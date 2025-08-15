@@ -6,8 +6,7 @@
     {
       "type": "minecolonies:random",
       "rarity": 2500000
-    },
-    {
+    }, {
       "type": "minecolonies:state",
       "state": {
         "path": "buildingManager/buildings",
@@ -16,8 +15,7 @@
           "level": 1
         }
       }
-    },
-    {
+    }, {
       "type": "minecolonies:citizen",
       "state": {
         "match": {
@@ -26,8 +24,7 @@
           }
         }
       }
-    },
-    {
+    }, {
       "type": "minecolonies:citizen",
       "state": {
         "match": {
@@ -54,8 +51,7 @@
                   "type": "minecolonies:advanceobjective",
                   "go-to": 1
                 }
-              },
-              {
+              }, {
                 "answer": "They're not my kids, why should I do it?",
                 "result": {
                   "type": "minecolonies:advanceobjective",
@@ -64,14 +60,12 @@
               }
             ]
           }
-        },
-        {
+        }, {
           "answer": "I'm sorry, I can't help right now.",
           "result": {
             "type": "minecolonies:cancel"
           }
-        },
-        {
+        }, {
           "answer": "I won't be able to help you with that.",
           "result": {
             "type": "minecolonies:advanceobjective",
@@ -79,8 +73,7 @@
           }
         }
       ]
-    },
-    {
+    }, {
       "type": "minecolonies:delivery",
       "details": {
         "target": 0,
@@ -90,8 +83,7 @@
         },
         "next-objective": 2
       }
-    },
-    {
+    }, {
       "type": "minecolonies:delivery",
       "details": {
         "target": 0,
@@ -100,8 +92,7 @@
         },
         "next-objective": 3
       }
-    },
-    {
+    }, {
       "type": "minecolonies:dialogue",
       "target": 0,
       "text": "Thank you. I'll get right on this!",
@@ -114,8 +105,7 @@
           }
         }
       ]
-    },
-    {
+    }, {
       "unlocks-rewards": [0],
       "type": "minecolonies:dialogue",
       "target": 0,
@@ -129,8 +119,7 @@
           }
         }
       ]
-    },
-    {
+    }, {
       "type": "minecolonies:dialogue",
       "target": 1,
       "text": "Hi! The baker told me you got cookies for me!",
@@ -150,8 +139,7 @@
               }
             ]
           }
-        },
-        {
+        }, {
           "answer": "Yes, I have them here! Give me a second!",
           "result": {
             "type": "minecolonies:advanceobjective",
@@ -159,8 +147,7 @@
           }
         }
       ]
-    },
-    {
+    }, {
       "type": "minecolonies:delivery",
       "details": {
         "target": 1,
@@ -170,9 +157,8 @@
         },
         "next-objective": 7
       }
-    },
-    {
-      "unlocks-rewards": [1,2,3],
+    }, {
+      "unlocks-rewards": [1, 2, 3],
       "type": "minecolonies:dialogue",
       "target": 1,
       "text": "*Shiny Eyes* Uhhh! Those look delicious!",
@@ -192,8 +178,7 @@
               }
             ]
           }
-        },
-        {
+        }, {
           "answer": "Yes they really do!",
           "result": {
             "type": "minecolonies:dialogue",
@@ -208,8 +193,7 @@
               }
             ]
           }
-        },
-        {
+        }, {
           "answer": "Have a good one!",
           "result": {
             "type": "minecolonies:dialogue",
@@ -237,24 +221,21 @@
           "count": 8
         }
       }
-    },
-    {
+    }, {
       "type": "minecolonies:item",
       "details": {
         "item": {
           "id": "minecraft:emerald"
         }
       }
-    },
-    {
+    }, {
       "type": "minecolonies:happiness",
       "details": {
         "target": 1,
         "qty": 1,
         "days": 7
       }
-    },
-    {
+    }, {
       "type": "minecolonies:happiness",
       "details": {
         "target": 0,

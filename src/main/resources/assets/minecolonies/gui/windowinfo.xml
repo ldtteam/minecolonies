@@ -1,14 +1,14 @@
-<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" size="190 244"
+<window size="190 244" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/ldtteam/BlockUI/version/main/src/main/resources/assets/blockui/gui/block_ui.xsd">
-    <image source="minecolonies:textures/gui/builderhut/builder_paper.png" size="190 244"/>
-    <image source="minecolonies:textures/gui/builderhut/builder_sketch_left.png" size="6 15" pos="44 12"/>
-    <image source="minecolonies:textures/gui/builderhut/builder_sketch_center.png" size="90 15" pos="50 12"/>
-    <image source="minecolonies:textures/gui/builderhut/builder_sketch_right.png" size="6 15" pos="140 12"/>
+    <image size="190 244" source="minecolonies:textures/gui/builderhut/builder_paper.png" />
+    <image pos="44 12" size="6 15" source="minecolonies:textures/gui/builderhut/builder_sketch_left.png" />
+    <image pos="50 12" size="90 15" source="minecolonies:textures/gui/builderhut/builder_sketch_center.png" />
+    <image pos="140 12" size="6 15" source="minecolonies:textures/gui/builderhut/builder_sketch_right.png" />
 
-    <switch id="pages" size="150 210" pos="20 14"/>
+    <switch id="pages" pos="20 14" size="150 210" />
 
-    <button id="exit" size="18 10" pos="13 13" source="minecolonies:textures/gui/builderhut/turn_page_left.png"/>
-    <button id="prevPage" size="18 10" pos="13 13" source="minecolonies:textures/gui/builderhut/turn_page_left.png"/>
-    <button id="nextPage" size="18 10" pos="159 13" source="minecolonies:textures/gui/builderhut/turn_page_right.png"/>
-    <text id="pageNum" size="20 11" pos="158 222" textalign="MIDDLE" label="" color="black"/>
+    <button id="exit" pos="13 13" size="18 10" source="minecolonies:textures/gui/builderhut/turn_page_left.png" />
+    <button id="prevPage" pos="13 13" size="18 10" source="minecolonies:textures/gui/builderhut/turn_page_left.png" />
+    <button id="nextPage" pos="159 13" size="18 10" source="minecolonies:textures/gui/builderhut/turn_page_right.png" />
+    <text id="pageNum" color="black" label="" pos="158 222" size="20 11" textalign="MIDDLE" />
 </window>

@@ -6,8 +6,7 @@
     {
       "type": "minecolonies:random",
       "rarity": 10000000
-    },
-    {
+    }, {
       "type": "minecolonies:citizen",
       "state": {
         "match": {
@@ -16,8 +15,7 @@
           }
         }
       }
-    },
-    {
+    }, {
       "type": "minecolonies:citizen",
       "state": {
         "match": {
@@ -46,8 +44,7 @@
                   "type": "minecolonies:advanceobjective",
                   "go-to": 1
                 }
-              },
-              {
+              }, {
                 "answer": "I'm sorry, but I can't do that for you.",
                 "result": {
                   "type": "minecolonies:dialogue",
@@ -64,16 +61,14 @@
               }
             ]
           }
-        },
-        {
+        }, {
           "answer": "I'm sorry, I don't have time right now.",
           "result": {
             "type": "minecolonies:return"
           }
         }
       ]
-    },
-    {
+    }, {
       "type": "minecolonies:delivery",
       "details": {
         "target": 1,
@@ -82,8 +77,7 @@
         },
         "next-objective": 2
       }
-    },
-    {
+    }, {
       "unlocks-rewards": [0, 1, 2],
       "type": "minecolonies:dialogue",
       "target": 1,
@@ -116,16 +110,14 @@
           "id": "minecraft:diamond"
         }
       }
-    },
-    {
+    }, {
       "type": "minecolonies:happiness",
       "details": {
         "target": 0,
         "qty": 2,
         "days": 7
       }
-    },
-    {
+    }, {
       "type": "minecolonies:happiness",
       "details": {
         "target": 1,

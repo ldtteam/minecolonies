@@ -1,35 +1,35 @@
-<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" size="190 130"
+<window size="190 130" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/ldtteam/BlockUI/version/main/src/main/resources/assets/blockui/gui/block_ui.xsd">
-    <image source="minecolonies:textures/gui/builderhut/builder_paper_short.png" size="190 130"/>
-    <image source="minecolonies:textures/gui/builderhut/builder_sketch_left.png" size="6 15" pos="44 12"/>
-    <image source="minecolonies:textures/gui/builderhut/builder_sketch_center.png" size="90 15" pos="50 12"/>
-    <image source="minecolonies:textures/gui/builderhut/builder_sketch_right.png" size="6 15" pos="140 12"/>
-    <text size="130 11" pos="30 14" color="red" textalign="MIDDLE" label="$(block.minecolonies.blockhutplantationfield)"/>
+    <image size="190 130" source="minecolonies:textures/gui/builderhut/builder_paper_short.png" />
+    <image pos="44 12" size="6 15" source="minecolonies:textures/gui/builderhut/builder_sketch_left.png" />
+    <image pos="50 12" size="90 15" source="minecolonies:textures/gui/builderhut/builder_sketch_center.png" />
+    <image pos="140 12" size="6 15" source="minecolonies:textures/gui/builderhut/builder_sketch_right.png" />
+    <text color="red" label="$(block.minecolonies.blockhutplantationfield)" pos="30 14" size="130 11" textalign="MIDDLE" />
 
-    <text id="not-in-colony" size="164 11" pos="13 55" color="black" textalign="MIDDLE"
-           label="$(com.minecolonies.coremod.gui.workerhuts.fields.notincolony)"/>
+    <text id="not-in-colony" color="black" label="$(com.minecolonies.coremod.gui.workerhuts.fields.notincolony)" pos="13 55" size="164 11"
+          textalign="MIDDLE" />
 
-    <text id="plants-header" size="130 11" pos="30 30" color="black" textalign="MIDDLE"
-           label="$(com.minecolonies.coremod.gui.workerhuts.plantationfields.plants)"/>
+    <text id="plants-header" color="black" label="$(com.minecolonies.coremod.gui.workerhuts.plantationfields.plants)" pos="30 30" size="130 11"
+          textalign="MIDDLE" />
 
-    <list id="plants" size="138 32" pos="30 45">
+    <list id="plants" pos="30 45" size="138 32">
         <view size="130 32">
-            <box size="24 24" pos="4 4">
-                <itemicon id="icon1" size="16 16" pos="4 4"/>
+            <box pos="4 4" size="24 24">
+                <itemicon id="icon1" pos="4 4" size="16 16" />
             </box>
-            <box size="24 24" pos="36 4">
-                <itemicon id="icon2" size="16 16" pos="4 4"/>
+            <box pos="36 4" size="24 24">
+                <itemicon id="icon2" pos="4 4" size="16 16" />
             </box>
-            <box size="24 24" pos="68 4">
-                <itemicon id="icon3" size="16 16" pos="4 4"/>
+            <box pos="68 4" size="24 24">
+                <itemicon id="icon3" pos="4 4" size="16 16" />
             </box>
-            <box size="24 24" pos="100 4">
-                <itemicon id="icon4" size="16 16" pos="4 4"/>
+            <box pos="100 4" size="24 24">
+                <itemicon id="icon4" pos="4 4" size="16 16" />
             </box>
         </view>
     </list>
 
-    <button id="repair" size="130 17" pos="30 90" color="black"
-                 source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
-                 label="$(com.minecolonies.coremod.gui.workerhuts.plantationfields.repair)"/>
+    <button id="repair" color="black" label="$(com.minecolonies.coremod.gui.workerhuts.plantationfields.repair)" pos="30 90"
+            size="130 17"
+            source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png" />
 </window>

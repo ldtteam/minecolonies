@@ -1,16 +1,17 @@
-<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/ldtteam/BlockUI/version/main/src/main/resources/assets/blockui/gui/block_ui.xsd"
-    size="190 244">
-    <image source="minecolonies:textures/gui/builderhut/builder_paper.png" size="190 244"/>
-    <text size="130 11" pos="30 14" textalign="MIDDLE" color="black"
-           label="$(com.minecolonies.coremod.gui.workerhuts.minerguards)"/>
-    <text id="noguardwarning" size="160 33" pos="13 29" color="black"
-           label="$(com.minecolonies.coremod.gui.workerhuts.miner.noguards)"/>
-    <list id="guards" size="164 185" pos="13 29">
-        <box size="100% 28" linewidth="0">
-            <text id="guardName" size="92 24" pos="0 0" textalign="MIDDLE" color="black"/>
-            <button id="assignGuard" size="64 17" pos="92 4" color="black"
-                         source="minecolonies:textures/gui/builderhut/builder_button_small.png"
-                         disabled="minecolonies:textures/gui/builderhut/builder_button_small_disabled.png"/>
+<window size="190 244"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/ldtteam/BlockUI/version/main/src/main/resources/assets/blockui/gui/block_ui.xsd">
+    <image size="190 244" source="minecolonies:textures/gui/builderhut/builder_paper.png" />
+    <text color="black" label="$(com.minecolonies.coremod.gui.workerhuts.minerguards)" pos="30 14" size="130 11"
+          textalign="MIDDLE" />
+    <text id="noguardwarning" color="black" label="$(com.minecolonies.coremod.gui.workerhuts.miner.noguards)" pos="13 29"
+          size="160 33" />
+    <list id="guards" pos="13 29" size="164 185">
+        <box linewidth="0" size="100% 28">
+            <text id="guardName" color="black" pos="0 0" size="92 24" textalign="MIDDLE" />
+            <button id="assignGuard" color="black" disabled="minecolonies:textures/gui/builderhut/builder_button_small_disabled.png" pos="92 4"
+                    size="64 17"
+                    source="minecolonies:textures/gui/builderhut/builder_button_small.png" />
         </box>
     </list>
 </window>

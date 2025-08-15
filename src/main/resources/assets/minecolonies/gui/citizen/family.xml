@@ -1,26 +1,28 @@
-<window size="210 244" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/ldtteam/BlockUI/version/main/src/main/resources/assets/blockui/gui/block_ui.xsd">
-    <layout source="minecolonies:gui/citizen/nav.xml"/>
+<window size="210 244"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/ldtteam/BlockUI/version/main/src/main/resources/assets/blockui/gui/block_ui.xsd">
+    <layout source="minecolonies:gui/citizen/nav.xml" />
 
-    <text pos="80 15" size="110 11" color="black" label="§n$(com.minecolonies.coremod.gui.citizen.family.title):§r"/>
-    
-    <text size="110 11" pos="90 40" color="black"  label="§n$(com.minecolonies.coremod.gui.citizen.family.parents):§r"/>
-    <text id="parentA" size="130 11" pos="50 51" color="black" textalign="MIDDLE"/>
-    <text id="parentB" size="130 11" pos="50 62" color="black" textalign="MIDDLE"/>
+    <text color="black" label="§n$(com.minecolonies.coremod.gui.citizen.family.title):§r" pos="80 15" size="110 11" />
 
-    <text size="110 11" pos="90 80" color="black"  label="§n$(com.minecolonies.coremod.gui.citizen.family.partner):§r"/>
-    <text id="partner" size="130 11" pos="50 95" color="black" textalign="MIDDLE"/>
+    <text color="black" label="§n$(com.minecolonies.coremod.gui.citizen.family.parents):§r" pos="90 40" size="110 11" />
+    <text id="parentA" color="black" pos="50 51" size="130 11" textalign="MIDDLE" />
+    <text id="parentB" color="black" pos="50 62" size="130 11" textalign="MIDDLE" />
 
-    <text size="110 11" pos="90 120" color="black"  label="§n$(com.minecolonies.coremod.gui.citizen.family.siblings):§r"/>
-    <list id="siblings" size="130 33" pos="50 135">
-        <box size="100% 11" linewidth="1">
-            <text id="name" size="130 11" pos="0 0" color="black" textalign="MIDDLE"/>
+    <text color="black" label="§n$(com.minecolonies.coremod.gui.citizen.family.partner):§r" pos="90 80" size="110 11" />
+    <text id="partner" color="black" pos="50 95" size="130 11" textalign="MIDDLE" />
+
+    <text color="black" label="§n$(com.minecolonies.coremod.gui.citizen.family.siblings):§r" pos="90 120" size="110 11" />
+    <list id="siblings" pos="50 135" size="130 33">
+        <box linewidth="1" size="100% 11">
+            <text id="name" color="black" pos="0 0" size="130 11" textalign="MIDDLE" />
         </box>
     </list>
 
-    <text size="110 11" pos="90 170" color="black"  label="§n$(com.minecolonies.coremod.gui.citizen.family.children):§r"/>
-    <list id="children" size="130 33" pos="50 185">
-        <box size="100% 11" linewidth="1">
-            <text id="name" size="130 11" pos="0 0" color="black" textalign="MIDDLE"/>
+    <text color="black" label="§n$(com.minecolonies.coremod.gui.citizen.family.children):§r" pos="90 170" size="110 11" />
+    <list id="children" pos="50 185" size="130 33">
+        <box linewidth="1" size="100% 11">
+            <text id="name" color="black" pos="0 0" size="130 11" textalign="MIDDLE" />
         </box>
     </list>
 

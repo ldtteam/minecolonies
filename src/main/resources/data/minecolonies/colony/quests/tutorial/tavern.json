@@ -14,10 +14,9 @@
           }
         }
       }
-    },
-    {
+    }, {
       "type": "minecolonies:citizen",
-      "state": { }
+      "state": {}
     }
   ],
   "triggerOrder": "1 || 2",
@@ -39,8 +38,7 @@
                   "type": "minecolonies:advanceobjective",
                   "go-to": 1
                 }
-              },
-              {
+              }, {
                 "answer": "Already done!",
                 "result": {
                   "type": "minecolonies:dialogue",
@@ -58,8 +56,7 @@
               }
             ]
           }
-        },
-        {
+        }, {
           "answer": "Already done!",
           "result": {
             "type": "minecolonies:dialogue",
@@ -74,16 +71,14 @@
               }
             ]
           }
-        },
-        {
+        }, {
           "answer": "Not right now. I will come back to you later!",
           "result": {
             "type": "minecolonies:return"
           }
         }
       ]
-    },
-    {
+    }, {
       "type": "minecolonies:dialogue",
       "target": 0,
       "text": "Welcome back, were you able to craft the tavern hut block?",
@@ -102,8 +97,7 @@
               }
             ]
           }
-        },
-        {
+        }, {
           "answer": "Yes, done, what's next?",
           "result": {
             "type": "minecolonies:dialogue",
@@ -118,8 +112,7 @@
               }
             ]
           }
-        },
-        {
+        }, {
           "answer": "I already finished building the Tavern!",
           "result": {
             "type": "minecolonies:dialogue",
@@ -134,16 +127,14 @@
               }
             ]
           }
-        },
-        {
+        }, {
           "answer": "Not yet, I will get to it later!",
           "result": {
             "type": "minecolonies:return"
           }
         }
       ]
-    },
-    {
+    }, {
       "type": "minecolonies:buildbuilding",
       "details": {
         "type": "minecolonies:tavern",
@@ -153,8 +144,7 @@
         "target": 0,
         "next-objective": 3
       }
-    },
-    {
+    }, {
       "type": "minecolonies:dialogue",
       "unlocks-rewards": [0],
       "target": 0,

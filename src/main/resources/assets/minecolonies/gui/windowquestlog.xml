@@ -1,49 +1,51 @@
-<window size="190 244" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/ldtteam/BlockUI/version/main/src/main/resources/assets/blockui/gui/block_ui.xsd">
-    <image source="minecolonies:textures/gui/builderhut/builder_paper_sketch.png" size="100% 100%"/>
-    <image source="minecolonies:textures/gui/builderhut/builder_sketch_left.png" size="6 15" pos="34 12"/>
-    <image source="minecolonies:textures/gui/builderhut/builder_sketch_center.png" size="110 15" pos="40 12"/>
-    <image source="minecolonies:textures/gui/builderhut/builder_sketch_right.png" size="6 15" pos="150 12"/>
+<window size="190 244"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/ldtteam/BlockUI/version/main/src/main/resources/assets/blockui/gui/block_ui.xsd">
+    <image size="100% 100%" source="minecolonies:textures/gui/builderhut/builder_paper_sketch.png" />
+    <image pos="34 12" size="6 15" source="minecolonies:textures/gui/builderhut/builder_sketch_left.png" />
+    <image pos="40 12" size="110 15" source="minecolonies:textures/gui/builderhut/builder_sketch_center.png" />
+    <image pos="150 12" size="6 15" source="minecolonies:textures/gui/builderhut/builder_sketch_right.png" />
 
-    <text size="100% 11" pos="0 14" color="black" textalign="MIDDLE"
-           label="$(com.minecolonies.coremod.item.questlog.gui.title)"/>
+    <text color="black" label="$(com.minecolonies.coremod.item.questlog.gui.title)" pos="0 14" size="100% 11"
+          textalign="MIDDLE" />
 
-    <button id="prevPage" size="18 10" pos="13 13" source="minecolonies:textures/gui/builderhut/turn_page_left.png"/>
-    <button id="nextPage" size="18 10" pos="159 13" source="minecolonies:textures/gui/builderhut/turn_page_right.png"/>
+    <button id="prevPage" pos="13 13" size="18 10" source="minecolonies:textures/gui/builderhut/turn_page_left.png" />
+    <button id="nextPage" pos="159 13" size="18 10" source="minecolonies:textures/gui/builderhut/turn_page_right.png" />
 
-    <switch id="pages" size="160 203" pos="15 30" endless="true">
+    <switch id="pages" endless="true" pos="15 30" size="160 203">
         <view id="pageInProgress">
-            <text size="100% 11" pos="0 0" color="black" textalign="MIDDLE"
-                   label="$(com.minecolonies.coremod.item.questlog.gui.inprogress)"/>
+            <text color="black" label="$(com.minecolonies.coremod.item.questlog.gui.inprogress)" pos="0 0" size="100% 11"
+                  textalign="MIDDLE" />
 
-            <list id="quests" size="160 187" pos="0 15">
+            <list id="quests" pos="0 15" size="160 187">
                 <view size="100% 45">
-                    <text id="questName" size="130 11" pos="0 0" color="black"/>
-                    <text id="questGiver" size="130 11" pos="0 15" color="black"/>
-                    <text id="questObjective" size="130 11" pos="0 30" color="black"/>
-                    <button id="questLocator" size="15 22" pos="135 0" source="minecolonies:textures/gui/quest-locator.png"/>
+                    <text id="questName" color="black" pos="0 0" size="130 11" />
+                    <text id="questGiver" color="black" pos="0 15" size="130 11" />
+                    <text id="questObjective" color="black" pos="0 30" size="130 11" />
+                    <button id="questLocator" pos="135 0" size="15 22" source="minecolonies:textures/gui/quest-locator.png" />
                 </view>
             </list>
         </view>
         <view id="pageAvailable">
-            <text size="100% 11" pos="0 0" color="black" textalign="MIDDLE"
-                   label="$(com.minecolonies.coremod.item.questlog.gui.available)"/>
+            <text color="black" label="$(com.minecolonies.coremod.item.questlog.gui.available)" pos="0 0" size="100% 11"
+                  textalign="MIDDLE" />
 
-            <list id="quests" size="160 187" pos="0 15">
+            <list id="quests" pos="0 15" size="160 187">
                 <view size="100% 30">
-                    <text id="questName" size="130 11" pos="0 0" color="black"/>
-                    <text id="questGiver" size="130 11" pos="0 15" color="black"/>
-                    <button id="questLocator" size="15 22" pos="135 0" source="minecolonies:textures/gui/quest-locator.png"/>
+                    <text id="questName" color="black" pos="0 0" size="130 11" />
+                    <text id="questGiver" color="black" pos="0 15" size="130 11" />
+                    <button id="questLocator" pos="135 0" size="15 22" source="minecolonies:textures/gui/quest-locator.png" />
                 </view>
             </list>
         </view>
         <view id="pageFinished">
-            <text size="100% 11" pos="0 0" color="black" textalign="MIDDLE"
-                   label="$(com.minecolonies.coremod.item.questlog.gui.finished)"/>
+            <text color="black" label="$(com.minecolonies.coremod.item.questlog.gui.finished)" pos="0 0" size="100% 11"
+                  textalign="MIDDLE" />
 
-            <list id="quests" size="160 187" pos="0 15">
+            <list id="quests" pos="0 15" size="160 187">
                 <view size="100% 30">
-                    <text id="questName" size="130 11" pos="0 0" color="black"/>
-                    <text id="questCompletedCount" size="130 11" pos="0 15" color="black"/>
+                    <text id="questName" color="black" pos="0 0" size="130 11" />
+                    <text id="questCompletedCount" color="black" pos="0 15" size="130 11" />
                 </view>
             </list>
         </view>

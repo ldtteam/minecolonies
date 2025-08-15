@@ -8,8 +8,7 @@
     {
       "type": "minecolonies:random",
       "rarity": 10000000
-    },
-    {
+    }, {
       "type": "minecolonies:citizen",
       "state": {
         "match": {
@@ -18,8 +17,7 @@
           ]
         }
       }
-    },
-    {
+    }, {
       "type": "minecolonies:citizen",
       "state": {
         "match": {
@@ -48,8 +46,7 @@
                   "type": "minecolonies:advanceobjective",
                   "go-to": 1
                 }
-              },
-              {
+              }, {
                 "answer": "I'm sorry, but I'm a bit busy right now.",
                 "result": {
                   "type": "minecolonies:dialogue",
@@ -66,16 +63,14 @@
               }
             ]
           }
-        },
-        {
+        }, {
           "answer": "I'm sorry, but I can't help you right now.",
           "result": {
             "type": "minecolonies:cancel"
           }
         }
       ]
-    },
-    {
+    }, {
       "type": "minecolonies:dialogue",
       "target": 1,
       "text": "Hi, what do you want?",
@@ -97,8 +92,7 @@
           }
         }
       ]
-    },
-    {
+    }, {
       "type": "minecolonies:delivery",
       "details": {
         "target": 1,
@@ -107,8 +101,7 @@
         },
         "next-objective": 3
       }
-    },
-    {
+    }, {
       "unlocks-rewards": [0, 1],
       "type": "minecolonies:dialogue",
       "target": 0,
@@ -132,8 +125,7 @@
           "id": "minecraft:emerald"
         }
       }
-    },
-    {
+    }, {
       "type": "minecolonies:happiness",
       "details": {
         "target": 0,

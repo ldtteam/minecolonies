@@ -1,32 +1,33 @@
-<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/ldtteam/BlockUI/version/main/src/main/resources/assets/blockui/gui/block_ui.xsd"
-        size="380 255">
-    <image source="minecolonies:textures/gui/builderhut/builder_paper.png" size="190 244"/>
-    <text id="title" size="130 11" pos="30 14" textalign="MIDDLE" color="black"  label="$(com.minecolonies.core.menu.title)"/>
-    <text id="warning" size="150 22" pos="13 50" color="black" textalign="MIDDLE" label="$(com.minecolonies.core.menu.warning)"/>
-    <text id="poorwarning" size="160 22" pos="14 25" color="red" textalign="MIDDLE" label="$(com.minecolonies.core.poor.menu.warning)" visible="false"/>
+<window size="380 255"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/ldtteam/BlockUI/version/main/src/main/resources/assets/blockui/gui/block_ui.xsd">
+    <image size="190 244" source="minecolonies:textures/gui/builderhut/builder_paper.png" />
+    <text id="title" color="black" label="$(com.minecolonies.core.menu.title)" pos="30 14" size="130 11" textalign="MIDDLE" />
+    <text id="warning" color="black" label="$(com.minecolonies.core.menu.warning)" pos="13 50" size="150 22" textalign="MIDDLE" />
+    <text id="poorwarning" color="red" label="$(com.minecolonies.core.poor.menu.warning)" pos="14 25" size="160 22" textalign="MIDDLE" visible="false" />
 
-    <list id="resourcesstock" size="164 180" pos="13 50">
-        <box size="100% 17" linewidth="1">
-            <gradient id="gradient" size="162 15" pos="1 1"/>
-            <itemicon id="resourceIcon" size="16 16" pos="0 0"/>
-            <text id="resourceName" size="100 12" pos="20 1" color="black"/>
+    <list id="resourcesstock" pos="13 50" size="164 180">
+        <box linewidth="1" size="100% 17">
+            <gradient id="gradient" pos="1 1" size="162 15" />
+            <itemicon id="resourceIcon" pos="0 0" size="16 16" />
+            <text id="resourceName" color="black" pos="20 1" size="100 12" />
 
-            <button label="X" id="removeStock" pos="126 1" size="29 15"
-                    source="minecolonies:textures/gui/builderhut/builder_button_very_small.png" textcolor="red"/>
+            <button id="removeStock" label="X" pos="126 1" size="29 15"
+                    source="minecolonies:textures/gui/builderhut/builder_button_very_small.png" textcolor="red" />
         </box>
     </list>
 
-    <image source="minecolonies:textures/gui/builderhut/builder_paper.png" size="190 244" pos="190 0"/>
-    <text id="desc" size="130 11" pos="220 14" color="black" textalign="MIDDLE" label="$(com.minecolonies.core.food_list.title)"/>
-    <input id="input" size="150 18" pos="210 28" maxlength="25"/>
+    <image pos="190 0" size="190 244" source="minecolonies:textures/gui/builderhut/builder_paper.png" />
+    <text id="desc" color="black" label="$(com.minecolonies.core.food_list.title)" pos="220 14" size="130 11" textalign="MIDDLE" />
+    <input id="input" maxlength="25" pos="210 28" size="150 18" />
 
-    <list id="resources" size="164 180" pos="203 50">
-        <box size="100% 17" linewidth="1">
-            <gradient id="gradient" size="162 15" pos="1 1"/>
-            <itemicon id="resourceIcon" size="16 16" pos="20 0"/>
-            <text id="resourceName" size="100 12" pos="40 3" color="white"/>
-            <button label="&lt;&lt;" id="switch" pos="3 1" size="14 15"
-                    source="minecolonies:textures/gui/builderhut/builder_button_mini.png" textcolor="black"/>
+    <list id="resources" pos="203 50" size="164 180">
+        <box linewidth="1" size="100% 17">
+            <gradient id="gradient" pos="1 1" size="162 15" />
+            <itemicon id="resourceIcon" pos="20 0" size="16 16" />
+            <text id="resourceName" color="white" pos="40 3" size="100 12" />
+            <button id="switch" label="&lt;&lt;" pos="3 1" size="14 15"
+                    source="minecolonies:textures/gui/builderhut/builder_button_mini.png" textcolor="black" />
         </box>
     </list>
 </window>

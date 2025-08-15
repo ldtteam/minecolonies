@@ -1,48 +1,47 @@
 <window size="524 243">
-    <layout source="minecolonies:gui/townhall/windowtownhall.xml"/>
+    <layout source="minecolonies:gui/townhall/windowtownhall.xml" />
 
-    <text id="desc" size="170 10" textalign="MIDDLE" pos="95 60" color="black" textscale="1.0" label="$(com.minecolonies.core.gui.connectioneventlist.desc)"/>
-    <list id="connectioneventlist" size="160 140" pos="98 70">
-        <box size="100% 40" linewidth="1">
-            <text id="name" size="140 12" pos="2 1" color="black"/>
-            <text id="desc" size="140 12" pos="2 10" color="black"/>
+    <text id="desc" color="black" label="$(com.minecolonies.core.gui.connectioneventlist.desc)" pos="95 60" size="170 10" textalign="MIDDLE" textscale="1.0" />
+    <list id="connectioneventlist" pos="98 70" size="160 140">
+        <box linewidth="1" size="100% 40">
+            <text id="name" color="black" pos="2 1" size="140 12" />
+            <text id="desc" color="black" pos="2 10" size="140 12" />
 
-            <button id="acceptally" size="86 17" label="$(com.minecolonies.core.gui.connectioneventlist.accept_ally)" pos="2 22"
-                    source="minecolonies:textures/gui/builderhut/builder_button_medium.png" color="black" textscale="0.8"/>
+            <button id="acceptally" color="black" label="$(com.minecolonies.core.gui.connectioneventlist.accept_ally)" pos="2 22"
+                    size="86 17" source="minecolonies:textures/gui/builderhut/builder_button_medium.png" textscale="0.8" />
         </box>
     </list>
 
+    <text id="desc" color="black" label="$(com.minecolonies.core.gui.colonylist.direct.desc)" pos="260 25" size="170 10" textalign="MIDDLE" textscale="1.0" />
+    <list id="directcolonylist" pos="263 35" size="170 80">
+        <box linewidth="1" size="100% 40">
+            <text id="name" color="black" pos="2 1" size="140 12" />
+            <text id="distance" color="black" pos="70 10" size="80 12" />
+            <text id="state" color="black" pos="2 10" size="100% 12" />
 
-    <text id="desc" size="170 10" textalign="MIDDLE" pos="260 25" color="black" textscale="1.0" label="$(com.minecolonies.core.gui.colonylist.direct.desc)"/>
-    <list id="directcolonylist" size="170 80" pos="263 35">
-        <box size="100% 40" linewidth="1">
-            <text id="name" size="140 12" pos="2 1" color="black"/>
-            <text id="distance" size="80 12" pos="70 10" color="black"/>
-            <text id="state" size="100% 12" pos="2 10" color="black"/>
+            <button id="requestally" color="black" label="$(com.minecolonies.core.gui.colonylist.request_ally)" pos="2 22"
+                    size="86 17" source="minecolonies:textures/gui/builderhut/builder_button_medium.png" textscale="0.8" />
+            <button id="startfeud" color="black" label="$(com.minecolonies.core.gui.colonylist.start_feud)" pos="90 22"
+                    size="71 17" source="minecolonies:textures/gui/builderhut/builder_button_medium_small.png" textscale="0.8" />
 
-            <button id="requestally" size="86 17" label="$(com.minecolonies.core.gui.colonylist.request_ally)" pos="2 22"
-                    source="minecolonies:textures/gui/builderhut/builder_button_medium.png" color="black" textscale="0.8"/>
-            <button id="startfeud" size="71 17" label="$(com.minecolonies.core.gui.colonylist.start_feud)" pos="90 22"
-                    source="minecolonies:textures/gui/builderhut/builder_button_medium_small.png" color="black" textscale="0.8"/>
-
-            <button id="setneutral" size="86 17" label="$(com.minecolonies.core.gui.colonylist.set_neutral)" pos="2 22"
-                    source="minecolonies:textures/gui/builderhut/builder_button_medium.png" color="black" visible="false" textscale="0.8"/>
+            <button id="setneutral" color="black" label="$(com.minecolonies.core.gui.colonylist.set_neutral)" pos="2 22"
+                    size="86 17" source="minecolonies:textures/gui/builderhut/builder_button_medium.png" textscale="0.8" visible="false" />
         </box>
     </list>
-    <text id="desc" size="170 10" textalign="MIDDLE"  pos="260 120" color="black" textscale="1.0" label="$(com.minecolonies.core.gui.colonylist.indirect.desc)"/>
-    <list id="indirectcolonylist" size="164 80" pos="263 135">
-        <box size="100% 40" linewidth="1">
-            <text id="name" size="140 12" pos="2 1" color="black"/>
-            <text id="distance" size="80 12" pos="70 10" color="black"/>
-            <text id="state" size="100% 12" pos="2 10" color="black"/>
+    <text id="desc" color="black" label="$(com.minecolonies.core.gui.colonylist.indirect.desc)" pos="260 120" size="170 10" textalign="MIDDLE" textscale="1.0" />
+    <list id="indirectcolonylist" pos="263 135" size="164 80">
+        <box linewidth="1" size="100% 40">
+            <text id="name" color="black" pos="2 1" size="140 12" />
+            <text id="distance" color="black" pos="70 10" size="80 12" />
+            <text id="state" color="black" pos="2 10" size="100% 12" />
 
-            <button id="requestally" size="86 17" label="$(com.minecolonies.core.gui.colonylist.request_ally)" pos="2 22"
-                    source="minecolonies:textures/gui/builderhut/builder_button_medium.png" color="black" textscale="0.8"/>
-            <button id="startfeud" size="64 17" label="$(com.minecolonies.core.gui.colonylist.start_feud)" pos="90 22"
-                    source="minecolonies:textures/gui/builderhut/builder_button_small.png" color="black" textscale="0.8"/>
+            <button id="requestally" color="black" label="$(com.minecolonies.core.gui.colonylist.request_ally)" pos="2 22"
+                    size="86 17" source="minecolonies:textures/gui/builderhut/builder_button_medium.png" textscale="0.8" />
+            <button id="startfeud" color="black" label="$(com.minecolonies.core.gui.colonylist.start_feud)" pos="90 22"
+                    size="64 17" source="minecolonies:textures/gui/builderhut/builder_button_small.png" textscale="0.8" />
 
-            <button id="setneutral" size="86 17" label="$(com.minecolonies.core.gui.colonylist.set_neutral)" pos="2 22"
-                    source="minecolonies:textures/gui/builderhut/builder_button_medium.png" color="black" visible="false" textscale="0.8"/>
+            <button id="setneutral" color="black" label="$(com.minecolonies.core.gui.colonylist.set_neutral)" pos="2 22"
+                    size="86 17" source="minecolonies:textures/gui/builderhut/builder_button_medium.png" textscale="0.8" visible="false" />
         </box>
     </list>
 

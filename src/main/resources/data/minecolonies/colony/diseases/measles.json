@@ -1,18 +1,16 @@
 {
-	"name": "com.minecolonies.coremod.diseases.measles",
-	"rarity": 10,
-	"items": [
-		{
-			"id": "minecraft:poppy",
-			"count": 1
-		},
-		{
-			"id": "minecraft:dandelion",
-			"count": 1
-		},
-		{
-			"id": "minecraft:kelp",
-			"count": 1
-		}
-	]
+  "name": "com.minecolonies.coremod.diseases.measles",
+  "rarity": 10,
+  "items": [
+    {
+      "id": "minecraft:poppy",
+      "count": 1
+    }, {
+      "id": "minecraft:dandelion",
+      "count": 1
+    }, {
+      "id": "minecraft:kelp",
+      "count": 1
+    }
+  ]
 }

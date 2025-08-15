@@ -1,28 +1,28 @@
-<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" size="190 130"
+<window size="190 130" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/ldtteam/BlockUI/version/main/src/main/resources/assets/blockui/gui/block_ui.xsd">
-    <image source="minecolonies:textures/gui/builderhut/builder_paper_short.png" size="190 130"/>
-    <image source="minecolonies:textures/gui/builderhut/builder_sketch_left.png" size="6 15" pos="44 12"/>
-    <image source="minecolonies:textures/gui/builderhut/builder_sketch_center.png" size="90 15" pos="50 12"/>
-    <image source="minecolonies:textures/gui/builderhut/builder_sketch_right.png" size="6 15" pos="140 12"/>
-    <text size="130 11" pos="30 14" color="red" textalign="MIDDLE" label="$(block.minecolonies.blockhutfield)"/>
+    <image size="190 130" source="minecolonies:textures/gui/builderhut/builder_paper_short.png" />
+    <image pos="44 12" size="6 15" source="minecolonies:textures/gui/builderhut/builder_sketch_left.png" />
+    <image pos="50 12" size="90 15" source="minecolonies:textures/gui/builderhut/builder_sketch_center.png" />
+    <image pos="140 12" size="6 15" source="minecolonies:textures/gui/builderhut/builder_sketch_right.png" />
+    <text color="red" label="$(block.minecolonies.blockhutfield)" pos="30 14" size="130 11" textalign="MIDDLE" />
 
-    <text id="not-in-colony" size="164 11" pos="13 55" color="black" textalign="MIDDLE"
-           label="$(com.minecolonies.coremod.gui.workerhuts.fields.notincolony)"/>
+    <text id="not-in-colony" color="black" label="$(com.minecolonies.coremod.gui.workerhuts.fields.notincolony)" pos="13 55" size="164 11"
+          textalign="MIDDLE" />
 
-    <text id="current-farmer" size="164 11" pos="13 30" color="black"/>
+    <text id="current-farmer" color="black" pos="13 30" size="164 11" />
 
-    <button id="select-seed" size="86 17" pos="13 72" color="black"
-                 source="minecolonies:textures/gui/builderhut/builder_button_medium.png"
-                 label="$(com.minecolonies.coremod.gui.field.selectseed)"/>
-    <itemicon id="current-seed" size="16 16" pos="13 92"/>
+    <button id="select-seed" color="black" label="$(com.minecolonies.coremod.gui.field.selectseed)" pos="13 72"
+            size="86 17"
+            source="minecolonies:textures/gui/builderhut/builder_button_medium.png" />
+    <itemicon id="current-seed" pos="13 92" size="16 16" />
 
-    <itemicon id="dir-center" size="16 16" pos="133 73" item="minecolonies:blockhutfield"/>
-    <button id="dir-resize-north" size="24 24" pos="129 45" color="white" textalign="MIDDLE"
-        source="minecolonies:building/scarecrow/north" highlight="minecolonies:building/scarecrow/north/light" disabled="minecolonies:building/scarecrow/north/dark"/>
-    <button id="dir-resize-south" size="24 24" pos="129 93" color="white" textalign="MIDDLE"
-        source="minecolonies:building/scarecrow/south" highlight="minecolonies:building/scarecrow/south/light" disabled="minecolonies:building/scarecrow/south/dark"/>
-    <button id="dir-resize-west" size="24 24" pos="105 69" color="white" textalign="MIDDLE"
-        source="minecolonies:building/scarecrow/west" highlight="minecolonies:building/scarecrow/west/light" disabled="minecolonies:building/scarecrow/west/dark"/>
-    <button id="dir-resize-east" size="24 24" pos="153 69" color="white" textalign="MIDDLE"
-        source="minecolonies:building/scarecrow/east" highlight="minecolonies:building/scarecrow/east/light" disabled="minecolonies:building/scarecrow/east/dark"/>
+    <itemicon id="dir-center" item="minecolonies:blockhutfield" pos="133 73" size="16 16" />
+    <button id="dir-resize-north" color="white" disabled="minecolonies:building/scarecrow/north/dark" highlight="minecolonies:building/scarecrow/north/light" pos="129 45"
+            size="24 24" source="minecolonies:building/scarecrow/north" textalign="MIDDLE" />
+    <button id="dir-resize-south" color="white" disabled="minecolonies:building/scarecrow/south/dark" highlight="minecolonies:building/scarecrow/south/light" pos="129 93"
+            size="24 24" source="minecolonies:building/scarecrow/south" textalign="MIDDLE" />
+    <button id="dir-resize-west" color="white" disabled="minecolonies:building/scarecrow/west/dark" highlight="minecolonies:building/scarecrow/west/light" pos="105 69"
+            size="24 24" source="minecolonies:building/scarecrow/west" textalign="MIDDLE" />
+    <button id="dir-resize-east" color="white" disabled="minecolonies:building/scarecrow/east/dark" highlight="minecolonies:building/scarecrow/east/light" pos="153 69"
+            size="24 24" source="minecolonies:building/scarecrow/east" textalign="MIDDLE" />
 </window>

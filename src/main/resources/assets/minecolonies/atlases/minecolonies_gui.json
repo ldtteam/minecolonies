@@ -4,8 +4,7 @@
       "type": "directory",
       "source": "gui/minecolonies",
       "prefix": ""
-    },
-    {
+    }, {
       "type": "unstitch",
       "resource": "minecolonies:gui/mcol_unstitch/building/scarecrow",
       "divisor_x": 128,
@@ -17,78 +16,67 @@
           "y": 0,
           "width": 24,
           "height": 24
-        },
-        {
+        }, {
           "sprite": "minecolonies:building/scarecrow/west/dark",
           "x": 24,
           "y": 0,
           "width": 24,
           "height": 24
-        },
-        {
+        }, {
           "sprite": "minecolonies:building/scarecrow/north/dark",
           "x": 48,
           "y": 0,
           "width": 24,
           "height": 24
-        },
-        {
+        }, {
           "sprite": "minecolonies:building/scarecrow/east/dark",
           "x": 72,
           "y": 0,
           "width": 24,
           "height": 24
-        },
-        {
+        }, {
           "sprite": "minecolonies:building/scarecrow/south",
           "x": 0,
           "y": 24,
           "width": 24,
           "height": 24
-        },
-        {
+        }, {
           "sprite": "minecolonies:building/scarecrow/west",
           "x": 24,
           "y": 24,
           "width": 24,
           "height": 24
-        },
-        {
+        }, {
           "sprite": "minecolonies:building/scarecrow/north",
           "x": 48,
           "y": 24,
           "width": 24,
           "height": 24
-        },
-        {
+        }, {
           "sprite": "minecolonies:building/scarecrow/east",
           "x": 72,
           "y": 24,
           "width": 24,
           "height": 24
-        },
-        {
+        }, {
           "sprite": "minecolonies:building/scarecrow/south/light",
           "x": 0,
           "y": 48,
           "width": 24,
           "height": 24
-        },
-        {
+        }, {
           "sprite": "minecolonies:building/scarecrow/west/light",
           "x": 24,
           "y": 48,
           "width": 24,
           "height": 24
-        },
-        {
+        }, {
           "sprite": "minecolonies:building/scarecrow/north/light",
           "x": 48,
           "y": 48,
           "width": 24,
           "height": 24
-        },
-        {
+        }, {
           "sprite": "minecolonies:building/scarecrow/east/light",
           "x": 72,
           "y": 48,
@@ -96,8 +84,7 @@
           "height": 24
         }
       ]
-    },
-    {
+    }, {
       "type": "unstitch",
       "resource": "minecolonies:gui/mcol_unstitch/citizen/green_bluehearts",
       "divisor_x": 256,
@@ -109,22 +96,19 @@
           "y": 0,
           "width": 9,
           "height": 9
-        },
-        {
+        }, {
           "sprite": "minecolonies:citizen/heart/green_half",
           "x": 8,
           "y": 0,
           "width": 9,
           "height": 9
-        },
-        {
+        }, {
           "sprite": "minecolonies:citizen/heart/blue",
           "x": 0,
           "y": 8,
           "width": 9,
           "height": 9
-        },
-        {
+        }, {
           "sprite": "minecolonies:citizen/heart/blue_half",
           "x": 8,
           "y": 8,
@@ -132,8 +116,7 @@
           "height": 9
         }
       ]
-    },
-    {
+    }, {
       "type": "unstitch",
       "resource": "minecolonies:gui/mcol_unstitch/citizen/smileys",
       "divisor_x": 87,
@@ -145,15 +128,13 @@
           "y": 0,
           "width": 9,
           "height": 9
-        },
-        {
+        }, {
           "sprite": "minecolonies:citizen/smiley/full",
           "x": 52,
           "y": 0,
           "width": 9,
           "height": 9
-        },
-        {
+        }, {
           "sprite": "minecolonies:citizen/smiley/half",
           "x": 61,
           "y": 0,

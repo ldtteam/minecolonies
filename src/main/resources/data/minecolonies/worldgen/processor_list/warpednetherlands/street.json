@@ -13,8 +13,7 @@
           "location_predicate": {
             "predicate_type": "minecraft:always_true"
           }
-        },
-        {
+        }, {
           "output_state": {
             "Properties": {
               "level": "0"
@@ -29,8 +28,7 @@
             "block": "minecraft:lava",
             "predicate_type": "minecraft:block_match"
           }
-        },
-        {
+        }, {
           "output_state": {
             "Properties": {
               "level": "0"
@@ -48,11 +46,10 @@
         }
       ],
       "processor_type": "minecraft:rule"
-    },
-    {
-      "blocks":[
+    }, {
+      "blocks": [
         {
-          "Name":"structurize:blocksubstitution"
+          "Name": "structurize:blocksubstitution"
         }
       ],
       "processor_type": "minecraft:block_ignore"

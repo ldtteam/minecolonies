@@ -1,16 +1,18 @@
-<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" size="190 133" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/ldtteam/BlockUI/version/main/src/main/resources/assets/blockui/gui/block_ui.xsd">
+<window size="190 133"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/ldtteam/BlockUI/version/main/src/main/resources/assets/blockui/gui/block_ui.xsd">
 
-    <image source="minecolonies:textures/gui/citizen/colonist_paper.png" size="100% 100%"/>
+    <image size="100% 100%" source="minecolonies:textures/gui/citizen/colonist_paper.png" />
 
-    <text id="name" size="150 60" pos="15 10" color="black" textalign="TOP_MIDDLE"/>
+    <text id="name" color="black" pos="15 10" size="150 60" textalign="TOP_MIDDLE" />
 
-    <button id="cancel" size="14 15" pos="400 0"
-                 source="minecolonies:textures/gui/button_x.png" color="black"/>
+    <button id="cancel" color="black" pos="400 0"
+            size="14 15" source="minecolonies:textures/gui/button_x.png" />
 
-    <button id="repair" size="86 17" pos="50 70"
-                 source="minecolonies:textures/gui/builderhut/builder_button_medium.png"
-                 label="$(com.minecolonies.coremod.gui.workerhuts.repair)" color="black"/>
-    <button id="build" size="86 17" pos="50 90"
-                 source="minecolonies:textures/gui/builderhut/builder_button_medium.png"
-                 label="$(com.minecolonies.coremod.gui.workerhuts.upgrade)" color="black"/>
+    <button id="repair" color="black" label="$(com.minecolonies.coremod.gui.workerhuts.repair)"
+            pos="50 70"
+            size="86 17" source="minecolonies:textures/gui/builderhut/builder_button_medium.png" />
+    <button id="build" color="black" label="$(com.minecolonies.coremod.gui.workerhuts.upgrade)"
+            pos="50 90"
+            size="86 17" source="minecolonies:textures/gui/builderhut/builder_button_medium.png" />
 </window>

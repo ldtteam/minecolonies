@@ -4,14 +4,12 @@
       "blocks": [
         {
           "Name": "structurize:blocksubstitution"
-        },
-        {
+        }, {
           "Name": "minecolonies:blockwaypoint"
         }
       ],
       "processor_type": "minecraft:block_ignore"
-    },
-    {
+    }, {
       "rules": [
         {
           "output_state": {
@@ -24,8 +22,7 @@
           "location_predicate": {
             "predicate_type": "minecraft:always_true"
           }
-        },
-        {
+        }, {
           "output_state": {
             "Name": "minecraft:cobweb"
           },
@@ -37,8 +34,7 @@
           "location_predicate": {
             "predicate_type": "minecraft:always_true"
           }
-        },
-        {
+        }, {
           "output_state": {
             "Name": "minecraft:cobweb"
           },
@@ -50,8 +46,7 @@
           "location_predicate": {
             "predicate_type": "minecraft:always_true"
           }
-        },
-        {
+        }, {
           "output_state": {
             "Name": "minecraft:cobweb"
           },
@@ -63,8 +58,7 @@
           "location_predicate": {
             "predicate_type": "minecraft:always_true"
           }
-        },
-        {
+        }, {
           "output_state": {
             "Name": "minecraft:air"
           },
@@ -76,8 +70,7 @@
           "location_predicate": {
             "predicate_type": "minecraft:always_true"
           }
-        },
-        {
+        }, {
           "output_state": {
             "Name": "minecraft:air"
           },
@@ -89,8 +82,7 @@
           "location_predicate": {
             "predicate_type": "minecraft:always_true"
           }
-        },
-        {
+        }, {
           "output_state": {
             "Name": "minecraft:air"
           },
@@ -102,8 +94,7 @@
           "location_predicate": {
             "predicate_type": "minecraft:always_true"
           }
-        },
-        {
+        }, {
           "output_state": {
             "Name": "minecraft:air"
           },

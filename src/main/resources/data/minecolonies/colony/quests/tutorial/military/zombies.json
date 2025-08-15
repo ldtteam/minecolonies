@@ -14,10 +14,9 @@
           ]
         }
       }
-    },
-    {
+    }, {
       "type": "minecolonies:citizen",
-      "state": { }
+      "state": {}
     }
   ],
   "triggerOrder": "1 || 2",
@@ -33,17 +32,15 @@
             "type": "minecolonies:advanceobjective",
             "go-to": 1
           }
-        },
-        {
+        }, {
           "answer": "Not right now. I will come back to you later!",
           "result": {
             "type": "minecolonies:return"
           }
         }
       ]
-    },
-    {
-      "unlocks-rewards": [0,1,2,3],
+    }, {
+      "unlocks-rewards": [0, 1, 2, 3],
       "type": "minecolonies:killentity",
       "details": {
         "entity-type": "minecraft:zombie",
@@ -51,8 +48,7 @@
         "qty": 10,
         "target": 0
       }
-    },
-    {
+    }, {
       "type": "minecolonies:dialogue",
       "target": 0,
       "text": "Great, thanks! I feel more at ease already. Here, have some leather armor!",
@@ -75,24 +71,21 @@
           "id": "minecraft:leather_chestplate"
         }
       }
-    },
-    {
+    }, {
       "type": "minecolonies:item",
       "details": {
         "item": {
           "id": "minecraft:leather_boots"
         }
       }
-    },
-    {
+    }, {
       "type": "minecolonies:item",
       "details": {
         "item": {
           "id": "minecraft:leather_helmet"
         }
       }
-    },
-    {
+    }, {
       "type": "minecolonies:item",
       "details": {
         "item": {

@@ -1,34 +1,34 @@
-<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" size="190 244"
+<window size="190 244" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/ldtteam/BlockUI/version/main/src/main/resources/assets/blockui/gui/block_ui.xsd">
 
-    <image source="minecolonies:textures/gui/builderhut/builder_paper_sketch.png" size="100% 100%"/>
-    <image source="minecolonies:textures/gui/builderhut/builder_charcoal_chalk.png" size="19 59" pos="175 180"/>
+    <image size="100% 100%" source="minecolonies:textures/gui/builderhut/builder_paper_sketch.png" />
+    <image pos="175 180" size="19 59" source="minecolonies:textures/gui/builderhut/builder_charcoal_chalk.png" />
 
-    <text size="100% 11" pos="0 11" color="black" textalign="MIDDLE"
-           label="$(com.minecolonies.coremod.gui.workerhuts.resourcelist)"/>
+    <text color="black" label="$(com.minecolonies.coremod.gui.workerhuts.resourcelist)" pos="0 11" size="100% 11"
+          textalign="MIDDLE" />
 
-    <image source="minecolonies:textures/gui/builderhut/builder_sketch_left.png" size="6 15" pos="24 22"/>
-    <image source="minecolonies:textures/gui/builderhut/builder_sketch_center.png" size="130 15" pos="30 22"/>
-    <image source="minecolonies:textures/gui/builderhut/builder_sketch_right.png" size="6 15" pos="160 22"/>
-    <text id="workerName" size="90 11" pos="50 24" textalign="MIDDLE" color="blue"/>
+    <image pos="24 22" size="6 15" source="minecolonies:textures/gui/builderhut/builder_sketch_left.png" />
+    <image pos="30 22" size="130 15" source="minecolonies:textures/gui/builderhut/builder_sketch_center.png" />
+    <image pos="160 22" size="6 15" source="minecolonies:textures/gui/builderhut/builder_sketch_right.png" />
+    <text id="workerName" color="blue" pos="50 24" size="90 11" textalign="MIDDLE" />
 
-    <text size="175 11" pos="6 38" id="constructionName" label="" color="black" textalign="MIDDLE"/>
+    <text id="constructionName" color="black" label="" pos="6 38" size="175 11" textalign="MIDDLE" />
 
-    <text size="175 11" pos="6 49" id="progress" label="" color="black" textalign="MIDDLE"/>
+    <text id="progress" color="black" label="" pos="6 49" size="175 11" textalign="MIDDLE" />
 
-    <list id="resources" size="164 71%" pos="13 60">
-        <box size="100% 30" linewidth="1">
-            <itemicon id="resourceIcon" size="16 16" pos="1 1"/>
-            <image id="indeliveryicon" source="minecolonies:textures/gui/citizen/delivery_16x16.png" size="16 16" pos="120 12" visible="false"/>
-            <image id="inWarehouseIcon" source="minecolonies:textures/gui/citizen/crate_16x16.png" size="16 16" pos="120 12" visible="false"/>
-            <text id="resourceName" size="135 9" pos="18 2" color="black"/>
-            <text id="resourceMissing" size="65 9" pos="2 18" textalign="MIDDLE" color="black"/>
-            <text id="resourceAvailableNeeded" size="65 9" pos="67 18" textalign="MIDDLE" color="black"/>
-            <text id="indeliveryamount" size="30 9" pos="132 18" textalign="MIDDLE" color="green"/>
-            <text id="inWarehouseAmount" size="30 9" pos="132 18" textalign="MIDDLE" color="yellow"/>
+    <list id="resources" pos="13 60" size="164 71%">
+        <box linewidth="1" size="100% 30">
+            <itemicon id="resourceIcon" pos="1 1" size="16 16" />
+            <image id="indeliveryicon" pos="120 12" size="16 16" source="minecolonies:textures/gui/citizen/delivery_16x16.png" visible="false" />
+            <image id="inWarehouseIcon" pos="120 12" size="16 16" source="minecolonies:textures/gui/citizen/crate_16x16.png" visible="false" />
+            <text id="resourceName" color="black" pos="18 2" size="135 9" />
+            <text id="resourceMissing" color="black" pos="2 18" size="65 9" textalign="MIDDLE" />
+            <text id="resourceAvailableNeeded" color="black" pos="67 18" size="65 9" textalign="MIDDLE" />
+            <text id="indeliveryamount" color="green" pos="132 18" size="30 9" textalign="MIDDLE" />
+            <text id="inWarehouseAmount" color="yellow" pos="132 18" size="30 9" textalign="MIDDLE" />
 
-            <text id="resourceId" size="1 1" pos="100 100"/>
-            <text id="resourceQuantity" size="1 1" pos="100 100"/>
+            <text id="resourceId" pos="100 100" size="1 1" />
+            <text id="resourceQuantity" pos="100 100" size="1 1" />
         </box>
     </list>
 </window>

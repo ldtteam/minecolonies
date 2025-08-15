@@ -14,10 +14,9 @@
           ]
         }
       }
-    },
-    {
+    }, {
       "type": "minecolonies:citizen",
-      "state": { }
+      "state": {}
     }
   ],
   "triggerOrder": "1 || 2",
@@ -39,8 +38,7 @@
                   "type": "minecolonies:advanceobjective",
                   "go-to": 1
                 }
-              },
-              {
+              }, {
                 "answer": "Already done!",
                 "result": {
                   "type": "minecolonies:dialogue",
@@ -58,8 +56,7 @@
               }
             ]
           }
-        },
-        {
+        }, {
           "answer": "I already set up the farm!",
           "result": {
             "type": "minecolonies:dialogue",
@@ -74,16 +71,14 @@
               }
             ]
           }
-        },
-        {
+        }, {
           "answer": "Not right now. I will come back to you later!",
           "result": {
             "type": "minecolonies:return"
           }
         }
       ]
-    },
-    {
+    }, {
       "type": "minecolonies:dialogue",
       "target": 0,
       "text": "Welcome back, were you able to craft the Farm hut block?",
@@ -102,8 +97,7 @@
               }
             ]
           }
-        },
-        {
+        }, {
           "answer": "Yes, done, what's next?",
           "result": {
             "type": "minecolonies:dialogue",
@@ -118,16 +112,14 @@
               }
             ]
           }
-        },
-        {
+        }, {
           "answer": "Not yet, I will get to it later!",
           "result": {
             "type": "minecolonies:return"
           }
         }
       ]
-    },
-    {
+    }, {
       "type": "minecolonies:buildbuilding",
       "details": {
         "type": "minecolonies:farmer",
@@ -137,8 +129,7 @@
         "target": 0,
         "next-objective": 3
       }
-    },
-    {
+    }, {
       "type": "minecolonies:dialogue",
       "target": 0,
       "text": "Okay great. But before your farmer can start working they need a field. To craft it in the crafting bench put a pumpkin or hay bale at the top, leather in the middle and then sticks to the right and left and below the the leather.",
@@ -149,8 +140,7 @@
             "type": "minecolonies:advanceobjective",
             "go-to": 4
           }
-        },
-        {
+        }, {
           "answer": "I already set up the field!",
           "result": {
             "type": "minecolonies:dialogue",
@@ -167,8 +157,7 @@
           }
         }
       ]
-    },
-    {
+    }, {
       "type": "minecolonies:dialogue",
       "target": 0,
       "text": "Welcome back, were you able to craft the Field block?",
@@ -187,8 +176,7 @@
               }
             ]
           }
-        },
-        {
+        }, {
           "answer": "Yes, done, what's next?",
           "result": {
             "type": "minecolonies:dialogue",
@@ -200,8 +188,7 @@
                   "type": "minecolonies:advanceobjective",
                   "go-to": 5
                 }
-              },
-              {
+              }, {
                 "answer": "Way ahead of you!",
                 "result": {
                   "type": "minecolonies:advanceobjective",
@@ -210,16 +197,14 @@
               }
             ]
           }
-        },
-        {
+        }, {
           "answer": "Not yet, I will get to it later!",
           "result": {
             "type": "minecolonies:return"
           }
         }
       ]
-    },
-    {
+    }, {
       "type": "minecolonies:placeblock",
       "details": {
         "block": "minecolonies:blockhutfield",
@@ -227,8 +212,7 @@
         "qty": 1,
         "target": 0
       }
-    },
-    {
+    }, {
       "unlocks-rewards": [0],
       "type": "minecolonies:dialogue",
       "target": 0,

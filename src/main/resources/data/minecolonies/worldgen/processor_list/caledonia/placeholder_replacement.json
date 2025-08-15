@@ -1,17 +1,15 @@
 {
   "processors": [
     {
-      "blocks":[
+      "blocks": [
         {
-          "Name":"structurize:blocksubstitution"
-        },
-        {
-          "Name":"minecolonies:blockwaypoint"
+          "Name": "structurize:blocksubstitution"
+        }, {
+          "Name": "minecolonies:blockwaypoint"
         }
       ],
       "processor_type": "minecraft:block_ignore"
-    },
-    {
+    }, {
       "rules": [
         {
           "output_state": {
@@ -24,8 +22,7 @@
           "location_predicate": {
             "predicate_type": "minecraft:always_true"
           }
-        },
-        {
+        }, {
           "output_state": {
             "Name": "minecraft:cobweb"
           },
@@ -37,8 +34,7 @@
           "location_predicate": {
             "predicate_type": "minecraft:always_true"
           }
-        },
-        {
+        }, {
           "output_state": {
             "Name": "minecraft:cobweb"
           },
@@ -50,8 +46,7 @@
           "location_predicate": {
             "predicate_type": "minecraft:always_true"
           }
-        },
-        {
+        }, {
           "output_state": {
             "Name": "minecraft:air"
           },
@@ -63,8 +58,7 @@
           "location_predicate": {
             "predicate_type": "minecraft:always_true"
           }
-        },
-        {
+        }, {
           "output_state": {
             "Name": "minecraft:air"
           },
@@ -76,8 +70,7 @@
           "location_predicate": {
             "predicate_type": "minecraft:always_true"
           }
-        },
-        {
+        }, {
           "output_state": {
             "Name": "minecraft:air"
           },
@@ -92,23 +85,22 @@
         }
       ],
       "processor_type": "minecraft:rule"
-    },
-    {
+    }, {
       "rules": [
-       {
-        "output_state": {
-          "Name": "minecraft:grass_block"
-        },
-        "input_predicate": {
-          "block": "minecraft:dirt",
-          "probability": 0.25,
-          "predicate_type": "minecraft:random_block_match"
-        },
-        "location_predicate": {
-          "predicate_type": "minecraft:always_true"
+        {
+          "output_state": {
+            "Name": "minecraft:grass_block"
+          },
+          "input_predicate": {
+            "block": "minecraft:dirt",
+            "probability": 0.25,
+            "predicate_type": "minecraft:random_block_match"
+          },
+          "location_predicate": {
+            "predicate_type": "minecraft:always_true"
+          }
         }
-      }
-    ],
+      ],
       "processor_type": "minecraft:rule"
     }
   ]

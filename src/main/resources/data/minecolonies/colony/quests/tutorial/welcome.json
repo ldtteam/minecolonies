@@ -5,7 +5,7 @@
   "triggers": [
     {
       "type": "minecolonies:citizen",
-      "state": { }
+      "state": {}
     }
   ],
   "objectives": [
@@ -26,8 +26,7 @@
                   "type": "minecolonies:advanceobjective",
                   "go-to": 1
                 }
-              },
-              {
+              }, {
                 "answer": "I already picked a style!",
                 "result": {
                   "type": "minecolonies:dialogue",
@@ -39,8 +38,7 @@
                         "type": "minecolonies:advanceobjective",
                         "go-to": 2
                       }
-                    },
-                    {
+                    }, {
                       "answer": "Okay, I'll do that again!",
                       "result": {
                         "type": "minecolonies:advanceobjective",
@@ -52,14 +50,12 @@
               }
             ]
           }
-        },
-        {
+        }, {
           "answer": "Yes, but not now. I will come back to you later!",
           "result": {
             "type": "minecolonies:return"
           }
-        },
-        {
+        }, {
           "answer": "I'm a Colony Master! You underestimate my power!",
           "result": {
             "type": "minecolonies:advanceobjective",
@@ -67,8 +63,7 @@
           }
         }
       ]
-    },
-    {
+    }, {
       "type": "minecolonies:dialogue",
       "target": 0,
       "text": "Hi! Did you choose a colony style already?",
@@ -87,8 +82,7 @@
               }
             ]
           }
-        },
-        {
+        }, {
           "answer": "Yes, all done, what is next?",
           "result": {
             "type": "minecolonies:dialogue",
@@ -100,8 +94,7 @@
                   "type": "minecolonies:advanceobjective",
                   "go-to": 2
                 }
-              },
-              {
+              }, {
                 "answer": "Okay, I'll do that again!",
                 "result": {
                   "type": "minecolonies:advanceobjective",
@@ -110,16 +103,14 @@
               }
             ]
           }
-        },
-        {
+        }, {
           "answer": "Not yet, I will get to it later!",
           "result": {
             "type": "minecolonies:return"
           }
         }
       ]
-    },
-    {
+    }, {
       "type": "minecolonies:dialogue",
       "target": 0,
       "text": "Welcome back! Were you able to navigate the Build Tool?",
@@ -139,8 +130,7 @@
               }
             ]
           }
-        },
-        {
+        }, {
           "answer": "No, what did I have to do again?",
           "result": {
             "type": "minecolonies:dialogue",
@@ -154,16 +144,14 @@
               }
             ]
           }
-        },
-        {
+        }, {
           "answer": "Not yet, but I will come back to you later!",
           "result": {
             "type": "minecolonies:return"
           }
         }
       ]
-    },
-    {
+    }, {
       "type": "minecolonies:dialogue",
       "target": 0,
       "text": "Welcome back! Did you craft the hut block already?",
@@ -182,8 +170,7 @@
               }
             ]
           }
-        },
-        {
+        }, {
           "answer": "Yes, all done. What's next?",
           "result": {
             "type": "minecolonies:dialogue",
@@ -195,8 +182,7 @@
                   "type": "minecolonies:advanceobjective",
                   "go-to": 4
                 }
-              },
-              {
+              }, {
                 "answer": "Already done!",
                 "result": {
                   "type": "minecolonies:advanceobjective",
@@ -205,16 +191,14 @@
               }
             ]
           }
-        },
-        {
+        }, {
           "answer": "Not yet, I will get to it later!",
           "result": {
             "type": "minecolonies:return"
           }
         }
       ]
-    },
-    {
+    }, {
       "type": "minecolonies:placeblock",
       "details": {
         "target": 0,
@@ -222,8 +206,7 @@
         "qty": 1,
         "next-objective": 5
       }
-    },
-    {
+    }, {
       "unlocks-rewards": [0, 1],
       "type": "minecolonies:dialogue",
       "target": 0,
@@ -247,8 +230,7 @@
           "id": "minecolonies:questlog"
         }
       }
-    },
-    {
+    }, {
       "type": "minecolonies:unlockquest",
       "details": {
         "id": "minecolonies:tutorial/builder"

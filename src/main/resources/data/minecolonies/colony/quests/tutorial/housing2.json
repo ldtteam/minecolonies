@@ -14,10 +14,9 @@
           ]
         }
       }
-    },
-    {
+    }, {
       "type": "minecolonies:citizen",
-      "state": { }
+      "state": {}
     }
   ],
   "triggerOrder": "1 || 2",
@@ -39,8 +38,7 @@
                   "type": "minecolonies:advanceobjective",
                   "go-to": 1
                 }
-              },
-              {
+              }, {
                 "answer": "Already done!",
                 "result": {
                   "type": "minecolonies:dialogue",
@@ -58,14 +56,12 @@
               }
             ]
           }
-        },
-        {
+        }, {
           "answer": "Not right now. I will come back to you later!",
           "result": {
             "type": "minecolonies:return"
           }
-        },
-        {
+        }, {
           "answer": "Already done!",
           "result": {
             "type": "minecolonies:dialogue",
@@ -82,8 +78,7 @@
           }
         }
       ]
-    },
-    {
+    }, {
       "type": "minecolonies:buildbuilding",
       "details": {
         "type": "minecolonies:residence",
@@ -93,8 +88,7 @@
         "target": 0,
         "next-objective": 2
       }
-    },
-    {
+    }, {
       "unlocks-rewards": [0],
       "type": "minecolonies:dialogue",
       "target": 0,

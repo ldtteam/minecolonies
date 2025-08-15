@@ -10,8 +10,7 @@
         "projection": "terrain_matching",
         "element_type": "minecraft:legacy_single_pool_element"
       }
-    },
-    {
+    }, {
       "weight": 6,
       "element": {
         "location": "minecolonies:desertoasis/fancy_intersection",
@@ -19,8 +18,7 @@
         "projection": "terrain_matching",
         "element_type": "minecraft:legacy_single_pool_element"
       }
-    },
-    {
+    }, {
       "weight": 4,
       "element": {
         "location": "minecolonies:desertoasis/fancy_straight",
@@ -28,8 +26,7 @@
         "projection": "terrain_matching",
         "element_type": "minecraft:legacy_single_pool_element"
       }
-    },
-    {
+    }, {
       "weight": 6,
       "element": {
         "location": "minecolonies:desertoasis/fancy_tjunction",
@@ -37,8 +34,7 @@
         "projection": "terrain_matching",
         "element_type": "minecraft:legacy_single_pool_element"
       }
-    },
-    {
+    }, {
       "weight": 1,
       "element": {
         "location": "minecolonies:desertoasis/fountain",
@@ -46,8 +42,7 @@
         "projection": "rigid",
         "element_type": "minecraft:legacy_single_pool_element"
       }
-    },
-    {
+    }, {
       "weight": 1,
       "element": {
         "location": "minecolonies:desertoasis/smalllake",
@@ -55,8 +50,7 @@
         "projection": "rigid",
         "element_type": "minecraft:legacy_single_pool_element"
       }
-    },
-    {
+    }, {
       "weight": 1,
       "element": {
         "location": "minecolonies:desertoasis/smallpark",
@@ -64,8 +58,7 @@
         "projection": "rigid",
         "element_type": "minecraft:legacy_single_pool_element"
       }
-    },
-    {
+    }, {
       "weight": 3,
       "element": {
         "element_type": "minecraft:empty_pool_element"

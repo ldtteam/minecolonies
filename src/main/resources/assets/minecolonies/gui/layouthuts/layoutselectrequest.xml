@@ -1,24 +1,25 @@
-<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/ldtteam/BlockUI/version/main/src/main/resources/assets/blockui/gui/block_ui.xsd"
-    size="190 244">
-    <image source="minecolonies:textures/gui/builderhut/builder_paper.png" size="190 244"/>
-    <text size="120 11" pos="30 14" textalign="MIDDLE" color="black"
-           label="$(com.minecolonies.coremod.gui.citizen.requests)"/>
-    <button id="cancel" label="X" color="red" pos="160 11" size="14 15"
-                 source="minecolonies:textures/gui/builderhut/builder_button_mini.png"/>
+<window size="190 244"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/ldtteam/BlockUI/version/main/src/main/resources/assets/blockui/gui/block_ui.xsd">
+    <image size="190 244" source="minecolonies:textures/gui/builderhut/builder_paper.png" />
+    <text color="black" label="$(com.minecolonies.coremod.gui.citizen.requests)" pos="30 14" size="120 11"
+          textalign="MIDDLE" />
+    <button id="cancel" color="red" label="X" pos="160 11" size="14 15"
+            source="minecolonies:textures/gui/builderhut/builder_button_mini.png" />
 
-    <list id="requests" size="170 170" pos="13 30">
-        <box id="requestx" size="100% 40" linewidth="1">
+    <list id="requests" pos="13 30" size="170 170">
+        <box id="requestx" linewidth="1" size="100% 40">
             <!--Item icon -->
-            <itemicon id="requestStack" size="16 16" pos="1 3"/>
-            <image id="deliveryImage" source="minecraft:textures/misc/shadow.png" size="16 16" pos="1 3" visible="false"/>
+            <itemicon id="requestStack" pos="1 3" size="16 16" />
+            <image id="deliveryImage" pos="1 3" size="16 16" source="minecraft:textures/misc/shadow.png" visible="false" />
 
             <!--Request name-->
-            <text id="shortDetail" size="130 12" pos="20 1" color="black"/>
-            <text id="requester" size="130 12" pos="20 13" color="black"/>
+            <text id="shortDetail" color="black" pos="20 1" size="130 12" />
+            <text id="requester" color="black" pos="20 13" size="130 12" />
 
-            <button id="select" size="37 16" pos="20 23" color="black"
-                         label="$(com.minecolonies.coremod.gui.scantool.select)"
-                         source="minecolonies:textures/gui/builderhut/builder_button_small.png"/>
+            <button id="select" color="black" label="$(com.minecolonies.coremod.gui.scantool.select)" pos="20 23"
+                    size="37 16"
+                    source="minecolonies:textures/gui/builderhut/builder_button_small.png" />
         </box>
     </list>
 </window>

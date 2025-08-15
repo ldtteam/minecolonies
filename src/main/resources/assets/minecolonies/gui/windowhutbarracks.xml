@@ -1,19 +1,21 @@
-<window size="190 244" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/ldtteam/BlockUI/version/main/src/main/resources/assets/blockui/gui/block_ui.xsd">
+<window size="190 244"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/ldtteam/BlockUI/version/main/src/main/resources/assets/blockui/gui/block_ui.xsd">
 
-    <layout source="minecolonies:gui/layouthuts/layouthutpageactionsmin.xml"/>
-    <text size="164 11" pos="13 32" color="black" textalign="MIDDLE"
-           label="$(com.minecolonies.coremod.gui.workerhuts.barbpoints.current):"/>
-    <text id="current" size="164 11" pos="13 43" color="black" textalign="MIDDLE"/>
-    <text size="164 11" pos="13 54" color="black" textalign="MIDDLE"
-           label="$(com.minecolonies.coremod.gui.workerhuts.barbpoints):"/>
-    <list id="positions" size="164 45" pos="13 65">
-        <box size="100% 11" linewidth="1">
-            <text id="pos" size="100% 11" color="black"/>
+    <layout source="minecolonies:gui/layouthuts/layouthutpageactionsmin.xml" />
+    <text color="black" label="$(com.minecolonies.coremod.gui.workerhuts.barbpoints.current):" pos="13 32" size="164 11"
+          textalign="MIDDLE" />
+    <text id="current" color="black" pos="13 43" size="164 11" textalign="MIDDLE" />
+    <text color="black" label="$(com.minecolonies.coremod.gui.workerhuts.barbpoints):" pos="13 54" size="164 11"
+          textalign="MIDDLE" />
+    <list id="positions" pos="13 65" size="164 45">
+        <box linewidth="1" size="100% 11">
+            <text id="pos" color="black" size="100% 11" />
         </box>
     </list>
 
-    <button id="hireSpies" size="129 17" pos="30 129" color="black"
-                 source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
-                 label="$(com.minecolonies.coremod.gui.workerhuts.spies)"/>
-    <itemicon id="hireSpiesIcon" size="15 15" pos="130 129"/>
+    <button id="hireSpies" color="black" label="$(com.minecolonies.coremod.gui.workerhuts.spies)" pos="30 129"
+            size="129 17"
+            source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png" />
+    <itemicon id="hireSpiesIcon" pos="130 129" size="15 15" />
 </window>
