@@ -1,14 +1,14 @@
-<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" size="190 133"
+<window size="190 133" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/ldtteam/BlockUI/version/1.20.1/src/main/resources/assets/blockui/gui/block_ui.xsd"
-        >
-    <image source="minecolonies:textures/gui/citizen/colonist_paper.png" size="100% 100%"/>
+>
+    <image size="100% 100%" source="minecolonies:textures/gui/citizen/colonist_paper.png" />
 
-    <button id="cancel" size="14 15" pos="165 5"
-                 source="minecolonies:textures/gui/button_x.png" color="black"/>
+    <button id="cancel" color="black" pos="165 5"
+            size="14 15" source="minecolonies:textures/gui/button_x.png" />
 
-    <text id="text" size="150 75" pos="15 15" color="black" text="$(com.minecolonies.coremod.gui.reactivate.message)" textscale="0.75"/>
+    <text id="text" color="black" pos="15 15" size="150 75" text="$(com.minecolonies.coremod.gui.reactivate.message)" textscale="0.75" />
 
-    <button id="reactivate" size="86 17" pos="50 100" color="black"
-                 source="minecolonies:textures/gui/builderhut/builder_button_medium.png"
-                 label="$(com.minecolonies.coremod.gui.reactivate.button)"/>
+    <button id="reactivate" color="black" label="$(com.minecolonies.coremod.gui.reactivate.button)" pos="50 100"
+            size="86 17"
+            source="minecolonies:textures/gui/builderhut/builder_button_medium.png" />
 </window>

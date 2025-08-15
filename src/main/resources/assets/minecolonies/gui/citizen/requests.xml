@@ -1,11 +1,13 @@
-<window size="210 244"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/ldtteam/BlockUI/version/1.20.1/src/main/resources/assets/blockui/gui/block_ui.xsd">
-    <layout source="minecolonies:gui/citizen/nav.xml"/>
+<window size="210 244"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/ldtteam/BlockUI/version/1.20.1/src/main/resources/assets/blockui/gui/block_ui.xsd">
+    <layout source="minecolonies:gui/citizen/nav.xml" />
 
-    <text size="164 11" pos="33 14" color="black" textalign="MIDDLE"
-           label="$(com.minecolonies.coremod.gui.citizen.requests)"/>
-    <list id="requests" size="164 185" pos="33 29">
-        <box id="requestx" size="100% 40" linewidth="1">
-            <layout source="minecolonies:gui/layouthuts/layoutrequeststree.xml"/>
+    <text color="black" label="$(com.minecolonies.coremod.gui.citizen.requests)" pos="33 14" size="164 11"
+          textalign="MIDDLE" />
+    <list id="requests" pos="33 29" size="164 185">
+        <box id="requestx" linewidth="1" size="100% 40">
+            <layout source="minecolonies:gui/layouthuts/layoutrequeststree.xml" />
         </box>
     </list>
 </window>

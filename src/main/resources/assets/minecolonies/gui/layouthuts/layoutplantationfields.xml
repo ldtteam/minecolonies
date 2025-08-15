@@ -1,27 +1,28 @@
-<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/ldtteam/BlockUI/version/1.20.1/src/main/resources/assets/blockui/gui/block_ui.xsd"
-    size="190 244" >
-    <image source="minecolonies:textures/gui/builderhut/builder_paper.png" size="190 244"/>
-    <text size="130 11" pos="30 14" color="black" textalign="MIDDLE"
-           label="$(com.minecolonies.coremod.gui.workerhuts.fields)"/>
-    <text id="AssignmentModeLabel" size="164 11" pos="13 29" color="black" textalign="MIDDLE"
-           label="$(com.minecolonies.coremod.gui.workerhuts.fields.assignmentmode)"/>
-    <button id="assignmentMode" size="86 17" pos="52 42" color="black"
-                 label="$(com.minecolonies.coremod.gui.hiring.off)"
-                 source="minecolonies:textures/gui/builderhut/builder_button_medium.png"
-                 disabled="minecolonies:textures/gui/builderhut/builder_button_medium_disabled.png"/>
-    <text id="fieldCount" size="164 11" pos="13 69" color="black" textalign="MIDDLE"
-           label="$(com.minecolonies.coremod.gui.workerhuts.fields.fieldcount)"/>
-    <text id="plantCount" size="164 11" pos="13 82" color="black" textalign="MIDDLE"
-           label="$(com.minecolonies.coremod.gui.workerhuts.fields.plantcount)"/>
+<window size="190 244"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/ldtteam/BlockUI/version/1.20.1/src/main/resources/assets/blockui/gui/block_ui.xsd">
+    <image size="190 244" source="minecolonies:textures/gui/builderhut/builder_paper.png" />
+    <text color="black" label="$(com.minecolonies.coremod.gui.workerhuts.fields)" pos="30 14" size="130 11"
+          textalign="MIDDLE" />
+    <text id="AssignmentModeLabel" color="black" label="$(com.minecolonies.coremod.gui.workerhuts.fields.assignmentmode)" pos="13 29" size="164 11"
+          textalign="MIDDLE" />
+    <button id="assignmentMode" color="black" disabled="minecolonies:textures/gui/builderhut/builder_button_medium_disabled.png" label="$(com.minecolonies.coremod.gui.hiring.off)"
+            pos="52 42"
+            size="86 17"
+            source="minecolonies:textures/gui/builderhut/builder_button_medium.png" />
+    <text id="fieldCount" color="black" label="$(com.minecolonies.coremod.gui.workerhuts.fields.fieldcount)" pos="13 69" size="164 11"
+          textalign="MIDDLE" />
+    <text id="plantCount" color="black" label="$(com.minecolonies.coremod.gui.workerhuts.fields.plantcount)" pos="13 82" size="164 11"
+          textalign="MIDDLE" />
 
-    <list id="fields" size="164 130" pos="13 95">
-        <box size="100% 24" linewidth="1">
-            <itemicon id="icon" size="16 16" pos="4 4"/>
-            <text id="dist" color="black" pos="25 8" size="108 9"/>
+    <list id="fields" pos="13 95" size="164 130">
+        <box linewidth="1" size="100% 24">
+            <itemicon id="icon" pos="4 4" size="16 16" />
+            <text id="dist" color="black" pos="25 8" size="108 9" />
 
-            <button id="assign" pos="137 4" size="14 15"
-                         source="minecolonies:textures/gui/builderhut/builder_button_mini.png"
-                         disabled="minecolonies:textures/gui/builderhut/builder_button_mini_disabled.png"/>
+            <button id="assign" disabled="minecolonies:textures/gui/builderhut/builder_button_mini_disabled.png" pos="137 4"
+                    size="14 15"
+                    source="minecolonies:textures/gui/builderhut/builder_button_mini.png" />
         </box>
     </list>
 </window>

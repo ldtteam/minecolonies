@@ -1,26 +1,26 @@
-<window size="524 243" >
-    <layout source="minecolonies:gui/townhall/windowtownhall.xml"/>
-    <text size="110 11" pos="100 61" color="black" label="$(com.minecolonies.coremod.gui.townhall.population.totalcitizens)"/>
-    <text id="totalCitizens" size="50 11" pos="215 61" color="black"/>
-    <list id="citizen-stats" size="148 136" pos="100 83">
-        <box size="100% 11" linewidth="0">
-            <text id="citizensAmount" size="100% 11" color="black"/>
+<window size="524 243">
+    <layout source="minecolonies:gui/townhall/windowtownhall.xml" />
+    <text color="black" label="$(com.minecolonies.coremod.gui.townhall.population.totalcitizens)" pos="100 61" size="110 11" />
+    <text id="totalCitizens" color="black" pos="215 61" size="50 11" />
+    <list id="citizen-stats" pos="100 83" size="148 136">
+        <box linewidth="0" size="100% 11">
+            <text id="citizensAmount" color="black" size="100% 11" />
         </box>
     </list>
 
-    <view size="200 243" pos="270 0">
+    <view pos="270 0" size="200 243">
         <dropdown id="intervals"
-              size="129 17"
-              pos="20 45"
-              maxContentHeight="75"
-              dropDownSize="140 75"
-              source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
-              textcolor="black">
-            <button id="button" size="129 17" pos="0 0" source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png" textcolor="black"
-                     label="$(com.minecolonies.coremod.gui.interval.yesterday)"/>
+                  dropDownSize="140 75"
+                  maxContentHeight="75"
+                  pos="20 45"
+                  size="129 17"
+                  source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
+                  textcolor="black">
+            <button id="button" label="$(com.minecolonies.coremod.gui.interval.yesterday)" pos="0 0" size="129 17" source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
+                    textcolor="black" />
         </dropdown>
-        <list id="stats" size="160 135" pos="20 65">
-            <text id="desc" size="160 13" pos="0 0" color="black"/>
+        <list id="stats" pos="20 65" size="160 135">
+            <text id="desc" color="black" pos="0 0" size="160 13" />
         </list>
     </view>
 </window>

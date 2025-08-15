@@ -1,9 +1,9 @@
-<overlay size="100% 100%" pos="0 0" vidible="false">
-    <view size="256 180" pos="82 30">
-        <image source="minecolonies:textures/gui/dialog.png" pos="0 0" size="256px 180px"/>
-        <text id="title" size="100% 11" pos="0 20" textalign="TOP_MIDDLE" color="black" label="$(com.minecolonies.coremod.gui.structure.delete.title)"/>
-        <text id="textcontent" size="150 30" pos="53 70" textalign="TOP_MIDDLE" color="black"/>
-        <button id="done" size="200 20" pos="28 110" label="$(gui.done)"/>
-        <button id="cancel" size="200 20" pos="28 134" label="$(gui.cancel)"/>
+<overlay pos="0 0" size="100% 100%" vidible="false">
+    <view pos="82 30" size="256 180">
+        <image pos="0 0" size="256px 180px" source="minecolonies:textures/gui/dialog.png" />
+        <text id="title" color="black" label="$(com.minecolonies.coremod.gui.structure.delete.title)" pos="0 20" size="100% 11" textalign="TOP_MIDDLE" />
+        <text id="textcontent" color="black" pos="53 70" size="150 30" textalign="TOP_MIDDLE" />
+        <button id="done" label="$(gui.done)" pos="28 110" size="200 20" />
+        <button id="cancel" label="$(gui.cancel)" pos="28 134" size="200 20" />
     </view>
 </overlay>
