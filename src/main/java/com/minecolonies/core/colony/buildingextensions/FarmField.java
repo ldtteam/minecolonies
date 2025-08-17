@@ -1,6 +1,5 @@
 package com.minecolonies.core.colony.buildingextensions;
 
-
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildingextensions.registry.BuildingExtensionRegistries;
@@ -11,22 +10,18 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.world.item.Item;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.FenceBlock;
 import net.minecraft.world.level.block.FenceGateBlock;
 import net.minecraft.world.level.block.WallBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Locale;
-
-import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
-
-import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.FIELD_STATUS;
 
@@ -280,10 +275,11 @@ public class FarmField extends AbstractBuildingExtension
             return Component.translatable(FIELD_STATUS + "." + name().toLowerCase(Locale.ROOT));
         }
 
+
         /**
-         * Gets the status icon of the next stage in the farm field's progress.
+         * Get the next stage in the field's progression.
          *
-         * @return the status icon of the next stage.
+         * @return the next Stage, or the first Stage if the current one is the last.
          */
         public Stage getNextStage()
         {
