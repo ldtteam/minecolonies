@@ -1,27 +1,27 @@
-<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" size="190 133"
+<window size="190 133" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/ldtteam/BlockUI/version/1.20.1/src/main/resources/assets/blockui/gui/block_ui.xsd"
-        >
+>
 
-    <image source="minecolonies:textures/gui/citizen/colonist_paper.png" size="100% 100%"/>
+    <image size="100% 100%" source="minecolonies:textures/gui/citizen/colonist_paper.png" />
 
-    <text size="190 11" pos="0 13" textalign="MIDDLE" color="black" label="$(com.minecolonies.coremod.gui.citizen.requests)"/>
+    <text color="black" label="$(com.minecolonies.coremod.gui.citizen.requests)" pos="0 13" size="190 11" textalign="MIDDLE" />
 
-    <itemicon id="requestStack" size="24 24" pos="12 30"/>
-    <image id="deliveryImage" source="minecraft:textures/misc/shadow.png" size="24 24" pos="12 30" visible="false"/>
+    <itemicon id="requestStack" pos="12 30" size="24 24" />
+    <image id="deliveryImage" pos="12 30" size="24 24" source="minecraft:textures/misc/shadow.png" visible="false" />
 
-    <text id="requester" size="135 9" pos="40 30" color="black"/>
-    <text id="targetLocation" size="135 9" pos="40 40" color="black"/>
-    <text id="resolver" size="135 9" pos="40 50" color="black"/>
+    <text id="requester" color="black" pos="40 30" size="135 9" />
+    <text id="targetLocation" color="black" pos="40 40" size="135 9" />
+    <text id="resolver" color="black" pos="40 50" size="135 9" />
 
-    <text id="shortDetail" size="170 40" pos="12 60" color="black"/>
-    <itemicon id="detailIcon" size="9 9" pos="80 75"/>
+    <text id="shortDetail" color="black" pos="12 60" size="170 40" />
+    <itemicon id="detailIcon" pos="80 75" size="9 9" />
 
-    <button id="back" size="37 16" pos="35 105" color="black"
-                 label="$(com.minecolonies.coremod.gui.back)" source="minecolonies:textures/gui/citizen/colonist_button_small.png"/>
+    <button id="back" color="black" label="$(com.minecolonies.coremod.gui.back)" pos="35 105"
+            size="37 16" source="minecolonies:textures/gui/citizen/colonist_button_small.png" />
 
-    <button id="fulfill" size="37 16" pos="76 105" color="black"
-                 label="$(com.minecolonies.coremod.gui.citizen.requestsfulfill)" source="minecolonies:textures/gui/citizen/colonist_button_small.png"/>
+    <button id="fulfill" color="black" label="$(com.minecolonies.coremod.gui.citizen.requestsfulfill)" pos="76 105"
+            size="37 16" source="minecolonies:textures/gui/citizen/colonist_button_small.png" />
 
-    <button id="cancel" size="37 16" pos="117 105" color="black"
-                 label="$(com.minecolonies.coremod.gui.citizen.requestscancel)" source="minecolonies:textures/gui/citizen/colonist_button_small.png"/>
+    <button id="cancel" color="black" label="$(com.minecolonies.coremod.gui.citizen.requestscancel)" pos="117 105"
+            size="37 16" source="minecolonies:textures/gui/citizen/colonist_button_small.png" />
 </window>

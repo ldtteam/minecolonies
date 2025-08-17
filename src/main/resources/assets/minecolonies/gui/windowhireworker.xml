@@ -1,43 +1,43 @@
 <window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/ldtteam/BlockUI/version/1.20.1/src/main/resources/assets/blockui/gui/block_ui.xsd"
-        >
-    <image source="minecolonies:textures/gui/builderhut/builder_paper_wide2.png" size="400 244"/>
+>
+    <image size="400 244" source="minecolonies:textures/gui/builderhut/builder_paper_wide2.png" />
 
-    <text id="jobLabel" size="100% 11" pos="0 15" textalign="MIDDLE" color="black"/>
-    <list id="unemployed" size="375 135" pos="20 48">
+    <text id="jobLabel" color="black" pos="0 15" size="100% 11" textalign="MIDDLE" />
+    <list id="unemployed" pos="20 48" size="375 135">
         <view size="100% 35">
-            <gradient gradientstart="430265344" gradientend="430265344" size="100% 100%"/>
-            <text id="citizen" size="175 12" pos="5 0" color="blue"/>
-            <text id="distance" size="300 8" pos="2 10" color="black" textscale="0.8"/>
-            <text id="attributes" size="300 16" pos="2 18" color="black" textscale="0.7"/>
+            <gradient gradientend="430265344" gradientstart="430265344" size="100% 100%" />
+            <text id="citizen" color="blue" pos="5 0" size="175 12" />
+            <text id="distance" color="black" pos="2 10" size="300 8" textscale="0.8" />
+            <text id="attributes" color="black" pos="2 18" size="300 16" textscale="0.7" />
 
-            <button id="done" size="44 10" pos="200 2" color="black"
-                         source="minecolonies:textures/gui/builderhut/builder_button_quite_small.png"
-                         label="$(com.minecolonies.coremod.gui.hiring.buttonhire)" textscale="0.8"/>
-            <button id="fire" size="44 10" pos="200 2" color="black"
-                         source="minecolonies:textures/gui/builderhut/builder_button_quite_small.png"
-                         label="$(com.minecolonies.coremod.gui.hiring.buttonfire)" textscale="0.8"/>
+            <button id="done" color="black" label="$(com.minecolonies.coremod.gui.hiring.buttonhire)" pos="200 2"
+                    size="44 10"
+                    source="minecolonies:textures/gui/builderhut/builder_button_quite_small.png" textscale="0.8" />
+            <button id="fire" color="black" label="$(com.minecolonies.coremod.gui.hiring.buttonfire)" pos="200 2"
+                    size="44 10"
+                    source="minecolonies:textures/gui/builderhut/builder_button_quite_small.png" textscale="0.8" />
 
-            <button id="pause" size="44 10" pos="250 2" color="black"
-                         source="minecolonies:textures/gui/builderhut/builder_button_quite_small.png"
-                         label="" textscale="0.8"/>
+            <button id="pause" color="black" label="" pos="250 2"
+                    size="44 10"
+                    source="minecolonies:textures/gui/builderhut/builder_button_quite_small.png" textscale="0.8" />
 
-            <button id="restart" size="44 10" pos="300 2" color="black"
-                         source="minecolonies:textures/gui/builderhut/builder_button_quite_small.png"
-                         label="$(com.minecolonies.coremod.gui.hiring.restart)" textscale="0.8"/>
+            <button id="restart" color="black" label="$(com.minecolonies.coremod.gui.hiring.restart)" pos="300 2"
+                    size="44 10"
+                    source="minecolonies:textures/gui/builderhut/builder_button_quite_small.png" textscale="0.8" />
         </view>
     </list>
 
-    <text id="buildingHireMode" size="200 11" pos="20 189" color="black" label="$(com.minecolonies.coremod.gui.buildinghiremode)"/>
-    <button id="mode" size="169 17" pos="150 187" color="black"
-                 source="minecolonies:textures/gui/builderhut/builder_button_large.png"
-                 label="$(com.minecolonies.coremod.gui.workerhuts.manage)"/>
+    <text id="buildingHireMode" color="black" label="$(com.minecolonies.coremod.gui.buildinghiremode)" pos="20 189" size="200 11" />
+    <button id="mode" color="black" label="$(com.minecolonies.coremod.gui.workerhuts.manage)" pos="150 187"
+            size="169 17"
+            source="minecolonies:textures/gui/builderhut/builder_button_large.png" />
 
-    <text id="showEmployedLabel" size="120 11" pos="20 210"  color="black" label="$(com.minecolonies.coremod.gui.showemployed)"/>
+    <text id="showEmployedLabel" color="black" label="$(com.minecolonies.coremod.gui.showemployed)" pos="20 210" size="120 11" />
 
-    <button id="showEmployed" color="black" pos="200 208" size="29 17" label="$(gui.no)"
-                 source="minecolonies:textures/gui/builderhut/builder_button_very_small.png"/>
+    <button id="showEmployed" color="black" label="$(gui.no)" pos="200 208" size="29 17"
+            source="minecolonies:textures/gui/builderhut/builder_button_very_small.png" />
 
-    <button id="cancel" size="14 15" pos="375 10"
-                 source="minecolonies:textures/gui/button_x.png" color="black"/>
+    <button id="cancel" color="black" pos="375 10"
+            size="14 15" source="minecolonies:textures/gui/button_x.png" />
 </window>

@@ -1,9 +1,9 @@
 {
-    "parent": "builtin/entity",
-    "gui_light": "front",
-    "textures": {
-        "particle": "#spear"
-    },
+  "parent": "builtin/entity",
+  "gui_light": "front",
+  "textures": {
+    "particle": "#spear"
+  },
   "display": {
     "thirdperson_righthand": {
       "rotation": [180, 0, 0],
@@ -16,12 +16,12 @@
     "firstperson_righthand": {
       "rotation": [160, 0, 0],
       "translation": [6, -5, -5],
-      "scale": [ 0.75, 0.75, 0.75 ]
+      "scale": [0.75, 0.75, 0.75]
     },
     "firstperson_lefthand": {
       "rotation": [160, 0, 0],
       "translation": [-6, -5, -5],
-      "scale": [ 0.75, 0.75, 0.75 ]
+      "scale": [0.75, 0.75, 0.75]
     },
     "ground": {
       "translation": [8.5, 2, 0],

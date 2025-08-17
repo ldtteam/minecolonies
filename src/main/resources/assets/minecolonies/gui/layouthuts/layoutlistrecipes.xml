@@ -1,37 +1,37 @@
-<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/ldtteam/BlockUI/version/1.20.1/src/main/resources/assets/blockui/gui/block_ui.xsd"
-    size="190 244" >
-    <image source="minecolonies:textures/gui/builderhut/builder_paper.png" size="190 244"/>
-    <text size="130 11" pos="30 14" textalign="MIDDLE" color="black"
-           label="$(com.minecolonies.coremod.gui.workerhuts.listrecipes)"/>
+<window size="190 244"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/ldtteam/BlockUI/version/1.20.1/src/main/resources/assets/blockui/gui/block_ui.xsd">
+    <image size="190 244" source="minecolonies:textures/gui/builderhut/builder_paper.png" />
+    <text color="black" label="$(com.minecolonies.coremod.gui.workerhuts.listrecipes)" pos="30 14" size="130 11"
+          textalign="MIDDLE" />
 
-    <text size="100% 11" pos="70 30"  color="black" id="recipestatus" />
-    <list id="recipes" size="85% 150" pos="20 40">
+    <text id="recipestatus" color="black" pos="70 30" size="100% 11" />
+    <list id="recipes" pos="20 40" size="85% 150">
         <view size="100% 50">
-            <gradient id="gradient" size="100% 100%" pos="0 0" visible="false" gradientstart="rgb(160,160,160)" gradientend="rgb(160,160,160)"/>
-            <itemicon id="output" size="16 16" pos="80 17"/>
-            <box id="3x3" size="100% 50" linewidth="1">
-                <itemicon id="res1" size="16 16" pos="20 1"/>
-                <itemicon id="res2" size="16 16" pos="34 1"/>
-                <itemicon id="res3" size="16 16" pos="48 1"/>
+            <gradient id="gradient" gradientend="rgb(160,160,160)" gradientstart="rgb(160,160,160)" pos="0 0" size="100% 100%" visible="false" />
+            <itemicon id="output" pos="80 17" size="16 16" />
+            <box id="3x3" linewidth="1" size="100% 50">
+                <itemicon id="res1" pos="20 1" size="16 16" />
+                <itemicon id="res2" pos="34 1" size="16 16" />
+                <itemicon id="res3" pos="48 1" size="16 16" />
 
-                <itemicon id="res4" size="16 16" pos="20 15"/>
-                <itemicon id="res5" size="16 16" pos="34 15"/>
-                <itemicon id="res6" size="16 16" pos="48 15"/>
+                <itemicon id="res4" pos="20 15" size="16 16" />
+                <itemicon id="res5" pos="34 15" size="16 16" />
+                <itemicon id="res6" pos="48 15" size="16 16" />
 
-                <itemicon id="res7" size="16 16" pos="20 29"/>
-                <itemicon id="res8" size="16 16" pos="34 29"/>
-                <itemicon id="res9" size="16 16" pos="48 29"/>
+                <itemicon id="res7" pos="20 29" size="16 16" />
+                <itemicon id="res8" pos="34 29" size="16 16" />
+                <itemicon id="res9" pos="48 29" size="16 16" />
             </box>
-            <button id="up" size="15 15" label="↥" pos="0 0"/>
-            <button id="down" size="15 15" label="↧" pos="0 15"/>
-            <button id="remove" size="45 15" pos="105 3" label="$(com.minecolonies.coremod.gui.recipe.remove)"/>
-            <button id="toggle" size="45 15" pos="105 18" label="$(com.minecolonies.coremod.gui.recipe.disable)"/>
-            <text id="intermediate" size="45 15" pos="105 33" textalign="MIDDLE" color="black" />
+            <button id="up" label="↥" pos="0 0" size="15 15" />
+            <button id="down" label="↧" pos="0 15" size="15 15" />
+            <button id="remove" label="$(com.minecolonies.coremod.gui.recipe.remove)" pos="105 3" size="45 15" />
+            <button id="toggle" label="$(com.minecolonies.coremod.gui.recipe.disable)" pos="105 18" size="45 15" />
+            <text id="intermediate" color="black" pos="105 33" size="45 15" textalign="MIDDLE" />
         </view>
     </list>
 
-
-    <button id="crafting" size="129 17" pos="30 200" color="black"
-                 source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
-                 label="$(com.minecolonies.coremod.gui.workerhuts.crafting)"/>
+    <button id="crafting" color="black" label="$(com.minecolonies.coremod.gui.workerhuts.crafting)" pos="30 200"
+            size="129 17"
+            source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png" />
 </window>

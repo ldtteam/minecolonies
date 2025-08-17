@@ -1,14 +1,14 @@
 <window size="400 244"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/ldtteam/BlockUI/version/1.20.1/src/main/resources/assets/blockui/gui/block_ui.xsd">
-    <image source="minecolonies:textures/gui/builderhut/builder_paper_wide2.png" size="400 244"/>
-    <text id="citizenid" visible="true" size="70 13" pos="10 15" color="black"/>
-    <text id="colonyid" visible="true" size="70 13" pos="10 25" color="black"/>
+    <image size="400 244" source="minecolonies:textures/gui/builderhut/builder_paper_wide2.png" />
+    <text id="citizenid" color="black" pos="10 15" size="70 13" visible="true" />
+    <text id="colonyid" color="black" pos="10 25" size="70 13" visible="true" />
     <scrollgroup id="buttonlist" pos="10 45" size="155 30">
-        <button id="aihistory" size="100% 13" pos="0 0" label="query AI History"/>
-        <button id="pathfinding" size="100% 13" pos="0 0" label="enable Pathfinding tracking"/>
+        <button id="aihistory" label="query AI History" pos="0 0" size="100% 13" />
+        <button id="pathfinding" label="enable Pathfinding tracking" pos="0 0" size="100% 13" />
     </scrollgroup>
-    <scrollgroup size="380 150" pos="10 75" visible="true">
-        <text id="output" visible="true" size="100% 10000" pos="5 5" color="black" textalign="TOP_LEFT"/>
+    <scrollgroup pos="10 75" size="380 150" visible="true">
+        <text id="output" color="black" pos="5 5" size="100% 10000" textalign="TOP_LEFT" visible="true" />
     </scrollgroup>
 </window>

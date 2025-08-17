@@ -1,24 +1,26 @@
-<window size="210 244"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/ldtteam/BlockUI/version/1.20.1/src/main/resources/assets/blockui/gui/block_ui.xsd">
-    <layout source="minecolonies:gui/citizen/nav.xml"/>
+<window size="210 244"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/ldtteam/BlockUI/version/1.20.1/src/main/resources/assets/blockui/gui/block_ui.xsd">
+    <layout source="minecolonies:gui/citizen/nav.xml" />
 
-    <text id="jobLabel" pos="45 32" size="136 11" textalign="MIDDLE" color="black"/>
-    <text id="skillexplanation" pos="50 44" size="150 30" color="black"/>
+    <text id="jobLabel" color="black" pos="45 32" size="136 11" textalign="MIDDLE" />
+    <text id="skillexplanation" color="black" pos="50 44" size="150 30" />
 
-    <text id="primary" pos="65 74" size="136 11" color="black"/>
-    <image id="primaryimg" pos="50 74" size="11 11"/>
+    <text id="primary" color="black" pos="65 74" size="136 11" />
+    <image id="primaryimg" pos="50 74" size="11 11" />
 
-    <text id="comp1" pos="65 86" size="136 11" color="black"/>
-    <image id="comp1img" pos="50 86" size="11 11"/>
+    <text id="comp1" color="black" pos="65 86" size="136 11" />
+    <image id="comp1img" pos="50 86" size="11 11" />
 
-    <text id="adverse1" pos="65 98" size="136 11" color="black"/>
-    <image id="adverse1img" pos="50 98" size="11 11"/>
+    <text id="adverse1" color="black" pos="65 98" size="136 11" />
+    <image id="adverse1img" pos="50 98" size="11 11" />
 
-    <text id="secondary" pos="65 124" size="136 11" color="black"/>
-    <image id="secondaryimg" pos="50 124" size="11 11"/>
+    <text id="secondary" color="black" pos="65 124" size="136 11" />
+    <image id="secondaryimg" pos="50 124" size="11 11" />
 
-    <text id="comp2" pos="65 136" size="136 11" color="black"/>
-    <image id="comp2img" pos="50 136" size="11 11"/>
+    <text id="comp2" color="black" pos="65 136" size="136 11" />
+    <image id="comp2img" pos="50 136" size="11 11" />
 
-    <text id="adverse2" pos="65 148" size="136 11" color="black"/>
-    <image id="adverse2img" pos="50 148" size="11 11"/>
+    <text id="adverse2" color="black" pos="65 148" size="136 11" />
+    <image id="adverse2img" pos="50 148" size="11 11" />
 </window>

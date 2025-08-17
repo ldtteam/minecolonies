@@ -1,24 +1,25 @@
-<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/ldtteam/BlockUI/version/1.20.1/src/main/resources/assets/blockui/gui/block_ui.xsd"
-    size="190 244" >
-    <image source="minecolonies:textures/gui/builderhut/builder_paper.png" size="190 244"/>
-    <text id="desc" size="130 11" pos="30 14" label="$(com.minecolonies.gui.workerhuts.expeditionlog)" color="black" textalign="MIDDLE"/>
+<window size="190 244"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/ldtteam/BlockUI/version/1.20.1/src/main/resources/assets/blockui/gui/block_ui.xsd">
+    <image size="190 244" source="minecolonies:textures/gui/builderhut/builder_paper.png" />
+    <text id="desc" color="black" label="$(com.minecolonies.gui.workerhuts.expeditionlog)" pos="30 14" size="130 11" textalign="MIDDLE" />
 
-    <text id="name" size="164 11" color="black" pos="13 28" textalign="MIDDLE"/>
-    <text id="status" size="164 11" color="black" pos="13 39" textalign="MIDDLE"/>
-    <view id="healthBar" size="120 11" pos="35 48">
-        <text id="healthLabel" size="30 11" color="black" pos="135 10" text="44"/>
+    <text id="name" color="black" pos="13 28" size="164 11" textalign="MIDDLE" />
+    <text id="status" color="black" pos="13 39" size="164 11" textalign="MIDDLE" />
+    <view id="healthBar" pos="35 48" size="120 11">
+        <text id="healthLabel" color="black" pos="135 10" size="30 11" text="44" />
     </view>
-    <view id="saturationBar" size="120 22" pos="35 60"/>
+    <view id="saturationBar" pos="35 60" size="120 22" />
 
-    <view id="equipment" size="164 16" pos="13 90"/>
-    <gradient size="164 36" pos="13 110" gradientstart="4292072403" gradientend="4289309097"/>
-    <gradient id="resourcesbg" size="164 80" pos="13 150" gradientstart="4292072403" gradientend="4289309097"/>
-    <box size="164 36" pos="13 110" linewidth="2">
-        <view id="mobs" size="100% 100%"/>
+    <view id="equipment" pos="13 90" size="164 16" />
+    <gradient gradientend="4289309097" gradientstart="4292072403" pos="13 110" size="164 36" />
+    <gradient id="resourcesbg" gradientend="4289309097" gradientstart="4292072403" pos="13 150" size="164 80" />
+    <box linewidth="2" pos="13 110" size="164 36">
+        <view id="mobs" size="100% 100%" />
     </box>
-    <box size="164 80" pos="13 150" linewidth="2">
-        <view id="resources" size="100% 100%"/>
+    <box linewidth="2" pos="13 150" size="164 80">
+        <view id="resources" size="100% 100%" />
     </box>
-    <image id="rip" source="minecolonies:textures/icons/grave_icon.png" size="8 8" pos="166 153"
+    <image id="rip" pos="166 153" size="8 8" source="minecolonies:textures/icons/grave_icon.png"
            tooltip="$(com.minecolonies.gui.workerhuts.expedition.killed.tip)" visible="false" />
 </window>

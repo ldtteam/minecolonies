@@ -1,1 +1,7 @@
-{"parent": "minecolonies:block/crops/rice/stage6","textures": {"bottom": "minecolonies:block/crops/corn/stage5", "bottom": "minecolonies:block/crops/corn/stage5"}}
+{
+  "parent": "minecolonies:block/crops/rice/stage6",
+  "textures": {
+    "bottom": "minecolonies:block/crops/corn/stage5",
+    "bottom": "minecolonies:block/crops/corn/stage5"
+  }
+}
