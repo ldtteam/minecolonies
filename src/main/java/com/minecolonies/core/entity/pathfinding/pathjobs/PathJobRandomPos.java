@@ -9,7 +9,6 @@ import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import org.jetbrains.annotations.NotNull;
 
@@ -163,6 +162,7 @@ public class PathJobRandomPos extends AbstractPathJob implements IDestinationPat
         this.maxDistToDest = -1;
         this.preferInside = preferInside;
         this.destination = BlockPosUtil.getRandomPosAround(start, minDistFromStart);
+        maxNodes = restrictionBox == null ? 2000 : 1000;
     }
 
     /**

@@ -2,6 +2,7 @@ package com.minecolonies.core;
 
 import com.ldtteam.common.config.Configurations;
 import com.ldtteam.common.language.LanguageHandler;
+import com.ldtteam.structurize.api.TagManager;
 import com.ldtteam.structurize.storage.SurvivalBlueprintHandlers;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.advancements.AdvancementTriggers;
@@ -23,13 +24,20 @@ import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
 import com.minecolonies.api.util.IItemHandlerCapProvider;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.api.util.constant.SchematicTagConstants;
 import com.minecolonies.apiimp.ClientMinecoloniesAPIImpl;
 import com.minecolonies.apiimp.CommonMinecoloniesAPIImpl;
 import com.minecolonies.apiimp.initializer.*;
+import com.minecolonies.core.blocks.BlockPlantationField;
+import com.minecolonies.core.blocks.huts.BlockHutGateHouse;
 import com.minecolonies.core.client.render.SpearItemTileEntityRenderer;
 import com.minecolonies.core.colony.crafting.CustomRecipeManagerMessage;
 import com.minecolonies.core.colony.requestsystem.init.RequestSystemInitializer;
 import com.minecolonies.core.colony.requestsystem.init.StandardFactoryControllerInitializer;
+import com.minecolonies.core.debug.messages.DebugEnableMessage;
+import com.minecolonies.core.debug.messages.DebugEnablePathfindingMessage;
+import com.minecolonies.core.debug.messages.DebugOutputMessage;
+import com.minecolonies.core.debug.messages.QueryCitizenAIHistoryMessage;
 import com.minecolonies.core.entity.mobs.EntityMercenary;
 import com.minecolonies.core.event.*;
 import com.minecolonies.core.network.messages.PermissionsMessage;
@@ -82,6 +90,8 @@ import net.neoforged.neoforge.registries.NewRegistryEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
+
+import static com.minecolonies.api.util.constant.SchematicTagConstants.*;
 
 @Mod(Constants.MOD_ID)
 public class MineColonies
@@ -143,6 +153,23 @@ public class MineColonies
             forgeBus.register(ClientEventHandler.class);
             forgeBus.register(DataPackSyncEventHandler.ClientEvents.class);
             modBus.register(ClientRegistryHandler.class);
+
+            TagManager.registerGlobalTagOption(TAG_WORK);
+             TagManager.registerGlobalTagOption(TAG_SIT_IN);
+             TagManager.registerGlobalTagOption(TAG_SIT_OUT);
+             TagManager.registerGlobalTagOption(TAG_STAND_IN);
+             TagManager.registerGlobalTagOption(TAG_STAND_OUT);
+             TagManager.registerGlobalTagOption(TAG_SITTING);
+             TagManager.registerGlobalTagOption(BUILDING_SIGN);
+
+             TagManager.registerSpecificTagOption(TAG_GATE, b -> b instanceof BlockHutGateHouse);
+             TagManager.registerSpecificTagOption(TAG_KNIGHT, b -> b instanceof BlockHutGateHouse);
+             TagManager.registerSpecificTagOption(TAG_ARCHER, b -> b instanceof BlockHutGateHouse);
+
+             for (final String fieldTag : SchematicTagConstants.getPlantationTags())
+             {
+                 TagManager.registerSpecificTagOption(fieldTag, b -> b instanceof BlockPlantationField);
+             }
         }
 
         modBus.addListener(GatherDataHandler::dataGeneratorSetup);
@@ -375,6 +402,8 @@ public class MineColonies
         InteractionClose.TYPE.register(registry);
         AlterRestaurantMenuItemMessage.TYPE.register(registry);
         TriggerConnectionEventMessage.TYPE.register(registry);
+        QueryCitizenAIHistoryMessage.TYPE.register(registry);
+        DebugEnablePathfindingMessage.TYPE.register(registry);
 
         //Client side only
         BlockParticleEffectMessage.TYPE.register(registry);
@@ -400,6 +429,8 @@ public class MineColonies
         SaveStructureNBTMessage.TYPE.register(registry);
         GlobalQuestSyncMessage.TYPE.register(registry);
         GlobalDiseaseSyncMessage.TYPE.register(registry);
+        DebugEnableMessage.TYPE.register(registry);
+        DebugOutputMessage.TYPE.register(registry);
 
         OpenBuildingUIMessage.TYPE.register(registry);
         OpenCantFoundColonyWarningMessage.TYPE.register(registry);
@@ -432,7 +463,8 @@ public class MineColonies
     }
 
     @SubscribeEvent
-    static void onRegisterClientExtensions(RegisterClientExtensionsEvent event) {
+    static void onRegisterClientExtensions(RegisterClientExtensionsEvent event)
+    {
         event.registerItem(new IClientItemExtensions() {
             @NotNull
             @Override

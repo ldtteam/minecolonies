@@ -119,6 +119,11 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
     private boolean didWork = false;
 
     /**
+     * Amount of time we skipped state already.
+     */
+    private int skippedState = 0;
+
+    /**
      * Constructor for the Farmer. Defines the tasks the Farmer executes.
      *
      * @param job a farmer job to use.
@@ -174,7 +179,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
     {
         IAIState state = super.decide();
 
-        if (state == IDLE || state == START_WORKING)
+        if (state == IDLE)
         {
             return PREPARING;
         }
@@ -266,12 +271,19 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
                 return FARMER_HOE;
             }
             farmField.nextState();
+            if (++skippedState >= 4)
+            {
+                skippedState = 0;
+                didWork = true;
+                module.resetCurrentExtension();
+            }
+            return IDLE;
         }
         else if (fieldToWork != null)
         {
             Log.getLogger().warn("Farmer found non-FarmField extension: {}", fieldToWork.getClass());
         }
-        return PREPARING;
+        return IDLE;
     }
 
     /**
@@ -559,9 +571,10 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
                 shouldDumpInventory = true;
                 farmField.nextState();
                 module.markDirty();
-                if (didWork)
+                if (didWork || ++skippedState >= 4)
                 {
                     module.resetCurrentExtension();
+                    skippedState = 0;
                 }
                 didWork = false;
                 building.setPrevPos(null);
@@ -897,9 +910,9 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
     {
         if (building.getModule(FARMER_FIELDS).getBuildingExtensionToWorkOn() == null)
         {
-            return true;
+            return !super.hasWorkToDo();
         }
 
-        return super.hasWorkToDo();
+        return false;
     }
 }

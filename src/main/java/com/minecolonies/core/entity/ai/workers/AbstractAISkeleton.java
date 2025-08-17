@@ -12,7 +12,6 @@ import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -127,11 +126,7 @@ public abstract class AbstractAISkeleton<J extends IJob<?>> implements ITickingS
         worker.setRenderMetadata("");
     }
 
-    /**
-     * Get the statemachine of the AI
-     *
-     * @return statemachine
-     */
+    @Override
     public ITickRateStateMachine<IAIState> getStateAI()
     {
         return stateMachine;

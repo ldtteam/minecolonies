@@ -5,9 +5,6 @@ import com.minecolonies.api.entity.ai.statemachine.states.IStateEventType;
 import com.minecolonies.api.entity.ai.statemachine.transitions.IStateMachineOneTimeEvent;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.function.BooleanSupplier;
-import java.util.function.Supplier;
-
 /**
  * One time event that can be checked at the given tickrate, one time events are removed after causing a state transition. (Even when transitioning into the same state again)
  */
@@ -23,8 +20,8 @@ public class TickingOneTimeEvent<S extends IState> extends TickingEvent<S> imple
      */
     protected TickingOneTimeEvent(
       @NotNull final IStateEventType eventType,
-      @NotNull final BooleanSupplier condition,
-      @NotNull final Supplier<S> nextState,
+        @NotNull final IBooleanConditionSupplier condition,
+        @NotNull final IStateSupplier<S> nextState,
       final int tickRate)
     {
         super(eventType, condition, nextState, tickRate);

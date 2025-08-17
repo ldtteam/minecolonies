@@ -786,4 +786,10 @@ public class CompatibilityManager implements ICompatibilityManager
     {
         return furnaceRecipes;
     }
+
+    @Override
+    public int getNumberOfSaplings()
+    {
+        return saplings.size();
+    }
 }

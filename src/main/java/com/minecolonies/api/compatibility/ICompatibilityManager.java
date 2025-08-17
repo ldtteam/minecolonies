@@ -3,7 +3,6 @@ package com.minecolonies.api.compatibility;
 import com.google.common.collect.ImmutableSet;
 import com.minecolonies.api.crafting.CompostRecipe;
 import com.minecolonies.api.crafting.ItemStorage;
-import com.minecolonies.api.util.Tuple;
 import com.minecolonies.core.util.FurnaceRecipes;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.HolderLookup;
@@ -228,4 +227,10 @@ public interface ICompatibilityManager
      * @return furnace recipes
      */
     FurnaceRecipes getFurnaceRecipes();
+
+    /**
+     * Get number of detected saplings.
+     * @return the number of saplings.
+     */
+    int getNumberOfSaplings();
 }

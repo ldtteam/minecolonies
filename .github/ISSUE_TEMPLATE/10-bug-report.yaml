@@ -107,8 +107,8 @@ body:
       description: This is issue footer. Please leave this text as is.
       value: |
         ---
-        ## Viewers
-        * Add a thumbs-up to the bug report if you are also affected. This helps the bug report become more visible to the team and doesn't clutter the comments.
-        * Add a comment if you have any insights or background information that isn't already part of the conversation.
+         ## Viewers
+          *  Add a 👍 reaction to the bug report if you are also affected. This helps the bug report become more visible without cluttering the comments.
+          *  ⚠️ Only add a comment if you have new insights or background information not already mentioned. Off-topic or "+1" comments will be deleted to keep the discussion focused.
     validations:
       required: true

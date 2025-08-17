@@ -1457,6 +1457,7 @@
   "com.minecolonies.coremod.research.requirement.university.level": "Requires University Level %d",
   "com.minecolonies.coremod.research.limit.onemaxperbranch": "Only one max-level research can be unlocked per branch.",
   "com.minecolonies.coremod.research.limit.immutable": "This research cannot be undone.",
+  "com.minecolonies.coremod.research.limit.requirement": "Requirement : %s %s",
   "com.minecolonies.coremod.research.limit.cost": "Cost : %s",
   "com.minecolonies.coremod.research.effect.modifier.multiplication": "%s by %d percent",
   "com.minecolonies.coremod.research.effect.modifier.addition": "%s + %d",
@@ -1480,6 +1481,7 @@
   "com.minecolonies.coremod.research.undo.remove": "Undo Research?",
   "com.minecolonies.coremod.research.undo.remove.tooltip": "Undoing this research will NOT refund items.",
   "com.minecolonies.coremod.research.tags.minecraft:planks": "Any Planks",
+  "com.minecolonies.coremod.research.tags.minecolonies:concrete": "Any Concrete",
   "com.minecolonies.coremod.research.tags.minecraft:iron_ores": "Any Iron Ore",
   "com.minecolonies.coremod.research.tags.minecraft:gold_ores": "Any Gold Ore",
   "com.minecolonies.coremod.research.tags.minecraft:diamond_ores": "Any Diamond Ore",
@@ -1973,6 +1975,7 @@
   "com.minecolonies.coremod.gui.flag.base_layer": "Base",
   "com.minecolonies.coremod.gui.townhall.edit_flag": "Edit Colony Flag",
   "block.minecolonies.colony_banner": "Colony Flag Banner",
+  "com.minecolonies.coremod.item.colony_banner.tooltipempty": "Right click to copy pattern on the item",
   "com.minecolonies.coremod.gui.locate": "Locate",
   "com.minecolonies.coremod.locating": "Successfully located rack with respective item(s).",
 
@@ -2562,6 +2565,7 @@
   "com.minecolonies.coremod.gui.townhall.stats.ingredients_harvested": "Harvested: %d %s",
   "com.minecolonies.coremod.gui.townhall.stats.items_collected": "Collected: %d %s",
   "com.minecolonies.coremod.gui.townhall.stats.breeding_attempts": "Breeding Attempts: %d",
+  "com.minecolonies.coremod.gui.townhall.stats.animals_butchered": "Animals Butchered: %d",
   "com.minecolonies.coremod.gui.townhall.stats.items_enchanted": "Enchanted: %d %s",
   "com.minecolonies.coremod.gui.townhall.stats.citizens_visited": "Citizens Visited: %d",
   "com.minecolonies.coremod.gui.townhall.stats.graves_dug": "Graves Dug: %d",
@@ -2960,5 +2964,17 @@
   "com.minecolonies.core.gui.connectionevent.disconnected": "§6Severed Ties with your Colony!",
   "com.minecolonies.core.item.sign.connected": "Successfully connected sign %s to %s",
   "com.minecolonies.core.item.sign.disrupted": "Connection to Sign at %s disrupted",
-  "com.minecolonies.core.colonyconnection.path.failure": "Couldn't Path from %s to %s"
+  "com.minecolonies.core.colonyconnection.path.failure": "Couldn't Path from %s to %s",
+  "com.minecolonies.coremod.debug.gui.tabicon": "Debugging Options",
+
+  "com.ldtteam.tag.tooltip.work": "Position a citizen would stand to work",
+  "com.ldtteam.tag.tooltip.sit_in": "Inside (under roof) sitting position",
+  "com.ldtteam.tag.tooltip.sit_out": "Outdoor sitting position",
+  "com.ldtteam.tag.tooltip.stand_in": "Inside (under roof) position to stand at",
+  "com.ldtteam.tag.tooltip.stand_out": "Outdoor position to stand at",
+  "com.ldtteam.tag.tooltip.building_sign": "Position of a sign that should mirror the building name and level",
+
+  "com.ldtteam.tag.tooltip.knight": "Position for knights to guard the Gate",
+  "com.ldtteam.tag.tooltip.archer": "Positions for archers to guard the gate",
+  "com.ldtteam.tag.tooltip.gate": "Position where the gate transitions from inside to outside"
 }

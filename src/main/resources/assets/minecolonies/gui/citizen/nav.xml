@@ -29,5 +29,10 @@
     <button id="jobIcon" size="20 20" pos="5 173" visible="false"
                  source="minecolonies:textures/gui/modules/main.png"/>
 
+    <button id="debugTab" size="32 26" pos="0 196" visible="false"
+            source="minecolonies:textures/gui/modules/tab_side3.png"/>
+    <button id="debugIcon" size="20 20" pos="5 199" visible="false"
+            source="minecolonies:textures/gui/modules/settings.png"/>
+
     <image source="minecolonies:textures/gui/citizen/colonist_paper.png" size="190 244" pos="20 0"/>
 </window>

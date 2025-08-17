@@ -418,7 +418,7 @@ public class WorkManager implements IWorkManager
                 final @Nullable ICitizenData citizen = building.getFirstModuleOccurance(WorkerBuildingModule.class).getFirstCitizen();
                 if (citizen == null)
                 {
-                    return;
+                    continue;
                 }
 
                 if (citizen.getJob() instanceof AbstractJobStructure<?,?> abstractJobStructure)
@@ -434,7 +434,7 @@ public class WorkManager implements IWorkManager
                         {
                             abstractJobStructure.setWorkOrder(order);
                             order.setClaimedBy(building.getID());
-                            return;
+                            continue;
                         }
                         continue;
                     }
@@ -449,7 +449,6 @@ public class WorkManager implements IWorkManager
                     {
                         abstractJobStructure.setWorkOrder(order);
                         order.setClaimedBy(building.getID());
-                        return;
                     }
                 }
             }
