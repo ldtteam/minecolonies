@@ -218,4 +218,10 @@ public interface ICompatibilityManager
      * @return the number or default.
      */
     int getCreativeTabKey(ItemStorage checkItem);
+
+    /**
+     * Get number of detected saplings.
+     * @return the number of saplings.
+     */
+    int getNumberOfSaplings();
 }

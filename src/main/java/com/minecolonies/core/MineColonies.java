@@ -2,6 +2,7 @@ package com.minecolonies.core;
 
 import com.ldtteam.structurize.storage.SurvivalBlueprintHandlers;
 import com.ldtteam.structurize.util.LanguageHandler;
+import com.ldtteam.structurize.util.TagManager;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.advancements.AdvancementTriggers;
 import com.minecolonies.api.colony.IChunkmanagerCapability;
@@ -21,9 +22,12 @@ import com.minecolonies.api.loot.ModLootConditions;
 import com.minecolonies.api.sounds.ModSoundEvents;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.api.util.constant.SchematicTagConstants;
 import com.minecolonies.apiimp.ClientMinecoloniesAPIImpl;
 import com.minecolonies.apiimp.CommonMinecoloniesAPIImpl;
 import com.minecolonies.apiimp.initializer.*;
+import com.minecolonies.core.blocks.BlockPlantationField;
+import com.minecolonies.core.blocks.huts.BlockHutGateHouse;
 import com.minecolonies.core.colony.IColonyManagerCapability;
 import com.minecolonies.core.colony.requestsystem.init.RequestSystemInitializer;
 import com.minecolonies.core.colony.requestsystem.init.StandardFactoryControllerInitializer;
@@ -59,6 +63,8 @@ import net.minecraftforge.registries.RegisterEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
+
+import static com.minecolonies.api.util.constant.SchematicTagConstants.*;
 
 @Mod(Constants.MOD_ID)
 public class MineColonies
@@ -120,6 +126,23 @@ public class MineColonies
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> Mod.EventBusSubscriber.Bus.FORGE.bus().get().register(ClientEventHandler.class));
         Mod.EventBusSubscriber.Bus.FORGE.bus().get().register(DataPackSyncEventHandler.ServerEvents.class);
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> Mod.EventBusSubscriber.Bus.FORGE.bus().get().register(DataPackSyncEventHandler.ClientEvents.class));
+        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
+            TagManager.registerGlobalTagOption(TAG_WORK);
+            TagManager.registerGlobalTagOption(TAG_SIT_IN);
+            TagManager.registerGlobalTagOption(TAG_SIT_OUT);
+            TagManager.registerGlobalTagOption(TAG_STAND_IN);
+            TagManager.registerGlobalTagOption(TAG_STAND_OUT);
+            TagManager.registerGlobalTagOption(BUILDING_SIGN);
+
+            TagManager.registerSpecificTagOption(TAG_GATE, b -> b instanceof BlockHutGateHouse);
+            TagManager.registerSpecificTagOption(TAG_KNIGHT, b -> b instanceof BlockHutGateHouse);
+            TagManager.registerSpecificTagOption(TAG_ARCHER, b -> b instanceof BlockHutGateHouse);
+
+            for (final String fieldTag : SchematicTagConstants.getPlantationTags())
+            {
+                TagManager.registerSpecificTagOption(fieldTag, b -> b instanceof BlockPlantationField);
+            }
+        });
 
         Mod.EventBusSubscriber.Bus.MOD.bus().get().addListener(GatherDataHandler::dataGeneratorSetup);
 

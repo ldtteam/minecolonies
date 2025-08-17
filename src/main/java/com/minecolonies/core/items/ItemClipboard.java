@@ -6,7 +6,6 @@ import com.minecolonies.core.client.gui.WindowClipBoard;
 import com.minecolonies.core.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.constant.TranslationConstants;
-import com.minecolonies.core.MineColonies;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
@@ -19,8 +18,6 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_CLIPBOARD_COLONY_SET;
 
@@ -33,6 +30,11 @@ public class ItemClipboard extends AbstractItemMinecolonies
      * Tag of the colony.
      */
     public static final String TAG_COLONY = "colony";
+
+    /**
+     * Tag of the "hide unimportant" UI toggle.
+     */
+    public static final String TAG_HIDEUNIMPORTANT = "hideunimportant";
 
     /**
      * Sets the name, creative tab, and registers the Clipboard item.
@@ -119,7 +121,14 @@ public class ItemClipboard extends AbstractItemMinecolonies
             final IColonyView colonyView = IColonyManager.getInstance().getColonyView(compound.getInt(TAG_COLONY), world.dimension());
             if (colonyView != null)
             {
-                new WindowClipBoard(colonyView).open();
+                boolean hide = false;
+
+                if (compound.contains(TAG_HIDEUNIMPORTANT))
+                {
+                    hide = compound.getBoolean(TAG_HIDEUNIMPORTANT);
+                }
+
+                new WindowClipBoard(colonyView, hide).open();
             }
         }
         else

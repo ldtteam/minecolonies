@@ -387,6 +387,11 @@ public abstract class AbstractWorkOrder implements IBuilderWorkOrder
     @Override
     public final void setClaimedBy(BlockPos claimedBy)
     {
+        if (isClaimed() && !this.claimedBy.equals(claimedBy) && claimedBy != null)
+        {
+            Log.getLogger().warn("Claiming an already claimed workorder! new claim:" + claimedBy + " old claim:" + this.claimedBy, new Exception());
+        }
+
         changed = true;
         this.claimedBy = claimedBy;
         if (claimedBy == null)

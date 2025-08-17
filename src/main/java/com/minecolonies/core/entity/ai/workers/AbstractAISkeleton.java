@@ -126,11 +126,7 @@ public abstract class AbstractAISkeleton<J extends IJob<?>> implements ITickingS
         worker.setRenderMetadata("");
     }
 
-    /**
-     * Get the statemachine of the AI
-     *
-     * @return statemachine
-     */
+    @Override
     public ITickRateStateMachine<IAIState> getStateAI()
     {
         return stateMachine;

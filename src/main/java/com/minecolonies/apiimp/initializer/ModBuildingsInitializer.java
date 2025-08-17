@@ -216,7 +216,6 @@ public final class ModBuildingsInitializer
           .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.GUARD_TOWER_ID))
           .addBuildingModuleProducer(KNIGHT_TOWER_WORK)
           .addBuildingModuleProducer(RANGER_TOWER_WORK)
-          .addBuildingModuleProducer(DRUID_TOWER_WORK)
           .addBuildingModuleProducer(GUARD_TOOL)
           .addBuildingModuleProducer(GUARD_ENTITY_LIST)
           .addBuildingModuleProducer(GUARD_SETTINGS)

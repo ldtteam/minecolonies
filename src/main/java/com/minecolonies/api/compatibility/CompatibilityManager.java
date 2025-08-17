@@ -780,4 +780,10 @@ public class CompatibilityManager implements ICompatibilityManager
             Compatibility.dynamicTreesCompat = new DynamicTreeCompat();
         }
     }
+
+    @Override
+    public int getNumberOfSaplings()
+    {
+        return saplings.size();
+    }
 }

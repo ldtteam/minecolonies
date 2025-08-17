@@ -379,6 +379,14 @@ public class TavernBuildingModule extends AbstractBuildingModule implements IDef
                 {
                     sitPositions.add(entry.getKey());
                 }
+                if (entry.getValue().contains(TAG_SIT_IN))
+                {
+                    sitPositions.add(entry.getKey());
+                }
+                if (entry.getValue().contains(TAG_SIT_OUT))
+                {
+                    sitPositions.add(entry.getKey());
+                }
 
                 if (entry.getValue().contains(TAG_WORK))
                 {

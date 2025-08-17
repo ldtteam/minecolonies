@@ -12,6 +12,7 @@ import com.minecolonies.api.util.constant.ColonyConstants;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.MineColonies;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
+import com.minecolonies.core.colony.buildings.modules.BuildingModules;
 import com.minecolonies.core.colony.buildings.modules.ItemListModule;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingLumberjack;
 import com.minecolonies.core.colony.jobs.JobLumberjack;
@@ -240,17 +241,21 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
             return getState();
         }
 
-        // This got moved downwards compared to the AICrafting-implementation,
-        // because in this case waiting for dumping is more important
-        // than restarting chopping
-        if (job.getTaskQueue().isEmpty())
+        if (building.getModule(BuildingModules.ITEMLIST_SAPLING).getList().size()
+            < IColonyManager.getInstance().getCompatibilityManager().getNumberOfSaplings())
         {
-            return LUMBERJACK_START_WORKING;
-        }
+            // This got moved downwards compared to the AICrafting-implementation,
+            // because in this case waiting for dumping is more important
+            // than restarting chopping
+            if (job.getTaskQueue().isEmpty())
+            {
+                return LUMBERJACK_START_WORKING;
+            }
 
-        if (job.getCurrentTask() == null)
-        {
-            return LUMBERJACK_START_WORKING;
+            if (job.getCurrentTask() == null)
+            {
+                return LUMBERJACK_START_WORKING;
+            }
         }
 
         return getNextCraftingState();
@@ -362,14 +367,18 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
     }
 
     /**
-     * Checks if lumberjack has already found some trees. If not search trees.
-     *
+     * Checks if lumberjack has already found some trees. If not, check task queue for crafting
+     * requests - if none, search trees.
      * @return next IAIState
      */
     private IAIState findTrees()
     {
         if (job.getTree() == null)
         {
+            if (!job.getTaskQueue().isEmpty())
+            {
+                return START_WORKING;
+            }
 
             return findTree();
         }

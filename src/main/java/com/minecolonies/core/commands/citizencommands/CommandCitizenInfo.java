@@ -124,9 +124,9 @@ public class CommandCitizenInfo implements IMCColonyOfficerCommand
                 final AbstractEntityCitizen entityCitizen = optionalEntityCitizen.get();
                 context.getSource()
                     .sendSuccess(() -> Component.translatable(CommandTranslationConstants.COMMAND_CITIZEN_INFO_ACTIVITY,
-                        ((EntityCitizen) entityCitizen).getCitizenAI().getState(),
+                        ((EntityCitizen) entityCitizen).getCitizenAI().getHistory(),
                         entityCitizen.getCitizenJobHandler().getColonyJob().getNameTagDescription(),
-                        entityCitizen.getCitizenJobHandler().getWorkAI().getState()), false);
+                        entityCitizen.getCitizenJobHandler().getWorkAI().getStateAI().getHistory()), false);
             }
         }
 

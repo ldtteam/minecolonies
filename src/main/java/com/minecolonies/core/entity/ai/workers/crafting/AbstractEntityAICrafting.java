@@ -294,7 +294,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
     {
         if (job.getCurrentTask() == null)
         {
-            return getState();
+            return IDLE;
         }
 
         if (currentRecipeStorage != null && !dumped && hasTooManyExternalItemsInInv(currentRecipeStorage, worker.getInventoryCitizen()))

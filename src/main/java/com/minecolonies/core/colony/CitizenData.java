@@ -1620,7 +1620,7 @@ public class CitizenData implements ICitizenData
 
         if (interactedRecently > 0)
         {
-            interactedRecently -= TICKS_SECOND * 3;
+            interactedRecently -= tickRate;
             if (interactedRecently <= 0)
             {
                 interactedRecentlyPlayers.clear();

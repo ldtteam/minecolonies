@@ -669,25 +669,38 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
     }
 
     @Override
-    public BlockPos getBestBuilding(final AbstractEntityCitizen citizen, final Class<? extends IBuilding> clazz)
+    public BlockPos getBestBuilding(final AbstractEntityCitizen citizen, final Class<? extends IBuilding> building)
     {
-        return getBestBuilding(citizen.blockPosition(), clazz);
+        return getBestBuilding(citizen.blockPosition(), building);
     }
 
     @Override
-    public BlockPos getBestBuilding(final BlockPos citizen, final Class<? extends IBuilding> clazz)
+    public <T extends IBuilding> BlockPos getBestBuilding(final AbstractEntityCitizen citizen, final Class<T> building, @NotNull final Predicate<T> filter)
+    {
+        return getBestBuilding(citizen.blockPosition(), building, filter);
+    }
+
+    @Override
+    public BlockPos getBestBuilding(final BlockPos pos, final Class<? extends IBuilding> building)
+    {
+        return getBestBuilding(pos, building, b -> true);
+    }
+
+    @Override
+    public <T extends IBuilding> BlockPos getBestBuilding(final BlockPos pos, final Class<T> building, @NotNull final Predicate<T> filter)
     {
         double distance = Double.MAX_VALUE;
         BlockPos goodCook = null;
-        for (final IBuilding building : buildings.values())
+        for (final IBuilding currentBuilding : buildings.values())
         {
-            if (clazz.isInstance(building) && building.getBuildingLevel() > 0 && WorldUtil.isBlockLoaded(colony.getWorld(), building.getPosition()))
+            if (building.isInstance(currentBuilding) && currentBuilding.getBuildingLevel() > 0 && WorldUtil.isBlockLoaded(colony.getWorld(), currentBuilding.getPosition()) && filter.test(
+                (T) currentBuilding))
             {
-                final double localDistance = building.getPosition().distSqr(citizen);
+                final double localDistance = currentBuilding.getPosition().distSqr(pos);
                 if (localDistance < distance)
                 {
                     distance = localDistance;
-                    goodCook = building.getPosition();
+                    goodCook = currentBuilding.getPosition();
                 }
             }
         }

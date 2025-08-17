@@ -624,9 +624,11 @@
   "com.minecolonies.coremod.gui.workerhuts.fields.plantation.direction.exact": "Current Plantation",
   "com.minecolonies.coremod.gui.workerhuts.fields.farmer.noseed": "Field has no seed set",
   "com.minecolonies.coremod.gui.field.status":  "Stage:",
-  "com.minecolonies.coremod.gui.field.status.empty":  "Harvested",
-  "com.minecolonies.coremod.gui.field.status.hoed":   "Hoed",
-  "com.minecolonies.coremod.gui.field.status.planted":"Planted",
+  "com.minecolonies.coremod.gui.field.status.current": "Current: %s",
+  "com.minecolonies.coremod.gui.field.status.next":   "Next: %s",
+  "com.minecolonies.coremod.gui.field.status.empty":  "Hoe",
+  "com.minecolonies.coremod.gui.field.status.hoed":   "Plant",
+  "com.minecolonies.coremod.gui.field.status.planted":"Harvest",
 
   "com.minecolonies.coremod.gui.workerhuts.plantationfields.repair": "Repair field",
   "com.minecolonies.coremod.gui.workerhuts.plantationfields.plants": "Plants on this field:",
@@ -2921,6 +2923,8 @@
   "com.minecolonies.core.poor.menu.warning": "A menu lacking quality food may not satisfy your citizens!",
   "com.minecolonies.core.item.colonymap.needcolony": "No colony set (sneak + use the colony map on the Town Hall)",
   "com.minecolonies.core.item.colonymap.registered": "Drawing mapdata on the colony map from %s.",
+  "com.minecolonies.core.item.colonymap.playerresolvedrequests.count": "Unmet Needs: %d",
+  "com.minecolonies.core.item.colonymap.playerresolvedrequests": "Needed",
   "com.minecolonies.core.event.summary.citizen.grownup": "%d kid(s) grew up",
   "com.minecolonies.core.event.summary.citizen.died": "%d citizen(s) died",
   "com.minecolonies.core.event.summary.citizen.born": "%d kid(s) were born",
@@ -2958,5 +2962,17 @@
   "com.minecolonies.core.gui.connectionevent.disconnected": "§6Severed Ties with your Colony!",
   "com.minecolonies.core.item.sign.connected": "Successfully connected sign %s to %s",
   "com.minecolonies.core.item.sign.disrupted": "Connection to Sign at %s disrupted",
-  "com.minecolonies.core.colonyconnection.path.failure": "Couldn't Path from %s to %s"
+  "com.minecolonies.core.colonyconnection.path.failure": "Couldn't Path from %s to %s",
+  "com.minecolonies.coremod.debug.gui.tabicon": "Debugging Options",
+
+  "com.ldtteam.tag.tooltip.work": "Position a citizen would stand to work",
+  "com.ldtteam.tag.tooltip.sit_in": "Inside (under roof) sitting position",
+  "com.ldtteam.tag.tooltip.sit_out": "Outdoor sitting position",
+  "com.ldtteam.tag.tooltip.stand_in": "Inside (under roof) position to stand at",
+  "com.ldtteam.tag.tooltip.stand_out": "Outdoor position to stand at",
+  "com.ldtteam.tag.tooltip.building_sign": "Position of a sign that should mirror the building name and level",
+
+  "com.ldtteam.tag.tooltip.knight": "Position for knights to guard the Gate",
+  "com.ldtteam.tag.tooltip.archer": "Positions for archers to guard the gate",
+  "com.ldtteam.tag.tooltip.gate": "Position where the gate transitions from inside to outside"
 }

@@ -1236,4 +1236,10 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
     {
         return stuckHandler;
     }
+
+    @Override
+    public boolean isStuck()
+    {
+        return stuckHandler.getStuckLevel() >= 3;
+    }
 }

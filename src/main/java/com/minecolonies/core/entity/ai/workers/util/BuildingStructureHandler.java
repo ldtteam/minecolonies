@@ -109,6 +109,8 @@ public class BuildingStructureHandler<J extends AbstractJobStructure<?, J>, B ex
                 break;
             }
         }
+
+        this.workOrder.setStage(getStage());
     }
 
     /**
