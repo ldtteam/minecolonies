@@ -2921,6 +2921,8 @@
   "com.minecolonies.core.poor.menu.warning": "A menu lacking quality food may not satisfy your citizens!",
   "com.minecolonies.core.item.colonymap.needcolony": "No colony set (sneak + use the colony map on the Town Hall)",
   "com.minecolonies.core.item.colonymap.registered": "Drawing mapdata on the colony map from %s.",
+  "com.minecolonies.core.item.colonymap.playerresolvedrequests.count": "Unmet Needs: %d",
+  "com.minecolonies.core.item.colonymap.playerresolvedrequests": "Needed",
   "com.minecolonies.core.event.summary.citizen.grownup": "%d kid(s) grew up",
   "com.minecolonies.core.event.summary.citizen.died": "%d citizen(s) died",
   "com.minecolonies.core.event.summary.citizen.born": "%d kid(s) were born",
