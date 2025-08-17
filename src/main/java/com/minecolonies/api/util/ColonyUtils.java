@@ -5,6 +5,7 @@ import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.storage.ClientFutureProcessor;
 import com.ldtteam.structurize.storage.ServerFutureProcessor;
 import com.ldtteam.structurize.storage.StructurePacks;
+import com.ldtteam.structurize.util.IOPool;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.claim.IChunkClaimData;
 import net.minecraft.core.BlockPos;
@@ -12,6 +13,7 @@ import net.minecraft.util.Tuple;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.phys.AABB;
+import net.neoforged.fml.loading.FMLEnvironment;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -64,9 +66,10 @@ public final class ColonyUtils
         final Consumer<Blueprint> afterLoad,
         final Consumer<String> errorHandler)
     {
+        final CompletableFuture<Blueprint> future =
+            CompletableFuture.supplyAsync(() -> StructurePacks.getBlueprint(structurePack, structurePath, FMLEnvironment.production, world.registryAccess()), IOPool.getExecutor());
         if (world.isClientSide)
         {
-            final CompletableFuture<Blueprint> future = StructurePacks.getBlueprintFuture(structurePack, structurePath, world.registryAccess());
             ClientFutureProcessor.queueBlueprint(new ClientFutureProcessor.BlueprintProcessingData(future,
                 (blueprint ->
                 {
@@ -84,7 +87,6 @@ public final class ColonyUtils
         }
         else
         {
-            final CompletableFuture<Blueprint> future = StructurePacks.getBlueprintFuture(structurePack, structurePath, world.registryAccess());
             ServerFutureProcessor.queueBlueprint(new ServerFutureProcessor.BlueprintProcessingData(future, world,
                 (blueprint ->
                 {

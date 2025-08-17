@@ -1355,10 +1355,10 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
                         return true;
                     }
 
-                    // We cannot enter a space of a trapdoor if its facing the opposite direction.
+                    // We cannot enter a space of a trapdoor if its facing the opposite direction, unless we are above it
                     if (direction == facing)
                     {
-                        return false;
+                        return dY < 0;
                     }
 
                     return true;
