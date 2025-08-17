@@ -202,11 +202,6 @@ public class EntityNavigationUtils
                     return true;
                 }
             }
-            else if (BlockPosUtil.dist(entity.blockPosition(), avoid) >= REACHED_DIST)
-            {
-                nav.stop();
-                return true;
-            }
 
             nav.walkAwayFrom(avoid, distance, speed, false);
         }
