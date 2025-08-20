@@ -1,0 +1,221 @@
+package com.minecolonies.core.datalistener;
+
+import com.google.common.collect.ImmutableMap;
+import com.google.gson.*;
+import com.minecolonies.api.util.Log;
+import com.minecolonies.core.util.GsonHelper;
+import com.mojang.datafixers.util.Pair;
+import com.mojang.serialization.DataResult;
+import com.mojang.serialization.JsonOps;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
+import net.minecraft.util.profiling.ProfilerFiller;
+import net.neoforged.neoforge.common.conditions.ICondition;
+import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.*;
+
+import static net.neoforged.neoforge.common.conditions.ConditionalOps.DEFAULT_CONDITIONS_KEY;
+
+/**
+ * Base json reload listener class that handles part of the heavy lifting across all reload listeners.
+ *
+ * @param <T> the type of entry.
+ */
+public abstract class BaseDataListener<T> extends SimpleJsonResourceReloadListener
+{
+    /**
+     * JSON keys.
+     */
+    private static final String KEY_REPLACE    = "replace";
+    private static final String KEY_REMOVE     = "remove";
+    private static final String KEY_CONDITIONS = DEFAULT_CONDITIONS_KEY;
+
+    /**
+     * Gson instance
+     */
+    private static final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
+
+    /**
+     * Mapping result class for returning the entry + warnings.
+     *
+     * @param success whether the entry was successfully parsed or not.
+     * @param item    the entry, if successfully parsed.
+     * @param reason  the reason when failed.
+     * @param <T>     the type of entry.
+     */
+    public record MappingResult<T>(
+        boolean success,
+        T item,
+        String reason)
+    {
+        /**
+         * Create an OK mapping result, giving the item entry.
+         *
+         * @param item the entry instance.
+         * @param <T>  the type of entry.
+         * @return the mapping result instance.
+         */
+        public static <T> MappingResult<T> ok(final T item)
+        {
+            return new MappingResult<>(true, item, null);
+        }
+
+        /**
+         * Create a FAIL mapping result, giving a failure reason.
+         *
+         * @param reason the failure reason.
+         * @param <T>    the type of entry.
+         * @return the mapping result instance.
+         */
+        public static <T> MappingResult<T> fail(final String reason)
+        {
+            return new MappingResult<>(false, null, reason);
+        }
+    }
+
+    /**
+     * The conditional context.
+     */
+    private final ICondition.IContext conditionalContext;
+
+    /**
+     * The visual name in the logs for output regarding the loader.
+     */
+    private final String name;
+
+    /**
+     * All parsed entries.
+     */
+    private ImmutableMap<ResourceLocation, T> entries = ImmutableMap.of();
+
+    /**
+     * Default constructor.
+     *
+     * @param conditionalContext the conditional context.
+     * @param directory          the directory name where to look for json files.
+     */
+    protected BaseDataListener(final ICondition.IContext conditionalContext, final String directory)
+    {
+        super(GSON, directory);
+        this.conditionalContext = conditionalContext;
+        this.name = StringUtils.capitalize(directory.replaceAll("_", " "));
+    }
+
+    /**
+     * Get all entries for this listener.
+     *
+     * @return the map of entries.
+     */
+    public Map<ResourceLocation, T> getEntries()
+    {
+        return entries;
+    }
+
+    @Override
+    protected final void apply(
+        @NotNull final Map<ResourceLocation, JsonElement> jsonElementMap,
+        @NotNull final ResourceManager resourceManager,
+        @NotNull final ProfilerFiller profilerFiller)
+    {
+        Log.getLogger().info("[{} Loader]: Starting reload...", name);
+
+        long start = System.nanoTime();
+        final Map<ResourceLocation, T> newEntries = new HashMap<>();
+        final Set<ResourceLocation> toRemove = new HashSet<>();
+        for (final Map.Entry<ResourceLocation, JsonElement> entry : jsonElementMap.entrySet())
+        {
+            final ResourceLocation key = entry.getKey();
+            if (!entry.getValue().isJsonObject())
+            {
+                logWarning(key, String.format("Entry is not a JSON object, found %s", entry.getValue().getClass()));
+                continue;
+            }
+            final JsonObject value = entry.getValue().getAsJsonObject();
+
+            try
+            {
+                final boolean replace = GsonHelper.getAsBoolean(value, KEY_REPLACE, false);
+                if (replace)
+                {
+                    newEntries.clear();
+                }
+
+                final JsonArray remove = GsonHelper.getAsJsonArray(value, KEY_REMOVE, new JsonArray());
+                for (final JsonElement element : remove)
+                {
+                    if (element.isJsonPrimitive() && element.getAsJsonPrimitive().isString() && ResourceLocation.tryParse(element.getAsString()) != null)
+                    {
+                        toRemove.add(ResourceLocation.parse(element.getAsString()));
+                    }
+                }
+
+                final List<ICondition> conditions = getConditions(value);
+                if (conditions.stream().allMatch(a -> a.test(conditionalContext)))
+                {
+                    final MappingResult<T> result = mapEntry(key, value);
+                    if (result.success)
+                    {
+                        newEntries.put(key, result.item);
+                    }
+                    else
+                    {
+                        logWarning(key, result.reason);
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Log.getLogger().error("[{} Loader]: Error loading entry with id {}.", name, key, e);
+            }
+        }
+
+        toRemove.forEach(newEntries::remove);
+
+        Log.getLogger().info("[{} Loader]: Finished reloading. {} entries created.", name, newEntries.size());
+        Log.getLogger().debug("[{} Loader]: Reloading finished in {} nanoseconds.", name, System.nanoTime() - start);
+        entries = ImmutableMap.copyOf(newEntries);
+    }
+
+    /**
+     * Simple reusable logger.
+     *
+     * @param key    the resource key.
+     * @param reason the failure reason.
+     */
+    private void logWarning(final ResourceLocation key, final String reason)
+    {
+        Log.getLogger().warn("[{} Loader]: Problem loading entry with id {}: {}", name, key, reason);
+    }
+
+    /**
+     * Parsed an individual entry from it's input json element.
+     *
+     * @param key    the resource key.
+     * @param object the resource value.
+     * @return the mapping result.
+     */
+    @NotNull
+    protected abstract MappingResult<T> mapEntry(final ResourceLocation key, final JsonObject object);
+
+    /**
+     * Get the list of conditionals.
+     *
+     * @param object the json object.
+     * @return the list of condition instances.
+     */
+    private List<ICondition> getConditions(final JsonObject object)
+    {
+        if (object.has(KEY_CONDITIONS))
+        {
+            final DataResult<Pair<List<ICondition>, JsonElement>> parse = ICondition.LIST_CODEC.decode(JsonOps.INSTANCE, object.get(KEY_CONDITIONS));
+            if (parse.isSuccess())
+            {
+                return parse.getOrThrow().getFirst();
+            }
+        }
+        return List.of();
+    }
+}

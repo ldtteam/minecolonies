@@ -4,7 +4,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.util.MathUtils;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
-import com.minecolonies.core.datalistener.StudyItemListener;
+import com.minecolonies.core.datalistener.model.StudyItem;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
@@ -50,7 +50,7 @@ public class BuildingLibrary extends AbstractBuilding
     public BuildingLibrary(final IColony c, final BlockPos l)
     {
         super(c, l);
-        keepX.put(StudyItemListener::isStudyItem, new Tuple<>(64, true));
+        keepX.put(StudyItem::isStudyItem, new Tuple<>(64, true));
     }
 
     @NotNull
