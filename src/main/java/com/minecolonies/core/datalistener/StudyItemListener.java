@@ -2,6 +2,7 @@ package com.minecolonies.core.datalistener;
 
 import com.google.gson.JsonObject;
 import com.minecolonies.core.datalistener.model.StudyItem;
+import com.minecolonies.core.datalistener.util.MappingResult;
 import com.minecolonies.core.util.GsonHelper;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;

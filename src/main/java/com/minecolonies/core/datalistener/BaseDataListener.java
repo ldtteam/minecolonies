@@ -3,6 +3,7 @@ package com.minecolonies.core.datalistener;
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.*;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.core.datalistener.util.*;
 import com.minecolonies.core.util.GsonHelper;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.DataResult;
@@ -16,7 +17,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
-import java.util.function.Predicate;
 
 import static net.neoforged.neoforge.common.conditions.ConditionalOps.DEFAULT_CONDITIONS_KEY;
 
@@ -37,71 +37,6 @@ public abstract class BaseDataListener<T> extends SimpleJsonResourceReloadListen
      * Gson instance
      */
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
-
-    /**
-     * Mapping result class for returning the entry + warnings.
-     *
-     * @param success whether the entry was successfully parsed or not.
-     * @param item    the entry, if successfully parsed.
-     * @param reason  the reason when failed.
-     * @param <T>     the type of entry.
-     */
-    public record MappingResult<T>(
-        boolean success,
-        T item,
-        String reason)
-    {
-        /**
-         * Create an OK mapping result, giving the item entry.
-         *
-         * @param item the entry instance.
-         * @param <T>  the type of entry.
-         * @return the mapping result instance.
-         */
-        public static <T> MappingResult<T> ok(final T item)
-        {
-            return new MappingResult<>(true, item, null);
-        }
-
-        /**
-         * Create a FAIL mapping result, giving a failure reason.
-         *
-         * @param reason the failure reason.
-         * @param <T>    the type of entry.
-         * @return the mapping result instance.
-         */
-        public static <T> MappingResult<T> fail(final String reason)
-        {
-            return new MappingResult<>(false, null, reason);
-        }
-    }
-
-    public record SingleEntryRemovalOrder(ResourceLocation key) implements RemovalOrder
-    {
-        @Override
-        public boolean test(final ResourceLocation resourceLocation)
-        {
-            return resourceLocation.equals(key);
-        }
-    }
-
-    public record ModRemovalorder(String modId) implements RemovalOrder
-    {
-        @Override
-        public boolean test(final ResourceLocation resourceLocation)
-        {
-            return resourceLocation.getNamespace().equals(modId);
-        }
-    }
-
-    public record OtherModsRemovalOrder(String modId) implements RemovalOrder
-    {
-        @Override
-        public boolean test(final ResourceLocation resourceLocation)
-        {
-            return !resourceLocation.getNamespace().equals(modId);
-        }
-    }
 
     /**
      * The visual name in the logs for output regarding the loader.
@@ -153,13 +88,13 @@ public abstract class BaseDataListener<T> extends SimpleJsonResourceReloadListen
                 if (conditions.stream().allMatch(a -> a.test(getContext())))
                 {
                     final MappingResult<T> result = mapEntry(key, value);
-                    if (result.success)
+                    if (result.success())
                     {
-                        newEntries.put(key, result.item);
+                        newEntries.put(key, result.item());
                     }
                     else
                     {
-                        logWarning(key, result.reason);
+                        logWarning(key, result.reason());
                     }
                 }
             }
@@ -266,9 +201,5 @@ public abstract class BaseDataListener<T> extends SimpleJsonResourceReloadListen
     public Map<ResourceLocation, T> getEntries()
     {
         return entries;
-    }
-
-    public interface RemovalOrder extends Predicate<ResourceLocation>
-    {
     }
 }
