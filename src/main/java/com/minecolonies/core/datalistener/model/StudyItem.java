@@ -1,7 +1,6 @@
 package com.minecolonies.core.datalistener.model;
 
 import com.minecolonies.core.datalistener.StudyItemListener;
-import com.minecolonies.core.datalistener.manager.DataListenerManager;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -26,6 +25,6 @@ public record StudyItem(
      */
     public static boolean isStudyItem(final ItemStack stack)
     {
-        return DataListenerManager.getInstance().isEntry(StudyItemListener.class, BuiltInRegistries.ITEM.getKey(stack.getItem()));
+        return StudyItemListener.INSTANCE.getEntries().containsKey(BuiltInRegistries.ITEM.getKey(stack.getItem()));
     }
 }

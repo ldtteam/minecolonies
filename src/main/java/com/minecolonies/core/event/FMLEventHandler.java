@@ -2,7 +2,6 @@ package com.minecolonies.core.event;
 
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.core.datalistener.*;
-import com.minecolonies.core.datalistener.manager.DataListenerManager;
 import com.minecolonies.core.entity.pathfinding.Pathfinding;
 import com.minecolonies.core.util.BackUpHelper;
 import net.minecraft.server.level.ServerPlayer;
@@ -16,9 +15,6 @@ import net.neoforged.neoforge.event.server.ServerStoppingEvent;
 import net.neoforged.neoforge.event.tick.LevelTickEvent;
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Event handler used to catch various forge events.
@@ -52,17 +48,13 @@ public class FMLEventHandler
     @SubscribeEvent
     public static void onAddReloadListenerEvent(@NotNull final AddReloadListenerEvent event)
     {
-        List<DataListenerManager.BaseListenerProvider> listeners = new ArrayList<>();
-        listeners.add(StudyItemListener::new);
-
-        DataListenerManager.getInstance().prepareAllListeners(listeners, event.getConditionContext()).forEach(event::addListener);
-
         event.addListener(new CrafterRecipeListener());
         event.addListener(new ResearchListener());
         event.addListener(new CustomVisitorListener());
         event.addListener(new CitizenNameListener());
         event.addListener(new QuestJsonListener());
         event.addListener(new ItemNbtListener());
+        event.addListener(StudyItemListener.INSTANCE);
         event.addListener(new DiseasesListener());
         event.addListener(new RecruitmentItemsListener());
     }

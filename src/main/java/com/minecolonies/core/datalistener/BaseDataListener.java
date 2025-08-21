@@ -16,6 +16,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
+import java.util.function.Predicate;
 
 import static net.neoforged.neoforge.common.conditions.ConditionalOps.DEFAULT_CONDITIONS_KEY;
 
@@ -29,7 +30,6 @@ public abstract class BaseDataListener<T> extends SimpleJsonResourceReloadListen
     /**
      * JSON keys.
      */
-    private static final String KEY_REPLACE    = "replace";
     private static final String KEY_REMOVE     = "remove";
     private static final String KEY_CONDITIONS = DEFAULT_CONDITIONS_KEY;
 
@@ -76,10 +76,32 @@ public abstract class BaseDataListener<T> extends SimpleJsonResourceReloadListen
         }
     }
 
-    /**
-     * The conditional context.
-     */
-    private final ICondition.IContext conditionalContext;
+    public record SingleEntryRemovalOrder(ResourceLocation key) implements RemovalOrder
+    {
+        @Override
+        public boolean test(final ResourceLocation resourceLocation)
+        {
+            return resourceLocation.equals(key);
+        }
+    }
+
+    public record ModRemovalorder(String modId) implements RemovalOrder
+    {
+        @Override
+        public boolean test(final ResourceLocation resourceLocation)
+        {
+            return resourceLocation.getNamespace().equals(modId);
+        }
+    }
+
+    public record OtherModsRemovalOrder(String modId) implements RemovalOrder
+    {
+        @Override
+        public boolean test(final ResourceLocation resourceLocation)
+        {
+            return !resourceLocation.getNamespace().equals(modId);
+        }
+    }
 
     /**
      * The visual name in the logs for output regarding the loader.
@@ -94,24 +116,12 @@ public abstract class BaseDataListener<T> extends SimpleJsonResourceReloadListen
     /**
      * Default constructor.
      *
-     * @param conditionalContext the conditional context.
-     * @param directory          the directory name where to look for json files.
+     * @param directory the directory name where to look for json files.
      */
-    protected BaseDataListener(final ICondition.IContext conditionalContext, final String directory)
+    protected BaseDataListener(final String directory)
     {
         super(GSON, directory);
-        this.conditionalContext = conditionalContext;
         this.name = StringUtils.capitalize(directory.replaceAll("_", " "));
-    }
-
-    /**
-     * Get all entries for this listener.
-     *
-     * @return the map of entries.
-     */
-    public Map<ResourceLocation, T> getEntries()
-    {
-        return entries;
     }
 
     @Override
@@ -124,7 +134,7 @@ public abstract class BaseDataListener<T> extends SimpleJsonResourceReloadListen
 
         long start = System.nanoTime();
         final Map<ResourceLocation, T> newEntries = new HashMap<>();
-        final Set<ResourceLocation> toRemove = new HashSet<>();
+        final Set<RemovalOrder> toRemove = new HashSet<>();
         for (final Map.Entry<ResourceLocation, JsonElement> entry : jsonElementMap.entrySet())
         {
             final ResourceLocation key = entry.getKey();
@@ -137,23 +147,10 @@ public abstract class BaseDataListener<T> extends SimpleJsonResourceReloadListen
 
             try
             {
-                final boolean replace = GsonHelper.getAsBoolean(value, KEY_REPLACE, false);
-                if (replace)
-                {
-                    newEntries.clear();
-                }
-
-                final JsonArray remove = GsonHelper.getAsJsonArray(value, KEY_REMOVE, new JsonArray());
-                for (final JsonElement element : remove)
-                {
-                    if (element.isJsonPrimitive() && element.getAsJsonPrimitive().isString() && ResourceLocation.tryParse(element.getAsString()) != null)
-                    {
-                        toRemove.add(ResourceLocation.parse(element.getAsString()));
-                    }
-                }
+                toRemove.addAll(getRemovalOrders(key, value));
 
                 final List<ICondition> conditions = getConditions(value);
-                if (conditions.stream().allMatch(a -> a.test(conditionalContext)))
+                if (conditions.stream().allMatch(a -> a.test(getContext())))
                 {
                     final MappingResult<T> result = mapEntry(key, value);
                     if (result.success)
@@ -172,7 +169,16 @@ public abstract class BaseDataListener<T> extends SimpleJsonResourceReloadListen
             }
         }
 
-        toRemove.forEach(newEntries::remove);
+        final Iterator<ResourceLocation> iterator = newEntries.keySet().iterator();
+        while (iterator.hasNext())
+        {
+            final ResourceLocation key = iterator.next();
+            final boolean shouldRemove = toRemove.stream().anyMatch(order -> order.test(key));
+            if (shouldRemove)
+            {
+                iterator.remove();
+            }
+        }
 
         Log.getLogger().info("[{} Loader]: Finished reloading. {} entries created.", name, newEntries.size());
         Log.getLogger().debug("[{} Loader]: Reloading finished in {} nanoseconds.", name, System.nanoTime() - start);
@@ -191,19 +197,42 @@ public abstract class BaseDataListener<T> extends SimpleJsonResourceReloadListen
     }
 
     /**
-     * Parsed an individual entry from it's input json element.
+     * Get the list of removal orders.
      *
      * @param key    the resource key.
      * @param object the resource value.
-     * @return the mapping result.
+     * @return the list of removal order instances.
      */
-    @NotNull
-    protected abstract MappingResult<T> mapEntry(final ResourceLocation key, final JsonObject object);
+    private List<RemovalOrder> getRemovalOrders(final ResourceLocation key, final JsonObject object)
+    {
+        final List<RemovalOrder> orders = new ArrayList<>();
+        final JsonArray remove = GsonHelper.getAsJsonArray(object, KEY_REMOVE, new JsonArray());
+        for (final JsonElement element : remove)
+        {
+            if (element.isJsonPrimitive() && element.getAsJsonPrimitive().isString())
+            {
+                final String text = element.getAsString();
+                if (text.equals("*"))
+                {
+                    orders.add(new OtherModsRemovalOrder(key.getNamespace()));
+                }
+                else if (text.matches("\\w+:\\*"))
+                {
+                    orders.add(new ModRemovalorder(StringUtils.substringBefore(text, ":")));
+                }
+                if (ResourceLocation.tryParse(text) != null)
+                {
+                    orders.add(new SingleEntryRemovalOrder(ResourceLocation.tryParse(text)));
+                }
+            }
+        }
+        return orders;
+    }
 
     /**
      * Get the list of conditionals.
      *
-     * @param object the json object.
+     * @param object the resource value.
      * @return the list of condition instances.
      */
     private List<ICondition> getConditions(final JsonObject object)
@@ -217,5 +246,29 @@ public abstract class BaseDataListener<T> extends SimpleJsonResourceReloadListen
             }
         }
         return List.of();
+    }
+
+    /**
+     * Parsed an individual entry from it's input json element.
+     *
+     * @param key    the resource key.
+     * @param object the resource value.
+     * @return the mapping result.
+     */
+    @NotNull
+    protected abstract MappingResult<T> mapEntry(final ResourceLocation key, final JsonObject object);
+
+    /**
+     * Get all entries for this listener.
+     *
+     * @return the map of entries.
+     */
+    public Map<ResourceLocation, T> getEntries()
+    {
+        return entries;
+    }
+
+    public interface RemovalOrder extends Predicate<ResourceLocation>
+    {
     }
 }

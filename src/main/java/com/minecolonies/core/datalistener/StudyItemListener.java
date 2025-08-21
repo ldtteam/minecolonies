@@ -7,7 +7,6 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.Item;
-import net.neoforged.neoforge.common.conditions.ICondition;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -16,13 +15,17 @@ import org.jetbrains.annotations.NotNull;
 public class StudyItemListener extends BaseDataListener<StudyItem>
 {
     /**
+     * Singleton instance.
+     */
+    public static final StudyItemListener INSTANCE = new StudyItemListener();
+
+    /**
      * Default constructor.
      *
-     * @param conditionContext the conditional context.
      */
-    public StudyItemListener(final ICondition.IContext conditionContext)
+    private StudyItemListener()
     {
-        super(conditionContext, "study_items");
+        super("study_items");
     }
 
     @Override
