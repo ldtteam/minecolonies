@@ -2,6 +2,7 @@ package com.minecolonies.core.commands.arguments;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.util.constant.translation.CommandTranslationConstants;
 import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.Message;
 import com.mojang.brigadier.StringReader;
@@ -71,6 +72,29 @@ public class ColonyIdArgument implements ArgumentType<ColonyIdArgument.Result>
             context.getSource().sendFailure(message);
             throw new CommandRuntimeException(message);
         }
+    }
+
+    /**
+     * Resolve the actual argument value into a colony.
+     * @param context the command context.
+     * @param name    the argument name.
+     * @return the colony.
+     * @throws CommandRuntimeException if a colony id cannot be parsed from the given argument (this is already reported back).
+     */
+    @NotNull
+    public static IColony getColony(@NotNull final CommandContext<CommandSourceStack> context, @NotNull final String name)
+    {
+        final int colonyId = getColonyId(context, name);
+
+        final IColony colony = IColonyManager.getInstance().getColonyByWorld(colonyId, context.getSource().getLevel());
+        if (colony == null)
+        {
+            final Component message = Component.translatable(CommandTranslationConstants.COMMAND_COLONY_ID_NOT_FOUND, colonyId);
+            context.getSource().sendFailure(message);
+            throw new CommandRuntimeException(message);
+        }
+
+        return colony;
     }
 
     @Override

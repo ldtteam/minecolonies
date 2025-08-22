@@ -1,7 +1,6 @@
 package com.minecolonies.core.commands.colonycommands;
 
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.core.colony.events.raid.RaidManager;
@@ -14,7 +13,6 @@ import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.contents.LiteralContents;
@@ -23,7 +21,6 @@ import net.minecraft.resources.ResourceLocation;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.minecolonies.api.util.constant.translation.CommandTranslationConstants.COMMAND_COLONY_ID_NOT_FOUND;
 import static com.minecolonies.core.commands.CommandArgumentNames.COLONYID_ARG;
 
 /**
@@ -51,15 +48,7 @@ public class CommandColonyPrintStats implements IMCOPCommand
     public int onExecute(final CommandContext<CommandSourceStack> context)
     {
         fullLog = "\n";
-        // Colony
-        final int colonyID = ColonyIdArgument.getColonyId(context, COLONYID_ARG);
-        final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, context.getSource().getLevel().dimension());
-        if (colony == null)
-        {
-            context.getSource().sendSuccess(() -> Component.translatable(COMMAND_COLONY_ID_NOT_FOUND, colonyID), false);
-            return 0;
-        }
-
+        final IColony colony = ColonyIdArgument.getColony(context, COLONYID_ARG);
         final BlockPos position = colony.getCenter();
         context.getSource().sendSuccess(() -> literalAndRemember(ID_TEXT + colony.getID() + NAME_TEXT + colony.getName()), false);
         final String mayor = colony.getPermissions().getOwnerName();

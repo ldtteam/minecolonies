@@ -1,7 +1,6 @@
 package com.minecolonies.core.commands.colonycommands;
 
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.core.MineColonies;
 import com.minecolonies.core.commands.arguments.ColonyIdArgument;
@@ -15,7 +14,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 
-import static com.minecolonies.api.util.constant.translation.CommandTranslationConstants.COMMAND_COLONY_ID_NOT_FOUND;
 import static com.minecolonies.api.util.constant.translation.CommandTranslationConstants.COMMAND_DISABLED_IN_CONFIG;
 import static com.minecolonies.core.commands.CommandArgumentNames.COLONYID_ARG;
 
@@ -40,14 +38,7 @@ public class CommandTeleport implements IMCColonyOfficerCommand
             return 0;
         }
 
-        // Colony
-        final int colonyID = ColonyIdArgument.getColonyId(context, COLONYID_ARG);
-        final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, context.getSource().getLevel().dimension());
-        if (colony == null)
-        {
-            MessageUtils.format(COMMAND_COLONY_ID_NOT_FOUND, colonyID).sendTo((Player) sender);
-            return 0;
-        }
+        final IColony colony = ColonyIdArgument.getColony(context, COLONYID_ARG);
 
         final ServerPlayer player = (ServerPlayer) sender;
         TeleportHelper.colonyTeleport(player, colony);

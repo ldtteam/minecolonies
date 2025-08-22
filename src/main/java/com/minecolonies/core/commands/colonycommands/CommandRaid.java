@@ -2,7 +2,6 @@ package com.minecolonies.core.commands.colonycommands;
 
 import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.colonyEvents.registry.ColonyEventTypeRegistryEntry;
 import com.minecolonies.api.colony.managers.interfaces.IRaiderManager;
 import com.minecolonies.api.util.Log;
@@ -65,14 +64,7 @@ public class CommandRaid implements IMCOPCommand
      */
     public int raidExecute(final CommandContext<CommandSourceStack> context, final String raidType)
     {
-        // Colony
-        final int colonyID = ColonyIdArgument.getColonyId(context, COLONYID_ARG);
-        final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, context.getSource().getLevel().dimension());
-        if (colony == null)
-        {
-            context.getSource().sendSuccess(() -> Component.translatable(CommandTranslationConstants.COMMAND_COLONY_ID_NOT_FOUND, colonyID), true);
-            return 0;
-        }
+        final IColony colony = ColonyIdArgument.getColony(context, COLONYID_ARG);
 
         final boolean allowShips = BoolArgumentType.getBool(context, SHIP_ARG);
         if (StringArgumentType.getString(context, RAID_TIME_ARG).equals(RAID_NOW))

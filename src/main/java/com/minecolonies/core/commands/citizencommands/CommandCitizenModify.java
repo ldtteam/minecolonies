@@ -119,14 +119,7 @@ public class CommandCitizenModify implements IMCColonyOfficerCommand
                 return 0;
             }
 
-            final int colonyID = ColonyIdArgument.getColonyId(context, COLONYID_ARG);
-            final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, context.getSource().getLevel().dimension());
-            if (colony == null)
-            {
-                context.getSource().sendSuccess(() -> Component.translatable(CommandTranslationConstants.COMMAND_COLONY_ID_NOT_FOUND, colonyID), true);
-                return 0;
-            }
-
+            final IColony colony = ColonyIdArgument.getColony(context, COLONYID_ARG);
             final ICitizenData citizenData = colony.getCitizenManager().getCivilian(IntegerArgumentType.getInteger(context, CITIZENID_ARG));
             if (citizenData == null)
             {

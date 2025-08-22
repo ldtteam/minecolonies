@@ -1,7 +1,6 @@
 package com.minecolonies.core.commands.colonycommands.requestsystem;
 
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.util.constant.translation.CommandTranslationConstants;
 import com.minecolonies.core.MineColonies;
 import com.minecolonies.core.commands.arguments.ColonyIdArgument;
@@ -23,14 +22,7 @@ public class CommandRSReset implements IMCCommand
     @Override
     public int onExecute(final CommandContext<CommandSourceStack> context)
     {
-        // Colony
-        final int colonyID = ColonyIdArgument.getColonyId(context, COLONYID_ARG);
-        final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, context.getSource().getLevel().dimension());
-        if (colony == null)
-        {
-            context.getSource().sendSuccess(() -> Component.translatable(CommandTranslationConstants.COMMAND_COLONY_ID_NOT_FOUND, colonyID), true);
-            return 0;
-        }
+        final IColony colony = ColonyIdArgument.getColony(context, COLONYID_ARG);
 
         if (!context.getSource().hasPermission(OP_PERM_LEVEL) && !MineColonies.getConfig().getServer().canPlayerUseResetCommand.get())
         {

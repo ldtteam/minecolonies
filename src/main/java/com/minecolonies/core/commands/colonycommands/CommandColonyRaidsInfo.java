@@ -1,7 +1,6 @@
 package com.minecolonies.core.commands.colonycommands;
 
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.core.MineColonies;
 import com.minecolonies.core.colony.events.raid.RaidManager;
 import com.minecolonies.core.commands.arguments.ColonyIdArgument;
@@ -14,7 +13,6 @@ import net.minecraft.network.chat.Component;
 
 import java.util.List;
 
-import static com.minecolonies.api.util.constant.translation.CommandTranslationConstants.COMMAND_COLONY_ID_NOT_FOUND;
 import static com.minecolonies.api.util.constant.translation.CommandTranslationConstants.COMMAND_DISABLED_IN_CONFIG;
 import static com.minecolonies.core.commands.CommandArgumentNames.COLONYID_ARG;
 
@@ -28,14 +26,7 @@ public class CommandColonyRaidsInfo implements IMCOPCommand
     @Override
     public int onExecute(final CommandContext<CommandSourceStack> context)
     {
-        // Colony
-        final int colonyID = ColonyIdArgument.getColonyId(context, COLONYID_ARG);
-        final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, context.getSource().getLevel().dimension());
-        if (colony == null)
-        {
-            context.getSource().sendSuccess(() -> Component.translatable(COMMAND_COLONY_ID_NOT_FOUND, colonyID), true);
-            return 0;
-        }
+        final IColony colony = ColonyIdArgument.getColony(context, COLONYID_ARG);
 
         if (!context.getSource().hasPermission(OP_PERM_LEVEL) && !MineColonies.getConfig().getServer().canPlayerUseShowColonyInfoCommand.get())
         {

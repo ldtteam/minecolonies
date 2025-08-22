@@ -2,7 +2,6 @@ package com.minecolonies.core.commands.citizencommands;
 
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.entity.ai.statemachine.AIOneTimeEventTarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IState;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
@@ -22,7 +21,6 @@ import net.minecraft.commands.arguments.coordinates.Vec3Argument;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.level.Level;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -49,17 +47,8 @@ public class CommandCitizenTriggerWalkTo implements IMCColonyOfficerCommand
     @Override
     public int onExecute(final CommandContext<CommandSourceStack> context)
     {
-
         final Entity sender = context.getSource().getEntity();
-        // Colony
-        final int colonyID = ColonyIdArgument.getColonyId(context, COLONYID_ARG);
-        final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, sender == null ? Level.OVERWORLD : context.getSource().getLevel().dimension());
-        if (colony == null)
-        {
-            context.getSource().sendSuccess(() -> Component.translatable(CommandTranslationConstants.COMMAND_COLONY_ID_NOT_FOUND, colonyID), true);
-            return 0;
-        }
-
+        final IColony colony = ColonyIdArgument.getColony(context, COLONYID_ARG);
         final ICitizenData citizenData = colony.getCitizenManager().getCivilian(IntegerArgumentType.getInteger(context, CITIZENID_ARG));
 
         if (citizenData == null)
