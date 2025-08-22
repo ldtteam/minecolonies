@@ -327,13 +327,22 @@ public final class ColonyManager implements IColonyManager
     @NotNull
     public List<IColony> getColonies(@NotNull final Level w)
     {
-        final IColonyManagerCapability cap = w.getCapability(COLONY_MANAGER_CAP, null).resolve().orElse(null);
-        if (cap == null)
+        if (w.isClientSide())
         {
-            Log.getLogger().warn(MISSING_WORLD_CAP_MESSAGE);
-            return Collections.emptyList();
+            // this might be a subset of colonies since it's only those known to the player right now
+            final ColonyList<IColonyView> colonies = colonyViews.get(w.dimension());
+            return colonies == null ? List.of() : new ArrayList<>(colonies.getCopyAsList());
         }
-        return cap.getColonies();
+        else
+        {
+            final IColonyManagerCapability cap = w.getCapability(COLONY_MANAGER_CAP, null).resolve().orElse(null);
+            if (cap == null)
+            {
+                Log.getLogger().warn(MISSING_WORLD_CAP_MESSAGE);
+                return Collections.emptyList();
+            }
+            return cap.getColonies();
+        }
     }
 
     @Override
