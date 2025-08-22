@@ -4,13 +4,13 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.util.constant.translation.CommandTranslationConstants;
 import com.minecolonies.core.MineColonies;
+import com.minecolonies.core.commands.arguments.ColonyIdArgument;
 import com.minecolonies.core.commands.commandTypes.IMCColonyOfficerCommand;
 import com.minecolonies.core.commands.commandTypes.IMCCommand;
 import com.minecolonies.core.util.BackUpHelper;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.arguments.ArgumentType;
 import com.mojang.brigadier.arguments.BoolArgumentType;
-import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
@@ -52,7 +52,7 @@ public class CommandDeleteColony implements IMCColonyOfficerCommand
     public LiteralArgumentBuilder<CommandSourceStack> build()
     {
         return IMCCommand.newLiteral(getName())
-                 .then(IMCCommand.newArgument(COLONYID_ARG, IntegerArgumentType.integer(1))
+                 .then(IMCCommand.newArgument(COLONYID_ARG, ColonyIdArgument.id())
                          .executes(this::executeGuidedBuildingAsk)
                          .then(IMCCommand.newArgument(DELETE_BUILDINGS_ARG, DeleteBuildingsArgumentType.argument())
                                  .executes(this::executeGuidedConfirm)
@@ -160,7 +160,7 @@ public class CommandDeleteColony implements IMCColonyOfficerCommand
     public int onExecute(final CommandContext<CommandSourceStack> context)
     {
         // Colony
-        final int colonyID = IntegerArgumentType.getInteger(context, COLONYID_ARG);
+        final int colonyID = ColonyIdArgument.getColonyId(context, COLONYID_ARG);
         final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, context.getSource().getLevel().dimension());
         if (colony == null)
         {

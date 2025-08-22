@@ -7,6 +7,7 @@ import com.minecolonies.api.entity.ai.statemachine.AIOneTimeEventTarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IState;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.constant.translation.CommandTranslationConstants;
+import com.minecolonies.core.commands.arguments.ColonyIdArgument;
 import com.minecolonies.core.commands.commandTypes.IMCColonyOfficerCommand;
 import com.minecolonies.core.commands.commandTypes.IMCCommand;
 import com.minecolonies.core.entity.citizen.EntityCitizen;
@@ -51,7 +52,7 @@ public class CommandCitizenTriggerWalkTo implements IMCColonyOfficerCommand
 
         final Entity sender = context.getSource().getEntity();
         // Colony
-        final int colonyID = IntegerArgumentType.getInteger(context, COLONYID_ARG);
+        final int colonyID = ColonyIdArgument.getColonyId(context, COLONYID_ARG);
         final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, sender == null ? Level.OVERWORLD : context.getSource().getLevel().dimension());
         if (colony == null)
         {
@@ -134,7 +135,7 @@ public class CommandCitizenTriggerWalkTo implements IMCColonyOfficerCommand
     {
         return IMCCommand.newLiteral(getName())
             .then(IMCCommand.newLiteral("stop").executes(this::stop))
-            .then(IMCCommand.newArgument(COLONYID_ARG, IntegerArgumentType.integer(1))
+            .then(IMCCommand.newArgument(COLONYID_ARG, ColonyIdArgument.id())
                 .then(IMCCommand.newArgument(CITIZENID_ARG, IntegerArgumentType.integer(1))
                     .then(IMCCommand.newArgument(POS_ARG, Vec3Argument.vec3())
                         .executes(this::checkPreConditionAndExecute))));

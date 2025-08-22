@@ -3,7 +3,7 @@ package com.minecolonies.core.commands.commandTypes;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.util.MessageUtils;
-import com.mojang.brigadier.arguments.IntegerArgumentType;
+import com.minecolonies.core.commands.arguments.ColonyIdArgument;
 import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.world.entity.Entity;
@@ -36,7 +36,7 @@ public interface IMCColonyOfficerCommand extends IMCCommand
         }
 
         // Colony
-        final int colonyID = IntegerArgumentType.getInteger(context, COLONYID_ARG);
+        final int colonyID = ColonyIdArgument.getColonyId(context, COLONYID_ARG);
         final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, context.getSource().getLevel().dimension());
         if (colony == null)
         {
