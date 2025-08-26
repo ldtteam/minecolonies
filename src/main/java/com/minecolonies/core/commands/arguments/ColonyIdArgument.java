@@ -186,7 +186,7 @@ public class ColonyIdArgument implements ArgumentType<ColonyIdArgument.Result>
     {
         if (context.getSource() instanceof final CommandSourceStack source)
         {
-            for (final IColony colony : IColonyManager.getInstance().getColonies(source.getLevel()))
+            for (final IColony colony : IColonyManager.getInstance().getIColonies(source.getLevel()))
             {
                 suggestions.add(String.valueOf(colony.getID()));
             }
@@ -204,7 +204,7 @@ public class ColonyIdArgument implements ArgumentType<ColonyIdArgument.Result>
         {
             if (source instanceof ClientSuggestionProvider)
             {
-                for (final IColony colony : IColonyManager.getInstance().getColonies(Minecraft.getInstance().level))
+                for (final IColony colony : IColonyManager.getInstance().getIColonies(Minecraft.getInstance().level))
                 {
                     suggestions.add(String.valueOf(colony.getID()));
                 }

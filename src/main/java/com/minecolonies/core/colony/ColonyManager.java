@@ -327,22 +327,13 @@ public final class ColonyManager implements IColonyManager
     @NotNull
     public List<IColony> getColonies(@NotNull final Level w)
     {
-        if (w.isClientSide())
+        final IColonyManagerCapability cap = w.getCapability(COLONY_MANAGER_CAP, null).resolve().orElse(null);
+        if (cap == null)
         {
-            // this might be a subset of colonies since it's only those known to the player right now
-            final ColonyList<IColonyView> colonies = colonyViews.get(w.dimension());
-            return colonies == null ? List.of() : new ArrayList<>(colonies.getCopyAsList());
+            Log.getLogger().warn(MISSING_WORLD_CAP_MESSAGE);
+            return Collections.emptyList();
         }
-        else
-        {
-            final IColonyManagerCapability cap = w.getCapability(COLONY_MANAGER_CAP, null).resolve().orElse(null);
-            if (cap == null)
-            {
-                Log.getLogger().warn(MISSING_WORLD_CAP_MESSAGE);
-                return Collections.emptyList();
-            }
-            return cap.getColonies();
-        }
+        return cap.getColonies();
     }
 
     @Override
@@ -393,6 +384,13 @@ public final class ColonyManager implements IColonyManager
     }
 
     @Override
+    @NotNull
+    public List<IColony> getIColonies(@NotNull final Level w)
+    {
+        return w.isClientSide() ? new ArrayList<>(getColonyViews(w)) : getColonies(w);
+    }
+
+    @Override
     @Nullable
     public IColony getIColony(@NotNull final Level w, @NotNull final BlockPos pos)
     {
@@ -403,6 +401,15 @@ public final class ColonyManager implements IColonyManager
     public void openReactivationWindow(final BlockPos pos)
     {
         new WindowReactivateBuilding(pos).open();
+    }
+
+    @Override
+    @NotNull
+    public List<IColonyView> getColonyViews(@NotNull final Level w)
+    {
+        // this might be a subset of colonies since it's only those known to the player right now
+        final ColonyList<IColonyView> colonies = colonyViews.get(w.dimension());
+        return colonies == null ? List.of() : new ArrayList<>(colonies.getCopyAsList());
     }
 
     /**
