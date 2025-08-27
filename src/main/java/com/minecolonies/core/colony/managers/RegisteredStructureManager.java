@@ -2,6 +2,7 @@ package com.minecolonies.core.colony.managers;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.*;
@@ -11,6 +12,8 @@ import com.minecolonies.api.colony.buildings.workerbuildings.IWareHouse;
 import com.minecolonies.api.colony.buildingextensions.IBuildingExtension;
 import com.minecolonies.api.colony.managers.interfaces.IRegisteredStructureManager;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.eventbus.events.colony.buildings.BuildingAddedModEvent;
+import com.minecolonies.api.eventbus.events.colony.buildings.BuildingRemovedModEvent;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.util.*;
 import com.minecolonies.core.MineColonies;
@@ -606,6 +609,9 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
 
             colony.getCitizenManager().calculateMaxCitizens();
             colony.getPackageManager().updateSubscribers();
+
+            IMinecoloniesAPI.getInstance().getEventBus().post(new BuildingAddedModEvent(building));
+
             return building;
         }
         return null;
@@ -659,6 +665,8 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
         colony.getRequestManager().onRequesterRemovedFromColony(building.getRequester());
 
         colony.getCitizenManager().calculateMaxCitizens();
+
+        IMinecoloniesAPI.getInstance().getEventBus().post(new BuildingRemovedModEvent(building));
     }
 
     @Override
