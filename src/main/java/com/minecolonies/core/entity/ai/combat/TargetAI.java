@@ -70,7 +70,7 @@ public class TargetAI<T extends Mob & IThreatTableEntity> implements IStateAI
             if (target != nextTarget.getEntity())
             {
                 target = nextTarget.getEntity();
-                onTargetChange();
+                onTargetChange(target);
             }
 
             return true;
@@ -255,8 +255,9 @@ public class TargetAI<T extends Mob & IThreatTableEntity> implements IStateAI
     /**
      * Actions on changing to a new target entity
      */
-    protected void onTargetChange()
+    protected void onTargetChange(final LivingEntity newTarget)
     {
-
+        // Fill vanilla target info in, though we disregard the result
+        user.setTarget(newTarget);
     }
 }
