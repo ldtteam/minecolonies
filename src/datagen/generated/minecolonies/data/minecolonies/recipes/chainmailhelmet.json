@@ -2,16 +2,16 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "I": {
-      "item": "minecraft:iron_ingot"
+    "C": {
+      "item": "minecraft:chain"
     },
     "N": {
       "item": "minecraft:iron_nugget"
     }
   },
   "pattern": [
-    "NNN",
-    "NIN"
+    "NCN",
+    "N N"
   ],
   "result": {
     "item": "minecraft:chainmail_helmet"
