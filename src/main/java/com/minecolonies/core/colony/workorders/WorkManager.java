@@ -411,7 +411,7 @@ public class WorkManager implements IWorkManager
      * @param order the workorder to assign.
      * @param predicate checks to execute before assignment.
      */
-    private void tryAssignWorkOrder(final IServerWorkOrder order, @Nullable Predicate<IBuilding> predicate)
+    private void tryAssignWorkOrder(final IServerWorkOrder order, @NotNull Predicate<IBuilding> predicate)
     {
         for (IBuilding building : colony.getBuildingManager().getBuildings().values())
         {
