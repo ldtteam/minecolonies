@@ -324,7 +324,7 @@ public interface IBuilding extends IBuildingContainer, IModuleContainer<IBuildin
      * @param data the citizen data (or null).
      * @return a collection of request.
      */
-    Collection<IRequest<?>> getCompletedRequestsOrCitizenOrBuilding(@Nullable ICitizenData data);
+    Collection<IRequest<?>> getCompletedRequestsOfCitizenOrBuilding(@Nullable ICitizenData data);
 
     @SuppressWarnings(GENERIC_WILDCARD)
     <R> ImmutableList<IRequest<? extends R>> getCompletedRequestsOfType(@NotNull ICitizenData citizenData, TypeToken<R> requestType);
