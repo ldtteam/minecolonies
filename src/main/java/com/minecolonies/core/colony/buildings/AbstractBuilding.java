@@ -1579,7 +1579,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     }
 
     @Override
-    public Collection<IRequest<?>> getCompletedRequestsOrCitizenOrBuilding(@Nullable final ICitizenData data)
+    public Collection<IRequest<?>> getCompletedRequestsOfCitizenOrBuilding(@Nullable final ICitizenData data)
     {
         final int citizenId = data == null ? -1 : data.getId();
         final Collection<IToken<?>> tokens = getCompletedRequestsByCitizen().get(citizenId);
@@ -1614,7 +1614,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     @SuppressWarnings({GENERIC_WILDCARD, UNCHECKED})
     public <R> ImmutableList<IRequest<? extends R>> getCompletedRequestsOfType(@NotNull final ICitizenData citizenData, final TypeToken<R> requestType)
     {
-        return ImmutableList.copyOf(getCompletedRequestsOrCitizenOrBuilding(citizenData).stream()
+        return ImmutableList.copyOf(getCompletedRequestsOfCitizenOrBuilding(citizenData).stream()
           .filter(request -> request.getType().isSubtypeOf(requestType))
           .map(request -> (IRequest<? extends R>) request)
           .iterator());
@@ -1627,7 +1627,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
       final TypeToken<R> requestType,
       final Predicate<IRequest<? extends R>> filter)
     {
-        return ImmutableList.copyOf(getCompletedRequestsOrCitizenOrBuilding(citizenData).stream()
+        return ImmutableList.copyOf(getCompletedRequestsOfCitizenOrBuilding(citizenData).stream()
           .filter(request -> request.getType().isSubtypeOf(requestType))
           .map(request -> (IRequest<? extends R>) request)
           .filter(filter)
@@ -1679,7 +1679,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
             }
         });
 
-        getCompletedRequestsOrCitizenOrBuilding(data).forEach(request -> colony.getRequestManager().updateRequestState(request.getId(), RequestState.RECEIVED));
+        getCompletedRequestsOfCitizenOrBuilding(data).forEach(request -> colony.getRequestManager().updateRequestState(request.getId(), RequestState.RECEIVED));
 
         getOpenRequestsByCitizen().remove(citizenId);
 
@@ -2111,7 +2111,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     public List<IRequest<?>> getCompletedRequestsOfCitizenOrBuilding(@Nullable final ICitizenData citizenData, final Predicate<IRequest<?>> selectionPredicate)
     {
         final List<IRequest<?>> requests = new ArrayList<>();
-        for (final IRequest<?> req : getCompletedRequestsOrCitizenOrBuilding(citizenData))
+        for (final IRequest<?> req : getCompletedRequestsOfCitizenOrBuilding(citizenData))
         {
             if (selectionPredicate.test(req))
             {
@@ -2119,7 +2119,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
             }
         }
 
-        for (final IRequest<?> req : getCompletedRequestsOrCitizenOrBuilding(citizenData))
+        for (final IRequest<?> req : getCompletedRequestsOfCitizenOrBuilding(citizenData))
         {
             if (selectionPredicate.test(req))
             {
