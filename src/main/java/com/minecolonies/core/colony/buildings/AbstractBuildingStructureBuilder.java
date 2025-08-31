@@ -446,10 +446,10 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuilding
             if (citizen.getJob() instanceof AbstractJobStructure<?,?> abstractJobStructure)
             {
                 abstractJobStructure.setWorkOrder(null);
-                this.cancelAllRequestsOfCitizen(citizen);
+                this.cancelAllRequestsOfCitizenOrBuilding(citizen);
             }
         }
         this.setProgressPos(null, BuildingProgressStage.CLEAR);
-        this.cancelAllRequestsOfCitizen(null);
+        this.cancelAllRequestsOfCitizenOrBuilding(null);
     }
 }

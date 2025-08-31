@@ -490,16 +490,16 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
             }
             job.setWorkOrder(null);
             resetCurrentStructure();
-            building.cancelAllRequestsOfCitizen(worker.getCitizenData());
-            building.cancelAllRequestsOfCitizen(null);
+            building.cancelAllRequestsOfCitizenOrBuilding(worker.getCitizenData());
+            building.cancelAllRequestsOfCitizenOrBuilding(null);
             building.setProgressPos(null, BuildingProgressStage.CLEAR);
             return true;
         }
         if (structurePlacer != null && structurePlacer.getB() != null && !job.getWorkOrder().getLocation().equals(structurePlacer.getB().getWorldPos()))
         {
             resetCurrentStructure();
-            building.cancelAllRequestsOfCitizen(worker.getCitizenData());
-            building.cancelAllRequestsOfCitizen(null);
+            building.cancelAllRequestsOfCitizenOrBuilding(worker.getCitizenData());
+            building.cancelAllRequestsOfCitizenOrBuilding(null);
             building.setProgressPos(null, BuildingProgressStage.CLEAR);
         }
         return job.getWorkOrder() != null && (!WorldUtil.isBlockLoaded(world, job.getWorkOrder().getLocation())) && getState() != PICK_UP_RESIDUALS;

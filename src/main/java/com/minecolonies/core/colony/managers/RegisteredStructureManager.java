@@ -665,7 +665,7 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
         for (@NotNull final ICitizenData citizen : colony.getCitizenManager().getCitizens())
         {
             citizen.onRemoveBuilding(building);
-            building.cancelAllRequestsOfCitizen(citizen);
+            building.cancelAllRequestsOfCitizenOrBuilding(citizen);
         }
 
         colony.getRequestManager().onProviderRemovedFromColony(building);
