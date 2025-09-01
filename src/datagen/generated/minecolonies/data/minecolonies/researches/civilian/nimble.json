@@ -2,7 +2,7 @@
   "branch": "minecolonies:civilian",
   "costs": [
     {
-      "count": 1,
+      "count": 4,
       "item": "minecraft:rabbit_foot"
     }
   ],
