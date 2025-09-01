@@ -15,9 +15,9 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Map;
+import java.util.Set;
 
 import static com.minecolonies.api.research.requirements.BuildingResearchRequirement.parseFallbackBuildingKey;
 
@@ -54,7 +54,12 @@ public class BuildingAlternatesResearchRequirement implements IResearchRequireme
     /**
      * The list of buildings, by level.
      */
-    private final Map<ResourceLocation, Integer> buildings;
+    private final Set<ResourceLocation> buildings;
+
+    /**
+     * The building level.
+     */
+    private final int buildingLevel;
 
     /**
      * Create an alternate building research requirement.
@@ -63,12 +68,13 @@ public class BuildingAlternatesResearchRequirement implements IResearchRequireme
      */
     public BuildingAlternatesResearchRequirement(final CompoundTag nbt)
     {
-        buildings = new HashMap<>();
+        buildings = new HashSet<>();
+        buildingLevel = nbt.getInt(TAG_BUILDING_LVL);
         final ListTag buildingsNBT = nbt.getList(TAG_BUILDINGS_LIST, Constants.TAG_COMPOUND);
         for (int i = 0; i < buildingsNBT.size(); i++)
         {
-            CompoundTag indNBT = buildingsNBT.getCompound(i);
-            buildings.put(parseFallbackBuildingKey(indNBT.getString(TAG_BUILDING_NAME)), indNBT.getInt(TAG_BUILDING_LVL));
+            final CompoundTag buildingNBT = buildingsNBT.getCompound(i);
+            buildings.add(parseFallbackBuildingKey(buildingNBT.getString(TAG_BUILDING_NAME)));
         }
     }
 
@@ -79,23 +85,31 @@ public class BuildingAlternatesResearchRequirement implements IResearchRequireme
      */
     public BuildingAlternatesResearchRequirement(final JsonObject json)
     {
-        buildings = new HashMap<>();
+        buildings = new HashSet<>();
+        buildingLevel = GsonHelper.getAsInt(json, RESEARCH_REQUIREMENT_BUILDING_LEVEL_PROP);
         for (final JsonElement element : GsonHelper.getAsJsonArray(json, RESEARCH_REQUIREMENT_ALTERNATE_BUILDINGS_PROP))
         {
             final String arrBuilding = element.getAsString();
-            final int arrLevel = GsonHelper.getAsInt(json, RESEARCH_REQUIREMENT_BUILDING_LEVEL_PROP);
-            buildings.merge(parseFallbackBuildingKey(arrBuilding), arrLevel, Integer::sum);
+            buildings.add(parseFallbackBuildingKey(arrBuilding));
         }
     }
 
     /**
-     * Get the Map of required building types and their levels.  Only one must be met to unlock the research.
+     * Get the set of required buildings. Only one must be met to unlock the research.
      *
      * @return the building description
      */
-    public Map<ResourceLocation, Integer> getBuildings()
+    public Set<ResourceLocation> getBuildings()
     {
         return buildings;
+    }
+
+    /**
+     * @return the building level
+     */
+    public int getBuildingLevel()
+    {
+        return buildingLevel;
     }
 
     @Override
@@ -108,17 +122,15 @@ public class BuildingAlternatesResearchRequirement implements IResearchRequireme
     public MutableComponent getDesc()
     {
         final MutableComponent requirementList = Component.literal("");
-        final Iterator<Map.Entry<ResourceLocation, Integer>> iterator = buildings.entrySet().iterator();
+        final Iterator<ResourceLocation> iterator = buildings.iterator();
         while (iterator.hasNext())
         {
-            final Map.Entry<ResourceLocation, Integer> kvp = iterator.next();
-            final ResourceLocation building = kvp.getKey();
-            final int buildingLevel = kvp.getValue();
+            final ResourceLocation building = iterator.next();
 
             final BuildingEntry buildingEntry = IBuildingRegistry.getInstance().getValue(building);
             final MutableComponent buildingName = buildingEntry != null ? Component.translatable(buildingEntry.getTranslationKey()) : Component.empty();
 
-            requirementList.append(Component.translatable("com.minecolonies.coremod.research.requirement.building.mandatory.level", buildingName, buildingLevel));
+            requirementList.append(Component.translatable("com.minecolonies.coremod.research.requirement.building.level", buildingName, buildingLevel));
 
             if (iterator.hasNext())
             {
@@ -131,9 +143,9 @@ public class BuildingAlternatesResearchRequirement implements IResearchRequireme
     @Override
     public boolean isFulfilled(final IColony colony)
     {
-        for (final Map.Entry<ResourceLocation, Integer> requirement : buildings.entrySet())
+        for (final ResourceLocation requirement : buildings)
         {
-            if (colony.hasBuilding(requirement.getKey(), requirement.getValue(), false))
+            if (colony.hasBuilding(requirement, buildingLevel, false))
             {
                 return true;
             }
@@ -145,12 +157,12 @@ public class BuildingAlternatesResearchRequirement implements IResearchRequireme
     public CompoundTag writeToNBT()
     {
         final CompoundTag nbt = new CompoundTag();
+        nbt.putInt(TAG_BUILDING_LVL, buildingLevel);
         final ListTag buildingsNBT = new ListTag();
-        for (Map.Entry<ResourceLocation, Integer> build : buildings.entrySet())
+        for (final ResourceLocation building : buildings)
         {
             CompoundTag indNBT = new CompoundTag();
-            indNBT.putString(TAG_BUILDING_NAME, build.getKey().toString());
-            indNBT.putInt(TAG_BUILDING_LVL, build.getValue());
+            indNBT.putString(TAG_BUILDING_NAME, building.toString());
             buildingsNBT.add(indNBT);
         }
         nbt.put(TAG_BUILDINGS_LIST, buildingsNBT);

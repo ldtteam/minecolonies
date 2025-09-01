@@ -437,23 +437,21 @@ public abstract class AbstractResearchProvider implements DataProvider
          * Only one of all added Alternate Buildings is required.  AlternateBuildingRequirements do not bypass normal BuildingRequirements.
          *
          * @param buildingNames The list required building.
-         * @param levels        The list of levels across the colony.
+         * @param level         The level across the colony.
          * @return this
          */
-        public Research addAlternateBuildingRequirement(final List<ResourceLocation> buildingNames, final List<Integer> levels)
+        public Research addAlternateBuildingRequirement(final List<ResourceLocation> buildingNames, final Integer level)
         {
             final JsonArray reqArray = getRequirementsArray();
             final JsonObject req = new JsonObject();
             req.addProperty("type", new ResourceLocation(Constants.MOD_ID, "alternate-building").toString());
             final JsonArray buildingsArray = new JsonArray();
-            for (int i = 0; i < buildingNames.size(); i++)
+            for (final ResourceLocation buildingName : buildingNames)
             {
-                final JsonObject building = new JsonObject();
-                building.addProperty("building", buildingNames.get(i).toString());
-                building.addProperty("level", levels.get(i));
-                buildingsArray.add(building);
+                buildingsArray.add(buildingName.toString());
             }
             req.add("alternate-buildings", buildingsArray);
+            req.addProperty("level", level);
             reqArray.add(req);
             this.json.add("requirements", reqArray);
             return this;

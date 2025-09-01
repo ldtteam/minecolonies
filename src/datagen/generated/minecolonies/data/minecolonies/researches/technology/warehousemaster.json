@@ -18,7 +18,15 @@
   "requirements": [
     {
       "type": "minecolonies:building",
-      "building": "minecolonies:sawmill",
+      "building": "minecolonies:warehouse",
+      "level": 3
+    },
+    {
+      "type": "minecolonies:alternate-building",
+      "alternate-buildings": [
+        "minecolonies:sawmill",
+        "minecolonies:stonemason"
+      ],
       "level": 3
     }
   ],

@@ -17,8 +17,11 @@
   "parentResearch": "minecolonies:technology/bonemeal",
   "requirements": [
     {
-      "type": "minecolonies:building",
-      "building": "minecolonies:miner",
+      "type": "minecolonies:alternate-building",
+      "alternate-buildings": [
+        "minecolonies:farmer",
+        "minecolonies:composter"
+      ],
       "level": 4
     }
   ],

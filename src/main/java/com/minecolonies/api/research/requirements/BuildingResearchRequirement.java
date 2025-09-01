@@ -45,14 +45,14 @@ public class BuildingResearchRequirement implements IResearchRequirement
     private static final String RESEARCH_REQUIREMENT_BUILDING_LEVEL_PROP = "level";
 
     /**
-     * The building level.
-     */
-    private final int buildingLevel;
-
-    /**
      * The building desc.
      */
     private final ResourceLocation building;
+
+    /**
+     * The building level.
+     */
+    private final int buildingLevel;
 
     /**
      * Whether to look between several or a single building.
