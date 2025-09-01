@@ -406,7 +406,7 @@ public abstract class AbstractResearchProvider implements DataProvider
         }
 
         /**
-         * Adds a mandatory building research requirement.  The colony must have one building at this specific level or greater.
+         * Adds a single building research requirement.  The colony must have one building at this specific level or greater.
          * (ie, guardtower 3 is fulfilled by one level-3 to level-5 guard tower, but no number of lower-level guard towers.)
          * This does not test whether the result is possible (eg, tavern-4 will not throw an exception, but can never be achieved in-game)
          * See ModBuildings for a list of supported buildings.  Whenever possible, use the public static String BUILDINGNAME_ID constants from ModBuildings.
@@ -416,11 +416,11 @@ public abstract class AbstractResearchProvider implements DataProvider
          * @param level        The required sum of levels across the colony.
          * @return this
          */
-        public Research addMandatoryBuildingRequirement(final ResourceLocation buildingName, final int level)
+        public Research addSingleBuildingRequirement(final ResourceLocation buildingName, final int level)
         {
             final JsonArray reqArray = getRequirementsArray();
             final JsonObject req = new JsonObject();
-            req.addProperty("type", new ResourceLocation(Constants.MOD_ID, "mandatory-building").toString());
+            req.addProperty("type", new ResourceLocation(Constants.MOD_ID, "single-building").toString());
             req.addProperty("building", buildingName.toString());
             req.addProperty("level", level);
             reqArray.add(req);

@@ -22,7 +22,7 @@ public class ModResearchRequirementInitializer
     {
         buildingResearchRequirement = create(BUILDING_RESEARCH_REQ_ID, BuildingResearchRequirement::new, BuildingResearchRequirement::new);
         buildingAlternatesResearchRequirement = create(BUILDING_ALTERNATES_RESEARCH_REQ_ID, BuildingAlternatesResearchRequirement::new, BuildingAlternatesResearchRequirement::new);
-        buildingMandatoryResearchRequirement = create(BUILDING_MANDATORY_RESEARCH_REQ_ID, BuildingResearchRequirement::new, BuildingResearchRequirement::new);
+        buildingSingleResearchRequirement = create(BUILDING_SINGLE_RESEARCH_REQ_ID, BuildingResearchRequirement::new, BuildingResearchRequirement::new);
 
         researchResearchRequirement = create(RESEARCH_RESEARCH_REQ_ID, ResearchResearchRequirement::new, ResearchResearchRequirement::new);
     }

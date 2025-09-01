@@ -15,7 +15,7 @@ import net.minecraft.resources.ResourceLocation;
 
 import java.util.Objects;
 
-import static com.minecolonies.api.research.ModResearchRequirements.BUILDING_MANDATORY_RESEARCH_REQ_ID;
+import static com.minecolonies.api.research.ModResearchRequirements.BUILDING_SINGLE_RESEARCH_REQ_ID;
 import static com.minecolonies.api.research.util.ResearchConstants.TAG_REQ_TYPE;
 import static com.minecolonies.core.datalistener.ResearchListener.RESEARCH_REQUIREMENT_TYPE_PROP;
 
@@ -68,7 +68,7 @@ public class BuildingResearchRequirement implements IResearchRequirement
     {
         building = parseFallbackBuildingKey(nbt.getString(TAG_BUILDING_NAME));
         buildingLevel = nbt.getInt(TAG_BUILDING_LVL);
-        singleBuilding = nbt.getString(TAG_REQ_TYPE).equals(BUILDING_MANDATORY_RESEARCH_REQ_ID.toString());
+        singleBuilding = nbt.getString(TAG_REQ_TYPE).equals(BUILDING_SINGLE_RESEARCH_REQ_ID.toString());
     }
 
     /**
@@ -95,7 +95,7 @@ public class BuildingResearchRequirement implements IResearchRequirement
         // TODO: 1.22: Change to GsonHelper.getAsResourceLocation(json, RESEARCH_REQUIREMENT_BUILDING_PROP);
         building = parseFallbackBuildingKey(GsonHelper.getAsString(json, RESEARCH_REQUIREMENT_BUILDING_PROP));
         buildingLevel = GsonHelper.getAsInt(json, RESEARCH_REQUIREMENT_BUILDING_LEVEL_PROP);
-        singleBuilding = GsonHelper.getAsResourceLocation(json, RESEARCH_REQUIREMENT_TYPE_PROP).equals(BUILDING_MANDATORY_RESEARCH_REQ_ID);
+        singleBuilding = GsonHelper.getAsResourceLocation(json, RESEARCH_REQUIREMENT_TYPE_PROP).equals(BUILDING_SINGLE_RESEARCH_REQ_ID);
     }
 
     /**
@@ -128,7 +128,7 @@ public class BuildingResearchRequirement implements IResearchRequirement
 
         if (singleBuilding)
         {
-            return Component.translatable("com.minecolonies.coremod.research.requirement.building.mandatory.level", buildingName, buildingLevel);
+            return Component.translatable("com.minecolonies.coremod.research.requirement.building.single.level", buildingName, buildingLevel);
         }
         else
         {
