@@ -17,7 +17,7 @@
   "parentResearch": "minecolonies:combat/ironarmor",
   "requirements": [
     {
-      "type": "minecolonies:mandatory-building",
+      "type": "minecolonies:single-building",
       "building": "minecolonies:blacksmith",
       "level": 4
     }

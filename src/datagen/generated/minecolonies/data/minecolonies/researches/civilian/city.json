@@ -17,7 +17,7 @@
   "parentResearch": "minecolonies:civilian/village",
   "requirements": [
     {
-      "type": "minecolonies:mandatory-building",
+      "type": "minecolonies:single-building",
       "building": "minecolonies:townhall",
       "level": 5
     }
