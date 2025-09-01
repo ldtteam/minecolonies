@@ -1303,12 +1303,12 @@ public class Colony implements IColony
     }
 
     @Override
-    public boolean hasBuilding(final String name, final int level, boolean singleBuilding)
+    public boolean hasBuilding(final ResourceLocation name, final int level, boolean singleBuilding)
     {
         int sum = 0;
         for (final IBuilding building : this.getBuildingManager().getBuildings().values())
         {
-            if (building.getBuildingType().getRegistryName().getPath().equalsIgnoreCase(name))
+            if (building.getBuildingType().getRegistryName().equals(name))
             {
                 if (singleBuilding)
                 {

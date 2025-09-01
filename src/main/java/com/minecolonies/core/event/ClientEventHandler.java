@@ -230,7 +230,7 @@ public class ClientEventHandler
             final Integer minimumLevel = crafterBuildingCombination.getValue();
             if (minimumLevel > 0)
             {
-                final String schematicName = crafterBuildingCombination.getKey().getRegistryName().getPath();
+                final ResourceLocation schematicName = crafterBuildingCombination.getKey().getRegistryName();
                 // the above is not guaranteed to match (and indeed doesn't for a few buildings), but
                 // does match for all currently interesting crafters, at least.  there doesn't otherwise
                 // appear to be an easy way to get the schematic name from a BuildingEntry ... or

@@ -16,7 +16,7 @@
   "icon": "minecolonies:textures/icons/research/hp1.png",
   "requirements": [
     {
-      "type": "minecolonies:building",
+      "type": "minecolonies:mandatory-building",
       "building": "minecolonies:townhall",
       "level": 1
     }

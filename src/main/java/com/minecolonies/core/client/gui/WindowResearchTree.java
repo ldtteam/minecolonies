@@ -9,6 +9,8 @@ import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.research.*;
+import com.minecolonies.api.research.IResearchCost;
+import com.minecolonies.api.research.IResearchEffect;
 import com.minecolonies.api.research.util.ResearchState;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
@@ -19,7 +21,6 @@ import com.minecolonies.core.client.gui.blockui.RotatingItemIcon;
 import com.minecolonies.core.client.gui.modules.UniversityModuleWindow;
 import com.minecolonies.core.network.messages.server.colony.building.university.TryResearchMessage;
 import com.minecolonies.api.research.requirements.BuildingAlternatesResearchRequirement;
-import com.minecolonies.api.research.requirements.BuildingMandatoryResearchRequirement;
 import com.minecolonies.api.research.requirements.BuildingResearchRequirement;
 import com.minecolonies.core.research.GlobalResearchEffect;
 import net.minecraft.client.Minecraft;
@@ -837,7 +838,6 @@ public class WindowResearchTree extends AbstractWindowSkeleton
       final IGlobalResearch research,
       final ResearchButtonState state)
     {
-
         if (state == ResearchButtonState.ABANDONED || state == ResearchButtonState.IN_PROGRESS || state == ResearchButtonState.FINISHED)
         {
             return;
@@ -845,7 +845,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
         int storageXOffset = ICON_WIDTH;
 
         final List<BuildingAlternatesResearchRequirement> alternateBuildingRequirements = new ArrayList<>();
-        final List<IBuildingResearchRequirement> buildingRequirements = new ArrayList<>();
+        final List<BuildingResearchRequirement> buildingRequirements = new ArrayList<>();
         final List<IResearchCost> itemRequirements = research.getCostList();
 
         research.getResearchRequirements().forEach(requirement -> {
@@ -858,29 +858,16 @@ public class WindowResearchTree extends AbstractWindowSkeleton
             {
                 buildingRequirements.add(buildingRequirement);
             }
-            else if (requirement instanceof BuildingMandatoryResearchRequirement mandatoryRequirement)
-            {
-                buildingRequirements.add(mandatoryRequirement);
-            }
         });
 
         for (final BuildingAlternatesResearchRequirement requirement : alternateBuildingRequirements)
         {
-            for (Map.Entry<String, Integer> building : requirement.getBuildings().entrySet())
+            for (Map.Entry<ResourceLocation, Integer> building : requirement.getBuildings().entrySet())
             {
                 final Item item;
-
-                ResourceLocation buildingResourceLocation = ResourceLocation.tryParse(building.getKey());
-
-                // Try to maintain backwards compatibility with non-namespaced research entries.
-                if (buildingResourceLocation == null)
+                if (IMinecoloniesAPI.getInstance().getBuildingRegistry().containsKey(building.getKey()))
                 {
-                    buildingResourceLocation = new ResourceLocation(Constants.MOD_ID, building.getKey());
-                }
-
-                if (IMinecoloniesAPI.getInstance().getBuildingRegistry().containsKey(buildingResourceLocation))
-                {
-                    item = IMinecoloniesAPI.getInstance().getBuildingRegistry().getValue(buildingResourceLocation).getBuildingBlock().asItem();
+                    item = IMinecoloniesAPI.getInstance().getBuildingRegistry().getValue(building.getKey()).getBuildingBlock().asItem();
                 }
                 else
                 {
@@ -917,10 +904,9 @@ public class WindowResearchTree extends AbstractWindowSkeleton
             storageXOffset += ICON_X_OFFSET;
         }
 
-        for (final IBuildingResearchRequirement requirement : buildingRequirements)
+        for (final BuildingResearchRequirement requirement : buildingRequirements)
         {
             final Item item;
-
             if (IMinecoloniesAPI.getInstance().getBuildingRegistry().containsKey(requirement.getBuilding()))
             {
                 item = IMinecoloniesAPI.getInstance().getBuildingRegistry().getValue(requirement.getBuilding()).getBuildingBlock().asItem();

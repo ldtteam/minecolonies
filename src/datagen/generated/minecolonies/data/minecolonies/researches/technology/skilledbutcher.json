@@ -28,12 +28,12 @@
   "requirements": [
     {
       "type": "minecolonies:building",
-      "building": "enchanter",
+      "building": "minecolonies:enchanter",
       "level": 2
     },
     {
       "type": "minecolonies:building",
-      "building": "blacksmith",
+      "building": "minecolonies:blacksmith",
       "level": 2
     }
   ],

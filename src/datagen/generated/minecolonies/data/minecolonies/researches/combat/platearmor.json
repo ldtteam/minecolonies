@@ -18,8 +18,8 @@
   "requirements": [
     {
       "type": "minecolonies:mandatory-building",
-      "level": 4,
-      "mandatory-building": "minecolonies:blacksmith"
+      "building": "minecolonies:blacksmith",
+      "level": 4
     }
   ],
   "researchLevel": 5,
