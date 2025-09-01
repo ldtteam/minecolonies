@@ -1030,7 +1030,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
             }
             job.setWorkOrder(null);
             resetCurrentStructure();
-            building.cancelAllRequestsOfCitizen(worker.getCitizenData());
+            building.cancelAllRequestsOfCitizenOrBuilding(worker.getCitizenData());
             building.setProgressPos(null, BuildingProgressStage.CLEAR);
             return true;
         }

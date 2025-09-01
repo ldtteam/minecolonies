@@ -552,7 +552,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
         }
         if (building.hasCitizenCompletedRequests(worker.getCitizenData()))
         {
-            final Collection<IRequest<?>> completedRequests = building.getCompletedRequests(worker.getCitizenData());
+            final Collection<IRequest<?>> completedRequests = building.getCompletedRequestsOfCitizenOrBuilding(worker.getCitizenData());
             final List<IRequest<?>> deliverableRequests = new ArrayList<>();
             for (final IRequest<?> req : completedRequests)
             {
@@ -702,7 +702,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
      */
     private boolean cleanAsync()
     {
-        final Collection<IRequest<?>> completedRequests = building.getCompletedRequests(worker.getCitizenData());
+        final Collection<IRequest<?>> completedRequests = building.getCompletedRequestsOfCitizenOrBuilding(worker.getCitizenData());
 
         for (IRequest<?> request : completedRequests)
         {

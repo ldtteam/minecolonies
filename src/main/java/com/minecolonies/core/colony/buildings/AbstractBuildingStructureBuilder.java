@@ -3,6 +3,7 @@ package com.minecolonies.core.colony.buildings;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
+import com.minecolonies.api.colony.workorders.IWorkOrder;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.equipment.ModEquipmentTypes;
 import com.minecolonies.api.equipment.registry.EquipmentTypeEntry;
@@ -14,6 +15,7 @@ import com.minecolonies.core.colony.buildings.modules.BuildingResourcesModule;
 import com.minecolonies.core.colony.buildings.modules.WorkerBuildingModule;
 import com.minecolonies.core.colony.buildings.utils.BuilderBucket;
 import com.minecolonies.core.colony.buildings.utils.BuildingBuilderResource;
+import com.minecolonies.core.colony.jobs.AbstractJobStructure;
 import com.minecolonies.core.entity.ai.workers.util.BuildingProgressStage;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -431,5 +433,23 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuilding
     public BuilderBucket getNextBucket()
     {
         return getFirstModuleOccurance(BuildingResourcesModule.class).getNextBucket();
+    }
+
+    /**
+     * Handle workorder cancellation, reset requests and progress.
+     * @param workOrder the cancelled workorder.
+     */
+    public void onWorkOrderCancellation(final IWorkOrder workOrder)
+    {
+        for (final ICitizenData citizen : this.getModule(BuildingModules.BUILDER_WORK).getAssignedCitizen())
+        {
+            if (citizen.getJob() instanceof AbstractJobStructure<?,?> abstractJobStructure)
+            {
+                abstractJobStructure.setWorkOrder(null);
+                this.cancelAllRequestsOfCitizenOrBuilding(citizen);
+            }
+        }
+        this.setProgressPos(null, BuildingProgressStage.CLEAR);
+        this.cancelAllRequestsOfCitizenOrBuilding(null);
     }
 }
