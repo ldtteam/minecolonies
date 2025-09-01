@@ -116,9 +116,7 @@ public class BuildingAlternatesResearchRequirement implements IResearchRequireme
             final int buildingLevel = kvp.getValue();
 
             final BuildingEntry buildingEntry = IBuildingRegistry.getInstance().getValue(building);
-            final MutableComponent buildingName = buildingEntry != null
-                ? Component.translatable(buildingEntry.getTranslationKey())
-                : Component.translatable("com." + building.getNamespace() + ".building." + building.getPath());
+            final MutableComponent buildingName = buildingEntry != null ? Component.translatable(buildingEntry.getTranslationKey()) : Component.empty();
 
             requirementList.append(Component.translatable("com.minecolonies.coremod.research.requirement.building.mandatory.level", buildingName, buildingLevel));
 
