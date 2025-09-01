@@ -849,8 +849,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
         final List<IResearchCost> itemRequirements = research.getCostList();
 
         research.getResearchRequirements().forEach(requirement -> {
-            // There will only ever be one AlternateBuildingRequirement per research, under the current implementation.
-            if (requirement instanceof BuildingAlternatesResearchRequirement alternateBuildingRequirement && alternateBuildingRequirements.isEmpty())
+            if (requirement instanceof BuildingAlternatesResearchRequirement alternateBuildingRequirement)
             {
                 alternateBuildingRequirements.add(alternateBuildingRequirement);
             }
