@@ -827,7 +827,7 @@ public class EventHandler
         {
             final Level world = entity.getCommandSenderWorld();
             final IColony colony = IColonyManager.getInstance().getIColony(world, entity.blockPosition());
-            if (colony != null && colony.hasBuilding(new ResourceLocation(Constants.MOD_ID, ModBuildings.TAVERN_ID), 1, false))
+            if (colony != null && colony.hasBuilding(ModBuildings.tavern.get().getRegistryName(), 1, false))
             {
                 if (ForgeEventFactory.canLivingConvert(entity, ModEntities.VISITOR, null))
                 {
