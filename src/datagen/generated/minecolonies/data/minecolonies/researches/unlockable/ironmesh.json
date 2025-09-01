@@ -13,9 +13,9 @@
   "parentResearch": "minecolonies:unlockable/flintmesh",
   "requirements": [
     {
-      "type": "minecolonies:mandatory-building",
-      "level": 4,
-      "mandatory-building": "minecolonies:sifter"
+      "type": "minecolonies:single-building",
+      "building": "minecolonies:sifter",
+      "level": 4
     }
   ],
   "researchLevel": 3

@@ -316,14 +316,7 @@ public class ResearchListener extends SimpleJsonResourceReloadListener
         {
             final JsonObject jsonRequirement = jsonRequirements.get(index).getAsJsonObject();
 
-            ResourceLocation type = GsonHelper.getAsResourceLocation(jsonRequirement, RESEARCH_REQUIREMENT_TYPE_PROP, null);
-
-            // TODO: 1.22 remove the ability for requirements not to provide an explicit `type` property
-            if (type == null)
-            {
-                type = attemptInferTypeFromValues(jsonRequirement);
-            }
-
+            final ResourceLocation type = GsonHelper.getAsResourceLocation(jsonRequirement, RESEARCH_REQUIREMENT_TYPE_PROP, null);
             if (type == null)
             {
                 Log.getLogger().warn("Research '{}' requirement #{} is missing the required '{}' property.", researchId, index, RESEARCH_REQUIREMENT_TYPE_PROP);
@@ -347,34 +340,6 @@ public class ResearchListener extends SimpleJsonResourceReloadListener
             Log.getLogger().warn("Research '{}' requirement #{} is invalid, type '{}' does not exist.", researchId, index, type);
         }
         return requirements;
-    }
-
-    /**
-     * Parse the requirement type from json data directly in case of no explicit type.
-     *
-     * @param jsonRequirement the input json object.
-     * @return the type string or null if undeterminable
-     */
-    private ResourceLocation attemptInferTypeFromValues(final JsonObject jsonRequirement)
-    {
-        // TODO: 1.22 remove the ability for requirements not to provide an explicit `type` property
-        if (jsonRequirement.has("building"))
-        {
-            return ModResearchRequirements.BUILDING_RESEARCH_REQ_ID;
-        }
-        else if (jsonRequirement.has("alternate-building"))
-        {
-            return ModResearchRequirements.BUILDING_ALTERNATES_RESEARCH_REQ_ID;
-        }
-        else if (jsonRequirement.has("mandatory-building"))
-        {
-            return ModResearchRequirements.BUILDING_MANDATORY_RESEARCH_REQ_ID;
-        }
-        else if (jsonRequirement.has("research"))
-        {
-            return ModResearchRequirements.RESEARCH_RESEARCH_REQ_ID;
-        }
-        return null;
     }
 
     /**

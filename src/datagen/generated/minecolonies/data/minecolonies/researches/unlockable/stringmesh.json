@@ -12,9 +12,9 @@
   "instant": true,
   "requirements": [
     {
-      "type": "minecolonies:mandatory-building",
-      "level": 1,
-      "mandatory-building": "minecolonies:sifter"
+      "type": "minecolonies:single-building",
+      "building": "minecolonies:sifter",
+      "level": 1
     }
   ],
   "researchLevel": 1

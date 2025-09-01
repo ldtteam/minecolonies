@@ -16,7 +16,7 @@
   "parentResearch": "minecolonies:civilian/firstaid2",
   "requirements": [
     {
-      "type": "minecolonies:building",
+      "type": "minecolonies:single-building",
       "building": "minecolonies:townhall",
       "level": 3
     }

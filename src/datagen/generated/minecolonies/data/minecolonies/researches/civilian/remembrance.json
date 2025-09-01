@@ -15,7 +15,7 @@
   "icon": "minecolonies:blockhutgraveyard",
   "requirements": [
     {
-      "type": "minecolonies:building",
+      "type": "minecolonies:single-building",
       "building": "minecolonies:townhall",
       "level": 2
     }

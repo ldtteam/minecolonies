@@ -16,7 +16,7 @@
   "parentResearch": "minecolonies:civilian/hamlet",
   "requirements": [
     {
-      "type": "minecolonies:building",
+      "type": "minecolonies:single-building",
       "building": "minecolonies:townhall",
       "level": 4
     }

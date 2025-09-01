@@ -13,9 +13,9 @@
   "parentResearch": "minecolonies:unlockable/stringmesh",
   "requirements": [
     {
-      "type": "minecolonies:mandatory-building",
-      "level": 3,
-      "mandatory-building": "minecolonies:sifter"
+      "type": "minecolonies:single-building",
+      "building": "minecolonies:sifter",
+      "level": 3
     }
   ],
   "researchLevel": 2

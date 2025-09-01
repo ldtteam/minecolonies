@@ -2,7 +2,6 @@ package com.minecolonies.apiimp.initializer;
 
 import com.minecolonies.api.research.ModResearchRequirements;
 import com.minecolonies.api.research.requirements.BuildingAlternatesResearchRequirement;
-import com.minecolonies.api.research.requirements.BuildingMandatoryResearchRequirement;
 import com.minecolonies.api.research.requirements.BuildingResearchRequirement;
 import com.minecolonies.api.research.requirements.ResearchResearchRequirement;
 import com.minecolonies.api.util.constant.Constants;
@@ -23,7 +22,7 @@ public class ModResearchRequirementInitializer
     {
         buildingResearchRequirement = create(BUILDING_RESEARCH_REQ_ID, BuildingResearchRequirement::new, BuildingResearchRequirement::new);
         buildingAlternatesResearchRequirement = create(BUILDING_ALTERNATES_RESEARCH_REQ_ID, BuildingAlternatesResearchRequirement::new, BuildingAlternatesResearchRequirement::new);
-        buildingMandatoryResearchRequirement = create(BUILDING_MANDATORY_RESEARCH_REQ_ID, BuildingMandatoryResearchRequirement::new, BuildingMandatoryResearchRequirement::new);
+        buildingSingleResearchRequirement = create(BUILDING_SINGLE_RESEARCH_REQ_ID, BuildingResearchRequirement::new, BuildingResearchRequirement::new);
 
         researchResearchRequirement = create(RESEARCH_RESEARCH_REQ_ID, ResearchResearchRequirement::new, ResearchResearchRequirement::new);
     }

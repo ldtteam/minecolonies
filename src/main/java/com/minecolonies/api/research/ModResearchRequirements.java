@@ -14,12 +14,12 @@ public class ModResearchRequirements
 {
     public static final ResourceLocation BUILDING_RESEARCH_REQ_ID            = new ResourceLocation(Constants.MOD_ID, "building");
     public static final ResourceLocation BUILDING_ALTERNATES_RESEARCH_REQ_ID = new ResourceLocation(Constants.MOD_ID, "alternate-building");
-    public static final ResourceLocation BUILDING_MANDATORY_RESEARCH_REQ_ID  = new ResourceLocation(Constants.MOD_ID, "mandatory-building");
+    public static final ResourceLocation BUILDING_SINGLE_RESEARCH_REQ_ID     = new ResourceLocation(Constants.MOD_ID, "single-building");
     public static final ResourceLocation RESEARCH_RESEARCH_REQ_ID            = new ResourceLocation(Constants.MOD_ID, "research");
 
     public static DeferredHolder<ResearchRequirementEntry, ResearchRequirementEntry> buildingResearchRequirement;
     public static DeferredHolder<ResearchRequirementEntry, ResearchRequirementEntry> buildingAlternatesResearchRequirement;
-    public static DeferredHolder<ResearchRequirementEntry, ResearchRequirementEntry> buildingMandatoryResearchRequirement;
+    public static DeferredHolder<ResearchRequirementEntry, ResearchRequirementEntry> buildingSingleResearchRequirement;
     public static DeferredHolder<ResearchRequirementEntry, ResearchRequirementEntry> researchResearchRequirement;
 
     private ModResearchRequirements()

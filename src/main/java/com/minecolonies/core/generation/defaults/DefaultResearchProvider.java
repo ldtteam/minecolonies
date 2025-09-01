@@ -14,6 +14,7 @@ import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.Items;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -318,14 +319,14 @@ public class DefaultResearchProvider extends AbstractResearchProvider
         final Research village = new Research(new ResourceLocation(Constants.MOD_ID, "civilian/village"), CIVIL).setParentResearch(hamlet)
                                    .setTranslatedName("Village")
                                    .setIcon(ModBlocks.blockHutHome.asItem(), 100)
-                                   .addBuildingRequirement(new ResourceLocation(Constants.MOD_ID, ModBuildings.TOWNHALL_ID), 4)
+                                   .addSingleBuildingRequirement(new ResourceLocation(Constants.MOD_ID, ModBuildings.TOWNHALL_ID), 4)
                                    .addItemCost(Items.COOKED_BEEF, 256, provider)
                                    .addEffect(CITIZEN_CAP, 4)
                                    .addToList(r);
         new Research(new ResourceLocation(Constants.MOD_ID, "civilian/city"), CIVIL).setParentResearch(village)
           .setTranslatedName("City")
           .setIcon(ModBlocks.blockHutHome.asItem(), 200)
-          .addBuildingRequirement(new ResourceLocation(Constants.MOD_ID, ModBuildings.TOWNHALL_ID), 5)
+          .addSingleBuildingRequirement(new ResourceLocation(Constants.MOD_ID, ModBuildings.TOWNHALL_ID), 5)
           .addItemCost(Items.COOKED_BEEF, 512, provider)
           .addEffect(CITIZEN_CAP, 5)
           .addToList(r);
@@ -371,9 +372,9 @@ public class DefaultResearchProvider extends AbstractResearchProvider
 
         final Research haste = new Research(new ResourceLocation(Constants.MOD_ID, "civilian/haste"), CIVIL).setParentResearch(keen)
                                   .setTranslatedName("Haste")
-                                 .setTranslatedSubtitle("We have got to hurry up!")
+                                  .setTranslatedSubtitle("We have got to hurry up!")
                                   .setIcon(new ResourceLocation("minecolonies", "textures/icons/research/speed1.png"))
-                                  .addBuildingRequirement(new ResourceLocation(Constants.MOD_ID, ModBuildings.TOWNHALL_ID), 3)
+                                  .addSingleBuildingRequirement(new ResourceLocation(Constants.MOD_ID, ModBuildings.TOWNHALL_ID), 3)
                                   .addItemCost(Items.RABBIT_FOOT, 1, provider)
                                   .addEffect(WALKING, 1)
                                   .setSortOrder(3)
@@ -382,8 +383,8 @@ public class DefaultResearchProvider extends AbstractResearchProvider
                                   .setTranslatedName("Nimble")
                                   .setTranslatedSubtitle("Not that we get time to exercise. It must be the morning commute.")
                                   .setIcon(new ResourceLocation("minecolonies", "textures/icons/research/speed1.png"))
-                                  .addBuildingRequirement(new ResourceLocation(Constants.MOD_ID, ModBuildings.TOWNHALL_ID), 3)
-                                  .addItemCost(Items.RABBIT_FOOT, 1, provider)
+                                  .addSingleBuildingRequirement(new ResourceLocation(Constants.MOD_ID, ModBuildings.TOWNHALL_ID), 3)
+                                  .addItemCost(Items.RABBIT_FOOT, 4, provider)
                                   .addEffect(WALKING, 2)
                                   .setSortOrder(3)
                                   .addToList(r);
@@ -391,7 +392,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
                                  .setTranslatedName("Agile")
                                  .setTranslatedSubtitle("So this is how it feels to be young again...")
                                  .setIcon(new ResourceLocation("minecolonies", "textures/icons/research/speed2.png"))
-                                 .addBuildingRequirement(new ResourceLocation(Constants.MOD_ID, ModBuildings.TOWNHALL_ID), 4)
+                                 .addSingleBuildingRequirement(new ResourceLocation(Constants.MOD_ID, ModBuildings.TOWNHALL_ID), 4)
                                  .addItemCost(Items.RABBIT_FOOT, 8, provider)
                                  .addEffect(WALKING, 3)
                                  .addToList(r);
@@ -399,7 +400,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
                                  .setTranslatedName("Swift")
                                  .setTranslatedSubtitle("They'll never see me coming.")
                                  .setIcon(new ResourceLocation("minecolonies", "textures/icons/research/speed3.png"))
-                                 .addBuildingRequirement(new ResourceLocation(Constants.MOD_ID, ModBuildings.TOWNHALL_ID), 5)
+                                 .addSingleBuildingRequirement(new ResourceLocation(Constants.MOD_ID, ModBuildings.TOWNHALL_ID), 5)
                                  .addItemCost(Items.RABBIT_FOOT, 32, provider)
                                  .addEffect(WALKING, 4)
                                  .addToList(r);
@@ -434,7 +435,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
                                     .setTranslatedSubtitle("First aid, second hand.")
                                     .setSortOrder(3)
                                     .setIcon(new ResourceLocation("minecolonies", "textures/icons/research/hp1.png"))
-                                    .addBuildingRequirement(new ResourceLocation(Constants.MOD_ID, ModBuildings.TOWNHALL_ID), 1)
+                                    .addSingleBuildingRequirement(new ResourceLocation(Constants.MOD_ID, ModBuildings.TOWNHALL_ID), 1)
                                     .addItemCost(Items.HAY_BLOCK, 8, provider)
                                     .addEffect(HEALTH_BOOST, 1)
                                     .addToList(r);
@@ -442,28 +443,28 @@ public class DefaultResearchProvider extends AbstractResearchProvider
                                      .setTranslatedName("First Aid II")
                                      .setTranslatedSubtitle("Second Aid?")
                                      .setIcon(new ResourceLocation("minecolonies", "textures/icons/research/hp2.png"))
-                                     .addBuildingRequirement(new ResourceLocation(Constants.MOD_ID, ModBuildings.TOWNHALL_ID), 2)
+                                     .addSingleBuildingRequirement(new ResourceLocation(Constants.MOD_ID, ModBuildings.TOWNHALL_ID), 2)
                                      .addItemCost(Items.HAY_BLOCK, 16, provider)
                                      .addEffect(HEALTH_BOOST, 2)
                                      .addToList(r);
         final Research lifesaver = new Research(new ResourceLocation(Constants.MOD_ID, "civilian/lifesaver"), CIVIL).setParentResearch(firstAid2)
                                      .setTranslatedName("Lifesaver")
                                      .setIcon(new ResourceLocation("minecolonies", "textures/icons/research/hp3.png"))
-                                     .addBuildingRequirement(new ResourceLocation(Constants.MOD_ID, ModBuildings.TOWNHALL_ID), 3)
+                                     .addSingleBuildingRequirement(new ResourceLocation(Constants.MOD_ID, ModBuildings.TOWNHALL_ID), 3)
                                      .addItemCost(Items.HAY_BLOCK, 32, provider)
                                      .addEffect(HEALTH_BOOST, 3)
                                      .addToList(r);
         final Research lifesaver2 = new Research(new ResourceLocation(Constants.MOD_ID, "civilian/lifesaver2"), CIVIL).setParentResearch(lifesaver)
                                       .setTranslatedName("Lifesaver II")
                                       .setIcon(new ResourceLocation("minecolonies", "textures/icons/research/hp4.png"))
-                                      .addBuildingRequirement(new ResourceLocation(Constants.MOD_ID, ModBuildings.TOWNHALL_ID), 4)
+                                      .addSingleBuildingRequirement(new ResourceLocation(Constants.MOD_ID, ModBuildings.TOWNHALL_ID), 4)
                                       .addItemCost(Items.HAY_BLOCK, 64, provider)
                                       .addEffect(HEALTH_BOOST, 4)
                                       .addToList(r);
         final Research guardianAngel = new Research(new ResourceLocation(Constants.MOD_ID, "civilian/guardianangel"), CIVIL).setParentResearch(lifesaver2)
                                          .setTranslatedName("Guardian Angel")
                                          .setIcon(new ResourceLocation("minecolonies", "textures/icons/research/hp5.png"))
-                                         .addBuildingRequirement(new ResourceLocation(Constants.MOD_ID, ModBuildings.TOWNHALL_ID), 5)
+                                         .addSingleBuildingRequirement(new ResourceLocation(Constants.MOD_ID, ModBuildings.TOWNHALL_ID), 5)
                                          .addItemCost(Items.HAY_BLOCK, 128, provider)
                                          .addEffect(HEALTH_BOOST, 5)
                                          .addToList(r);
@@ -545,7 +546,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
           .setTranslatedSubtitle("Got any coffee?")
           .setSortOrder(2)
           .setIcon(Items.CLOCK, 2)
-          .addBuildingRequirement(new ResourceLocation(Constants.MOD_ID, ModBuildings.TOWNHALL_ID), 3)
+          .addSingleBuildingRequirement(new ResourceLocation(Constants.MOD_ID, ModBuildings.TOWNHALL_ID), 3)
           .addItemCost(Items.GOLDEN_CARROT, 75, provider)
           .addEffect(WORK_LONGER, 2)
           .addToList(r);
@@ -700,7 +701,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
                 .setSortOrder(6)
                 .setIcon(ModBlocks.blockHutGraveyard.asItem())
                 .addEffect(ModBuildings.graveyard.get().getBuildingBlock(), 1)
-                .addBuildingRequirement(new ResourceLocation(Constants.MOD_ID, ModBuildings.TOWNHALL_ID), 2)
+                .addSingleBuildingRequirement(new ResourceLocation(Constants.MOD_ID, ModBuildings.TOWNHALL_ID), 2)
                 .addItemCost(Items.BONE, 8, provider)
                 .setTranslatedSubtitle("Our fallen shall not be forgotten!")
                 .addToList(r);
@@ -1038,7 +1039,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
                                            .setTranslatedSubtitle("Becoming more like the real thing every day.")
                                            .setSortOrder(4)
                                            .setIcon(Items.LEATHER_HELMET)
-                                           .addBuildingRequirement(new ResourceLocation(Constants.MOD_ID, ModBuildings.TOWNHALL_ID), 1)
+                                           .addSingleBuildingRequirement(new ResourceLocation(Constants.MOD_ID, ModBuildings.TOWNHALL_ID), 1)
                                            .addItemCost(Items.LEATHER, 32, provider)
                                            .addEffect(ARMOR_DURABILITY, 1)
                                            .addToList(r);
@@ -1046,21 +1047,21 @@ public class DefaultResearchProvider extends AbstractResearchProvider
                                          .setTranslatedName("Boiled Leather")
                                          .setTranslatedSubtitle("Extra leathery!")
                                          .setIcon(Items.TURTLE_HELMET)
-                                         .addBuildingRequirement(new ResourceLocation(Constants.MOD_ID, ModBuildings.TOWNHALL_ID), 2)
+                                         .addSingleBuildingRequirement(new ResourceLocation(Constants.MOD_ID, ModBuildings.TOWNHALL_ID), 2)
                                          .addItemCost(Items.LEATHER, 64, provider)
                                          .addEffect(ARMOR_DURABILITY, 2)
                                          .addToList(r);
         final Research ironSkin = new Research(new ResourceLocation(Constants.MOD_ID, "combat/ironskin"), COMBAT).setParentResearch(boiledLeather)
                                     .setTranslatedName("Iron Skin")
                                     .setIcon(Items.CHAINMAIL_HELMET)
-                                    .addBuildingRequirement(new ResourceLocation(Constants.MOD_ID, ModBuildings.TOWNHALL_ID), 3)
+                                    .addSingleBuildingRequirement(new ResourceLocation(Constants.MOD_ID, ModBuildings.TOWNHALL_ID), 3)
                                     .addItemCost(Items.IRON_INGOT, 16, provider)
                                     .addEffect(ARMOR_DURABILITY, 3)
                                     .addToList(r);
         final Research ironArmor = new Research(new ResourceLocation(Constants.MOD_ID, "combat/ironarmor"), COMBAT).setParentResearch(ironSkin)
                                      .setTranslatedName("Iron Armor")
                                      .setIcon(Items.IRON_HELMET)
-                                     .addBuildingRequirement(new ResourceLocation(Constants.MOD_ID, ModBuildings.TOWNHALL_ID), 4)
+                                     .addSingleBuildingRequirement(new ResourceLocation(Constants.MOD_ID, ModBuildings.TOWNHALL_ID), 4)
                                      .addItemCost(Items.IRON_INGOT, 32, provider)
                                      .addEffect(ARMOR_DURABILITY, 4)
                                      .addToList(r);
@@ -1068,7 +1069,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
                                       .setTranslatedName("Steel Armor")
                                       .setSortOrder(1)
                                       .setIcon(Items.GOLDEN_HELMET)
-                                      .addBuildingRequirement(new ResourceLocation(Constants.MOD_ID, ModBuildings.TOWNHALL_ID), 5)
+                                      .addSingleBuildingRequirement(new ResourceLocation(Constants.MOD_ID, ModBuildings.TOWNHALL_ID), 5)
                                       .addItemCost(Items.IRON_INGOT, 64, provider)
                                       .addEffect(ARMOR_DURABILITY, 5)
                                       .addToList(r);
@@ -1076,7 +1077,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
                                      .setTranslatedName("Plate Armor")
                                      .setSortOrder(2)
                                      .setIcon(ModItems.plateArmorHelmet)
-                                     .addMandatoryBuildingRequirement(new ResourceLocation(Constants.MOD_ID, ModBuildings.BLACKSMITH_ID), 4)
+                                     .addSingleBuildingRequirement(new ResourceLocation(Constants.MOD_ID, ModBuildings.BLACKSMITH_ID), 4)
                                      .addItemCost(Items.IRON_INGOT, 32, provider)
                                      .addEffect(PLATE_ARMOR, 1)
                                      .addToList(r);
@@ -1348,7 +1349,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
                                     .setTranslatedSubtitle("And to think this stuff feeds our plants...")
                                     .setSortOrder(3)
                                     .setIcon(Items.WHEAT_SEEDS)
-                                    .addBuildingRequirement(new ResourceLocation(Constants.MOD_ID, ModBuildings.MINER_ID), 3)
+                                    .addAlternateBuildingRequirement(List.of(new ResourceLocation(Constants.MOD_ID, ModBuildings.FARMER_ID), new ResourceLocation(Constants.MOD_ID, ModBuildings.COMPOSTER_ID)), 3)
                                     .addItemCost(Items.WHEAT_SEEDS, 64, provider)
                                     .addEffect(FARMING, 1)
                                     .addToList(r);
@@ -1356,14 +1357,14 @@ public class DefaultResearchProvider extends AbstractResearchProvider
                                 .setTranslatedName("Dung")
                                 .setTranslatedSubtitle("Fresh or not, here it comes!")
                                 .setIcon(Items.BONE_MEAL)
-                                .addBuildingRequirement(new ResourceLocation(Constants.MOD_ID, ModBuildings.MINER_ID), 4)
+                                .addAlternateBuildingRequirement(List.of(new ResourceLocation(Constants.MOD_ID, ModBuildings.FARMER_ID), new ResourceLocation(Constants.MOD_ID, ModBuildings.COMPOSTER_ID)), 4)
                                 .addItemCost(Items.WHEAT_SEEDS, 128, provider)
                                 .addEffect(FARMING, 2)
                                 .addToList(r);
         final Research compost = new Research(new ResourceLocation(Constants.MOD_ID, "technology/compost"), TECH).setParentResearch(dung)
                                    .setTranslatedName("Compost")
                                    .setIcon(Items.BONE)
-                                   .addBuildingRequirement(new ResourceLocation(Constants.MOD_ID, ModBuildings.MINER_ID), 5)
+                                   .addAlternateBuildingRequirement(List.of(new ResourceLocation(Constants.MOD_ID, ModBuildings.FARMER_ID), new ResourceLocation(Constants.MOD_ID, ModBuildings.COMPOSTER_ID)), 5)
                                    .addItemCost(Items.WHEAT_SEEDS, 256, provider)
                                    .addEffect(FARMING, 3)
                                    .addToList(r);
@@ -1610,14 +1611,15 @@ public class DefaultResearchProvider extends AbstractResearchProvider
           .addToList(r);
 
         new Research(new ResourceLocation(Constants.MOD_ID, "technology/warehousemaster"), TECH).setParentResearch(memoryAid)
-                                      .setTranslatedName("Warehouse Master")
-                                      .setTranslatedSubtitle("So many items to choose from!")
-                                      .setIcon(ModBlocks.blockRack.asItem())
-                                      .addBuildingRequirement(new ResourceLocation(Constants.MOD_ID, ModBuildings.SAWMILL_ID), 3)
-                                      .addItemCost(ModBlocks.blockRack.asItem(), 3, provider)
-                                      .addEffect(RECIPE_MODE, 1)
-                                      .setSortOrder(2)
-                                      .addToList(r);
+          .setTranslatedName("Warehouse Master")
+          .setTranslatedSubtitle("So many items to choose from!")
+          .setIcon(ModBlocks.blockRack.asItem())
+          .addBuildingRequirement(new ResourceLocation(Constants.MOD_ID, ModBuildings.WAREHOUSE_ID), 3)
+          .addAlternateBuildingRequirement(List.of(new ResourceLocation(Constants.MOD_ID, ModBuildings.SAWMILL_ID), new ResourceLocation(Constants.MOD_ID, ModBuildings.STONE_MASON_ID)), 3)
+          .addItemCost(ModBlocks.blockRack.asItem(), 3, provider)
+          .addEffect(RECIPE_MODE, 1)
+          .setSortOrder(2)
+          .addToList(r);
 
         new Research(new ResourceLocation(Constants.MOD_ID, "civilian/moq"), TECH).setParentResearch(memoryAid)
           .setTranslatedName("Minimum Order Quantity")
@@ -1823,14 +1825,14 @@ public class DefaultResearchProvider extends AbstractResearchProvider
         final Research richVeins = new Research(new ResourceLocation(Constants.MOD_ID, "technology/richveins"), TECH).setParentResearch(goodVeins)
                                      .setTranslatedName("Rich Veins")
                                      .setIcon(Items.GOLD_BLOCK)
-                                     .addBuildingRequirement(new ResourceLocation(Constants.MOD_ID, ModBuildings.BLACKSMITH_ID), 4)
+                                     .addBuildingRequirement(new ResourceLocation(Constants.MOD_ID, ModBuildings.MINER_ID), 4)
                                      .addItemCost(ItemTags.GOLD_ORES, 32, provider)
                                      .addEffect(MORE_ORES, 3)
                                      .addToList(r);
         final Research amazingVeins = new Research(new ResourceLocation(Constants.MOD_ID, "technology/amazingveins"), TECH).setParentResearch(richVeins)
                                         .setTranslatedName("Amazing Veins")
                                         .setIcon(Items.LAPIS_BLOCK)
-                                        .addBuildingRequirement(new ResourceLocation(Constants.MOD_ID, ModBuildings.BLACKSMITH_ID), 5)
+                                        .addBuildingRequirement(new ResourceLocation(Constants.MOD_ID, ModBuildings.MINER_ID), 5)
                                         .addItemCost(ItemTags.GOLD_ORES, 64, provider)
                                         .addEffect(MORE_ORES, 4)
                                         .addToList(r);
@@ -1874,7 +1876,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
         Research stringmesh = new Research(new ResourceLocation(Constants.MOD_ID, "unlockable/stringmesh"), UNLOCK)
             .setTranslatedName("String Mesh")
             .setIcon(ModItems.sifterMeshString)
-            .addMandatoryBuildingRequirement(new ResourceLocation(Constants.MOD_ID, ModBuildings.SIFTER_ID), 1)
+            .addSingleBuildingRequirement(new ResourceLocation(Constants.MOD_ID, ModBuildings.SIFTER_ID), 1)
             .setHidden()
             .setAutostart()
             .setInstant()
@@ -1885,7 +1887,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
             .setTranslatedName("Flint Mesh")
             .setParentResearch(stringmesh)
             .setIcon(ModItems.sifterMeshString)
-            .addMandatoryBuildingRequirement(new ResourceLocation(Constants.MOD_ID, ModBuildings.SIFTER_ID), 3)
+            .addSingleBuildingRequirement(new ResourceLocation(Constants.MOD_ID, ModBuildings.SIFTER_ID), 3)
             .setHidden()
             .setAutostart()
             .setInstant()
@@ -1896,7 +1898,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
             .setTranslatedName("Iron Mesh")
             .setParentResearch(flintmesh)
             .setIcon(ModItems.sifterMeshString)
-            .addMandatoryBuildingRequirement(new ResourceLocation(Constants.MOD_ID, ModBuildings.SIFTER_ID), 4)
+            .addSingleBuildingRequirement(new ResourceLocation(Constants.MOD_ID, ModBuildings.SIFTER_ID), 4)
             .setHidden()
             .setAutostart()
             .setInstant()
@@ -1907,7 +1909,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
             .setTranslatedName("Diamond Mesh")
             .setParentResearch(ironmesh)
             .setIcon(ModItems.sifterMeshString)
-            .addMandatoryBuildingRequirement(new ResourceLocation(Constants.MOD_ID, ModBuildings.SIFTER_ID), 5)
+            .addSingleBuildingRequirement(new ResourceLocation(Constants.MOD_ID, ModBuildings.SIFTER_ID), 5)
             .setHidden()
             .setAutostart()
             .setInstant()

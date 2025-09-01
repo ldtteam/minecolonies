@@ -3,7 +3,6 @@ package com.minecolonies.api.research;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.blocks.AbstractColonyBlock;
 import com.minecolonies.api.util.Utils;
 import com.minecolonies.api.util.constant.Constants;
@@ -397,53 +396,46 @@ public abstract class AbstractResearchProvider implements DataProvider
         }
 
         /**
-         * Creates a Building-requirement related json property, with sanitization.
-         * Temporary workaround for discrepancies between schematic ID and modBuildings ID.
-         * @param propertyType     The type of building requirement.  Currently supports : 'building', 'mandatory-building', and 'alternate-building'
-         * @param buildingName     The schematic name for the building.
-         * @param level            The required level or sum of levels.
-         * @return The json object
-         */
-        private JsonObject makeSafeBuildingProperty(final String propertyType, final String buildingName, final int level)
-        {
-            JsonObject req = new JsonObject();
-            req.addProperty("type", new ResourceLocation(Constants.MOD_ID, propertyType).toString());
-            req.addProperty(propertyType, buildingName);
-            req.addProperty("level", level);
-            return req;
-        }
-
-        /**
          * Adds a building research requirement.  The colony must have at least as many levels of this building to begin the research
          * cumulative across all buildings of that type.  (ie, guardtower 8 is fulfilled by eight level-1 guard towers, four level-2 guard towers, two level-3 and a level-2 guard tower, etc)
          * See ModBuildings for a list of supported buildings.  Whenever possible, use the public static String BUILDINGNAME_ID constants from ModBuildings.
          * Multiple different buildings can be added as different BuildingRequirements, and all must be fulfilled to begin research.
-         * @param buildingName  The name of the building to require.  Derived from SchematicName.
-         * @param level         The required sum of levels across the colony.
+         *
+         * @param buildingName The name of the building to require.  Derived from SchematicName.
+         * @param level        The required sum of levels across the colony.
          * @return this
          */
         public Research addBuildingRequirement(final ResourceLocation buildingName, final int level)
         {
             final JsonArray reqArray = getRequirementsArray();
-            reqArray.add(makeSafeBuildingProperty("building", buildingName.toString(), level));
+            final JsonObject req = new JsonObject();
+            req.addProperty("type", new ResourceLocation(Constants.MOD_ID, "building").toString());
+            req.addProperty("building", buildingName.toString());
+            req.addProperty("level", level);
+            reqArray.add(req);
             this.json.add("requirements", reqArray);
             return this;
         }
 
         /**
-         * Adds a mandatory building research requirement.  The colony must have one building at this specific level or greater.
+         * Adds a single building research requirement.  The colony must have one building at this specific level or greater.
          * (ie, guardtower 3 is fulfilled by one level-3 to level-5 guard tower, but no number of lower-level guard towers.)
          * This does not test whether the result is possible (eg, tavern-4 will not throw an exception, but can never be achieved in-game)
          * See ModBuildings for a list of supported buildings.  Whenever possible, use the public static String BUILDINGNAME_ID constants from ModBuildings.
          * Multiple different buildings can be added as different BuildingRequirements, and all must be fulfilled to begin research.
-         * @param buildingName  The name of the building to require.  Derived from SchematicName.
-         * @param level         The required sum of levels across the colony.
+         *
+         * @param buildingName The name of the building to require.  Derived from SchematicName.
+         * @param level        The required sum of levels across the colony.
          * @return this
          */
-        public Research addMandatoryBuildingRequirement(final ResourceLocation buildingName, final int level)
+        public Research addSingleBuildingRequirement(final ResourceLocation buildingName, final int level)
         {
             final JsonArray reqArray = getRequirementsArray();
-            reqArray.add(makeSafeBuildingProperty("mandatory-building", buildingName.toString(), level));
+            final JsonObject req = new JsonObject();
+            req.addProperty("type", new ResourceLocation(Constants.MOD_ID, "single-building").toString());
+            req.addProperty("building", buildingName.toString());
+            req.addProperty("level", level);
+            reqArray.add(req);
             this.json.add("requirements", reqArray);
             return this;
         }
@@ -455,14 +447,24 @@ public abstract class AbstractResearchProvider implements DataProvider
          * would be fulfilled by any one of those buildings level 3, or by two citizen houses.
          * See ModBuildings for a list of supported buildings.  Whenever possible, use the public static String BUILDINGNAME_ID constants from ModBuildings.
          * Only one of all added Alternate Buildings is required.  AlternateBuildingRequirements do not bypass normal BuildingRequirements.
-         * @param buildingName          The required building.
-         * @param level                 The required sum of levels across the colony.
+         *
+         * @param buildingNames The list required building.
+         * @param level         The level across the colony.
          * @return this
          */
-        public Research addAlternateBuildingRequirement(final String buildingName, final int level)
+        public Research addAlternateBuildingRequirement(final List<ResourceLocation> buildingNames, final Integer level)
         {
             final JsonArray reqArray = getRequirementsArray();
-            reqArray.add(makeSafeBuildingProperty("alternate-building", buildingName, level));
+            final JsonObject req = new JsonObject();
+            req.addProperty("type", new ResourceLocation(Constants.MOD_ID, "alternate-building").toString());
+            final JsonArray buildingsArray = new JsonArray();
+            for (final ResourceLocation buildingName : buildingNames)
+            {
+                buildingsArray.add(buildingName.toString());
+            }
+            req.add("alternate-buildings", buildingsArray);
+            req.addProperty("level", level);
+            reqArray.add(req);
             this.json.add("requirements", reqArray);
             return this;
         }

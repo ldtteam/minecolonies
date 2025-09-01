@@ -15,7 +15,7 @@
   "icon": "minecraft:leather_helmet",
   "requirements": [
     {
-      "type": "minecolonies:building",
+      "type": "minecolonies:single-building",
       "building": "minecolonies:townhall",
       "level": 1
     }
