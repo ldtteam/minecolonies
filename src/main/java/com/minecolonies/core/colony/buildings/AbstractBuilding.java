@@ -658,7 +658,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     public Set<ICitizenData> getAllAssignedCitizen()
     {
         final Set<ICitizenData> citizens = new HashSet<>();
-        for (final AbstractAssignedCitizenModule module : getModulesByType(AbstractAssignedCitizenModule.class))
+        for (final IAssignsCitizen module : getModulesByType(IAssignsCitizen.class))
         {
             citizens.addAll(module.getAssignedCitizen());
         }

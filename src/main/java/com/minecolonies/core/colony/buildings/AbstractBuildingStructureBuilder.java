@@ -441,7 +441,7 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuilding
      */
     public void onWorkOrderCancellation(final IWorkOrder workOrder)
     {
-        for (final ICitizenData citizen : this.getModule(BuildingModules.BUILDER_WORK).getAssignedCitizen())
+        for (final ICitizenData citizen : getAllAssignedCitizen())
         {
             if (citizen.getJob() instanceof AbstractJobStructure<?,?> abstractJobStructure)
             {
