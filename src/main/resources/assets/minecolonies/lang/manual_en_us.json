@@ -760,6 +760,9 @@
   "item.minecolonies.supplychestdeployer": "Supply Ship",
   "item.minecolonies.supplycampdeployer": "Supply Camp",
   "item.minecolonies.supply.free": "%s - free",
+  "item.minecolonies.hut.level": "Places at level %s",
+  "item.minecolonies.hut.colony": "Can only be placed in %s",
+  "item.minecolonies.hut.unknowncolony": "unknown colony",
   "com.minecolonies.coremod.job.guard.toolclickguardtoofar": "Too far away from Guard Tower, please upgrade your Guard Tower to set this spot!",
 
   "item.minecolonies.scepterbeekeeper": "Hive Tool",

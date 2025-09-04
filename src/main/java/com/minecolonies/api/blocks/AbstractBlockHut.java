@@ -7,19 +7,14 @@ import com.ldtteam.structurize.placement.structure.AbstractStructureHandler;
 import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.blocks.interfaces.IBuildingBrowsableBlock;
-import com.minecolonies.api.blocks.interfaces.ITickableBlockMinecolonies;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.IBuilding;
-import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
-import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.permissions.Action;
-import com.minecolonies.api.entity.ai.workers.util.IBuilderUndestroyable;
 import com.minecolonies.api.items.ItemBlockHut;
+import com.minecolonies.api.items.component.ModDataComponents;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
-import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
-import com.minecolonies.core.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.TranslationConstants;
@@ -27,7 +22,6 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -35,27 +29,15 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.context.BlockPlaceContext;
-import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.*;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.StateDefinition;
-import net.minecraft.world.level.block.state.properties.DirectionProperty;
-import net.minecraft.world.level.chunk.LevelChunk;
-import net.minecraft.world.level.material.MapColor;
-import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.shapes.CollisionContext;
-import net.minecraft.world.phys.shapes.Shapes;
-import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.items.wrapper.InvWrapper;
@@ -63,12 +45,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
 import static com.ldtteam.structurize.blockentities.interfaces.IBlueprintDataProviderBE.*;
-import static com.minecolonies.api.util.constant.BuildingConstants.DEACTIVATED;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 
 /**
@@ -365,6 +345,16 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
     public String getBlueprintName()
     {
         return getBuildingEntry().getRegistryName().getPath();
+    }
+
+    @Override
+    public void appendHoverText(@NotNull final ItemStack stack, @NotNull final Item.TooltipContext context,
+        @NotNull final List<Component> tooltip, @NotNull final TooltipFlag flags)
+    {
+        super.appendHoverText(stack, context, tooltip, flags);
+
+        stack.addToTooltip(ModDataComponents.HUT_COMPONENT, context, tooltip::add, flags);
+        stack.addToTooltip(ModDataComponents.COLONY_ID_COMPONENT, context, tooltip::add, flags);
     }
 
     @Override
