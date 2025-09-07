@@ -107,6 +107,28 @@ public class FoodUtils
     }
 
     /**
+     * Calculate the food tier from the food value
+     *
+     * @param foodValue
+     * @return
+     */
+    public static int getFoodTier(final double foodValue)
+    {
+        if (foodValue <= 4)
+        {
+            return 1;
+        }
+        else if (foodValue <= 6)
+        {
+            return 2;
+        }
+        else
+        {
+            return 3;
+        }
+    }
+
+    /**
      * Get the best food for a given citizen from a given inventory and return the index where it is.
      * @param inventoryCitizen the inventory to check.
      * @param citizenData the citizen data the food is for.

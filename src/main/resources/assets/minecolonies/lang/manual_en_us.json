@@ -1163,6 +1163,9 @@
   "com.minecolonies.coremod.gui.workerhuts.request": "Request",
 
   "com.minecolonies.coremod.ai.wrongfood": "The food I have is too raw to eat!",
+  "com.minecolonies.coremod.item.tooltip.wrongfood": "This food is too raw for your citizens to eat",
+  "com.minecolonies.coremod.item.tooltip.needbetterfood": "This food is not suitable for this citizen",
+  "com.minecolonies.coremod.item.tooltip.nomenu": "This food cannot be eaten because it’s not on the restaurant’s menu.",
   "com.minecolonies.coremod.ai.betterfood": "Can I have better food please?",
   "com.minecolonies.coremod.ai.betterfood.children": "Ew! I don't want to eat that!",
 
