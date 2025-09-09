@@ -3,10 +3,10 @@ projects:
     sources:
       - dir: "%crowdin_download_path%"
         crowdinPath:
-          dir: "/lang"
+          dir: "%branch_name%"
           filename: "en_us.json"
         exportPattern:
-          dir: "/lang"
+          dir: "%branch_name%"
           filename: "%locale_with_underscore%.json"
         includes:
           - pattern: "en_us.json"
