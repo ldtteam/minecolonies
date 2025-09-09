@@ -2,6 +2,7 @@ package com.minecolonies.core.colony.managers;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
@@ -12,6 +13,8 @@ import com.minecolonies.api.colony.buildings.workerbuildings.IWareHouse;
 import com.minecolonies.api.colony.buildingextensions.IBuildingExtension;
 import com.minecolonies.api.colony.managers.interfaces.IRegisteredStructureManager;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.eventbus.events.colony.buildings.BuildingAddedModEvent;
+import com.minecolonies.api.eventbus.events.colony.buildings.BuildingRemovedModEvent;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.util.*;
 import com.minecolonies.core.MineColonies;
@@ -610,6 +613,9 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
 
             colony.getCitizenManager().calculateMaxCitizens();
             colony.getPackageManager().updateSubscribers();
+
+            IMinecoloniesAPI.getInstance().getEventBus().post(new BuildingAddedModEvent(building));
+
             return building;
         }
         return null;
@@ -659,35 +665,50 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
         for (@NotNull final ICitizenData citizen : colony.getCitizenManager().getCitizens())
         {
             citizen.onRemoveBuilding(building);
-            building.cancelAllRequestsOfCitizen(citizen);
+            building.cancelAllRequestsOfCitizenOrBuilding(citizen);
         }
 
         colony.getRequestManager().onProviderRemovedFromColony(building);
         colony.getRequestManager().onRequesterRemovedFromColony(building.getRequester());
 
         colony.getCitizenManager().calculateMaxCitizens();
+
+        IMinecoloniesAPI.getInstance().getEventBus().post(new BuildingRemovedModEvent(building));
     }
 
     @Override
-    public BlockPos getBestBuilding(final AbstractEntityCitizen citizen, final Class<? extends IBuilding> clazz)
+    public BlockPos getBestBuilding(final AbstractEntityCitizen citizen, final Class<? extends IBuilding> building)
     {
-        return getBestBuilding(citizen.blockPosition(), clazz);
+        return getBestBuilding(citizen.blockPosition(), building);
     }
 
     @Override
-    public BlockPos getBestBuilding(final BlockPos citizen, final Class<? extends IBuilding> clazz)
+    public <T extends IBuilding> BlockPos getBestBuilding(final AbstractEntityCitizen citizen, final Class<T> building, @NotNull final Predicate<T> filter)
+    {
+        return getBestBuilding(citizen.blockPosition(), building, filter);
+    }
+
+    @Override
+    public BlockPos getBestBuilding(final BlockPos pos, final Class<? extends IBuilding> building)
+    {
+        return getBestBuilding(pos, building, b -> true);
+    }
+
+    @Override
+    public <T extends IBuilding> BlockPos getBestBuilding(final BlockPos pos, final Class<T> building, @NotNull final Predicate<T> filter)
     {
         double distance = Double.MAX_VALUE;
         BlockPos goodCook = null;
-        for (final IBuilding building : buildings.values())
+        for (final IBuilding currentBuilding : buildings.values())
         {
-            if (clazz.isInstance(building) && building.getBuildingLevel() > 0 && WorldUtil.isBlockLoaded(colony.getWorld(), building.getPosition()))
+            if (building.isInstance(currentBuilding) && currentBuilding.getBuildingLevel() > 0 && WorldUtil.isBlockLoaded(colony.getWorld(), currentBuilding.getPosition()) && filter.test(
+                (T) currentBuilding))
             {
-                final double localDistance = building.getPosition().distSqr(citizen);
+                final double localDistance = currentBuilding.getPosition().distSqr(pos);
                 if (localDistance < distance)
                 {
                     distance = localDistance;
-                    goodCook = building.getPosition();
+                    goodCook = currentBuilding.getPosition();
                 }
             }
         }

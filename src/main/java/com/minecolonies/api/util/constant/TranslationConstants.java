@@ -525,6 +525,10 @@ public final class TranslationConstants
     @NonNls
     public static final String FIELD_STATUS                                       = "com.minecolonies.coremod.gui.field.status";
     @NonNls
+    public static final String FIELD_STATUS_CURRENT                               = "com.minecolonies.coremod.gui.field.status.current";
+    @NonNls
+    public static final String FIELD_STATUS_NEXT                                  = "com.minecolonies.coremod.gui.field.status.next";
+    @NonNls
     public static final String LABEL_X_OF_Z                                       = "com.minecolonies.coremod.gui.xofz";
     @NonNls
     public static final String MINER_REPAIR_ENQUEUED                              = "com.minecolonies.coremod.gui.workerhuts.miner.repair.enqueued";
@@ -815,6 +819,11 @@ public final class TranslationConstants
 
     @NonNls
     public static final String MESSAGE_INFO_PLAYER_INVENTORY_FULL_HOTBAR_INSERT = "com.minecolonies.coremod.playerinvfull.hotbarinsert";
+
+    @NonNls
+    public static final String COLONYMAP_PLAYER_RESOLVED_REQUESTS = "com.minecolonies.core.item.colonymap.playerresolvedrequests";
+    @NonNls
+    public static final String COLONYMAP_PLAYER_RESOLVED_REQUESTS_COUNT = "com.minecolonies.core.item.colonymap.playerresolvedrequests.count";
 
     //</editor-fold>
 

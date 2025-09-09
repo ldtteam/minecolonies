@@ -147,6 +147,12 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
     }
 
     @Override
+    public boolean hasWorkToDo()
+    {
+        return super.hasWorkToDo() || building.isReadyForTrip();
+    }
+
+    @Override
     public Class<BuildingNetherWorker> getExpectedBuildingClass()
     {
         return BuildingNetherWorker.class;
@@ -170,7 +176,7 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
         worker.getCitizenData().getColony().getTravellingManager().startTravellingTo(
             worker.getCitizenData(),
             building.getPortalLocation(),
-            job.getCraftedResults().size() * 20 //One second of travelling time per item, task or adventure that we complete, maybe parameterize in the config.
+            job.getCraftedResults().size() * 400 //Twenty seconds of travelling time per item, task or adventure that we complete, maybe parameterize in the config.
         );
 
         worker.remove(Entity.RemovalReason.DISCARDED);

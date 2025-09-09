@@ -25,9 +25,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import static com.minecolonies.api.util.constant.EquipmentLevelConstants.*;
 import static com.minecolonies.api.util.constant.GuardConstants.*;
 import static com.minecolonies.api.util.constant.InventoryConstants.*;
-import static com.minecolonies.api.util.constant.EquipmentLevelConstants.*;
 
 /**
  * Container for Mie
@@ -336,5 +336,13 @@ public class ContainerCitizenInventory extends AbstractContainerMenu
     public Optional<? extends Entity> getEntity()
     {
         return this.entity;
+    }
+
+    /**
+     * @return
+     */
+    public ICitizen getCitizenData()
+    {
+        return citizenData;
     }
 }

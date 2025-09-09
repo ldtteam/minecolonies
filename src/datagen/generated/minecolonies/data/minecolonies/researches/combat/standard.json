@@ -18,7 +18,7 @@
   "requirements": [
     {
       "type": "minecolonies:building",
-      "building": "barracks",
+      "building": "minecolonies:barracks",
       "level": 4
     }
   ],

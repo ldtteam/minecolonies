@@ -241,7 +241,8 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
             return getState();
         }
 
-        if (building.getModule(BuildingModules.ITEMLIST_SAPLING).getList().size() > 0)
+        if (building.getModule(BuildingModules.ITEMLIST_SAPLING).getList().size()
+            < IColonyManager.getInstance().getCompatibilityManager().getNumberOfSaplings())
         {
             // This got moved downwards compared to the AICrafting-implementation,
             // because in this case waiting for dumping is more important

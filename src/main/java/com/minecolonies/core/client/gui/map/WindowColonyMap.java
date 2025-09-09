@@ -1,6 +1,7 @@
 package com.minecolonies.core.client.gui.map;
 
-import com.ldtteam.blockui.BOScreen;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 import com.ldtteam.blockui.PaneBuilders;
 import com.ldtteam.blockui.controls.*;
 import com.ldtteam.blockui.util.resloc.OutOfJarResourceLocation;
@@ -13,8 +14,14 @@ import com.minecolonies.api.client.render.modeltype.registry.IModelTypeRegistry;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
+import com.minecolonies.api.colony.requestsystem.location.ILocation;
+import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
+import com.minecolonies.api.colony.requestsystem.request.IRequest;
+import com.minecolonies.api.colony.requestsystem.requestable.IStackBasedTask;
+import com.minecolonies.api.colony.requestsystem.resolver.player.IPlayerRequestResolver;
+import com.minecolonies.api.colony.requestsystem.token.IToken;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.SoundUtils;
-import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.Network;
 import com.minecolonies.core.client.gui.AbstractWindowSkeleton;
@@ -22,6 +29,7 @@ import com.minecolonies.core.client.render.worldevent.HighlightManager;
 import com.minecolonies.core.client.render.worldevent.highlightmanager.CitizenRenderData;
 import com.minecolonies.core.colony.buildings.views.LivingBuildingView;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingTownHall;
+import com.minecolonies.core.colony.requestsystem.locations.StaticLocation;
 import com.minecolonies.core.entity.citizen.EntityCitizen;
 import com.minecolonies.core.network.messages.client.colony.ColonyListMessage;
 import com.minecolonies.core.network.messages.server.colony.OpenInventoryMessage;
@@ -38,17 +46,89 @@ import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static com.minecolonies.api.research.util.ResearchConstants.COLOR_TEXT_FULFILLED;
 import static com.minecolonies.api.util.constant.CitizenConstants.LOW_SATURATION;
+import static com.minecolonies.api.util.constant.TranslationConstants.COLONYMAP_PLAYER_RESOLVED_REQUESTS;
+import static com.minecolonies.api.util.constant.TranslationConstants.COLONYMAP_PLAYER_RESOLVED_REQUESTS_COUNT;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 import static com.minecolonies.core.client.gui.questlog.Constants.HIGHLIGHT_QUEST_LOG_TRACKER_DURATION;
 import static net.minecraft.client.gui.Gui.GUI_ICONS_LOCATION;
 
 public class WindowColonyMap extends AbstractWindowSkeleton
 {
+    public static final int HIGHLIGHT_RANGE = 2;
+
+    /**
+     * Holds information about the map decorations that may be associated with each building.
+     */
+    public class MapDecoration
+    {
+
+        public ItemIcon icon;
+        public Box rangeBox;
+        public Box highlightBox;
+        public Image statusImage;
+
+        public MapDecoration(final ItemIcon icon, final Box rangeBox, final Box highlightBox, final Image statusImage)
+        {
+            this.icon = icon;
+            this.rangeBox = rangeBox;
+            this.highlightBox = highlightBox;
+            this.statusImage = statusImage;
+        }
+
+    /**
+     * Returns the red component of a color based on the percentage of building capacity used.
+     *
+     * @param pctFull the percentage of building capacity used
+     * @return the red component of the color
+     */
+        public static int getRedFromRange(double pctFull)
+        {
+            int red;
+
+            if (pctFull <= 0.5)
+            {
+                red = (int) (255 * (pctFull / 0.5));
+            }
+            else
+            {
+                red = 255;
+            }
+
+            return red;
+        }
+
+
+        /**
+         * Returns the green component of a color based on the percentage of building capacity used.
+         *
+         * @param pctFull the percentage of building capacity used
+         * @return the green component of the color
+         */
+        public static int getGreenFromRange(double pctFull)
+        {
+            int green;
+
+            if (pctFull <= 0.5)
+            {
+                green = 255;
+            }
+            else
+            {
+                green = (int) (255 * (1 - (pctFull - 0.5) / 0.5));
+            }
+
+            return green;
+        }
+    }
+
     /**
      * Link to the xml file of the window.
      */
@@ -83,7 +163,7 @@ public class WindowColonyMap extends AbstractWindowSkeleton
      * Colony data beeing currently displayed
      */
     private Map<ICitizenDataView, View>              citizens       = new HashMap<>();
-    private Map<IBuildingView, Tuple<ItemIcon, Box>> buildings      = new HashMap<>();
+    private Map<IBuildingView, MapDecoration>        buildings      = new HashMap<>();
     private Map<ColonyListMessage.ColonyInfo, View>  coloniesImages = new HashMap<>();
     private List<MinecraftMap>                       maps           = new ArrayList<>();
 
@@ -217,17 +297,17 @@ public class WindowColonyMap extends AbstractWindowSkeleton
                 }
             }
 
-            for (Map.Entry<IBuildingView, Tuple<ItemIcon, Box>> building : buildings.entrySet())
+            for (Map.Entry<IBuildingView, MapDecoration> building : buildings.entrySet())
             {
-                if (building.getValue().getB() != null)
+                if (building.getValue().rangeBox != null)
                 {
-                    if (building.getValue().getA().wasCursorInPane())
+                    if (building.getValue().icon.wasCursorInPane())
                     {
-                        building.getValue().getB().show();
+                        building.getValue().rangeBox.show();
                     }
                     else
                     {
-                        building.getValue().getB().hide();
+                        building.getValue().rangeBox.hide();
                     }
                 }
             }
@@ -290,9 +370,9 @@ public class WindowColonyMap extends AbstractWindowSkeleton
             // Hide small icons
             // show colony
 
-            for (Map.Entry<IBuildingView, Tuple<ItemIcon, Box>> buildingEntry : buildings.entrySet())
+            for (Map.Entry<IBuildingView, MapDecoration> buildingEntry : buildings.entrySet())
             {
-                buildingEntry.getValue().getA().off();
+                buildingEntry.getValue().icon.off();
             }
 
             for (Map.Entry<ICitizenDataView, View> citizenEntry : citizens.entrySet())
@@ -303,9 +383,9 @@ public class WindowColonyMap extends AbstractWindowSkeleton
         else
         {
             // Display small icons
-            for (Map.Entry<IBuildingView, Tuple<ItemIcon, Box>> buildingEntry : buildings.entrySet())
+            for (Map.Entry<IBuildingView, MapDecoration> buildingEntry : buildings.entrySet())
             {
-                buildingEntry.getValue().getA().on();
+                buildingEntry.getValue().icon.on();
             }
 
             for (Map.Entry<ICitizenDataView, View> citizenEntry : citizens.entrySet())
@@ -379,11 +459,13 @@ public class WindowColonyMap extends AbstractWindowSkeleton
      */
     private void updateBuildingView(final IBuildingView buildingView)
     {
-        Tuple<ItemIcon, Box> buildingTuple = buildings.get(buildingView);
-        if (buildingTuple == null)
+        MapDecoration buildingDecorations = buildings.get(buildingView);
+        if (buildingDecorations == null)
         {
             ItemIcon uiBuilding = new ItemIcon();
             Box box = null;
+            Box houseWithCapacity = null;
+            Image statusImage = null;
 
             uiBuilding.setID(buildingView.getID().toShortString());
             uiBuilding.setSize(11 + buildingView.getBuildingLevel(), 11 + buildingView.getBuildingLevel());
@@ -393,7 +475,7 @@ public class WindowColonyMap extends AbstractWindowSkeleton
 
             AbstractTextBuilder.TooltipBuilder tooltip = PaneBuilders.tooltipBuilder();
             tooltip.hoverPane(uiBuilding)
-              .append(BOScreen.getTooltipFromItem(mc, item).get(0)).append(Component.literal(" : " + buildingView.getBuildingLevel()))
+              .append(Component.translatable(buildingView.getBuildingDisplayName())).append(Component.literal(" : " + buildingView.getBuildingLevel()))
               .appendNL(Component.literal("Coordinates: " + buildingView.getID().getX() + "X, " + buildingView.getID().getZ() + "Z"))
               .appendNL(Component.literal("Citizens: " + (buildingView instanceof LivingBuildingView home ? home.getResidents().size() : buildingView.getAllAssignedCitizens().size())));
 
@@ -405,8 +487,68 @@ public class WindowColonyMap extends AbstractWindowSkeleton
                     tooltip.appendNL(Component.literal(dataView.getName()));
                 }
             }
+
+            ImmutableList<IRequest<?>> playerResolvedRequests = getPlayerResolvedRequestsForBuilding(buildingView);
+
+            // If there are player resolved requests for this building, add the appropriate status icon, and a tooltip with the detail
+            if (playerResolvedRequests.size() > 0)
+            {
+                statusImage = new Image();
+                statusImage.setImage(new ResourceLocation("minecolonies:textures/icons/information.png"), false);
+                statusImage.setSize(6, 6);
+                final BlockPos uiPos = worldPosToUIPos(buildingView.getPosition());
+                statusImage.setPosition(uiPos.getX() - 4, uiPos.getY() - 4);
+                statusImage.setVisible(true);
+
+                AbstractTextBuilder.TooltipBuilder statustip = PaneBuilders.tooltipBuilder();
+                statustip.hoverPane(statusImage);
+
+                statustip.append(Component.translatable(COLONYMAP_PLAYER_RESOLVED_REQUESTS));
+
+                for (IRequest<?> request : playerResolvedRequests)
+                {
+                    int count = -1;
+                    Component tipText = null;
+
+                    if (request instanceof IStackBasedTask stackRequest)
+                    {
+                        count = stackRequest.getDisplayCount();
+                        tipText = stackRequest.getDisplayPrefix();
+                    }
+                    else
+                    {   
+                        tipText = Component.literal(request.getLongDisplayString().getString().replace("§f", ""));
+                    }
+                    statustip.appendNL(tipText);
+                    
+                    if (count > 0)
+                    {
+                        statustip.append(Component.literal(": " + count));
+                    }
+                }
+
+                dragView.addChild(statusImage);
+                statustip.build();
+
+                tooltip.appendNL(Component.translatable(COLONYMAP_PLAYER_RESOLVED_REQUESTS_COUNT, playerResolvedRequests.size()));
+            }
+
             tooltip.build();
             uiBuilding.setVisible(true);
+
+            // Highlight houses that have capacity for additional citizens.
+            if (buildingView instanceof LivingBuildingView home && home.getResidents().size() < buildingView.getBuildingLevel() && buildingView.getRange() == 0)
+            {
+                double pctFull = Math.max(0, Math.min(1, (double) home.getResidents().size() / (double) buildingView.getBuildingLevel()));
+                houseWithCapacity = new Box();
+                final BlockPos uiPos = worldPosToUIPos(buildingView.getPosition());
+                houseWithCapacity.setLineWidth(2);
+                houseWithCapacity.setColor(MapDecoration.getRedFromRange(pctFull), MapDecoration.getGreenFromRange(pctFull), 33);
+                houseWithCapacity.setPosition(uiPos.getX(), uiPos.getZ());
+                houseWithCapacity.setSize(uiBuilding.getWidth(), uiBuilding.getHeight());
+                dragView.addChild(houseWithCapacity);
+            }
+
 
             if (buildingView.getRange() != 0)
             {
@@ -424,19 +566,32 @@ public class WindowColonyMap extends AbstractWindowSkeleton
             }
             dragView.addChild(uiBuilding);
 
-            buildingTuple = new Tuple<>(uiBuilding, box);
-            this.buildings.put(buildingView, buildingTuple);
+            buildingDecorations = new MapDecoration(uiBuilding, box, houseWithCapacity, statusImage);
+            this.buildings.put(buildingView, buildingDecorations);
         }
 
         final BlockPos newPos = worldPosToUIPos(buildingView.getID());
-        buildingTuple.getA().setPosition(newPos.getX(), newPos.getZ());
-        if (buildingTuple.getB() != null)
+        buildingDecorations.icon.setPosition(newPos.getX(), newPos.getZ());
+        if (buildingDecorations.rangeBox != null)
         {
             final int range = buildingView.getRange();
             final BlockPos UIPos1 = worldPosToUIPos(buildingView.getPosition().offset(-range, 0, -range));
             final BlockPos UIPos2 = worldPosToUIPos(buildingView.getPosition().offset(range, 0, range));
-            buildingTuple.getB().setPosition(UIPos1.getX(), UIPos1.getZ());
-            buildingTuple.getB().setSize(UIPos2.getX() - UIPos1.getX(), UIPos2.getZ() - UIPos1.getZ());
+            buildingDecorations.rangeBox.setPosition(UIPos1.getX(), UIPos1.getZ());
+            buildingDecorations.rangeBox.setSize(UIPos2.getX() - UIPos1.getX(), UIPos2.getZ() - UIPos1.getZ());
+        }
+
+        if (buildingDecorations.highlightBox != null)
+        {
+            final BlockPos UIPos1 = worldPosToUIPos(buildingView.getPosition());
+            buildingDecorations.highlightBox.setPosition(UIPos1.getX(), UIPos1.getZ());
+            buildingDecorations.highlightBox.setSize(buildingDecorations.icon.getWidth(), buildingDecorations.icon.getHeight());
+        }
+
+        if (buildingDecorations.statusImage != null)
+        {
+            final BlockPos UIPos1 = worldPosToUIPos(buildingView.getPosition());
+            buildingDecorations.statusImage.setPosition(UIPos1.getX() - 4, UIPos1.getZ() - 4);
         }
     }
 
@@ -541,4 +696,62 @@ public class WindowColonyMap extends AbstractWindowSkeleton
         super.onClosed();
         maps.forEach(MinecraftMap::close);
     }
+
+    /**
+     * Retrieves the player resolved requests that match with a specified building view.
+     * 
+     * @param buildingView the building view to match requests against
+     * @return an immutable list of the player resolved requests for the building, or an empty list if the building view or colony is null
+     * or if there is no request manager or player resolver
+     */
+    public ImmutableList<IRequest<?>> getPlayerResolvedRequestsForBuilding(final IBuildingView buildingView)
+    {
+        if (buildingView == null || buildingView.getColony() == null) 
+        {
+            return ImmutableList.of();
+        }
+
+        // buildingView.getLocation() is null... is this a bug? Using the colony dimension to allow multi-dimensional matching against player requests.
+        ILocation buildingLocation = new StaticLocation(buildingView.getPosition(), buildingView.getColony().getDimension());  
+
+        final ArrayList<IRequest<?>> playerResolvedBuildingRequests = Lists.newArrayList();
+
+        if (buildingView == null || buildingView.getColony() == null)
+        {
+            return ImmutableList.of();
+        }
+
+        final IRequestManager requestManager = buildingView.getColony().getRequestManager();
+        if (requestManager == null)
+        {
+            return ImmutableList.of();
+        }
+
+        try
+        {
+            final IPlayerRequestResolver resolver = requestManager.getPlayerResolver();
+            final Set<IToken<?>> assigned = new HashSet<>(resolver.getAllAssignedRequests());
+
+            for (final IToken<?> assignedToken : assigned)
+            {
+                final IRequest<?> r = requestManager.getRequestForToken(assignedToken);
+                if (r != null)
+                {
+                    if (r.getRequester().getLocation().equals(buildingLocation))
+                    {
+                        playerResolvedBuildingRequests.add(r);
+                    }
+                }
+            }
+        }
+        catch (Exception e)
+        {
+            Log.getLogger().warn("Exception trying to retrieve requests:", e);
+            requestManager.reset();
+            return ImmutableList.of();
+        }
+
+        return ImmutableList.copyOf(playerResolvedBuildingRequests);
+    }
+
 }

@@ -274,6 +274,9 @@ public class NetworkChannel
         registerMessage(++idx, DebugEnablePathfindingMessage.class, DebugEnablePathfindingMessage::new);
         registerMessage(++idx, DebugOutputMessage.class, DebugOutputMessage::new);
         registerMessage(++idx, DebugEnableMessage.class, DebugEnableMessage::new);
+
+        // Item Setting Messages
+        registerMessage(++idx, ItemSettingMessage.class, ItemSettingMessage::new);
     }
 
     private void setupInternalMessages()

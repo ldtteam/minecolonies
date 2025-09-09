@@ -19,8 +19,8 @@ import java.util.Optional;
 import java.util.Random;
 
 import static com.minecolonies.api.util.constant.CitizenConstants.MAX_GUARD_CALL_RANGE;
+import static com.minecolonies.core.entity.ai.minimal.EntityAICitizenAvoidEntity.FleeStates.CHECK_ENTITIES;
 import static com.minecolonies.core.entity.ai.minimal.EntityAICitizenAvoidEntity.FleeStates.RUNNING;
-import static com.minecolonies.core.entity.ai.minimal.EntityAICitizenAvoidEntity.FleeStates.SAFE;
 
 /**
  * AI task to avoid an Entity class.
@@ -67,7 +67,7 @@ public class EntityAICitizenAvoidEntity implements IStateAI
 
     public enum FleeStates implements IState
     {
-        SAFE,
+        CHECK_ENTITIES,
         RUNNING
     }
 
@@ -103,11 +103,11 @@ public class EntityAICitizenAvoidEntity implements IStateAI
         this.nearSpeed = nearSpeed;
 
         citizen.getCitizenAI().addTransition(new AITarget(CitizenAIState.FLEE, () -> true, () -> {
-            reset();
-            return SAFE;
+            startingPos = citizen.blockPosition();
+            return CHECK_ENTITIES;
         }, 1));
-        citizen.getCitizenAI().addTransition(new AITarget(SAFE, () -> true, this::isEntityClose, 5));
-        citizen.getCitizenAI().addTransition(new AITarget(RUNNING, this::updateMoving, () -> SAFE, 5));
+        citizen.getCitizenAI().addTransition(new AITarget(CHECK_ENTITIES, () -> true, this::isEntityClose, 5));
+        citizen.getCitizenAI().addTransition(new AITarget(RUNNING, this::updateMoving, () -> CHECK_ENTITIES, 5));
     }
 
     /**
@@ -121,6 +121,7 @@ public class EntityAICitizenAvoidEntity implements IStateAI
 
         if (safeTime > CHECKS_BEFORE_SAFE)
         {
+            reset();
             return CitizenAIState.IDLE;
         }
 
@@ -129,12 +130,11 @@ public class EntityAICitizenAvoidEntity implements IStateAI
         {
             closestLivingEntity = currentClosest;
             safeTime = 0;
-            startingPos = citizen.blockPosition();
             performMoveAway();
             return RUNNING;
         }
 
-        return SAFE;
+        return CHECK_ENTITIES;
     }
 
     /**

@@ -37,7 +37,7 @@ public class DefaultDyerCraftingProvider extends CustomRecipeProvider
     protected void registerRecipes(@NotNull final Consumer<FinishedRecipe> consumer)
     {
         CustomRecipeBuilder.create(DYER, MODULE_CRAFTING, "red_sand")
-                .inputs(List.of(new ItemStorage(new ItemStack(Items.SAND, 4)),
+                .inputs(List.of(new ItemStorage(new ItemStack(Items.SAND), 4),
                         new ItemStorage(new ItemStack(Items.RED_DYE))))
                 .result(new ItemStack(Items.RED_SAND, 4))
                 .build(consumer);

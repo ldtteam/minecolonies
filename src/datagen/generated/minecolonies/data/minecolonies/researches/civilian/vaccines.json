@@ -18,7 +18,7 @@
   "requirements": [
     {
       "type": "minecolonies:building",
-      "building": "hospital",
+      "building": "minecolonies:hospital",
       "level": 3
     }
   ],

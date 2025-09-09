@@ -94,7 +94,7 @@ public class RecruitmentItemsListener extends SimpleJsonResourceReloadListener
     {
         // Number between 1-9
         final int limit = 3 * buildingLevel + 1;
-        int rarity = (int) MathUtils.RANDOM.nextGaussian(limit/2.0,0.5);
+        int rarity = (int) MathUtils.RANDOM.nextGaussian(limit/2.0,2.0);
         if (rarity <= 0)
         {
             rarity = 1;

@@ -1158,12 +1158,12 @@ public final class ColonyView implements IColonyView
     }
 
     @Override
-    public boolean hasBuilding(final String name, final int level, final boolean singleBuilding)
+    public boolean hasBuilding(final ResourceLocation name, final int level, final boolean singleBuilding)
     {
         int sum = 0;
         for (final IBuildingView building : buildings.values())
         {
-            if (building.getBuildingType().getRegistryName().getPath().equalsIgnoreCase(name))
+            if (building.getBuildingType().getRegistryName().equals(name))
             {
                 if (singleBuilding)
                 {

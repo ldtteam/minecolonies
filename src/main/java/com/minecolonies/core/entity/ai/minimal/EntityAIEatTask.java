@@ -14,6 +14,7 @@ import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenFoodHandler;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.CitizenConstants;
 import com.minecolonies.core.Network;
+import com.minecolonies.core.colony.buildings.modules.BuildingModules;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingCook;
 import com.minecolonies.core.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.core.colony.jobs.AbstractJobGuard;
@@ -31,6 +32,7 @@ import net.minecraft.world.item.ItemStack;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.ItemStackUtils.ISCOOKABLE;
 import static com.minecolonies.api.util.constant.CitizenConstants.FULL_SATURATION;
@@ -47,7 +49,12 @@ import static com.minecolonies.core.entity.ai.minimal.EntityAIEatTask.EatingStat
 public class EntityAIEatTask implements IStateAI
 {
     /**
-     * Max waiting time for food in minutes..
+     * Predicate for matching valid restaurants to navigate to.
+     */
+    private static final Predicate<BuildingCook> STAFFED_RESTAURANTS = buildingCook -> buildingCook.getModule(BuildingModules.COOK_WORK).hasAssignedCitizen();
+
+    /**
+     * Max waiting time for food in minutes.
      */
     private static final int MINUTES_WAITING_TIME = 2;
 
@@ -441,17 +448,14 @@ public class EntityAIEatTask implements IStateAI
     {
         final ICitizenData citizenData = citizen.getCitizenData();
         final IColony colony = citizenData.getColony();
-        if (citizenData.getWorkBuilding() != null)
+        final BlockPos searchFrom = citizenData.getWorkBuilding() != null
+            ? citizenData.getWorkBuilding().getPosition()
+            : citizenData.getHomeBuilding() != null ? citizenData.getHomeBuilding().getPosition() : citizen.blockPosition();
+
+        restaurantPos = colony.getBuildingManager().getBestBuilding(searchFrom, BuildingCook.class, STAFFED_RESTAURANTS);
+        if (restaurantPos == null)
         {
-            restaurantPos = colony.getBuildingManager().getBestBuilding(citizenData.getWorkBuilding().getPosition(), BuildingCook.class);
-        }
-        else if (citizenData.getHomeBuilding() != null)
-        {
-            restaurantPos = colony.getBuildingManager().getBestBuilding(citizenData.getHomeBuilding().getPosition(), BuildingCook.class);
-        }
-        else
-        {
-            restaurantPos = colony.getBuildingManager().getBestBuilding(citizen, BuildingCook.class);
+            restaurantPos = colony.getBuildingManager().getBestBuilding(searchFrom, BuildingCook.class);
         }
 
         final IJob<?> job = citizen.getCitizenJobHandler().getColonyJob();

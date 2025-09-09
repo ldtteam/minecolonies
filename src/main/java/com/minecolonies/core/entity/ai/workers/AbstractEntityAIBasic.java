@@ -255,10 +255,6 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
            */
           new AITarget(PAUSED, this::bePaused, 10),
           /*
-           * Walk to goal.
-           */
-          new AITarget(WALK_TO, this::walkToState, 10),
-          /*
            * Start paused with inventory dump
            */
           new AIEventTarget(AIBlockingEventType.AI_BLOCKING, this::isStartingPaused, INVENTORY_FULL, TICKS_SECOND)
@@ -274,30 +270,6 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
         return getState() != INVENTORY_FULL &&
                  (this.building.hasOpenSyncRequest(worker.getCitizenData())
                     || this.building.hasCitizenCompletedRequestsToPickup(worker.getCitizenData()));
-    }
-
-    /**
-     * Set a position to walk to.
-     *
-     * @param walkto the position to walk to.
-     */
-    public void setWalkTo(final BlockPos walkto)
-    {
-        this.walkTo = walkto;
-    }
-
-    /**
-     * Only used for command-triggered walking
-     *
-     * @return IDLE once arrived.
-     */
-    private IAIState walkToState()
-    {
-        if (!walkToSafePos(walkTo))
-        {
-            return getState();
-        }
-        return IDLE;
     }
 
     /**
@@ -580,7 +552,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
         }
         if (building.hasCitizenCompletedRequests(worker.getCitizenData()))
         {
-            final Collection<IRequest<?>> completedRequests = building.getCompletedRequests(worker.getCitizenData());
+            final Collection<IRequest<?>> completedRequests = building.getCompletedRequestsOfCitizenOrBuilding(worker.getCitizenData());
             final List<IRequest<?>> deliverableRequests = new ArrayList<>();
             for (final IRequest<?> req : completedRequests)
             {
@@ -730,7 +702,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
      */
     private boolean cleanAsync()
     {
-        final Collection<IRequest<?>> completedRequests = building.getCompletedRequests(worker.getCitizenData());
+        final Collection<IRequest<?>> completedRequests = building.getCompletedRequestsOfCitizenOrBuilding(worker.getCitizenData());
 
         for (IRequest<?> request : completedRequests)
         {

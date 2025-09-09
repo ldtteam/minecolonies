@@ -477,4 +477,21 @@ public abstract class AbstractJob<AI extends AbstractAISkeleton<J> & ITickingSta
     {
         // Do Nothing.
     }
+
+    @Override
+    public final boolean equals(final Object o)
+    {
+        if (!(o instanceof final AbstractJob<?, ?> that))
+        {
+            return false;
+        }
+
+        return entry.equals(that.entry);
+    }
+
+    @Override
+    public final int hashCode()
+    {
+        return entry.hashCode();
+    }
 }

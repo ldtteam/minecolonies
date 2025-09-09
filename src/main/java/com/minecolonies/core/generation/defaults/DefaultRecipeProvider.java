@@ -547,35 +547,35 @@ public class DefaultRecipeProvider extends RecipeProvider
                 .save(consumer);
 
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC,Items.CHAINMAIL_HELMET)
-                .pattern("NNN")
-                .pattern("NIN")
-                .define('I', Items.IRON_INGOT)
+                .pattern("NCN")
+                .pattern("N N")
+                .define('C', Items.CHAIN)
                 .define('N', Items.IRON_NUGGET)
                 .unlockedBy("has_iron", has(Items.IRON_INGOT))
                 .save(consumer, new ResourceLocation(MOD_ID, "chainmailhelmet"));
 
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC,Items.CHAINMAIL_CHESTPLATE)
-                .pattern("I I")
+                .pattern("C C")
                 .pattern("NNN")
                 .pattern("NNN")
-                .define('I', Items.IRON_INGOT)
+                .define('C', Items.CHAIN)
                 .define('N', Items.IRON_NUGGET)
                 .unlockedBy("has_iron", has(Items.IRON_INGOT))
                 .save(consumer, new ResourceLocation(MOD_ID, "chainmailchestplate"));
 
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC,Items.CHAINMAIL_LEGGINGS)
-                .pattern("III")
+                .pattern("CNC")
                 .pattern("N N")
                 .pattern("N N")
-                .define('I', Items.IRON_INGOT)
+                .define('C', Items.CHAIN)
                 .define('N', Items.IRON_NUGGET)
                 .unlockedBy("has_iron", has(Items.IRON_INGOT))
                 .save(consumer, new ResourceLocation(MOD_ID, "chainmailleggings"));
 
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC,Items.CHAINMAIL_BOOTS)
-                .pattern("I I")
+                .pattern("C C")
                 .pattern("N N")
-                .define('I', Items.IRON_INGOT)
+                .define('C', Items.CHAIN)
                 .define('N', Items.IRON_NUGGET)
                 .unlockedBy("has_iron", has(Items.IRON_INGOT))
                 .save(consumer, new ResourceLocation(MOD_ID, "chainmailboots"));
@@ -1075,5 +1075,14 @@ public class DefaultRecipeProvider extends RecipeProvider
           .requires(Items.EGG)
           .unlockedBy("has_butter", has(ModItems.butter))
           .save(consumer, new ResourceLocation(MOD_ID, "plain_cheesecake"));
+
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.fried_rice, 1)
+          .requires(ModBlocks.blockOnion)
+          .requires(Items.CARROT)
+          .requires(ModItems.cooked_rice)
+          .requires(Items.EGG)
+          .requires(ModTags.rawMeat)
+          .unlockedBy("has_onion", has(ModBlocks.blockOnion))
+          .save(consumer, new ResourceLocation(MOD_ID, "fried_rice"));
     }
 }

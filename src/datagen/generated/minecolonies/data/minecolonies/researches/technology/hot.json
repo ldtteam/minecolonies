@@ -17,7 +17,7 @@
   "requirements": [
     {
       "type": "minecolonies:building",
-      "building": "miner",
+      "building": "minecolonies:miner",
       "level": 2
     }
   ],

@@ -18,7 +18,7 @@
   "requirements": [
     {
       "type": "minecolonies:building",
-      "building": "cook",
+      "building": "minecolonies:cook",
       "level": 2
     }
   ],

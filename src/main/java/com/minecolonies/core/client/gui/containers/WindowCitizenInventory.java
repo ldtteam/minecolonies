@@ -1,5 +1,6 @@
 package com.minecolonies.core.client.gui.containers;
 
+import com.minecolonies.api.colony.ICitizen;
 import com.minecolonies.api.inventory.container.ContainerCitizenInventory;
 import com.minecolonies.api.util.constant.Constants;
 import com.mojang.blaze3d.platform.Lighting;
@@ -8,11 +9,11 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
@@ -61,6 +62,16 @@ public class WindowCitizenInventory extends AbstractContainerScreen<ContainerCit
     private static final int SLOTS_EACH_ROW = 9;
 
     /**
+     * Current active citizen inventory window
+     */
+    public static WindowCitizenInventory activeCitizenInventory = null;
+
+    /**
+     * Citizen of this UI
+     */
+    private ICitizen citizenData;
+
+    /**
      * window height is calculated with these values; the more rows, the heigher
      */
     private final int inventoryRows;
@@ -72,6 +83,8 @@ public class WindowCitizenInventory extends AbstractContainerScreen<ContainerCit
 
         this.imageHeight = Y_OFFSET + Math.min(SLOTS_EACH_ROW, this.inventoryRows) * SLOT_OFFSET;
         this.imageWidth = 245;
+        activeCitizenInventory = this;
+        citizenData = container.getCitizenData();
     }
 
     @Override
@@ -174,5 +187,22 @@ public class WindowCitizenInventory extends AbstractContainerScreen<ContainerCit
         entityrenderdispatcher.setRenderShadow(true);
         stack.pose().popPose();
         Lighting.setupFor3DItems();
+    }
+
+    @Override
+    public void onClose()
+    {
+        activeCitizenInventory = null;
+        super.onClose();
+    }
+
+    /**
+     * Get the citizen for this UI
+     *
+     * @return
+     */
+    public ICitizen getCitizenData()
+    {
+        return citizenData;
     }
 }
