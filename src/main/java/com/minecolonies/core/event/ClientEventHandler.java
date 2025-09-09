@@ -7,17 +7,25 @@ import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.blocks.interfaces.IBuildingBrowsableBlock;
+import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.modules.IBuildingModule;
 import com.minecolonies.api.colony.buildings.modules.ICraftingBuildingModule;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
+import com.minecolonies.api.colony.buildings.views.IBuildingView;
+import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.research.IGlobalResearch;
+import com.minecolonies.api.util.FoodUtils;
 import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.ColonyConstants;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.core.client.gui.WindowBuildingBrowser;
+import com.minecolonies.core.client.gui.containers.WindowCitizenInventory;
 import com.minecolonies.core.client.render.worldevent.ColonyBorderRenderer;
 import com.minecolonies.core.client.render.worldevent.WorldEventContext;
 import com.minecolonies.core.colony.crafting.CustomRecipe;
@@ -29,6 +37,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
@@ -37,6 +46,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.phys.HitResult;
 import net.neoforged.api.distmarker.Dist;
@@ -59,9 +69,11 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.Map.Entry;
 
+import static com.minecolonies.api.research.util.ResearchConstants.SATURATION;
 import static com.minecolonies.api.sounds.ModSoundEvents.CITIZEN_SOUND_EVENT_PREFIX;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.api.util.constant.translation.DebugTranslationConstants.*;
+import static com.minecolonies.core.colony.buildings.modules.BuildingModules.RESTAURANT_MENU;
 
 /**
  * Used to handle client events.
@@ -106,8 +118,8 @@ public class ClientEventHandler
 
         final ResourceLocation soundLocation = event.getSound().getLocation();
         if (!MinecoloniesAPIProxy.getInstance().getConfig().getClient().citizenVoices.get()
-              && soundLocation.getNamespace().equals(Constants.MOD_ID)
-              && soundLocation.getPath().startsWith(CITIZEN_SOUND_EVENT_PREFIX)
+            && soundLocation.getNamespace().equals(Constants.MOD_ID)
+            && soundLocation.getPath().startsWith(CITIZEN_SOUND_EVENT_PREFIX)
         )
         {
             event.setSound(null);
@@ -128,14 +140,16 @@ public class ClientEventHandler
             return;
         }
         IColony colony = IMinecoloniesAPI.getInstance().getColonyManager().getIColony(event.getEntity().level(), event.getEntity().blockPosition());
+
+        final ItemStack stack = event.getItemStack();
         if (colony == null)
         {
             colony = IMinecoloniesAPI.getInstance().getColonyManager().getIColonyByOwner(event.getEntity().level(), event.getEntity());
         }
-        handleCrafterRecipeTooltips(colony, event.getToolTip(), event.getItemStack().getItem());
-        if (event.getItemStack().getItem() instanceof BlockItem)
+        handleCrafterRecipeTooltips(colony, event.getToolTip(), stack.getItem());
+        if (stack.getItem() instanceof BlockItem)
         {
-            final BlockItem blockItem = (BlockItem) event.getItemStack().getItem();
+            final BlockItem blockItem = (BlockItem) stack.getItem();
             if (blockItem.getBlock() instanceof AbstractBlockHut)
             {
                 handleHutBlockResearchUnlocks(colony, event.getToolTip(), blockItem.getBlock());
@@ -154,6 +168,48 @@ public class ClientEventHandler
                 }
 
                 event.getToolTip().add(Component.translatableEscape("com.minecolonies.coremod.tooltip.schematic.tier", tier));
+            }
+        }
+
+        if (WindowCitizenInventory.activeCitizenInventory != null && ItemStackUtils.ISFOOD.test(stack))
+        {
+            if (!FoodUtils.EDIBLE.test(stack))
+            {
+                event.getToolTip().add(Component.translatable("com.minecolonies.coremod.item.tooltip.wrongfood").withStyle(ChatFormatting.RED));
+                return;
+            }
+
+            double foodValue = FoodUtils.getFoodValue(stack, stack.get(DataComponents.FOOD), colony.getResearchManager().getResearchEffects().getEffectStrength(SATURATION));
+            final int foodTier = FoodUtils.getFoodTier(foodValue);
+
+            final ICitizenDataView citizenData = (ICitizenDataView) WindowCitizenInventory.activeCitizenInventory.getCitizenData();
+            final IColonyView colonyView = (IColonyView) citizenData.getColony();
+
+            IBuildingView cookBuilding = null;
+            for (final IBuildingView buildingView : colonyView.getBuildings())
+            {
+                if (buildingView.getBuildingType() == ModBuildings.cook.get())
+                {
+                    if (cookBuilding == null || cookBuilding.getID().distSqr(citizenData.getPosition()) > buildingView.getID().distSqr(citizenData.getPosition()))
+                    {
+                        cookBuilding = buildingView;
+                    }
+                }
+            }
+
+            final int homeBuildingLevel =
+                colonyView.getBuilding(citizenData.getHomeBuilding()) == null ? 0 : colonyView.getBuilding(citizenData.getHomeBuilding()).getBuildingLevel();
+            if (FoodUtils.canEatLevel(event.getItemStack(), homeBuildingLevel))
+            {
+                event.getToolTip().add(Component.translatable(TranslationConstants.TIER_TOOLTIP + foodTier).withStyle(ChatFormatting.GRAY));
+                if (cookBuilding != null && !cookBuilding.getModuleView(RESTAURANT_MENU).getMenu().contains(new ItemStorage(event.getItemStack())))
+                {
+                    event.getToolTip().add(Component.translatable("com.minecolonies.coremod.item.tooltip.nomenu").withStyle(ChatFormatting.RED));
+                }
+            }
+            else
+            {
+                event.getToolTip().add(Component.translatable("com.minecolonies.coremod.item.tooltip.needbetterfood").withStyle(ChatFormatting.RED));
             }
         }
     }
@@ -207,7 +263,7 @@ public class ClientEventHandler
                 {
                     final ChatFormatting researchFormat;
                     if (colony != null && (colony.getResearchManager().getResearchTree().hasCompletedResearch(id) ||
-                                             colony.getResearchManager().getResearchEffects().getEffectStrength(id) > 0))
+                        colony.getResearchManager().getResearchEffects().getEffectStrength(id) > 0))
                     {
                         researchFormat = ChatFormatting.AQUA;
                     }
@@ -267,8 +323,8 @@ public class ClientEventHandler
     {
         final String namespace = building.getBuildingBlock().getRegistryName().getNamespace();
         final String modName = ModList.get().getModContainerById(namespace)
-          .map(m -> m.getModInfo().getDisplayName())
-          .orElse(namespace);
+            .map(m -> m.getModInfo().getDisplayName())
+            .orElse(namespace);
         final Component buildingName = building.getBuildingBlock().getName();
         return Component.literal(modName + " ").append(buildingName);
     }

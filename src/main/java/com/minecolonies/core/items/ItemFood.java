@@ -2,6 +2,7 @@ package com.minecolonies.core.items;
 
 import com.minecolonies.api.items.IMinecoloniesFoodItem;
 import com.minecolonies.api.util.constant.TranslationConstants;
+import com.minecolonies.core.client.gui.containers.WindowCitizenInventory;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -25,7 +26,7 @@ public class ItemFood extends Item implements IMinecoloniesFoodItem
      * Creates a new food item.
      *
      * @param builder the item properties to use.
-     * @param tier the nutrition tier.
+     * @param tier    the nutrition tier.
      */
     public ItemFood(@NotNull final Properties builder, final int tier)
     {
@@ -36,7 +37,10 @@ public class ItemFood extends Item implements IMinecoloniesFoodItem
     @Override
     public void appendHoverText(@NotNull final ItemStack stack, @Nullable final TooltipContext ctx, @NotNull final List<Component> tooltip, @NotNull final TooltipFlag flagIn)
     {
-        tooltip.add(Component.translatable(TranslationConstants.TIER_TOOLTIP + this.tier));
+        if (WindowCitizenInventory.activeCitizenInventory == null)
+        {
+            tooltip.add(Component.translatable(TranslationConstants.TIER_TOOLTIP + this.tier));
+        }
     }
 
     @Override
