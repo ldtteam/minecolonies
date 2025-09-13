@@ -252,16 +252,6 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
      */
     protected IAIState pickUpResiduals()
     {
-        if (structurePlacer != null && structurePlacer.getB().getStage() != null)
-        {
-            return IDLE;
-        }
-
-        if (getItemsForPickUp() == null)
-        {
-            fillItemsList();
-        }
-
         if (getItemsForPickUp() != null && !getItemsForPickUp().isEmpty())
         {
             gatherItems();
@@ -269,9 +259,6 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
         }
 
         resetGatheringItems();
-        workFrom = null;
-        structurePlacer = null;
-
         return IDLE;
     }
 
@@ -285,7 +272,8 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
         incrementActionsDoneAndDecSaturation();
         executeSpecificCompleteActions();
         worker.getCitizenExperienceHandler().addExperience(XP_EACH_BUILDING);
-
+        fillItemsList();
+        resetCurrentStructure();
         return PICK_UP_RESIDUALS;
     }
 
@@ -343,6 +331,8 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
     {
         if (structurePlacer.getB().getStage() == null)
         {
+            fillItemsList();
+            resetCurrentStructure();
             return PICK_UP_RESIDUALS;
         }
 
@@ -917,6 +907,8 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
     @Override
     public void fillItemsList()
     {
+        //TODO: Make the cleanup a proper building stage in the future.
+        // Search by sections instead of huge AABB all at once.
         if (!structurePlacer.getB().hasBluePrint())
         {
             return;

@@ -23,7 +23,7 @@
     {
       "weight": 10,
       "element": {
-        "location": "minecolonies:desertoasis/cook1",
+        "location": "minecolonies:desertoasis/restaurant1",
         "processors": "minecolonies:desertoasis/placeholder_replacement",
         "projection": "rigid",
         "element_type": "minecraft:single_pool_element"
@@ -32,7 +32,16 @@
     {
       "weight": 10,
       "element": {
-        "location": "minecolonies:desertoasis/farmer1",
+        "location": "minecolonies:desertoasis/farm1",
+        "processors": "minecolonies:desertoasis/placeholder_replacement",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
+      "weight": 5,
+      "element": {
+        "location": "minecolonies:desertoasis/farm2",
         "processors": "minecolonies:desertoasis/placeholder_replacement",
         "projection": "rigid",
         "element_type": "minecraft:single_pool_element"
@@ -41,7 +50,7 @@
     {
       "weight": 8,
       "element": {
-        "location": "minecolonies:desertoasis/deliveryman1",
+        "location": "minecolonies:desertoasis/courier1",
         "processors": "minecolonies:desertoasis/placeholder_replacement",
         "projection": "rigid",
         "element_type": "minecraft:single_pool_element"
@@ -50,7 +59,16 @@
     {
       "weight": 10,
       "element": {
-        "location": "minecolonies:desertoasis/lumberjack1",
+        "location": "minecolonies:desertoasis/forester1",
+        "processors": "minecolonies:desertoasis/placeholder_replacement",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
+      "weight": 1,
+      "element": {
+        "location": "minecolonies:desertoasis/forester2",
         "processors": "minecolonies:desertoasis/placeholder_replacement",
         "projection": "rigid",
         "element_type": "minecraft:single_pool_element"
@@ -86,7 +104,7 @@
     {
       "weight": 10,
       "element": {
-        "location": "minecolonies:desertoasis/residence1",
+        "location": "minecolonies:desertoasis/residenceluxuryblue1",
         "processors": "minecolonies:desertoasis/placeholder_replacement",
         "projection": "rigid",
         "element_type": "minecraft:single_pool_element"
@@ -95,7 +113,7 @@
     {
       "weight": 1,
       "element": {
-        "location": "minecolonies:desertoasis/residence2",
+        "location": "minecolonies:desertoasis/residenceluxuryblue2",
         "processors": "minecolonies:desertoasis/placeholder_replacement",
         "projection": "rigid",
         "element_type": "minecraft:single_pool_element"
@@ -104,7 +122,7 @@
     {
       "weight": 8,
       "element": {
-        "location": "minecolonies:desertoasis/miner1",
+        "location": "minecolonies:desertoasis/mine1",
         "processors": "minecolonies:desertoasis/placeholder_replacement",
         "projection": "rigid",
         "element_type": "minecraft:single_pool_element"
@@ -113,7 +131,7 @@
     {
       "weight": 1,
       "element": {
-        "location": "minecolonies:desertoasis/miner2",
+        "location": "minecolonies:desertoasis/mine2",
         "processors": "minecolonies:desertoasis/placeholder_replacement",
         "projection": "rigid",
         "element_type": "minecraft:single_pool_element"
