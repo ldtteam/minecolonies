@@ -680,12 +680,6 @@ public class DefaultRecipeProvider extends RecipeProvider
           .unlockedBy("has_bottle", has(ModItems.large_empty_bottle))
           .save(consumer, new ResourceLocation(MOD_ID, "large_water_bottle"));
 
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.large_milk_bottle)
-          .requires(ModItems.large_empty_bottle)
-          .requires(Items.MILK_BUCKET)
-          .unlockedBy("has_bottle", has(ModItems.large_empty_bottle))
-          .save(consumer, new ResourceLocation(MOD_ID, "large_milk_bottle"));
-
         ShapedRecipeBuilder.shaped(RecipeCategory.FOOD, ModItems.butter, 3)
           .pattern("MMM")
           .pattern("MMM")

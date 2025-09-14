@@ -22,6 +22,8 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraftforge.items.wrapper.PlayerMainInvWrapper;
 import org.jetbrains.annotations.NotNull;
 
+import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
+
 /**
  * A custom item class for jug items.
  */
@@ -39,28 +41,40 @@ public class ItemLargeBottle extends Item
 
     @NotNull
     @Override
-    public InteractionResult interactLivingEntity(@NotNull final ItemStack stack, @NotNull final Player player, @NotNull final LivingEntity entity, @NotNull final InteractionHand hand)
+    public InteractionResult interactLivingEntity(
+        @NotNull final ItemStack stack,
+        @NotNull final Player player,
+        @NotNull final LivingEntity entity,
+        @NotNull final InteractionHand hand)
     {
+        if (this != ModItems.large_empty_bottle)
+        {
+            return super.interactLivingEntity(stack, player, entity, hand);
+        }
+
         if (entity instanceof Cow && !entity.isBaby())
         {
             player.playSound(SoundEvents.COW_MILK, 1.0F, 1.0F);
-            if(!InventoryUtils.addItemStackToItemHandler(new PlayerMainInvWrapper(player.getInventory()), ModItems.large_milk_bottle.getDefaultInstance()))
+            if (!InventoryUtils.addItemStackToItemHandler(new PlayerMainInvWrapper(player.getInventory()), ModItems.large_milk_bottle.getDefaultInstance()))
             {
                 player.drop(ModItems.large_milk_bottle.getDefaultInstance(), false);
             }
             stack.shrink(1);
+            player.getCooldowns().addCooldown(this, TICKS_SECOND * 10);
             return InteractionResult.SUCCESS;
         }
         else if (entity instanceof final Goat goat && !entity.isBaby())
         {
             player.playSound(goat.getMilkingSound(), 1.0F, 1.0F);
-            if(!InventoryUtils.addItemStackToItemHandler(new PlayerMainInvWrapper(player.getInventory()), ModItems.large_milk_bottle.getDefaultInstance()))
+            if (!InventoryUtils.addItemStackToItemHandler(new PlayerMainInvWrapper(player.getInventory()), ModItems.large_milk_bottle.getDefaultInstance()))
             {
                 player.drop(ModItems.large_milk_bottle.getDefaultInstance(), false);
             }
             stack.shrink(1);
+            player.getCooldowns().addCooldown(this, TICKS_SECOND * 10);
             return InteractionResult.SUCCESS;
         }
+
         return super.interactLivingEntity(stack, player, entity, hand);
     }
 
@@ -68,7 +82,12 @@ public class ItemLargeBottle extends Item
     @Override
     public InteractionResultHolder<ItemStack> use(@NotNull final Level level, final Player player, @NotNull final InteractionHand hand)
     {
-        ItemStack itemstack = player.getItemInHand(hand);
+        final ItemStack itemstack = player.getItemInHand(hand);
+        if (this != ModItems.large_empty_bottle)
+        {
+            return InteractionResultHolder.pass(itemstack);
+        }
+
         BlockHitResult blockhitresult = getPlayerPOVHitResult(level, player, ClipContext.Fluid.SOURCE_ONLY);
         if (blockhitresult.getType() != HitResult.Type.MISS)
         {
@@ -88,6 +107,7 @@ public class ItemLargeBottle extends Item
                         player.drop(ModItems.large_water_bottle.getDefaultInstance(), false);
                     }
                     itemstack.shrink(1);
+                    player.getCooldowns().addCooldown(this, TICKS_SECOND);
                     return InteractionResultHolder.success(itemstack);
                 }
             }
