@@ -1781,6 +1781,10 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     @Override
     public AbstractContainerMenu createMenu(final int id, @NotNull final Inventory inv, @NotNull final Player player)
     {
+        if (player.isSpectator())
+        {
+            return null;
+        }
         return new ContainerCitizenInventory(id, inv, citizenColonyHandler.getColonyId(), citizenId);
     }
 
