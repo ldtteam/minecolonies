@@ -54,10 +54,6 @@ public enum AIWorkerState implements IAIState
      */
     COMPLETE_BUILD(false),
     /**
-     * Pick up left over items after building.
-     */
-    PICK_UP_RESIDUALS(true),
-    /**
      * Decide what AIstate to go to next.
      */
     DECIDE(true),

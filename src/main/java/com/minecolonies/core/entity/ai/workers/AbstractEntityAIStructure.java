@@ -154,11 +154,6 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
     {
         super(job);
         this.registerTargets(
-
-          /*
-           * Pick up stuff which might've been
-           */
-          new AITarget(PICK_UP_RESIDUALS, this::pickUpResiduals, TICKS_SECOND),
           /*
            * Check if tasks should be executed.
            */
@@ -246,23 +241,6 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
     }
 
     /**
-     * Pick up residuals within the building area.
-     *
-     * @return the next state to go to.
-     */
-    protected IAIState pickUpResiduals()
-    {
-        if (getItemsForPickUp() != null && !getItemsForPickUp().isEmpty())
-        {
-            gatherItems();
-            return getState();
-        }
-
-        resetGatheringItems();
-        return IDLE;
-    }
-
-    /**
      * Completition logic.
      *
      * @return the final state after completition.
@@ -274,7 +252,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
         worker.getCitizenExperienceHandler().addExperience(XP_EACH_BUILDING);
         fillItemsList();
         resetCurrentStructure();
-        return PICK_UP_RESIDUALS;
+        return IDLE;
     }
 
     /**
@@ -333,7 +311,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
         {
             fillItemsList();
             resetCurrentStructure();
-            return PICK_UP_RESIDUALS;
+            return IDLE;
         }
 
         if (!worker.getInventoryCitizen().hasSpace())
