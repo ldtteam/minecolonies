@@ -373,9 +373,10 @@ public class Colony implements IColony
         researchManager = new ResearchManager(this);
         colonyStateMachine = new TickRateStateMachine<>(INACTIVE, e ->
         {
-            Log.getLogger().warn("Exception triggered in colony:" + getID() + " in dimension:" + getDimension().location(), e);
+            Log.getLogger().warn("Exception triggered in colony:{} in dimension:{} history:{}", getID(), getDimension().location(), colonyStateMachine.getHistory(), e);
             colonyStateMachine.setCurrentDelay(20 * 60 * 5);
         });
+        colonyStateMachine.setHistoryEnabled(true, 10);
 
         colonyStateMachine.addTransition(new TickingTransition<>(INACTIVE, () -> true, this::updateState, UPDATE_STATE_INTERVAL));
         colonyStateMachine.addTransition(new TickingTransition<>(UNLOADED, () -> true, this::updateState, UPDATE_STATE_INTERVAL));

@@ -154,11 +154,6 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
     {
         super(job);
         this.registerTargets(
-
-          /*
-           * Pick up stuff which might've been
-           */
-          new AITarget(PICK_UP_RESIDUALS, this::pickUpResiduals, TICKS_SECOND),
           /*
            * Check if tasks should be executed.
            */
@@ -246,36 +241,6 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
     }
 
     /**
-     * Pick up residuals within the building area.
-     *
-     * @return the next state to go to.
-     */
-    protected IAIState pickUpResiduals()
-    {
-        if (structurePlacer != null && structurePlacer.getB().getStage() != null)
-        {
-            return IDLE;
-        }
-
-        if (getItemsForPickUp() == null)
-        {
-            fillItemsList();
-        }
-
-        if (getItemsForPickUp() != null && !getItemsForPickUp().isEmpty())
-        {
-            gatherItems();
-            return getState();
-        }
-
-        resetGatheringItems();
-        workFrom = null;
-        structurePlacer = null;
-
-        return IDLE;
-    }
-
-    /**
      * Completition logic.
      *
      * @return the final state after completition.
@@ -285,8 +250,9 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
         incrementActionsDoneAndDecSaturation();
         executeSpecificCompleteActions();
         worker.getCitizenExperienceHandler().addExperience(XP_EACH_BUILDING);
-
-        return PICK_UP_RESIDUALS;
+        fillItemsList();
+        resetCurrentStructure();
+        return IDLE;
     }
 
     /**
@@ -343,7 +309,9 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
     {
         if (structurePlacer.getB().getStage() == null)
         {
-            return PICK_UP_RESIDUALS;
+            fillItemsList();
+            resetCurrentStructure();
+            return IDLE;
         }
 
         if (!worker.getInventoryCitizen().hasSpace())
@@ -917,6 +885,8 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
     @Override
     public void fillItemsList()
     {
+        //TODO: Make the cleanup a proper building stage in the future.
+        // Search by sections instead of huge AABB all at once.
         if (!structurePlacer.getB().hasBluePrint())
         {
             return;
