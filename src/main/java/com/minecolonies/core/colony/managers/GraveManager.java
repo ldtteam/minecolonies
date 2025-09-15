@@ -6,16 +6,16 @@ import com.minecolonies.api.colony.GraveData;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.managers.interfaces.IGraveManager;
-import com.minecolonies.core.tileentities.TileEntityGrave;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.core.blocks.BlockMinecoloniesGrave;
 import com.minecolonies.core.colony.Colony;
+import com.minecolonies.core.tileentities.TileEntityGrave;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -25,7 +25,6 @@ import net.minecraft.world.level.block.AirBlock;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -36,7 +35,8 @@ import java.util.Map;
 import static com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickRateConstants.MAX_TICKRATE;
 import static com.minecolonies.api.research.util.ResearchConstants.GRAVE_DECAY_BONUS;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
-import static com.minecolonies.api.util.constant.TranslationConstants.*;
+import static com.minecolonies.api.util.constant.TranslationConstants.WARNING_GRAVE_LAVA;
+import static com.minecolonies.api.util.constant.TranslationConstants.WARNING_GRAVE_WATER;
 
 public class GraveManager implements IGraveManager
 {
@@ -251,13 +251,13 @@ public class GraveManager implements IGraveManager
      * @param citizenData The citizenData
      */
     @Override
-    public boolean createCitizenGrave(final Level world, final BlockPos pos, final ICitizenData citizenData)
+    public BlockPos createCitizenGrave(final Level world, final BlockPos pos, final ICitizenData citizenData)
     {
         final BlockState here = world.getBlockState(pos);
         if (here.getBlock() == Blocks.LAVA)
         {
             MessageUtils.format(WARNING_GRAVE_LAVA).sendTo(colony).forManagers();
-            return false;
+            return null;
         }
 
         BlockPos firstValidPosition = null;
@@ -320,13 +320,13 @@ public class GraveManager implements IGraveManager
             graveData.setCitizenDataNBT(citizenData.serializeNBT());
             graveEntity.setGraveData(graveData);
 
-            colony.getGraveManager().addNewGrave(firstValidPosition);
-            return true;
+            addNewGrave(firstValidPosition);
+            return firstValidPosition;
         }
         else
         {
             InventoryUtils.dropItemHandler(citizenData.getInventory(), world, pos.getX(), pos.getY(), pos.getZ());
         }
-        return false;
+        return null;
     }
 }

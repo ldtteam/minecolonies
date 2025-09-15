@@ -445,11 +445,11 @@ public final class TranslationConstants
     @NonNls
     public static final String CITIZEN_DEATH_DESC       = "block.blockhuttownhall.messagecitizendeathdesc";
     @NonNls
-    public static final String WORKER_DESC              = "block.blockhuttownhall.messageworkerdesc";
+    public static final String WORKER_DESC                       = "block.blockhuttownhall.messageworkerdesc";
     @NonNls
-    public static final String COLONIST_GRAVE_LOCATION                            = "block.blockhuttownhall.messagecolonistgravelocation";
+    public static final String COLONIST_DEATH_LOCATION           = "block.blockhuttownhall.messagecolonistgravelocation";
     @NonNls
-    public static final String HUT_BREAK_WARNING_CHILD_BUILDINGS                  = "block.minecolonies.blockhut.breakwarn.children";
+    public static final String HUT_BREAK_WARNING_CHILD_BUILDINGS = "block.minecolonies.blockhut.breakwarn.children";
     @NonNls
     public static final String HUT_BLOCK_MISSING_BUILDING                         = "com.minecolonies.coremod.gui.nobuilding";
     @NonNls

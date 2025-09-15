@@ -81,7 +81,6 @@ public class WindowMainPage extends AbstractWindowTownHall
      */
     private final Text title;
 
-
     /**
      * Constructor for the town hall window.
      *
@@ -93,6 +92,8 @@ public class WindowMainPage extends AbstractWindowTownHall
         initDropDowns();
 
         title = findPaneOfTypeByID(LABEL_BUILDING_NAME, Text.class);
+        findPaneOfTypeByID("actions1", Button.class).setText(Component.translatable(building.getBuildingDisplayName())
+            .append(Component.literal(" " + building.getBuildingLevel())));
 
         registerButton(BUTTON_CHANGE_SPEC, this::doNothing);
         registerButton(BUTTON_RENAME, this::renameClicked);
@@ -115,7 +116,6 @@ public class WindowMainPage extends AbstractWindowTownHall
 
         checkFeatureUnlock();
     }
-
 
     /**
      * Switch the structure style pack.
@@ -283,17 +283,18 @@ public class WindowMainPage extends AbstractWindowTownHall
                 textPane.show();
             }
 
-            final AbstractTextBuilder.TooltipBuilder textPaneToolTipBuilder = PaneBuilders.tooltipBuilder().hoverPane(textPane).append(Component.translatable("com.minecolonies.core.townhall.patreon.textures"))
-              .paragraphBreak()
-              .appendNL(Component.empty())
-              .appendNL(Component.translatable("com.minecolonies.core.townhall.patreon"))
-              .paragraphBreak();
+            final AbstractTextBuilder.TooltipBuilder textPaneToolTipBuilder =
+                PaneBuilders.tooltipBuilder().hoverPane(textPane).append(Component.translatable("com.minecolonies.core.townhall.patreon.textures"))
+                    .paragraphBreak()
+                    .appendNL(Component.empty())
+                    .appendNL(Component.translatable("com.minecolonies.core.townhall.patreon"))
+                    .paragraphBreak();
 
 
             final AbstractTextBuilder.TooltipBuilder namePaneToolTipBuilder = PaneBuilders.tooltipBuilder().hoverPane(namePane)
-              .append(Component.translatable("com.minecolonies.core.townhall.patreon.names")).paragraphBreak()
-              .appendNL(Component.empty())
-              .appendNL(Component.translatable("com.minecolonies.core.townhall.patreon")).paragraphBreak();
+                .append(Component.translatable("com.minecolonies.core.townhall.patreon.names")).paragraphBreak()
+                .appendNL(Component.empty())
+                .appendNL(Component.translatable("com.minecolonies.core.townhall.patreon")).paragraphBreak();
 
             if (isFeatureUnlocked.get() && !isOwner)
             {
@@ -352,7 +353,8 @@ public class WindowMainPage extends AbstractWindowTownHall
     private void patreonClicked()
     {
         Minecraft.getInstance().setScreen(new ConfirmLinkScreen((check) -> {
-            if (check) {
+            if (check)
+            {
                 Util.getPlatform().openUri("https://www.patreon.com/Minecolonies");
             }
 
@@ -368,7 +370,7 @@ public class WindowMainPage extends AbstractWindowTownHall
         title.setText(Component.literal(building.getColony().getName()));
 
         if (building.getColony().getMercenaryUseTime() != 0
-              && building.getColony().getWorld().getGameTime() - building.getColony().getMercenaryUseTime() < TICKS_FOURTY_MIN)
+            && building.getColony().getWorld().getGameTime() - building.getColony().getMercenaryUseTime() < TICKS_FOURTY_MIN)
         {
             findPaneOfTypeByID(BUTTON_MERCENARY, Button.class).disable();
         }
