@@ -120,6 +120,42 @@
       }
     },
     {
+      "weight": 10,
+      "element": {
+        "location": "minecolonies:desertoasis/residenceluxuryred1",
+        "processors": "minecolonies:desertoasis/placeholder_replacement",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
+      "weight": 1,
+      "element": {
+        "location": "minecolonies:desertoasis/residenceluxuryred2",
+        "processors": "minecolonies:desertoasis/placeholder_replacement",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
+      "weight": 10,
+      "element": {
+        "location": "minecolonies:desertoasis/residenceluxuryblue1",
+        "processors": "minecolonies:desertoasis/placeholder_replacement",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
+      "weight": 1,
+      "element": {
+        "location": "minecolonies:desertoasis/residenceluxuryblue2",
+        "processors": "minecolonies:desertoasis/placeholder_replacement",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
       "weight": 8,
       "element": {
         "location": "minecolonies:desertoasis/mine1",

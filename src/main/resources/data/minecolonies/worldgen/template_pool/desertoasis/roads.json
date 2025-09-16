@@ -5,7 +5,7 @@
     {
       "weight": 5,
       "element": {
-        "location": "minecolonies:desertoasis/fancy_corner",
+        "location": "minecolonies:desertoasis/corner",
         "processors": "minecolonies:desertoasis/street",
         "projection": "terrain_matching",
         "element_type": "minecraft:legacy_single_pool_element"
@@ -14,7 +14,7 @@
     {
       "weight": 6,
       "element": {
-        "location": "minecolonies:desertoasis/fancy_intersection",
+        "location": "minecolonies:desertoasis/cross_intersection",
         "processors": "minecolonies:desertoasis/street",
         "projection": "terrain_matching",
         "element_type": "minecraft:legacy_single_pool_element"
@@ -23,7 +23,52 @@
     {
       "weight": 4,
       "element": {
-        "location": "minecolonies:desertoasis/fancy_straight",
+        "location": "minecolonies:desertoasis/section_long",
+        "processors": "minecolonies:desertoasis/street",
+        "projection": "terrain_matching",
+        "element_type": "minecraft:legacy_single_pool_element"
+      }
+    },
+    {
+      "weight": 4,
+      "element": {
+        "location": "minecolonies:desertoasis/section_medium",
+        "processors": "minecolonies:desertoasis/street",
+        "projection": "terrain_matching",
+        "element_type": "minecraft:legacy_single_pool_element"
+      }
+    },
+    {
+      "weight": 4,
+      "element": {
+        "location": "minecolonies:desertoasis/section_short",
+        "processors": "minecolonies:desertoasis/street",
+        "projection": "terrain_matching",
+        "element_type": "minecraft:legacy_single_pool_element"
+      }
+    },
+    {
+      "weight": 1,
+      "element": {
+        "location": "minecolonies:desertoasis/section_long_glowing",
+        "processors": "minecolonies:desertoasis/street",
+        "projection": "terrain_matching",
+        "element_type": "minecraft:legacy_single_pool_element"
+      }
+    },
+    {
+      "weight": 1,
+      "element": {
+        "location": "minecolonies:desertoasis/section_medium_glowing",
+        "processors": "minecolonies:desertoasis/street",
+        "projection": "terrain_matching",
+        "element_type": "minecraft:legacy_single_pool_element"
+      }
+    },
+    {
+      "weight": 1,
+      "element": {
+        "location": "minecolonies:desertoasis/section_short_glowing",
         "processors": "minecolonies:desertoasis/street",
         "projection": "terrain_matching",
         "element_type": "minecraft:legacy_single_pool_element"
@@ -32,7 +77,7 @@
     {
       "weight": 6,
       "element": {
-        "location": "minecolonies:desertoasis/fancy_tjunction",
+        "location": "minecolonies:desertoasis/intersection",
         "processors": "minecolonies:desertoasis/street",
         "projection": "terrain_matching",
         "element_type": "minecraft:legacy_single_pool_element"
@@ -50,7 +95,7 @@
     {
       "weight": 1,
       "element": {
-        "location": "minecolonies:desertoasis/smalllake",
+        "location": "minecolonies:desertoasis/shrine",
         "processors": "minecolonies:desertoasis/decoration",
         "projection": "rigid",
         "element_type": "minecraft:legacy_single_pool_element"
@@ -59,7 +104,7 @@
     {
       "weight": 1,
       "element": {
-        "location": "minecolonies:desertoasis/smallpark",
+        "location": "minecolonies:desertoasis/seating",
         "processors": "minecolonies:desertoasis/decoration",
         "projection": "rigid",
         "element_type": "minecraft:legacy_single_pool_element"
