@@ -2,10 +2,13 @@ package com.minecolonies.core.client.render;
 
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.util.Log;
+import com.minecolonies.core.event.ClientEventHandler;
 import com.mojang.authlib.GameProfile;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
+import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
@@ -21,24 +24,31 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.ModelManager;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.item.*;
+import net.minecraft.world.item.ArmorItem;
+import net.minecraft.world.item.ArmorMaterial;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.armortrim.ArmorTrim;
 import net.minecraft.world.level.block.SkullBlock;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 @OnlyIn(Dist.CLIENT)
 public class CitizenArmorLayer<T extends AbstractEntityCitizen, M extends HumanoidModel<T>, A extends HumanoidModel<T>> extends HumanoidArmorLayer<T, M, A>
 {
     private final Map<SkullBlock.Type, SkullModelBase> skullModels;
     private final Map<UUID, GameProfile> gameProfileMap = new HashMap<>();
+
+    /**
+     * Set of items except from rendering as they're causing errors
+     */
+    private static Set<Item> disabledFromRendering = new HashSet<>();
 
     public CitizenArmorLayer(RenderLayerParent<T, M> parentLayer, A innerModel, A outerModel, ModelManager modelManager, final EntityModelSet modelSet)
     {
@@ -127,35 +137,55 @@ public class CitizenArmorLayer<T extends AbstractEntityCitizen, M extends Humano
         }
         Item armorItem = itemstack.getItem();
 
-        if (armorItem instanceof ArmorItem armoritem)
+        if (armorItem instanceof ArmorItem armoritem && !disabledFromRendering.contains(armorItem))
         {
-            if (armoritem.getEquipmentSlot() == equipmentSlot)
+            try
             {
-                this.getParentModel().copyPropertiesTo(armor);
-                this.setPartVisibility(armor, equipmentSlot);
-                net.minecraft.client.model.Model model = getArmorModelHook(citizen, itemstack, equipmentSlot, armor);
-                boolean flag = this.usesInnerModel(equipmentSlot);
-                if (armoritem instanceof net.minecraft.world.item.DyeableLeatherItem)
+                if (armoritem.getEquipmentSlot() == equipmentSlot)
                 {
-                    int i = ((net.minecraft.world.item.DyeableLeatherItem) armoritem).getColor(itemstack);
-                    float f = (float) (i >> 16 & 255) / 255.0F;
-                    float f1 = (float) (i >> 8 & 255) / 255.0F;
-                    float f2 = (float) (i & 255) / 255.0F;
-                    this.renderModel(poseStack, bufferSource, light, armoritem, model, flag, f, f1, f2, this.getArmorResource(citizen, itemstack, equipmentSlot, null));
-                    this.renderModel(poseStack, bufferSource, light, armoritem, model, flag, 1.0F, 1.0F, 1.0F, this.getArmorResource(citizen, itemstack, equipmentSlot, "overlay"));
-                }
-                else
-                {
-                    this.renderModel(poseStack, bufferSource, light, armoritem, model, flag, 1.0F, 1.0F, 1.0F, this.getArmorResource(citizen, itemstack, equipmentSlot, null));
-                }
+                    this.getParentModel().copyPropertiesTo(armor);
+                    this.setPartVisibility(armor, equipmentSlot);
+                    net.minecraft.client.model.Model model = getArmorModelHook(citizen, itemstack, equipmentSlot, armor);
+                    boolean flag = this.usesInnerModel(equipmentSlot);
+                    if (armoritem instanceof net.minecraft.world.item.DyeableLeatherItem)
+                    {
+                        int i = ((net.minecraft.world.item.DyeableLeatherItem) armoritem).getColor(itemstack);
+                        float f = (float) (i >> 16 & 255) / 255.0F;
+                        float f1 = (float) (i >> 8 & 255) / 255.0F;
+                        float f2 = (float) (i & 255) / 255.0F;
+                        this.renderModel(poseStack, bufferSource, light, armoritem, model, flag, f, f1, f2, this.getArmorResource(citizen, itemstack, equipmentSlot, null));
+                        this.renderModel(poseStack,
+                            bufferSource,
+                            light,
+                            armoritem,
+                            model,
+                            flag,
+                            1.0F,
+                            1.0F,
+                            1.0F,
+                            this.getArmorResource(citizen, itemstack, equipmentSlot, "overlay"));
+                    }
+                    else
+                    {
+                        this.renderModel(poseStack, bufferSource, light, armoritem, model, flag, 1.0F, 1.0F, 1.0F, this.getArmorResource(citizen, itemstack, equipmentSlot, null));
+                    }
 
-                ArmorTrim.getTrim(citizen.level().registryAccess(), itemstack).ifPresent((p_289638_) -> {
-                    this.renderTrim(armoritem.getMaterial(), poseStack, bufferSource, light, p_289638_, model, flag);
-                });
-                if (itemstack.hasFoil())
-                {
-                    this.renderGlint(poseStack, bufferSource, light, model);
+                    ArmorTrim.getTrim(citizen.level().registryAccess(), itemstack).ifPresent((p_289638_) -> {
+                        this.renderTrim(armoritem.getMaterial(), poseStack, bufferSource, light, p_289638_, model, flag);
+                    });
+                    if (itemstack.hasFoil())
+                    {
+                        this.renderGlint(poseStack, bufferSource, light, model);
+                    }
                 }
+            }
+            catch (Exception e)
+            {
+                Log.getLogger().warn("Error rendering armor: " + itemstack + " report to the armor's mod.", e);
+                disabledFromRendering.add(armorItem);
+                ClientEventHandler.extraItemTooltips.put(armorItem,
+                    Component.literal("This armor is causing errors when rendering on citizens, check your latest.log and report to the respective armor mod.").withStyle(
+                        ChatFormatting.RED));
             }
         }
     }
