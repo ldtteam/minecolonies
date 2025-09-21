@@ -49,7 +49,6 @@ public class BlockConstructionTape extends AbstractBlockMinecoloniesConstruction
                 .sound(SoundType.WOOD)
                 .replaceable()
                 .pushReaction(PushReaction.DESTROY)
-                .ignitedByLava()
                 .isRedstoneConductor((state, getter, pos) -> false)
                 .forceSolidOff()
                 .strength(0.0f).noCollission().noLootTable());

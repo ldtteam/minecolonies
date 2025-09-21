@@ -4,7 +4,6 @@ import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
-import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
@@ -47,7 +46,6 @@ import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.api.util.constant.TranslationConstants.NO_WORKERS_TO_DRAIN_SET;
 import static com.minecolonies.api.util.constant.StatisticsConstants.ITEMS_ENCHANTED;
 import static com.minecolonies.api.util.constant.StatisticsConstants.CITIZENS_VISITED;
-import static com.minecolonies.api.util.constant.StatisticsConstants.ITEMS_CRAFTED_DETAIL;
 
 /**
  * Enchanter AI class.
@@ -176,7 +174,7 @@ public class EntityAIWorkEnchanter extends AbstractEntityAICrafting<JobEnchanter
             return ENCHANTER_DRAIN;
         }
 
-        final BuildingEnchanter.@NotNull CraftingModule craftingModule = building.getFirstModuleOccurance(BuildingEnchanter.CraftingModule.class);
+        final BuildingEnchanter.CraftingModule craftingModule = building.getFirstModuleOccurance(BuildingEnchanter.CraftingModule.class);
         boolean ancientTomeCraftingDisabled = false;
         for (final IToken<?> token : craftingModule.getRecipes())
         {
@@ -204,6 +202,13 @@ public class EntityAIWorkEnchanter extends AbstractEntityAICrafting<JobEnchanter
         }
 
         return ENCHANT;
+    }
+
+    @Override
+    public boolean hasWorkToDo()
+    {
+        // Enchanter can always work to either craft or go gather xp
+        return true;
     }
 
     @Override

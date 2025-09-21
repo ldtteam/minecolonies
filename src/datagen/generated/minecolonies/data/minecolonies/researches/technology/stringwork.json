@@ -18,7 +18,7 @@
   "requirements": [
     {
       "type": "minecolonies:building",
-      "building": "sawmill",
+      "building": "minecolonies:sawmill",
       "level": 1
     }
   ],

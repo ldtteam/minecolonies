@@ -17,8 +17,8 @@
   "parentResearch": "minecolonies:civilian/nightowl",
   "requirements": [
     {
-      "type": "minecolonies:building",
-      "building": "townhall",
+      "type": "minecolonies:single-building",
+      "building": "minecolonies:townhall",
       "level": 3
     }
   ],

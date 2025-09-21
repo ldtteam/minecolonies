@@ -5,7 +5,6 @@ import com.ldtteam.domumornamentum.block.IMateriallyTexturedBlock;
 import com.ldtteam.domumornamentum.block.decorative.*;
 import com.ldtteam.domumornamentum.block.types.FancyTrapdoorType;
 import com.ldtteam.domumornamentum.block.types.PostType;
-import com.ldtteam.domumornamentum.block.types.TimberFrameType;
 import com.ldtteam.domumornamentum.block.types.TrapdoorType;
 import com.ldtteam.domumornamentum.block.vanilla.DoorBlock;
 import com.ldtteam.domumornamentum.block.vanilla.TrapdoorBlock;
@@ -138,7 +137,7 @@ public class DoBlockPlacementHandler implements IPlacementHandler
             {
                 return Collections.emptyList();
             }
-            itemList.add(getCorrectDOItem(BlockUtils.getMaterializedItemStack(null, tileEntity), blockState));
+            itemList.add(getCorrectDOItem(BlockUtils.getMaterializedItemStack(null, tileEntity), blockState, complete));
         }
         itemList.removeIf(ItemStackUtils::isEmpty);
         return itemList;
@@ -151,7 +150,7 @@ public class DoBlockPlacementHandler implements IPlacementHandler
      * @param blockState the blockstate in the world.
      * @return the adjusted item.
      */
-    public static ItemStack getCorrectDOItem(final ItemStack item, final BlockState blockState)
+    public static ItemStack getCorrectDOItem(final ItemStack item, final BlockState blockState, final boolean complete)
     {
         if (blockState.getBlock() instanceof DoorBlock)
         {
@@ -163,21 +162,21 @@ public class DoBlockPlacementHandler implements IPlacementHandler
         }
         else if (blockState.getBlock() instanceof TrapdoorBlock)
         {
-            item.getOrCreateTag().putString("type", TrapdoorType.FULL.toString().toUpperCase());
+            item.getOrCreateTag().putString("type", complete ? blockState.getValue(TrapdoorBlock.TYPE).toString().toUpperCase() : TrapdoorType.FULL.toString().toUpperCase());
         }
         else if (blockState.getBlock() instanceof FancyTrapdoorBlock)
         {
-            item.getOrCreateTag().putString("type", FancyTrapdoorType.FULL.toString().toUpperCase());
+            item.getOrCreateTag().putString("type", complete ? blockState.getValue(FancyTrapdoorBlock.TYPE).toString().toUpperCase() : FancyTrapdoorType.FULL.toString().toUpperCase());
         }
         else if (blockState.getBlock() instanceof PanelBlock)
         {
-            item.getOrCreateTag().putString("type", TrapdoorType.FULL.toString().toUpperCase());
+            item.getOrCreateTag().putString("type", complete ? blockState.getValue(PanelBlock.TYPE).toString().toUpperCase() : TrapdoorType.FULL.toString().toUpperCase());
         }
         else if (blockState.getBlock() instanceof AbstractPostBlock<?>)
         {
-            item.getOrCreateTag().putString("type", PostType.PLAIN.toString().toUpperCase());
+            item.getOrCreateTag().putString("type", complete ? blockState.getValue(PostBlock.TYPE).toString().toUpperCase() : PostType.PLAIN.toString().toUpperCase());
         }
-        else if (blockState.getBlock() instanceof TimberFrameBlock || blockState.getBlock() instanceof DynamicTimberFrameBlock)
+        else if ((blockState.getBlock() instanceof TimberFrameBlock || blockState.getBlock() instanceof DynamicTimberFrameBlock) && !complete)
         {
             final ItemStack tempItem = new ItemStack(com.ldtteam.domumornamentum.block.ModBlocks.getInstance().getTimberFrames().get(2));
             tempItem.setTag(item.getTag());
@@ -198,7 +197,7 @@ public class DoBlockPlacementHandler implements IPlacementHandler
             for (final ItemStack item : items)
             {
                 final BlockState state = world.getBlockState(pos);
-                InventoryUtils.transferIntoNextBestSlot(getCorrectDOItem(item, state), handler.getInventory());
+                InventoryUtils.transferIntoNextBestSlot(getCorrectDOItem(item, state, false), handler.getInventory());
             }
         }
         world.removeBlock(pos, false);

@@ -17,8 +17,8 @@
   "parentResearch": "minecolonies:combat/ironskin",
   "requirements": [
     {
-      "type": "minecolonies:building",
-      "building": "townhall",
+      "type": "minecolonies:single-building",
+      "building": "minecolonies:townhall",
       "level": 4
     }
   ],

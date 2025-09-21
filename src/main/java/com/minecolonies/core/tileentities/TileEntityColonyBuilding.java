@@ -25,13 +25,17 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.WorldUtil;
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.FormattedText;
+import net.minecraft.network.chat.Style;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.StringUtil;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -40,6 +44,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.entity.SignBlockEntity;
+import net.minecraft.world.level.block.entity.SignText;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
@@ -48,10 +54,7 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.function.Predicate;
@@ -59,6 +62,7 @@ import java.util.function.Predicate;
 import static com.minecolonies.api.util.constant.BuildingConstants.DEACTIVATED;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_BUILDING_TYPE;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_NAME;
+import static com.minecolonies.api.util.constant.SchematicTagConstants.BUILDING_SIGN;
 
 /**
  * Class which handles the tileEntity of our colonyBuildings.
@@ -175,6 +179,10 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
             {
                 colony = IColonyManager.getInstance().getColonyByPosFromWorld(getLevel(), this.getBlockPos());
             }
+            else if (level.isClientSide)
+            {
+                colony = IColonyManager.getInstance().getColonyView(colonyId, getLevel().dimension());
+            }
             else
             {
                 colony = IColonyManager.getInstance().getColonyByWorld(colonyId, getLevel());
@@ -188,10 +196,10 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
             }
         }
 
-        if (building == null && colony != null)
+        if (building == null && colony != null && !getLevel().isClientSide)
         {
             building = colony.getBuildingManager().getBuilding(getPosition());
-            if (building != null && (getLevel() == null || !getLevel().isClientSide))
+            if (building != null)
             {
                 registryName = building.getBuildingType().getRegistryName();
                 building.setTileEntity(this);
@@ -458,8 +466,41 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
                 colonyId = tempColony.getID();
             }
         }
+        else
+        {
+            if (colony instanceof IColonyView && level.getGameTime() % 20 == 0)
+            {
+                final IBuildingView buildingView = ((IColonyView) colony).getBuilding(buildingPos);
+                if (buildingView != null)
+                {
+                    for (final BlockPos buildingSignPos : getWorldTagNamePosMap().getOrDefault(BUILDING_SIGN, Collections.emptySet()))
+                    {
+                        if (WorldUtil.isBlockLoaded(colony.getWorld(), buildingSignPos))
+                        {
+                            final BlockEntity blockEntity = colony.getWorld().getBlockEntity(buildingSignPos);
+                            if (blockEntity instanceof SignBlockEntity signBlockEntity)
+                            {
+                                SignText signText = new SignText();
+                                final String nameText = Component.translatable(buildingView.getBuildingDisplayName()).getString();
 
-        if (!getLevel().isClientSide && colonyId != 0 && colony == null)
+                                final List<FormattedText> lines = Minecraft.getInstance().font.getSplitter().splitLines(nameText, 60, Style.EMPTY);
+                                int i;
+                                for (i = 0; i < Math.min(lines.size(), 3); i++)
+                                {
+                                    signText = signText.setMessage(i,  Component.literal(lines.get(i).getString()));
+                                }
+
+                                signText = signText.setMessage(i, Component.literal(buildingView.getBuildingLevel() + ""));
+                                signBlockEntity.setText(signText, true);
+                                signBlockEntity.setText(signText, false);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        if (colonyId != 0 && colony == null)
         {
             updateColonyReferences();
         }

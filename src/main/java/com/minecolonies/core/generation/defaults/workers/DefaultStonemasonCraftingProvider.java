@@ -45,7 +45,7 @@ public class DefaultStonemasonCraftingProvider extends CustomRecipeProvider
         convert(consumer, Items.STONE_BRICKS, Items.PRISMARINE_SHARD, Items.PRISMARINE_BRICKS);
 
         CustomRecipeBuilder.create(STONEMASON, MODULE_CRAFTING, "end_stone")
-                .inputs(List.of(new ItemStorage(new ItemStack(Items.SANDSTONE, 8)),
+                .inputs(List.of(new ItemStorage(new ItemStack(Items.SANDSTONE), 8),
                         new ItemStorage(new ItemStack(Items.ENDER_PEARL))))
                 .result(new ItemStack(Items.END_STONE, 8))
                 .minResearchId(ResearchConstants.THE_END)

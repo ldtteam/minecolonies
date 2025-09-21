@@ -161,6 +161,7 @@ public class ColonyConnectionManager implements IColonyConnectionManager
                 MessageUtils.format(Component.translatable(COM_MINECOLONIES_SIGN_DISRUPTED, nextNode.getPosition())).sendTo(this.colony).forManagers();
             }
         }
+        pendingColonyConnections.remove(connectionPoint);
     }
 
     @Override
@@ -197,7 +198,10 @@ public class ColonyConnectionManager implements IColonyConnectionManager
             {
                 if (pendingConnection.getValue().getCachedPathResult().isPathReachingDestination())
                 {
-                    pendingColonyConnections.remove(pendingConnection.getKey());
+                    if (pendingColonyConnections.remove(pendingConnection.getKey()) == null)
+                    {
+                        return;
+                    }
                     final ColonyConnectionNode connection = colonyConnections.get(pendingConnection.getValue().getPreviousNode());
                     if (pendingConnection.getValue().getPendingConnectionType() == PendingConnectionNode.PendingConnectionType.DEFAULT)
                     {
@@ -212,7 +216,7 @@ public class ColonyConnectionManager implements IColonyConnectionManager
                         colonyConnections.put(pendingConnection.getKey(), pendingConnection.getValue());
                     }
 
-                    MessageUtils.format(COM_MINECOLONIES_SIGN_CONNECTED, pendingConnection.getValue().getPreviousNode().toShortString())
+                    MessageUtils.format(COM_MINECOLONIES_SIGN_CONNECTED, pendingConnection.getValue().getPosition(), pendingConnection.getValue().getPreviousNode().toShortString())
                         .withPriority(MessageUtils.MessagePriority.IMPORTANT)
                         .sendTo(colony)
                         .forManagers();
@@ -259,7 +263,7 @@ public class ColonyConnectionManager implements IColonyConnectionManager
                             if (node.getPreviousNode().equals(BlockPos.ZERO) && !node.getPosition().equals(pendingConnection.getKey()))
                             {
                                 final int localDistance = (int) node.getPosition().distSqr(pendingConnection.getKey());
-                                if (localDistance <= 50 * 50 && localDistance < distance)
+                                if (localDistance <= 50 * 50 && localDistance < distance && !node.getPosition().equals(pendingConnection.getKey()))
                                 {
                                     distance = localDistance;
                                     potentialConnection = node;
@@ -467,18 +471,23 @@ public class ColonyConnectionManager implements IColonyConnectionManager
     @Override
     public void addNewGateHouse(final BlockPos gateHouseConnectionNode)
     {
-        gateHouses.add(gateHouseConnectionNode);
-        for (final ColonyConnectionNode node : colonyConnections.values())
+        if (!gateHouses.contains(gateHouseConnectionNode))
         {
-            // Only connect to a node with correct distance.
-            if (node.getPreviousNode().equals(BlockPos.ZERO))
+            gateHouses.add(gateHouseConnectionNode);
+            for (final ColonyConnectionNode node : colonyConnections.values())
             {
-                if (node.getPosition().distSqr(gateHouseConnectionNode) <= 50*50)
+                // Only connect to a node with correct distance.
+                if (node.getPreviousNode().equals(BlockPos.ZERO))
                 {
-                    final PendingConnectionNode newNode = new PendingConnectionNode(gateHouseConnectionNode, createSignPath(gateHouseConnectionNode, node.getPosition()), PendingConnectionNode.PendingConnectionType.FIX_PATH);
-                    newNode.setTargetColonyId(node.getTargetColonyId());
-                    newNode.alterNextNode(node.getPosition());
-                    pendingColonyConnections.put(newNode.getPosition(), newNode);
+                    if (node.getPosition().distSqr(gateHouseConnectionNode) <= 50 * 50)
+                    {
+                        final PendingConnectionNode newNode = new PendingConnectionNode(gateHouseConnectionNode,
+                            createSignPath(gateHouseConnectionNode, node.getPosition()),
+                            PendingConnectionNode.PendingConnectionType.FIX_PATH);
+                        newNode.setTargetColonyId(node.getTargetColonyId());
+                        newNode.alterNextNode(node.getPosition());
+                        pendingColonyConnections.put(newNode.getPosition(), newNode);
+                    }
                 }
             }
         }

@@ -1112,4 +1112,11 @@ public class EntityAIWorkAlchemist extends AbstractEntityAICrafting<JobAlchemist
 
         return checkIfAbleToSmelt();
     }
+
+    @Override
+    public boolean hasWorkToDo()
+    {
+        // Alchemist can always work to either craft or go gather mistletoe, netherwart, etc.
+        return true;
+    }
 }

@@ -3,7 +3,6 @@ package com.minecolonies.core.colony.workorders;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.storage.StructurePacks;
 import com.minecolonies.api.advancements.AdvancementTriggers;
-import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
@@ -15,6 +14,10 @@ import com.minecolonies.api.util.ColonyUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.core.colony.Colony;
+import com.minecolonies.core.colony.buildings.AbstractBuildingStructureBuilder;
+import com.minecolonies.core.colony.buildings.modules.WorkerBuildingModule;
+import com.minecolonies.core.colony.buildings.modules.settings.StringSetting;
+import com.minecolonies.core.colony.jobs.AbstractJobStructure;
 import com.minecolonies.core.util.AdvancementUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -31,6 +34,8 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.OUT_OF_COLONY;
+import static com.minecolonies.core.colony.buildings.workerbuildings.BuildingBuilder.MANUAL_SETTING;
+import static com.minecolonies.core.colony.buildings.workerbuildings.BuildingBuilder.MODE;
 
 /**
  * Handles work orders for a colony.
@@ -89,6 +94,15 @@ public class WorkManager implements IWorkManager
         final IWorkOrder workOrder = workOrders.get(orderId);
         if (workOrder != null)
         {
+            if (workOrder.isClaimed())
+            {
+                final IBuilding building = colony.getBuildingManager().getBuilding(workOrder.getClaimedBy());
+                if (building instanceof AbstractBuildingStructureBuilder abstractBuildingStructureBuilder)
+                {
+                    abstractBuildingStructureBuilder.onWorkOrderCancellation(workOrder);
+                }
+            }
+
             dirty = true;
             workOrders.remove(orderId);
             colony.removeWorkOrderInView(orderId);
@@ -372,16 +386,80 @@ public class WorkManager implements IWorkManager
         @NotNull final Iterator<IServerWorkOrder> iter = workOrders.values().iterator();
         while (iter.hasNext())
         {
-            final IServerWorkOrder o = iter.next();
-            if (!o.isValid(this.colony))
+            final IServerWorkOrder order = iter.next();
+            if (!order.isValid(this.colony))
             {
                 iter.remove();
                 dirty = true;
+                continue;
             }
-            else if (o.isDirty())
+            else if (order.isDirty())
             {
                 dirty = true;
-                o.resetChange();
+                order.resetChange();
+            }
+
+            if (order.isClaimed() && getColony().getBuildingManager().getBuildings().get(order.getClaimedBy()) == null)
+            {
+                order.setClaimedBy(BlockPos.ZERO);
+            }
+
+            tryAssignWorkOrder(order, (b) -> order.getClaimedBy().equals(b.getPosition()));
+        }
+
+        for (final IServerWorkOrder wo : colony.getWorkManager().getWorkOrders().values())
+        {
+            tryAssignWorkOrder(wo, wo::canBuild);
+        }
+    }
+
+    /**
+     * Try assign a workorder to a structure builder (miner, builder, etc).
+     * @param order the workorder to assign.
+     * @param predicate checks to execute before assignment.
+     */
+    private void tryAssignWorkOrder(final IServerWorkOrder order, @NotNull Predicate<IBuilding> predicate)
+    {
+        for (IBuilding building : colony.getBuildingManager().getBuildings().values())
+        {
+            if (building instanceof AbstractBuildingStructureBuilder)
+            {
+                final @Nullable ICitizenData citizen = building.getFirstModuleOccurance(WorkerBuildingModule.class).getFirstCitizen();
+                if (citizen == null)
+                {
+                    continue;
+                }
+
+                if (citizen.getJob() instanceof AbstractJobStructure<?,?> abstractJobStructure)
+                {
+                    if (abstractJobStructure.hasWorkOrder())
+                    {
+                        continue;
+                    }
+
+                    if (order.isClaimed())
+                    {
+                        if (order.getClaimedBy().equals(building.getPosition()))
+                        {
+                            abstractJobStructure.setWorkOrder(order);
+                            order.setClaimedBy(building.getID());
+                            continue;
+                        }
+                        continue;
+                    }
+
+                    final StringSetting setting = building.getSetting(MODE);
+                    if (setting != null && setting.getValue().equals(MANUAL_SETTING))
+                    {
+                        continue;
+                    }
+
+                    if (predicate.test(building))
+                    {
+                        abstractJobStructure.setWorkOrder(order);
+                        order.setClaimedBy(building.getID());
+                    }
+                }
             }
         }
     }

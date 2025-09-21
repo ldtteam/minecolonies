@@ -365,9 +365,10 @@ public class RangerCombatAI extends AttackMoveAI<EntityCitizen>
     }
 
     @Override
-    protected void onTargetChange()
+    protected void onTargetChange(final LivingEntity newTarget)
     {
-        CombatUtils.notifyGuardsOfTarget(user, target, PATROL_DEVIATION_RAID_POINT);
+        super.onTargetChange(newTarget);
+        CombatUtils.notifyGuardsOfTarget(user, newTarget, PATROL_DEVIATION_RAID_POINT);
     }
 
     @Override

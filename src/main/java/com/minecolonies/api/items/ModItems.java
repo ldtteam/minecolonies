@@ -156,6 +156,7 @@ public final class ModItems
     public static Item large_milk_bottle;
     public static Item large_soy_milk_bottle;
     public static Item large_empty_bottle;
+    public static Item fried_rice;
 
     /**
      * Private constructor to hide the implicit public one.
@@ -248,7 +249,8 @@ public final class ModItems
           spicy_eggplant,
           stew_trencher,
           stuffed_pepper,
-          tacos
+          tacos,
+          fried_rice
         };
     }
 }

@@ -21,8 +21,10 @@ import com.minecolonies.core.entity.ai.workers.util.BuildingStructureHandler;
 import com.minecolonies.core.entity.pathfinding.navigation.MinecoloniesAdvancedPathNavigate;
 import com.minecolonies.core.entity.pathfinding.pathjobs.PathJobMoveCloseToXNearY;
 import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.monster.Monster;
@@ -31,7 +33,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
-import static com.minecolonies.api.util.constant.TranslationConstants.*;
+import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
+import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_MANUAL_SUFFIX;
 
 /**
  * AI class for the builder. Manages building and repairing buildings.
@@ -67,8 +70,8 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
     {
         super(job);
         super.registerTargets(
-          new AITarget(IDLE, START_WORKING, 100),
-          new AITarget(START_WORKING, this::checkForWorkOrder, this::startWorkingAtOwnBuilding, 100)
+            new AITarget(IDLE, START_WORKING, 10),
+            new AITarget(START_WORKING, this::checkForWorkOrder, this::startWorkingAtOwnBuilding, TICKS_SECOND)
         );
         worker.setCanPickUpLoot(true);
     }
@@ -100,7 +103,6 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
     {
         if (!job.hasWorkOrder())
         {
-            building.searchWorkOrder();
             building.setProgressPos(null, BuildingProgressStage.CLEAR);
             worker.getCitizenData().setStatusPosition(null);
             return false;
@@ -211,10 +213,10 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
             if (gotoPath == null || gotoPath.isCancelled())
             {
                 final PathJobMoveCloseToXNearY pathJob = new PathJobMoveCloseToXNearY(world,
-                  currentBlock,
-                  job.getWorkOrder().getLocation(),
-                  4,
-                  worker);
+                    currentBlock,
+                    job.getWorkOrder().getLocation(),
+                    4,
+                    worker);
                 gotoPath = ((MinecoloniesAdvancedPathNavigate) worker.getNavigation()).setPathJob(pathJob, currentBlock, 1.0, false);
                 pathJob.getPathingOptions().dropCost = 200;
                 pathJob.extraNodes = 0;
@@ -303,34 +305,18 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
             }
         }
 
-        MutableComponent message;
-        switch (wo.getWorkOrderType())
-        {
-            case REPAIR:
-                message = Component.translatable(
-                  COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_REPAIRING_COMPLETE,
-                  wo.getDisplayName(),
-                  position.getX(),
-                  position.getY(),
-                  position.getZ());
-                break;
-            case REMOVE:
-                message = Component.translatable(
-                  COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_DECONSTRUCTION_COMPLETE,
-                  wo.getDisplayName(),
-                  position.getX(),
-                  position.getY(),
-                  position.getZ());
-                break;
-            default:
-                message = Component.translatable(
-                  COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILD_COMPLETE,
-                  wo.getDisplayName(),
-                  position.getX(),
-                  position.getY(),
-                  position.getZ());
-                break;
-        }
+        final MutableComponent message = Component.translatable(
+                wo.getWorkOrderType().getCompletionMessageID(),
+                wo.getDisplayName(),
+                BlockPosUtil.calcDirection(position, building.getColony().getCenter()).getLongText())
+            .withStyle(style -> style
+                .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
+                    Component.translatable("message.positiondist",
+                        position.getX(),
+                        position.getY(),
+                        position.getZ(),
+                        (int) BlockPosUtil.dist(position, building.getColony().getCenter())))))
+            .withStyle(ChatFormatting.GREEN);
 
         if (showManualSuffix)
         {
@@ -338,5 +324,11 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
         }
 
         MessageUtils.forCitizen(worker, message).sendTo(worker.getCitizenColonyHandler().getColonyOrRegister().getImportantMessageEntityPlayers());
+    }
+
+    @Override
+    public boolean canGoIdle()
+    {
+        return !job.hasWorkOrder();
     }
 }

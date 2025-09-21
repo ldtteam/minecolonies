@@ -384,6 +384,13 @@ public final class ColonyManager implements IColonyManager
     }
 
     @Override
+    @NotNull
+    public List<IColony> getIColonies(@NotNull final Level w)
+    {
+        return w.isClientSide() ? new ArrayList<>(getColonyViews(w)) : getColonies(w);
+    }
+
+    @Override
     @Nullable
     public IColony getIColony(@NotNull final Level w, @NotNull final BlockPos pos)
     {
@@ -394,6 +401,15 @@ public final class ColonyManager implements IColonyManager
     public void openReactivationWindow(final BlockPos pos)
     {
         new WindowReactivateBuilding(pos).open();
+    }
+
+    @Override
+    @NotNull
+    public List<IColonyView> getColonyViews(@NotNull final Level w)
+    {
+        // this might be a subset of colonies since it's only those known to the player right now
+        final ColonyList<IColonyView> colonies = colonyViews.get(w.dimension());
+        return colonies == null ? List.of() : new ArrayList<>(colonies.getCopyAsList());
     }
 
     /**

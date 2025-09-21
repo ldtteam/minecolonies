@@ -241,7 +241,7 @@ public final class ColonyView implements IColonyView
      * Client side connection manager.
      */
     private final IColonyConnectionManager connectionManager = new ColonyConnectionManager(this);
-    
+
     /**
      * Day in the colony.
      */
@@ -385,7 +385,7 @@ public final class ColonyView implements IColonyView
         colony.getGraveManager().write(graveTag);
         buf.writeNbt(graveTag);     // this could be more efficient, but it should usually be short anyway
         colony.getStatisticsManager().serialize(buf, hasNewSubscribers);
-        buf.writeNbt(colony.getQuestManager().serializeNBT());
+        colony.getQuestManager().serialize(buf, hasNewSubscribers);
         buf.writeInt(colony.getDay());
         buf.writeNbt(colony.getTravellingManager().serializeNBT());
         colony.getConnectionManager().serializeToView(buf);
@@ -824,7 +824,7 @@ public final class ColonyView implements IColonyView
 
         this.graveManager.read(buf.readNbt());
         this.statisticManager.deserialize(buf);
-        this.questManager.deserializeNBT(buf.readNbt());
+        this.questManager.deserialize(buf);
         this.day = buf.readInt();
         this.travellingManager.deserializeNBT(buf.readNbt());
         this.connectionManager.deserializeFromView(buf);
@@ -1158,12 +1158,12 @@ public final class ColonyView implements IColonyView
     }
 
     @Override
-    public boolean hasBuilding(final String name, final int level, final boolean singleBuilding)
+    public boolean hasBuilding(final ResourceLocation name, final int level, final boolean singleBuilding)
     {
         int sum = 0;
         for (final IBuildingView building : buildings.values())
         {
-            if (building.getBuildingType().getRegistryName().getPath().equalsIgnoreCase(name))
+            if (building.getBuildingType().getRegistryName().equals(name))
             {
                 if (singleBuilding)
                 {

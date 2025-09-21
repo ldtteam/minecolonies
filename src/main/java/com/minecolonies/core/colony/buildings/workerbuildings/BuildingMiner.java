@@ -253,29 +253,6 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
         ladderLocation = ladderPos.iterator().next();
     }
 
-    @Override
-    public void searchWorkOrder()
-    {
-        final ICitizenData citizen = getModule(BuildingModules.MINER_WORK).getFirstCitizen();
-        if (citizen == null)
-        {
-            return;
-        }
-
-        final List<WorkOrderMiner> list = getColony().getWorkManager().getOrderedList(WorkOrderMiner.class, getPosition());
-
-        for (final WorkOrderMiner wo : list)
-        {
-            if (this.getID().equals(wo.getMinerBuilding()))
-            {
-                citizen.getJob(JobMiner.class).setWorkOrder(wo);
-                wo.setClaimedBy(getID());
-                getColony().getWorkManager().setDirty(true);
-                return;
-            }
-        }
-    }
-
     /**
      * Initiates structure loading.
      *

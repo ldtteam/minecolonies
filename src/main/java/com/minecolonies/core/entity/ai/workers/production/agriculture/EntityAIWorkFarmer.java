@@ -66,6 +66,7 @@ import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.api.util.constant.EquipmentLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 import static com.minecolonies.api.util.constant.StatisticsConstants.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.NO_FREE_FIELDS;
+import static com.minecolonies.core.colony.buildings.modules.BuildingModules.FARMER_FIELDS;
 import static com.minecolonies.core.colony.buildings.modules.BuildingModules.STATS_MODULE;
 
 /**
@@ -113,6 +114,16 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
      * Changed after finished harvesting in order to dump the inventory.
      */
     private boolean shouldDumpInventory = false;
+
+    /**
+     * If the farmer actually did any work on the field.
+     */
+    private boolean didWork = false;
+
+    /**
+     * Amount of time we skipped state already.
+     */
+    private int skippedState = 0;
 
     /**
      * Constructor for the Farmer. Defines the tasks the Farmer executes.
@@ -178,6 +189,12 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
     }
 
     @Override
+    public boolean hasWorkToDo()
+    {
+        return true;
+    }
+
+    @Override
     protected int getActionsDoneUntilDumping()
     {
         return MAX_BLOCKS_MINED;
@@ -199,8 +216,6 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
         }
 
         final BuildingExtensionsModule module = building.getFirstModuleOccurance(BuildingExtensionsModule.class);
-        module.claimExtensions();
-
         if (module.getOwnedExtensions().size() == building.getMaxBuildingLevel())
         {
             AdvancementUtils.TriggerAdvancementPlayersForColony(building.getColony(), AdvancementTriggers.MAX_FIELDS::trigger);
@@ -258,13 +273,19 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
                 return FARMER_HOE;
             }
             farmField.nextState();
-            module.resetCurrentExtension();
+            if (++skippedState >= 4)
+            {
+                skippedState = 0;
+                didWork = true;
+                module.resetCurrentExtension();
+            }
+            return IDLE;
         }
         else if (fieldToWork != null)
         {
             Log.getLogger().warn("Farmer found non-FarmField extension: {}", fieldToWork.getClass());
         }
-        return PREPARING;
+        return IDLE;
     }
 
     /**
@@ -517,6 +538,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
                     {
                         if (!hoeIfAble(position, farmField))
                         {
+                            didWork = true;
                             return getState();
                         }
                     }
@@ -524,6 +546,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
                     {
                         if (!tryToPlant(farmField, position))
                         {
+                            didWork = true;
                             return PREPARING;
                         }
                     }
@@ -531,6 +554,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
                     {
                         if (!harvestIfAble(position))
                         {
+                            didWork = true;
                             return getState();
                         }
                     }
@@ -549,7 +573,12 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
                 shouldDumpInventory = true;
                 farmField.nextState();
                 module.markDirty();
-                module.resetCurrentExtension();
+                if (didWork || ++skippedState >= 4)
+                {
+                    module.resetCurrentExtension();
+                    skippedState = 0;
+                }
+                didWork = false;
                 building.setPrevPos(null);
                 return IDLE;
             }
@@ -876,5 +905,16 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
     public AbstractEntityCitizen getCitizen()
     {
         return worker;
+    }
+
+    @Override
+    public boolean canGoIdle()
+    {
+        if (building.getModule(FARMER_FIELDS).getExtensionToWorkOn() == null)
+        {
+            return !super.hasWorkToDo();
+        }
+
+        return false;
     }
 }

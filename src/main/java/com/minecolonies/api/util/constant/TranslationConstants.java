@@ -445,11 +445,11 @@ public final class TranslationConstants
     @NonNls
     public static final String CITIZEN_DEATH_DESC       = "block.blockhuttownhall.messagecitizendeathdesc";
     @NonNls
-    public static final String WORKER_DESC              = "block.blockhuttownhall.messageworkerdesc";
+    public static final String WORKER_DESC                       = "block.blockhuttownhall.messageworkerdesc";
     @NonNls
-    public static final String COLONIST_GRAVE_LOCATION                            = "block.blockhuttownhall.messagecolonistgravelocation";
+    public static final String COLONIST_DEATH_LOCATION           = "block.blockhuttownhall.messagecolonistgravelocation";
     @NonNls
-    public static final String HUT_BREAK_WARNING_CHILD_BUILDINGS                  = "block.minecolonies.blockhut.breakwarn.children";
+    public static final String HUT_BREAK_WARNING_CHILD_BUILDINGS = "block.minecolonies.blockhut.breakwarn.children";
     @NonNls
     public static final String HUT_BLOCK_MISSING_BUILDING                         = "com.minecolonies.coremod.gui.nobuilding";
     @NonNls
@@ -524,6 +524,10 @@ public final class TranslationConstants
     public static final String BLOCK_HUT_FIELD_DIRECTION_RELATIVE_NEAREST         = "com.minecolonies.coremod.gui.field.near";
     @NonNls
     public static final String FIELD_STATUS                                       = "com.minecolonies.coremod.gui.field.status";
+    @NonNls
+    public static final String FIELD_STATUS_CURRENT                               = "com.minecolonies.coremod.gui.field.status.current";
+    @NonNls
+    public static final String FIELD_STATUS_NEXT                                  = "com.minecolonies.coremod.gui.field.status.next";
     @NonNls
     public static final String LABEL_X_OF_Z                                       = "com.minecolonies.coremod.gui.xofz";
     @NonNls
@@ -815,6 +819,11 @@ public final class TranslationConstants
 
     @NonNls
     public static final String MESSAGE_INFO_PLAYER_INVENTORY_FULL_HOTBAR_INSERT = "com.minecolonies.coremod.playerinvfull.hotbarinsert";
+
+    @NonNls
+    public static final String COLONYMAP_PLAYER_RESOLVED_REQUESTS = "com.minecolonies.core.item.colonymap.playerresolvedrequests";
+    @NonNls
+    public static final String COLONYMAP_PLAYER_RESOLVED_REQUESTS_COUNT = "com.minecolonies.core.item.colonymap.playerresolvedrequests.count";
 
     //</editor-fold>
 

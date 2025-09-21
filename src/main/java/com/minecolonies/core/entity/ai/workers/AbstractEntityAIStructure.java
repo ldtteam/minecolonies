@@ -15,7 +15,7 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.requestable.Stack;
-import com.minecolonies.api.colony.workorders.IWorkOrder;
+import com.minecolonies.api.colony.workorders.IBuilderWorkOrder;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.ai.statemachine.AIEventTarget;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
@@ -154,11 +154,6 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
     {
         super(job);
         this.registerTargets(
-
-          /*
-           * Pick up stuff which might've been
-           */
-          new AITarget(PICK_UP_RESIDUALS, this::pickUpResiduals, TICKS_SECOND),
           /*
            * Check if tasks should be executed.
            */
@@ -178,7 +173,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
           /*
            * Check if we have to build something.
            */
-          new AITarget(IDLE, this::isThereAStructureToBuild, () -> START_BUILDING, 100),
+          new AITarget(IDLE, this::isThereAStructureToBuild, () -> START_BUILDING, 10),
           /*
            * Build the structure and foundation of the building.
            */
@@ -246,36 +241,6 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
     }
 
     /**
-     * Pick up residuals within the building area.
-     *
-     * @return the next state to go to.
-     */
-    protected IAIState pickUpResiduals()
-    {
-        if (structurePlacer != null && structurePlacer.getB().getStage() != null)
-        {
-            return IDLE;
-        }
-
-        if (getItemsForPickUp() == null)
-        {
-            fillItemsList();
-        }
-
-        if (getItemsForPickUp() != null && !getItemsForPickUp().isEmpty())
-        {
-            gatherItems();
-            return getState();
-        }
-
-        resetGatheringItems();
-        workFrom = null;
-        structurePlacer = null;
-
-        return IDLE;
-    }
-
-    /**
      * Completition logic.
      *
      * @return the final state after completition.
@@ -285,8 +250,9 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
         incrementActionsDoneAndDecSaturation();
         executeSpecificCompleteActions();
         worker.getCitizenExperienceHandler().addExperience(XP_EACH_BUILDING);
-
-        return PICK_UP_RESIDUALS;
+        fillItemsList();
+        resetCurrentStructure();
+        return IDLE;
     }
 
     /**
@@ -343,7 +309,9 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
     {
         if (structurePlacer.getB().getStage() == null)
         {
-            return PICK_UP_RESIDUALS;
+            fillItemsList();
+            resetCurrentStructure();
+            return IDLE;
         }
 
         if (!worker.getInventoryCitizen().hasSpace())
@@ -686,7 +654,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
      * @param isMirrored  is the structure mirroed?
      * @param removal     if removal step.
      */
-    public void loadStructure(@NotNull final IWorkOrder workOrder, final BlockPos position, final boolean removal)
+    public void loadStructure(@NotNull final IBuilderWorkOrder workOrder, final BlockPos position, final boolean removal)
     {
         this.loadingBlueprint = true;
         workOrder.loadBlueprint(world, (blueprint -> {
@@ -917,6 +885,8 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
     @Override
     public void fillItemsList()
     {
+        //TODO: Make the cleanup a proper building stage in the future.
+        // Search by sections instead of huge AABB all at once.
         if (!structurePlacer.getB().hasBluePrint())
         {
             return;
@@ -1011,7 +981,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
      */
     protected boolean isThereAStructureToBuild()
     {
-        if (structurePlacer == null || !structurePlacer.getB().hasBluePrint())
+        if (structurePlacer == null || !structurePlacer.getB().hasBluePrint() || job.getWorkOrder() == null)
         {
             return false;
         }

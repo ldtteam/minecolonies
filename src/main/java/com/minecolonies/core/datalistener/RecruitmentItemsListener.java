@@ -94,14 +94,14 @@ public class RecruitmentItemsListener extends SimpleJsonResourceReloadListener
     {
         // Number between 1-9
         final int limit = 3 * buildingLevel + 1;
-        int rarity = (int) MathUtils.RANDOM.nextGaussian(limit/2.0,0.5);
-        if (rarity < 0)
+        int rarity = (int) MathUtils.RANDOM.nextGaussian(limit/2.0,2.0);
+        if (rarity <= 0)
         {
             rarity = 1;
         }
-        else if (rarity > limit)
+        else if (rarity >= limit)
         {
-            rarity = limit;
+            rarity = limit - 1;
         }
         final List<RecruitCost> recruitCostsAtTier = RECRUIT_COSTS.get(rarity);
         return recruitCostsAtTier.get(ColonyConstants.rand.nextInt(recruitCostsAtTier.size()));
@@ -141,7 +141,6 @@ public class RecruitmentItemsListener extends SimpleJsonResourceReloadListener
                 continue;
             }
 
-            //todo this calc results in the low levels being correct, and the high levels all around the 15 base recruit + random, this doesn't work.
             final int count = BASE_ITEM_COUNT * (MAX_RARITY + 1 - rarity);
             final int recruitLevel = BASE_RECRUIT_LEVEL + rarity * rarity / 2;
             recruitCosts.putIfAbsent(rarity, new ArrayList<>());

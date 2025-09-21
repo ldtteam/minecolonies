@@ -5,6 +5,7 @@ import com.google.common.collect.HashBiMap;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.workorders.*;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ColonyUtils;
@@ -386,6 +387,11 @@ public abstract class AbstractWorkOrder implements IBuilderWorkOrder
     @Override
     public final void setClaimedBy(BlockPos claimedBy)
     {
+        if (isClaimed() && !this.claimedBy.equals(claimedBy) && claimedBy != null)
+        {
+            Log.getLogger().warn("Claiming an already claimed workorder! new claim:" + claimedBy + " old claim:" + this.claimedBy, new Exception());
+        }
+
         changed = true;
         this.claimedBy = claimedBy;
         if (claimedBy == null)
@@ -611,7 +617,7 @@ public abstract class AbstractWorkOrder implements IBuilderWorkOrder
      * @param citizen the citizen attempting to perform the work order
      * @return true if it can be built
      */
-    public abstract boolean canBuild(@NotNull final ICitizenData citizen);
+    public abstract boolean canBuild(final IBuilding citizen);
 
     /**
      * Is this WorkOrder still valid?  If not, it will be deleted.

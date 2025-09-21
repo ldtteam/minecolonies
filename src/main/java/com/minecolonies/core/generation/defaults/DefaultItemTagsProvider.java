@@ -181,6 +181,13 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
           .add(Items.SPIDER_EYE)
           .add(Items.ROTTEN_FLESH);
 
+        tag(ModTags.rawMeat)
+          .add(Items.BEEF)
+          .add(Items.CHICKEN)
+          .add(Items.PORKCHOP)
+          .add(Items.RABBIT)
+          .add(Items.MUTTON);
+
         final Item[] paperExtras = getDomumExtra(ExtraBlockType.BASE_PAPER, ExtraBlockType.LIGHT_PAPER);
 
         tag(ModTags.crafterIngredient.get(TagConstants.CRAFTING_BAKER))

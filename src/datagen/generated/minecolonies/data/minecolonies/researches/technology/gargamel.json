@@ -23,12 +23,12 @@
   "requirements": [
     {
       "type": "minecolonies:building",
-      "building": "plantation",
+      "building": "minecolonies:plantation",
       "level": 3
     },
     {
       "type": "minecolonies:building",
-      "building": "netherworker",
+      "building": "minecolonies:netherworker",
       "level": 3
     }
   ],

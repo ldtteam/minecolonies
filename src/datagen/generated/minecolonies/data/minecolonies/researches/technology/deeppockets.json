@@ -19,7 +19,7 @@
   "requirements": [
     {
       "type": "minecolonies:building",
-      "building": "library",
+      "building": "minecolonies:library",
       "level": 4
     }
   ],

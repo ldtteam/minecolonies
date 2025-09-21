@@ -38,7 +38,6 @@ import org.jetbrains.annotations.Nullable;
 
 import static com.ldtteam.structurize.placement.AbstractBlueprintIterator.NULL_POS;
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.IDLE;
-import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.PICK_UP_RESIDUALS;
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 import static com.minecolonies.api.util.constant.StatisticsConstants.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILD_START;
@@ -111,7 +110,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
             return getState();
         }
 
-        if (job.getWorkOrder().getBlueprint() == null || structurePlacer == null)
+        if (job.getWorkOrder() == null || job.getWorkOrder().getBlueprint() == null || structurePlacer == null)
         {
             loadStructure();
             final IBuilderWorkOrder wo = job.getWorkOrder();
@@ -490,12 +489,12 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
             }
             job.setWorkOrder(null);
             resetCurrentStructure();
-            building.cancelAllRequestsOfCitizen(worker.getCitizenData());
-            building.cancelAllRequestsOfCitizen(null);
+            building.cancelAllRequestsOfCitizenOrBuilding(worker.getCitizenData());
+            building.cancelAllRequestsOfCitizenOrBuilding(null);
             building.setProgressPos(null, BuildingProgressStage.CLEAR);
             return true;
         }
-        return job.getWorkOrder() != null && (!WorldUtil.isBlockLoaded(world, job.getWorkOrder().getLocation())) && getState() != PICK_UP_RESIDUALS;
+        return job.getWorkOrder() != null && (!WorldUtil.isBlockLoaded(world, job.getWorkOrder().getLocation()));
     }
 
     @Override

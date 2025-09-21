@@ -10,6 +10,7 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IVisitorData;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IGuardBuilding;
+import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.entity.ModEntities;
@@ -826,9 +827,8 @@ public class EventHandler
         {
             final Level world = entity.getCommandSenderWorld();
             final IColony colony = IColonyManager.getInstance().getIColony(world, entity.blockPosition());
-            if (colony != null && colony.hasBuilding("tavern", 1, false))
+            if (colony != null && colony.hasBuilding(ModBuildings.tavern.get().getRegistryName(), 1, false))
             {
-                event.setCanceled(true);
                 if (ForgeEventFactory.canLivingConvert(entity, ModEntities.VISITOR, null))
                 {
                     final BlockPos tavernPos = colony.getBuildingManager().getRandomBuilding(b -> !b.getModulesByType(TavernBuildingModule.class).isEmpty());
@@ -844,10 +844,11 @@ public class EventHandler
                     {
                         return;
                     }
+                    event.setCanceled(true);
 
                     visitorData.triggerInteraction(new RecruitmentInteraction(Component.translatable(
                       "com.minecolonies.coremod.gui.chat.recruitstorycured", visitorData.getName().split(" ")[0]), ChatPriority.IMPORTANT));
-
+                    visitorData.getEntity().ifPresent(e -> e.setPos(entity.getX(), entity.getY(), entity.getZ()));
                     if (!entity.isSilent())
                     {
                         world.levelEvent(null, 1027, entity.blockPosition(), 0);

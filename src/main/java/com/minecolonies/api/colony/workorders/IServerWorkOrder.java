@@ -1,6 +1,7 @@
 package com.minecolonies.api.colony.workorders;
 
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.buildings.IBuilding;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import org.jetbrains.annotations.NotNull;
@@ -63,4 +64,12 @@ public interface IServerWorkOrder extends IWorkOrder
      * @param readingFromNbt if being read from NBT.
      */
     void onAdded(IColony colony, boolean readingFromNbt);
+
+    /**
+     * Whether the workorder can be built by the given building.
+     *
+     * @param building the building.
+     * @return
+     */
+    boolean canBuild(IBuilding building);
 }

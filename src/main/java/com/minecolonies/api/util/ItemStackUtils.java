@@ -620,6 +620,25 @@ public final class ItemStackUtils
     }
 
     /**
+     * Method to check if a stack is in a list of ItemStorage items.
+     *
+     * @param stacks the list of stacks.
+     * @param stack  the stack.
+     * @return true if so.
+     */
+    public static boolean compareItemStorageListIgnoreStackSize(final List<ItemStorage> stacks, final ItemStack stack)
+    {
+        for (final ItemStorage tempStack : stacks)
+        {
+            if (compareItemStacksIgnoreStackSize(tempStack.getItemStack(), stack, true, true))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Method to check if a stack is in a list of stacks.
      *
      * @param stacks      the list of stacks.

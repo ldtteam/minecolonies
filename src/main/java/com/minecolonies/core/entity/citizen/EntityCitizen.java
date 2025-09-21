@@ -51,6 +51,7 @@ import com.minecolonies.core.colony.jobs.JobKnight;
 import com.minecolonies.core.colony.jobs.JobNetherWorker;
 import com.minecolonies.core.colony.jobs.JobRanger;
 import com.minecolonies.core.datalistener.DiseasesListener;
+import com.minecolonies.core.debug.DebugPlayerManager;
 import com.minecolonies.core.entity.ai.minimal.*;
 import com.minecolonies.core.entity.ai.workers.AbstractEntityAIBasic;
 import com.minecolonies.core.entity.ai.workers.CitizenAI;
@@ -72,6 +73,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
@@ -390,18 +392,28 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
 
         if (!level.isClientSide && getCitizenData() != null)
         {
-            citizenData.update(TICKS_SECOND * 3);
             citizenData.setInteractedRecently(player.getUUID());
             final ColonyViewCitizenViewMessage message = new ColonyViewCitizenViewMessage((Colony) getCitizenData().getColony(), getCitizenData());
             Network.getNetwork().sendToPlayer(message, (ServerPlayer) player);
 
-            if (citizenData.getJob() != null)
+            if (DebugPlayerManager.hasDebugEnabled(player))
             {
-                ((AbstractEntityAIBasic) citizenData.getJob().getWorkerAI()).setDelay(TICKS_SECOND * 3);
+                getCitizenAI().setHistoryEnabled(true, 20);
+                if (getCitizenJobHandler().getColonyJob() != null)
+                {
+                    getCitizenJobHandler().getWorkAI().getStateAI().setHistoryEnabled(true, 20);
+                }
             }
+            else
+            {
+                if (citizenData.getJob() != null)
+                {
+                    ((AbstractEntityAIBasic) citizenData.getJob().getWorkerAI()).setDelay(TICKS_SECOND * 3);
+                }
 
-            getNavigation().stop();
-            getLookControl().setLookAt(player);
+                getNavigation().stop();
+                getLookControl().setLookAt(player);
+            }
         }
 
         return InteractionResult.SUCCESS;
@@ -1543,28 +1555,47 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
 
             getCitizenColonyHandler().getColonyOrRegister().getStatisticsManager().increment(DEATH, getCitizenColonyHandler().getColonyOrRegister().getDay());
 
-            boolean graveSpawned = false;
+            final BlockPos gravePos;
             if (!isInvisible())
             {
                 if (citizenColonyHandler.getColonyOrRegister().isCoordInColony(level, blockPosition()))
                 {
-                    graveSpawned = getCitizenColonyHandler().getColonyOrRegister().getGraveManager().createCitizenGrave(level, blockPosition(), citizenData);
+                    gravePos = getCitizenColonyHandler().getColonyOrRegister().getGraveManager().createCitizenGrave(level, blockPosition(), citizenData);
                 }
                 else
                 {
+                    gravePos = null;
                     InventoryUtils.dropItemHandler(citizenData.getInventory(), level, (int) getX(), (int) getY(), (int) getZ());
                 }
+            }
+            else
+            {
+                gravePos = null;
             }
 
             if (getCitizenColonyHandler().getColonyOrRegister() != null && getCitizenData() != null)
             {
                 MessageUtils.format(getCombatTracker().getDeathMessage())
                   .append(Component.literal("! "))
-                  .append(Component.translatable(TranslationConstants.COLONIST_GRAVE_LOCATION, Math.round(getX()), Math.round(getY()), Math.round(getZ())))
+                    .append(Component.translatable(TranslationConstants.COLONIST_DEATH_LOCATION,
+                            BlockPosUtil.calcDirection(blockPosition(), getCitizenColonyHandler().getColonyOrRegister().getCenter()).getLongText())
+                        .withStyle(style -> style
+                            .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
+                                Component.translatable("message.positiondist",
+                                    getBlockX(),
+                                    getBlockY(),
+                                    getBlockZ(),
+                                    (int) BlockPosUtil.dist(blockPosition(), getCitizenColonyHandler().getColonyOrRegister().getCenter()))))))
                   .append(!(citizenJobHandler.getColonyJob() instanceof AbstractJobGuard<?>)
                             ? Component.translatable(COM_MINECOLONIES_COREMOD_MOURN, getCitizenData().getName())
                             : Component.empty())
-                  .append(graveSpawned ? Component.translatable(WARNING_GRAVE_SPAWNED) : Component.empty())
+                    .append(gravePos != null ? Component.translatable(WARNING_GRAVE_SPAWNED).withStyle(style -> style
+                        .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
+                            Component.translatable("message.positiondist",
+                                gravePos.getX(),
+                                gravePos.getY(),
+                                gravePos.getZ(),
+                                (int) BlockPosUtil.dist(gravePos, getCitizenColonyHandler().getColonyOrRegister().getCenter()))))) : Component.empty())
                   .withPriority(MessagePriority.DANGER)
                   .sendTo(getCitizenColonyHandler().getColonyOrRegister()).forManagers();
             }
@@ -1770,6 +1801,10 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     @Override
     public AbstractContainerMenu createMenu(final int id, @NotNull final Inventory inv, @NotNull final Player player)
     {
+        if (player.isSpectator())
+        {
+            return null;
+        }
         return new ContainerCitizenInventory(id, inv, citizenColonyHandler.getColonyId(), citizenId);
     }
 

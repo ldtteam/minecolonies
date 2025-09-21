@@ -204,6 +204,7 @@ public final class ModItemsInitializer
         // Tier 3
         ModItems.sushi_roll = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(8).saturationMod(1.2F).build()), 3);
         ModItems.ramen = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(8).saturationMod(1.2F).build()), 3);
+        ModItems.fried_rice = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(8).saturationMod(1.2F).build()), 3);
 
         // Temperate Biomes
         // Tier 1
@@ -370,6 +371,7 @@ public final class ModItemsInitializer
         registry.register(new ResourceLocation(Constants.MOD_ID, "fish_dinner"), ModItems.fish_dinner);
         registry.register(new ResourceLocation(Constants.MOD_ID, "mutton_dinner"), ModItems.mutton_dinner);
         registry.register(new ResourceLocation(Constants.MOD_ID, "ramen"), ModItems.ramen);
+        registry.register(new ResourceLocation(Constants.MOD_ID, "fried_rice"), ModItems.fried_rice);
         registry.register(new ResourceLocation(Constants.MOD_ID, "schnitzel"), ModItems.schnitzel);
         registry.register(new ResourceLocation(Constants.MOD_ID, "steak_dinner"), ModItems.steak_dinner);
         registry.register(new ResourceLocation(Constants.MOD_ID, "tacos"), ModItems.tacos);

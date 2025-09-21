@@ -193,7 +193,7 @@ public class BuildingModules
       new BuildingEntry.ModuleProducer<>("rabbitherder_settings", () -> new SettingsModule().with(AbstractBuilding.BREEDING, new BoolSetting(true)), () -> SettingsModuleView::new);
     public static final BuildingEntry.ModuleProducer<AnimalHerdingModule, IBuildingModuleView>       RABBITHERDER_HERDING  =
       new BuildingEntry.ModuleProducer<>("rabbitherder_herding",
-        () -> new AnimalHerdingModule(ModJobs.rabbitHerder.get(), a -> a instanceof Rabbit, new ItemStack(Items.CARROT, 2)),
+        () -> new AnimalHerdingModule(ModJobs.rabbitHerder.get(), a -> a instanceof Rabbit, new ItemStorage(Items.CARROT, 2)),
         null);
 
     public static final BuildingEntry.ModuleProducer<WorkerBuildingModule,WorkerBuildingModuleView> SHEPERD_WORK          =
@@ -214,7 +214,7 @@ public class BuildingModules
       new BuildingEntry.ModuleProducer<>("swineherder_settings", () -> new SettingsModule().with(AbstractBuilding.BREEDING, new BoolSetting(true)), () -> SettingsModuleView::new);
     public static final BuildingEntry.ModuleProducer<AnimalHerdingModule, IBuildingModuleView>       SWINEHERDER_HERDING  =
       new BuildingEntry.ModuleProducer<>("swineherder_herding",
-        () -> new AnimalHerdingModule(ModJobs.swineHerder.get(), a -> a instanceof Pig, new ItemStack(Items.CARROT, 2)),
+        () -> new AnimalHerdingModule(ModJobs.swineHerder.get(), a -> a instanceof Pig, new ItemStorage(Items.CARROT, 2)),
         null);
 
     /**
@@ -524,11 +524,11 @@ public class BuildingModules
       () -> CombinedHiringLimitModuleView::new);
 
     public static final BuildingEntry.ModuleProducer<GuardBuildingModule,CombinedHiringLimitModuleView> KNIGHT_TOWER_WORK =
-      new BuildingEntry.ModuleProducer<>("knight_tower_work", () -> new GuardBuildingModule(ModGuardTypes.knight.get(), true, (b) -> 2), () -> CombinedHiringLimitModuleView::new);
+      new BuildingEntry.ModuleProducer<>("knight_tower_work", () -> new GuardBuildingModule(ModGuardTypes.knight.get(), true, (b) -> 1), () -> CombinedHiringLimitModuleView::new);
     public static final BuildingEntry.ModuleProducer<GuardBuildingModule,CombinedHiringLimitModuleView> RANGER_TOWER_WORK =
-      new BuildingEntry.ModuleProducer<>("ranger_tower_work", () -> new GuardBuildingModule(ModGuardTypes.ranger.get(), true, (b) -> 2), () -> CombinedHiringLimitModuleView::new);
+      new BuildingEntry.ModuleProducer<>("ranger_tower_work", () -> new GuardBuildingModule(ModGuardTypes.ranger.get(), true, (b) -> 1), () -> CombinedHiringLimitModuleView::new);
     public static final BuildingEntry.ModuleProducer<GuardBuildingModule,CombinedHiringLimitModuleView> DRUID_TOWER_WORK  =
-      new BuildingEntry.ModuleProducer<>("druid_tower_work", () -> new GuardBuildingModule(ModGuardTypes.druid.get(), true, (b) -> 2), () -> CombinedHiringLimitModuleView::new);
+      new BuildingEntry.ModuleProducer<>("druid_tower_work", () -> new GuardBuildingModule(ModGuardTypes.druid.get(), true, (b) -> 1), () -> CombinedHiringLimitModuleView::new);
 
     public static final BuildingEntry.ModuleProducer<GuardBuildingModule,CombinedHiringLimitModuleView> KNIGHT_GATE_WORK = new BuildingEntry.ModuleProducer<>(
         "knight_gate_work", () -> new GuardBuildingModule(ModGuardTypes.knight.get(), true, (b) -> 2),

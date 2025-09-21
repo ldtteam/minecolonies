@@ -7,6 +7,7 @@ import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.crafting.GenericRecipe;
 import com.minecolonies.api.crafting.IGenericRecipe;
+import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.equipment.ModEquipmentTypes;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.api.util.constant.NbtTagConstants;
@@ -239,12 +240,12 @@ public class BuildingBeekeeper extends AbstractBuilding
 
         public HerdingModule()
         {
-            super(ModJobs.beekeeper.get(), a -> a instanceof Bee, ItemStack.EMPTY);
+            super(ModJobs.beekeeper.get(), a -> a instanceof Bee, new ItemStorage(ItemStack.EMPTY, 1));
         }
 
         @NotNull
         @Override
-        public List<ItemStack> getBreedingItems()
+        public List<ItemStorage> getBreedingItems()
         {
             if (building != null)
             {
@@ -252,7 +253,7 @@ public class BuildingBeekeeper extends AbstractBuilding
             }
 
             return IColonyManager.getInstance().getCompatibilityManager().getImmutableFlowers().stream()
-              .map(flower -> new ItemStack(flower.getItem(), 2))
+              .map(flower -> new ItemStorage(flower.getItem(), 2))
               .collect(Collectors.toList());
         }
 

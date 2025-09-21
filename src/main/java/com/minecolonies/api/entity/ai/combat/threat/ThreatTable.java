@@ -1,6 +1,7 @@
 package com.minecolonies.api.entity.ai.combat.threat;
 
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraftforge.common.util.FakePlayer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -60,6 +61,10 @@ public class ThreatTable<T extends LivingEntity & IThreatTableEntity>
      */
     public void addThreat(final LivingEntity attacker, final int additionalThreat)
     {
+        if (attacker instanceof FakePlayer)
+        {
+            return;
+        }
         ThreatTableEntry threatTableEntry = null;
         int index = threatList.size();
 

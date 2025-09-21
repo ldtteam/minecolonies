@@ -125,6 +125,18 @@ public class ItemStorage
      * Creates an instance of the storage.
      *
      * @param item the item.
+     * @param amount the number of items.
+     */
+    public ItemStorage(@NotNull final Item item, final int amount)
+    {
+        this(item);
+        this.amount = amount;
+    }
+
+    /**
+     * Creates an instance of the storage.
+     *
+     * @param item the item.
      */
     public ItemStorage(@NotNull final Item item)
     {

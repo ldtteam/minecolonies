@@ -152,7 +152,17 @@ public abstract class AbstractJobStructure<AI extends AbstractAISkeleton<J>, J e
      */
     public IBuilderWorkOrder getWorkOrder()
     {
-        return getColony().getWorkManager().getWorkOrder(workOrderId, IBuilderWorkOrder.class);
+        final @Nullable IBuilderWorkOrder workOrder = getColony().getWorkManager().getWorkOrder(workOrderId, IBuilderWorkOrder.class);
+        if (workOrder == null)
+        {
+            return null;
+        }
+        else if (!workOrder.getClaimedBy().equals(getCitizen().getWorkBuilding().getID()))
+        {
+            workOrderId = 0;
+            return null;
+        }
+        return workOrder;
     }
 
     /**

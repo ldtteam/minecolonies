@@ -1,9 +1,9 @@
 package com.minecolonies.core.commands.colonycommands;
 
+import com.minecolonies.core.commands.arguments.ColonyIdArgument;
 import com.minecolonies.core.commands.commandTypes.IMCCommand;
 import com.minecolonies.core.commands.commandTypes.IMCOPCommand;
 import com.minecolonies.core.util.BackUpHelper;
-import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.commands.CommandSourceStack;
@@ -25,7 +25,7 @@ public class CommandLoadBackup implements IMCOPCommand
     @Override
     public int onExecute(final CommandContext<CommandSourceStack> context)
     {
-        final int colonyId = IntegerArgumentType.getInteger(context, COLONYID_ARG);
+        final int colonyId = ColonyIdArgument.getColonyId(context, COLONYID_ARG);
         BackUpHelper.loadColonyBackup(colonyId, context.getSource().getLevel().dimension(), true, true);
         context.getSource().sendSuccess(() -> Component.translatable(COMMAND_COLONY_LOAD_BACKUP_SUCCESS), true);
         return 1;
@@ -44,6 +44,6 @@ public class CommandLoadBackup implements IMCOPCommand
     public LiteralArgumentBuilder<CommandSourceStack> build()
     {
         return IMCCommand.newLiteral(getName())
-                 .then(IMCCommand.newArgument(COLONYID_ARG, IntegerArgumentType.integer(1)).executes(this::checkPreConditionAndExecute));
+                 .then(IMCCommand.newArgument(COLONYID_ARG, ColonyIdArgument.id()).executes(this::checkPreConditionAndExecute));
     }
 }

@@ -22,6 +22,7 @@ import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenDiseaseHandler;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenFoodHandler;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenSkillHandler;
+import com.minecolonies.api.eventbus.events.colony.citizens.CitizenJobChangedModEvent;
 import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.api.quests.IQuestDeliveryObjective;
 import com.minecolonies.api.quests.IQuestInstance;
@@ -175,6 +176,7 @@ public class CitizenData implements ICitizenData
     /**
      * The job of the citizen.
      */
+    @Nullable
     private IJob<?> job;
 
     /**
@@ -338,6 +340,11 @@ public class CitizenData implements ICitizenData
      * Texture UUID.
      */
     private UUID textureUUID;
+
+    /**
+     * Citizen leisure time in ticks.
+     */
+    private int leisureTime;
 
     /**
      * Create a CitizenData given an ID. Used as a super-constructor or during loading.
@@ -961,6 +968,7 @@ public class CitizenData implements ICitizenData
     }
 
     @Override
+    @Nullable
     public IJob<?> getJob()
     {
         return job;
@@ -969,15 +977,32 @@ public class CitizenData implements ICitizenData
     @Override
     public void setJob(final IJob<?> job)
     {
-        if (this.job != null && job == null)
+        setJob(job, false);
+    }
+
+    private void setJob(final IJob<?> job, final boolean onLoad)
+    {
+        if (Objects.equals(this.job, job))
         {
-            final IJob oldJob = this.job;
-            this.job = null;
+            return;
+        }
+
+        final IJob<?> oldJob = this.job;
+        this.job = null;
+
+        if (oldJob != null)
+        {
             oldJob.onRemoval();
         }
+
         this.job = job;
 
         getEntity().ifPresent(entityCitizen -> entityCitizen.getCitizenJobHandler().onJobChanged(job));
+
+        if (!onLoad)
+        {
+            IMinecoloniesAPI.getInstance().getEventBus().post(new CitizenJobChangedModEvent(this, Optional.ofNullable(oldJob).map(IJob::getJobRegistryEntry).orElse(null)));
+        }
 
         markDirty(0);
     }
@@ -1180,6 +1205,7 @@ public class CitizenData implements ICitizenData
     public void setAsleep(final boolean asleep)
     {
         isAsleep = asleep;
+        leisureTime = 0;
     }
 
     @Override
@@ -1340,7 +1366,7 @@ public class CitizenData implements ICitizenData
         nbtTagCompound.put(TAG_CHILDREN, childrenNBT);
         nbtTagCompound.putInt(TAG_PARTNER, partner);
         nbtTagCompound.putBoolean(TAG_ACTIVE, this.isWorking);
-
+        nbtTagCompound.putInt(TAG_LEISURE, this.leisureTime);
 
         @NotNull final ListTag avQuestNBT = new ListTag();
         for (final ResourceLocation quest : availableQuests)
@@ -1417,7 +1443,7 @@ public class CitizenData implements ICitizenData
 
         if (nbtTagCompound.contains("job"))
         {
-            setJob(IJobDataManager.getInstance().createFrom(this, nbtTagCompound.getCompound("job")));
+            setJob(IJobDataManager.getInstance().createFrom(this, nbtTagCompound.getCompound("job")), true);
         }
 
         if (nbtTagCompound.contains(TAG_INVENTORY))
@@ -1519,6 +1545,7 @@ public class CitizenData implements ICitizenData
 
         partner = nbtTagCompound.getInt(TAG_PARTNER);
         this.isWorking = nbtTagCompound.getBoolean(TAG_ACTIVE);
+        this.leisureTime = nbtTagCompound.getInt(TAG_LEISURE);
 
         @NotNull final ListTag availQuestNbt = nbtTagCompound.getList(TAG_AV_QUESTS, TAG_STRING);
         for (int i = 0; i < availQuestNbt.size(); i++)
@@ -1560,7 +1587,7 @@ public class CitizenData implements ICitizenData
 
         if (job.getBuildingPos() == null)
         {
-            setJob(null);
+            setJob(null, true);
             return;
         }
 
@@ -1581,7 +1608,7 @@ public class CitizenData implements ICitizenData
 
             if (building == null || job.getWorkBuilding() == null)
             {
-                setJob(null);
+                setJob(null, true);
             }
         }
     }
@@ -1601,9 +1628,19 @@ public class CitizenData implements ICitizenData
             return;
         }
 
+        final int homeBuildingLevel = homeBuilding == null ? 1 : homeBuilding.getBuildingLevel();
+        if (leisureTime > 0)
+        {
+            leisureTime -= tickRate;
+        }
+        else if (MathUtils.RANDOM.nextInt(TICKS_SECOND * 60 * (int) (60 / (homeBuildingLevel / 2.0)) / tickRate) <= 0)
+        {
+            leisureTime = (int) (TICKS_SECOND * 60 * 3.0);
+        }
+
         if (interactedRecently > 0)
         {
-            interactedRecently -= TICKS_SECOND * 3;
+            interactedRecently -= tickRate;
             if (interactedRecently <= 0)
             {
                 interactedRecentlyPlayers.clear();
@@ -2088,5 +2125,11 @@ public class CitizenData implements ICitizenData
     public double getDiseaseModifier()
     {
         return citizenFoodHandler.getDiseaseModifier(getJob() == null ? 1 : getJob().getDiseaseModifier());
+    }
+
+    @Override
+    public int getLeisureTime()
+    {
+        return this.leisureTime;
     }
 }

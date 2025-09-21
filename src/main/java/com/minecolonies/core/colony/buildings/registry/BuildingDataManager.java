@@ -32,6 +32,11 @@ public class BuildingDataManager implements IBuildingDataManager
 
         IBuilding building = this.createFrom(colony, pos, type);
 
+        if (building == null)
+        {
+            return null;
+        }
+
         try
         {
             building.deserializeNBT(compound);

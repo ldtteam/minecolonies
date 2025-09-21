@@ -1030,7 +1030,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
             }
             job.setWorkOrder(null);
             resetCurrentStructure();
-            building.cancelAllRequestsOfCitizen(worker.getCitizenData());
+            building.cancelAllRequestsOfCitizenOrBuilding(worker.getCitizenData());
             building.setProgressPos(null, BuildingProgressStage.CLEAR);
             return true;
         }
@@ -1045,7 +1045,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
                     return false;
             }
         }
-        return job.getWorkOrder() != null && (!WorldUtil.isBlockLoaded(world, job.getWorkOrder().getLocation())) && getState() != PICK_UP_RESIDUALS;
+        return job.getWorkOrder() != null && (!WorldUtil.isBlockLoaded(world, job.getWorkOrder().getLocation()));
     }
 
     private boolean ladderDamaged()

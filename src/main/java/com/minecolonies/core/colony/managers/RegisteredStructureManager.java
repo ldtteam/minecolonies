@@ -2,6 +2,7 @@ package com.minecolonies.core.colony.managers;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
@@ -12,6 +13,8 @@ import com.minecolonies.api.colony.buildings.workerbuildings.IWareHouse;
 import com.minecolonies.api.colony.buildingextensions.IBuildingExtension;
 import com.minecolonies.api.colony.managers.interfaces.IRegisteredStructureManager;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.eventbus.events.colony.buildings.BuildingAddedModEvent;
+import com.minecolonies.api.eventbus.events.colony.buildings.BuildingRemovedModEvent;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.util.*;
 import com.minecolonies.core.MineColonies;
@@ -23,10 +26,7 @@ import com.minecolonies.core.colony.buildings.BuildingMysticalSite;
 import com.minecolonies.core.colony.buildings.modules.BuildingModules;
 import com.minecolonies.core.colony.buildings.modules.BuildingExtensionsModule;
 import com.minecolonies.core.colony.buildings.modules.LivingBuildingModule;
-import com.minecolonies.core.colony.buildings.workerbuildings.BuildingBarracks;
-import com.minecolonies.core.colony.buildings.workerbuildings.BuildingLibrary;
-import com.minecolonies.core.colony.buildings.workerbuildings.BuildingTownHall;
-import com.minecolonies.core.colony.buildings.workerbuildings.BuildingWareHouse;
+import com.minecolonies.core.colony.buildings.workerbuildings.*;
 import com.minecolonies.core.colony.buildingextensions.registry.BuildingExtensionDataManager;
 import com.minecolonies.core.entity.ai.workers.util.ConstructionTapeHelper;
 import com.minecolonies.core.event.QuestObjectiveEventHandler;
@@ -360,14 +360,14 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
     {
         final boolean isRaining = colony.getWorld().isRaining();
 
-        IBuilding building = null;
+        BlockPos building = null;
         final int randomDist = RANDOM.nextInt(4);
         if (randomDist < 1)
         {
-            building = getFirstBuildingMatching(b -> b instanceof BuildingTownHall && b.getBuildingLevel() >= 3);
+            building = townHall != null && townHall.getBuildingLevel() >= 3 ? townHall.getPosition() : null;
             if (building != null)
             {
-                return building.getPosition();
+                return building;
             }
         }
 
@@ -375,34 +375,35 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
         {
             if (!isRaining && RANDOM.nextBoolean())
             {
-                building = getFirstBuildingMatching(b -> b instanceof BuildingMysticalSite && b.getBuildingLevel() >= 1);
-                if (building != null)
-                {
-                    return building.getPosition();
-                }
+                building = getRandomBuilding(b -> b instanceof BuildingMysticalSite && b.getBuildingLevel() >= 1);
+            }
+            else if (RANDOM.nextBoolean())
+            {
+                building = getRandomBuilding(b -> b instanceof BuildingLibrary && b.getBuildingLevel() >= 1);
             }
             else
             {
-                building = getFirstBuildingMatching(b -> b instanceof BuildingLibrary && b.getBuildingLevel() >= 1);
-                if (building != null)
-                {
-                    return building.getPosition();
-                }
+                building = getRandomBuilding(b -> b instanceof BuildingUniversity && b.getBuildingLevel() >= 1);
             }
         }
 
-        if (randomDist < 3)
+        if (building != null)
         {
-            building = getFirstBuildingMatching(b -> b.hasModule(BuildingModules.TAVERN_VISITOR) && b.getBuildingLevel() >= 1);
+            return building;
+        }
+
+        if (randomDist < 3 || (isRaining && (townHall == null || townHall.getBuildingLevel() < 1)))
+        {
+            building = getRandomBuilding(b -> b.hasModule(BuildingModules.TAVERN_VISITOR) && b.getBuildingLevel() >= 1);
             if (building != null)
             {
-                return building.getPosition();
+                return building;
             }
         }
 
         if (isRaining)
         {
-            return null;
+            return townHall == null ? null : townHall.getPosition();
         }
 
         return leisureSites.isEmpty() ? null : leisureSites.get(RANDOM.nextInt(leisureSites.size()));
@@ -612,6 +613,9 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
 
             colony.getCitizenManager().calculateMaxCitizens();
             colony.getPackageManager().updateSubscribers();
+
+            IMinecoloniesAPI.getInstance().getEventBus().post(new BuildingAddedModEvent(building));
+
             return building;
         }
         return null;
@@ -661,35 +665,50 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
         for (@NotNull final ICitizenData citizen : colony.getCitizenManager().getCitizens())
         {
             citizen.onRemoveBuilding(building);
-            building.cancelAllRequestsOfCitizen(citizen);
+            building.cancelAllRequestsOfCitizenOrBuilding(citizen);
         }
 
         colony.getRequestManager().onProviderRemovedFromColony(building);
         colony.getRequestManager().onRequesterRemovedFromColony(building.getRequester());
 
         colony.getCitizenManager().calculateMaxCitizens();
+
+        IMinecoloniesAPI.getInstance().getEventBus().post(new BuildingRemovedModEvent(building));
     }
 
     @Override
-    public BlockPos getBestBuilding(final AbstractEntityCitizen citizen, final Class<? extends IBuilding> clazz)
+    public BlockPos getBestBuilding(final AbstractEntityCitizen citizen, final Class<? extends IBuilding> building)
     {
-        return getBestBuilding(citizen.blockPosition(), clazz);
+        return getBestBuilding(citizen.blockPosition(), building);
     }
 
     @Override
-    public BlockPos getBestBuilding(final BlockPos citizen, final Class<? extends IBuilding> clazz)
+    public <T extends IBuilding> BlockPos getBestBuilding(final AbstractEntityCitizen citizen, final Class<T> building, @NotNull final Predicate<T> filter)
+    {
+        return getBestBuilding(citizen.blockPosition(), building, filter);
+    }
+
+    @Override
+    public BlockPos getBestBuilding(final BlockPos pos, final Class<? extends IBuilding> building)
+    {
+        return getBestBuilding(pos, building, b -> true);
+    }
+
+    @Override
+    public <T extends IBuilding> BlockPos getBestBuilding(final BlockPos pos, final Class<T> building, @NotNull final Predicate<T> filter)
     {
         double distance = Double.MAX_VALUE;
         BlockPos goodCook = null;
-        for (final IBuilding building : buildings.values())
+        for (final IBuilding currentBuilding : buildings.values())
         {
-            if (clazz.isInstance(building) && building.getBuildingLevel() > 0 && WorldUtil.isBlockLoaded(colony.getWorld(), building.getPosition()))
+            if (building.isInstance(currentBuilding) && currentBuilding.getBuildingLevel() > 0 && WorldUtil.isBlockLoaded(colony.getWorld(), currentBuilding.getPosition()) && filter.test(
+                (T) currentBuilding))
             {
-                final double localDistance = building.getPosition().distSqr(citizen);
+                final double localDistance = currentBuilding.getPosition().distSqr(pos);
                 if (localDistance < distance)
                 {
                     distance = localDistance;
-                    goodCook = building.getPosition();
+                    goodCook = currentBuilding.getPosition();
                 }
             }
         }

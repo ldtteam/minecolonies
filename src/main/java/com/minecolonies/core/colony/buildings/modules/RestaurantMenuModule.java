@@ -143,8 +143,9 @@ public class RestaurantMenuModule extends AbstractBuildingModule implements IPer
                 {
                     if (request == null)
                     {
-                        requestStack.setCount(Math.min(16, Math.min(requestStack.getMaxStackSize(), delta)));
-                        final MinimumStack stack = new MinimumStack(requestStack, false);
+                        final int qty = Math.min(16, Math.min(requestStack.getMaxStackSize(), delta));
+                        final MinimumStack stack = new MinimumStack(requestStack, false, true, ItemStackUtils.EMPTY, qty, 1);
+
                         stack.setCanBeResolvedByBuilding(false);
                         building.createRequest(stack, true);
                     }

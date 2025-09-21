@@ -38,7 +38,7 @@ import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*
 import static com.minecolonies.api.util.constant.CitizenConstants.TICKS_20;
 import static com.minecolonies.api.util.constant.StatisticsConstants.ITEM_OBTAINED;
 import static com.minecolonies.api.util.constant.TranslationConstants.NO_FREE_FIELDS;
-import static com.minecolonies.core.colony.buildings.modules.BuildingModules.STATS_MODULE;
+import static com.minecolonies.core.colony.buildings.modules.BuildingModules.*;
 
 /**
  * Planter AI class.
@@ -109,8 +109,6 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
         }
 
         BuildingExtensionsModule module = building.getFirstModuleOccurance(BuildingExtensionsModule.class);
-        module.claimExtensions();
-
         if (module.hasNoExtensions())
         {
             if (worker.getCitizenData() != null)
@@ -463,6 +461,23 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
     public Class<BuildingPlantation> getExpectedBuildingClass()
     {
         return BuildingPlantation.class;
+    }
+
+    @Override
+    public boolean hasWorkToDo()
+    {
+        return true;
+    }
+
+    @Override
+    public boolean canGoIdle()
+    {
+        if (building.getModule(PLANTATION_FIELDS).getExtensionToWorkOn() == null)
+        {
+            return !super.hasWorkToDo();
+        }
+
+        return false;
     }
 
     private enum ActionHandlerResult

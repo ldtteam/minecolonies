@@ -46,24 +46,24 @@ public class DefaultSupplyLootProvider extends SimpleLootTableProvider
                 LootTable.lootTable()
                         .withPool(LootPool.lootPool()
                                 .add(LootItem.lootTableItem(ModItems.supplyCamp)
-                                        .when(LootItemRandomChanceCondition.randomChance(0.1f))
+                                    .when(LootItemRandomChanceCondition.randomChance(0.01f))
                                         .apply(SetNbtFunction.setTag(instantTag))
                                         .apply(SetNameFunction.setName(Component.translatable("item.minecolonies.supply.free", ModItems.supplyCamp.getDescription()))))
                                 .add(LootItem.lootTableItem(ModItems.scrollBuff)
-                                        .when(LootItemRandomChanceCondition.randomChance(0.2f))
-                                        .apply(SetItemCountFunction.setCount(ConstantValue.exactly(8))))
+                                    .when(LootItemRandomChanceCondition.randomChance(0.1f))
+                                    .apply(SetItemCountFunction.setCount(ConstantValue.exactly(4))))
                         ));
 
         registrar.register(new ResourceLocation(MOD_ID, "chests/supplyship"), LootContextParamSets.CHEST,
                 LootTable.lootTable()
                         .withPool(LootPool.lootPool()
                                 .add(LootItem.lootTableItem(ModItems.supplyChest)
-                                        .when(LootItemRandomChanceCondition.randomChance(0.1f))
+                                    .when(LootItemRandomChanceCondition.randomChance(0.01f))
                                         .apply(SetNbtFunction.setTag(instantTag))
                                         .apply(SetNameFunction.setName(Component.translatable("item.minecolonies.supply.free", ModItems.supplyChest.getDescription()))))
                                 .add(LootItem.lootTableItem(ModItems.scrollBuff)
-                                        .when(LootItemRandomChanceCondition.randomChance(0.2f))
-                                        .apply(SetItemCountFunction.setCount(ConstantValue.exactly(8))))
+                                    .when(LootItemRandomChanceCondition.randomChance(0.1f))
+                                    .apply(SetItemCountFunction.setCount(ConstantValue.exactly(4))))
                         ));
     }
 }

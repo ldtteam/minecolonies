@@ -18,7 +18,7 @@
   "requirements": [
     {
       "type": "minecolonies:building",
-      "building": "archery",
+      "building": "minecolonies:archery",
       "level": 5
     }
   ],
