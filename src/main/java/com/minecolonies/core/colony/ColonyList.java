@@ -207,9 +207,9 @@ public final class ColonyList<T extends IColony> implements Iterable<T>
      * @return List of Colonies.
      */
     @NotNull
-    public List<IColony> getCopyAsList()
+    public List<T> getCopyAsList()
     {
-        final List<IColony> copyList = new ArrayList<>();
+        final List<T> copyList = new ArrayList<>();
         for (final T colony : this)
         {
             copyList.add(colony);

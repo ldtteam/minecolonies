@@ -389,6 +389,10 @@
   "entity.builder.messagenobuilder": "You need a Builder to build or upgrade this building.",
   "entity.farmer.needseed": "I need %s to plant.",
 
+  "com.minecolonies.command.argument.colony.unknown": "There is no colony here",
+  "com.minecolonies.command.argument.colony.here": "The colony at this location",
+  "com.minecolonies.command.argument.colony.mine": "The colony you own",
+
   "com.minecolonies.command.help.wiki": "Check out the wiki to learn more: ",
   "com.minecolonies.command.help.discord": "Join the community at  ",
   "com.minecolonies.command.notcreative": "Must be in Creative Mode to use this command.",

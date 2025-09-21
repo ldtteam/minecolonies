@@ -5,6 +5,7 @@ import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.constant.translation.CommandTranslationConstants;
 import com.minecolonies.core.MineColonies;
 import com.minecolonies.core.colony.Colony;
+import com.minecolonies.core.commands.arguments.ColonyIdArgument;
 import com.minecolonies.core.commands.commandTypes.IMCCommand;
 import com.minecolonies.core.commands.commandTypes.IMCOPCommand;
 import com.minecolonies.core.util.ChunkDataHelper;
@@ -37,7 +38,7 @@ public class CommandClaimChunks implements IMCOPCommand
         }
 
         // Colony
-        final int colonyID = IntegerArgumentType.getInteger(context, COLONYID_ARG);
+        final int colonyID = ColonyIdArgument.getColonyId(context, COLONYID_ARG);
         final Colony colony = (Colony) IColonyManager.getInstance().getColonyByWorld(colonyID, sender.level());
 
         // Range
@@ -74,7 +75,7 @@ public class CommandClaimChunks implements IMCOPCommand
     public LiteralArgumentBuilder<CommandSourceStack> build()
     {
         return IMCCommand.newLiteral(getName())
-                 .then(IMCCommand.newArgument(COLONYID_ARG, IntegerArgumentType.integer(1))
+                 .then(IMCCommand.newArgument(COLONYID_ARG, ColonyIdArgument.id())
                          .then(IMCCommand.newArgument(RANGE_ARG, IntegerArgumentType.integer(0, 10))
                                  .then(IMCCommand.newArgument(ADD_ARG, BoolArgumentType.bool()).executes(this::checkPreConditionAndExecute))));
     }

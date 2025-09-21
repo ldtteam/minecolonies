@@ -168,6 +168,15 @@ public interface IColonyManager
     IBuildingView getBuildingView(final ResourceKey<Level> dimension, BlockPos pos);
 
     /**
+     * Get all colonies in this world.  (Side neutral; on clients it returns the subset of views known to the player.)
+     *
+     * @param w World.
+     * @return a list of colonies.
+     */
+    @NotNull
+    List<IColony> getIColonies(@NotNull Level w);
+
+    /**
      * Side neutral method to get colony. On clients it returns the view. On servers it returns the colony itself.
      *
      * @param w   World.
@@ -176,6 +185,15 @@ public interface IColonyManager
      */
     @Nullable
     IColony getIColony(@NotNull Level w, @NotNull BlockPos pos);
+
+    /**
+     * Get all colony views in this world known to the current player.
+     *
+     * @param w World.
+     * @return a list of colony views.
+     */
+    @NotNull
+    List<IColonyView> getColonyViews(@NotNull Level w);
 
     /**
      * Gets the colony view aat the given position

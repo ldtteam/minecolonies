@@ -1,18 +1,16 @@
 package com.minecolonies.core.commands.colonycommands;
 
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.core.commands.arguments.ColonyIdArgument;
 import com.minecolonies.core.commands.commandTypes.IMCCommand;
 import com.minecolonies.core.commands.commandTypes.IMCOPCommand;
 import com.minecolonies.core.util.BackUpHelper;
-import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
 
 import static com.minecolonies.api.util.constant.translation.CommandTranslationConstants.COMMAND_COLONY_EXPORT_SUCCESS;
-import static com.minecolonies.api.util.constant.translation.CommandTranslationConstants.COMMAND_COLONY_ID_NOT_FOUND;
 import static com.minecolonies.core.commands.CommandArgumentNames.COLONYID_ARG;
 
 /**
@@ -23,16 +21,11 @@ public class CommandExportColony implements IMCOPCommand
     @Override
     public int onExecute(final CommandContext<CommandSourceStack> context)
     {
-        final int colonyId = IntegerArgumentType.getInteger(context, COLONYID_ARG);
+        final IColony colony = ColonyIdArgument.getColony(context, COLONYID_ARG);
         BackUpHelper.backupColonyData(context.getSource().getLevel().registryAccess());
-        final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyId, context.getSource().getLevel().dimension());
-        if (colony == null)
-        {
-            context.getSource().sendSuccess(() -> Component.translatableEscape(COMMAND_COLONY_ID_NOT_FOUND, colonyId), true);
-            return 0;
-        }
 
-        context.getSource().sendSuccess(() -> Component.translatableEscape(COMMAND_COLONY_EXPORT_SUCCESS, BackUpHelper.exportColony(colony)), true);
+        final String filename = BackUpHelper.exportColony(colony);
+        context.getSource().sendSuccess(() -> Component.translatable(COMMAND_COLONY_EXPORT_SUCCESS, filename), true);
         return 1;
     }
 
@@ -49,6 +42,6 @@ public class CommandExportColony implements IMCOPCommand
     public LiteralArgumentBuilder<CommandSourceStack> build()
     {
         return IMCCommand.newLiteral(getName())
-                 .then(IMCCommand.newArgument(COLONYID_ARG, IntegerArgumentType.integer(1)).executes(this::checkPreConditionAndExecute));
+                 .then(IMCCommand.newArgument(COLONYID_ARG, ColonyIdArgument.id()).executes(this::checkPreConditionAndExecute));
     }
 }

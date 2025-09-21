@@ -34,6 +34,7 @@ import com.minecolonies.core.client.render.SpearItemTileEntityRenderer;
 import com.minecolonies.core.colony.crafting.CustomRecipeManagerMessage;
 import com.minecolonies.core.colony.requestsystem.init.RequestSystemInitializer;
 import com.minecolonies.core.colony.requestsystem.init.StandardFactoryControllerInitializer;
+import com.minecolonies.core.commands.arguments.ModArgumentTypes;
 import com.minecolonies.core.debug.messages.DebugEnableMessage;
 import com.minecolonies.core.debug.messages.DebugEnablePathfindingMessage;
 import com.minecolonies.core.debug.messages.DebugOutputMessage;
@@ -105,10 +106,11 @@ public class MineColonies
     {
         final IEventBus modBus = modContainer.getEventBus();
         final IEventBus forgeBus = NeoForge.EVENT_BUS;
-    
+
         LanguageHandler.loadLangPath("assets/minecolonies/lang/%s.json");
         config = new Configurations<>(modContainer, modBus, ClientConfiguration::new, ServerConfiguration::new, CommonConfiguration::new);
 
+        ModArgumentTypes.ARGUMENT_TYPES.register(modBus);
         TileEntityInitializer.BLOCK_ENTITIES.register(modBus);
         AdvancementTriggers.DEFERRED_REGISTER.register(modBus);
         ModIngredientTypeInitializer.DEFERRED_REGISTER.register(modBus);
