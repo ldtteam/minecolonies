@@ -74,7 +74,7 @@ public class BlockHutGateHouse extends AbstractBlockHut<BlockHutGateHouse>
             @Nullable final IBuildingView building = IColonyManager.getInstance().getBuildingView(worldIn.dimension(), pos);
             if (building != null && !building.getColony().getPermissions().hasPermission(player, Action.ACCESS_HUTS))
             {
-                new ConnectionModuleWindow(Constants.MOD_ID + ":gui/layouthuts/layoutcolonyconnection.xml", building, false).open();
+                new ConnectionModuleWindow(Constants.MOD_ID + ":gui/layouthuts/layoutcolonyconnection.xml", building, true).open();
                 return InteractionResult.FAIL;
             }
 

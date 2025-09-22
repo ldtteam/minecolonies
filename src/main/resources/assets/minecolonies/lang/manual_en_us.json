@@ -2988,5 +2988,6 @@
 
   "com.ldtteam.tag.tooltip.knight": "Position for knights to guard the Gate",
   "com.ldtteam.tag.tooltip.archer": "Positions for archers to guard the gate",
-  "com.ldtteam.tag.tooltip.gate": "Position where the gate transitions from inside to outside"
+  "com.ldtteam.tag.tooltip.gate": "Position where the gate transitions from inside to outside",
+  "com.ldtteam.gatehouse.travel.cost": "You don't have enough nuggets to pay for this trip!"
 }

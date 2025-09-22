@@ -2,9 +2,9 @@ package com.minecolonies.core.network.messages.server.colony;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
-import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.connections.DiplomacyStatus;
 import com.minecolonies.api.colony.permissions.Action;
+import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.MathUtils;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingGateHouse;
 import com.minecolonies.core.network.messages.server.AbstractColonyServerMessage;
@@ -13,8 +13,11 @@ import com.minecolonies.core.util.TeleportHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraftforge.items.wrapper.InvWrapper;
 import net.minecraftforge.network.NetworkEvent;
 import org.jetbrains.annotations.Nullable;
 
@@ -33,6 +36,11 @@ public class TeleportToColonyMessage extends AbstractColonyServerMessage
     private int originColonyId;
 
     /**
+     * Teleportation cost.
+     */
+    private int cost;
+
+    /**
      * Gatehouse pos to teleport to.
      */
     private BlockPos pos;
@@ -42,11 +50,12 @@ public class TeleportToColonyMessage extends AbstractColonyServerMessage
         super();
     }
 
-    public TeleportToColonyMessage(final ResourceKey<Level> dimensionId, final int colonyId, final BlockPos pos, final int originColonyId)
+    public TeleportToColonyMessage(final ResourceKey<Level> dimensionId, final int colonyId, final BlockPos pos, final int originColonyId, final int cost)
     {
         super(dimensionId, colonyId);
         this.pos = pos;
         this.originColonyId = originColonyId;
+        this.cost = cost;
     }
 
     @Nullable
@@ -77,6 +86,10 @@ public class TeleportToColonyMessage extends AbstractColonyServerMessage
 
         if (originColony.getPermissions().hasPermission(ctxIn.getSender(), Action.TELEPORT_TO_COLONY) || colony.getPermissions().hasPermission(ctxIn.getSender(), Action.TELEPORT_TO_COLONY))
         {
+            if (cost > 0)
+            {
+                InventoryUtils.reduceStackInItemHandler(new InvWrapper(ctxIn.getSender().getInventory()), new ItemStack(Items.GOLD_NUGGET), cost);
+            }
             final BlockEntity gateHouse = colony.getWorld().getBlockEntity(pos);
             if (gateHouse instanceof TileEntityColonyBuilding && ((TileEntityColonyBuilding) gateHouse).getBuilding() instanceof BuildingGateHouse)
             {
@@ -102,6 +115,7 @@ public class TeleportToColonyMessage extends AbstractColonyServerMessage
     {
         buf.writeBlockPos(pos);
         buf.writeInt(originColonyId);
+        buf.writeInt(cost);
     }
 
     @Override
@@ -109,5 +123,6 @@ public class TeleportToColonyMessage extends AbstractColonyServerMessage
     {
         this.pos = buf.readBlockPos();
         this.originColonyId = buf.readInt();
+        this.cost = buf.readInt();
     }
 }
