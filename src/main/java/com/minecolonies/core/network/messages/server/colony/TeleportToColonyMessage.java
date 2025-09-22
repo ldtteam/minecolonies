@@ -23,6 +23,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
+import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 import static com.minecolonies.api.util.constant.SchematicTagConstants.TAG_GATE;
 
 /**
@@ -86,13 +87,33 @@ public class TeleportToColonyMessage extends AbstractColonyServerMessage
 
         if (originColony.getPermissions().hasPermission(ctxIn.getSender(), Action.TELEPORT_TO_COLONY) || colony.getPermissions().hasPermission(ctxIn.getSender(), Action.TELEPORT_TO_COLONY))
         {
-            if (cost > 0)
-            {
-                InventoryUtils.reduceStackInItemHandler(new InvWrapper(ctxIn.getSender().getInventory()), new ItemStack(Items.GOLD_NUGGET), cost);
-            }
             final BlockEntity gateHouse = colony.getWorld().getBlockEntity(pos);
             if (gateHouse instanceof TileEntityColonyBuilding && ((TileEntityColonyBuilding) gateHouse).getBuilding() instanceof BuildingGateHouse)
             {
+                if (cost > 0)
+                {
+                    if (InventoryUtils.attemptReduceStackInItemHandler(new InvWrapper(ctxIn.getSender().getInventory()), new ItemStack(Items.GOLD_NUGGET), cost))
+                    {
+                        int output = cost/2;
+                        if (output <= STACKSIZE)
+                        {
+                            InventoryUtils.addItemStackToItemHandler(((TileEntityColonyBuilding) gateHouse).getInventory(), new ItemStack(Items.GOLD_NUGGET, output));
+                        }
+                        else
+                        {
+                            for (int i = 0; i < output/STACKSIZE; i++)
+                            {
+                                if (output > 0)
+                                {
+                                    final int qty = Math.min(STACKSIZE, output);
+                                    InventoryUtils.addItemStackToItemHandler(((TileEntityColonyBuilding) gateHouse).getInventory(), new ItemStack(Items.GOLD_NUGGET, qty));
+                                    output -= qty;
+                                }
+                            }
+                        }
+                    }
+                }
+
                 final List<BlockPos> posList = ((TileEntityColonyBuilding) gateHouse).getCachedWorldTagNamePosMap().get(TAG_GATE);
                 if (posList == null || posList.isEmpty())
                 {
