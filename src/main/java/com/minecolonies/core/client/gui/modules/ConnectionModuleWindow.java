@@ -47,12 +47,23 @@ public class ConnectionModuleWindow extends AbstractModuleWindow
     /**
      * Constructor for the minimum stock window view.
      *
+     *
      * @param building class extending
-     * @param moduleView the module view.
      */
-    public ConnectionModuleWindow(final String res, final IBuildingView building, final ColonyConnectionModuleView moduleView)
+    public ConnectionModuleWindow(final String res, final IBuildingView building, final boolean perms)
     {
         super(building, res);
+
+        if (!perms)
+        {
+            for (final Pane child : children)
+            {
+                if (child.getID().contains("modules"))
+                {
+                    child.setVisible(false);
+                }
+            }
+        }
 
         directConnections = findPaneOfTypeByID(LIST_DIRECT, ScrollingList.class);
         indirectConnections = findPaneOfTypeByID(LIST_INDIRECT, ScrollingList.class);
