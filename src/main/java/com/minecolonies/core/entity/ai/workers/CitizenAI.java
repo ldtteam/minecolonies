@@ -112,8 +112,12 @@ public class CitizenAI implements IStateAI
     private IState decideAiTask()
     {
         IState next = calculateNextState();
-        if (next == null || next == lastState)
+        if ((next == null || next == lastState))
         {
+            if (citizen.getCitizenAI().getState() == CitizenAIState.IDLE && next != CitizenAIState.IDLE)
+            {
+                return next;
+            }
             return null;
         }
 
