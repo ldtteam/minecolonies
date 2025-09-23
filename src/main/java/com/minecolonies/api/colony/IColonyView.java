@@ -260,6 +260,12 @@ public interface IColonyView extends IColony
     void handleColonyBuildingExtensionsViewUpdateMessage(final Set<IBuildingExtension> extensions);
 
     /**
+     * Handle the colony view module template manager updating.
+     * @param compoundTag the tag to update the module template manager with.
+     */
+    void handleColonyViewModuleTemplateManagerUpdate(@NotNull final HolderLookup.Provider provider, CompoundTag compoundTag);
+
+    /**
      * Get all building extensions.
      *
      * @param matcher the building extension matcher predicate.

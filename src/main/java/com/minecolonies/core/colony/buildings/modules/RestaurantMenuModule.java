@@ -13,11 +13,13 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.crafting.RecipeStorage;
 import com.minecolonies.api.util.*;
+import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import org.apache.logging.log4j.util.TriConsumer;
 import org.jetbrains.annotations.NotNull;
@@ -31,7 +33,7 @@ import static com.minecolonies.api.research.util.ResearchConstants.MIN_ORDER;
 /**
  * Minimum stock module.
  */
-public class RestaurantMenuModule extends AbstractBuildingModule implements IPersistentModule, ITickingModule, IAltersRequiredItems
+public class RestaurantMenuModule extends AbstractBuildingModule implements IPersistentModule, ITickingModule, IAltersRequiredItems, ITemplateModule
 {
     /**
      * Minimum stock it can hold per level.
@@ -90,6 +92,7 @@ public class RestaurantMenuModule extends AbstractBuildingModule implements IPer
 
         menu.add(new ItemStorage(itemStack));
         markDirty();
+        resetTemplateAssignment();
     }
 
     /**
@@ -107,6 +110,7 @@ public class RestaurantMenuModule extends AbstractBuildingModule implements IPer
             building.getColony().getRequestManager().updateRequestState(token, RequestState.CANCELLED);
         }
         markDirty();
+        resetTemplateAssignment();
     }
 
     @Override
@@ -236,5 +240,12 @@ public class RestaurantMenuModule extends AbstractBuildingModule implements IPer
         {
             Utils.serializeCodecMess(buf, menuItem.getItemStack());
         }
+    }
+
+    @Override
+    @NotNull
+    public ResourceLocation getTemplateStorageId()
+    {
+        return new ResourceLocation(Constants.MOD_ID, "restaurant_menu");
     }
 }

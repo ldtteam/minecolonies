@@ -6,6 +6,7 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.tileentities.TileEntityGrave;
 import com.minecolonies.core.client.gui.modules.GraveyardManagementWindow;
 import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.core.BlockPos;
@@ -54,7 +55,7 @@ public class GraveyardManagementModuleView extends AbstractBuildingModuleView
     @Override
     public BOWindow getWindow()
     {
-        return new GraveyardManagementWindow(buildingView, this);
+        return new GraveyardManagementWindow(this);
     }
 
     @Override
@@ -64,11 +65,10 @@ public class GraveyardManagementModuleView extends AbstractBuildingModuleView
     }
 
     @Override
-    public String getDesc()
+    public Component getDesc()
     {
-        return "com.minecolonies.gui.workerhuts.enchanter.workers";
+        return Component.translatable("com.minecolonies.gui.workerhuts.enchanter.workers");
     }
-
 
     /**
      * Getter of the graves list.

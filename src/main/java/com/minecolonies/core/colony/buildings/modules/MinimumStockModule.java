@@ -5,7 +5,6 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.modules.*;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.request.RequestState;
-import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.requestable.MinimumStack;
 import com.minecolonies.api.colony.requestsystem.requestable.Stack;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
@@ -14,14 +13,15 @@ import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Utils;
 import com.minecolonies.api.util.WorldUtil;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.NbtTagConstants;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.network.RegistryFriendlyByteBuf;
 
 import org.apache.logging.log4j.util.TriConsumer;
 import org.jetbrains.annotations.NotNull;
@@ -36,17 +36,17 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_QUANTITY;
 /**
  * Minimum stock module.
  */
-public class MinimumStockModule extends AbstractBuildingModule implements IMinimumStockModule, IPersistentModule, ITickingModule, IAltersRequiredItems
+public class MinimumStockModule extends AbstractBuildingModule implements IMinimumStockModule, IPersistentModule, ITickingModule, IAltersRequiredItems, ITemplateModule
 {
+    /**
+     * The minimum stock tag.
+     */
+    public static final String TAG_MINIMUM_STOCK = "minstock";
+
     /**
      * Minimum stock it can hold per level.
      */
     private static final int STOCK_PER_LEVEL = 5;
-
-    /**
-     * The minimum stock tag.
-     */
-    private static final String TAG_MINIMUM_STOCK = "minstock";
 
     /**
      * The minimum stock.
@@ -72,6 +72,7 @@ public class MinimumStockModule extends AbstractBuildingModule implements IMinim
         {
             minimumStock.put(new ItemStorage(itemStack), quantity);
             markDirty();
+            resetTemplateAssignment();
         }
     }
 
@@ -107,6 +108,7 @@ public class MinimumStockModule extends AbstractBuildingModule implements IMinim
         }
 
         markDirty();
+        resetTemplateAssignment();
     }
 
     @Override
@@ -201,5 +203,12 @@ public class MinimumStockModule extends AbstractBuildingModule implements IMinim
             buf.writeInt(entry.getValue());
         }
         buf.writeBoolean(minimumStock.size() >= minimumStockSize());
+    }
+
+    @Override
+    @NotNull
+    public ResourceLocation getTemplateStorageId()
+    {
+        return new ResourceLocation(Constants.MOD_ID, "minimum_stock");
     }
 }

@@ -14,7 +14,6 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.CraftingUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.OptionalPredicate;
-import com.minecolonies.api.util.constant.NbtTagConstants;
 import com.minecolonies.core.blocks.MinecoloniesCropBlock;
 import com.minecolonies.core.client.gui.modules.FarmFieldsModuleWindow;
 import com.minecolonies.core.colony.buildingextensions.FarmField;
@@ -317,7 +316,7 @@ public class BuildingFarmer extends AbstractBuilding
         @OnlyIn(Dist.CLIENT)
         public BOWindow getWindow()
         {
-            return new FarmFieldsModuleWindow(buildingView, this);
+            return new FarmFieldsModuleWindow(this);
         }
 
         @Override

@@ -3,10 +3,12 @@ package com.minecolonies.core.colony.buildings.modules;
 import com.minecolonies.api.colony.buildings.modules.AbstractBuildingModule;
 import com.minecolonies.api.colony.buildings.modules.IPersistentModule;
 import com.minecolonies.api.colony.buildings.modules.ISettingsModule;
+import com.minecolonies.api.colony.buildings.modules.ITemplateModule;
 import com.minecolonies.api.colony.buildings.modules.settings.ISetting;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.colony.buildings.modules.settings.SettingKey;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.Tag;
@@ -24,7 +26,7 @@ import java.util.Optional;
 /**
  * Module containing all settings.
  */
-public class SettingsModule extends AbstractBuildingModule implements IPersistentModule, ISettingsModule
+public class SettingsModule extends AbstractBuildingModule implements IPersistentModule, ISettingsModule, ITemplateModule
 {
     /**
      * Map of setting id (string) to generic setting.
@@ -110,6 +112,7 @@ public class SettingsModule extends AbstractBuildingModule implements IPersisten
         {
             settings.put(settingKey, value);
             value.onUpdate(building, sender);
+            resetTemplateAssignment();
         }
     }
 
@@ -118,5 +121,12 @@ public class SettingsModule extends AbstractBuildingModule implements IPersisten
     {
         final T setting = getSetting(key);
         return setting == null ? def : setting.getValue();
+    }
+
+    @Override
+    @NotNull
+    public ResourceLocation getTemplateStorageId()
+    {
+        return new ResourceLocation(Constants.MOD_ID, "settings");
     }
 }

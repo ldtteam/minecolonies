@@ -4,15 +4,17 @@ import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.colony.buildings.modules.AbstractBuildingModule;
 import com.minecolonies.api.colony.buildings.modules.IItemListModule;
 import com.minecolonies.api.colony.buildings.modules.IPersistentModule;
+import com.minecolonies.api.colony.buildings.modules.ITemplateModule;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.Utils;
+import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.network.RegistryFriendlyByteBuf;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -22,7 +24,7 @@ import java.util.List;
 /**
  * Abstract class for all buildings which require a filterable list of allowed/blocked items.
  */
-public class ItemListModule extends AbstractBuildingModule implements IItemListModule, IPersistentModule
+public class ItemListModule extends AbstractBuildingModule implements IItemListModule, IPersistentModule, ITemplateModule
 {
     /**
      * Tag to store the item list.
@@ -102,6 +104,7 @@ public class ItemListModule extends AbstractBuildingModule implements IItemListM
         {
             this.itemsAllowed = ImmutableList.<ItemStorage>builder().addAll(itemsAllowed).add(item).build();
             markDirty();
+            resetTemplateAssignment();
         }
     }
 
@@ -118,6 +121,7 @@ public class ItemListModule extends AbstractBuildingModule implements IItemListM
         allowedItems.remove(item);
         this.itemsAllowed = ImmutableList.copyOf(allowedItems);
         markDirty();
+        resetTemplateAssignment();
     }
 
     @Override
@@ -137,6 +141,7 @@ public class ItemListModule extends AbstractBuildingModule implements IItemListM
     {
         itemsAllowed = ImmutableList.of();
         markDirty();
+        resetTemplateAssignment();
     }
 
     @Override
@@ -159,5 +164,12 @@ public class ItemListModule extends AbstractBuildingModule implements IItemListM
     public String getId()
     {
         return this.id;
+    }
+
+    @Override
+    @NotNull
+    public ResourceLocation getTemplateStorageId()
+    {
+        return new ResourceLocation(Constants.MOD_ID, id + "_item_list");
     }
 }

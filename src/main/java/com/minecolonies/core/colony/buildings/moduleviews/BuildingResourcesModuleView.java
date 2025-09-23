@@ -7,6 +7,7 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.client.gui.modules.WindowBuilderResModule;
 import com.minecolonies.core.colony.buildings.utils.BuildingBuilderResource;
 import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
@@ -124,7 +125,7 @@ public class BuildingResourcesModuleView extends AbstractBuildingModuleView
     @Override
     public BOWindow getWindow()
     {
-        return new WindowBuilderResModule(Constants.MOD_ID + ":gui/layouthuts/layoutbuilderres.xml", buildingView, this);
+        return new WindowBuilderResModule(this);
     }
 
     @Override
@@ -134,8 +135,8 @@ public class BuildingResourcesModuleView extends AbstractBuildingModuleView
     }
 
     @Override
-    public String getDesc()
+    public Component getDesc()
     {
-        return "com.minecolonies.coremod.gui.workerhuts.resourcelist";
+        return Component.literal("com.minecolonies.coremod.gui.workerhuts.resourcelist");
     }
 }

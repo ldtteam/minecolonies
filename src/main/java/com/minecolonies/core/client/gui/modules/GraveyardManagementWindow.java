@@ -3,7 +3,6 @@ package com.minecolonies.core.client.gui.modules;
 import com.ldtteam.blockui.Pane;
 import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.blockui.views.ScrollingList;
-import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.core.tileentities.TileEntityGrave;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.constant.Constants;
@@ -12,6 +11,7 @@ import com.minecolonies.core.colony.buildings.moduleviews.GraveyardManagementMod
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.core.BlockPos;
 import org.jetbrains.annotations.NotNull;
@@ -19,13 +19,8 @@ import org.jetbrains.annotations.NotNull;
 /**
  * BOWindow for the Graveyard building.
  */
-public class GraveyardManagementWindow extends AbstractModuleWindow
+public class GraveyardManagementWindow extends AbstractModuleWindow<GraveyardManagementModuleView>
 {
-    /**
-     * Resource suffix of the GUI.
-     */
-    private static final String HUT_GRAVEYARD_RESOURCE_SUFFIX = ":gui/layouthuts/layoutgraveyard.xml";
-
     /**
      * Id of the graves list inside the GUI.
      */
@@ -62,19 +57,13 @@ public class GraveyardManagementWindow extends AbstractModuleWindow
     private final ClientLevel world = Minecraft.getInstance().level;
 
     /**
-     * The module view.
-     */
-    private final GraveyardManagementModuleView moduleView;
-
-    /**
      * Constructor for the window of the graveyard.
      *
      * @param moduleView {@link GraveyardManagementModuleView}.
      */
-    public GraveyardManagementWindow(final IBuildingView building, GraveyardManagementModuleView moduleView)
+    public GraveyardManagementWindow(final GraveyardManagementModuleView moduleView)
     {
-        super(building, Constants.MOD_ID + HUT_GRAVEYARD_RESOURCE_SUFFIX);
-        this.moduleView = moduleView;
+        super(moduleView, new ResourceLocation(Constants.MOD_ID, "gui/layouthuts/layoutgraveyard.xml"));
     }
 
     @Override

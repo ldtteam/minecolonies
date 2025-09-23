@@ -5,6 +5,7 @@ import com.minecolonies.api.colony.buildings.modules.AbstractBuildingModuleView;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.client.gui.modules.WindowMineGuardModule;
 import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
@@ -25,7 +26,7 @@ public class MinerGuardAssignModuleView extends AbstractBuildingModuleView
     @Override
     public BOWindow getWindow()
     {
-        return new WindowMineGuardModule(buildingView);
+        return new WindowMineGuardModule(this);
     }
 
     @Override
@@ -35,8 +36,8 @@ public class MinerGuardAssignModuleView extends AbstractBuildingModuleView
     }
     
     @Override
-    public String getDesc()
+    public Component getDesc()
     {
-        return "com.minecolonies.coremod.gui.miner.guardassign";
+        return Component.translatable("com.minecolonies.coremod.gui.miner.guardassign");
     }
 }

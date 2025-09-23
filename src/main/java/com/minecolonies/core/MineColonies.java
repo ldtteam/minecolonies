@@ -58,6 +58,10 @@ import com.minecolonies.core.network.messages.server.colony.building.home.Assign
 import com.minecolonies.core.network.messages.server.colony.building.miner.MinerRepairLevelMessage;
 import com.minecolonies.core.network.messages.server.colony.building.miner.MinerSetLevelMessage;
 import com.minecolonies.core.network.messages.server.colony.building.postbox.PostBoxRequestMessage;
+import com.minecolonies.core.network.messages.server.colony.building.template.ApplyTemplateMessage;
+import com.minecolonies.core.network.messages.server.colony.building.template.IgnoreTemplateMessage;
+import com.minecolonies.core.network.messages.server.colony.building.template.RemoveTemplateMessage;
+import com.minecolonies.core.network.messages.server.colony.building.template.UpdateTemplateDataMessage;
 import com.minecolonies.core.network.messages.server.colony.building.university.TryResearchMessage;
 import com.minecolonies.core.network.messages.server.colony.building.warehouse.SortWarehouseMessage;
 import com.minecolonies.core.network.messages.server.colony.building.warehouse.UpgradeWarehouseMessage;
@@ -312,6 +316,7 @@ public class MineColonies
         ColonyViewRemoveCitizenMessage.TYPE.register(registry);
         ColonyViewBuildingViewMessage.TYPE.register(registry);
         ColonyViewRemoveBuildingMessage.TYPE.register(registry);
+        ColonyViewModuleTemplateManagerViewMessage.TYPE.register(registry);
         ColonyViewBuildingExtensionsUpdateMessage.TYPE.register(registry);
         PermissionsMessage.View.TYPE.register(registry);
         ColonyViewWorkOrderMessage.TYPE.register(registry);
@@ -406,6 +411,10 @@ public class MineColonies
         TriggerConnectionEventMessage.TYPE.register(registry);
         QueryCitizenAIHistoryMessage.TYPE.register(registry);
         DebugEnablePathfindingMessage.TYPE.register(registry);
+        ApplyTemplateMessage.TYPE.register(registry);
+        IgnoreTemplateMessage.TYPE.register(registry);
+        UpdateTemplateDataMessage.TYPE.register(registry);
+        RemoveTemplateMessage.TYPE.register(registry);
 
         //Client side only
         BlockParticleEffectMessage.TYPE.register(registry);

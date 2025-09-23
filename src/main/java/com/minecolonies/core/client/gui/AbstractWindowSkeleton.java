@@ -35,35 +35,30 @@ public abstract class AbstractWindowSkeleton extends BOWindow implements ButtonH
     protected       SwitchView switchView;
 
     /**
-     * This window's resource location
-     */
-    private String resource;
-
-    /**
      * This window's parent
      */
     @Nullable
-    private BOWindow parent;
+    private final BOWindow parent;
 
     /**
      * Constructor with no parent window
      *
-     * @param resource Resource location string.
+     * @param resource window resource location.
      */
-    public AbstractWindowSkeleton(final String resource)
+    public AbstractWindowSkeleton(final ResourceLocation resource)
     {
-        this(resource, null);
+        this(null, resource);
     }
 
     /**
      * Constructor for the skeleton class of the windows.
      *
-     * @param resource Resource location string.
+     * @param parent   the parent window.
+     * @param resource window resource location.
      */
-    public AbstractWindowSkeleton(final String resource, @Nullable final BOWindow parent)
+    public AbstractWindowSkeleton(@Nullable final BOWindow parent, final ResourceLocation resource)
     {
-        super(ResourceLocation.parse(resource));
-        this.resource = resource;
+        super(resource);
         this.parent = parent;
 
         buttons = new HashMap<>();
@@ -87,7 +82,7 @@ public abstract class AbstractWindowSkeleton extends BOWindow implements ButtonH
             pageNum = null;
         }
 
-        new OpenGuiWindowTriggerMessage(this.resource).sendToServer();
+        new OpenGuiWindowTriggerMessage(this.xmlResourceLocation).sendToServer();
     }
 
     /**
@@ -125,7 +120,7 @@ public abstract class AbstractWindowSkeleton extends BOWindow implements ButtonH
         if (buttons.containsKey(button.getID()))
         {
             buttons.get(button.getID()).accept(button);
-            new ClickGuiButtonTriggerMessage(button.getID(), this.resource).sendToServer();
+            new ClickGuiButtonTriggerMessage(button.getID(), this.xmlResourceLocation).sendToServer();
         }
     }
 

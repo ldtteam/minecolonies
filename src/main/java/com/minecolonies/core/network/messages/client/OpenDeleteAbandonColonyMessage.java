@@ -60,7 +60,7 @@ public class OpenDeleteAbandonColonyMessage  extends AbstractClientPlayMessage
     @Override
     protected void onExecute(final IPayloadContext ctxIn, final Player player)
     {
-        new WindowTownHallDeleteAbandonColony(currentTownHallPos, oldColonyName, oldColonyPos, oldColonyId).open();
+        new WindowTownHallDeleteAbandonColony(currentTownHallPos, oldColonyName, oldColonyPos).open();
     }
 
     @Override

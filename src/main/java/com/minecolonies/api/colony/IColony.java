@@ -487,6 +487,13 @@ public interface IColony
     IQuestManager getQuestManager();
 
     /**
+     * Get the module template manager of the colony.
+     *
+     * @return the module template manager.
+     */
+    IBuildingModuleTemplateManager getBuildingModuleTemplateManager();
+
+    /**
      * Get citizen from colony.
      *
      * @param id the id of the cit.

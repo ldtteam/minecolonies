@@ -4,11 +4,11 @@ import com.ldtteam.blockui.Pane;
 import com.ldtteam.blockui.controls.Button;
 import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.blockui.views.ScrollingList;
-import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.connections.ColonyConnection;
 import com.minecolonies.api.colony.connections.DiplomacyStatus;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.MessageUtils;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.client.gui.AbstractModuleWindow;
 import com.minecolonies.core.colony.buildings.moduleviews.ColonyConnectionModuleView;
 import com.minecolonies.core.commands.ClickEventWithExecutable;
@@ -16,12 +16,13 @@ import com.minecolonies.core.network.messages.server.colony.TeleportToColonyMess
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ConnectionModuleWindow extends AbstractModuleWindow
+public class ConnectionModuleWindow extends AbstractModuleWindow<ColonyConnectionModuleView>
 {
     /**
      * Special buttons
@@ -45,18 +46,17 @@ public class ConnectionModuleWindow extends AbstractModuleWindow
     /**
      * Constructor for the minimum stock window view.
      *
-     * @param building class extending
      * @param moduleView the module view.
      */
-    public ConnectionModuleWindow(final String res, final IBuildingView building, final ColonyConnectionModuleView moduleView)
+    public ConnectionModuleWindow(final ColonyConnectionModuleView moduleView)
     {
-        super(building, res);
+        super(moduleView, new ResourceLocation(Constants.MOD_ID, "gui/layouthuts/layoutcolonyconnection.xml"));
 
         directConnections = findPaneOfTypeByID(LIST_DIRECT, ScrollingList.class);
         indirectConnections = findPaneOfTypeByID(LIST_INDIRECT, ScrollingList.class);
 
-        directConnectionData = new ArrayList<>(building.getColony().getConnectionManager().getDirectlyConnectedColonies().values());
-        indirectConnectionData = new ArrayList<>(building.getColony().getConnectionManager().getIndirectlyConnectedColonies().values());
+        directConnectionData = new ArrayList<>(buildingView.getColony().getConnectionManager().getDirectlyConnectedColonies().values());
+        indirectConnectionData = new ArrayList<>(buildingView.getColony().getConnectionManager().getIndirectlyConnectedColonies().values());
 
         registerButton(TRAVEL, this::teleportToColony);
 

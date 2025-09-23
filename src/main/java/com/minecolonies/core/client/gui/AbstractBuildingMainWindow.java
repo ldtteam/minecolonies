@@ -7,42 +7,42 @@ import com.minecolonies.core.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.core.network.messages.server.colony.OpenInventoryMessage;
 import com.minecolonies.core.network.messages.server.colony.building.BuildRequestMessage;
 import net.minecraft.client.resources.language.I18n;
-import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.contents.TranslatableContents;
-import net.minecraft.sounds.SoundEvents;
-import org.jetbrains.annotations.NotNull;
+import net.minecraft.resources.ResourceLocation;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 
 /**
- * Manage windows associated with Buildings.
+ * Base window class for the main window behind buildings.
  *
  * @param <B> Class extending {@link AbstractBuildingView}.
  */
-public abstract class AbstractWindowModuleBuilding<B extends IBuildingView> extends AbstractModuleWindow
+public abstract class AbstractBuildingMainWindow<B extends IBuildingView> extends AbstractBuildingWindow<B>
 {
     /**
-     * Type B is a class that extends {@link com.minecolonies.core.colony.buildings.views.AbstractBuildingView}.
+     * The title displayed at the top of the window showing the building name.
      */
-    protected final B      building;
-    private final   Text   title;
-    private final   Button buttonBuild;
+    private final Text title;
+
+    /**
+     * The build button.
+     */
+    private final Button buttonBuild;
 
     /**
      * Constructor for the windows that are associated with buildings.
      *
-     * @param building Class extending {@link AbstractBuildingView}.
-     * @param resource Resource location string.
+     * @param buildingView Class extending {@link AbstractBuildingView}.
+     * @param resource     window resource location.
      */
-    public AbstractWindowModuleBuilding(final B building, final String resource)
+    public AbstractBuildingMainWindow(final B buildingView, final ResourceLocation resource)
     {
-        super(building, resource);
+        super(buildingView, resource);
 
-        this.building = building;
         registerButton(BUTTON_BUILD, this::buildClicked);
         registerButton(BUTTON_INFO, this::infoClicked);
         registerButton(BUTTON_INVENTORY, this::inventoryClicked);
@@ -54,39 +54,8 @@ public abstract class AbstractWindowModuleBuilding<B extends IBuildingView> exte
         Button buttonInfo = findPaneOfTypeByID(BUTTON_INFO, Button.class);
         if (buttonInfo != null)
         {
-            buttonInfo.setVisible(I18n.exists(PARTIAL_INFO_TEXT + building.getBuildingType().getTranslationKey().replace("com.minecolonies.building.", "") + ".0"));
+            buttonInfo.setVisible(I18n.exists(PARTIAL_INFO_TEXT + buildingView.getBuildingType().getTranslationKey().replace("com.minecolonies.building.", "") + ".0"));
         }
-    }
-
-    @Override
-    public void setPage(final boolean relative, final int page)
-    {
-        super.setPage(relative, page);
-        mc.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.BOOK_PAGE_TURN, 1.0F));
-    }
-
-    /**
-     * Edit custom name action.
-     */
-    private void editName()
-    {
-        new WindowHutNameEntry(building).open();
-    }
-
-    /**
-     * Action when info button is clicked.
-     */
-    private void infoClicked()
-    {
-        new WindowInfo(building).open();
-    }
-
-    /**
-     * Action when allInventory button is clicked.
-     */
-    private void allInventoryClicked()
-    {
-        new WindowHutAllInventory(building, this).open();
     }
 
     /**
@@ -94,25 +63,34 @@ public abstract class AbstractWindowModuleBuilding<B extends IBuildingView> exte
      */
     private void buildClicked()
     {
-        String buttonLabel =
-          buttonBuild.getText().getContents() instanceof TranslatableContents ? ((TranslatableContents) buttonBuild.getText().getContents()).getKey() : buttonBuild.getTextAsString();
+        final String buttonLabel = buttonBuild.getText().getContents() instanceof TranslatableContents
+            ? ((TranslatableContents) buttonBuild.getText().getContents()).getKey()
+            : buttonBuild.getTextAsString();
 
         if (buttonLabel.equalsIgnoreCase(ACTION_CANCEL_BUILD) || buttonLabel.equalsIgnoreCase(ACTION_CANCEL_UPGRADE))
         {
-            new BuildRequestMessage(building, BuildRequestMessage.Mode.BUILD, BlockPos.ZERO).sendToServer();
+            new BuildRequestMessage(buildingView, BuildRequestMessage.Mode.BUILD, BlockPos.ZERO).sendToServer();
         }
         else if (buttonLabel.equalsIgnoreCase(ACTION_CANCEL_REPAIR))
         {
-            new BuildRequestMessage(building, BuildRequestMessage.Mode.REPAIR, BlockPos.ZERO).sendToServer();
+            new BuildRequestMessage(buildingView, BuildRequestMessage.Mode.REPAIR, BlockPos.ZERO).sendToServer();
         }
         else if (buttonLabel.equalsIgnoreCase(ACTION_CANCEL_DECONSTRUCTION))
         {
-            new BuildRequestMessage(building, BuildRequestMessage.Mode.REMOVE, BlockPos.ZERO).sendToServer();
+            new BuildRequestMessage(buildingView, BuildRequestMessage.Mode.REMOVE, BlockPos.ZERO).sendToServer();
         }
         else
         {
-            new WindowBuildBuilding(building.getColony(), building).open();
+            new WindowBuildBuilding(buildingView.getColony(), buildingView).open();
         }
+    }
+
+    /**
+     * Action when info button is clicked.
+     */
+    private void infoClicked()
+    {
+        new WindowInfo(buildingView).open();
     }
 
     /**
@@ -120,24 +98,30 @@ public abstract class AbstractWindowModuleBuilding<B extends IBuildingView> exte
      */
     private void inventoryClicked()
     {
-        new OpenInventoryMessage(building).sendToServer();
+        new OpenInventoryMessage(buildingView).sendToServer();
+    }
+
+    /**
+     * Edit custom name action.
+     */
+    private void editName()
+    {
+        new WindowHutNameEntry(buildingView).open();
+    }
+
+    /**
+     * Action when allInventory button is clicked.
+     */
+    private void allInventoryClicked()
+    {
+        new WindowHutAllInventory(buildingView, this).open();
     }
 
     @Override
     public void onUpdate()
     {
         super.onUpdate();
-        updateButtonBuild(building);
-    }
-
-    /**
-     * Returns the name of a building.
-     *
-     * @return Name of a building.
-     */
-    public String getBuildingName()
-    {
-        return buildingView.getBuildingDisplayName();
+        updateButtonBuild(buildingView);
     }
 
     /**
@@ -185,7 +169,7 @@ public abstract class AbstractWindowModuleBuilding<B extends IBuildingView> exte
 
         if (title != null)
         {
-            final MutableComponent component = Component.translatableEscape(building.getBuildingDisplayName());
+            final MutableComponent component = Component.translatableEscape(buildingView.getBuildingDisplayName());
             final MutableComponent componentWithLevel = component.append(" ").append(String.valueOf(buildingView.getBuildingLevel()));
             title.setText(componentWithLevel);
         }
