@@ -3,6 +3,7 @@ package com.minecolonies.core.client.gui.townhall;
 import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.blockui.controls.TextField;
 import com.ldtteam.structurize.storage.StructurePacks;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.core.client.gui.AbstractWindowSkeleton;
 import com.minecolonies.core.network.messages.server.CreateColonyMessage;
@@ -18,7 +19,6 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.level.block.entity.BlockEntity;
 
-import static com.minecolonies.api.util.constant.Constants.MOD_ID;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
@@ -42,7 +42,7 @@ public class WindowTownHallColonyManage extends AbstractWindowSkeleton
 
     public WindowTownHallColonyManage(final BlockPos pos, final String closestName, final int closestDistance, final String preName, final boolean reactivate)
     {
-        super(new ResourceLocation(MOD_ID, "gui/townhall/windowcolonymanagement.xml"));
+        super(new ResourceLocation(Constants.MOD_ID, "gui/townhall/windowcolonymanagement.xml"));
         this.pos = pos;
         this.reactivate = reactivate;
         mc.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.BOOK_PAGE_TURN, 1.0F));
