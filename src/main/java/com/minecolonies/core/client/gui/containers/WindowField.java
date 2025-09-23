@@ -23,6 +23,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.CropBlock;
@@ -44,11 +45,6 @@ import static com.minecolonies.api.util.constant.translation.GuiTranslationConst
 @OnlyIn(Dist.CLIENT)
 public class WindowField extends AbstractWindowSkeleton
 {
-    /**
-     * Link to the xml file of the window.
-     */
-    private static final String WINDOW_RESOURCE = ":gui/windowfield.xml";
-
     /**
      * The ID for the "not in colony" text.
      */
@@ -98,7 +94,7 @@ public class WindowField extends AbstractWindowSkeleton
      */
     public WindowField(@NotNull AbstractTileEntityScarecrow tileEntityScarecrow)
     {
-        super(Constants.MOD_ID + WINDOW_RESOURCE);
+        super(new ResourceLocation(Constants.MOD_ID, "gui/windowfield.xml"));
         this.tileEntityScarecrow = tileEntityScarecrow;
 
         registerButton(SELECT_SEED_BUTTON_ID, this::selectSeed);

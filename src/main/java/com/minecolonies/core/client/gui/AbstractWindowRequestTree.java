@@ -23,6 +23,7 @@ import com.minecolonies.core.network.messages.server.colony.UpdateRequestStateMe
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.core.BlockPos;
@@ -49,7 +50,7 @@ public abstract class AbstractWindowRequestTree extends AbstractWindowSkeleton
     protected final IColonyView colony;
 
     /**
-     * Scrollinglist of the resources.
+     * Scrolling list of the resources.
      */
     protected ScrollingList resourceList;
 
@@ -71,16 +72,17 @@ public abstract class AbstractWindowRequestTree extends AbstractWindowSkeleton
     /**
      * The building position.
      */
-    private @Nullable final IBuildingView building;
+    @Nullable
+    private final IBuildingView building;
 
     /**
      * Constructor to initiate the window request tree windows.
      *
-     * @param building citizen to bind the window to.
-     * @param pane     the string name of the pane.
      * @param colony   the colony it belongs to.
+     * @param building building to bind the window to.
+     * @param pane     the string name of the pane.
      */
-    public AbstractWindowRequestTree(final BlockPos building, final String pane, final IColonyView colony)
+    public AbstractWindowRequestTree(final IColonyView colony, final BlockPos building, final ResourceLocation pane)
     {
         super(pane);
         this.colony = colony;

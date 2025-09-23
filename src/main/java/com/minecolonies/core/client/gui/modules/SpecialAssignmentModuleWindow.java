@@ -6,15 +6,14 @@ import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.blockui.views.ScrollingList;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.buildings.modules.IAssignmentModuleView;
-import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.core.client.gui.AbstractModuleWindow;
 import com.minecolonies.core.client.gui.WindowHireWorker;
-import com.minecolonies.core.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.core.network.messages.server.colony.building.worker.RecallCitizenMessage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -27,7 +26,7 @@ import static com.minecolonies.api.util.constant.WindowConstants.BUTTON_RECALL;
  * Assignment module for workers to a building.
  * This is specifically for the assignment of workers that got their own hut and are assigned additionally to this building (e.g., warehouse, quarry).
  */
-public class SpecialAssignmentModuleWindow extends AbstractModuleWindow
+public class SpecialAssignmentModuleWindow extends AbstractModuleWindow<IAssignmentModuleView>
 {
     /**
      * Id of the hire/fire button in the GUI.
@@ -47,12 +46,11 @@ public class SpecialAssignmentModuleWindow extends AbstractModuleWindow
     /**
      * Constructor for the window of the worker building.
      *
-     * @param building class extending {@link AbstractBuildingView}.
      * @param resource Resource of the window.
      */
-    public SpecialAssignmentModuleWindow(final IBuildingView building, final String resource)
+    public SpecialAssignmentModuleWindow(final IAssignmentModuleView moduleView, final ResourceLocation resource)
     {
-        super(building, resource);
+        super(moduleView, resource);
         super.registerButton(BUTTON_HIRE, this::hireClicked);
         super.registerButton(BUTTON_RECALL, this::recallClicked);
     }

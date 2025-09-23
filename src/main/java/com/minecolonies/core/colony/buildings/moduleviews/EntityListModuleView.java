@@ -7,6 +7,7 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.client.gui.modules.EntityListModuleWindow;
 import com.minecolonies.core.network.messages.server.colony.building.AssignFilterableEntityMessage;
 import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
@@ -38,7 +39,7 @@ public class EntityListModuleView extends AbstractBuildingModuleView implements 
     /**
      * Lang string for description.
      */
-    private final String desc;
+    private final Component desc;
 
     /**
      * Create a nw grouped entity list view for the client side.
@@ -46,7 +47,7 @@ public class EntityListModuleView extends AbstractBuildingModuleView implements 
      * @param desc desc lang string.
      * @param inverted enabling or disabling.
      */
-    public EntityListModuleView(final String id, final String desc, final boolean inverted)
+    public EntityListModuleView(final String id, final Component desc, final boolean inverted)
     {
         super();
         this.id = id;
@@ -96,7 +97,7 @@ public class EntityListModuleView extends AbstractBuildingModuleView implements 
     public void clearEntities() { listOfEntities.clear(); }
 
     @Override
-    public String getDesc()
+    public Component getDesc()
     {
         return desc;
     }
@@ -117,7 +118,7 @@ public class EntityListModuleView extends AbstractBuildingModuleView implements 
     @OnlyIn(Dist.CLIENT)
     public BOWindow getWindow()
     {
-        return new EntityListModuleWindow(Constants.MOD_ID + ":gui/layouthuts/layoutfilterableentitylist.xml", buildingView, this);
+        return new EntityListModuleWindow(this);
     }
 
     @Override

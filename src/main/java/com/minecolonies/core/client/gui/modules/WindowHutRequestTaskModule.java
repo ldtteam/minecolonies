@@ -6,16 +6,17 @@ import com.ldtteam.blockui.controls.Image;
 import com.ldtteam.blockui.controls.ItemIcon;
 import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.blockui.views.ScrollingList;
-import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.requestable.IStackBasedTask;
 import com.minecolonies.api.colony.requestsystem.requestable.deliveryman.IDeliverymanRequestable;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.client.gui.AbstractModuleWindow;
 import com.minecolonies.core.colony.buildings.moduleviews.RequestTaskModuleView;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
@@ -27,21 +28,19 @@ import static com.minecolonies.api.util.constant.WindowConstants.*;
 /**
  * Task list module.
  */
-public class WindowHutRequestTaskModule extends AbstractModuleWindow
+public class WindowHutRequestTaskModule extends AbstractModuleWindow<RequestTaskModuleView>
 {
     /**
-     * Id of the the task list inside the GUI.
+     * ID of the task list inside the GUI.
      */
     private static final String LIST_TASKS = "tasks";
 
     /**
      * The constructor of the window.
-     * @param view the building view.
-     * @param name the layout file.
      */
-    public WindowHutRequestTaskModule(final IBuildingView view, final String name)
+    public WindowHutRequestTaskModule(final RequestTaskModuleView moduleView)
     {
-        super(view, name);
+        super(moduleView, new ResourceLocation(Constants.MOD_ID, "gui/layouthuts/layouttasklist.xml"));
     }
 
     @Override

@@ -18,6 +18,7 @@ import com.minecolonies.core.tileentities.TileEntityDecorationController;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 
@@ -31,11 +32,6 @@ import static com.minecolonies.api.util.constant.WindowConstants.*;
  */
 public class WindowDecorationController extends AbstractWindowSkeleton
 {
-    /**
-     * Resource suffix of GUI xml file.
-     */
-    private static final String HUT_NAME_RESOURCE_SUFFIX = ":gui/windowdecorationcontroller.xml";
-
     /**
      * The building associated to the GUI.
      */
@@ -53,7 +49,7 @@ public class WindowDecorationController extends AbstractWindowSkeleton
      */
     public WindowDecorationController(final BlockPos b)
     {
-        super(Constants.MOD_ID + HUT_NAME_RESOURCE_SUFFIX);
+        super(new ResourceLocation(Constants.MOD_ID, "gui/windowdecorationcontroller.xml"));
         this.controller = (TileEntityDecorationController) world.getBlockEntity(b);
         registerButton(BUTTON_BUILD, this::buildClicked);
         registerButton(BUTTON_REPAIR, this::repairClicked);

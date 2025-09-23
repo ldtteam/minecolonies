@@ -123,9 +123,9 @@ public class WindowMainPage extends AbstractWindowTownHall
     private void switchPack()
     {
         new WindowSwitchPack(() -> {
-            building.getColony().setStructurePack(StructurePacks.selectedPack.getName());
-            new ColonyStructureStyleMessage(building.getColony(), StructurePacks.selectedPack.getName()).sendToServer();
-            return new WindowMainPage((BuildingTownHall.View) this.building);
+            buildingView.getColony().setStructurePack(StructurePacks.selectedPack.getName());
+            new ColonyStructureStyleMessage(buildingView.getColony(), StructurePacks.selectedPack.getName()).sendToServer();
+            return new WindowMainPage((BuildingTownHall.View) this.buildingView);
         }).open();
     }
 
@@ -185,13 +185,13 @@ public class WindowMainPage extends AbstractWindowTownHall
             @Override
             public int getElementCount()
             {
-                return building.getColony().getNameFileIds().size();
+                return buildingView.getColony().getNameFileIds().size();
             }
 
             @Override
             public MutableComponent getLabel(final int index)
             {
-                return Component.literal(building.getColony().getNameFileIds().get(index));
+                return Component.literal(buildingView.getColony().getNameFileIds().get(index));
             }
         });
     }
@@ -205,7 +205,7 @@ public class WindowMainPage extends AbstractWindowTownHall
     {
         if (dropDownList.getSelectedIndex() != initialTextureIndex)
         {
-            new ColonyTextureStyleMessage(building.getColony(), TEXTURE_PACKS.get(dropDownList.getSelectedIndex())).sendToServer();
+            new ColonyTextureStyleMessage(buildingView.getColony(), TEXTURE_PACKS.get(dropDownList.getSelectedIndex())).sendToServer();
         }
     }
 
@@ -218,7 +218,7 @@ public class WindowMainPage extends AbstractWindowTownHall
     {
         if (dropDownList.getSelectedIndex() != initialNamePackIndex)
         {
-            new ColonyNameStyleMessage(building.getColony(), building.getColony().getNameFileIds().get(dropDownList.getSelectedIndex())).sendToServer();
+            new ColonyNameStyleMessage(buildingView.getColony(), buildingView.getColony().getNameFileIds().get(dropDownList.getSelectedIndex())).sendToServer();
         }
     }
 
@@ -229,7 +229,7 @@ public class WindowMainPage extends AbstractWindowTownHall
      */
     private void onDropDownListChanged(final DropDownList dropDownList)
     {
-        new TeamColonyColorChangeMessage(dropDownList.getSelectedIndex(), building).sendToServer();
+        new TeamColonyColorChangeMessage(dropDownList.getSelectedIndex(), buildingView).sendToServer();
     }
 
     /**
@@ -239,7 +239,7 @@ public class WindowMainPage extends AbstractWindowTownHall
      */
     private void openBannerPicker(@NotNull final Button button)
     {
-        Screen window = new WindowBannerPicker(building.getColony(), this, isFeatureUnlocked);
+        Screen window = new WindowBannerPicker(buildingView.getColony(), this, isFeatureUnlocked);
         Minecraft.getInstance().setScreen(window);
     }
 
@@ -248,7 +248,7 @@ public class WindowMainPage extends AbstractWindowTownHall
      */
     private void resetTextureStyle()
     {
-        new ColonyTextureStyleMessage(building.getColony(), TEXTURE_PACKS.get(0)).sendToServer();
+        new ColonyTextureStyleMessage(buildingView.getColony(), TEXTURE_PACKS.get(0)).sendToServer();
     }
 
     @Override
@@ -258,7 +258,7 @@ public class WindowMainPage extends AbstractWindowTownHall
         final Pane textPane = findPaneByID(DROPDOWN_TEXT_ID);
         final Pane namePane = findPaneByID(DROPDOWN_NAME_ID);
         final Pane resetButton = findPaneByID(BUTTON_RESET_TEXTURE);
-        final boolean isOwner = building.getColony().getPermissions().getOwner().equals(Minecraft.getInstance().player.getUUID());
+        final boolean isOwner = buildingView.getColony().getPermissions().getOwner().equals(Minecraft.getInstance().player.getUUID());
         if (isFeatureUnlocked.get() && isOwner)
         {
             findPaneByID(BUTTON_PATREON).hide();
@@ -273,7 +273,7 @@ public class WindowMainPage extends AbstractWindowTownHall
             textPane.disable();
             namePane.disable();
 
-            if (!building.getColony().getTextureStyleId().equals("default"))
+            if (!buildingView.getColony().getTextureStyleId().equals("default"))
             {
                 resetButton.show();
                 textPane.hide();
@@ -366,10 +366,10 @@ public class WindowMainPage extends AbstractWindowTownHall
     {
         super.onOpened();
 
-        title.setText(Component.literal(building.getColony().getName()));
+        title.setText(Component.literal(buildingView.getColony().getName()));
 
-        if (building.getColony().getMercenaryUseTime() != 0
-            && building.getColony().getWorld().getGameTime() - building.getColony().getMercenaryUseTime() < TICKS_FOURTY_MIN)
+        if (buildingView.getColony().getMercenaryUseTime() != 0
+              && buildingView.getColony().getWorld().getGameTime() - buildingView.getColony().getMercenaryUseTime() < TICKS_FOURTY_MIN)
         {
             findPaneOfTypeByID(BUTTON_MERCENARY, Button.class).disable();
         }
@@ -380,7 +380,7 @@ public class WindowMainPage extends AbstractWindowTownHall
      */
     private void renameClicked()
     {
-        new WindowTownHallNameEntry(building.getColony()).open();
+        new WindowTownHallNameEntry(buildingView.getColony()).open();
     }
 
     /**
@@ -388,7 +388,7 @@ public class WindowMainPage extends AbstractWindowTownHall
      */
     private void mercenaryClicked()
     {
-        new WindowTownHallMercenary(building.getColony()).open();
+        new WindowTownHallMercenary(buildingView.getColony()).open();
     }
 
     /**
@@ -396,7 +396,7 @@ public class WindowMainPage extends AbstractWindowTownHall
      */
     private void mapButtonClicked()
     {
-        new WindowColonyMap(true, building).open();
+        new WindowColonyMap(true, buildingView).open();
     }
 
     @Override

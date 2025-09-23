@@ -7,7 +7,6 @@ import com.ldtteam.blockui.controls.ItemIcon;
 import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.blockui.views.ScrollingList;
 import com.minecolonies.api.colony.buildings.modules.IMinimumStockModuleView;
-import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.constant.Constants;
@@ -25,13 +24,8 @@ import static com.minecolonies.api.util.constant.WindowConstants.*;
 /**
  * Cook window class. Specifies the extras the composter has for its list.
  */
-public class MinimumStockModuleWindow extends AbstractModuleWindow
+public class MinimumStockModuleWindow extends AbstractModuleWindow<IMinimumStockModuleView>
 {
-    /**
-     * The resource string.
-     */
-    private static final String RESOURCE_STRING = ":gui/layouthuts/layoutminimumstock.xml";
-
     /**
      * Limit reached label.
      */
@@ -43,24 +37,15 @@ public class MinimumStockModuleWindow extends AbstractModuleWindow
     private final ScrollingList resourceList;
 
     /**
-     * The matching module view to the window.
-     */
-    private final IMinimumStockModuleView moduleView;
-
-    /**
      * Constructor for the minimum stock window view.
      *
-     * @param building class extending
      * @param moduleView the module view.
      */
-    public MinimumStockModuleWindow(
-      final IBuildingView building,
-      final IMinimumStockModuleView moduleView)
+    public MinimumStockModuleWindow(final IMinimumStockModuleView moduleView)
     {
-        super(building, Constants.MOD_ID + RESOURCE_STRING);
+        super(moduleView, new ResourceLocation(Constants.MOD_ID, "gui/layouthuts/layoutminimumstock.xml"));
 
         resourceList = this.window.findPaneOfTypeByID("resourcesstock", ScrollingList.class);
-        this.moduleView = moduleView;
 
         registerButton(STOCK_ADD, this::addStock);
         if (moduleView.hasReachedLimit())

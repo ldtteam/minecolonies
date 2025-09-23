@@ -6,6 +6,7 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.client.gui.modules.ExpeditionLogModuleWindow;
 import com.minecolonies.core.colony.buildings.modules.expedition.ExpeditionLog;
 import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
@@ -53,7 +54,7 @@ public class ExpeditionLogModuleView extends AbstractBuildingModuleView
     @Override
     public BOWindow getWindow()
     {
-        return new ExpeditionLogModuleWindow(getBuildingView(), this);
+        return new ExpeditionLogModuleWindow(this);
     }
 
     @Override
@@ -63,8 +64,8 @@ public class ExpeditionLogModuleView extends AbstractBuildingModuleView
     }
 
     @Override
-    public String getDesc()
+    public Component getDesc()
     {
-        return "com.minecolonies.gui.workerhuts.expeditionlog";
+        return Component.translatable("com.minecolonies.gui.workerhuts.expeditionlog");
     }
 }
