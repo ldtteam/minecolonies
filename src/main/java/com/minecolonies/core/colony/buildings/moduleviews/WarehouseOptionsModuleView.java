@@ -4,8 +4,9 @@ import com.ldtteam.blockui.views.BOWindow;
 import com.minecolonies.api.colony.buildings.modules.AbstractBuildingModuleView;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.client.gui.modules.WarehouseOptionsModuleWindow;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.Component;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
@@ -21,9 +22,9 @@ public class WarehouseOptionsModuleView extends AbstractBuildingModuleView
     private int storageUpgrade = 0;
 
     @Override
-    public String getDesc()
+    public Component getDesc()
     {
-        return "com.minecolonies.coremod.gui.workerhuts.settings";
+        return Component.translatable("com.minecolonies.coremod.gui.workerhuts.settings");
     }
 
     @Override
@@ -36,7 +37,7 @@ public class WarehouseOptionsModuleView extends AbstractBuildingModuleView
     @OnlyIn(Dist.CLIENT)
     public BOWindow getWindow()
     {
-        return new WarehouseOptionsModuleWindow(buildingView, this);
+        return new WarehouseOptionsModuleWindow(this);
     }
 
     @Override

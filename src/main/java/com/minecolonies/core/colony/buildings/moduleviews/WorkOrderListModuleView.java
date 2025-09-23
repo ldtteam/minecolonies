@@ -5,6 +5,7 @@ import com.minecolonies.api.colony.buildings.modules.AbstractBuildingModuleView;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.client.gui.modules.WorkOrderModuleWindow;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -24,9 +25,9 @@ public class WorkOrderListModuleView extends AbstractBuildingModuleView
     }
 
     @Override
-    public String getDesc()
+    public Component getDesc()
     {
-        return "com.minecolonies.coremod.gui.townhall.workorders";
+        return Component.translatable("com.minecolonies.coremod.gui.townhall.workorders");
     }
 
     @Override
@@ -39,7 +40,7 @@ public class WorkOrderListModuleView extends AbstractBuildingModuleView
     @OnlyIn(Dist.CLIENT)
     public BOWindow getWindow()
     {
-        return new WorkOrderModuleWindow(Constants.MOD_ID + ":gui/layouthuts/layoutworkorders.xml", buildingView, this);
+        return new WorkOrderModuleWindow(this);
     }
 
     @Override

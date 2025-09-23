@@ -35,6 +35,7 @@ import com.minecolonies.core.network.messages.server.colony.building.BuildingSet
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -58,11 +59,6 @@ import static com.minecolonies.api.util.constant.WindowConstants.*;
  */
 public class WindowBuildBuilding extends AbstractWindowSkeleton
 {
-    /**
-     * Link to the xml file of the window.
-     */
-    private static final String BUILDING_NAME_RESOURCE_SUFFIX = ":gui/windowbuildbuilding.xml";
-
     /**
      * Predicate defining things we don't want the builders to ever touch.
      */
@@ -125,7 +121,7 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
      */
     public WindowBuildBuilding(final IColonyView c, final IBuildingView building)
     {
-        super(Constants.MOD_ID + BUILDING_NAME_RESOURCE_SUFFIX);
+        super(new ResourceLocation(Constants.MOD_ID, "gui/windowbuildbuilding.xml"));
         this.building = building;
 
         initStyleNavigation();
@@ -136,7 +132,6 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
         registerButton(BUTTON_PICKUP_BUILDING, this::pickUpBuilding);
 
         final Button buttonBuild = findPaneOfTypeByID(BUTTON_BUILD, Button.class);
-        final IBuildingView parentBuilding = c.getBuilding(building.getParent());
 
         if (building.getBuildingLevel() == 0)
         {

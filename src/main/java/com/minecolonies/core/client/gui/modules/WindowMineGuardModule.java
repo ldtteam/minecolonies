@@ -11,9 +11,11 @@ import com.minecolonies.core.Network;
 import com.minecolonies.core.client.gui.AbstractModuleWindow;
 import com.minecolonies.core.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.core.colony.buildings.modules.settings.GuardTaskSetting;
+import com.minecolonies.core.colony.buildings.moduleviews.MinerGuardAssignModuleView;
 import com.minecolonies.core.colony.buildings.moduleviews.SettingsModuleView;
 import com.minecolonies.core.network.messages.server.colony.building.guard.GuardSetMinePosMessage;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,24 +24,25 @@ import java.util.stream.Collectors;
 /**
  * BOWindow for the miner hut.
  */
-public class WindowMineGuardModule  extends AbstractModuleWindow
+public class WindowMineGuardModule  extends AbstractModuleWindow<MinerGuardAssignModuleView>
 {
-    private static final String                        LIST_GUARDS               = "guards";
-    private static final String                        BUTTON_ASSIGNGUARD        = "assignGuard";
-    private static final String                        HUT_MINER_RESOURCE_SUFFIX = ":gui/layouthuts/layoutguardlist.xml";
+    private static final String LIST_GUARDS        = "guards";
+    private static final String BUTTON_ASSIGNGUARD = "assignGuard";
 
-    private              ScrollingList                 guardsList;
-    private              List<ICitizenDataView>        guardsInfo = new ArrayList<>();
+    private final List<ICitizenDataView> guardsInfo = new ArrayList<>();
+
+    private final ScrollingList guardsList;
+
     private int assignedGuards;
 
     /**
      * Constructor for the window of the miner hut.
      *
-     * @param building {@link IBuildingView}.
      */
-    public WindowMineGuardModule(final IBuildingView building)
+    public WindowMineGuardModule(final MinerGuardAssignModuleView moduleView)
     {
-        super(building, Constants.MOD_ID + HUT_MINER_RESOURCE_SUFFIX);
+        super(moduleView, new ResourceLocation(Constants.MOD_ID, "gui/layouthuts/layoutguardlist.xml"));
+        this.guardsList = findPaneOfTypeByID(LIST_GUARDS, ScrollingList.class);
         pullGuardsFromHut();
 
         registerButton(BUTTON_ASSIGNGUARD, this::assignGuardClicked);
@@ -137,7 +140,6 @@ public class WindowMineGuardModule  extends AbstractModuleWindow
     public void onOpened()
     {
         super.onOpened();
-        guardsList = findPaneOfTypeByID(LIST_GUARDS, ScrollingList.class);
         guardsList.setDataProvider(new ScrollingList.DataProvider() {
             @Override
             public int getElementCount()

@@ -11,7 +11,6 @@ import com.ldtteam.domumornamentum.block.MateriallyTexturedBlockManager;
 import com.ldtteam.domumornamentum.client.model.data.MaterialTextureData;
 import com.ldtteam.domumornamentum.recipe.ModRecipeTypes;
 import com.ldtteam.domumornamentum.recipe.architectscutter.ArchitectsCutterRecipe;
-import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.crafting.ItemStorage;
@@ -27,6 +26,7 @@ import com.minecolonies.core.network.messages.server.colony.building.worker.AddR
 import com.minecolonies.core.util.DomumOrnamentumUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.item.ItemStack;
@@ -43,13 +43,8 @@ import static com.minecolonies.api.util.constant.WindowConstants.*;
 /**
  * Cook window class. Specifies the extras the composter has for its list.
  */
-public class DOCraftingWindow extends AbstractModuleWindow
+public class DOCraftingWindow extends AbstractModuleWindow<DOCraftingModuleView>
 {
-    /**
-     * The resource string.
-     */
-    private static final String RESOURCE_STRING = ":gui/layouthuts/layoutdocrafting.xml";
-
     /**
      * Inputs scrolling list.
      */
@@ -67,26 +62,18 @@ public class DOCraftingWindow extends AbstractModuleWindow
     public final Container inputInventory = new SimpleContainer(MateriallyTexturedBlockManager.getInstance().getMaxTexturableComponentCount()) {};
 
     /**
-     * The module view.
-     */
-    private final DOCraftingModuleView craftingModuleView;
-
-    /**
      * The ingredient validator.
      */
     private final OptionalPredicate<ItemStack> validator;
 
     /**
      * Constructor for the minimum stock window view.
-     *
-     * @param building class extending
      */
-    public DOCraftingWindow(final IBuildingView building, final DOCraftingModuleView view)
+    public DOCraftingWindow(final DOCraftingModuleView moduleView)
     {
-        super(building, Constants.MOD_ID + RESOURCE_STRING);
-        this.craftingModuleView = view;
+        super(moduleView, new ResourceLocation(Constants.MOD_ID, "gui/layouthuts/layoutdocrafting.xml"));
 
-        validator = craftingModuleView.getIngredientValidator();
+        validator = this.moduleView.getIngredientValidator();
         inputs = this.window.findPaneOfTypeByID(LIST_RESOURCES, ScrollingList.class);
         resourceList = this.window.findPaneOfTypeByID("resourcesstock", ScrollingList.class);
 
@@ -117,7 +104,7 @@ public class DOCraftingWindow extends AbstractModuleWindow
 
     private void showRequests()
     {
-        new WindowSelectRequest(this.buildingView, this::matchingRequest, this::reopenWithRequest).open();
+        new WindowSelectRequest(moduleView, this::matchingRequest, this::reopenWithRequest).open();
     }
 
     private boolean matchingRequest(@NotNull final IRequest<?> request)
@@ -222,7 +209,7 @@ public class DOCraftingWindow extends AbstractModuleWindow
                 .withRecipeType(com.minecolonies.api.crafting.ModRecipeTypes.MULTI_OUTPUT_ID)
                 .build();
 
-        Network.getNetwork().sendToServer(new AddRemoveRecipeMessage(buildingView, false, storage, craftingModuleView.getProducer().getRuntimeID()));
+        Network.getNetwork().sendToServer(new AddRemoveRecipeMessage(buildingView, false, storage, moduleView.getProducer().getRuntimeID()));
     }
 
     @Override

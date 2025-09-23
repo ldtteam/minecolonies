@@ -48,11 +48,6 @@ import static com.minecolonies.api.util.constant.translation.GuiTranslationConst
 public class WindowField extends AbstractWindowSkeleton
 {
     /**
-     * Link to the xml file of the window.
-     */
-    private static final String WINDOW_RESOURCE = ":gui/windowfield.xml";
-
-    /**
      * The ID for the "not in colony" text.
      */
     private static final String NOT_IN_COLONY_TEXT_ID = "not-in-colony";
@@ -111,7 +106,7 @@ public class WindowField extends AbstractWindowSkeleton
      */
     public WindowField(@NotNull AbstractTileEntityScarecrow tileEntityScarecrow)
     {
-        super(Constants.MOD_ID + WINDOW_RESOURCE);
+        super(new ResourceLocation(Constants.MOD_ID, "gui/windowfield.xml"));
         this.tileEntityScarecrow = tileEntityScarecrow;
 
         registerButton(SELECT_SEED_BUTTON_ID, this::selectSeed);

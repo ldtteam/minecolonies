@@ -13,6 +13,7 @@ import com.minecolonies.core.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.core.network.messages.server.colony.OpenInventoryMessage;
 import com.minecolonies.core.network.messages.server.colony.building.postbox.PostBoxRequestMessage;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.EnchantedBookItem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.item.ItemStack;
@@ -41,7 +42,7 @@ public class WindowPostBox extends AbstractWindowRequestTree
     private static final String RED_X = "§n§4X";
 
     /**
-     * String which displays partial delivery..
+     * String which displays partial delivery.
      */
     private static final String APPROVE = "✓";
 
@@ -82,7 +83,7 @@ public class WindowPostBox extends AbstractWindowRequestTree
      */
     public WindowPostBox(final AbstractBuildingView buildingView)
     {
-        super(buildingView.getID(), Constants.MOD_ID + WINDOW_POSTBOX, buildingView.getColony());
+        super(buildingView.getColony(), buildingView.getID(), new ResourceLocation(Constants.MOD_ID, "gui/windowpostbox.xml"));
         this.buildingView = buildingView;
         this.stackList = findPaneOfTypeByID(LIST_RESOURCES, ScrollingList.class);
         registerButton(BUTTON_INVENTORY, this::inventoryClicked);

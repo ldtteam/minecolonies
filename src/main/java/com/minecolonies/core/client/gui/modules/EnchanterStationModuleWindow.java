@@ -15,6 +15,7 @@ import com.minecolonies.core.colony.buildings.views.AbstractBuildingView;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.contents.TranslatableContents;
+import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -25,13 +26,8 @@ import static com.minecolonies.api.util.constant.WindowConstants.*;
 /**
  * Enchanter window class.
  */
-public class EnchanterStationModuleWindow extends AbstractModuleWindow
+public class EnchanterStationModuleWindow extends AbstractModuleWindow<EnchanterStationsModuleView>
 {
-    /**
-     * The resource string.
-     */
-    private static final String RESOURCE_STRING = ":gui/layouthuts/layoutenchanter.xml";
-
     /**
      * Tag of the list of workers.
      */
@@ -41,11 +37,6 @@ public class EnchanterStationModuleWindow extends AbstractModuleWindow
      * The label of the worker.
      */
     private static final String WORKER_NAME = "workerName";
-
-    /**
-     * The stations module view.
-     */
-    private final EnchanterStationsModuleView module;
 
     /**
      * The actual list element of the workers.
@@ -64,21 +55,18 @@ public class EnchanterStationModuleWindow extends AbstractModuleWindow
 
     /**
      * Constructor for the window of the worker building.
-     *
-     * @param building class extending
      */
-    public EnchanterStationModuleWindow(final IBuildingView building, final EnchanterStationsModuleView module)
+    public EnchanterStationModuleWindow(final EnchanterStationsModuleView moduleView)
     {
-        super(building, Constants.MOD_ID + RESOURCE_STRING);
+        super(moduleView, new ResourceLocation(Constants.MOD_ID, "gui/layouthuts/layoutenchanter.xml"));
         super.registerButton(BUTTON_SWITCH, this::switchClicked);
-        this.module = module;
     }
 
     @Override
     public void onOpened()
     {
         super.onOpened();
-        selectedBuildings = module.getBuildingsToGatherFrom();
+        selectedBuildings = moduleView.getBuildingsToGatherFrom();
         allBuildings = buildingView.getColony().getBuildings().stream()
                          .filter(b -> b instanceof AbstractBuildingView && !b.getModuleViews(WorkerBuildingModuleView.class).isEmpty() && b.getBuildingType() != ModBuildings.enchanter.get())
                          .sorted((b1, b2) -> (int) (BlockPosUtil.getDistance2D(buildingView.getPosition(), b1.getPosition()) - BlockPosUtil.getDistance2D(buildingView.getPosition(),
@@ -130,14 +118,14 @@ public class EnchanterStationModuleWindow extends AbstractModuleWindow
         if (buttonText.equals(OFF))
         {
             button.setText(Component.translatable(ON));
-            module.addWorker(allBuildings.get(row).getID());
+            moduleView.addWorker(allBuildings.get(row).getID());
         }
         else
         {
             button.setText(Component.translatable(OFF));
-            module.removeWorker(allBuildings.get(row).getID());
+            moduleView.removeWorker(allBuildings.get(row).getID());
         }
-        selectedBuildings = module.getBuildingsToGatherFrom();
+        selectedBuildings = moduleView.getBuildingsToGatherFrom();
         workerList.refreshElementPanes();
     }
 }

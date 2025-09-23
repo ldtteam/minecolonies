@@ -8,6 +8,7 @@ import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.client.gui.modules.MinimumStockModuleWindow;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -18,12 +19,12 @@ import java.util.*;
 /**
  * Client side representation of the minimum stock module.
  */
-public class MinimumStockModuleView extends AbstractBuildingModuleView  implements IMinimumStockModuleView
+public class MinimumStockModuleView extends AbstractBuildingModuleView implements IMinimumStockModuleView
 {
     /**
      * The minimum stock.
      */
-    private List<Tuple<ItemStorage, Integer>> minimumStock = new ArrayList<>();
+    private final List<Tuple<ItemStorage, Integer>> minimumStock = new ArrayList<>();
 
     /**
      * If the stock limit was reached.
@@ -51,7 +52,7 @@ public class MinimumStockModuleView extends AbstractBuildingModuleView  implemen
     @OnlyIn(Dist.CLIENT)
     public BOWindow getWindow()
     {
-        return new MinimumStockModuleWindow(buildingView, this);
+        return new MinimumStockModuleWindow(this);
     }
 
     @Override
@@ -73,8 +74,8 @@ public class MinimumStockModuleView extends AbstractBuildingModuleView  implemen
     }
 
     @Override
-    public String getDesc()
+    public Component getDesc()
     {
-        return "com.minecolonies.coremod.gui.warehouse.stock";
+        return Component.translatable("com.minecolonies.coremod.gui.warehouse.stock");
     }
 }

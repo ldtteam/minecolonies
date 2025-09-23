@@ -21,6 +21,11 @@ import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.util.constant.WindowConstants;
 import net.minecraft.advancements.*;
+import com.minecolonies.core.client.gui.WindowHutGuide;
+import com.minecolonies.core.client.gui.WindowRequestDetail;
+import com.minecolonies.core.client.gui.citizen.RequestWindowCitizen;
+import net.minecraft.advancements.Advancement;
+import net.minecraft.advancements.DisplayInfo;
 import net.minecraft.advancements.critereon.ItemPredicate;
 import net.minecraft.advancements.critereon.ItemUsedOnLocationTrigger;
 import net.minecraft.core.HolderLookup;
@@ -101,9 +106,9 @@ public class DefaultAdvancementsProvider extends ForgeAdvancementProvider
                 .parent(startBuilder)
                 .display(make(FrameType.TASK, ModItems.resourceScroll,"click_gui_button_fulfill"))
                 .addCriterion("click_gui_button_fulfill",
-                        new ClickGuiButtonCriterionInstance(WindowConstants.REQUEST_FULLFIL, MOD_ID + WindowConstants.CITIZEN_REQ_RESOURCE_SUFFIX))
+                        new ClickGuiButtonCriterionInstance(WindowConstants.REQUEST_FULLFIL, RequestWindowCitizen.WINDOW_ID))
                 .addCriterion("click_request_button_fulfill",
-                        new ClickGuiButtonCriterionInstance(WindowConstants.REQUEST_FULLFIL, MOD_ID + WindowConstants.CITIZEN_REQ_DETAIL_SUFFIX))
+                        new ClickGuiButtonCriterionInstance(WindowConstants.REQUEST_FULLFIL, WindowRequestDetail.WINDOW_ID))
                 .requirements(RequirementsStrategy.OR)
                 .save(consumer, new ResourceLocation(MOD_ID, GROUP + "fulfill_request"), fileHelper);
 
@@ -174,7 +179,7 @@ public class DefaultAdvancementsProvider extends ForgeAdvancementProvider
                 .parent(placeTownHall)
                 .display(make(FrameType.TASK, ModBlocks.blockHutBuilder, "check_out_guide"))
                 .addCriterion("click_gui_button_close",
-                        new ClickGuiButtonCriterionInstance(WindowConstants.GUIDE_CONFIRM, MOD_ID + WindowConstants.GUIDE_RESOURCE_SUFFIX))
+                        new ClickGuiButtonCriterionInstance(WindowConstants.GUIDE_CONFIRM, WindowHutGuide.WINDOW_ID))
                 .save(consumer, new ResourceLocation(MOD_ID, GROUP + "check_out_guide"), fileHelper);
 
         final Advancement citizenEatFood = Advancement.Builder.advancement()

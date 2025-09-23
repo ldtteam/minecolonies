@@ -13,6 +13,7 @@ import com.minecolonies.core.debug.gui.DebugWindowCitizen;
 import com.minecolonies.core.network.messages.server.colony.OpenInventoryMessage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 
 /**
  * BOWindow for the citizen.
@@ -20,14 +21,20 @@ import net.minecraft.network.chat.Component;
 public abstract class AbstractWindowCitizen extends AbstractWindowRequestTree
 {
     /**
+     * The citizenData.View object.
+     */
+    protected final ICitizenDataView citizen;
+
+    /**
      * Constructor to initiate the citizen windows.
      *
      * @param citizen citizen to bind the window to.
      * @param ui the xml res loc.
      */
-    public AbstractWindowCitizen(final ICitizenDataView citizen, final String ui)
+    public AbstractWindowCitizen(final ICitizenDataView citizen, final ResourceLocation ui)
     {
-        super(citizen.getWorkBuilding(), ui, IColonyManager.getInstance().getColonyView(citizen.getColonyId(), Minecraft.getInstance().level.dimension()));
+        super(IColonyManager.getInstance().getColonyView(citizen.getColonyId(), Minecraft.getInstance().level.dimension()), citizen.getWorkBuilding(), ui);
+        this.citizen = citizen;
 
         registerButton("mainTab", () -> new MainWindowCitizen(citizen).open());
         registerButton("mainIcon", () -> new MainWindowCitizen(citizen).open());

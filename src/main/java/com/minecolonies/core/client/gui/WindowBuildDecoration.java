@@ -29,6 +29,7 @@ import com.minecolonies.core.colony.buildings.views.AbstractBuildingBuilderView;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -51,11 +52,6 @@ import static com.minecolonies.api.util.constant.WindowConstants.*;
 public class WindowBuildDecoration extends AbstractWindowSkeleton
 {
     /**
-     * Link to the xml file of the window.
-     */
-    private static final String BUILDING_NAME_RESOURCE_SUFFIX = ":gui/windowbuildbuilding.xml";
-
-    /**
      * White color.
      */
     private static final int WHITE = Color.getByName("white", 0);
@@ -65,11 +61,6 @@ public class WindowBuildDecoration extends AbstractWindowSkeleton
      */
     @NotNull
     private final List<Tuple<String, BlockPos>> builders = new ArrayList<>();
-
-    /**
-     * Pack meta of the deco.
-     */
-    private final String packMeta;
 
     /**
      * Path of the blueprint in the pack.
@@ -122,8 +113,7 @@ public class WindowBuildDecoration extends AbstractWindowSkeleton
       final boolean mirror,
       Function<BlockPos, IMessage> buildRequestMessage)
     {
-        super(Constants.MOD_ID + BUILDING_NAME_RESOURCE_SUFFIX);
-        this.packMeta = packMeta;
+        super(new ResourceLocation(Constants.MOD_ID, "gui/windowbuildbuilding.xml"));
         this.path = path;
         this.structurePos = pos;
 

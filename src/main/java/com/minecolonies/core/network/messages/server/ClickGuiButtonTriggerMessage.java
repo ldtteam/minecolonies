@@ -2,6 +2,7 @@ package com.minecolonies.core.network.messages.server;
 
 import com.minecolonies.api.advancements.AdvancementTriggers;
 import com.minecolonies.api.network.IMessage;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.fml.LogicalSide;
@@ -18,7 +19,7 @@ public class ClickGuiButtonTriggerMessage implements IMessage
     /**
      * The window's Resource
      */
-    private String resource;
+    private ResourceLocation resource;
 
     /**
      * Empty constructor used when registering the message.
@@ -28,7 +29,7 @@ public class ClickGuiButtonTriggerMessage implements IMessage
         super();
     }
 
-    public ClickGuiButtonTriggerMessage(final String buttonId, final String resource)
+    public ClickGuiButtonTriggerMessage(final String buttonId, final ResourceLocation resource)
     {
         super();
         this.resource = resource;
@@ -38,14 +39,14 @@ public class ClickGuiButtonTriggerMessage implements IMessage
     @Override
     public void toBytes(final FriendlyByteBuf buf)
     {
-        buf.writeUtf(this.resource);
+        buf.writeResourceLocation(this.resource);
         buf.writeUtf(this.buttonId);
     }
 
     @Override
     public void fromBytes(final FriendlyByteBuf buf)
     {
-        this.resource = buf.readUtf(32767);
+        this.resource = buf.readResourceLocation();
         this.buttonId = buf.readUtf(32767);
     }
 

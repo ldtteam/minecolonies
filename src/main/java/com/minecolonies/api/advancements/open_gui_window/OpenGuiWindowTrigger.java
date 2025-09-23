@@ -23,7 +23,7 @@ public class OpenGuiWindowTrigger extends AbstractCriterionTrigger<OpenGuiWindow
      * @param player the player the check regards
      * @param windowResource the window id that was just opened
      */
-    public void trigger(final ServerPlayer player, final String windowResource)
+    public void trigger(final ServerPlayer player, final ResourceLocation windowResource)
     {
         final OpenGuiWindowListeners listeners = this.getListeners(player.getAdvancements());
         if (listeners != null)

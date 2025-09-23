@@ -21,7 +21,7 @@ public class ClickGuiButtonTrigger extends AbstractCriterionTrigger<ClickGuiButt
      * @param buttonId the id of the button in blockui
      * @param windowResource the blockui window id to refer to
      */
-    public void trigger(final ServerPlayer player, final String buttonId, final String windowResource)
+    public void trigger(final ServerPlayer player, final String buttonId, final ResourceLocation windowResource)
     {
         final ClickGuiButtonListeners listeners = this.getListeners(player.getAdvancements());
         if (listeners != null)

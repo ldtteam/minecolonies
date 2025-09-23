@@ -7,12 +7,13 @@ import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.Network;
-import com.minecolonies.core.client.gui.AbstractWindowModuleBuilding;
+import com.minecolonies.core.client.gui.AbstractBuildingMainWindow;
 import com.minecolonies.core.client.gui.WindowAssignCitizen;
 import com.minecolonies.core.colony.buildings.views.LivingBuildingView;
 import com.minecolonies.core.network.messages.server.colony.building.RecallCitizenHutMessage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_LEVEL_0;
@@ -22,7 +23,7 @@ import static com.minecolonies.api.util.constant.WindowConstants.BUTTON_RECALL;
 /**
  * BOWindow for the tavern
  */
-public class WindowHutLiving extends AbstractWindowModuleBuilding<LivingBuildingView>
+public class WindowHutLiving extends AbstractBuildingMainWindow<LivingBuildingView>
 {
     /**
      * Id of the hire/fire button in the GUI.
@@ -33,11 +34,6 @@ public class WindowHutLiving extends AbstractWindowModuleBuilding<LivingBuilding
      * Label showing the assigned.
      */
     private static final String ASSIGNED_LABEL = "assignedlabel";
-
-    /**
-     * Suffix describing the window xml.
-     */
-    private static final String HOME_BUILDING_RESOURCE_SUFFIX = ":gui/windowhuthome.xml";
 
     /**
      * Id to identify the list of the citizen in the view.
@@ -61,7 +57,7 @@ public class WindowHutLiving extends AbstractWindowModuleBuilding<LivingBuilding
      */
     public WindowHutLiving(final LivingBuildingView building)
     {
-        super(building, Constants.MOD_ID + HOME_BUILDING_RESOURCE_SUFFIX);
+        super(building, new ResourceLocation(Constants.MOD_ID, "gui/windowhuthome.xml"));
 
         super.registerButton(BUTTON_ASSIGN, this::assignClicked);
         super.registerButton(BUTTON_RECALL, this::recallClicked);
@@ -74,7 +70,7 @@ public class WindowHutLiving extends AbstractWindowModuleBuilding<LivingBuilding
      */
     private void recallClicked()
     {
-        Network.getNetwork().sendToServer(new RecallCitizenHutMessage(building));
+        Network.getNetwork().sendToServer(new RecallCitizenHutMessage(buildingView));
     }
 
     @Override
@@ -109,7 +105,7 @@ public class WindowHutLiving extends AbstractWindowModuleBuilding<LivingBuilding
      */
     private void refreshView()
     {
-        findPaneOfTypeByID(ASSIGNED_LABEL, Text.class).setText(Component.translatable(LABEL_HOUSE_ASSIGNED_CITIZENS, building.getResidents().size(), building.getMax()));
+        findPaneOfTypeByID(ASSIGNED_LABEL, Text.class).setText(Component.translatable(LABEL_HOUSE_ASSIGNED_CITIZENS, buildingView.getResidents().size(), buildingView.getMax()));
         citizen.refreshElementPanes();
     }
 
@@ -118,12 +114,12 @@ public class WindowHutLiving extends AbstractWindowModuleBuilding<LivingBuilding
      */
     private void assignClicked()
     {
-        if (building.getBuildingLevel() == 0)
+        if (buildingView.getBuildingLevel() == 0)
         {
             MessageUtils.format(COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_LEVEL_0).sendTo(Minecraft.getInstance().player);
             return;
         }
 
-        new WindowAssignCitizen(building.getColony(), building).open();
+        new WindowAssignCitizen(buildingView.getColony(), buildingView).open();
     }
 }

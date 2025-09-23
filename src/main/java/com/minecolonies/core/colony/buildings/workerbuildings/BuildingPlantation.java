@@ -406,7 +406,7 @@ public class BuildingPlantation extends AbstractBuilding
         @OnlyIn(Dist.CLIENT)
         public BOWindow getWindow()
         {
-            return new PlantationFieldsModuleWindow(buildingView, this);
+            return new PlantationFieldsModuleWindow(this);
         }
 
         /**

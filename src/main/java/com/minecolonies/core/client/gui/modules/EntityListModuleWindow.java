@@ -7,7 +7,7 @@ import com.ldtteam.blockui.controls.TextField;
 import com.ldtteam.blockui.views.ScrollingList;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.modules.IEntityListModuleView;
-import com.minecolonies.api.colony.buildings.views.IBuildingView;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.client.gui.AbstractModuleWindow;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.network.chat.Component;
@@ -23,17 +23,12 @@ import static org.jline.utils.AttributedStyle.WHITE;
 /**
  * BOWindow for all the filterable entity lists.
  */
-public class EntityListModuleWindow extends AbstractModuleWindow
+public class EntityListModuleWindow extends AbstractModuleWindow<IEntityListModuleView>
 {
     /**
      * Resource scrolling list.
      */
     private final ScrollingList resourceList;
-
-    /**
-     * The building this belongs to.
-     */
-    protected final IBuildingView building;
 
     /**
      * The filter for the resource list.
@@ -48,7 +43,7 @@ public class EntityListModuleWindow extends AbstractModuleWindow
     /**
      * Grouped list that can be further filtered.
      */
-    private List<ResourceLocation> groupedItemList;
+    private final List<ResourceLocation> groupedItemList;
 
     /**
      * Grouped list after applying the current temporary filter.
@@ -61,25 +56,16 @@ public class EntityListModuleWindow extends AbstractModuleWindow
     private int tick;
 
     /**
-     * @param building   the building it belongs to.
-     * @param res   the building res id.
-     * @param moduleView   the assigned module view.
+     * @param moduleView the assigned module view.
      */
-    public EntityListModuleWindow(
-      final String res,
-      final IBuildingView building,
-      final IEntityListModuleView moduleView)
+    public EntityListModuleWindow(final IEntityListModuleView moduleView)
     {
-        super(building, res);
-
-        resourceList = window.findPaneOfTypeByID(LIST_RESOURCES, ScrollingList.class);
-        window.findPaneOfTypeByID(DESC_LABEL, Text.class).setText(Component.translatable(moduleView.getDesc().toLowerCase(Locale.US)));
-        this.building = building;
+        super(moduleView, new ResourceLocation(Constants.MOD_ID, "gui/layouthuts/layoutfilterableentitylist.xml"));
         this.isInverted = moduleView.isInverted();
         this.id = moduleView.getId();
 
+        resourceList = window.findPaneOfTypeByID(LIST_RESOURCES, ScrollingList.class);
         groupedItemList = new ArrayList<>(IColonyManager.getInstance().getCompatibilityManager().getAllMonsters());
-
         window.findPaneOfTypeByID(INPUT_FILTER, TextField.class).setHandler(input -> {
             final String newFilter = input.getText();
             if (!newFilter.equals(filter))
@@ -131,7 +117,7 @@ public class EntityListModuleWindow extends AbstractModuleWindow
         final ResourceLocation item = currentDisplayedList.get(row);
         final boolean on = button.getText().equals(Component.translatable(ON));
         final boolean add = (on && isInverted) || (!on && !isInverted);
-        final IEntityListModuleView module = building.getModuleViewMatching(IEntityListModuleView.class, view -> view.getId().equals(id));
+        final IEntityListModuleView module = buildingView.getModuleViewMatching(IEntityListModuleView.class, view -> view.getId().equals(id));
 
         if (add)
         {
@@ -150,7 +136,7 @@ public class EntityListModuleWindow extends AbstractModuleWindow
      */
     private void reset()
     {
-        final IEntityListModuleView module = building.getModuleViewMatching(IEntityListModuleView.class, view -> view.getId().equals(id));
+        final IEntityListModuleView module = buildingView.getModuleViewMatching(IEntityListModuleView.class, view -> view.getId().equals(id));
         module.clearEntities();
         resourceList.refreshElementPanes();
     }
@@ -172,9 +158,9 @@ public class EntityListModuleWindow extends AbstractModuleWindow
 
         currentDisplayedList.sort((o1, o2) -> {
 
-            boolean o1Allowed = building.getModuleViewMatching(IEntityListModuleView.class, view -> view.getId().equals(id)).isAllowedEntity(o1);
+            boolean o1Allowed = buildingView.getModuleViewMatching(IEntityListModuleView.class, view -> view.getId().equals(id)).isAllowedEntity(o1);
 
-            boolean o2Allowed = building.getModuleViewMatching(IEntityListModuleView.class, view -> view.getId().equals(id)).isAllowedEntity(o2);
+            boolean o2Allowed = buildingView.getModuleViewMatching(IEntityListModuleView.class, view -> view.getId().equals(id)).isAllowedEntity(o2);
 
             if(!o1Allowed && o2Allowed)
             {
@@ -226,7 +212,7 @@ public class EntityListModuleWindow extends AbstractModuleWindow
                 final Text resourceLabel = rowPane.findPaneOfTypeByID(RESOURCE_NAME, Text.class);
                 resourceLabel.setText(ForgeRegistries.ENTITY_TYPES.getValue(resource).getDescription());
                 resourceLabel.setColors(WHITE);
-                final boolean isAllowedItem  = building.getModuleViewMatching(IEntityListModuleView.class, view -> view.getId().equals(id)).isAllowedEntity(resource);
+                final boolean isAllowedItem  = buildingView.getModuleViewMatching(IEntityListModuleView.class, view -> view.getId().equals(id)).isAllowedEntity(resource);
                 final Button switchButton = rowPane.findPaneOfTypeByID(BUTTON_SWITCH, Button.class);
 
                 if ((isInverted && !isAllowedItem) || (!isInverted && isAllowedItem))

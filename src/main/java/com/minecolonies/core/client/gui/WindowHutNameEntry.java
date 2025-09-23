@@ -28,11 +28,6 @@ public class WindowHutNameEntry extends BOWindow implements ButtonHandler
     private static final int MAX_NAME_LENGTH = 15;
 
     /**
-     * Resource suffix of GUI xml file.
-     */
-    private static final String HUT_NAME_RESOURCE_SUFFIX = ":gui/windowhutnameentry.xml";
-
-    /**
      * The building associated to the GUI.
      */
     private final IBuildingView building;
@@ -44,7 +39,7 @@ public class WindowHutNameEntry extends BOWindow implements ButtonHandler
      */
     public WindowHutNameEntry(final IBuildingView b)
     {
-        super(new ResourceLocation(Constants.MOD_ID + HUT_NAME_RESOURCE_SUFFIX));
+        super(new ResourceLocation(Constants.MOD_ID, "gui/windowhutnameentry.xml"));
         this.building = b;
     }
 

@@ -24,11 +24,6 @@ import static com.minecolonies.api.util.constant.WindowConstants.BUTTON_DONE;
 public class WindowTownHallMercenary extends BOWindow implements ButtonHandler
 {
     /**
-     * The xml file for this gui
-     */
-    private static final String TOWNHALL_NAME_RESOURCE_SUFFIX = ":gui/townhall/windowtownhallmercenary.xml";
-
-    /**
      * The client side colony data
      */
     private final IColonyView colony;
@@ -40,7 +35,7 @@ public class WindowTownHallMercenary extends BOWindow implements ButtonHandler
      */
     public WindowTownHallMercenary(final IColonyView c)
     {
-        super(new ResourceLocation(Constants.MOD_ID + TOWNHALL_NAME_RESOURCE_SUFFIX));
+        super(new ResourceLocation(Constants.MOD_ID, "gui/townhall/windowtownhallmercenary.xml"));
         this.colony = c;
 
         int amountOfMercenaries = colony.getCitizenCount();
@@ -54,7 +49,7 @@ public class WindowTownHallMercenary extends BOWindow implements ButtonHandler
         {
 
             final Image newImage = new Image();
-            newImage.setImage(new ResourceLocation("minecolonies:textures/entity_icon/citizen/default/citizenmale3" + CitizenData.SUFFIXES.get(ColonyConstants.rand.nextInt(CitizenData.SUFFIXES.size())) + ".png"), false);
+            newImage.setImage(new ResourceLocation(Constants.MOD_ID, "textures/entity_icon/citizen/default/citizenmale3" + CitizenData.SUFFIXES.get(ColonyConstants.rand.nextInt(CitizenData.SUFFIXES.size())) + ".png"), false);
             newImage.setSize(10, 10);
             newImage.setPosition(startX, startY);
             this.addChild(newImage);

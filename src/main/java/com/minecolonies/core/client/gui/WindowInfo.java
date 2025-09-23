@@ -9,6 +9,7 @@ import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 
 import java.util.Arrays;
 import java.util.function.Supplier;
@@ -19,18 +20,13 @@ import static com.minecolonies.api.util.constant.WindowConstants.BUTTON_EXIT;
 public class WindowInfo extends AbstractWindowSkeleton
 {
     /**
-     * Link to the xml file of the window.
-     */
-    private static final String WINDOW_RESOURCE = ":gui/windowinfo.xml";
-
-    /**
      * Constructor for the skeleton class of the windows.
      *
      * @param building The building the info window is for.
      */
     public WindowInfo(final IBuildingView building)
     {
-        super(Constants.MOD_ID + WINDOW_RESOURCE);
+        super(new ResourceLocation(Constants.MOD_ID, "gui/windowinfo.xml"));
 
         registerButton(BUTTON_EXIT, () -> building.openGui(false));
 

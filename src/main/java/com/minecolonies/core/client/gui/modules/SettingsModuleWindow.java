@@ -8,55 +8,33 @@ import com.ldtteam.blockui.views.ScrollingList;
 import com.ldtteam.blockui.views.View;
 import com.minecolonies.api.colony.buildings.modules.settings.ISetting;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
-import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.client.gui.AbstractModuleWindow;
 import com.minecolonies.core.colony.buildings.moduleviews.SettingsModuleView;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Locale;
-
-import static com.minecolonies.api.util.constant.WindowConstants.DESC_LABEL;
 import static com.minecolonies.api.util.constant.WindowConstants.LIST_SETTINGS;
 
 /**
  * BOWindow for all the settings of a hut.
  */
-public class SettingsModuleWindow extends AbstractModuleWindow
+public class SettingsModuleWindow extends AbstractModuleWindow<SettingsModuleView>
 {
-    /**
-     * The building this belongs to.
-     */
-    protected final IBuildingView building;
-
     /**
      * Resource scrolling list.
      */
     private final ScrollingList settingsList;
 
     /**
-     * The module view.
-     */
-    private final SettingsModuleView moduleView;
-
-    /**
-     * @param building   the building it belongs to.
-     * @param res        the building res id.
      * @param moduleView the assigned module view.
      */
-    public SettingsModuleWindow(
-      final String res,
-      final IBuildingView building,
-      final SettingsModuleView moduleView)
+    public SettingsModuleWindow(final SettingsModuleView moduleView)
     {
-        super(building, res);
-
-        window.findPaneOfTypeByID(DESC_LABEL, Text.class).setText(Component.translatable(moduleView.getDesc().toLowerCase(Locale.US)));
-        this.building = building;
-
+        super(moduleView, new ResourceLocation(Constants.MOD_ID, "gui/layouthuts/layoutsettings.xml"));
         settingsList = window.findPaneOfTypeByID(LIST_SETTINGS, ScrollingList.class);
-        this.moduleView = moduleView;
     }
 
     @Override
@@ -110,7 +88,7 @@ public class SettingsModuleWindow extends AbstractModuleWindow
                 if (box.getChildren().isEmpty())
                 {
                     Loader.createFromXMLFile(setting.getLayoutItem(), (View) rowPane);
-                    setting.setupHandler(key, rowPane, moduleView, building, SettingsModuleWindow.this);
+                    setting.setupHandler(key, rowPane, moduleView, buildingView, SettingsModuleWindow.this);
                     final Text rowIdField = rowPane.findPaneOfTypeByID("id", Text.class);
                     if (rowIdField != null)
                     {
@@ -130,7 +108,7 @@ public class SettingsModuleWindow extends AbstractModuleWindow
                     }
                 }
 
-                setting.render(key, rowPane, moduleView, building, SettingsModuleWindow.this);
+                setting.render(key, rowPane, moduleView, buildingView, SettingsModuleWindow.this);
             }
         });
     }

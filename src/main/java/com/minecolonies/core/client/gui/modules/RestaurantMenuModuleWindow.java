@@ -5,7 +5,6 @@ import com.ldtteam.blockui.PaneBuilders;
 import com.ldtteam.blockui.controls.*;
 import com.ldtteam.blockui.views.ScrollingList;
 import com.minecolonies.api.colony.IColonyManager;
-import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.items.IMinecoloniesFoodItem;
 import com.minecolonies.api.util.FoodUtils;
@@ -15,6 +14,7 @@ import com.minecolonies.core.client.gui.AbstractModuleWindow;
 import com.minecolonies.core.colony.buildings.moduleviews.RestaurantMenuModuleView;
 import com.minecolonies.core.network.messages.server.colony.building.AlterRestaurantMenuItemMessage;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
@@ -31,13 +31,8 @@ import static org.jline.utils.AttributedStyle.WHITE;
 /**
  * Restaurant menu window.
  */
-public class RestaurantMenuModuleWindow extends AbstractModuleWindow
+public class RestaurantMenuModuleWindow extends AbstractModuleWindow<RestaurantMenuModuleView>
 {
-    /**
-     * The resource string.
-     */
-    private static final String RESOURCE_STRING = ":gui/layouthuts/layoutfoodstock.xml";
-
     /**
      * Limit reached label.
      */
@@ -49,11 +44,6 @@ public class RestaurantMenuModuleWindow extends AbstractModuleWindow
     private final ScrollingList menuList;
 
     /**
-     * The matching module view to the window.
-     */
-    private final RestaurantMenuModuleView moduleView;
-
-    /**
      * Resource scrolling list.
      */
     protected final ScrollingList resourceList;
@@ -62,7 +52,6 @@ public class RestaurantMenuModuleWindow extends AbstractModuleWindow
      * The filter for the resource list.
      */
     private String filter = "";
-
 
     /**
      * Grouped list that can be further filtered.
@@ -77,7 +66,7 @@ public class RestaurantMenuModuleWindow extends AbstractModuleWindow
     /**
      * Update delay.
      */
-    private int                    tick;
+    private int tick;
 
     /**
      * The currently selected menu.
@@ -87,22 +76,20 @@ public class RestaurantMenuModuleWindow extends AbstractModuleWindow
     /**
      * Constructor for the minimum stock window view.
      *
-     * @param building class extending
      * @param moduleView the module view.
      */
-    public RestaurantMenuModuleWindow(final IBuildingView building, final RestaurantMenuModuleView moduleView)
+    public RestaurantMenuModuleWindow(final RestaurantMenuModuleView moduleView)
     {
-        super(building, Constants.MOD_ID + RESOURCE_STRING);
+        super(moduleView, new ResourceLocation(Constants.MOD_ID, "gui/layouthuts/layoutfoodstock.xml"));
 
         menuList = this.window.findPaneOfTypeByID("resourcesstock", ScrollingList.class);
-        this.moduleView = moduleView;
 
         registerButton(BUTTON_SWITCH, this::switchClicked);
         registerButton(STOCK_REMOVE, this::removeStock);
 
         resourceList = window.findPaneOfTypeByID(LIST_RESOURCES, ScrollingList.class);
 
-        groupedItemList = new ArrayList<>(IColonyManager.getInstance().getCompatibilityManager().getEdibles(building.getBuildingLevel() - 1));
+        groupedItemList = new ArrayList<>(IColonyManager.getInstance().getCompatibilityManager().getEdibles(moduleView.getBuildingView().getBuildingLevel() - 1));
 
         window.findPaneOfTypeByID(INPUT_FILTER, TextField.class).setHandler(input -> {
             final String newFilter = input.getText();

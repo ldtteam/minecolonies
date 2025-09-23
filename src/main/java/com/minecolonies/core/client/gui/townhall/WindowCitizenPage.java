@@ -96,11 +96,11 @@ public class WindowCitizenPage extends AbstractWindowTownHall
         citizens.clear();
         if (filter.isEmpty())
         {
-            citizens.addAll(building.getColony().getCitizens().values());
+            citizens.addAll(buildingView.getColony().getCitizens().values());
         }
         else
         {
-            citizens.addAll(building.getColony().getCitizens().values().stream().filter(cit -> cit.getName().toLowerCase(Locale.US).contains(filter.toLowerCase(Locale.US))
+            citizens.addAll(buildingView.getColony().getCitizens().values().stream().filter(cit -> cit.getName().toLowerCase(Locale.US).contains(filter.toLowerCase(Locale.US))
                                                                                                  || cit.getJobComponent().getString().toLowerCase(Locale.US).contains(filter.toLowerCase(Locale.US))).toList());
         }
         citizens.sort(COMPARE_BY_NAME);
@@ -163,7 +163,7 @@ public class WindowCitizenPage extends AbstractWindowTownHall
         {
             return;
         }
-        Network.getNetwork().sendToServer(new RecallSingleCitizenMessage(building, selectedCitizen.getId()));
+        Network.getNetwork().sendToServer(new RecallSingleCitizenMessage(buildingView, selectedCitizen.getId()));
     }
 
     /**
@@ -217,7 +217,7 @@ public class WindowCitizenPage extends AbstractWindowTownHall
     {
         final Map<String, Double> happinessMap = new HashMap<>();
 
-        for (final ICitizenDataView data : building.getColony().getCitizens().values())
+        for (final ICitizenDataView data : buildingView.getColony().getCitizens().values())
         {
             for (final String modifier : data.getHappinessHandler().getModifiers())
             {
@@ -228,7 +228,7 @@ public class WindowCitizenPage extends AbstractWindowTownHall
         final DecimalFormat df = new DecimalFormat("#.#");
         df.setRoundingMode(RoundingMode.CEILING);
 
-        final String roundedHappiness = df.format(building.getColony().getOverallHappiness());
+        final String roundedHappiness = df.format(buildingView.getColony().getOverallHappiness());
         findPaneOfTypeByID("happinessTitle", Text.class).setText(Component.translatable("com.minecolonies.coremod.gui.townhall.currenthappiness", roundedHappiness));
 
         final List<Map.Entry<String, Double>> happinessList = new ArrayList<>(happinessMap.entrySet());
@@ -246,7 +246,7 @@ public class WindowCitizenPage extends AbstractWindowTownHall
             public void updateElement(final int index, @NotNull final Pane rowPane)
             {
                 final Map.Entry<String, Double> entry = happinessList.get(index);
-                final double value = entry.getValue() / building.getColony().getCitizenCount();
+                final double value = entry.getValue() / buildingView.getColony().getCitizenCount();
                 final Image image = rowPane.findPaneOfTypeByID("icon", Image.class);
 
                 final Text label = rowPane.findPaneOfTypeByID("name", Text.class);

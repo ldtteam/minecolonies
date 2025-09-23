@@ -5,7 +5,6 @@ import com.google.common.collect.Lists;
 import com.google.common.reflect.TypeToken;
 import com.ldtteam.blockui.Color;
 import com.ldtteam.blockui.controls.Button;
-import com.ldtteam.blockui.views.ZoomDragView;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
@@ -25,8 +24,8 @@ import com.minecolonies.core.network.messages.server.colony.UpdateRequestStateMe
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Vec3i;
-import net.minecraft.network.chat.Component;
 
+import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -38,11 +37,6 @@ import static com.minecolonies.api.util.constant.WindowConstants.CLIPBOARD_TOGGL
  */
 public class WindowClipBoard extends AbstractWindowRequestTree
 {
-    /**
-     * Resource suffix.
-     */
-    private static final String BUILD_TOOL_RESOURCE_SUFFIX = ":gui/windowclipboard.xml";
-
     /**
      * List of async request tokens.
      */
@@ -65,7 +59,7 @@ public class WindowClipBoard extends AbstractWindowRequestTree
      */
     public WindowClipBoard(final IColonyView colony, boolean hidestate)
     {
-        super(null, Constants.MOD_ID + BUILD_TOOL_RESOURCE_SUFFIX, colony);
+        super(colony, null, new ResourceLocation(Constants.MOD_ID, "gui/windowclipboard.xml"));
         this.colony = colony;
         this.hide = hidestate;
 
@@ -101,7 +95,7 @@ public class WindowClipBoard extends AbstractWindowRequestTree
 
     /**
      * Paints the button state of the important toggle.
-     *
+     * <p>
      * This function finds the important toggle button and sets its colors based on the state of hide.
      * If hide is true, the button is set to green. Otherwise, it is set to red.
      */
@@ -130,11 +124,6 @@ public class WindowClipBoard extends AbstractWindowRequestTree
         }
 
         final IRequestManager requestManager = colony.getRequestManager();
-
-        if (requestManager == null)
-        {
-            return ImmutableList.of();
-        }
 
         try
         {

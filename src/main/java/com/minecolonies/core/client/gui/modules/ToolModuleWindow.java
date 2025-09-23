@@ -1,37 +1,30 @@
 package com.minecolonies.core.client.gui.modules;
 
 import com.ldtteam.blockui.controls.Text;
-import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.core.Network;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.client.gui.AbstractModuleWindow;
 import com.minecolonies.core.colony.buildings.moduleviews.ToolModuleView;
 import com.minecolonies.core.network.messages.server.colony.building.GiveToolMessage;
 import net.minecraft.network.chat.Component;
 import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraft.resources.ResourceLocation;
 
-public class ToolModuleWindow extends AbstractModuleWindow
+public class ToolModuleWindow extends AbstractModuleWindow<ToolModuleView>
 {
     /**
-     * Id of the button to give tool
+     * ID of the button to give tool
      */
     private static final String BUTTON_GIVE_TOOL = "giveTool";
 
     /**
-     * The matching module view to the window.
-     */
-    private final ToolModuleView moduleView;
-
-    /**
      * Constructor for the minimum stock window view.
      *
-     * @param building class extending
      * @param moduleView the module view.
      */
-    public ToolModuleWindow(final String res, final IBuildingView building, final ToolModuleView moduleView)
+    public ToolModuleWindow(final ToolModuleView moduleView)
     {
-        super(building, res);
-
-        this.moduleView = moduleView;
+        super(moduleView,  new ResourceLocation(Constants.MOD_ID, "gui/layouthuts/layouttool.xml"));
 
         findPaneOfTypeByID("desc", Text.class).setText(Component.translatable("com.minecolonies.coremod.gui.tooldesc." + ForgeRegistries.ITEMS.getKey(moduleView.getTool()).getPath()));
         registerButton(BUTTON_GIVE_TOOL, this::givePlayerScepter);

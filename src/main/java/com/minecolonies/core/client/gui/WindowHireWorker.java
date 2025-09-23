@@ -89,7 +89,7 @@ public class WindowHireWorker extends AbstractWindowSkeleton
      */
     public WindowHireWorker(final IColonyView c, final BlockPos buildingId)
     {
-        super(Constants.MOD_ID + HIRE_WORKER_SUFFIX);
+        super(new ResourceLocation(Constants.MOD_ID, "gui/windowhireworker.xml"));
         this.colony = c;
         building = (AbstractBuildingView) colony.getBuilding(buildingId);
 

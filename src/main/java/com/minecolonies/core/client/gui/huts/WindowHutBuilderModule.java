@@ -45,7 +45,7 @@ public class WindowHutBuilderModule extends AbstractWindowWorkerModuleBuilding<B
      */
     public WindowHutBuilderModule(final BuildingBuilder.View building, final boolean needGuide)
     {
-        super(building, Constants.MOD_ID + HUT_BUILDER_RESOURCE_SUFFIX);
+        super(building, new ResourceLocation(Constants.MOD_ID, "gui/windowhutworkerplaceholder.xml"));
         this.needGuide = needGuide;
     }
 
@@ -58,7 +58,7 @@ public class WindowHutBuilderModule extends AbstractWindowWorkerModuleBuilding<B
             if (ad == null || !Minecraft.getInstance().player.connection.getAdvancements().progress.getOrDefault(ad, new AdvancementProgress()).isDone())
             {
                 close();
-                new WindowHutGuide(building).open();
+                new WindowHutGuide(buildingView).open();
                 return;
             }
         }

@@ -5,6 +5,7 @@ import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildingextensions.registry.BuildingExtensionRegistries;
 import com.minecolonies.api.colony.buildingextensions.registry.BuildingExtensionRegistries.BuildingExtensionEntry;
+import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -247,7 +248,7 @@ public class FarmField extends AbstractBuildingExtensionModule
     {
         EMPTY(new ResourceLocation("minecraft", "textures/item/iron_hoe.png")), 
         HOED(new ResourceLocation("minecraft", "textures/item/wheat_seeds.png")), 
-        PLANTED(new ResourceLocation("minecolonies", "textures/item/crops/durum.png"));
+        PLANTED(new ResourceLocation(Constants.MOD_ID, "textures/item/crops/durum.png"));
 
         protected final ResourceLocation stageIcon;
 
@@ -279,7 +280,7 @@ public class FarmField extends AbstractBuildingExtensionModule
 
         /**
          * Get the next stage in the field's progression.
-         * 
+         *
          * @return the next Stage, or the first Stage if the current one is the last.
          */
         public Stage getNextStage()

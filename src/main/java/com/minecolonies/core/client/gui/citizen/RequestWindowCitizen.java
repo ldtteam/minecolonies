@@ -15,6 +15,7 @@ import com.minecolonies.core.Network;
 import com.minecolonies.core.network.messages.server.colony.UpdateRequestStateMessage;
 import com.minecolonies.core.network.messages.server.colony.citizen.TransferItemsToCitizenRequestMessage;
 import net.minecraft.client.Minecraft;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.wrapper.InvWrapper;
@@ -26,17 +27,13 @@ import java.util.List;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_CANT_TAKE_EQUIPPED;
-import static com.minecolonies.api.util.constant.WindowConstants.CITIZEN_REQ_RESOURCE_SUFFIX;
 
 /**
  * BOWindow for the citizen.
  */
 public class RequestWindowCitizen extends AbstractWindowCitizen
 {
-    /**
-     * The citizenData.View object.
-     */
-    private final ICitizenDataView citizen;
+    public static final ResourceLocation WINDOW_ID = new ResourceLocation(Constants.MOD_ID, "gui/citizen/requests.xml");
 
     /**
      * Inventory of the player.
@@ -55,8 +52,7 @@ public class RequestWindowCitizen extends AbstractWindowCitizen
      */
     public RequestWindowCitizen(final ICitizenDataView citizen)
     {
-        super(citizen, Constants.MOD_ID + CITIZEN_REQ_RESOURCE_SUFFIX);
-        this.citizen = citizen;
+        super(citizen, WINDOW_ID);
     }
 
     public ICitizenDataView getCitizen()

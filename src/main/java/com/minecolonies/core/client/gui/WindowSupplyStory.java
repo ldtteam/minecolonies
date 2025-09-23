@@ -5,6 +5,7 @@ import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.structurize.client.gui.WindowSwitchPack;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.core.Network;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.event.ColonyStoryListener;
 import com.minecolonies.core.network.messages.server.MarkStoryReadOnItemMessage;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
@@ -13,6 +14,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
@@ -51,7 +53,7 @@ public class WindowSupplyStory extends AbstractWindowSkeleton
 
     public WindowSupplyStory(final BlockPos pos, final String type, final ItemStack stack, final InteractionHand hand)
     {
-        super(MOD_ID + SUPPLIES_STORY_RESOURCE_SUFFIX);
+        super(new ResourceLocation(Constants.MOD_ID, "gui/windowsupplystory.xml"));
         mc.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.BOOK_PAGE_TURN, 1.0F));
         if (pos == null)
         {

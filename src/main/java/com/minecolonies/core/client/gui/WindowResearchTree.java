@@ -112,7 +112,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
      */
     public WindowResearchTree(final ResourceLocation branch, final IBuildingView building, final UniversityModuleWindow last)
     {
-        super(Constants.MOD_ID + R_TREE_RESOURCE_SUFFIX, last);
+        super(last, new ResourceLocation(Constants.MOD_ID, "gui/windowresearch.xml"));
         this.branch = branch;
         this.building = building;
         this.last = last;

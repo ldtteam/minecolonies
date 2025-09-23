@@ -4,10 +4,9 @@ import com.ldtteam.blockui.Pane;
 import com.ldtteam.blockui.controls.*;
 import com.ldtteam.blockui.views.ScrollingList;
 import com.minecolonies.api.colony.buildings.modules.IItemListModuleView;
-import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.core.client.gui.AbstractModuleWindow;
-import com.minecolonies.core.colony.buildings.moduleviews.ItemListModuleView;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
@@ -21,17 +20,12 @@ import static org.jline.utils.AttributedStyle.WHITE;
 /**
  * BOWindow for all the filterable lists.
  */
-public class ItemListModuleWindow extends AbstractModuleWindow
+public class ItemListModuleWindow extends AbstractModuleWindow<IItemListModuleView>
 {
     /**
      * Resource scrolling list.
      */
     protected final ScrollingList resourceList;
-
-    /**
-     * The building this belongs to.
-     */
-    protected final IBuildingView building;
 
     /**
      * The filter for the resource list.
@@ -59,28 +53,20 @@ public class ItemListModuleWindow extends AbstractModuleWindow
     private int tick;
 
     /**
-     * @param building   the building it belongs to.
-     * @param res   the building res id.
-     * @param moduleView   the assigned module view.
+     * @param moduleView the assigned module view.
+     * @param resource   window resource location.
      */
-    public ItemListModuleWindow(
-      final String res,
-      final IBuildingView building,
-      final IItemListModuleView moduleView)
+    public ItemListModuleWindow(final IItemListModuleView moduleView, final ResourceLocation resource)
     {
-        super(building, res);
+        super(moduleView, resource);
+        this.isInverted = moduleView.isInverted();
+        this.id = moduleView.getId();
 
         registerButton(BUTTON_SWITCH, this::switchClicked);
         registerButton(BUTTON_RESET_DEFAULT, this::reset);
 
         resourceList = window.findPaneOfTypeByID(LIST_RESOURCES, ScrollingList.class);
-        window.findPaneOfTypeByID(DESC_LABEL, Text.class).setText(Component.translatable(moduleView.getDesc().toLowerCase(Locale.US)));
-        this.building = building;
-        this.isInverted = moduleView.isInverted();
-        this.id = moduleView.getId();
-
-        groupedItemList = new ArrayList<>(moduleView.getAllItems().apply(building));
-
+        groupedItemList = new ArrayList<>(moduleView.getAllItems().apply(buildingView));
         window.findPaneOfTypeByID(INPUT_FILTER, TextField.class).setHandler(input -> {
             final String newFilter = input.getText();
             if (!newFilter.equals(filter))
@@ -119,15 +105,14 @@ public class ItemListModuleWindow extends AbstractModuleWindow
         final ItemStorage item = currentDisplayedList.get(row);
         final boolean on = button.getText().equals(Component.translatable(ON));
         final boolean add = (on && isInverted) || (!on && !isInverted);
-        final IItemListModuleView module = building.getModuleViewMatching(ItemListModuleView.class, view -> view.getId().equals(id));
 
         if (add)
         {
-            module.addItem(item);
+            moduleView.addItem(item);
         }
         else
         {
-            module.removeItem(item);
+            moduleView.removeItem(item);
         }
 
         resourceList.refreshElementPanes();
@@ -138,10 +123,7 @@ public class ItemListModuleWindow extends AbstractModuleWindow
      */
     private void reset()
     {
-        final IItemListModuleView module = building.getModuleViewMatching(ItemListModuleView.class, view -> view.getId().equals(id));
-
-        module.clearItems();
-
+        moduleView.clearItems();
         resourceList.refreshElementPanes();
     }
 
@@ -170,10 +152,8 @@ public class ItemListModuleWindow extends AbstractModuleWindow
     protected void applySorting(final List<ItemStorage> displayedList)
     {
         displayedList.sort((o1, o2) -> {
-
-            boolean o1Allowed = building.getModuleViewMatching(ItemListModuleView.class, view -> view.getId().equals(id)).isAllowedItem(o1);
-
-            boolean o2Allowed = building.getModuleViewMatching(ItemListModuleView.class, view -> view.getId().equals(id)).isAllowedItem(o2);
+            boolean o1Allowed = moduleView.isAllowedItem(o1);
+            boolean o2Allowed = moduleView.isAllowedItem(o2);
 
             if(!o1Allowed && o2Allowed)
             {
@@ -224,7 +204,7 @@ public class ItemListModuleWindow extends AbstractModuleWindow
                 resourceLabel.setText(resource.getHoverName());
                 resourceLabel.setColors(WHITE);
                 rowPane.findPaneOfTypeByID(RESOURCE_ICON, ItemIcon.class).setItem(resource);
-                final boolean isAllowedItem  = building.getModuleViewMatching(ItemListModuleView.class, view -> view.getId().equals(id)).isAllowedItem(new ItemStorage(resource));
+                final boolean isAllowedItem = moduleView.isAllowedItem(new ItemStorage(resource));
                 final Button switchButton = rowPane.findPaneOfTypeByID(BUTTON_SWITCH, Button.class);
 
                 if ((isInverted && !isAllowedItem) || (!isInverted && isAllowedItem))

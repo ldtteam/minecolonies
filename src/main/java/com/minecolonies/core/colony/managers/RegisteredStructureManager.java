@@ -143,11 +143,18 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
         }
         for (int i = 0; i < extensionsTagList.size(); ++i)
         {
-            final CompoundTag extensionCompound = extensionsTagList.getCompound(i);
-            final IBuildingExtension extension = BuildingExtensionDataManager.compoundToExtension(extensionCompound);
-            if (extension != null)
+            try
             {
-                addBuildingExtension(extension);
+                final CompoundTag extensionCompound = extensionsTagList.getCompound(i);
+                final IBuildingExtension extension = BuildingExtensionDataManager.compoundToExtension(extensionCompound);
+                if (extension != null)
+                {
+                    addBuildingExtension(extension);
+                }
+            }
+            catch (final Exception e)
+            {
+                Log.getLogger().error("Failure loading building extension", e);
             }
         }
 

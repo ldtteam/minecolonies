@@ -9,7 +9,6 @@ import com.ldtteam.blockui.controls.Image;
 import com.ldtteam.blockui.controls.ItemIcon;
 import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.blockui.views.ScrollingList;
-import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.buildingextensions.IBuildingExtension;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.BlockPosUtil.DirectionResult;
@@ -29,13 +28,8 @@ import static com.minecolonies.api.util.constant.translation.GuiTranslationConst
 /**
  * BOWindow for the fields tab in huts.
  */
-public class FarmFieldsModuleWindow extends AbstractModuleWindow
+public class FarmFieldsModuleWindow extends AbstractModuleWindow<FieldsModuleView>
 {
-    /**
-     * Resource suffix of the GUI.
-     */
-    private static final String HUT_FIELDS_RESOURCE_SUFFIX = ":gui/layouthuts/layoutfarmfields.xml";
-
     /**
      * ID of the fields list inside the GUI.
      */
@@ -97,11 +91,6 @@ public class FarmFieldsModuleWindow extends AbstractModuleWindow
     private static final String TEXTURE_ASSIGN_OFF_DISABLED = "minecolonies:textures/gui/builderhut/builder_button_mini_disabled.png";
 
     /**
-     * The field module view.
-     */
-    private final FieldsModuleView moduleView;
-
-    /**
      * ScrollList with the fields.
      */
     private ScrollingList fieldList;
@@ -111,10 +100,9 @@ public class FarmFieldsModuleWindow extends AbstractModuleWindow
      *
      * @param moduleView {@link FieldsModuleView}.
      */
-    public FarmFieldsModuleWindow(final IBuildingView building, final FieldsModuleView moduleView)
+    public FarmFieldsModuleWindow(final FieldsModuleView moduleView)
     {
-        super(building, Constants.MOD_ID + HUT_FIELDS_RESOURCE_SUFFIX);
-        this.moduleView = moduleView;
+        super(moduleView, new ResourceLocation(Constants.MOD_ID, "gui/layouthuts/layoutfarmfields.xml"));
 
         registerButton(TAG_BUTTON_ASSIGNMENT_MODE, this::assignmentModeClicked);
         registerButton(TAG_BUTTON_ASSIGN, this::assignClicked);

@@ -21,11 +21,6 @@ import static com.minecolonies.api.util.constant.WindowConstants.*;
 public class MainWindowCitizen extends AbstractWindowCitizen
 {
     /**
-     * The citizenData.View object.
-     */
-    private final ICitizenDataView citizen;
-
-    /**
      * Tick function for updating every second.
      */
     private int tick = 0;
@@ -37,8 +32,7 @@ public class MainWindowCitizen extends AbstractWindowCitizen
      */
     public MainWindowCitizen(final ICitizenDataView citizen)
     {
-        super(citizen, Constants.MOD_ID + CITIZEN_MAIN_RESOURCE_SUFFIX);
-        this.citizen = citizen;
+        super(citizen, new ResourceLocation(Constants.MOD_ID, "gui/citizen/main.xml"));
 
         final Image statusIcon = findPaneOfTypeByID(STATUS_ICON, Image.class);
         if (citizen.getVisibleStatus() == null)

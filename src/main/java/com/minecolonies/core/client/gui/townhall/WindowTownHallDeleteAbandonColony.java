@@ -3,6 +3,7 @@ package com.minecolonies.core.client.gui.townhall;
 import com.ldtteam.blockui.controls.ButtonImage;
 import com.ldtteam.blockui.controls.Image;
 import com.ldtteam.blockui.controls.Text;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.MineColonies;
 import com.minecolonies.core.Network;
 import com.minecolonies.core.client.gui.AbstractWindowSkeleton;
@@ -14,9 +15,9 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 
-import static com.minecolonies.api.util.constant.Constants.MOD_ID;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 
 /**
@@ -37,9 +38,9 @@ public class WindowTownHallDeleteAbandonColony extends AbstractWindowSkeleton
      */
     private final BlockPos pos;
 
-    public WindowTownHallDeleteAbandonColony(final BlockPos pos, final String oldColonyName, final BlockPos oldColonyPos, final int oldColonyId)
+    public WindowTownHallDeleteAbandonColony(final BlockPos pos, final String oldColonyName, final BlockPos oldColonyPos)
     {
-        super(MOD_ID + TOWNHALL_DELETE_ABANDON_GUI);
+        super(new ResourceLocation(Constants.MOD_ID, "gui/townhall/windowdeleteabandoncolony.xml"));
         this.pos = pos;
         mc.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.BOOK_PAGE_TURN, 1.0F));
 

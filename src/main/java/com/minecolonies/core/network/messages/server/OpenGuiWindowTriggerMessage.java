@@ -2,6 +2,7 @@ package com.minecolonies.core.network.messages.server;
 
 import com.minecolonies.api.advancements.AdvancementTriggers;
 import com.minecolonies.api.network.IMessage;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.fml.LogicalSide;
@@ -13,7 +14,7 @@ public class OpenGuiWindowTriggerMessage implements IMessage
     /**
      * The window's Resource
      */
-    private String resource;
+    private ResourceLocation resource;
 
     /**
      * Empty constructor used when registering the message.
@@ -23,7 +24,7 @@ public class OpenGuiWindowTriggerMessage implements IMessage
         super();
     }
 
-    public OpenGuiWindowTriggerMessage(final String resource)
+    public OpenGuiWindowTriggerMessage(final ResourceLocation resource)
     {
         super();
         this.resource = resource;
@@ -32,13 +33,13 @@ public class OpenGuiWindowTriggerMessage implements IMessage
     @Override
     public void toBytes(final FriendlyByteBuf buf)
     {
-        buf.writeUtf(this.resource);
+        buf.writeResourceLocation(this.resource);
     }
 
     @Override
     public void fromBytes(final FriendlyByteBuf buf)
     {
-        this.resource = buf.readUtf(32767);
+        this.resource = buf.readResourceLocation();
     }
 
     @Nullable

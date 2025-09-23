@@ -5,15 +5,16 @@ import com.ldtteam.blockui.controls.ButtonImage;
 import com.ldtteam.blockui.controls.Image;
 import com.minecolonies.api.colony.buildings.workerbuildings.ITownHallView;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.core.client.gui.AbstractWindowModuleBuilding;
+import com.minecolonies.core.client.gui.AbstractBuildingMainWindow;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingTownHall;
+import net.minecraft.resources.ResourceLocation;
 
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 
 /**
  * BOWindow for the town hall.
  */
-public abstract class AbstractWindowTownHall extends AbstractWindowModuleBuilding<ITownHallView>
+public abstract class AbstractWindowTownHall extends AbstractBuildingMainWindow<ITownHallView>
 {
     /**
      * Color constants for builder list.
@@ -30,7 +31,7 @@ public abstract class AbstractWindowTownHall extends AbstractWindowModuleBuildin
      */
     public AbstractWindowTownHall(final BuildingTownHall.View townHall, final String page)
     {
-        super(townHall, Constants.MOD_ID + ":gui/townhall/" + page);
+        super(townHall, new ResourceLocation(Constants.MOD_ID, "gui/townhall/").withSuffix(page));
 
         registerButton(BUTTON_ACTIONS, () -> new WindowMainPage(townHall).open());
         registerButton(BUTTON_INFOPAGE, () -> new WindowInfoPage(townHall).open());
@@ -51,15 +52,4 @@ public abstract class AbstractWindowTownHall extends AbstractWindowModuleBuildin
      * @return the string id.
      */
     protected abstract String getWindowId();
-
-    /**
-     * Returns the name of a building.
-     *
-     * @return Name of a building.
-     */
-    @Override
-    public String getBuildingName()
-    {
-        return building.getColony().getName();
-    }
 }

@@ -5,12 +5,16 @@ import com.ldtteam.blockui.Pane;
 import com.ldtteam.blockui.PaneBuilders;
 import com.ldtteam.blockui.controls.*;
 import com.ldtteam.blockui.views.ScrollingList;
-import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.research.IGlobalResearchTree;
 import com.minecolonies.api.research.IResearchRequirement;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.client.gui.AbstractModuleWindow;
 import com.minecolonies.core.client.gui.WindowResearchTree;
+import com.minecolonies.core.colony.buildings.moduleviews.UniversityResearchModuleView;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
@@ -20,26 +24,21 @@ import java.util.Comparator;
 import java.util.List;
 
 import static com.minecolonies.api.research.util.ResearchConstants.COLOR_TEXT_UNFULFILLED;
-import static com.minecolonies.api.util.constant.WindowConstants.*;
 
-import net.minecraft.ChatFormatting;
-import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.Style;
-import net.minecraft.network.chat.Component;
+import static com.minecolonies.api.util.constant.WindowConstants.GUI_LIST_ELEMENT_NAME;
 
 /**
  * BOWindow for the university.
  */
-public class UniversityModuleWindow extends AbstractModuleWindow
+public class UniversityModuleWindow extends AbstractModuleWindow<UniversityResearchModuleView>
 {
     /**
      * Constructor for the window of the lumberjack.
      *
-     * @param building {@link com.minecolonies.core.colony.buildings.views.EmptyView}.
      */
-    public UniversityModuleWindow(final IBuildingView building)
+    public UniversityModuleWindow(final UniversityResearchModuleView moduleView)
     {
-        super(building, Constants.MOD_ID + RESOURCE_STRING);
+        super(moduleView, new ResourceLocation(Constants.MOD_ID, "gui/layouthuts/layoutuniversity.xml"));
 
         final List<ResourceLocation> inputBranches = IGlobalResearchTree.getInstance().getBranches();
         inputBranches.sort(Comparator.comparingInt(branchId -> IGlobalResearchTree.getInstance().getBranchData(branchId).getSortOrder()));

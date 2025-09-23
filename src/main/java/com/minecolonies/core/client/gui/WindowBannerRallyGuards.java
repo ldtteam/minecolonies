@@ -15,6 +15,7 @@ import com.minecolonies.core.network.messages.server.RemoveFromRallyingListMessa
 import com.minecolonies.core.network.messages.server.ToggleBannerRallyGuardsMessage;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.NotNull;
@@ -29,11 +30,6 @@ import static com.minecolonies.core.items.ItemBannerRallyGuards.*;
  */
 public class WindowBannerRallyGuards extends AbstractWindowSkeleton
 {
-    /**
-     * Resource suffix.
-     */
-    private static final String BUILD_TOOL_RESOURCE_SUFFIX = ":gui/windowbannerrallyguards.xml";
-
     /**
      * Requests list id.
      */
@@ -81,7 +77,7 @@ public class WindowBannerRallyGuards extends AbstractWindowSkeleton
      */
     public WindowBannerRallyGuards(final ItemStack banner)
     {
-        super(Constants.MOD_ID + BUILD_TOOL_RESOURCE_SUFFIX);
+        super(new ResourceLocation(Constants.MOD_ID, "gui/windowbannerrallyguards.xml"));
         this.banner = banner;
 
         registerButton(BUTTON_REMOVE, this::removeClicked);

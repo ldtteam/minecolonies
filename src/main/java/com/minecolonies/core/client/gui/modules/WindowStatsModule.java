@@ -7,7 +7,6 @@ import com.ldtteam.blockui.controls.ButtonImage;
 import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.blockui.views.DropDownList;
 import com.ldtteam.blockui.views.ScrollingList;
-import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.managers.interfaces.IStatisticsManager;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.client.gui.AbstractModuleWindow;
@@ -26,7 +25,7 @@ import static com.minecolonies.api.util.constant.WindowConstants.*;
 /**
  * BOWindow for the miner hut.
  */
-public class WindowStatsModule extends AbstractModuleWindow
+public class WindowStatsModule extends AbstractModuleWindow<BuildingStatisticsModuleView>
 {
     /**
      * Map of intervals.
@@ -67,24 +66,9 @@ public class WindowStatsModule extends AbstractModuleWindow
     }
 
     /**
-     * Drop down list for interval.
-     */
-    private DropDownList intervalDropdown;
-
-    /**
      * Current selected interval.
      */
     public String selectedInterval = "com.minecolonies.coremod.gui.interval.yesterday";
-
-    /**
-     * Util tags.
-     */
-    private static final String HUT_RESOURCE_SUFFIX = ":gui/layouthuts/layoutstatsmodule.xml";
-
-    /*
-     * Module view
-     */
-    private BuildingStatisticsModuleView moduleView = null;
 
     /*
      * Flag to indicate whether recorded stats with no occurrence 
@@ -98,10 +82,9 @@ public class WindowStatsModule extends AbstractModuleWindow
      *
      * @param moduleView {@link MinerLevelManagementModuleView}.
      */
-    public WindowStatsModule(final IBuildingView building, final BuildingStatisticsModuleView moduleView)
+    public WindowStatsModule(final BuildingStatisticsModuleView moduleView)
     {
-        super(building, Constants.MOD_ID + HUT_RESOURCE_SUFFIX);
-        this.moduleView = moduleView;
+        super(moduleView, new ResourceLocation(Constants.MOD_ID, "gui/layouthuts/layoutstatsmodule.xml"));
         registerButton(TAG_BUTTON_HIDEZERO, this::hideZeroClicked);
     }
 
@@ -121,15 +104,13 @@ public class WindowStatsModule extends AbstractModuleWindow
         final @NotNull List<String> stats = new ArrayList<>(statisticsManager.getStatTypes());
         findPaneOfTypeByID("stats", ScrollingList.class).setDataProvider(new ScrollingList.DataProvider()
         {
-
-            private List <String> filteredStats = new ArrayList<>();
-
+            private final List<String> filteredStats = new ArrayList<>();
             {
                 int interval = INTERVAL.get(selectedInterval);
 
-                if (hideZeroStats) 
+                if (hideZeroStats)
                 {
-                    for (int i = 0; i < stats.size(); i++) 
+                    for (int i = 0; i < stats.size(); i++)
                     {
                         if (interval > 0)
                         {
@@ -137,7 +118,7 @@ public class WindowStatsModule extends AbstractModuleWindow
                             {
                                 filteredStats.add(stats.get(i));
                             }
-                        } 
+                        }
                         else
                         {
                             if (statisticsManager.getStatTotal(stats.get(i)) > 0)
@@ -146,8 +127,8 @@ public class WindowStatsModule extends AbstractModuleWindow
                             }
                         }
                     }
-                } 
-                else 
+                }
+                else
                 {
                     filteredStats.addAll(stats);
                 }
@@ -159,9 +140,7 @@ public class WindowStatsModule extends AbstractModuleWindow
              */
             @Override
             public int getElementCount()
-            {  
-
-                
+            {
                 return filteredStats.size();
             }
 
@@ -204,7 +183,7 @@ public class WindowStatsModule extends AbstractModuleWindow
             }
         });
 
-        intervalDropdown = findPaneOfTypeByID(DROPDOWN_INTERVAL_ID, DropDownList.class);
+        final DropDownList intervalDropdown = findPaneOfTypeByID(DROPDOWN_INTERVAL_ID, DropDownList.class);
         intervalDropdown.setHandler(this::onDropDownListChanged);
 
         intervalDropdown.setDataProvider(new DropDownList.DataProvider()

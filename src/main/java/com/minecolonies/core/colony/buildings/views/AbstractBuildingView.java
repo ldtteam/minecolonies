@@ -24,7 +24,6 @@ import com.minecolonies.core.colony.buildings.moduleviews.WorkerBuildingModuleVi
 import com.minecolonies.core.network.messages.server.colony.OpenInventoryMessage;
 import com.minecolonies.core.network.messages.server.colony.building.HutRenameMessage;
 import it.unimi.dsi.fastutil.ints.Int2ObjectLinkedOpenHashMap;
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
@@ -376,7 +375,7 @@ public abstract class AbstractBuildingView implements IBuildingView
      * @return blockui window.
      */
     @Override
-    @Nullable
+    @NotNull
     public BOWindow getWindow()
     {
         if (!getModuleViews(WorkerBuildingModuleView.class).isEmpty())

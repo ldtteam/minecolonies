@@ -9,6 +9,7 @@ import com.minecolonies.core.Network;
 import com.minecolonies.core.client.gui.modules.ItemListModuleWindow;
 import com.minecolonies.core.network.messages.server.colony.building.AssignFilterableItemMessage;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
 import com.minecolonies.core.network.messages.server.colony.building.ResetFilterableItemMessage;
@@ -49,7 +50,7 @@ public class ItemListModuleView extends AbstractBuildingModuleView implements II
     /**
      * Lang string for description.
      */
-    private final String desc;
+    private final Component desc;
 
     /**
      * Create a nw grouped item list view for the client side.
@@ -58,7 +59,7 @@ public class ItemListModuleView extends AbstractBuildingModuleView implements II
      * @param inverted enabling or disabling.
      * @param allItems a supplier for all the items.
      */
-    public ItemListModuleView(final String id, final String desc, final boolean inverted, final Function<IBuildingView, Set<ItemStorage>> allItems)
+    public ItemListModuleView(final String id, final Component desc, final boolean inverted, final Function<IBuildingView, Set<ItemStorage>> allItems)
     {
         super();
         this.id = id;
@@ -119,7 +120,7 @@ public class ItemListModuleView extends AbstractBuildingModuleView implements II
     }
 
     @Override
-    public String getDesc()
+    public Component getDesc()
     {
         return desc;
     }
@@ -140,7 +141,7 @@ public class ItemListModuleView extends AbstractBuildingModuleView implements II
     @OnlyIn(Dist.CLIENT)
     public BOWindow getWindow()
     {
-        return new ItemListModuleWindow(Constants.MOD_ID + ":gui/layouthuts/layoutfilterablelist.xml", buildingView, this);
+        return new ItemListModuleWindow(this, new ResourceLocation(Constants.MOD_ID, "gui/layouthuts/layoutfilterablelist.xml"));
     }
 
     @Override

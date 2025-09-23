@@ -109,14 +109,14 @@ public class WindowInfoPage extends AbstractWindowTownHall
         int interval = INTERVAL.get(selectedInterval);
         if (interval < 0)
         {
-            events = new ArrayList<>(building.getColonyEvents());
+            events = new ArrayList<>(buildingView.getColonyEvents());
         }
         else
         {
             events = new ArrayList<>();
-            for (IColonyEventDescription event : building.getColonyEvents())
+            for (IColonyEventDescription event : buildingView.getColonyEvents())
             {
-                if (event.getDay() >= building.getColony().getDay() - interval)
+                if (event.getDay() >= buildingView.getColony().getDay() - interval)
                 {
                     events.add(event);
                 }
@@ -171,7 +171,7 @@ public class WindowInfoPage extends AbstractWindowTownHall
     private void updateWorkOrders()
     {
         workOrders.clear();
-        workOrders.addAll(building.getColony().getWorkOrders().stream().filter(wo -> wo.shouldShowIn(building)).collect(Collectors.toList()));
+        workOrders.addAll(buildingView.getColony().getWorkOrders().stream().filter(wo -> wo.shouldShowIn(buildingView)).collect(Collectors.toList()));
         sortWorkOrders();
     }
 
@@ -201,12 +201,12 @@ public class WindowInfoPage extends AbstractWindowTownHall
                 if (buttonLabel.equals(BUTTON_UP) && i > 0)
                 {
                     workOrder.setPriority(workOrders.get(i - 1).getPriority() + 1);
-                    Network.getNetwork().sendToServer(new WorkOrderChangeMessage(this.building, id, false, workOrder.getPriority()));
+                    Network.getNetwork().sendToServer(new WorkOrderChangeMessage(this.buildingView, id, false, workOrder.getPriority()));
                 }
                 else if (buttonLabel.equals(BUTTON_DOWN) && i <= workOrders.size())
                 {
                     workOrder.setPriority(workOrders.get(i + 1).getPriority() - 1);
-                    Network.getNetwork().sendToServer(new WorkOrderChangeMessage(this.building, id, false, workOrder.getPriority()));
+                    Network.getNetwork().sendToServer(new WorkOrderChangeMessage(this.buildingView, id, false, workOrder.getPriority()));
                 }
 
                 sortWorkOrders();
@@ -232,7 +232,7 @@ public class WindowInfoPage extends AbstractWindowTownHall
                 break;
             }
         }
-        Network.getNetwork().sendToServer(new WorkOrderChangeMessage(this.building, id, true, 0));
+        Network.getNetwork().sendToServer(new WorkOrderChangeMessage(this.buildingView, id, true, 0));
         window.findPaneOfTypeByID(LIST_WORKORDER, ScrollingList.class).refreshElementPanes();
     }
 
@@ -278,7 +278,7 @@ public class WindowInfoPage extends AbstractWindowTownHall
                 }
 
                 //Searches citizen of id x
-                for (@NotNull final IBuildingView buildingView : building.getColony().getBuildings())
+                for (@NotNull final IBuildingView buildingView : buildingView.getColony().getBuildings())
                 {
                     if (buildingView.getPosition().equals(workOrder.getClaimedBy()) && buildingView instanceof AbstractBuildingBuilderView)
                     {

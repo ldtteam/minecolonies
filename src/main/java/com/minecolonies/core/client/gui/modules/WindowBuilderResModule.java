@@ -7,19 +7,19 @@ import com.ldtteam.blockui.controls.Button;
 import com.ldtteam.blockui.controls.ItemIcon;
 import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.blockui.views.ScrollingList;
-import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.workorders.IWorkOrderView;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.core.Network;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.client.gui.AbstractModuleWindow;
 import com.minecolonies.core.colony.buildings.moduleviews.BuildingResourcesModuleView;
 import com.minecolonies.core.colony.buildings.utils.BuildingBuilderResource;
-import com.minecolonies.core.colony.buildings.workerbuildings.BuildingBuilder;
 import com.minecolonies.core.network.messages.server.colony.building.MarkBuildingDirtyMessage;
 import com.minecolonies.core.network.messages.server.colony.building.TransferItemsRequestMessage;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.wrapper.InvWrapper;
@@ -27,14 +27,13 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 
 /**
  * BOWindow for the builder hut.
  */
-public class WindowBuilderResModule extends AbstractModuleWindow
+public class WindowBuilderResModule extends AbstractModuleWindow<BuildingResourcesModuleView>
 {
     /**
      * Color constants for builder list.
@@ -51,11 +50,6 @@ public class WindowBuilderResModule extends AbstractModuleWindow
     private final List<BuildingBuilderResource> resources = new ArrayList<>();
 
     /**
-     * The module belonging to this.
-     */
-    private final BuildingResourcesModuleView moduleView;
-
-    /**
      * Tick to update the list.
      */
     private int tickToInventoryUpdate = 0;
@@ -63,13 +57,11 @@ public class WindowBuilderResModule extends AbstractModuleWindow
     /**
      * Constructor for window builder hut.
      *
-     * @param building  {@link BuildingBuilder.View}.
      */
-    public WindowBuilderResModule(final String res, final IBuildingView building, final BuildingResourcesModuleView moduleView)
+    public WindowBuilderResModule(final BuildingResourcesModuleView moduleView)
     {
-        super(building, res);
-        this.moduleView = moduleView;
-        findPaneOfTypeByID(DESC_LABEL, Text.class).setText(Component.translatable(moduleView.getDesc().toLowerCase(Locale.US)));
+        super(moduleView, new ResourceLocation(Constants.MOD_ID, "gui/layouthuts/layoutbuilderres.xml"));
+        findPaneOfTypeByID(DESC_LABEL, Text.class).setText(moduleView.getDesc());
 
         pullResourcesFromHut();
 

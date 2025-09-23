@@ -9,11 +9,12 @@ import com.ldtteam.blockui.views.ScrollingList;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.core.client.gui.AbstractWindowModuleBuilding;
+import com.minecolonies.core.client.gui.AbstractBuildingMainWindow;
 import com.minecolonies.core.client.gui.WindowsBarracksSpies;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingBarracks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.NotNull;
 
@@ -24,7 +25,7 @@ import static com.minecolonies.api.util.constant.TranslationConstants.*;
 /**
  * BOWindow for the barracks building.
  */
-public class WindowBarracksBuilding extends AbstractWindowModuleBuilding<BuildingBarracks.View>
+public class WindowBarracksBuilding extends AbstractBuildingMainWindow<BuildingBarracks.View>
 {
     /**
      * Id of the positions list.
@@ -39,11 +40,6 @@ public class WindowBarracksBuilding extends AbstractWindowModuleBuilding<Buildin
      * Id of the position label.
      */
     private static final String LABEL_CURRENNT = "current";
-
-    /**
-     * Suffix for the window.
-     */
-    private static final String HOME_BUILDING_RESOURCE_SUFFIX = ":gui/windowhutbarracks.xml";
 
     /**
      * Spies button id.
@@ -87,7 +83,7 @@ public class WindowBarracksBuilding extends AbstractWindowModuleBuilding<Buildin
      */
     public WindowBarracksBuilding(final BuildingBarracks.View building)
     {
-        super(building, Constants.MOD_ID + HOME_BUILDING_RESOURCE_SUFFIX);
+        super(building, new ResourceLocation(Constants.MOD_ID, "gui/windowhutbarracks.xml"));
         view = building.getColony();
         positionsList = findPaneOfTypeByID(LIST_POSITIONS, ScrollingList.class);
         findPaneOfTypeByID(SPIES_BUTTON_ICON, ItemIcon.class).setItem(Items.GOLD_INGOT.getDefaultInstance());
@@ -107,14 +103,14 @@ public class WindowBarracksBuilding extends AbstractWindowModuleBuilding<Buildin
      */
     private void hireSpiesClicked(final Button button)
     {
-        new WindowsBarracksSpies(this.building, this.building.getID()).open();
+        new WindowsBarracksSpies(this.buildingView, this.buildingView.getID()).open();
     }
 
     @Override
     public void onOpened()
     {
         super.onOpened();
-        if (building.getBuildingLevel() >= BUILDING_LEVEL_FOR_LIST)
+        if (buildingView.getBuildingLevel() >= BUILDING_LEVEL_FOR_LIST)
         {
             final List<BlockPos> spawnPoints = view.getLastSpawnPoints();
             if (spawnPoints.size() == 0)
@@ -155,7 +151,7 @@ public class WindowBarracksBuilding extends AbstractWindowModuleBuilding<Buildin
      */
     private Component mountDistanceString(final BlockPos pos)
     {
-        final long distance = BlockPosUtil.getDistance2D(pos, building.getPosition());
+        final long distance = BlockPosUtil.getDistance2D(pos, buildingView.getPosition());
         final String distanceDesc;
         if (distance < QUITE_CLOSE)
         {
@@ -169,7 +165,7 @@ public class WindowBarracksBuilding extends AbstractWindowModuleBuilding<Buildin
         {
             distanceDesc = REALLY_FAR_DESC;
         }
-        final Component directionDest = BlockPosUtil.calcDirection(building.getPosition(), pos).getLongText();
+        final Component directionDest = BlockPosUtil.calcDirection(buildingView.getPosition(), pos).getLongText();
         return Component.translatable(distanceDesc)
                  .append(" ")
                  .append(directionDest);

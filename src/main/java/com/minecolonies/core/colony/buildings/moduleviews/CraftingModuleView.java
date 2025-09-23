@@ -15,6 +15,7 @@ import com.minecolonies.core.network.messages.server.colony.building.OpenCraftin
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.MenuProvider;
 import net.minecraftforge.api.distmarker.Dist;
@@ -179,7 +180,7 @@ public class CraftingModuleView extends AbstractBuildingModuleView
     @OnlyIn(Dist.CLIENT)
     public BOWindow getWindow()
     {
-        return new WindowListRecipes(buildingView, Constants.MOD_ID + ":gui/layouthuts/layoutlistrecipes.xml", this);
+        return new WindowListRecipes(this);
     }
 
     @Override
@@ -189,9 +190,9 @@ public class CraftingModuleView extends AbstractBuildingModuleView
     }
 
     @Override
-    public String getDesc()
+    public Component getDesc()
     {
-        return "com.minecolonies.coremod.gui.workerhuts.recipe." + id ;
+        return Component.translatable("com.minecolonies.coremod.gui.workerhuts.recipe." + id);
     }
 
     /**

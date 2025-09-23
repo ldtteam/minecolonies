@@ -35,10 +35,7 @@ import static com.minecolonies.core.colony.requestsystem.requests.AbstractReques
  */
 public class WindowRequestDetail extends BOWindow implements ButtonHandler
 {
-    /**
-     * Id of the request detail box.
-     */
-    private static final String BOX_ID_REQUEST = "requestDetail";
+    public static final ResourceLocation WINDOW_ID = new ResourceLocation(Constants.MOD_ID, "gui/windowrequestdetail.xml");
 
     /**
      * Id of the requester label.
@@ -74,14 +71,16 @@ public class WindowRequestDetail extends BOWindow implements ButtonHandler
      * The request itself.
      */
     private final IRequest<?> request;
+
     /**
      * The colony id.
      */
-    private final int         colonyId;
+    private final int colonyId;
+
     /**
      * Life count.
      */
-    private       int         lifeCount = 0;
+    private int lifeCount = 0;
 
     /**
      * The previous window.
@@ -97,7 +96,7 @@ public class WindowRequestDetail extends BOWindow implements ButtonHandler
      */
     public WindowRequestDetail(@Nullable final BOWindow prevWindow, final IRequest<?> request, final int colonyId)
     {
-        super(new ResourceLocation(Constants.MOD_ID + CITIZEN_REQ_DETAIL_SUFFIX));
+        super(WINDOW_ID);
         this.prevWindow = prevWindow;
         this.request = request;
         this.colonyId = colonyId;
@@ -219,7 +218,7 @@ public class WindowRequestDetail extends BOWindow implements ButtonHandler
             {
                 ((RequestWindowCitizen) this.prevWindow).fulfill(request);
                 // because this isn't an AbstractWindowSkeleton, and we want to trigger an advancement...
-                Network.getNetwork().sendToServer(new ClickGuiButtonTriggerMessage(button.getID(), Constants.MOD_ID + CITIZEN_REQ_DETAIL_SUFFIX));
+                Network.getNetwork().sendToServer(new ClickGuiButtonTriggerMessage(button.getID(), new ResourceLocation(Constants.MOD_ID, "gui/windowrequestdetail.xml")));
             }
             this.window.close();
         }

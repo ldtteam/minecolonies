@@ -7,16 +7,17 @@ import com.ldtteam.blockui.views.Box;
 import com.ldtteam.blockui.views.ScrollingList;
 import com.ldtteam.structurize.api.util.ItemStorage;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
-import com.ldtteam.structurize.client.gui.AbstractWindowSkeleton;
 import com.ldtteam.structurize.client.gui.WindowExtendedBuildTool;
 import com.ldtteam.structurize.storage.rendering.RenderingCache;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.items.ItemScanAnalyzer;
 import com.minecolonies.core.util.SchemAnalyzerUtil;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.*;
@@ -28,11 +29,6 @@ import static com.minecolonies.core.items.ItemScanAnalyzer.TEMP_SCAN;
  */
 public class WindowSchematicAnalyzer extends AbstractWindowSkeleton
 {
-    /**
-     * Link to the xml file of the window.
-     */
-    private static final String ID = "minecolonies:gui/analyzer/windowanalyze.xml";
-
     /**
      * Xml ID's for analyzer/analyzedisplay.xml
      */
@@ -72,23 +68,19 @@ public class WindowSchematicAnalyzer extends AbstractWindowSkeleton
 
     public WindowSchematicAnalyzer()
     {
-        super(ID);
-        registerButton(BUTTON_CANCEL, b -> {
-            close();
-        });
-        registerButton(BUTTON_SELECT_SCHEMATIC, b -> {
-            new WindowExtendedBuildTool(
-              BlockPos.containing(Minecraft.getInstance().player.position().add(Minecraft.getInstance().player.getLookAngle().multiply(10, 10, 10))),
-              1,
-              (window, blueprint) -> {
-                  Minecraft.getInstance().setScreen(this.getScreen());
-                  final SchemAnalyzerUtil.SchematicAnalyzationResult result = analyzationResults.computeIfAbsent(blueprint, SchemAnalyzerUtil::analyzeSchematic);
-                  sortAnalyzationResults();
-                  switchSelectionTo(getBoxForSide(b), result);
-              },
-              (a) -> true
-            ).open();
-        });
+        super(new ResourceLocation(Constants.MOD_ID, "gui/analyzer/windowanalyze.xml"));
+        registerButton(BUTTON_CANCEL, b -> close());
+        registerButton(BUTTON_SELECT_SCHEMATIC, b -> new WindowExtendedBuildTool(
+            BlockPos.containing(Minecraft.getInstance().player.position().add(Minecraft.getInstance().player.getLookAngle().multiply(10, 10, 10))),
+            1,
+            (window, blueprint) -> {
+                Minecraft.getInstance().setScreen(this.getScreen());
+                final SchemAnalyzerUtil.SchematicAnalyzationResult result = analyzationResults.computeIfAbsent(blueprint, SchemAnalyzerUtil::analyzeSchematic);
+                sortAnalyzationResults();
+                switchSelectionTo(getBoxForSide(b), result);
+            },
+            (a) -> true
+        ).open());
 
         registerButton(BUTTON_SELECTION_LEFT, b -> {
             switchSelection(b, false);

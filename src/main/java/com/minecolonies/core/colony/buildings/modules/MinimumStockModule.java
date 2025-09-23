@@ -5,7 +5,6 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.modules.*;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.request.RequestState;
-import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.requestable.MinimumStack;
 import com.minecolonies.api.colony.requestsystem.requestable.Stack;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
@@ -35,14 +34,14 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_QUANTITY;
 public class MinimumStockModule extends AbstractBuildingModule implements IMinimumStockModule, IPersistentModule, ITickingModule, IAltersRequiredItems
 {
     /**
+     * The minimum stock tag.
+     */
+    public static final String TAG_MINIMUM_STOCK = "minstock";
+
+    /**
      * Minimum stock it can hold per level.
      */
     private static final int STOCK_PER_LEVEL = 5;
-
-    /**
-     * The minimum stock tag.
-     */
-    private static final String TAG_MINIMUM_STOCK = "minstock";
 
     /**
      * The minimum stock.
