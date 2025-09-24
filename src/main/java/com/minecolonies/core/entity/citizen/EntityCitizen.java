@@ -1578,7 +1578,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
                 MessageUtils.format(getCombatTracker().getDeathMessage())
                   .append(Component.literal("! "))
                     .append(Component.translatable(TranslationConstants.COLONIST_DEATH_LOCATION,
-                            BlockPosUtil.calcDirection(blockPosition(), getCitizenColonyHandler().getColonyOrRegister().getCenter()).getLongText())
+                            BlockPosUtil.calcDirection(getCitizenColonyHandler().getColonyOrRegister().getCenter(), blockPosition()).getLongText())
                         .withStyle(style -> style
                             .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
                                 Component.translatable("message.positiondist",
