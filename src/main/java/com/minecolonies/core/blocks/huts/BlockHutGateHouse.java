@@ -1,6 +1,7 @@
 package com.minecolonies.core.blocks.huts;
 
 import com.minecolonies.api.blocks.AbstractBlockHut;
+import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
@@ -79,6 +80,17 @@ public class BlockHutGateHouse extends AbstractBlockHut<BlockHutGateHouse>
             }
 
             return super.use(state, worldIn, pos, player, hand, ray);
+        }
+        else
+        {
+            final IColony colony = IColonyManager.getInstance().getIColony(worldIn, pos);
+            if (colony != null)
+            {
+                if (!colony.getPermissions().hasPermission(player, Action.ACCESS_HUTS))
+                {
+                    return InteractionResult.FAIL;
+                }
+            }
         }
         return InteractionResult.SUCCESS;
     }
