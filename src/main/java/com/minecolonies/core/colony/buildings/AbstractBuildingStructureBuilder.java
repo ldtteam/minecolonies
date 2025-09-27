@@ -16,6 +16,8 @@ import com.minecolonies.core.colony.buildings.modules.WorkerBuildingModule;
 import com.minecolonies.core.colony.buildings.utils.BuilderBucket;
 import com.minecolonies.core.colony.buildings.utils.BuildingBuilderResource;
 import com.minecolonies.core.colony.jobs.AbstractJobStructure;
+import com.minecolonies.core.entity.ai.workers.AbstractEntityAIStructure;
+import com.minecolonies.core.entity.ai.workers.AbstractEntityAIStructureWithWorkOrder;
 import com.minecolonies.core.entity.ai.workers.util.BuildingProgressStage;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
@@ -448,9 +450,14 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuilding
             {
                 abstractJobStructure.setWorkOrder(null);
                 this.cancelAllRequestsOfCitizenOrBuilding(citizen);
+                if (abstractJobStructure.getWorkerAI() instanceof AbstractEntityAIStructureWithWorkOrder<?,?> abstractEntityAIStructure)
+                {
+                    abstractEntityAIStructure.resetCurrentStructure();
+                }
             }
         }
-        this.setProgressPos(null, BuildingProgressStage.CLEAR);
+        resetNeededResources();
+        this.setProgressPos(null, null);
         this.cancelAllRequestsOfCitizenOrBuilding(null);
     }
 }
