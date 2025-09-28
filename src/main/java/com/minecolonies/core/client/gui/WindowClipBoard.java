@@ -121,6 +121,10 @@ public class WindowClipBoard extends AbstractWindowRequestTree
         }
 
         final IRequestManager requestManager = colony.getRequestManager();
+        if (requestManager == null)
+        {
+            return ImmutableList.of();
+        }
 
         try
         {
