@@ -246,6 +246,11 @@ public class CitizenData implements ICitizenData
     private String textureSuffix;
 
     /**
+     * Whether this citizen has a preserved name (set by nametag or special visitor).
+     */
+    private boolean hasPreservedName = false;
+
+    /**
      * The status icon to display
      */
     private VisibleCitizenStatus status;
@@ -816,6 +821,22 @@ public class CitizenData implements ICitizenData
     }
 
     @Override
+    public void regenerateName()
+    {
+        if (hasPreservedName)
+        {
+            return;
+        }
+
+        this.name = generateName(random, this.female, getColony(), getColony().getCitizenNameFile());
+        if (getEntity().isPresent())
+        {
+            getEntity().get().setCustomName(Component.literal(this.name));
+        }
+        markDirty(0);
+    }
+
+    @Override
     public void setGender(final boolean isFemale)
     {
         this.female = isFemale;
@@ -1160,6 +1181,21 @@ public class CitizenData implements ICitizenData
     }
 
     @Override
+    public void setName(final String name, final boolean isPreserved)
+    {
+        this.name = name;
+        this.hasPreservedName = isPreserved;
+        markDirty(0);
+    }
+
+    @Override
+    public void setHasPreservedName(final boolean hasPreservedName)
+    {
+        this.hasPreservedName = hasPreservedName;
+        markDirty(0);
+    }
+
+    @Override
     public void setLastPosition(final BlockPos lastPosition)
     {
         this.lastPosition = lastPosition;
@@ -1308,6 +1344,7 @@ public class CitizenData implements ICitizenData
         nbtTagCompound.putBoolean(TAG_PAUSED, paused);
         nbtTagCompound.putBoolean(TAG_CHILD, isChild);
         nbtTagCompound.putInt(TAG_TEXTURE, textureId);
+        nbtTagCompound.putBoolean(TAG_PRESERVED_NAME, hasPreservedName);
 
         nbtTagCompound.put(TAG_NEW_SKILLS, citizenSkillHandler.write());
 
@@ -1411,6 +1448,7 @@ public class CitizenData implements ICitizenData
         paused = nbtTagCompound.getBoolean(TAG_PAUSED);
         isChild = nbtTagCompound.getBoolean(TAG_CHILD);
         textureId = nbtTagCompound.getInt(TAG_TEXTURE);
+        hasPreservedName = nbtTagCompound.getBoolean(TAG_PRESERVED_NAME);
 
         if (nbtTagCompound.contains(TAG_SUFFIX))
         {

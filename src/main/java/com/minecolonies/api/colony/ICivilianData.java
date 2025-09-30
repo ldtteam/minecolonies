@@ -56,6 +56,11 @@ public interface ICivilianData extends ICitizen, INBTSerializable<CompoundTag>
     void setGenderAndGenerateName(boolean isFemale);
 
     /**
+     * Regenerates the name using the current gender and colony name pack.
+     */
+    void regenerateName();
+
+    /**
      * Sets the gender
      *
      * @param isFemale
@@ -208,4 +213,19 @@ public interface ICivilianData extends ICitizen, INBTSerializable<CompoundTag>
      * @return uuid
      */
     UUID getUUID();
+
+    /**
+     * Set the name with optional preserved flag.
+     *
+     * @param name the name to set.
+     * @param isPreserved true to mark this name as preserved (from nametag or special visitor) and prevent regeneration.
+     */
+    void setName(String name, boolean isPreserved);
+
+    /**
+     * Set whether this civilian has a preserved name.
+     *
+     * @param hasPreservedName true if the name should be preserved.
+     */
+    void setHasPreservedName(boolean hasPreservedName);
 }

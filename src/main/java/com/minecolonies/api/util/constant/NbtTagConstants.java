@@ -72,6 +72,7 @@ public final class NbtTagConstants
     public static final String TAG_PERIOD                 = "period";
     public static final String TAG_IS_BUILT               = "isBuilt";
     public static final String TAG_CUSTOM_NAME            = "customName";
+    public static final String TAG_PRESERVED_NAME         = "preservedName";
     public static final String TAG_OTHER_LEVEL            = "otherLevel";
     public static final String TAG_PASTEABLE              = "isPasteable";
     public static final String TAG_MOURNING               = "mourning";
