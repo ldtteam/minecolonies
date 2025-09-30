@@ -233,7 +233,7 @@ public class CustomVisitorListener extends SimpleJsonResourceReloadListener
 
             if (name != null)
             {
-                visitorData.setName(name);
+                visitorData.setName(name, true);
                 visitorData.getEntity().ifPresent(entity -> entity.setCustomName(Component.literal(name)));
             }
 
