@@ -1939,6 +1939,14 @@ public class Colony implements IColony
     public void setNameStyle(final String style)
     {
         this.nameStyle = style;
+        for (final ICitizenData citizen : citizenManager.getCitizens())
+        {
+            citizen.regenerateName();
+        }
+        for (final ICivilianData visitor : visitorManager.getCivilianDataMap().values())
+        {
+            visitor.regenerateName();
+        }
         this.markDirty();
     }
 

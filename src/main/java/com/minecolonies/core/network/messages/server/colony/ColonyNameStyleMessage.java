@@ -1,6 +1,8 @@
 package com.minecolonies.core.network.messages.server.colony;
 
+import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.eventbus.events.colony.ColonyNameStyleChangedModEvent;
 import com.minecolonies.core.network.messages.server.AbstractColonyServerMessage;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.network.NetworkEvent;
@@ -39,6 +41,7 @@ public class ColonyNameStyleMessage extends AbstractColonyServerMessage
     protected void onExecute(NetworkEvent.Context ctxIn, boolean isLogicalServer, IColony colony)
     {
         colony.setNameStyle(style);
+        IMinecoloniesAPI.getInstance().getEventBus().post(new ColonyNameStyleChangedModEvent(colony));
     }
 
     @Override
