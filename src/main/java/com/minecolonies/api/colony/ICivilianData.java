@@ -56,6 +56,11 @@ public interface ICivilianData extends ICitizen, INBTSerializable<CompoundTag>
     void setGenderAndGenerateName(boolean isFemale);
 
     /**
+     * Regenerates the name using the current gender and colony name pack.
+     */
+    void regenerateName();
+
+    /**
      * Sets the gender
      *
      * @param isFemale

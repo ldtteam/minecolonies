@@ -816,6 +816,17 @@ public class CitizenData implements ICitizenData
     }
 
     @Override
+    public void regenerateName()
+    {
+        this.name = generateName(random, this.female, getColony(), getColony().getCitizenNameFile());
+        if (getEntity().isPresent())
+        {
+            getEntity().get().setCustomName(Component.literal(this.name));
+        }
+        markDirty(0);
+    }
+
+    @Override
     public void setGender(final boolean isFemale)
     {
         this.female = isFemale;
