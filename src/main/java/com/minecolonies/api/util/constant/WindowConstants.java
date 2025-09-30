@@ -137,6 +137,11 @@ public final class WindowConstants
     public static final String BUTTON_BANNER_PICKER = "bannerPicker";
 
     /**
+     * Id of the regenerate names button in the GUI.
+     */
+    public static final String BUTTON_REGENERATE_NAMES = "regenerateNames";
+
+    /**
      * Id of the remove player button in the GUI.
      */
     public static final String BUTTON_REMOVE_PLAYER = "removePlayer";

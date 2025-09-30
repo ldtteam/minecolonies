@@ -367,7 +367,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
         {
             if (citizenData != null)
             {
-                citizenData.setHasPreservedName(true);
+                citizenData.setHasSpecialName(true);
             }
             return super.checkAndHandleImportantInteractions(player, hand);
         }

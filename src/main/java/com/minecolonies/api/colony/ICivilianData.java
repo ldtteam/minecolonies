@@ -223,9 +223,21 @@ public interface ICivilianData extends ICitizen, INBTSerializable<CompoundTag>
     void setName(String name, boolean isPreserved);
 
     /**
-     * Set whether this civilian has a preserved name.
+     * Set whether this civilian has a special name.
      *
-     * @param hasPreservedName true if the name should be preserved.
+     * @param hasSpecialName true if the name should be preserved.
      */
-    void setHasPreservedName(boolean hasPreservedName);
+    void setHasSpecialName(boolean hasSpecialName);
+
+    /**
+     * Check if the civilian has a special name (set by nametag or special visitor).
+     * @return true if the civilian has a special name.
+     */
+    boolean hasSpecialName();
+
+    /**
+     * Get the name pack this civilian was assigned when created.
+     * @return the name pack identifier.
+     */
+    String getAssignedNamePack();
 }

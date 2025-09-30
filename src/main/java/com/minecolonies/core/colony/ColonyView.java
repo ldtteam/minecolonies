@@ -223,6 +223,11 @@ public final class ColonyView implements IColonyView
     private String nameStyle;
 
     /**
+     * Whether there are citizens with mismatched name packs.
+     */
+    private boolean hasMismatchedNames = false;
+
+    /**
      * Statistic manager associated to the view.
      */
     private final IStatisticsManager statisticManager = new StatisticsManager();
@@ -322,6 +327,7 @@ public final class ColonyView implements IColonyView
         {
             buf.writeUtf(nameFileIndex);
         }
+        buf.writeBoolean(colony.hasCitizensWithMismatchedNamePack());
         //  Citizens are sent as a separate packet
 
         if (colony.getRequestManager() != null && (colony.getRequestManager().isDirty() || hasNewSubscribers))
@@ -777,6 +783,7 @@ public final class ColonyView implements IColonyView
         {
             nameFileIds.add(buf.readUtf(32767));
         }
+        this.hasMismatchedNames = buf.readBoolean();
 
         if (buf.readBoolean())
         {
@@ -1490,6 +1497,17 @@ public final class ColonyView implements IColonyView
     {
         this.nameStyle = style;
         this.markDirty();
+    }
+
+    @Override
+    public boolean hasCitizensWithMismatchedNamePack()
+    {
+        return hasMismatchedNames;
+    }
+
+    @Override
+    public void regenerateAllNames()
+    {
     }
 
     @Override

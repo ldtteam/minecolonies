@@ -246,9 +246,14 @@ public class CitizenData implements ICitizenData
     private String textureSuffix;
 
     /**
-     * Whether this citizen has a preserved name (set by nametag or special visitor).
+     * Whether this citizen has a special name (set by nametag or special visitor).
      */
-    private boolean hasPreservedName = false;
+    private boolean specialName = false;
+
+    /**
+     * The name pack this citizen was created with.
+     */
+    private String assignedNamePack = "";
 
     /**
      * The status icon to display
@@ -522,6 +527,7 @@ public class CitizenData implements ICitizenData
         paused = false;
         name = generateName(random, female, getColony(), getColony().getCitizenNameFile());
         textureId = random.nextInt(255);
+        assignedNamePack = getColony().getNameStyle();
 
         saturation = MAX_SATURATION;
 
@@ -785,6 +791,7 @@ public class CitizenData implements ICitizenData
             }
         }
         this.name = citizenName;
+        this.assignedNamePack = getColony().getNameStyle();
     }
 
     @Override
@@ -817,18 +824,20 @@ public class CitizenData implements ICitizenData
     {
         this.female = isFemale;
         this.name = generateName(random, isFemale, getColony(), getColony().getCitizenNameFile());
+        this.assignedNamePack = getColony().getNameStyle();
         markDirty(0);
     }
 
     @Override
     public void regenerateName()
     {
-        if (hasPreservedName)
+        if (specialName)
         {
             return;
         }
 
         this.name = generateName(random, this.female, getColony(), getColony().getCitizenNameFile());
+        this.assignedNamePack = getColony().getNameStyle();
         if (getEntity().isPresent())
         {
             getEntity().get().setCustomName(Component.literal(this.name));
@@ -1184,15 +1193,27 @@ public class CitizenData implements ICitizenData
     public void setName(final String name, final boolean isPreserved)
     {
         this.name = name;
-        this.hasPreservedName = isPreserved;
+        this.specialName = isPreserved;
         markDirty(0);
     }
 
     @Override
-    public void setHasPreservedName(final boolean hasPreservedName)
+    public void setHasSpecialName(final boolean hasSpecialName)
     {
-        this.hasPreservedName = hasPreservedName;
-        markDirty(0);
+        this.specialName = hasSpecialName;
+        markDirty(60);
+    }
+
+    @Override
+    public boolean hasSpecialName()
+    {
+        return specialName;
+    }
+
+    @Override
+    public String getAssignedNamePack()
+    {
+        return assignedNamePack;
     }
 
     @Override
@@ -1344,7 +1365,8 @@ public class CitizenData implements ICitizenData
         nbtTagCompound.putBoolean(TAG_PAUSED, paused);
         nbtTagCompound.putBoolean(TAG_CHILD, isChild);
         nbtTagCompound.putInt(TAG_TEXTURE, textureId);
-        nbtTagCompound.putBoolean(TAG_PRESERVED_NAME, hasPreservedName);
+        nbtTagCompound.putBoolean(TAG_SPECIAL_NAME, specialName);
+        nbtTagCompound.putString(TAG_NAME_PACK, assignedNamePack);
 
         nbtTagCompound.put(TAG_NEW_SKILLS, citizenSkillHandler.write());
 
@@ -1448,7 +1470,16 @@ public class CitizenData implements ICitizenData
         paused = nbtTagCompound.getBoolean(TAG_PAUSED);
         isChild = nbtTagCompound.getBoolean(TAG_CHILD);
         textureId = nbtTagCompound.getInt(TAG_TEXTURE);
-        hasPreservedName = nbtTagCompound.getBoolean(TAG_PRESERVED_NAME);
+        specialName = nbtTagCompound.getBoolean(TAG_SPECIAL_NAME);
+
+        if (nbtTagCompound.contains(TAG_NAME_PACK))
+        {
+            assignedNamePack = nbtTagCompound.getString(TAG_NAME_PACK);
+        }
+        else
+        {
+            assignedNamePack = getColony() != null ? getColony().getNameStyle() : "";
+        }
 
         if (nbtTagCompound.contains(TAG_SUFFIX))
         {

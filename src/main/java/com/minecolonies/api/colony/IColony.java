@@ -458,6 +458,10 @@ public interface IColony
      */
     void setNameStyle(final String style);
 
+    boolean hasCitizensWithMismatchedNamePack();
+
+    void regenerateAllNames();
+
     /**
      * Get the matching citizen name file of the colony .
      *

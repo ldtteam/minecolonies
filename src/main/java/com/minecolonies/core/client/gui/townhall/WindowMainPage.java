@@ -14,6 +14,7 @@ import com.minecolonies.core.client.gui.WindowBannerPicker;
 import com.minecolonies.core.client.gui.map.WindowColonyMap;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingTownHall;
 import com.minecolonies.core.network.messages.server.colony.ColonyNameStyleMessage;
+import com.minecolonies.core.network.messages.server.colony.ColonyRegenerateNamesMessage;
 import com.minecolonies.core.network.messages.server.colony.ColonyStructureStyleMessage;
 import com.minecolonies.core.network.messages.server.colony.ColonyTextureStyleMessage;
 import com.minecolonies.core.network.messages.server.colony.TeamColonyColorChangeMessage;
@@ -100,6 +101,7 @@ public class WindowMainPage extends AbstractWindowTownHall
         registerButton(BUTTON_MERCENARY, this::mercenaryClicked);
         registerButton(BUTTON_TOWNHALLMAP, this::mapButtonClicked);
         registerButton(BUTTON_PATREON, this::patreonClicked);
+        registerButton(BUTTON_REGENERATE_NAMES, this::regenerateNamesClicked);
 
         registerButton(BUTTON_COLONY_SWITCH_STYLE, this::switchPack);
 
@@ -258,7 +260,18 @@ public class WindowMainPage extends AbstractWindowTownHall
         final Pane textPane = findPaneByID(DROPDOWN_TEXT_ID);
         final Pane namePane = findPaneByID(DROPDOWN_NAME_ID);
         final Pane resetButton = findPaneByID(BUTTON_RESET_TEXTURE);
+        final Pane regenerateNamesButton = findPaneByID(BUTTON_REGENERATE_NAMES);
         final boolean isOwner = building.getColony().getPermissions().getOwner().equals(Minecraft.getInstance().player.getUUID());
+
+        if (building.getColony().hasCitizensWithMismatchedNamePack())
+        {
+            regenerateNamesButton.show();
+        }
+        else
+        {
+            regenerateNamesButton.hide();
+        }
+
         if (isFeatureUnlocked.get() && isOwner)
         {
             findPaneByID(BUTTON_PATREON).hide();
@@ -398,6 +411,14 @@ public class WindowMainPage extends AbstractWindowTownHall
     private void mapButtonClicked()
     {
         new WindowColonyMap(true, building).open();
+    }
+
+    /**
+     * Action performed when regenerate names button is clicked.
+     */
+    private void regenerateNamesClicked()
+    {
+        Network.getNetwork().sendToServer(new ColonyRegenerateNamesMessage(building.getColony()));
     }
 
     @Override
