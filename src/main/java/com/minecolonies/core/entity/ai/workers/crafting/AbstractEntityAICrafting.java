@@ -388,9 +388,9 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
             {
                 remaining = inputStorage.getAmount() * remainingOpsCount;
             }
-            if (InventoryUtils.getCountFromBuilding(building, itemStack -> ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, inputStorage.getItemStack(), false, true))
+            if (InventoryUtils.getCountFromBuilding(building, itemStack -> ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, inputStorage.getItemStack(), !inputStorage.ignoreDamageValue(), !inputStorage.ignoreNBT()))
                   + InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(),
-              itemStack -> ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, inputStorage.getItemStack(), false, true))
+              itemStack -> ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, inputStorage.getItemStack(), !inputStorage.ignoreDamageValue(), !inputStorage.ignoreNBT()))
                   + getExtendedCount(inputStorage.getItemStack())
                   < remaining)
             {
@@ -452,7 +452,8 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
         final List<ItemStorage> input = storage.getCleanedInput();
         for (final ItemStorage inputStorage : input)
         {
-            final Predicate<ItemStack> predicate = stack -> !ItemStackUtils.isEmpty(stack) && new Stack(stack, false).matches(inputStorage.getItemStack());
+            final Predicate<ItemStack> predicate = stack -> !ItemStackUtils.isEmpty(stack)
+                && ItemStackUtils.compareItemStacksIgnoreStackSize(stack, inputStorage.getItemStack(), !inputStorage.ignoreDamageValue(), !inputStorage.ignoreNBT());
             final int invCount = InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), predicate);
             final ItemStack container = inputStorage.getItemStack().getCraftingRemainingItem();
             final int remaining;

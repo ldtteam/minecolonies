@@ -131,7 +131,7 @@ public class RecipeStorageFactory implements IRecipeStorageFactory
         compound.put(ALTOUTPUT_TAG, altOutputTagList);
 
         @NotNull final ListTag secOutputTagList = new ListTag();
-        for (@NotNull final ItemStack stack : recipeStorage.getCraftingToolsAndSecondaryOutputs())
+        for (@NotNull final ItemStack stack : recipeStorage.getSecondaryOutputs())
         {
             @NotNull final CompoundTag neededRes = new CompoundTag();
             stack.save(neededRes);
@@ -236,8 +236,8 @@ public class RecipeStorageFactory implements IRecipeStorageFactory
         packetBuffer.writeVarInt(input.getAlternateOutputs().size());
         input.getAlternateOutputs().forEach(stack -> packetBuffer.writeItem(stack));
 
-        packetBuffer.writeVarInt(input.getCraftingToolsAndSecondaryOutputs().size());
-        input.getCraftingToolsAndSecondaryOutputs().forEach(stack -> packetBuffer.writeItem(stack));
+        packetBuffer.writeVarInt(input.getSecondaryOutputs().size());
+        input.getSecondaryOutputs().forEach(stack -> packetBuffer.writeItem(stack));
 
         packetBuffer.writeResourceLocation(input.getRequiredTool().getRegistryName());
 

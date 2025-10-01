@@ -161,7 +161,7 @@ public class RecipeStorage implements IRecipeStorage
             this.input = recipe.getInput();
             this.primaryOutput = recipe.getPrimaryOutput();
             this.alternateOutputs = recipe.getAlternateOutputs();
-            this.secondaryOutputs = recipe.getCraftingToolsAndSecondaryOutputs();
+            this.secondaryOutputs = recipe.getSecondaryOutputs();
             this.intermediate = recipe.getIntermediate();
             this.gridSize = recipe.getGridSize();
             this.token = null;
@@ -378,15 +378,31 @@ public class RecipeStorage implements IRecipeStorage
                 this.secondaryOutputs.add(container);
             }
 
+            boolean isToolDetected = false;
             for (ItemStack result : this.secondaryOutputs)
             {
                 if (ItemStackUtils.compareItemStacksIgnoreStackSize(inputItem.getItemStack(), result, false, true))
                 {
-                    inputItem = new ItemStorage(inputItem.getItemStack(), inputItem.getAmount(), true, inputItem.shouldIgnoreNBTValue);
+                    // For damageable tools (eg. GregTech), also set ignoreNBT=true since durability is stored in NBT
+                    final boolean ignoreNBT = inputItem.shouldIgnoreNBTValue || inputItem.getItemStack().isDamageableItem();
+                    inputItem = new ItemStorage(inputItem.getItemStack(), inputItem.getAmount(), true, ignoreNBT);
                     this.tools.add(result);
                     this.secondaryOutputs.remove(result);
+                    isToolDetected = true;
                     break;
                 }
+            }
+
+            // Check if this is a damageable item (e.g., GregTech tools, modded tools)
+            // These items are not consumed in crafting but take durability damage
+            // Set both ignoreDamageValue=true and ignoreNBT=true since GregTech stores
+            // crafting durability in NBT which changes with each use
+            if (!isToolDetected && inputItem.getItemStack().isDamageableItem())
+            {
+                inputItem = new ItemStorage(inputItem.getItemStack(), inputItem.getAmount(), true, true);
+                final ItemStack toolStack = inputItem.getItemStack().copy();
+                toolStack.setCount(inputItem.getAmount());
+                this.tools.add(toolStack);
             }
 
             ItemStorage storage = inputItem.copy();
@@ -455,7 +471,7 @@ public class RecipeStorage implements IRecipeStorage
             final int availableCount = InventoryUtils.getItemCountInItemHandlers(
               ImmutableList.copyOf(inventories),
               itemStack -> !ItemStackUtils.isEmpty(itemStack)
-                             && ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, stack, false, !storage.ignoreNBT()));
+                             && ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, stack, !storage.ignoreDamageValue(), !storage.ignoreNBT()));
 
             if (!canFulfillItemStorage(qty, existingRequirements, availableCount, storage))
             {
@@ -475,7 +491,7 @@ public class RecipeStorage implements IRecipeStorage
             final ItemStack stack = storage.getItemStack();
             final int availableCount = InventoryUtils.getItemCountInItemHandlers(citizen,
               itemStack -> !ItemStackUtils.isEmpty(itemStack)
-                             && ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, stack, false, !storage.ignoreNBT()))
+                             && ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, stack, !storage.ignoreDamageValue(), !storage.ignoreNBT()))
                                          + InventoryUtils.getCountFromBuilding(building, storage);;
 
             if (!canFulfillItemStorage(qty, existingRequirements, availableCount, storage))
@@ -599,7 +615,7 @@ public class RecipeStorage implements IRecipeStorage
     {
         if(hash == 0)
         {
-            hash = Objects.hash(cleanedInput, 
+            hash = Objects.hash(cleanedInput,
             primaryOutput.getItem(),
             primaryOutput.getCount(),
             intermediate,
@@ -698,10 +714,10 @@ public class RecipeStorage implements IRecipeStorage
 
             for (final IItemHandler handler : handlers)
             {
-                boolean isTool = ItemStackUtils.compareItemStackListIgnoreStackSize(tools, stack, false, !storage.ignoreNBT());
+                boolean isTool = ItemStackUtils.compareItemStackListIgnoreStackSize(tools, stack, !storage.ignoreDamageValue(), !storage.ignoreNBT());
                 int slotOfStack =
                   InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(handler, itemStack ->
-                          ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, stack, false, !storage.ignoreNBT()) &&
+                          ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, stack, !storage.ignoreDamageValue(), !storage.ignoreNBT()) &&
                                   (!isTool || !stack.isDamageableItem() || ItemStackUtils.getDurability(itemStack) > 0));
 
                 while (slotOfStack != -1 && amountNeeded > 0)
@@ -741,7 +757,7 @@ public class RecipeStorage implements IRecipeStorage
                         if (amountNeeded > 0)
                         {
                             slotOfStack = InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(handler,
-                            itemStack -> !ItemStackUtils.isEmpty(itemStack) && ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, stack, false, !storage.ignoreNBT()));
+                            itemStack -> !ItemStackUtils.isEmpty(itemStack) && ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, stack, !storage.ignoreDamageValue(), !storage.ignoreNBT()));
                         }
                     }
                 }
@@ -848,7 +864,7 @@ public class RecipeStorage implements IRecipeStorage
             }
         }
 
-        return null; 
+        return null;
     }
 
     @Override
@@ -860,7 +876,7 @@ public class RecipeStorage implements IRecipeStorage
     @Override
     public ResourceLocation getRecipeSource()
     {
-        return recipeSource; 
+        return recipeSource;
     }
 
     @NotNull

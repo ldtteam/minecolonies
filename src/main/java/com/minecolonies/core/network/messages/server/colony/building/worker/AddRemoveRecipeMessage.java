@@ -25,6 +25,7 @@ import net.minecraftforge.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.MESSAGE_RECIPE_SAVED;
 import static com.minecolonies.api.util.constant.TranslationConstants.UNABLE_TO_ADD_RECIPE_MESSAGE;
@@ -88,10 +89,14 @@ public class AddRemoveRecipeMessage extends AbstractBuildingServerMessage<IBuild
     {
         super(building);
         this.remove = remove;
+        // Filter out damageable items (tools) from additionalOutputs, they will be auto-detected in processInputsAndTools
+        final List<ItemStack> actualSecondaryOutputs = additionalOutputs.stream()
+                .filter(stack -> !stack.isDamageableItem())
+                .collect(Collectors.toList());
         this.storage = RecipeStorage.builder()
                 .withInputs(input)
                 .withPrimaryOutput(primaryOutput)
-                .withSecondaryOutputs(additionalOutputs)
+                .withSecondaryOutputs(actualSecondaryOutputs)
                 .withGridSize(gridSize)
                 .withIntermediate(gridSize == 1 ? Blocks.FURNACE : Blocks.AIR)
                 .build();
