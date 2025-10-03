@@ -1,8 +1,6 @@
 {
   "values": [
     "minecraft:rotten_flesh",
-    "minecraft:brown_mushroom",
-    "minecraft:red_mushroom",
     "minecraft:feather",
     "minecraft:pumpkin",
     "minecraft:carved_pumpkin",
@@ -49,6 +47,9 @@
     "#minecraft:fishes",
     "#minecraft:leaves",
     "#minecraft:wool",
+    "#c:foods/raw_fish",
+    "#c:foods/raw_meat",
+    "#c:mushrooms",
     "#minecolonies:fungi"
   ]
 }
