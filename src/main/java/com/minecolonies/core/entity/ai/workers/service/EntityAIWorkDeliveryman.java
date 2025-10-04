@@ -147,7 +147,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         setDelay(WALK_DELAY);
         final IRequest<? extends IDeliverymanRequestable> currentTask = job.getCurrentTask();
 
-        if (!(currentTask instanceof PickupRequest pickupRequest))
+        if (!(currentTask instanceof PickupRequest))
         {
             // The current task has changed since the Decision-state. Restart.
             return START_WORKING;
@@ -175,7 +175,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             return PICKUP;
         }
 
-        if (pickupFromBuilding(pickupBuilding, pickupRequest))
+        if (pickupFromBuilding(pickupBuilding))
         {
             this.alreadyKept = new ArrayList<>();
             this.currentSlot = 0;
@@ -206,11 +206,10 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
     /**
      * Gather not needed Items from building.
      *
-     * @param targetBuilding building to gather it from.
-     * @param request  the pickup request.
+     * @param building building to gather it from.
      * @return true when finished.
      */
-    private boolean pickupFromBuilding(@NotNull final IBuilding targetBuilding, final PickupRequest request)
+    private boolean pickupFromBuilding(@NotNull final IBuilding targetBuilding)
     {
         if (cannotHoldMoreItems() || InventoryUtils.openSlotCount(worker.getInventoryCitizen()) <= 0)
         {
@@ -242,6 +241,11 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
 
         final int amount = workerRequiresItem(targetBuilding, stack, alreadyKept);
         if (amount <= 0)
+        {
+            return false;
+        }
+
+        if (ItemStackUtils.isEmpty(handler.getStackInSlot(currentSlot)))
         {
             return false;
         }
