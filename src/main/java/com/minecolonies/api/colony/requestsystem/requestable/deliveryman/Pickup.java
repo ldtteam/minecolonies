@@ -8,7 +8,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -44,7 +44,6 @@ public class Pickup extends AbstractDeliverymanRequestable
     public static Pickup deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundTag compound)
     {
         final int priority = controller.deserialize(compound.getCompound(NBT_PRIORITY));
-
         return new Pickup(priority);
     }
 
@@ -70,6 +69,7 @@ public class Pickup extends AbstractDeliverymanRequestable
     public static Pickup deserialize(final IFactoryController controller, final FriendlyByteBuf buffer)
     {
         final int priority = buffer.readInt();
+
         return new Pickup(priority);
     }
 
