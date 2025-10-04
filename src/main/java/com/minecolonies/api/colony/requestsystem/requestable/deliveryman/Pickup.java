@@ -5,12 +5,8 @@ import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.util.ReflectionUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -29,7 +25,7 @@ public class Pickup extends AbstractDeliverymanRequestable
     /**
      * Constructor for Delivery requests
      *
-     * @param priority the priority of the request.
+     * @param priority The priority of the request.
      */
     public Pickup(final int priority)
     {
@@ -48,6 +44,7 @@ public class Pickup extends AbstractDeliverymanRequestable
     public static Pickup deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundTag compound)
     {
         final int priority = controller.deserialize(compound.getCompound(NBT_PRIORITY));
+
         return new Pickup(priority);
     }
 
