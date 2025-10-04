@@ -61,6 +61,7 @@ public class WorkOrderBuilding extends AbstractWorkOrder
                 break;
         }
 
+        final int currentLevel = building.isBuilt() && !building.isDeconstructed() ? building.getBuildingLevel() : 0;
         final int targetSchematicLevel = type == WorkOrderType.REMOVE ? building.getBuildingLevel() : targetLevel;
         String schemPath = building.getBlueprintPath().replace(".blueprint", "");
         schemPath = schemPath.substring(0, schemPath.length() - 1) + targetSchematicLevel + ".blueprint";
@@ -71,7 +72,7 @@ public class WorkOrderBuilding extends AbstractWorkOrder
           type,
           building.getID(),
           building.getTileEntity() == null ? building.getRotationMirror() : building.getTileEntity().getRotationMirror(),
-          building.getBuildingLevel(),
+          currentLevel,
           targetLevel);
         wo.setCustomName(building);
         return wo;
