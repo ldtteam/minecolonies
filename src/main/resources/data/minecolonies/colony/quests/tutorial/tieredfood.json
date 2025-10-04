@@ -92,7 +92,7 @@
       "unlocks-rewards": [0],
       "type": "minecolonies:dialogue",
       "target": 0,
-      "text": "Great, now that the Cookery is finished, make sure that your farmer grows the crops for the recipes. You can obtain the seeds from breaking blocks like grass, fern, bushes, etc! Here, have some Onion and Garlic to get started!",
+      "text": "Great, now that the Cookery is finished, make sure that your farmer grows the crops for the recipes. You can obtain the seeds from breaking blocks like grass, fern, bushes, etc with a hoe! Here, have some Onion and Garlic to get started!",
       "options": [
         {
           "answer": "Thank you. Bye!",

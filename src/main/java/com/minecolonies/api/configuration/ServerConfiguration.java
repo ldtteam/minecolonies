@@ -54,6 +54,7 @@ public class ServerConfiguration extends AbstractConfiguration
     public final ForgeConfigSpec.BooleanValue canPlayerUseHomeTPCommand;
     public final ForgeConfigSpec.BooleanValue canPlayerUseShowColonyInfoCommand;
     public final ForgeConfigSpec.BooleanValue canPlayerUseKillCitizensCommand;
+    public final ForgeConfigSpec.BooleanValue canPlayerUseModifyCitizensCommand;
     public final ForgeConfigSpec.BooleanValue canPlayerUseAddOfficerCommand;
     public final ForgeConfigSpec.BooleanValue canPlayerUseDeleteColonyCommand;
     public final ForgeConfigSpec.BooleanValue canPlayerUseResetCommand;
@@ -88,17 +89,16 @@ public class ServerConfiguration extends AbstractConfiguration
      *  ------------------- ######## Permission Settings ######## ------------------- *
      *  ----------------------------------------------------------------------------- */
 
-    public final ForgeConfigSpec.BooleanValue                        enableColonyProtection;
-    public final ForgeConfigSpec.EnumValue<Explosions>               turnOffExplosionsInColonies;
+    public final ForgeConfigSpec.BooleanValue          enableColonyProtection;
+    public final ForgeConfigSpec.EnumValue<Explosions> turnOffExplosionsInColonies;
 
     /*  -------------------------------------------------------------------------------- *
      *  ------------------- ######## Compatibility Settings ######## ------------------- *
      *  -------------------------------------------------------------------------------- */
 
-    public final ForgeConfigSpec.ConfigValue<List<? extends String>> configListRecruitmentItems;
-    public final ForgeConfigSpec.BooleanValue                        auditCraftingTags;
-    public final ForgeConfigSpec.BooleanValue                        debugInventories;
-    public final ForgeConfigSpec.BooleanValue                        blueprintBuildMode;
+    public final ForgeConfigSpec.BooleanValue auditCraftingTags;
+    public final ForgeConfigSpec.BooleanValue debugInventories;
+    public final ForgeConfigSpec.BooleanValue blueprintBuildMode;
 
     /*  ------------------------------------------------------------------------------ *
      *  ------------------- ######## Pathfinding Settings ######## ------------------- *
@@ -113,6 +113,12 @@ public class ServerConfiguration extends AbstractConfiguration
      *  --------------------------------------------------------------------------------- */
 
     public final ForgeConfigSpec.BooleanValue creativeResolve;
+
+    /*  --------------------------------------------------------------------------------- *
+     *  ------------------- ######## Debugging Settings ######## ------------------- *
+     *  --------------------------------------------------------------------------------- */
+
+    public final ForgeConfigSpec.BooleanValue netherWorkerTakesDamage;
 
     /**
      * Builds server configuration.
@@ -145,7 +151,7 @@ public class ServerConfiguration extends AbstractConfiguration
         swapToCategory(builder, "research");
         researchCreativeCompletion = defineBoolean(builder, "researchcreativecompletion", true);
         researchDebugLog = defineBoolean(builder, "researchdebuglog", false);
-        researchResetCost = defineList(builder, "researchresetcost", Arrays.asList("minecolonies:ancienttome:1"), s -> s instanceof String);
+        researchResetCost = defineList(builder, "researchresetcost", List.of("minecolonies:ancienttome:1"), s -> s instanceof String);
 
         swapToCategory(builder, "commands");
 
@@ -155,6 +161,7 @@ public class ServerConfiguration extends AbstractConfiguration
         canPlayerUseHomeTPCommand = defineBoolean(builder, "canplayerusehometpcommand", false);
         canPlayerUseShowColonyInfoCommand = defineBoolean(builder, "canplayeruseshowcolonyinfocommand", true);
         canPlayerUseKillCitizensCommand = defineBoolean(builder, "canplayerusekillcitizenscommand", false);
+        canPlayerUseModifyCitizensCommand = defineBoolean(builder, "canplayerusemodifycitizenscommand", false);
         canPlayerUseAddOfficerCommand = defineBoolean(builder, "canplayeruseaddofficercommand", true);
         canPlayerUseDeleteColonyCommand = defineBoolean(builder, "canplayerusedeletecolonycommand", false);
         canPlayerUseResetCommand = defineBoolean(builder, "canplayeruseresetcommand", false);
@@ -188,23 +195,6 @@ public class ServerConfiguration extends AbstractConfiguration
 
         swapToCategory(builder, "compatibility");
 
-        configListRecruitmentItems = defineList(builder, "configlistrecruitmentitems",
-          Arrays.asList
-                  ("minecraft:hay_block;3",
-                    "minecraft:book;2",
-                    "minecraft:enchanted_book;9",
-                    "minecraft:diamond;9",
-                    "minecraft:emerald;8",
-                    "minecraft:baked_potato;1",
-                    "minecraft:gold_ingot;2",
-                    "minecraft:redstone;2",
-                    "minecraft:lapis_lazuli;2",
-                    "minecraft:cake;11",
-                    "minecraft:sunflower;5",
-                    "minecraft:honeycomb;6",
-                    "minecraft:quartz;3"),
-          s -> s instanceof String);
-
         auditCraftingTags = defineBoolean(builder, "auditcraftingtags", false);
         debugInventories = defineBoolean(builder, "debuginventories", false);
         blueprintBuildMode = defineBoolean(builder, "blueprintbuildmode", false);
@@ -218,6 +208,10 @@ public class ServerConfiguration extends AbstractConfiguration
         swapToCategory(builder, "requestSystem");
 
         creativeResolve = defineBoolean(builder, "creativeresolve", false);
+
+        swapToCategory(builder, "debugging");
+
+        netherWorkerTakesDamage = defineBoolean(builder, "netherworkertakesdamage", true);
 
         finishCategory(builder);
     }

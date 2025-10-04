@@ -49,12 +49,10 @@ public final class ModBlocks
     public static AbstractBlockHut<? extends AbstractBlockHut<?>> blockHutStoneSmeltery;
     public static AbstractBlockHut<? extends AbstractBlockHut<?>> blockHutCrusher;
     public static AbstractBlockHut<? extends AbstractBlockHut<?>> blockHutSifter;
-    public static AbstractBlockHut<? extends AbstractBlockHut<?>> blockPostBox;
     public static AbstractBlockHut<? extends AbstractBlockHut<?>> blockHutFlorist;
     public static AbstractBlockHut<? extends AbstractBlockHut<?>> blockHutEnchanter;
     public static AbstractBlockHut<? extends AbstractBlockHut<?>> blockHutUniversity;
     public static AbstractBlockHut<? extends AbstractBlockHut<?>> blockHutHospital;
-    public static AbstractBlockHut<? extends AbstractBlockHut<?>> blockStash;
     public static AbstractBlockHut<? extends AbstractBlockHut<?>> blockHutSchool;
     public static AbstractBlockHut<? extends AbstractBlockHut<?>> blockHutGlassblower;
     public static AbstractBlockHut<? extends AbstractBlockHut<?>> blockHutDyer;
@@ -73,6 +71,10 @@ public final class ModBlocks
     //public static AbstractBlockHut<? extends AbstractBlockHut<?>> blockLargeQuarry;
     public static AbstractBlockHut<? extends AbstractBlockHut<?>> blockHutAlchemist;
     public static AbstractBlockHut<? extends AbstractBlockHut<?>> blockHutKitchen;
+    public static AbstractBlockHut<? extends AbstractBlockHut<?>> blockHutGateHouse;
+
+    public static AbstractColonyBlock<? extends AbstractColonyBlock<?>> blockStash;
+    public static AbstractColonyBlock<? extends AbstractColonyBlock<?>> blockPostBox;
 
     /**
      * Utility blocks.
@@ -92,7 +94,8 @@ public final class ModBlocks
     public static AbstractBlockGate                                                                                 blockIronGate;
     public static AbstractBlockGate                                                                                 blockWoodenGate;
     public static MinecoloniesFarmland                                                                              farmland;
-    public static MinecoloniesFarmland                                                                              floodedFarmland;
+    public static MinecoloniesFarmland                                              floodedFarmland;
+    public static AbstractBlockMinecolonies<? extends AbstractBlockMinecolonies<?>> blockColonySign;
 
     public static MinecoloniesCropBlock blockBellPepper;
     public static MinecoloniesCropBlock blockCabbage;
@@ -120,9 +123,9 @@ public final class ModBlocks
     }
 
     @NotNull
-    public static AbstractBlockHut<?>[] getHuts()
+    public static AbstractColonyBlock<?>[] getHuts()
     {
-        return new AbstractBlockHut[] {
+        return new AbstractColonyBlock[] {
           blockHutTownHall,
           blockHutHome,
           blockHutTavern,
@@ -173,6 +176,7 @@ public final class ModBlocks
           blockHutNetherWorker,
           blockHutAlchemist,
           blockHutKitchen,
+          blockHutGateHouse,
           blockSimpleQuarry,
           blockMediumQuarry,
           //blockLargeQuarry

@@ -17,6 +17,7 @@ import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.ColonyConstants;
 import com.minecolonies.core.MineColonies;
 import com.minecolonies.core.colony.Colony;
+import com.minecolonies.core.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.core.colony.buildings.modules.LivingBuildingModule;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingGuardTower;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingTownHall;
@@ -913,7 +914,7 @@ public class RaidManager implements IRaiderManager
 
                     for (int i = 0; i < possibleGuards.size() && i <= 3; i++)
                     {
-                        ((AbstractEntityAIGuard<?, ?>) possibleGuards.get(i).getCitizenData().getJob().getWorkerAI()).setNextPatrolTargetAndMove(lastBuilding);
+                        ((AbstractBuildingGuards) possibleGuards.get(i).getCitizenData().getWorkBuilding()).setTempNextPatrolPoint(lastBuilding);
                     }
                 }
 

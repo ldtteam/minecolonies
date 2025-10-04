@@ -146,9 +146,9 @@ public abstract class AbstractEntityAIFight<J extends AbstractJobGuard<J>, B ext
      */
     protected void atBuildingActions()
     {
-        for (final GuardGear item : itemsNeeded.get(building.getBuildingLevel() - 1))
+        for (final GuardGear item : itemsNeeded.get(building.getBuildingLevelEquivalent() - 1))
         {
-            if (!(building.getBuildingLevel() >= item.getMinBuildingLevelRequired() && building.getBuildingLevel() <= item.getMaxBuildingLevelRequired()))
+            if (!(building.getBuildingLevelEquivalent() >= item.getMinBuildingLevelRequired() && building.getBuildingLevelEquivalent() <= item.getMaxBuildingLevelRequired()))
             {
                 continue;
             }
@@ -275,7 +275,7 @@ public abstract class AbstractEntityAIFight<J extends AbstractJobGuard<J>, B ext
     {
         cleanVisibleSlots();
         final Set<EquipmentSlot> equipment = new HashSet<>();
-        for (final GuardGear item : itemsNeeded.get(building.getBuildingLevel() - 1))
+        for (final GuardGear item : itemsNeeded.get(building.getBuildingLevelEquivalent() - 1))
         {
             if (equipment.contains(item.getType()))
             {
@@ -283,7 +283,7 @@ public abstract class AbstractEntityAIFight<J extends AbstractJobGuard<J>, B ext
             }
             if (item.getType().isArmor())
             {
-                if (building.getBuildingLevel() >= item.getMinBuildingLevelRequired() && building.getBuildingLevel() <= item.getMaxBuildingLevelRequired())
+                if (building.getBuildingLevelEquivalent() >= item.getMinBuildingLevelRequired() && building.getBuildingLevelEquivalent() <= item.getMaxBuildingLevelRequired())
                 {
                     int slot = InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(worker.getInventoryCitizen(), item);
                     if (slot <= -1)
@@ -307,8 +307,8 @@ public abstract class AbstractEntityAIFight<J extends AbstractJobGuard<J>, B ext
             }
             else
             {
-                if (ItemStackUtils.isEmpty(worker.getItemBySlot(item.getType())) && building.getBuildingLevel() >= item.getMinBuildingLevelRequired()
-                      && building.getBuildingLevel() <= item.getMaxBuildingLevelRequired())
+                if (ItemStackUtils.isEmpty(worker.getItemBySlot(item.getType())) && building.getBuildingLevelEquivalent() >= item.getMinBuildingLevelRequired()
+                      && building.getBuildingLevelEquivalent() <= item.getMaxBuildingLevelRequired())
                 {
                     equipment.add(item.getType());
                     int slot = InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(worker.getInventoryCitizen(), item);

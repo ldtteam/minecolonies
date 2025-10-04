@@ -1,5 +1,6 @@
 package com.minecolonies.core.colony.buildingextensions;
 
+
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildingextensions.registry.BuildingExtensionRegistries;
@@ -15,7 +16,15 @@ import net.minecraft.world.level.block.FenceBlock;
 import net.minecraft.world.level.block.FenceGateBlock;
 import net.minecraft.world.level.block.WallBlock;
 import net.minecraft.world.level.block.state.BlockState;
+
+import java.util.Locale;
+
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+
 import org.jetbrains.annotations.NotNull;
+
+import static com.minecolonies.api.util.constant.TranslationConstants.FIELD_STATUS;
 
 /**
  * Field class implementation for the plantation
@@ -236,8 +245,50 @@ public class FarmField extends AbstractBuildingExtensionModule
      */
     public enum Stage
     {
-        EMPTY,
-        HOED,
-        PLANTED
+        EMPTY(new ResourceLocation("minecraft", "textures/item/iron_hoe.png")), 
+        HOED(new ResourceLocation("minecraft", "textures/item/wheat_seeds.png")), 
+        PLANTED(new ResourceLocation("minecolonies", "textures/item/crops/durum.png"));
+
+        protected final ResourceLocation stageIcon;
+
+        private Stage(ResourceLocation stageIcon)
+        {
+            this.stageIcon = stageIcon;
+        }
+
+        /**
+         * Gets the status icon of the current stage in the farm field's progress.
+         *
+         * @return the status icon of the current stage.
+         */
+        public ResourceLocation getStageIcon()
+        {
+            return stageIcon;
+        }
+
+        /**
+         * Gets the translatable text of the current stage in the farm field's progress.
+         * 
+         * @return the translatable text of the current stage.
+         */
+        public Component getStageText()
+        {
+            return Component.translatable(FIELD_STATUS + "." + name().toLowerCase(Locale.ROOT));
+        }
+
+
+        /**
+         * Get the next stage in the field's progression.
+         * 
+         * @return the next Stage, or the first Stage if the current one is the last.
+         */
+        public Stage getNextStage()
+        {
+            if (ordinal() + 1 >= values().length)
+            {
+                return values()[0];
+            }
+            return values()[ordinal() + 1];
+        }
     }
 }

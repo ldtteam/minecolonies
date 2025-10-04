@@ -282,7 +282,7 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
      */
     public static double getFoodFactor(final ICitizenData citizenData)
     {
-        final int homeBuildingLevel = citizenData.getHomeBuilding() == null ? 0 : citizenData.getHomeBuilding().getBuildingLevel();
+        final int homeBuildingLevel = citizenData.getHomeBuilding() == null ? 0 : citizenData.getHomeBuilding().getBuildingLevelEquivalent();
         final ICitizenFoodHandler foodHandler = citizenData.getCitizenFoodHandler();
         if (homeBuildingLevel == 0 || !foodHandler.hasFullFoodHistory())
         {

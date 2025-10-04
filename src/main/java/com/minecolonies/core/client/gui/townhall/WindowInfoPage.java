@@ -4,6 +4,7 @@ import com.ldtteam.blockui.Pane;
 import com.ldtteam.blockui.PaneBuilders;
 import com.ldtteam.blockui.controls.Button;
 import com.ldtteam.blockui.controls.Text;
+import com.ldtteam.blockui.views.DropDownList;
 import com.ldtteam.blockui.views.ScrollingList;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.colonyEvents.descriptions.IBuildingEventDescription;
@@ -19,10 +20,13 @@ import com.minecolonies.core.network.messages.server.colony.WorkOrderChangeMessa
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.WindowConstants.*;
+import static com.minecolonies.core.client.gui.townhall.WindowStatsPage.INTERVAL;
 
 /**
  * BOWindow for the town hall.
@@ -35,9 +39,14 @@ public class WindowInfoPage extends AbstractWindowTownHall
     private final List<IWorkOrderView> workOrders = new ArrayList<>();
 
     /**
-     * The ScrollingList of the events.
+     * Drop down list for interval.
      */
-    private ScrollingList eventList;
+    private DropDownList intervalDropdown;
+
+    /**
+     * Current selected interval.
+     */
+    public String selectedInterval = "com.minecolonies.coremod.gui.interval.alltime";
 
     /**
      * Constructor for the town hall window.
@@ -52,6 +61,35 @@ public class WindowInfoPage extends AbstractWindowTownHall
         registerButton(BUTTON_UP, this::updatePriority);
         registerButton(BUTTON_DOWN, this::updatePriority);
         registerButton(BUTTON_DELETE, this::deleteWorkOrder);
+
+        intervalDropdown = findPaneOfTypeByID(DROPDOWN_INTERVAL_ID, DropDownList.class);
+        intervalDropdown.setHandler(this::onDropDownListChanged);
+
+        intervalDropdown.setDataProvider(new DropDownList.DataProvider()
+        {
+            @Override
+            public int getElementCount()
+            {
+                return INTERVAL.size();
+            }
+
+            @Override
+            public String getLabel(final int index)
+            {
+                return Component.translatable((String) INTERVAL.keySet().toArray()[index]).getString();
+            }
+        });
+        intervalDropdown.setSelectedIndex(new ArrayList<>(INTERVAL.keySet()).indexOf(selectedInterval));
+    }
+
+    private void onDropDownListChanged(final DropDownList dropDownList)
+    {
+        final String temp = (String) INTERVAL.keySet().toArray()[dropDownList.getSelectedIndex()];
+        if (!temp.equals(selectedInterval))
+        {
+            selectedInterval = temp;
+            fillEventsList();
+        }
     }
 
     /**
@@ -65,16 +103,32 @@ public class WindowInfoPage extends AbstractWindowTownHall
         fillEventsList();
     }
 
-
     private void fillEventsList()
     {
-        eventList = findPaneOfTypeByID(EVENTS_LIST, ScrollingList.class);
-        eventList.setDataProvider(new ScrollingList.DataProvider()
+        final List<IColonyEventDescription> events;
+        int interval = INTERVAL.get(selectedInterval);
+        if (interval < 0)
+        {
+            events = new ArrayList<>(building.getColonyEvents());
+        }
+        else
+        {
+            events = new ArrayList<>();
+            for (IColonyEventDescription event : building.getColonyEvents())
+            {
+                if (event.getDay() >= building.getColony().getDay() - interval)
+                {
+                    events.add(event);
+                }
+            }
+        }
+
+        findPaneOfTypeByID(EVENTS_LIST, ScrollingList.class).setDataProvider(new ScrollingList.DataProvider()
         {
             @Override
             public int getElementCount()
             {
-                return building.getColonyEvents().size();
+                return events.size();
             }
 
             @Override
@@ -83,7 +137,7 @@ public class WindowInfoPage extends AbstractWindowTownHall
                 final Text nameLabel = rowPane.findPaneOfTypeByID(NAME_LABEL, Text.class);
                 final Text actionLabel = rowPane.findPaneOfTypeByID(ACTION_LABEL, Text.class);
 
-                final IColonyEventDescription event = building.getColonyEvents().get(index);
+                final IColonyEventDescription event = events.get(index);
                 if (event instanceof CitizenDiedEvent)
                 {
                     actionLabel.setText(Component.literal(((CitizenDiedEvent) event).getDeathCause()));
@@ -92,6 +146,7 @@ public class WindowInfoPage extends AbstractWindowTownHall
                 {
                     actionLabel.setText(Component.literal(event.getName()));
                 }
+
                 if (event instanceof ICitizenEventDescription)
                 {
                     nameLabel.setText(Component.literal(((ICitizenEventDescription) event).getCitizenName()));
@@ -141,7 +196,7 @@ public class WindowInfoPage extends AbstractWindowTownHall
         for (int i = 0; i < workOrders.size(); i++)
         {
             final IWorkOrderView workOrder = workOrders.get(i);
-            if (workOrder.getId() == id)
+            if (workOrder.getID() == id)
             {
                 if (buttonLabel.equals(BUTTON_UP) && i > 0)
                 {
@@ -171,7 +226,7 @@ public class WindowInfoPage extends AbstractWindowTownHall
         final int id = Integer.parseInt(button.getParent().findPaneOfTypeByID("hiddenId", Text.class).getTextAsString());
         for (int i = 0; i < workOrders.size(); i++)
         {
-            if (workOrders.get(i).getId() == id)
+            if (workOrders.get(i).getID() == id)
             {
                 workOrders.remove(i);
                 break;
@@ -236,7 +291,7 @@ public class WindowInfoPage extends AbstractWindowTownHall
                 PaneBuilders.tooltipBuilder().append(workOrder.getDisplayName()).hoverPane(workOrderTextPanel).build();
                 workOrderTextPanel.setText(Component.literal(workOrder.getDisplayName().getString().replace("\n", ": ")));
                 rowPane.findPaneOfTypeByID(ASSIGNEE_LABEL, Text.class).setText(Component.literal(claimingCitizen));
-                rowPane.findPaneOfTypeByID(HIDDEN_WORKORDER_ID, Text.class).setText(Component.literal(Integer.toString(workOrder.getId())));
+                rowPane.findPaneOfTypeByID(HIDDEN_WORKORDER_ID, Text.class).setText(Component.literal(Integer.toString(workOrder.getID())));
             }
         });
     }

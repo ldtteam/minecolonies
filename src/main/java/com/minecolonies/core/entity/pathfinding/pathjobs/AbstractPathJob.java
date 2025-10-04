@@ -157,6 +157,11 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
     private MNode startNode = null;
 
     /**
+     * Current best node
+     */
+    private MNode bestNode = null;
+
+    /**
      * Visited level
      */
     private int visitedLevel = 1;
@@ -327,7 +332,7 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
     @Nullable
     protected Path search()
     {
-        MNode bestNode = getAndSetupStartNode();
+        bestNode = getAndSetupStartNode();
         double bestNodeEndScore = getEndNodeScore(bestNode);
         // Node count since we found a better end node than the current one
         int nodesSinceEndNode = 0;
@@ -582,6 +587,12 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
         if (costPerEstimation <= 0.0)
         {
             return false;
+        }
+
+        // When reaching and never having done a heuristic rebalance and we did explore a high cost assume that we found a possibly too expensive path
+        if (reaches && maxCost > 20 && visitedLevel == 1 && totalNodesVisited < maxNodes * 0.5)
+        {
+            costPerEstimation *= 0.7;
         }
 
         // Detect an overstimating heuristic(not guranteed, but can check the found path)
@@ -847,6 +858,8 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
         if (!corner)
         {
             MNode costFrom = node;
+
+            dY = nextY - node.y;
             // Base cost calc on parent if we're expanding from a corner node
             if (node.isCornerNode() && node.parent != null)
             {
@@ -1355,10 +1368,10 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
                         return true;
                     }
 
-                    // We cannot enter a space of a trapdoor if its facing the opposite direction.
+                    // We cannot enter a space of a trapdoor if its facing the opposite direction, unless we are above it
                     if (direction == facing)
                     {
-                        return false;
+                        return dY < 0;
                     }
 
                     return true;
@@ -1385,9 +1398,8 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
                     return true;
                 }
 
-                if (ShapeUtil.isEmpty(shape) || ShapeUtil.max(shape, Direction.Axis.Y) <= 0.1 && !PathfindingUtils.isLiquid((block)) && (block.getBlock() != Blocks.SNOW
-                                                                                                                                           || block.getValue(SnowLayerBlock.LAYERS)
-                                                                                                                                                == 1))
+                if (ShapeUtil.isEmpty(shape) || ShapeUtil.max(shape, Direction.Axis.Y) <= 0.1
+                    && !PathfindingUtils.isLiquid((block)) && (block.getBlock() != Blocks.SNOW || block.getValue(SnowLayerBlock.LAYERS) == 1))
                 {
                     final BlockPathTypes pathType = block.getBlockPathType(world, tempWorldPos.set(x, y, z), entity);
                     if (pathType == null || pathType.getDanger() == null)
@@ -1546,6 +1558,10 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
         for (int i = 2; i <= (pathingOptions.canDrop ? 10 : 2); i++)
         {
             final BlockState below = cachedBlockLookup.getBlockState(x, y - i, z);
+            if (!canLeaveBlock(x, y - 1, z, x, y, z, false))
+            {
+                return Integer.MIN_VALUE;
+            }
             if (SurfaceType.getSurfaceType(world, below, tempWorldPos.set(x, y - i, z), getPathingOptions()) == SurfaceType.WALKABLE)
             {
                 //  Level path
@@ -1599,26 +1615,32 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
         int parentX = parent == null ? start.getX() : parent.x;
         int parentY = parent == null ? start.getY() : parent.y;
         int parentZ = parent == null ? start.getZ() : parent.z;
-        if (head)
-        {
-            parentY++;
-        }
+        return canLeaveBlock(x, y, z, parentX, head ? parentY + 1 : parentY, parentZ, head);
+    }
 
+    /**
+     * Check if we can leave the block at this pos.
+     *
+     * @return true if so.
+     */
+    private boolean canLeaveBlock(final int x, final int y, final int z, final int parentX, final int parentY, final int parentZ, final boolean head)
+    {
         final int dY = y - parentY;
 
-        final BlockState parentBlock = cachedBlockLookup.getBlockState(parentX, parentY, parentZ);
-        if (parentBlock.getBlock() instanceof TrapDoorBlock || parentBlock.getBlock() instanceof PanelBlock)
+        final BlockState parentBlockState = cachedBlockLookup.getBlockState(parentX, parentY, parentZ);
+        final Block parentBlock = parentBlockState.getBlock();
+        if (parentBlock instanceof TrapDoorBlock || parentBlock instanceof PanelBlock)
         {
-            if (!parentBlock.getValue(TrapDoorBlock.OPEN))
+            if (!parentBlockState.getValue(TrapDoorBlock.OPEN))
             {
                 if (dY != 0)
                 {
-                    if (parentBlock.getBlock() instanceof TrapDoorBlock)
+                    if (parentBlock instanceof TrapDoorBlock)
                     {
                         return true;
                     }
-                    return (head && parentBlock.getValue(PanelBlock.HALF) == Half.TOP && dY < 0) || (!head && parentBlock.getValue(PanelBlock.HALF) == Half.BOTTOM
-                                                                                                       && dY > 0);
+                    return (head && parentBlockState.getValue(PanelBlock.HALF) == Half.TOP && dY < 0)
+                        || (!head && parentBlockState.getValue(PanelBlock.HALF) == Half.BOTTOM && dY > 0);
                 }
                 return true;
             }
@@ -1626,11 +1648,22 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
             {
                 // Check if we can leave the current block, there might be a trapdoor or panel blocking us.
                 final Direction direction = BlockPosUtil.getXZFacing(parentX, parentZ, x, z);
-                final Direction facing = parentBlock.getValue(TrapDoorBlock.FACING);
+                final Direction facing = parentBlockState.getValue(TrapDoorBlock.FACING);
                 if (direction == facing.getOpposite())
                 {
                     return false;
                 }
+            }
+        }
+        else if (parentBlock instanceof FloatingCarpetBlock)
+        {
+            if (dY < 0)
+            {
+                return head;
+            }
+            else if (dY > 0)
+            {
+                return !head;
             }
         }
         return true;
@@ -1838,7 +1871,8 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
     @Override
     public String toString()
     {
-        return getClass().getSimpleName() + " start:" + start + " entity:" + entity + " maxNodes:" + maxNodes + " totalNodesVisited:" + totalNodesVisited + " h-rebalances:" + (
+        return getClass().getSimpleName() + " start:" + start + " entity:" + entity + " maxNodes:" + maxNodes + " totalNodesVisited:" + totalNodesVisited + " bestNodeCost:"
+            + bestNode.getCost() + " heuristicCostEstimate:" + startNode.getHeuristic() + " h-rebalances:" + (
             visitedLevel - 1) + " reaches:"
             + reachesDestination;
     }

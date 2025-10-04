@@ -3,31 +3,34 @@ package com.minecolonies.core.colony.buildings.modules;
 import com.ldtteam.blockui.views.BOWindow;
 import com.ldtteam.structurize.blockentities.interfaces.IBlueprintDataProviderBE;
 import com.minecolonies.api.colony.*;
+import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.modules.*;
 import com.minecolonies.api.colony.buildings.modules.stat.IStat;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.sounds.TavernSounds;
 import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.api.util.Tuple;
+import com.minecolonies.api.util.StatsUtil;
+import com.minecolonies.api.util.MathUtils;
 import com.minecolonies.core.Network;
 import com.minecolonies.core.client.gui.huts.WindowHutLiving;
 import com.minecolonies.core.colony.buildings.views.LivingBuildingView;
 import com.minecolonies.core.colony.eventhooks.citizenEvents.VisitorSpawnedEvent;
 import com.minecolonies.core.colony.interactionhandling.RecruitmentInteraction;
 import com.minecolonies.core.datalistener.CustomVisitorListener;
+import com.minecolonies.core.datalistener.RecruitmentItemsListener;
 import com.minecolonies.core.network.messages.client.colony.PlayMusicAtPosMessage;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,10 +39,10 @@ import java.util.Map;
 import static com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickRateConstants.MAX_TICKRATE;
 import static com.minecolonies.api.util.constant.Constants.MAX_STORY;
 import static com.minecolonies.api.util.constant.Constants.TAG_COMPOUND;
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_VISITORS;
-import static com.minecolonies.api.util.constant.SchematicTagConstants.TAG_SITTING;
-import static com.minecolonies.api.util.constant.SchematicTagConstants.TAG_WORK;
-
+import static com.minecolonies.api.util.constant.NbtTagConstants.*;
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_WORK;
+import static com.minecolonies.api.util.constant.SchematicTagConstants.*;
+import static com.minecolonies.api.util.constant.StatisticsConstants.NEW_VISITORS;
 /**
  * Tavern building for the colony. Houses 4 citizens Plays a tavern theme on entering Spawns/allows citizen recruitment Spawns trader/quest npcs
  */
@@ -49,14 +52,6 @@ public class TavernBuildingModule extends AbstractBuildingModule implements IDef
      * Schematic name
      */
     public static final String TAG_VISITOR_ID = "visitor";
-
-    /**
-     * Skill levels
-     */
-    private static final int LEATHER_SKILL_LEVEL = 20;
-    private static final int GOLD_SKILL_LEVEL    = 25;
-    private static final int IRON_SKILL_LEVEL    = 30;
-    private static final int DIAMOND_SKILL_LEVEL = 35;
 
     /**
      * Music interval
@@ -154,10 +149,9 @@ public class TavernBuildingModule extends AbstractBuildingModule implements IDef
 
         if (building.getBuildingLevel() > 0 && externalCitizens.size() < 3 * building.getBuildingLevel() && noVisitorTime <= 0)
         {
-            spawnVisitor();
-            noVisitorTime =
-              colony.getWorld().getRandom().nextInt(3000) + (6000 / building.getBuildingLevel()) * colony.getCitizenManager().getCurrentCitizenCount() / colony.getCitizenManager()
-                                                                                                                                                  .getMaxCitizens();
+            spawnVisitorInternal();
+            noVisitorTime = colony.getWorld().getRandom().nextInt(3000)
+                + (6000 / building.getBuildingLevel()) * colony.getCitizenManager().getCurrentCitizenCount() / colony.getCitizenManager().getMaxCitizens();
         }
     }
 
@@ -168,79 +162,83 @@ public class TavernBuildingModule extends AbstractBuildingModule implements IDef
     }
 
     /**
-     * Spawns a recruitable visitor citizen.
+     * Spawns a visitor specifically for the tavern logic.
      */
-    private void spawnVisitor()
+    private void spawnVisitorInternal()
     {
-        IVisitorData newCitizen = (IVisitorData) building.getColony().getVisitorManager().createAndRegisterCivilianData();
-        externalCitizens.add(newCitizen.getId());
-
-        newCitizen.setBedPos(building.getPosition());
-        newCitizen.setHomeBuilding(building);
-
-        int recruitLevel = building.getColony().getWorld().random.nextInt(10 * building.getBuildingLevel()) + 15;
-        List<com.minecolonies.api.util.Tuple<Item, Integer>> recruitCosts = IColonyManager.getInstance().getCompatibilityManager().getRecruitmentCostsWeights();
-
-        if (newCitizen.getName().contains("Ray"))
+        final IVisitorData visitorData = spawnVisitor();
+        if (visitorData != null && !CustomVisitorListener.chanceCustomVisitors(visitorData))
         {
-            newCitizen.setRecruitCosts(new ItemStack(Items.BAKED_POTATO, 64));
+            visitorData.triggerInteraction(new RecruitmentInteraction(Component.translatable(
+                "com.minecolonies.coremod.gui.chat.recruitstory" + (building.getColony().getWorld().random.nextInt(MAX_STORY) + 1), visitorData.getName().split(" ")[0]),
+                ChatPriority.IMPORTANT));
+        }
+    }
+
+    /**
+     * Spawns a visitor citizen that can be recruited.
+     */
+    @Nullable
+    public IVisitorData spawnVisitor()
+    {
+        final RecruitmentItemsListener.RecruitCost cost = RecruitmentItemsListener.getRandomRecruitCost(building.getBuildingLevel());
+        if (cost == null)
+        {
+            return null;
         }
 
-        newCitizen.getCitizenSkillHandler().init(recruitLevel);
+        final IVisitorData newCitizen = (IVisitorData) building.getColony().getVisitorManager().createAndRegisterCivilianData();
+        newCitizen.setBedPos(building.getPosition());
+        newCitizen.setHomeBuilding(building);
+        newCitizen.getCitizenSkillHandler().init(cost.recruitLevel());
 
-        BlockPos spawnPos = BlockPosUtil.findSpawnPosAround(building.getColony().getWorld(), building.getPosition());
+        final ItemStack recruitCostItem = cost.recruitItem().copy();
+        recruitCostItem.setCount(Math.min(cost.recruitItem().getMaxStackSize(), recruitCostItem.getCount() + MathUtils.RANDOM.nextInt(3)));
+        newCitizen.setRecruitCosts(recruitCostItem);
+
+        BlockPos spawnPos;
+        final BlockPos gatePos = building.getColony().getBuildingManager().getRandomBuilding(b -> b.getBuildingType() == ModBuildings.gateHouse.get());
+        if (gatePos != null)
+        {
+            final IBuilding gateHouseBuilding = building.getColony().getBuildingManager().getBuilding(gatePos);
+            if (gateHouseBuilding != null)
+            {
+                final List<BlockPos> gatePositions = gateHouseBuilding.getLocationsFromTag(TAG_GATE);
+                if (gatePositions.isEmpty())
+                {
+                    spawnPos = BlockPosUtil.findSpawnPosAround(building.getColony().getWorld(), gatePos);
+                }
+                else
+                {
+                    spawnPos = BlockPosUtil.findSpawnPosAround(building.getColony().getWorld(), gatePositions.get(MathUtils.RANDOM.nextInt(gatePositions.size())));
+                }
+            }
+            else
+            {
+                spawnPos = BlockPosUtil.findSpawnPosAround(building.getColony().getWorld(), gatePos);
+            }
+        }
+        else
+        {
+            spawnPos = BlockPosUtil.findSpawnPosAround(building.getColony().getWorld(), building.getPosition());
+        }
+
         if (spawnPos == null)
         {
             spawnPos = building.getPosition();
         }
 
-        Tuple<Item, Integer> cost = recruitCosts.get(building.getColony().getWorld().random.nextInt(recruitCosts.size()));
-
-        ItemStack boots = ItemStack.EMPTY;
-        if (recruitLevel > LEATHER_SKILL_LEVEL)
-        {
-            // Leather
-            boots = new ItemStack(Items.LEATHER_BOOTS);
-        }
-        if (recruitLevel > GOLD_SKILL_LEVEL)
-        {
-            // Gold
-            boots = new ItemStack(Items.GOLDEN_BOOTS);
-        }
-        if (recruitLevel > IRON_SKILL_LEVEL)
-        {
-            if (cost.getB() <= 2)
-            {
-                cost = recruitCosts.get(building.getColony().getWorld().random.nextInt(recruitCosts.size()));
-            }
-            // Iron
-            boots = new ItemStack(Items.IRON_BOOTS);
-        }
-        if (recruitLevel > DIAMOND_SKILL_LEVEL)
-        {
-            if (cost.getB() <= 3)
-            {
-                cost = recruitCosts.get(building.getColony().getWorld().random.nextInt(recruitCosts.size()));
-            }
-            // Diamond
-            boots = new ItemStack(Items.DIAMOND_BOOTS);
-        }
-
-        newCitizen.setRecruitCosts(new ItemStack(cost.getA(), (int) (recruitLevel * 3.0 / cost.getB())));
-
-        if (!CustomVisitorListener.chanceCustomVisitors(newCitizen))
-        {
-            newCitizen.triggerInteraction(new RecruitmentInteraction(Component.translatable(
-              "com.minecolonies.coremod.gui.chat.recruitstory" + (building.getColony().getWorld().random.nextInt(MAX_STORY) + 1), newCitizen.getName().split(" ")[0]),
-              ChatPriority.IMPORTANT));
-        }
-
         building.getColony().getVisitorManager().spawnOrCreateCivilian(newCitizen, building.getColony().getWorld(), spawnPos, true);
         if (newCitizen.getEntity().isPresent())
         {
-            newCitizen.getEntity().get().setItemSlot(EquipmentSlot.FEET, boots);
+            newCitizen.getEntity().get().setItemSlot(EquipmentSlot.FEET, cost.boots());
         }
         building.getColony().getEventDescriptionManager().addEventDescription(new VisitorSpawnedEvent(spawnPos, newCitizen.getName()));
+
+        StatsUtil.trackStat(building, NEW_VISITORS, 1);
+
+        externalCitizens.add(newCitizen.getId());
+        return newCitizen;
     }
 
     @Override
@@ -378,6 +376,14 @@ public class TavernBuildingModule extends AbstractBuildingModule implements IDef
             for (final Map.Entry<BlockPos, List<String>> entry : te.getWorldTagPosMap().entrySet())
             {
                 if (entry.getValue().contains(TAG_SITTING))
+                {
+                    sitPositions.add(entry.getKey());
+                }
+                if (entry.getValue().contains(TAG_SIT_IN))
+                {
+                    sitPositions.add(entry.getKey());
+                }
+                if (entry.getValue().contains(TAG_SIT_OUT))
                 {
                     sitPositions.add(entry.getKey());
                 }

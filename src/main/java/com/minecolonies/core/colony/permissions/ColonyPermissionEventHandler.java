@@ -526,6 +526,8 @@ public class ColonyPermissionEventHandler
     @SubscribeEvent
     public void on(final EntityItemPickupEvent event)
     {
+        if (event.getEntity().equals(event.getItem().getOwner())) return;   // always allowed to pick up your own thrown items
+
         checkEventCancelation(Action.PICKUP_ITEM, event.getEntity(), event.getEntity().getCommandSenderWorld(), event, event.getEntity().blockPosition());
     }
 

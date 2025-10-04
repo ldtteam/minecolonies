@@ -1,8 +1,16 @@
 {
   "branch": "minecolonies:combat",
+  "costs": [
+    {
+      "type": "minecolonies:item_simple",
+      "item": "minecraft:flint",
+      "quantity": 128
+    }
+  ],
   "effects": [
     {
-      "minecolonies:effects/archerdamageaddition": 4
+      "id": "minecolonies:effects/archerdamageaddition",
+      "level": 4
     }
   ],
   "icon": "minecolonies:firearrow",
@@ -10,13 +18,8 @@
   "requirements": [
     {
       "type": "minecolonies:building",
-      "building": "barracks",
+      "building": "minecolonies:barracks",
       "level": 5
-    },
-    {
-      "type": "minecolonies:item_simple",
-      "item": "minecraft:flint",
-      "quantity": 128
     }
   ],
   "researchLevel": 5

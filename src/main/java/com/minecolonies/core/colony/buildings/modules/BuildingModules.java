@@ -54,6 +54,10 @@ public class BuildingModules
       "stats_module", BuildingStatisticsModule::new,
       () -> BuildingStatisticsModuleView::new);
 
+    public static final BuildingEntry.ModuleProducer<BarracksStatisticsModule, BuildingStatisticsModuleView> BARRACKS_STATS_MODULE = new BuildingEntry.ModuleProducer<>(
+      "barracks_stats_module", BarracksStatisticsModule::new,
+      () -> BuildingStatisticsModuleView::new);
+
     /**
      * Item Lists
      */
@@ -189,7 +193,7 @@ public class BuildingModules
       new BuildingEntry.ModuleProducer<>("rabbitherder_settings", () -> new SettingsModule().with(AbstractBuilding.BREEDING, new BoolSetting(true)), () -> SettingsModuleView::new);
     public static final BuildingEntry.ModuleProducer<AnimalHerdingModule, IBuildingModuleView>       RABBITHERDER_HERDING  =
       new BuildingEntry.ModuleProducer<>("rabbitherder_herding",
-        () -> new AnimalHerdingModule(ModJobs.rabbitHerder.get(), a -> a instanceof Rabbit, new ItemStack(Items.CARROT, 2)),
+        () -> new AnimalHerdingModule(ModJobs.rabbitHerder.get(), a -> a instanceof Rabbit, new ItemStorage(Items.CARROT, 2)),
         null);
 
     public static final BuildingEntry.ModuleProducer<WorkerBuildingModule,WorkerBuildingModuleView> SHEPERD_WORK          =
@@ -210,7 +214,7 @@ public class BuildingModules
       new BuildingEntry.ModuleProducer<>("swineherder_settings", () -> new SettingsModule().with(AbstractBuilding.BREEDING, new BoolSetting(true)), () -> SettingsModuleView::new);
     public static final BuildingEntry.ModuleProducer<AnimalHerdingModule, IBuildingModuleView>       SWINEHERDER_HERDING  =
       new BuildingEntry.ModuleProducer<>("swineherder_herding",
-        () -> new AnimalHerdingModule(ModJobs.swineHerder.get(), a -> a instanceof Pig, new ItemStack(Items.CARROT, 2)),
+        () -> new AnimalHerdingModule(ModJobs.swineHerder.get(), a -> a instanceof Pig, new ItemStorage(Items.CARROT, 2)),
         null);
 
     /**
@@ -526,6 +530,13 @@ public class BuildingModules
     public static final BuildingEntry.ModuleProducer<GuardBuildingModule,CombinedHiringLimitModuleView> DRUID_TOWER_WORK  =
       new BuildingEntry.ModuleProducer<>("druid_tower_work", () -> new GuardBuildingModule(ModGuardTypes.druid.get(), true, (b) -> 1), () -> CombinedHiringLimitModuleView::new);
 
+    public static final BuildingEntry.ModuleProducer<GuardBuildingModule,CombinedHiringLimitModuleView> KNIGHT_GATE_WORK = new BuildingEntry.ModuleProducer<>(
+        "knight_gate_work", () -> new GuardBuildingModule(ModGuardTypes.knight.get(), true, (b) -> 2),
+        () -> CombinedHiringLimitModuleView::new);
+    public static final BuildingEntry.ModuleProducer<GuardBuildingModule,CombinedHiringLimitModuleView> RANGER_GATE_WORK = new BuildingEntry.ModuleProducer<>(
+        "ranger_gate_work", () -> new GuardBuildingModule(ModGuardTypes.ranger.get(), true, (b) -> 2),
+        () -> CombinedHiringLimitModuleView::new);
+
     public static final BuildingEntry.ModuleProducer<IBuildingModule,ToolModuleView> GUARD_TOOL     =
       new BuildingEntry.ModuleProducer<>("tool_scepterguard_view", null, () -> () -> new ToolModuleView(
         ModItems.scepterGuard));
@@ -535,6 +546,11 @@ public class BuildingModules
       .with(AbstractBuildingGuards.HIRE_TRAINEE, new BoolSetting(true))
       .with(AbstractBuildingGuards.PATROL_MODE, new GuardPatrolModeSetting())
       .with(AbstractBuildingGuards.FOLLOW_MODE, new GuardFollowModeSetting()), () -> SettingsModuleView::new);
+
+    public static final BuildingEntry.ModuleProducer<SettingsModule,SettingsModuleView> GATE_GUARD_SETTINGS = new BuildingEntry.ModuleProducer<>("gate_guard_settings", () -> new SettingsModule()
+        .with(AbstractBuildingGuards.GUARD_TASK, new GuardTaskSetting(GuardTaskSetting.GUARD))
+        .with(AbstractBuildingGuards.RETREAT, new BoolSetting(true))
+        .with(AbstractBuildingGuards.HIRE_TRAINEE, new BoolSetting(true)), () -> SettingsModuleView::new);
 
     /**
      * Mystic
@@ -566,4 +582,7 @@ public class BuildingModules
         , () -> SettingsModuleView::new);
     public static final BuildingEntry.ModuleProducer<ExpeditionLogModule,ExpeditionLogModuleView> NETHERWORKER_EXPEDITION =
       new BuildingEntry.ModuleProducer<>("netherworker_expedition", () -> new ExpeditionLogModule(ResearchConstants.NETHER_LOG), () -> ExpeditionLogModuleView::new);
+
+    public static final BuildingEntry.ModuleProducer<GuardBuildingModule,CombinedHiringLimitModuleView> CONNECTION_MODULE = new BuildingEntry.ModuleProducer<>(
+        "colony_connections", ColonyConnectionModule::new, () -> ColonyConnectionModuleView::new);
 }

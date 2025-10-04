@@ -2,6 +2,7 @@ package com.minecolonies.core.entity.ai.workers.crafting;
 
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingGlassblower;
 import com.minecolonies.core.colony.jobs.JobGlassblower;
+
 import org.jetbrains.annotations.NotNull;
 
 /**

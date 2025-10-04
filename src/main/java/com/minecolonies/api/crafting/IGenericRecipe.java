@@ -12,6 +12,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Supplier;
 
 /**
  * This is a generic recipe wrapper, used to abstract both potential
@@ -142,7 +143,7 @@ public interface IGenericRecipe
      * @return A list of restrictions.
      */
     @NotNull
-    List<Component> getRestrictions();
+    Supplier<List<Component>> getRestrictions();
 
     /**
      * Returns an arbitrary integer that influences recipe sort order based on level.

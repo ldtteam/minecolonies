@@ -26,6 +26,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.ComponentUtils;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.EnchantedBookItem;
@@ -43,6 +44,8 @@ import java.util.function.Predicate;
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.api.util.constant.TranslationConstants.NO_WORKERS_TO_DRAIN_SET;
+import static com.minecolonies.api.util.constant.StatisticsConstants.ITEMS_ENCHANTED;
+import static com.minecolonies.api.util.constant.StatisticsConstants.CITIZENS_VISITED;
 
 /**
  * Enchanter AI class.
@@ -171,7 +174,7 @@ public class EntityAIWorkEnchanter extends AbstractEntityAICrafting<JobEnchanter
             return ENCHANTER_DRAIN;
         }
 
-        final BuildingEnchanter.@NotNull CraftingModule craftingModule = building.getFirstModuleOccurance(BuildingEnchanter.CraftingModule.class);
+        final BuildingEnchanter.CraftingModule craftingModule = building.getFirstModuleOccurance(BuildingEnchanter.CraftingModule.class);
         boolean ancientTomeCraftingDisabled = false;
         for (final IToken<?> token : craftingModule.getRecipes())
         {
@@ -199,6 +202,13 @@ public class EntityAIWorkEnchanter extends AbstractEntityAICrafting<JobEnchanter
         }
 
         return ENCHANT;
+    }
+
+    @Override
+    public boolean hasWorkToDo()
+    {
+        // Enchanter can always work to either craft or go gather xp
+        return true;
     }
 
     @Override
@@ -267,6 +277,7 @@ public class EntityAIWorkEnchanter extends AbstractEntityAICrafting<JobEnchanter
 
                 //Decrement mana.
                 data.getCitizenSkillHandler().incrementLevel(Skill.Mana, -enchantmentLevel);
+                recordEnchantmentStats(loot);
                 incrementActionsDoneAndDecSaturation();
             }
         }
@@ -415,6 +426,7 @@ public class EntityAIWorkEnchanter extends AbstractEntityAICrafting<JobEnchanter
             worker.getCitizenData().getCitizenSkillHandler().incrementLevel(Skill.Mana, 1);
             worker.getCitizenExperienceHandler().addExperience(XP_PER_DRAIN);
             worker.getCitizenData().markDirty(80);
+            StatsUtil.trackStat(building, CITIZENS_VISITED, 1);
         }
         resetDraining();
         return IDLE;
@@ -437,5 +449,50 @@ public class EntityAIWorkEnchanter extends AbstractEntityAICrafting<JobEnchanter
     public Class<BuildingEnchanter> getExpectedBuildingClass()
     {
         return BuildingEnchanter.class;
+    }
+
+    /**
+     * Records stats for items enchanted by the enchanter.
+     *
+     * @param loot the items to record stats for
+     */
+    public void recordEnchantmentStats(List<ItemStack> loot)
+    {
+        for (ItemStack stack : loot)
+        {
+            Component name = stack.getHoverName();
+
+            if (stack.is(Items.ENCHANTED_BOOK))
+            {
+                var enchants = EnchantmentHelper.getEnchantments(stack);
+
+                if (!enchants.isEmpty())
+                {
+                    if (enchants.size() == 1)
+                    {
+                        var e = enchants.entrySet().iterator().next();
+                        name = e.getKey().getFullname(e.getValue());
+                    }
+                    else
+                    {
+                        name = ComponentUtils.formatList(
+                            enchants.entrySet().stream().map(e -> e.getKey().getFullname(e.getValue())).toList(),
+                            Component.literal(", "));
+                    }
+                }
+            }
+
+            StatsUtil.trackStatByName(building, ITEMS_ENCHANTED, name, stack.getCount());
+        }
+    }
+
+    /**
+     * Returns the name of the crafting stat used in the building's statistics.
+     * @return The name of the enchanting statistic.
+     */
+
+    protected String getCraftingStatName()
+    {
+        return ITEMS_ENCHANTED;
     }
 }

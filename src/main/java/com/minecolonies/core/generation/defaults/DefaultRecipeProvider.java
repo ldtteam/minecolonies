@@ -1,12 +1,11 @@
 package com.minecolonies.core.generation.defaults;
 
 import com.minecolonies.api.blocks.ModBlocks;
-import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.crafting.ZeroWasteRecipe;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.constant.TagConstants;
 import com.minecolonies.core.generation.CompostRecipeBuilder;
-import com.minecolonies.core.generation.CustomRecipeProvider;
 import com.minecolonies.core.recipes.FoodIngredient;
 import com.minecolonies.core.recipes.PlantIngredient;
 import net.minecraft.advancements.critereon.InventoryChangeTrigger;
@@ -17,21 +16,17 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.ItemLike;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
 import java.util.function.Consumer;
 
 import static com.ldtteam.structurize.items.ModItems.buildTool;
 import static com.ldtteam.structurize.items.ModItems.shapeTool;
-import static com.minecolonies.api.util.constant.BuildingConstants.MODULE_CRAFTING;
 import static com.minecolonies.api.util.constant.Constants.MOD_ID;
 
 /**
@@ -213,6 +208,26 @@ public class DefaultRecipeProvider extends RecipeProvider
                 .unlockedBy("has_items", hasAllOf(buildTool.get(), ModBlocks.blockHutMiner))
                 .save(consumer);
 
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.blockHutGateHouse)
+            .pattern("XTX")
+            .pattern("CXB")
+            .pattern("XXX")
+            .define('X', ItemTags.PLANKS)
+            .define('B', Items.BOW)
+            .define('C', Items.IRON_SWORD)
+            .define('T', buildTool.get())
+            .unlockedBy("has_items", hasAllOf(buildTool.get(), Items.IRON_SWORD, Items.BOW))
+            .save(consumer);
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.blockColonySign, 6)
+            .pattern("XXX")
+            .pattern("XXX")
+            .pattern(" T ")
+            .define('X', ItemTags.PLANKS)
+            .define('T', buildTool.get())
+            .unlockedBy("has_items", hasAllOf(buildTool.get()))
+            .save(consumer);
+
 //        ShapedRecipeBuilder.shaped(ModBlocks.blockLargeQuarry)
 //                .pattern("XTX")
 //                .pattern("XDX")
@@ -223,6 +238,16 @@ public class DefaultRecipeProvider extends RecipeProvider
 //                .define('T', buildTool.get())
 //                .unlockedBy("has_items", hasAllOf(buildTool.get(), ModBlocks.blockHutMiner))
 //                .save(consumer);
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.assistantHammer_Gold)
+            .pattern("GGG")
+            .pattern("GBG")
+            .pattern(" S ")
+            .define('G', Tags.Items.INGOTS_GOLD)
+            .define('B', buildTool.get())
+            .define('S', Items.STICK)
+            .unlockedBy("has_items", hasAllOf(buildTool.get(), ModBlocks.blockHutBuilder))
+            .save(consumer);
     }
 
     private static InventoryChangeTrigger.TriggerInstance hasAllOf(ItemLike... items)
@@ -542,35 +567,35 @@ public class DefaultRecipeProvider extends RecipeProvider
                 .save(consumer);
 
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC,Items.CHAINMAIL_HELMET)
-                .pattern("NNN")
-                .pattern("NIN")
-                .define('I', Items.IRON_INGOT)
+                .pattern("NCN")
+                .pattern("N N")
+                .define('C', Items.CHAIN)
                 .define('N', Items.IRON_NUGGET)
                 .unlockedBy("has_iron", has(Items.IRON_INGOT))
                 .save(consumer, new ResourceLocation(MOD_ID, "chainmailhelmet"));
 
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC,Items.CHAINMAIL_CHESTPLATE)
-                .pattern("I I")
+                .pattern("C C")
                 .pattern("NNN")
                 .pattern("NNN")
-                .define('I', Items.IRON_INGOT)
+                .define('C', Items.CHAIN)
                 .define('N', Items.IRON_NUGGET)
                 .unlockedBy("has_iron", has(Items.IRON_INGOT))
                 .save(consumer, new ResourceLocation(MOD_ID, "chainmailchestplate"));
 
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC,Items.CHAINMAIL_LEGGINGS)
-                .pattern("III")
+                .pattern("CNC")
                 .pattern("N N")
                 .pattern("N N")
-                .define('I', Items.IRON_INGOT)
+                .define('C', Items.CHAIN)
                 .define('N', Items.IRON_NUGGET)
                 .unlockedBy("has_iron", has(Items.IRON_INGOT))
                 .save(consumer, new ResourceLocation(MOD_ID, "chainmailleggings"));
 
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC,Items.CHAINMAIL_BOOTS)
-                .pattern("I I")
+                .pattern("C C")
                 .pattern("N N")
-                .define('I', Items.IRON_INGOT)
+                .define('C', Items.CHAIN)
                 .define('N', Items.IRON_NUGGET)
                 .unlockedBy("has_iron", has(Items.IRON_INGOT))
                 .save(consumer, new ResourceLocation(MOD_ID, "chainmailboots"));
@@ -660,39 +685,59 @@ public class DefaultRecipeProvider extends RecipeProvider
                 .unlockedBy("has_scimitar", has(ModItems.scimitar))
                 .save(consumer, new ResourceLocation(MOD_ID, "iron_nugget_from_iron_scimitar_blasting"));
 
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.butter)
-          .requires(ModItems.large_milk_bottle)
-          .requires(ModItems.large_milk_bottle)
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC,ModItems.colonyMap)
+                .pattern("XXX")
+                .pattern("XTX")
+                .pattern("XXX")
+                .define('X', Items.MAP)
+                .define('T', buildTool.get())
+                .unlockedBy("has_build_tool", has(buildTool.get()))
+                .save(consumer);
+
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.large_water_bottle)
+          .requires(ModItems.large_empty_bottle)
+          .requires(Items.WATER_BUCKET)
+          .unlockedBy("has_bottle", has(ModItems.large_empty_bottle))
+          .save(consumer, new ResourceLocation(MOD_ID, "large_water_bottle"));
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.FOOD, ModItems.butter, 3)
+          .pattern("MMM")
+          .pattern("MMM")
+          .define('M', ModItems.large_milk_bottle)
           .unlockedBy("has_milk", has(ModItems.large_milk_bottle))
           .save(consumer, new ResourceLocation(MOD_ID, "butter"));
 
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.butter)
-          .requires(ModItems.large_soy_milk_bottle)
-          .requires(ModItems.large_soy_milk_bottle)
+        ShapedRecipeBuilder.shaped(RecipeCategory.FOOD, ModItems.butter, 3)
+          .pattern("MMM")
+          .pattern("MMM")
+          .define('M', ModItems.large_soy_milk_bottle)
           .unlockedBy("has_soy_milk", has(ModItems.large_soy_milk_bottle))
           .save(consumer, new ResourceLocation(MOD_ID, "soy_butter"));
 
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.cheddar_cheese)
-          .requires(ModItems.large_milk_bottle)
-          .requires(ModItems.large_milk_bottle)
+        ShapedRecipeBuilder.shaped(RecipeCategory.FOOD, ModItems.cheddar_cheese, 2)
+          .pattern("MM")
+          .pattern("MM")
+          .define('M', ModItems.large_milk_bottle)
           .unlockedBy("has_milk", has(ModItems.large_milk_bottle))
           .save(consumer, new ResourceLocation(MOD_ID, "cheddar_cheese"));
 
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.feta_cheese)
-          .requires(ModItems.large_milk_bottle)
-          .requires(ModItems.large_milk_bottle)
+        ShapedRecipeBuilder.shaped(RecipeCategory.FOOD, ModItems.feta_cheese)
+          .pattern("MM")
+          .define('M', ModItems.large_milk_bottle)
           .unlockedBy("has_milk", has(ModItems.large_milk_bottle))
           .save(consumer, new ResourceLocation(MOD_ID, "feta_cheese"));
 
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.creamcheese)
-          .requires(ModItems.large_milk_bottle)
-          .requires(ModItems.large_milk_bottle)
+        ShapedRecipeBuilder.shaped(RecipeCategory.FOOD, ModItems.creamcheese, 2)
+          .pattern(" M ")
+          .pattern("MMM")
+          .define('M', ModItems.large_milk_bottle)
           .unlockedBy("has_milk", has(ModItems.large_milk_bottle))
           .save(consumer, new ResourceLocation(MOD_ID, "cream_cheese"));
 
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.creamcheese)
-          .requires(ModItems.large_soy_milk_bottle)
-          .requires(ModItems.large_soy_milk_bottle)
+        ShapedRecipeBuilder.shaped(RecipeCategory.FOOD, ModItems.creamcheese, 2)
+          .pattern(" M ")
+          .pattern("MMM")
+          .define('M', ModItems.large_soy_milk_bottle)
           .unlockedBy("has_soy_milk", has(ModItems.large_soy_milk_bottle))
           .save(consumer, new ResourceLocation(MOD_ID, "soy_cream_cheese"));
 
@@ -914,7 +959,7 @@ public class DefaultRecipeProvider extends RecipeProvider
           .unlockedBy("has_durum", has(ModBlocks.blockDurum))
           .save(consumer, new ResourceLocation(MOD_ID, "veggie_ravioli"));
 
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.large_soy_milk_bottle, 1)
+        ZeroWasteRecipe.build(RecipeCategory.FOOD, ModItems.large_soy_milk_bottle, 1)
           .requires(ModItems.large_water_bottle)
           .requires(ModBlocks.blockSoyBean)
           .unlockedBy("has_soy", has(ModBlocks.blockSoyBean))
@@ -1044,5 +1089,14 @@ public class DefaultRecipeProvider extends RecipeProvider
           .requires(Items.EGG)
           .unlockedBy("has_butter", has(ModItems.butter))
           .save(consumer, new ResourceLocation(MOD_ID, "plain_cheesecake"));
+
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.fried_rice, 1)
+          .requires(ModBlocks.blockOnion)
+          .requires(Items.CARROT)
+          .requires(ModItems.cooked_rice)
+          .requires(Items.EGG)
+          .requires(ModTags.rawMeat)
+          .unlockedBy("has_onion", has(ModBlocks.blockOnion))
+          .save(consumer, new ResourceLocation(MOD_ID, "fried_rice"));
     }
 }

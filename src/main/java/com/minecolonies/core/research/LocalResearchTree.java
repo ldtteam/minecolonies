@@ -6,9 +6,9 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.research.*;
-import com.minecolonies.api.research.costs.IResearchCost;
-import com.minecolonies.api.research.effects.IResearchEffect;
-import com.minecolonies.api.research.effects.IResearchEffectManager;
+import com.minecolonies.api.research.IResearchCost;
+import com.minecolonies.api.research.IResearchEffect;
+import com.minecolonies.api.research.IResearchEffectManager;
 import com.minecolonies.api.research.util.ResearchState;
 import com.minecolonies.api.util.*;
 import com.minecolonies.core.event.QuestObjectiveEventHandler;
@@ -165,9 +165,9 @@ public class LocalResearchTree implements ILocalResearchTree
                 SoundUtils.playErrorSound(player, player.blockPosition());
                 return;
             }
-            if (!research.getResearchRequirement().isEmpty())
+            if (!research.getResearchRequirements().isEmpty())
             {
-                for (IResearchRequirement requirement : research.getResearchRequirement())
+                for (IResearchRequirement requirement : research.getResearchRequirements())
                 {
                     if (!requirement.isFulfilled(colony))
                     {
@@ -330,7 +330,7 @@ public class LocalResearchTree implements ILocalResearchTree
                 {
                     if (research.getValue().getState() == ResearchState.FINISHED)
                     {
-                        for (final IResearchEffect<?> effect : IGlobalResearchTree.getInstance().getResearch(branch.getKey(), research.getValue().getId()).getEffects())
+                        for (final IResearchEffect effect : IGlobalResearchTree.getInstance().getResearch(branch.getKey(), research.getValue().getId()).getEffects())
                         {
                             colony.getResearchManager().getResearchEffects().applyEffect(effect);
                             colony.getResearchManager().markDirty();
@@ -394,7 +394,7 @@ public class LocalResearchTree implements ILocalResearchTree
                   // or to have a different research that was in a now-removed data pack.  But those will get just thrown away.
                   if (MinecoloniesAPIProxy.getInstance().getGlobalResearchTree().hasResearch(research.getBranch(), research.getId()))
                   {
-                      for (final IResearchEffect<?> effect : MinecoloniesAPIProxy.getInstance()
+                      for (final IResearchEffect effect : MinecoloniesAPIProxy.getInstance()
                         .getGlobalResearchTree()
                         .getResearch(research.getBranch(), research.getId())
                         .getEffects())

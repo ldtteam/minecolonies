@@ -9,6 +9,7 @@ import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenFoodHandler;
 import com.minecolonies.api.entity.citizen.happiness.ITimeBasedHappinessModifier;
 import com.minecolonies.api.items.ModTags;
+import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.FoodUtils;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
@@ -38,7 +39,7 @@ import static com.minecolonies.core.colony.buildings.modules.BuildingModules.RES
 import static com.minecolonies.core.entity.ai.workers.crafting.EntityAIWorkSmelter.ORE_LIST;
 import static com.minecolonies.core.util.WorkerUtil.getLastLadder;
 import static com.minecolonies.core.util.WorkerUtil.isThereCompostedLand;
-
+import static com.minecolonies.core.entity.ai.workers.production.agriculture.EntityAIWorkFisherman.SUBOPTIMAL_POND_COMPLAINT_DISTANCE;
 /**
  * Class containing initializer for all the validator predicates.
  */
@@ -168,6 +169,12 @@ public class InteractionValidatorInitializer
         InteractionValidatorRegistry.registerStandardPredicate(Component.translatable(WATER_TOO_FAR),
           citizen -> citizen.getJob() instanceof JobFisherman && ((JobFisherman) citizen.getJob()).getPonds().isEmpty());
 
+        InteractionValidatorRegistry.registerPosBasedPredicate(Component.translatable(SUBOPTIMAL_POND),
+          (citizen, pos) -> 
+          {
+            return citizen.getJob() instanceof JobFisherman && (BlockPosUtil.getDistance(citizen.getEntity().get().blockPosition(), pos) <= SUBOPTIMAL_POND_COMPLAINT_DISTANCE);
+          });
+
         InteractionValidatorRegistry.registerStandardPredicate(Component.translatable(FURNACE_USER_NO_FUEL),
           citizen -> citizen.getWorkBuilding() != null && citizen.getWorkBuilding().hasModule(BuildingModules.FURNACE) && citizen.getWorkBuilding().hasModule(BuildingModules.ITEMLIST_FUEL) && citizen.getWorkBuilding().getModule(BuildingModules.ITEMLIST_FUEL).getList().isEmpty());
         InteractionValidatorRegistry.registerStandardPredicate(Component.translatable(FURNACE_USER_NO_FOOD),
@@ -271,7 +278,7 @@ public class InteractionValidatorInitializer
             {
                 return false;
             }
-            final int homeBuildingLevel = citizen.getHomeBuilding().getBuildingLevel();
+            final int homeBuildingLevel = citizen.getHomeBuilding().getBuildingLevelEquivalent();
             if (homeBuildingLevel <= 2)
             {
                 return false;
@@ -285,7 +292,7 @@ public class InteractionValidatorInitializer
               {
                   return false;
               }
-              final int homeBuildingLevel = citizen.getHomeBuilding().getBuildingLevel();
+              final int homeBuildingLevel = citizen.getHomeBuilding().getBuildingLevelEquivalent();
               if (homeBuildingLevel <= 1)
               {
                   return false;
@@ -299,7 +306,7 @@ public class InteractionValidatorInitializer
               {
                   return false;
               }
-              final int homeBuildingLevel = citizen.getHomeBuilding().getBuildingLevel();
+              final int homeBuildingLevel = citizen.getHomeBuilding().getBuildingLevelEquivalent();
               if (homeBuildingLevel <= 2)
               {
                   return false;
@@ -314,7 +321,7 @@ public class InteractionValidatorInitializer
               {
                   return false;
               }
-              final int homeBuildingLevel = citizen.getHomeBuilding().getBuildingLevel();
+              final int homeBuildingLevel = citizen.getHomeBuilding().getBuildingLevelEquivalent();
               if (homeBuildingLevel <= 1)
               {
                   return false;

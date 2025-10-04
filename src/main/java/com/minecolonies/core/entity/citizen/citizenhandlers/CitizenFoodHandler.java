@@ -1,6 +1,7 @@
 package com.minecolonies.core.entity.citizen.citizenhandlers;
 
 import com.google.common.collect.EvictingQueue;
+import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenFoodHandler;
@@ -70,11 +71,11 @@ public class CitizenFoodHandler implements ICitizenFoodHandler
         lastEatenFoods.add(item);
         citizenData.markDirty(TICKS_SECOND);
         dirty = true;
-        if (lastEatenFoods.size() >= 10)
+        if (lastEatenFoods.size() >= FOOD_QUEUE_SIZE)
         {
             citizenData.triggerInteraction(new StandardInteraction(Component.translatable(NO + FOOD_DIVERSITY), ChatPriority.IMPORTANT));
-            citizenData.triggerInteraction(new StandardInteraction(Component.translatable(NO + FOOD_DIVERSITY), ChatPriority.IMPORTANT));
-            citizenData.triggerInteraction(new StandardInteraction(Component.translatable(NO + FOOD_QUALITY + URGENT), ChatPriority.BLOCKING));
+            citizenData.triggerInteraction(new StandardInteraction(Component.translatable(NO + FOOD_QUALITY), ChatPriority.IMPORTANT));
+            citizenData.triggerInteraction(new StandardInteraction(Component.translatable(NO + FOOD_DIVERSITY + URGENT), ChatPriority.BLOCKING));
             citizenData.triggerInteraction(new StandardInteraction(Component.translatable(NO + FOOD_QUALITY + URGENT), ChatPriority.BLOCKING));
         }
     }
@@ -88,16 +89,18 @@ public class CitizenFoodHandler implements ICitizenFoodHandler
     @Override
     public int checkLastEaten(final Item item)
     {
+        int foundIndex = -1;
+
         int index = -1;
         for (final Item foodItem : lastEatenFoods)
         {
+            index++;
             if (foodItem == item)
             {
-                return index;
+                foundIndex = index;
             }
-            index++;
         }
-        return -1;
+        return foundIndex;
     }
 
     @Override
@@ -115,7 +118,7 @@ public class CitizenFoodHandler implements ICitizenFoodHandler
                 }
                 uniqueFoods.add(foodItem);
             }
-            foodStatCache = new CitizenFoodStats(qualityFoodCounter, Math.max(1, uniqueFoods.size()));
+            foodStatCache = new CitizenFoodStats(Math.max(1, uniqueFoods.size()), qualityFoodCounter);
         }
         return foodStatCache;
     }
@@ -154,10 +157,16 @@ public class CitizenFoodHandler implements ICitizenFoodHandler
     @Override
     public double getDiseaseModifier(final double baseModifier)
     {
-        if (lastEatenFoods.size() < 10 || baseModifier == 0)
+        if (lastEatenFoods.size() < FOOD_QUEUE_SIZE || baseModifier == 0)
         {
             return baseModifier;
         }
         return baseModifier * 0.5 * Math.min(2.5, 5.0/getFoodHappinessStats().diversity());
+    }
+
+    @Override
+    public ImmutableList<Item> getLastEatenFoods()
+    {
+        return ImmutableList.copyOf(lastEatenFoods);
     }
 }

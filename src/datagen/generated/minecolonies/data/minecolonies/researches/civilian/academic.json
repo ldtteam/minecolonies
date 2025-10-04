@@ -1,19 +1,20 @@
 {
   "branch": "minecolonies:civilian",
-  "effects": [
-    {
-      "minecolonies:effects/levelingmultiplier": 5
-    }
-  ],
-  "icon": "minecraft:experience_bottle:5",
-  "parentResearch": "minecolonies:civilian/reflective",
-  "requirements": [
+  "costs": [
     {
       "type": "minecolonies:item_simple",
       "item": "minecraft:book",
       "quantity": 128
     }
   ],
+  "effects": [
+    {
+      "id": "minecolonies:effects/levelingmultiplier",
+      "level": 5
+    }
+  ],
+  "icon": "minecraft:experience_bottle:5",
+  "parentResearch": "minecolonies:civilian/reflective",
   "researchLevel": 6,
   "subtitle": "com.minecolonies.research.civilian.academic.subtitle"
 }

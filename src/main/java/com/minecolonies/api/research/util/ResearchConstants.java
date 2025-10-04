@@ -50,8 +50,6 @@ public final class ResearchConstants
     public static final String TAG_PROGRESS       = "progress";
     public static final String TAG_CHILDS         = "hasResearchedChild";
     public static final String TAG_ONLY_CHILD     = "onlyChild";
-    public static final String TAG_ICON_TEXTURE   = "icon_tex";
-    public static final String TAG_ICON_ITEM_STACK= "icon_is";
     public static final String TAG_SUBTITLE_NAME  = "subtitle";
     public static final String TAG_INSTANT        = "instant";
     public static final String TAG_AUTOSTART      = "autostart";
@@ -92,7 +90,6 @@ public final class ResearchConstants
     public static final int    OR_WIDTH             = 16;
     public static final int    TIME_HEIGHT          = 12;
     public static final int    TIME_WIDTH           = 95;
-    public static final boolean DRAW_ICONS = false;
 
     public static final int    COLOR_TEXT_NEGATIVE   = Color.rgbaToInt(218, 10, 10, 255);
     public static final int    COLOR_TEXT_LABEL      = Color.rgbaToInt(218, 202, 171, 255);
@@ -141,6 +138,7 @@ public final class ResearchConstants
     public static final ResourceLocation TEACHING          = new ResourceLocation(Constants.MOD_ID, "effects/teachingmultiplier");
     public static final ResourceLocation TOOL_DURABILITY   = new ResourceLocation(Constants.MOD_ID, "effects/tooldurabilitymultiplier");
     public static final ResourceLocation WALKING           = new ResourceLocation(Constants.MOD_ID, "effects/walkingmultiplier");
+    public static final ResourceLocation LOOTING           = new ResourceLocation(Constants.MOD_ID, "effects/looting");
 
     //Unlock Ability modifiers.
     public static final ResourceLocation CRUSHING_11       = new ResourceLocation(Constants.MOD_ID, "effects/crushing11unlock");
@@ -175,6 +173,8 @@ public final class ResearchConstants
     public static final ResourceLocation STANDARD          = new ResourceLocation(Constants.MOD_ID, "effects/standard");
     public static final ResourceLocation MORE_AIR          = new ResourceLocation(Constants.MOD_ID, "effects/air");
     public static final ResourceLocation MIN_ORDER         = new ResourceLocation(Constants.MOD_ID, "effects/min_order");
+    public static final ResourceLocation GREEN_REVOLUTION  = new ResourceLocation(Constants.MOD_ID, "effects/greenrevolution");
+    public static final ResourceLocation BUILDERS_ASSISTANT_HAMMER = new ResourceLocation(Constants.MOD_ID, "effects/assistanthammerunlock");
 
     //Recipe unlocks
     public static final ResourceLocation THE_END           = new ResourceLocation(Constants.MOD_ID, "effects/knowledgeoftheendunlock");

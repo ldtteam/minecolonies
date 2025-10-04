@@ -1,8 +1,16 @@
 {
   "branch": "minecolonies:technology",
+  "costs": [
+    {
+      "type": "minecolonies:item_simple",
+      "item": "minecraft:deepslate",
+      "quantity": 64
+    }
+  ],
   "effects": [
     {
-      "minecolonies:effects/knowledgeofthedepthsunlock": 1
+      "id": "minecolonies:effects/knowledgeofthedepthsunlock",
+      "level": 1
     }
   ],
   "icon": "minecraft:cobbled_deepslate",
@@ -10,13 +18,8 @@
   "requirements": [
     {
       "type": "minecolonies:building",
-      "building": "crusher",
+      "building": "minecolonies:crusher",
       "level": 3
-    },
-    {
-      "type": "minecolonies:item_simple",
-      "item": "minecraft:deepslate",
-      "quantity": 64
     }
   ],
   "researchLevel": 3,

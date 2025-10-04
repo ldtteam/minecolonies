@@ -6,6 +6,7 @@ import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.core.blocks.MinecoloniesCropBlock;
 import com.minecolonies.core.blocks.MinecoloniesFarmland;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
@@ -71,9 +72,17 @@ public class ItemCrop extends BlockItem
     public void appendHoverText(@NotNull final ItemStack stack, @Nullable final Level worldIn, @NotNull final List<Component> tooltip, @NotNull final TooltipFlag flagIn)
     {
         tooltip.add(Component.translatable(TranslationConstants.CROP_TOOLTIP).withStyle(ChatFormatting.GRAY));
-        if (preferredBiome != null)
+        if (preferredBiome != null && worldIn != null)
         {
             tooltip.add(Component.translatable(TranslationConstants.BIOME_TOOLTIP + "." + preferredBiome.location().getPath()));
+            if (worldIn.getBiome(Minecraft.getInstance().player.blockPosition()).is(preferredBiome))
+            {
+                tooltip.add(Component.translatable("com.minecolonies.core.item.crop.tooltip.biome.match").withStyle(ChatFormatting.GREEN));
+            }
+            else
+            {
+                tooltip.add(Component.translatable("com.minecolonies.core.item.crop.tooltip.biome.nomatch").withStyle(ChatFormatting.RED));
+            }
         }
         tooltip.add(Component.translatable(TranslationConstants.CROP_TOOLTIP_HOE).withStyle(ChatFormatting.DARK_AQUA).withStyle(ChatFormatting.ITALIC));
     }

@@ -8,6 +8,7 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.DamageSourceKeys;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.SoundUtils;
+import com.minecolonies.api.util.StatsUtil;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingCombatAcademy;
 import com.minecolonies.core.colony.jobs.JobCombatTraining;
 import com.minecolonies.core.entity.pathfinding.navigation.EntityNavigationUtils;
@@ -22,6 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.constant.CitizenConstants.TICKS_20;
 import static com.minecolonies.api.util.constant.GuardConstants.*;
+import static com.minecolonies.api.util.constant.StatisticsConstants.LEVELS_GAINED;
 
 @SuppressWarnings("squid:MaximumInheritanceDepth")
 public class EntityAICombatTraining extends AbstractEntityAITraining<JobCombatTraining, BuildingCombatAcademy>
@@ -175,11 +177,23 @@ public class EntityAICombatTraining extends AbstractEntityAITraining<JobCombatTr
 
         if (currentAttackDelay <= 0)
         {
+            int priorPrimaryLevel = getPrimarySkillLevel();
+            int priorSecondaryLevel = getSecondarySkillLevel();
+
             worker.getCitizenExperienceHandler().addExperience(XP_BASE_RATE);
             worker.decreaseSaturationForAction();
             worker.lookAt(trainingPartner, (float) TURN_AROUND, (float) TURN_AROUND);
             WorkerUtil.faceBlock(trainingPartner.blockPosition().above(), worker);
             worker.stopUsingItem();
+
+            if (getPrimarySkillLevel() - priorPrimaryLevel > 0)
+            {
+                StatsUtil.trackStatByName(building, LEVELS_GAINED, getModuleForJob().getPrimarySkill().name(), getPrimarySkillLevel() - priorPrimaryLevel);
+            }
+            if (getSecondarySkillLevel() - priorSecondaryLevel > 0)
+            {
+                StatsUtil.trackStatByName(building, LEVELS_GAINED, getModuleForJob().getSecondarySkill().name(), getSecondarySkillLevel() - priorSecondaryLevel);
+            }
 
             if (worker.getRandom().nextBoolean())
             {
@@ -268,10 +282,23 @@ public class EntityAICombatTraining extends AbstractEntityAITraining<JobCombatTr
 
         if (currentAttackDelay <= 0)
         {
+            int priorPrimaryLevel = getPrimarySkillLevel();
+            int priorSecondaryLevel = getSecondarySkillLevel();
+
             worker.getCitizenExperienceHandler().addExperience(XP_BASE_RATE);
             worker.decreaseSaturationForAction();
             WorkerUtil.faceBlock(currentCombatTarget, worker);
             worker.stopUsingItem();
+
+            if (getPrimarySkillLevel() - priorPrimaryLevel > 0)
+            {
+                StatsUtil.trackStatByName(building, LEVELS_GAINED, getModuleForJob().getPrimarySkill().name(), getPrimarySkillLevel() - priorPrimaryLevel);
+            }
+            if (getSecondarySkillLevel() - priorSecondaryLevel > 0)
+            {
+                StatsUtil.trackStatByName(building, LEVELS_GAINED, getModuleForJob().getSecondarySkill().name(), getSecondarySkillLevel() - priorSecondaryLevel);
+            }
+
 
             if (worker.getRandom().nextBoolean())
             {

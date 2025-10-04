@@ -12,7 +12,6 @@ import com.minecolonies.api.colony.buildings.HiringMode;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.Network;
-import com.minecolonies.core.colony.buildings.modules.BuildingModules;
 import com.minecolonies.core.colony.buildings.moduleviews.LivingBuildingModuleView;
 import com.minecolonies.core.colony.buildings.views.LivingBuildingView;
 import com.minecolonies.core.network.messages.server.colony.building.home.AssignUnassignMessage;
@@ -26,7 +25,6 @@ import java.util.*;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_CITIZEN_UNEMPLOYED;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
-import static com.minecolonies.core.client.gui.townhall.AbstractWindowTownHall.*;
 
 /**
  * BOWindow for the hiring or firing of a worker.
@@ -66,7 +64,7 @@ public class WindowAssignCitizen extends AbstractWindowSkeleton implements Butto
     /**
      * Contains all the already assigned citizens.
      */
-    private List<ICitizenDataView> assignedCitizens = new ArrayList<>();
+    private final List<ICitizenDataView> assignedCitizens = new ArrayList<>();
 
     /**
      * Constructor for the window when the player wants to assign a worker for a certain home building.
@@ -346,7 +344,6 @@ public class WindowAssignCitizen extends AbstractWindowSkeleton implements Butto
                 final BlockPos work = citizen.getWorkBuilding();
                 fireButton.setText(Component.translatable("com.minecolonies.coremod.gui.hiring.buttonunassign"));
 
-
                 final Text citizenLabel = rowPane.findPaneOfTypeByID(CITIZEN_LABEL, Text.class);
                 citizenLabel.setText(Component.literal(citizen.getName()));
 
@@ -379,7 +376,16 @@ public class WindowAssignCitizen extends AbstractWindowSkeleton implements Butto
 
                 if (((colony.isManualHousing() && building.getHiringMode() == HiringMode.DEFAULT) || (building.getHiringMode() == HiringMode.MANUAL)))
                 {
-                    fireButton.enable();
+                    if (citizen.getColony().getTravellingManager().isTravelling(citizen.getId()))
+                    {
+                        fireButton.disable();
+                        PaneBuilders.tooltipBuilder().hoverPane(fireButton).build().setText(Component.translatable("com.minecolonies.coremod.gui.home.travelling"));
+                    }
+                    else
+                    {
+                        fireButton.enable();
+                    }
+
                     PaneBuilders.tooltipBuilder().hoverPane(fireButton).build().setText(Component.empty());
                 }
                 else

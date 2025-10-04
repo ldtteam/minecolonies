@@ -130,7 +130,7 @@ public interface ICitizenDataView extends ICitizen
      * 
      * @return true if so.
      */
-    boolean hasVisibleInteractions();
+    boolean hasVisibleStatus();
 
     /**
      * Check if the citizen has any interactions.
@@ -158,7 +158,7 @@ public interface ICitizenDataView extends ICitizen
      *
      * @return resourcelocation
      */
-    ResourceLocation getInteractionIcon();
+    ResourceLocation getStatusIcon();
 
     /**
      * Get the visible citizen status
@@ -236,4 +236,10 @@ public interface ICitizenDataView extends ICitizen
      * @return the armor in the slot.
      */
     ItemStack getDisplayArmor(EquipmentSlot equipmentSlot);
+
+    /**
+     * Check if sick.
+     * @return true if so.
+     */
+    boolean isSick();
 }

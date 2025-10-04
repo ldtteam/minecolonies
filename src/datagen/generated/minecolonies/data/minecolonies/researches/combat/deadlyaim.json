@@ -1,19 +1,20 @@
 {
   "branch": "minecolonies:combat",
-  "effects": [
-    {
-      "minecolonies:effects/archerdamageaddition": 5
-    }
-  ],
-  "icon": "minecraft:tipped_arrow",
-  "parentResearch": "minecolonies:combat/woundingshot",
-  "requirements": [
+  "costs": [
     {
       "type": "minecolonies:item_simple",
       "item": "minecraft:flint",
       "quantity": 256
     }
   ],
+  "effects": [
+    {
+      "id": "minecolonies:effects/archerdamageaddition",
+      "level": 5
+    }
+  ],
+  "icon": "minecraft:tipped_arrow",
+  "parentResearch": "minecolonies:combat/woundingshot",
   "researchLevel": 6,
   "subtitle": "com.minecolonies.research.combat.deadlyaim.subtitle"
 }

@@ -29,6 +29,7 @@ import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.chunk.LevelChunk;
+import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.common.util.ITeleporter;
 import org.jetbrains.annotations.NotNull;
 
@@ -428,7 +429,7 @@ public abstract class AbstractEntityMinecoloniesRaider extends AbstractEntityMin
     @Override
     public boolean hurt(@NotNull final DamageSource damageSource, final float damage)
     {
-        if (damageSource.getDirectEntity() == null)
+        if (damageSource.getDirectEntity() == null || damageSource.getDirectEntity() instanceof FakePlayer)
         {
             if (envDamageImmunity || tempEnvDamageImmunity)
             {

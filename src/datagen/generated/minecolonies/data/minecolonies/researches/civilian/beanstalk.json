@@ -1,19 +1,20 @@
 {
   "branch": "minecolonies:civilian",
-  "effects": [
-    {
-      "minecolonies:effects/growthmultiplier": 5
-    }
-  ],
-  "icon": "minecolonies:textures/icons/research/childgrowth5.png",
-  "parentResearch": "minecolonies:civilian/growth",
-  "requirements": [
+  "costs": [
     {
       "type": "minecolonies:item_simple",
       "item": "minecraft:cooked_chicken",
       "quantity": 512
     }
   ],
+  "effects": [
+    {
+      "id": "minecolonies:effects/growthmultiplier",
+      "level": 5
+    }
+  ],
+  "icon": "minecolonies:textures/icons/research/childgrowth5.png",
+  "parentResearch": "minecolonies:civilian/growth",
   "researchLevel": 6,
   "subtitle": "com.minecolonies.research.civilian.beanstalk.subtitle"
 }

@@ -167,7 +167,7 @@ public class KnightCombatAI extends AttackMoveAI<EntityCitizen>
         final int fireLevel = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.FIRE_ASPECT, user.getItemInHand(InteractionHand.MAIN_HAND));
         if (fireLevel > 0)
         {
-            target.setSecondsOnFire(fireLevel * 80);
+            target.setSecondsOnFire(fireLevel * 4);
         }
 
         if (user.level.getGameTime() - lastAoeUseTime > KNOCKBACK_COOLDOWN)
@@ -315,7 +315,7 @@ public class KnightCombatAI extends AttackMoveAI<EntityCitizen>
     protected double getCombatMovementSpeed()
     {
         double levelAdjustment = user.getCitizenData().getCitizenSkillHandler().getLevel(Skill.Adaptability) * SPEED_LEVEL_BONUS;
-        levelAdjustment += (user.getCitizenData().getWorkBuilding().getBuildingLevel() - 1) * SPEED_LEVEL_BONUS;
+        levelAdjustment += (user.getCitizenData().getWorkBuilding().getBuildingLevelEquivalent() - 1) * SPEED_LEVEL_BONUS;
 
         levelAdjustment = Math.min(levelAdjustment, 0.3);
         return COMBAT_SPEED + levelAdjustment;
@@ -352,8 +352,9 @@ public class KnightCombatAI extends AttackMoveAI<EntityCitizen>
     }
 
     @Override
-    protected void onTargetChange()
+    protected void onTargetChange(final LivingEntity newTarget)
     {
+        super.onTargetChange(newTarget);
         CombatUtils.notifyGuardsOfTarget(user, target, PATROL_DEVIATION_RAID_POINT);
     }
 

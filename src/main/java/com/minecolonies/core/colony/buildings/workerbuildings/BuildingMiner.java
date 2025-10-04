@@ -10,6 +10,7 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.colony.buildings.AbstractBuildingStructureBuilder;
+import com.minecolonies.core.colony.buildings.modules.BuildingModules;
 import com.minecolonies.core.colony.buildings.modules.WorkerBuildingModule;
 import com.minecolonies.core.colony.buildings.modules.settings.BlockSetting;
 import com.minecolonies.core.colony.buildings.modules.settings.IntSetting;
@@ -26,9 +27,13 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
-import static com.minecolonies.api.util.constant.BuildingConstants.*;
+import static com.minecolonies.api.util.constant.BuildingConstants.TAG_CLOCATION;
+import static com.minecolonies.api.util.constant.BuildingConstants.TAG_LLOCATION;
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 import static com.minecolonies.api.util.constant.EquipmentLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 
@@ -246,29 +251,6 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
         }
         cobbleLocation = cobblePos.iterator().next();
         ladderLocation = ladderPos.iterator().next();
-    }
-
-    @Override
-    public void searchWorkOrder()
-    {
-        final ICitizenData citizen = getFirstModuleOccurance(WorkerBuildingModule.class).getFirstCitizen();
-        if (citizen == null)
-        {
-            return;
-        }
-
-        final List<WorkOrderMiner> list = getColony().getWorkManager().getOrderedList(WorkOrderMiner.class, getPosition());
-
-        for (final WorkOrderMiner wo : list)
-        {
-            if (this.getID().equals(wo.getMinerBuilding()))
-            {
-                citizen.getJob(JobMiner.class).setWorkOrder(wo);
-                wo.setClaimedBy(citizen);
-                getColony().getWorkManager().setDirty(true);
-                return;
-            }
-        }
     }
 
     /**

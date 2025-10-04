@@ -179,7 +179,7 @@ public class RangerCombatAI extends AttackMoveAI<EntityCitizen>
 
             if (EnchantmentHelper.getItemEnchantmentLevel(Enchantments.FLAMING_ARROWS, bow) > 0)
             {
-                arrow.setSecondsOnFire(100);
+                arrow.setSecondsOnFire(5);
             }
             final int k = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.PUNCH_ARROWS, bow);
             if (k > 0)
@@ -210,7 +210,7 @@ public class RangerCombatAI extends AttackMoveAI<EntityCitizen>
         // + 1 Blockrange per building level for a total of +5 from building level
         if (user.getCitizenData().getWorkBuilding() != null)
         {
-            attackDist += user.getCitizenData().getWorkBuilding().getBuildingLevel();
+            attackDist += user.getCitizenData().getWorkBuilding().getBuildingLevelEquivalent();
         }
         // ~ +1 each three levels for a total of +10 from guard level
         if (user.getCitizenData() != null)
@@ -314,7 +314,7 @@ public class RangerCombatAI extends AttackMoveAI<EntityCitizen>
             job.setPathingOptions(combatPathingOptions);
             return pathResult;
         }
-        final PathJobCanSee job = new PathJobCanSee(user, target, user.level, ((AbstractBuildingGuards) user.getCitizenData().getWorkBuilding()).getGuardPos(), 40);
+        final PathJobCanSee job = new PathJobCanSee(user, target, user.level, ((AbstractBuildingGuards) user.getCitizenData().getWorkBuilding()).getGuardPos(user), 40);
         final PathResult pathResult = ((MinecoloniesAdvancedPathNavigate) user.getNavigation()).setPathJob(job, null, getCombatMovementSpeed(), true);
         job.setPathingOptions(combatPathingOptions);
         return pathResult;
@@ -328,7 +328,7 @@ public class RangerCombatAI extends AttackMoveAI<EntityCitizen>
     protected double getCombatMovementSpeed()
     {
         double levelAdjustment = user.getCitizenData().getCitizenSkillHandler().getLevel(Skill.Agility) * SPEED_LEVEL_BONUS;
-        levelAdjustment += (user.getCitizenData().getWorkBuilding().getBuildingLevel() * 2 - 1) * SPEED_LEVEL_BONUS;
+        levelAdjustment += (user.getCitizenData().getWorkBuilding().getBuildingLevelEquivalent() * 2 - 1) * SPEED_LEVEL_BONUS;
 
         levelAdjustment = Math.min(levelAdjustment, 0.3);
         return COMBAT_SPEED + levelAdjustment;
@@ -365,9 +365,10 @@ public class RangerCombatAI extends AttackMoveAI<EntityCitizen>
     }
 
     @Override
-    protected void onTargetChange()
+    protected void onTargetChange(final LivingEntity newTarget)
     {
-        CombatUtils.notifyGuardsOfTarget(user, target, PATROL_DEVIATION_RAID_POINT);
+        super.onTargetChange(newTarget);
+        CombatUtils.notifyGuardsOfTarget(user, newTarget, PATROL_DEVIATION_RAID_POINT);
     }
 
     @Override

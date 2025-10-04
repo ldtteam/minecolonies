@@ -74,9 +74,9 @@ public class GraveManagerView implements IGraveManager
     }
 
     @Override
-    public boolean createCitizenGrave(Level world, BlockPos pos, ICitizenData citizenData)
+    public BlockPos createCitizenGrave(Level world, BlockPos pos, ICitizenData citizenData)
     {
-        return false;
+        return null;
     }
 
     @NotNull

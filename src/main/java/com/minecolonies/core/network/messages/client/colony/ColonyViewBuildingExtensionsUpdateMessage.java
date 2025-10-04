@@ -18,10 +18,7 @@ import net.minecraftforge.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Update message for auto syncing the entire building extension list.
@@ -57,7 +54,7 @@ public class ColonyViewBuildingExtensionsUpdateMessage implements IMessage
      * @param colony the colony this building extension is in.
      * @param extensions the complete list of building extensions of this colony.
      */
-    public ColonyViewBuildingExtensionsUpdateMessage(@NotNull final IColony colony, @NotNull final Set<IBuildingExtension> extensions)
+    public ColonyViewBuildingExtensionsUpdateMessage(@NotNull final IColony colony, @NotNull final Collection<IBuildingExtension> extensions)
     {
         super();
         this.colonyId = colony.getID();

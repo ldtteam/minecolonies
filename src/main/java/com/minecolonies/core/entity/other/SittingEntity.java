@@ -1,23 +1,28 @@
 package com.minecolonies.core.entity.other;
 
 import com.minecolonies.api.entity.ModEntities;
+import com.minecolonies.api.entity.other.AbstractFastMinecoloniesEntity;
 import com.minecolonies.api.util.EntityUtils;
+import com.minecolonies.api.util.LookHandler;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.StairBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.*;
 import java.util.List;
 
 /**
@@ -30,6 +35,11 @@ public class SittingEntity extends Entity
      */
     int maxLifeTime = 100;
     private BlockPos sittingpos = BlockPos.ZERO;
+
+    /**
+     * Set to track sitting entities in the world.
+     */
+    private static Map<ResourceKey<Level>, Set<BlockPos>> existingSittingEntities = new HashMap<>();
 
     public SittingEntity(final EntityType<?> type, final Level worldIn)
     {
@@ -90,6 +100,13 @@ public class SittingEntity extends Entity
     protected void defineSynchedData()
     {
 
+    }
+
+    @Override
+    public void remove(final RemovalReason removalReason)
+    {
+        super.remove(removalReason);
+        existingSittingEntities.getOrDefault(level.dimension(), new HashSet<>()).remove(sittingpos);
     }
 
     @Override
@@ -174,19 +191,36 @@ public class SittingEntity extends Entity
     }
 
     /**
+     * Check if the sitting position at the location is already occupied.
+     * @param pos the world pos to check.
+     * @param world the world it is in.
+     * @return true if sitting pos is occupied.
+     */
+    public static boolean isSittingPosOccupied(final BlockPos pos, final Level world)
+    {
+        return existingSittingEntities.computeIfAbsent(world.dimension(), k -> new HashSet<>()).contains(pos);
+    }
+
+    /**
      * Makes the given entity sit down onto a new sitting entity
      *
      * @param pos         the position to sit at
      * @param entity      entity to sit down
      * @param maxLifeTime max time to sit
      */
-    public static void sitDown(final BlockPos pos, final Mob entity, final int maxLifeTime)
+    public static boolean sitDown(final BlockPos pos, final Mob entity, final int maxLifeTime)
     {
         if (entity.getVehicle() != null)
         {
             // Already riding an entity, abort
-            return;
+            return true;
         }
+
+        if (existingSittingEntities.getOrDefault(entity.level.dimension(), new HashSet<>()).contains(pos))
+        {
+            return false;
+        }
+        existingSittingEntities.computeIfAbsent(entity.level.dimension(), k -> new HashSet<>()).add(pos);
 
         final SittingEntity sittingEntity = (SittingEntity) ModEntities.SITTINGENTITY.create(entity.level);
 
@@ -214,5 +248,15 @@ public class SittingEntity extends Entity
         sittingEntity.setSittingPos(pos);
         entity.level.addFreshEntity(sittingEntity);
         entity.startRiding(sittingEntity);
+
+        if (state.getBlock() instanceof StairBlock && entity instanceof AbstractFastMinecoloniesEntity abstractFastMinecoloniesEntity)
+        {
+            final BlockPos lookAt = pos.relative(state.getValue(StairBlock.FACING).getOpposite()).above();
+            final LookHandler lookHandler = (LookHandler) abstractFastMinecoloniesEntity.getLookControl();
+            lookHandler.setLookAt(lookAt.getX(), lookAt.getY(), lookAt.getZ());
+            lookHandler.setLookAtCooldown(40);
+        }
+
+        return true;
     }
 }

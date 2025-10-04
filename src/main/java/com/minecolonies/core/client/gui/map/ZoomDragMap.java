@@ -1,6 +1,7 @@
 package com.minecolonies.core.client.gui.map;
 
 import com.ldtteam.blockui.BOGuiGraphics;
+import com.ldtteam.blockui.MouseEventCallback;
 import com.ldtteam.blockui.Pane;
 import com.ldtteam.blockui.PaneParams;
 import com.ldtteam.blockui.views.View;
@@ -210,6 +211,16 @@ public class ZoomDragMap extends View
             return true;
         }
         return childResult;
+    }
+
+    @Override
+    public boolean mouseEventProcessor(final double mx,
+        final double my,
+        final MouseEventCallback panePredicate,
+        final MouseEventCallback eventCallbackPositive,
+        final MouseEventCallback eventCallbackNegative)
+    {
+        return super.mouseEventProcessor(calcRelativeX(mx), calcRelativeY(my), panePredicate, eventCallbackPositive, eventCallbackNegative);
     }
 
     public double getScale()

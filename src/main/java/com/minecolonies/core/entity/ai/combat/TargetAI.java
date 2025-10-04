@@ -1,17 +1,18 @@
 package com.minecolonies.core.entity.ai.combat;
 
 import com.minecolonies.api.entity.ai.IStateAI;
-import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.ITickRateStateMachine;
-import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickingTransition;
 import com.minecolonies.api.entity.ai.combat.CombatAIStates;
 import com.minecolonies.api.entity.ai.combat.threat.IThreatTableEntity;
 import com.minecolonies.api.entity.ai.combat.threat.ThreatTableEntry;
+import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.ITickRateStateMachine;
+import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickingTransition;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.phys.AABB;
+import net.minecraftforge.common.util.FakePlayer;
 
 import java.util.List;
 
@@ -69,7 +70,7 @@ public class TargetAI<T extends Mob & IThreatTableEntity> implements IStateAI
             if (target != nextTarget.getEntity())
             {
                 target = nextTarget.getEntity();
-                onTargetChange();
+                onTargetChange(target);
             }
 
             return true;
@@ -89,7 +90,7 @@ public class TargetAI<T extends Mob & IThreatTableEntity> implements IStateAI
      */
     public boolean isEntityValidTarget(final LivingEntity target)
     {
-        if (target == user || target == null || !target.isAlive() || !isWithinPersecutionDistance(target))
+        if (target == user || target == null || !target.isAlive() || !isWithinPersecutionDistance(target) || target instanceof FakePlayer)
         {
             return false;
         }
@@ -254,8 +255,9 @@ public class TargetAI<T extends Mob & IThreatTableEntity> implements IStateAI
     /**
      * Actions on changing to a new target entity
      */
-    protected void onTargetChange()
+    protected void onTargetChange(final LivingEntity newTarget)
     {
-
+        // Fill vanilla target info in, though we disregard the result
+        user.setTarget(newTarget);
     }
 }

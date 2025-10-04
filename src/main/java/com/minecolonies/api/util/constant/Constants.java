@@ -1,7 +1,9 @@
 package com.minecolonies.api.util.constant;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.phys.AABB;
 
 /**
  * Some constants needed for the whole mod.
@@ -188,6 +190,11 @@ public final class Constants
      * Builder infinite resoureces toggle
      */
     public static boolean BUILDER_INF_RESOURECES = false;
+
+    /**
+     * Empty AABB
+     */
+    public static AABB EMPTY_AABB = new AABB(BlockPos.ZERO);
 
     /**
      * Private constructor to hide implicit public one.

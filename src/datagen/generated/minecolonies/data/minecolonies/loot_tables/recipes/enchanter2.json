@@ -250,7 +250,7 @@
           "functions": [
             {
               "function": "minecraft:set_nbt",
-              "tag": "{StoredEnchantments:[{id:\"minecraft:aqua_affinity\",lvl:2s}]}"
+              "tag": "{StoredEnchantments:[{id:\"minecraft:aqua_affinity\",lvl:1s}]}"
             }
           ],
           "name": "minecraft:enchanted_book",
@@ -338,7 +338,7 @@
           "functions": [
             {
               "function": "minecraft:set_nbt",
-              "tag": "{StoredEnchantments:[{id:\"minecraft:flame\",lvl:2s}]}"
+              "tag": "{StoredEnchantments:[{id:\"minecraft:flame\",lvl:1s}]}"
             }
           ],
           "name": "minecraft:enchanted_book",

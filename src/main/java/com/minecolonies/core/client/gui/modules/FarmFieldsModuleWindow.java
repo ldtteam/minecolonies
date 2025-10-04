@@ -2,8 +2,10 @@ package com.minecolonies.core.client.gui.modules;
 
 import com.ldtteam.blockui.Pane;
 import com.ldtteam.blockui.PaneBuilders;
+import com.ldtteam.blockui.controls.AbstractTextBuilder;
 import com.ldtteam.blockui.controls.Button;
 import com.ldtteam.blockui.controls.ButtonImage;
+import com.ldtteam.blockui.controls.Image;
 import com.ldtteam.blockui.controls.ItemIcon;
 import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.blockui.views.ScrollingList;
@@ -43,6 +45,16 @@ public class FarmFieldsModuleWindow extends AbstractModuleWindow
      * ID of the distance label inside the GUI.
      */
     private static final String TAG_DISTANCE = "dist";
+
+    /**
+     * ID of the stage label inside the GUI.
+     */
+    private static final String TAG_STAGE_TEXT = "nextstagetext";
+
+    /**
+     * ID of the stage label inside the GUI.
+     */
+    private static final String TAG_STAGE_ICON = "nextstageicon";
 
     /**
      * ID of the assign button inside the GUI.
@@ -168,9 +180,21 @@ public class FarmFieldsModuleWindow extends AbstractModuleWindow
             public void updateElement(final int index, @NotNull final Pane rowPane)
             {
                 final IBuildingExtension field = moduleView.getFields().get(index);
+                Image iconPane = rowPane.findPaneOfTypeByID(TAG_STAGE_ICON, Image.class);
+
                 if (field instanceof FarmField farmField && !farmField.getSeed().isEmpty())
                 {
                     rowPane.findPaneOfTypeByID(TAG_ICON, ItemIcon.class).setItem(farmField.getSeed());
+                    rowPane.findPaneOfTypeByID(TAG_STAGE_TEXT, Text.class).setText(Component.translatable(FIELD_STATUS));
+                    iconPane.setImage(farmField.getFieldStage().getStageIcon(), true);
+                    AbstractTextBuilder.TooltipBuilder hoverText = PaneBuilders.tooltipBuilder().hoverPane(iconPane);
+                    hoverText.append(Component.translatable(FIELD_STATUS_CURRENT, farmField.getFieldStage().getStageText())).paragraphBreak();
+                    hoverText.append(Component.translatable(FIELD_STATUS_NEXT, farmField.getFieldStage().getNextStage().getStageText()));
+                    hoverText.build();
+                }
+                else
+                {
+                    iconPane.hide();
                 }
 
                 final String distance = Integer.toString(field.getSqDistance(buildingView));

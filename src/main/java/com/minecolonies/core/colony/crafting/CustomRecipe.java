@@ -16,7 +16,6 @@ import com.minecolonies.api.research.IGlobalResearchTree;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.Tuple;
-import com.minecolonies.api.util.constant.TypeConstants;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
@@ -803,40 +802,17 @@ public class CustomRecipe
     {
         if(cachedRecipeStorage == null)
         {
-            if(altOutputs.isEmpty())
-            {
-                cachedRecipeStorage = StandardFactoryController.getInstance().getNewInstance(
-                    TypeConstants.RECIPE,
-                    StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
-                    inputs,
-                    1,
-                    result,
-                    intermediate,
-                    this.getRecipeId(),
-                    ModRecipeTypes.CLASSIC_ID,
-                    null, //alternate outputs
-                    secondary, //secondary output
-                    lootTable,
-                    requiredTool
-                    );
-            }
-            else
-            {
-                cachedRecipeStorage = StandardFactoryController.getInstance().getNewInstance(
-                    TypeConstants.RECIPE,
-                    StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
-                    inputs,
-                    1,
-                    result,
-                    intermediate,
-                    this.getRecipeId(),
-                    ModRecipeTypes.MULTI_OUTPUT_ID,
-                    altOutputs, //alternate outputs
-                    secondary, //secondary output
-                    lootTable,
-                    requiredTool
-                    );
-            }
+            cachedRecipeStorage = RecipeStorage.builder()
+                    .withInputs(inputs)
+                    .withPrimaryOutput(result)
+                    .withIntermediate(intermediate)
+                    .withRecipeId(this.getRecipeId())
+                    .withAlternateOutputs(altOutputs)
+                    .withSecondaryOutputs(secondary)
+                    .withLootTable(lootTable)
+                    .withRequiredTool(requiredTool)
+                    .build();
+
             IRecipeManager recipeManager = IColonyManager.getInstance().getRecipeManager();
             IToken<?> cachedRecipeToken = recipeManager.getRecipeId(cachedRecipeStorage);
             if(cachedRecipeToken != null && !cachedRecipeToken.equals(cachedRecipeStorage.getToken()))

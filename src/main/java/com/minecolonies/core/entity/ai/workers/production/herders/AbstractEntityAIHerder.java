@@ -1,5 +1,6 @@
 package com.minecolonies.core.entity.ai.workers.production.herders;
 
+import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
@@ -7,12 +8,15 @@ import com.minecolonies.api.equipment.ModEquipmentTypes;
 import com.minecolonies.api.equipment.registry.EquipmentTypeEntry;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.StatsUtil;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.api.util.constant.ColonyConstants;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
 import com.minecolonies.core.colony.buildings.modules.AnimalHerdingModule;
 import com.minecolonies.core.colony.jobs.AbstractJob;
 import com.minecolonies.core.entity.ai.workers.AbstractEntityAIInteract;
+import com.minecolonies.core.entity.pathfinding.navigation.EntityNavigationUtils;
 import com.minecolonies.core.util.citizenutils.CitizenItemUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvents;
@@ -23,7 +27,12 @@ import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.common.util.FakePlayer;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -32,10 +41,10 @@ import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
+import static com.minecolonies.api.research.util.ResearchConstants.LOOTING;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.api.util.constant.EquipmentLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
-import static com.minecolonies.api.util.constant.StatisticsConstants.ITEM_USED;
-import static com.minecolonies.core.colony.buildings.modules.BuildingModules.STATS_MODULE;
+import static com.minecolonies.api.util.constant.StatisticsConstants.*;
 
 /**
  * Abstract class for all Citizen Herder AIs
@@ -149,9 +158,9 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
 
     @NotNull
     @Override
-    protected List<ItemStack> itemsNiceToHave()
+    protected List<ItemStorage> itemsNiceToHave()
     {
-        final List<ItemStack> list = super.itemsNiceToHave();
+        final List<ItemStorage> list = super.itemsNiceToHave();
         for (final AnimalHerdingModule module : building.getModulesByType(AnimalHerdingModule.class))
         {
             list.addAll(getRequestBreedingItems(module));
@@ -178,7 +187,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
      * @return a list of items needed or empty.
      */
     @NotNull
-    public List<ItemStack> getExtraItemsNeeded()
+    public List<ItemStorage> getExtraItemsNeeded()
     {
         return new ArrayList<>();
     }
@@ -216,9 +225,8 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
                 }
             }
 
-            final boolean hasBreedingItem =
-              InventoryUtils.getItemCountInItemHandler((worker.getInventoryCitizen()),
-                (ItemStack stack) -> ItemStackUtils.compareItemStackListIgnoreStackSize(module.getBreedingItems(), stack)) > 1;
+            final boolean hasBreedingItem = InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(),
+                stack -> ItemStackUtils.compareItemStorageListIgnoreStackSize(module.getBreedingItems(), stack)) > 1;
 
             if (ColonyConstants.rand.nextDouble() < 0.1 && !searchForItemsInArea().isEmpty())
             {
@@ -307,14 +315,14 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
             }
         }
 
-        for (final ItemStack breedingItem : current_module.getBreedingItems())
+        for (final ItemStorage breedingItem : current_module.getBreedingItems())
         {
-            checkIfRequestForItemExistOrCreateAsync(breedingItem, breedingItem.getCount() * EXTRA_BREEDING_ITEMS_REQUEST, breedingItem.getCount());
+            checkIfRequestForItemExistOrCreateAsync(breedingItem.getItemStack(), breedingItem.getAmount() * EXTRA_BREEDING_ITEMS_REQUEST, breedingItem.getAmount());
         }
 
-        for (final ItemStack item : getExtraItemsNeeded())
+        for (final ItemStorage items : getExtraItemsNeeded())
         {
-            checkIfRequestForItemExistOrCreateAsync(item);
+            checkIfRequestForItemExistOrCreateAsync(items.getItemStack(), items.getAmount(), items.getAmount());
         }
 
         return DECIDE;
@@ -371,6 +379,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
 
         if (!toKill.isAlive())
         {
+            StatsUtil.trackStat(building, ANIMALS_BUTCHERED, 1);
             worker.getCitizenExperienceHandler().addExperience(XP_PER_ACTION);
             incrementActionsDoneAndDecSaturation();
             fedRecently.remove(toKill.getUUID());
@@ -543,7 +552,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
 
             // Values taken from vanilla.
             worker.swing(InteractionHand.MAIN_HAND);
-            building.getModule(STATS_MODULE).increment(ITEM_USED + ";" + worker.getMainHandItem().getItem().getDescriptionId());
+            StatsUtil.trackStatByName(building, ITEM_USED, worker.getMainHandItem().getItem().getDescriptionId(), 1);
             worker.getMainHandItem().shrink(1);
             worker.getCitizenExperienceHandler().addExperience(XP_PER_ACTION);
             worker.level.broadcastEntityEvent(toFeed, (byte) 18);
@@ -613,11 +622,11 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
     {
         if (animal != null)
         {
-            return walkToWorkPos(animal.blockPosition());
+            return !EntityNavigationUtils.walkToPos(worker, animal.blockPosition(), 2, true);
         }
         else
         {
-            return true;
+            return false;
         }
     }
 
@@ -643,7 +652,8 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
             {
                 animal.setInLove(null);
                 worker.swing(InteractionHand.MAIN_HAND);
-                building.getModule(STATS_MODULE).increment(ITEM_USED + ";" + worker.getMainHandItem().getItem().getDescriptionId());
+                StatsUtil.trackStatByName(building, ITEM_USED, worker.getMainHandItem().getItem().getDescriptionId(), 1);
+                StatsUtil.trackStat(building, BREEDING_ATTEMPTS, 1);
                 worker.getMainHandItem().shrink(1);
                 worker.getCitizenExperienceHandler().addExperience(XP_PER_ACTION);
                 worker.decreaseSaturationForAction();
@@ -720,19 +730,19 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
     }
 
     /**
-     * Sets the {@link ItemStack} as held item or returns false.
+     * Sets the {@link ItemStorage} as held item or returns false.
      *
-     * @param itemStacks the list of {@link ItemStack}s to equip one of.
+     * @param itemStacks the list of {@link ItemStorage}s to equip one of.
      * @param hand       the hand to equip it in.
      * @return true if the item was equipped.
      */
-    public boolean equipItem(final InteractionHand hand, final List<ItemStack> itemStacks)
+    public boolean equipItem(final InteractionHand hand, final List<ItemStorage> itemStacks)
     {
-        for (final ItemStack itemStack : itemStacks)
+        for (final ItemStorage itemStorage : itemStacks)
         {
-            if (checkIfRequestForItemExistOrCreateAsync(itemStack))
+            if (checkIfRequestForItemExistOrCreateAsync(itemStorage.getItemStack(), itemStorage.getAmount(), itemStorage.getAmount()))
             {
-                CitizenItemUtils.setHeldItem(worker, hand, getItemSlot(itemStack.getItem()));
+                CitizenItemUtils.setHeldItem(worker, hand, getItemSlot(itemStorage.getItemStack().getItem()));
                 return true;
             }
         }
@@ -752,6 +762,41 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
     }
 
     /**
+     * Ensures that the provided ItemStack has at least Looting I.
+     * If the ItemStack does not have Looting, it will be added.
+     * If the ItemStack has Looting but with a level less than 1, it will be increased to 1.
+     * This method will NOT increase the level of Looting if it is already 1 or higher.
+     *
+     * @param stack the ItemStack to check and modify if necessary.
+     */
+    private static void ensureLootingI(ItemStack stack)
+    {
+        Map<Enchantment, Integer> ench = new HashMap<>(EnchantmentHelper.getEnchantments(stack));
+        int current = ench.getOrDefault(Enchantments.MOB_LOOTING, 0);
+
+        // Force at least Looting I
+        if (current < 1)
+        {
+            ench.put(Enchantments.MOB_LOOTING, 1);
+            EnchantmentHelper.setEnchantments(ench, stack);
+        }
+    }
+
+    /**
+     * Simulates a butcher swing against an animal. The animal is given damage from the butcher's attack, and the butcher's held item is damaged.
+     * The swing animation is also played.
+     * @param fakePlayer the {@link FakePlayer} to simulate the attack from.
+     * @param animal the animal being attacked.
+     */
+    protected void butcherSwing(FakePlayer fakePlayer, Animal animal)
+    {
+        worker.swing(InteractionHand.MAIN_HAND); // visual only
+        DamageSource ds = animal.level.damageSources().playerAttack(fakePlayer);
+        animal.hurt(ds, (float) getButcheringAttackDamage());
+        CitizenItemUtils.damageItemInHand(worker, InteractionHand.MAIN_HAND, 1);
+    }
+
+    /**
      * Butcher an animal.
      *
      * @param animal the {@link Animal} we are butchering
@@ -760,10 +805,37 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
     {
         if (animal != null && !walkingToAnimal(animal) && !ItemStackUtils.isEmpty(worker.getMainHandItem()))
         {
-            worker.swing(InteractionHand.MAIN_HAND);
-            final DamageSource ds = animal.level.damageSources().playerAttack(getFakePlayer());
-            animal.hurt(ds, (float) getButcheringAttackDamage());
-            CitizenItemUtils.damageItemInHand(worker, InteractionHand.MAIN_HAND, 1);
+            boolean looting = worker.getCitizenColonyHandler().getColonyOrRegister().getResearchManager().getResearchEffects().getEffectStrength(LOOTING) > 0;
+
+            if (looting)
+            {
+                final FakePlayer fp = getFakePlayer();
+                if (fp == null) return;
+
+                // Ensure the worker’s weapon has Looting I
+                ItemStack workerWeapon = worker.getMainHandItem();
+
+                // Temporarily mirror the weapon onto the fake player
+                ItemStack prev = fp.getMainHandItem();
+                ItemStack temp = workerWeapon.copy();
+                ensureLootingI(temp);
+                fp.setItemInHand(InteractionHand.MAIN_HAND, temp);
+
+                try
+                {
+                    butcherSwing(fp, animal);
+                }
+                finally
+                {
+                    // Restore whatever the fake player had (usually empty) to avoid dupes/leaks
+                    fp.setItemInHand(InteractionHand.MAIN_HAND, prev);
+                }
+            }
+            else 
+            {
+                butcherSwing(getFakePlayer(), animal);
+            }
+
         }
     }
 
@@ -783,16 +855,16 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
      * @param module the herding module.
      * @return the BreedingItem stacks.
      */
-    public List<ItemStack> getRequestBreedingItems(final AnimalHerdingModule module)
+    public List<ItemStorage> getRequestBreedingItems(final AnimalHerdingModule module)
     {
-        final List<ItemStack> breedingItems = new ArrayList<>();
+        final List<ItemStorage> breedingItems = new ArrayList<>();
 
         // TODO: currently this will request some of all items, when really we should be happy with enough of *any* of
         //       these items ... but right now it doesn't matter anyway since these are currently all single item lists.
-        for (final ItemStack stack : module.getBreedingItems())
+        for (final ItemStorage stack : module.getBreedingItems())
         {
-            final ItemStack requestable = stack.copy();
-            ItemStackUtils.setSize(requestable, stack.getCount() * EXTRA_BREEDING_ITEMS_REQUEST);
+            final ItemStorage requestable = stack.copy();
+            requestable.setAmount(stack.getAmount() * EXTRA_BREEDING_ITEMS_REQUEST);
             breedingItems.add(requestable);
         }
 

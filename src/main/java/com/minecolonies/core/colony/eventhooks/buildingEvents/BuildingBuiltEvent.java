@@ -12,7 +12,6 @@ import org.jetbrains.annotations.NotNull;
  */
 public class BuildingBuiltEvent extends AbstractBuildingEvent
 {
-
     /**
      * This events id, registry entries use res locations as ids.
      */
@@ -32,9 +31,9 @@ public class BuildingBuiltEvent extends AbstractBuildingEvent
      * @param eventPos      the position of the hut block of the building.
      * @param buildingName  the name of the building.
      */
-    public BuildingBuiltEvent(BlockPos eventPos, String buildingName)
+    public BuildingBuiltEvent(final BlockPos eventPos, final String buildingName)
     {
-        super(eventPos, buildingName, 1);
+        super(false, eventPos, buildingName, 1);
     }
 
     @Override

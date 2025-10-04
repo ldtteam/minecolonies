@@ -81,6 +81,26 @@ public class StatisticsManager implements IStatisticsManager
         return stats.keySet();
     }
 
+    /**
+     * Gets all the current stat entries in this manager.
+     * @return a set of entries with the id and the stats map.
+     */
+    @Override
+    public @NotNull Set<Map.Entry<String, Int2IntLinkedOpenHashMap>>  getStatEntries()
+    {
+        return stats.entrySet();
+    }
+
+    /**
+     * Clear all the statistics, this will remove all the entries from the map
+     */
+    @Override
+    public void clear()
+    {
+        stats.clear();
+        dirtyStats = new HashSet<>();
+    }
+
     @Override
     public void serialize(@NotNull final FriendlyByteBuf buf, final boolean fullSync)
     {

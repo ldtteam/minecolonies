@@ -1,12 +1,6 @@
 {
   "branch": "minecolonies:technology",
-  "effects": [
-    {
-      "minecolonies:effects/softshoesunlock": 1
-    }
-  ],
-  "icon": "minecraft:leather_boots",
-  "requirements": [
+  "costs": [
     {
       "type": "minecolonies:item_simple",
       "item": "minecraft:white_wool",
@@ -18,6 +12,13 @@
       "quantity": 16
     }
   ],
+  "effects": [
+    {
+      "id": "minecolonies:effects/softshoesunlock",
+      "level": 1
+    }
+  ],
+  "icon": "minecraft:leather_boots",
   "researchLevel": 1,
   "sortOrder": 2,
   "subtitle": "com.minecolonies.research.technology.softshoes.subtitle"

@@ -8,12 +8,15 @@ import com.ldtteam.blockui.views.BOWindow;
 import com.ldtteam.blockui.views.Box;
 import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.colony.*;
+import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.interactionhandling.IChatPriority;
 import com.minecolonies.api.colony.interactionhandling.IInteractionResponseHandler;
 import com.minecolonies.api.colony.interactionhandling.ModInteractionResponseHandlers;
 import com.minecolonies.api.eventbus.events.colony.citizens.CitizenAddedModEvent;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.MessageUtils;
+import com.minecolonies.api.util.StatsUtil;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.network.chat.Component;
@@ -28,6 +31,8 @@ import net.minecraftforge.items.wrapper.InvWrapper;
 import java.util.Collections;
 import java.util.List;
 
+import static com.minecolonies.api.util.constant.StatisticsConstants.VISITORS_ABSCONDED;
+import static com.minecolonies.api.util.constant.StatisticsConstants.VISITORS_RECRUITED;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.api.util.constant.WindowConstants.CHAT_LABEL_ID;
 import static com.minecolonies.api.util.constant.WindowConstants.RESPONSE_BOX_ID;
@@ -163,11 +168,18 @@ public class RecruitmentInteraction extends ServerCitizenInteraction
                     data.setHomeBuilding(null);
                     data.setJob(null);
 
+                    final IBuilding tavern = colony.getBuildingManager().getFirstBuildingMatching(b -> b.getBuildingType() == ModBuildings.tavern.get());
+                    
                     if (colony.getWorld().random.nextInt(100) <= BAD_VISITOR_CHANCE)
                     {
+                        StatsUtil.trackStat(tavern, VISITORS_ABSCONDED, 1);
+                        colony.getStatisticsManager().increment(VISITORS_ABSCONDED, colony.getDay());
+
                         MessageUtils.format(MESSAGE_RECRUITMENT_RAN_OFF, data.getName()).sendTo(colony).forAllPlayers();
                         return;
                     }
+                    StatsUtil.trackStat(tavern, VISITORS_RECRUITED, 1);
+                    colony.getStatisticsManager().increment(VISITORS_RECRUITED, colony.getDay());
 
                     // Create and read new citizen
                     ICitizenData newCitizen = colony.getCitizenManager().createAndRegisterCivilianData();

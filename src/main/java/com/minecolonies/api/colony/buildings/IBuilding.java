@@ -319,7 +319,12 @@ public interface IBuilding extends IBuildingContainer, IModuleContainer<IBuildin
 
     boolean hasCitizenCompletedRequestsToPickup(@NotNull ICitizenData data);
 
-    Collection<IRequest<?>> getCompletedRequests(@NotNull ICitizenData data);
+    /**
+     * Get completed requests for citizen or building (citizen independent, so if data is null)
+     * @param data the citizen data (or null).
+     * @return a collection of request.
+     */
+    Collection<IRequest<?>> getCompletedRequestsOfCitizenOrBuilding(@Nullable ICitizenData data);
 
     @SuppressWarnings(GENERIC_WILDCARD)
     <R> ImmutableList<IRequest<? extends R>> getCompletedRequestsOfType(@NotNull ICitizenData citizenData, TypeToken<R> requestType);
@@ -332,7 +337,11 @@ public interface IBuilding extends IBuildingContainer, IModuleContainer<IBuildin
 
     void markRequestAsAccepted(@NotNull ICitizenData data, @NotNull IToken<?> token);
 
-    void cancelAllRequestsOfCitizen(@NotNull ICitizenData data);
+    /**
+     * Cancel all requests of citizen or building (if citizen data is null)
+     * @param data the citizen data (or null).
+     */
+    void cancelAllRequestsOfCitizenOrBuilding(@Nullable ICitizenData data);
 
     /**
      * Overrule the next open request with a give stack.
@@ -517,4 +526,12 @@ public interface IBuilding extends IBuildingContainer, IModuleContainer<IBuildin
     {
         return true;
     }
+
+    /**
+     * Gets the list of tags, and finds all locations registered there.
+     * @param tagName the name of the tag to query
+     * @return all the matching BlockPos, or an empty list if not found
+     */
+    @NotNull
+    List<BlockPos> getLocationsFromTag(@NotNull final String tagName);
 }

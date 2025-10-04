@@ -6,7 +6,6 @@ import com.minecolonies.api.crafting.GenericRecipe;
 import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.crafting.ModCraftingTypes;
 import com.minecolonies.api.crafting.registry.CraftingType;
-import com.minecolonies.api.equipment.ModEquipmentTypes;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.level.Level;
@@ -17,8 +16,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -60,9 +57,11 @@ public class BrewingCraftingType extends CraftingType
                         final ItemStack actualOutput = output.copy();
                         actualOutput.setCount(3);
 
-                        recipes.add(new GenericRecipe(null, actualOutput, Collections.emptyList(),
-                                Arrays.asList(Collections.singletonList(ingredient), Collections.singletonList(actualInput)),
-                                1, Blocks.BREWING_STAND, null, ModEquipmentTypes.none.get(), Collections.emptyList(), -1));
+                        recipes.add(GenericRecipe.builder()
+                                .withOutput(actualOutput)
+                                .withInputs(List.of(List.of(ingredient), List.of(actualInput)))
+                                .withIntermediate(Blocks.BREWING_STAND)
+                                .build());
                     }
                 }
             }

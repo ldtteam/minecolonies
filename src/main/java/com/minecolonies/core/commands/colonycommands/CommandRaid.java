@@ -2,17 +2,16 @@ package com.minecolonies.core.commands.colonycommands;
 
 import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.colonyEvents.registry.ColonyEventTypeRegistryEntry;
 import com.minecolonies.api.colony.managers.interfaces.IRaiderManager;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.translation.CommandTranslationConstants;
 import com.minecolonies.core.colony.events.raid.norsemenevent.NorsemenShipRaidEvent;
 import com.minecolonies.core.colony.events.raid.pirateEvent.PirateGroundRaidEvent;
+import com.minecolonies.core.commands.arguments.ColonyIdArgument;
 import com.minecolonies.core.commands.commandTypes.IMCCommand;
 import com.minecolonies.core.commands.commandTypes.IMCOPCommand;
 import com.mojang.brigadier.arguments.BoolArgumentType;
-import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
@@ -65,14 +64,7 @@ public class CommandRaid implements IMCOPCommand
      */
     public int raidExecute(final CommandContext<CommandSourceStack> context, final String raidType)
     {
-        // Colony
-        final int colonyID = IntegerArgumentType.getInteger(context, COLONYID_ARG);
-        final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, context.getSource().getLevel().dimension());
-        if (colony == null)
-        {
-            context.getSource().sendSuccess(() -> Component.translatable(CommandTranslationConstants.COMMAND_COLONY_ID_NOT_FOUND, colonyID), true);
-            return 0;
-        }
+        final IColony colony = ColonyIdArgument.getColony(context, COLONYID_ARG);
 
         final boolean allowShips = BoolArgumentType.getBool(context, SHIP_ARG);
         if (StringArgumentType.getString(context, RAID_TIME_ARG).equals(RAID_NOW))
@@ -129,7 +121,7 @@ public class CommandRaid implements IMCOPCommand
         return IMCCommand.newLiteral(getName())
                  .then(IMCCommand.newArgument(RAID_TIME_ARG, StringArgumentType.string())
                          .suggests((ctx, builder) -> SharedSuggestionProvider.suggest(opt, builder))
-                         .then(IMCCommand.newArgument(COLONYID_ARG, IntegerArgumentType.integer(1))
+                         .then(IMCCommand.newArgument(COLONYID_ARG, ColonyIdArgument.id())
                                  .then(IMCCommand.newArgument(RAID_TYPE_ARG, StringArgumentType.string())
                                          .suggests((ctx, builder) -> SharedSuggestionProvider.suggest(raidTypes, builder))
                                          .then(IMCCommand.newArgument(SHIP_ARG, BoolArgumentType.bool())

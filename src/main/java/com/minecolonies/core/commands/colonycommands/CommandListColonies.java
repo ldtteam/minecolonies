@@ -68,7 +68,7 @@ public class CommandListColonies implements IMCCommand
 
         // check to see if we have to add one page to show the half page
         final int halfPage = (colonyCount % COLONIES_ON_PAGE == 0) ? 0 : 1;
-        final int pageCount = ((colonyCount) / COLONIES_ON_PAGE) + halfPage;
+        final int pageCount = (int) (Math.floor((double) colonyCount / COLONIES_ON_PAGE) + halfPage);
 
 
         if (page < 1 || page > pageCount)

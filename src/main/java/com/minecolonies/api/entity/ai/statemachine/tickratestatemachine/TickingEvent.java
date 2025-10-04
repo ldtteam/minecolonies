@@ -5,9 +5,6 @@ import com.minecolonies.api.entity.ai.statemachine.states.IStateEventType;
 import com.minecolonies.api.entity.ai.statemachine.transitions.IStateMachineEvent;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.function.BooleanSupplier;
-import java.util.function.Supplier;
-
 /**
  * Event with a tickrate for a statemachine using a tickrate.
  */
@@ -28,8 +25,8 @@ public class TickingEvent<S extends IState> extends TickingTransition<S> impleme
      */
     protected TickingEvent(
       @NotNull final IStateEventType eventType,
-      @NotNull final BooleanSupplier condition,
-      @NotNull final Supplier<S> nextState,
+        @NotNull final IBooleanConditionSupplier condition,
+        @NotNull final IStateSupplier<S> nextState,
       final int tickRate)
     {
         super(condition, nextState, tickRate);

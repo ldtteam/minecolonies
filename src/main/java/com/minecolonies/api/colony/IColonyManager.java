@@ -5,7 +5,6 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.compatibility.ICompatibilityManager;
 import com.minecolonies.api.crafting.IRecipeManager;
-import com.minecolonies.api.sounds.SoundManager;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
@@ -159,6 +158,15 @@ public interface IColonyManager
     IBuildingView getBuildingView(final ResourceKey<Level> dimension, BlockPos pos);
 
     /**
+     * Get all colonies in this world.  (Side neutral; on clients it returns the subset of views known to the player.)
+     *
+     * @param w World.
+     * @return a list of colonies.
+     */
+    @NotNull
+    List<IColony> getIColonies(@NotNull Level w);
+
+    /**
      * Side neutral method to get colony. On clients it returns the view. On servers it returns the colony itself.
      *
      * @param w   World.
@@ -167,6 +175,24 @@ public interface IColonyManager
      */
     @Nullable
     IColony getIColony(@NotNull Level w, @NotNull BlockPos pos);
+
+    /**
+     * Get all colony views in this world known to the current player.
+     *
+     * @param w World.
+     * @return a list of colony views.
+     */
+    @NotNull
+    List<IColonyView> getColonyViews(@NotNull Level w);
+
+    /**
+     * Gets the colony view aat the given position
+     *
+     * @param w
+     * @param pos
+     * @return IColonyView
+     */
+    IColonyView getColonyView(@NotNull Level w, @NotNull BlockPos pos);
 
     /**
      * Side neutral method to get colony. On clients it returns the view. On servers it returns the colony itself. {@link #getClosestColony(Level, BlockPos)}
@@ -185,6 +211,7 @@ public interface IColonyManager
      * @param pos Block Position.
      * @return View of the closest colony.
      */
+    // TODO: Check usages, some of the probably want to avoid getting a distant colony and use getColonyView at pos instead
     @Nullable
     IColonyView getClosestColonyView(@Nullable Level w, @Nullable BlockPos pos);
 

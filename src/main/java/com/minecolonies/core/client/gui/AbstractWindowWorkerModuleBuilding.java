@@ -1,6 +1,7 @@
 package com.minecolonies.core.client.gui;
 
 import com.ldtteam.blockui.Pane;
+import com.ldtteam.blockui.PaneBuilders;
 import com.ldtteam.blockui.controls.Button;
 import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.blockui.views.ScrollingList;
@@ -189,8 +190,9 @@ public abstract class AbstractWindowWorkerModuleBuilding<B extends IBuildingView
                     final ICitizenDataView worker = building.getColony().getCitizen(workers.get(index).getB());
                     if (worker != null)
                     {
-                        rowPane.findPaneOfTypeByID(LABEL_WORKERNAME, Text.class)
-                          .setText(Component.literal(Component.translatable(workers.get(index).getA()).getString() + ": " + worker.getName()));
+                        Text workerNameField = rowPane.findPaneOfTypeByID(LABEL_WORKERNAME, Text.class);
+                        workerNameField.setText(Component.literal(Component.translatable(workers.get(index).getA()).getString() + ": " + worker.getName()));
+                        PaneBuilders.tooltipBuilder().hoverPane(workerNameField).build().setText(Component.literal(worker.getName() + " (" + worker.getId() + ")"));
                     }
                 }
             });

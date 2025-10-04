@@ -1,18 +1,16 @@
 package com.minecolonies.core.entity.ai.workers.production;
 
-import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.placement.BlockPlacementResult;
 import com.ldtteam.structurize.placement.StructurePhasePlacementResult;
 import com.ldtteam.structurize.placement.StructurePlacer;
 import com.ldtteam.structurize.placement.structure.IStructureHandler;
-import com.ldtteam.structurize.storage.ServerFutureProcessor;
 import com.ldtteam.structurize.util.BlockUtils;
 import com.ldtteam.structurize.util.BlueprintPositionInfo;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
-import com.minecolonies.api.colony.workorders.IWorkOrder;
+import com.minecolonies.api.colony.workorders.IBuilderWorkOrder;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
@@ -25,6 +23,7 @@ import com.minecolonies.core.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.core.colony.jobs.JobQuarrier;
 import com.minecolonies.core.colony.workorders.WorkOrderMiner;
 import com.minecolonies.core.entity.ai.workers.AbstractEntityAIStructureWithWorkOrder;
+import com.minecolonies.core.entity.ai.workers.util.BuildingProgressStage;
 import com.minecolonies.core.entity.ai.workers.util.BuildingStructureHandler;
 import com.minecolonies.core.entity.ai.workers.util.LayerBlueprintIterator;
 import com.minecolonies.core.entity.ai.workers.util.WorkerLoadOnlyStructureHandler;
@@ -37,7 +36,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.AirBlock;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraftforge.common.ToolActions;
@@ -45,7 +43,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.Future;
 
 import static com.ldtteam.structurize.placement.AbstractBlueprintIterator.NULL_POS;
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
@@ -57,7 +54,7 @@ import static com.minecolonies.core.colony.buildings.modules.BuildingModules.STA
 import static com.minecolonies.core.colony.buildings.workerbuildings.BuildingMiner.FILL_BLOCK;
 import static com.minecolonies.core.entity.ai.workers.production.EntityAIStructureMiner.RENDER_META_PICKAXE;
 import static com.minecolonies.core.entity.ai.workers.production.EntityAIStructureMiner.RENDER_META_SHOVEL;
-import static com.minecolonies.core.entity.ai.workers.util.BuildingStructureHandler.Stage.*;
+import static com.minecolonies.core.entity.ai.workers.util.BuildingProgressStage.*;
 
 /**
  * Class which handles the quarrier behaviour.
@@ -216,16 +213,12 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
 
     @Override
     public void loadStructure(
-      @NotNull final IWorkOrder workOrder,
-      final int rotateTimes,
+        @NotNull final IBuilderWorkOrder workOrder,
       final BlockPos position,
-      final boolean isMirrored,
       final boolean removal)
     {
-        final Future<Blueprint> blueprintFuture = workOrder.getBlueprintFuture();
         this.loadingBlueprint = true;
-
-        ServerFutureProcessor.queueBlueprint(new ServerFutureProcessor.BlueprintProcessingData(blueprintFuture, world, (blueprint -> {
+        workOrder.loadBlueprint(world, (blueprint -> {
             if (blueprint == null)
             {
                 handleSpecificCancelActions();
@@ -237,10 +230,8 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
 
             final BuildingStructureHandler<JobQuarrier, BuildingMiner> structure;
             structure = new BuildingStructureHandler<>(world,
-              position,
-              blueprint,
-              new PlacementSettings(isMirrored ? Mirror.FRONT_BACK : Mirror.NONE, BlockPosUtil.getRotationFromRotations(rotateTimes)),
-              this, new BuildingStructureHandler.Stage[] {BUILD_SOLID, DECORATE, CLEAR});
+                workOrder,
+                this, new BuildingProgressStage[] {BUILD_SOLID, DECORATE, CLEAR});
             building.setTotalStages(3);
 
             if (!structure.hasBluePrint())
@@ -251,8 +242,6 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
                 return;
             }
 
-            job.setBlueprint(structure.getBluePrint());
-            job.getBlueprint().rotateWithMirror(BlockPosUtil.getRotationFromRotations(rotateTimes), isMirrored ? Mirror.FRONT_BACK : Mirror.NONE, world);
             setStructurePlacer(structure);
 
             if (getProgressPos() != null)
@@ -260,7 +249,7 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
                 structure.setStage(getProgressPos().getB());
             }
             this.loadingBlueprint = false;
-        })));
+        }));
     }
 
     @Override

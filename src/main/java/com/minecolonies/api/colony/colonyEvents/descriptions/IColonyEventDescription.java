@@ -62,4 +62,32 @@ public interface IColonyEventDescription extends INBTSerializable<CompoundTag>
      * @param buf the {@link FriendlyByteBuf} to deserialize from.
      */
     void deserialize(final FriendlyByteBuf buf);
+
+    /**
+     * Get the day the event occured.
+     * @return true.
+     */
+    int getDay();
+
+    /**
+     * Set the day it happened at.
+     * @param day the day.
+     */
+    void setDay(int day);
+
+    /**
+     * If the event should be included at the end of day summary.
+     * @return true if so.
+     */
+    boolean includeInSummary();
+
+    /**
+     * Get the summary translation key.
+     * @return the translation key.
+     */
+    default String getSummaryTranslationKey()
+    {
+        // Not all need it.
+        return  "";
+    }
 }

@@ -3,8 +3,13 @@ package com.minecolonies.api.colony.requestsystem.factory;
 import com.google.common.reflect.TypeToken;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  * Interface used to describe classes that function as Factory controllers.
@@ -149,7 +154,23 @@ public interface IFactoryController
      * @return An NBTTag containing a serialized version of the given object.
      * @throws IllegalArgumentException is thrown when the output type is unknown to this controller.
      */
-    <Output extends Object> CompoundTag serialize(@NotNull final Output object) throws IllegalArgumentException;
+    <Output> CompoundTag serialize(@NotNull final Output object) throws IllegalArgumentException;
+
+    /**
+     * Serialize a collection to nbt util.
+     * @param list the collection to serialize.
+     * @return an nbt tag.
+     * @param <Output> the thing being serialized.
+     */
+    default <Output> Tag serializeList(Collection<Output> list)
+    {
+        final ListTag tag = new ListTag();
+        for (final Output value : list)
+        {
+            tag.add(this.serialize(value));
+        }
+        return tag;
+    }
 
     /**
      * Method used to quickly deserialize a object if it is known to this controller.
@@ -160,6 +181,22 @@ public interface IFactoryController
      * @throws IllegalArgumentException is thrown when the type stored in the data is unknown to this controller.
      */
     <Output> Output deserialize(@NotNull final CompoundTag compound) throws IllegalArgumentException;
+
+    /**
+     * Deserialize a collection from nbt util.
+     * @param listTag the nbt tag to deserialize from.
+     * @return a collection.
+     * @param <Output> the thing being serialized.
+     */
+    default <Output> Collection<Output> deserializeList(ListTag listTag)
+    {
+        final Collection<Output> values = new ArrayList<>();
+        for (final Tag subCompound : listTag)
+        {
+            values.add(this.deserialize(((CompoundTag) subCompound)));
+        }
+        return values;
+    }
 
     /**
      * Method used to quickly write an object into the given {@link ByteBuf}.

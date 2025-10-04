@@ -1,5 +1,6 @@
 package com.minecolonies.api.colony;
 
+import com.minecolonies.api.colony.connections.IColonyConnectionManager;
 import com.minecolonies.api.colony.managers.interfaces.*;
 import com.minecolonies.api.colony.permissions.IPermissions;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
@@ -13,6 +14,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -26,8 +28,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
-
-import static com.minecolonies.api.util.constant.ColonyConstants.TEAM_COLONY_NAME;
 
 /**
  * Interface of the Colony and ColonyView which will have to implement the following methods.
@@ -111,12 +111,12 @@ public interface IColony
     /**
      * Check if the colony has a building type at a specific level or higher.
      *
-     * @param building       The string identifier for the building, based on schematic name.
+     * @param building       The identifier for the building, based on schematic name.
      * @param level          The level requirement.
      * @param singleBuilding If true, requires that a single building meet the minimum requirement.
      * @return true if at least one building of at least the target level is present.
      */
-    boolean hasBuilding(final String building, final int level, final boolean singleBuilding);
+    boolean hasBuilding(final ResourceLocation building, final int level, final boolean singleBuilding);
 
     /**
      * Getter for the team colony color.
@@ -269,7 +269,25 @@ public interface IColony
      */
     IEventDescriptionManager getEventDescriptionManager();
 
+    /**
+     * The colony networking packaging manager.
+     *
+     * @return The packaging manager.
+     */
     IColonyPackageManager getPackageManager();
+
+    /**
+     * Get the travelling manager of the colony.
+     *
+     * @return the travelling manager.
+     */
+    ITravellingManager getTravellingManager();
+
+    /**
+     * Get the connection manager of the colony.
+     * @return the connection manager.
+     */
+    IColonyConnectionManager getConnectionManager();
 
     /**
      * Add a visiting player.
@@ -442,6 +460,7 @@ public interface IColony
 
     /**
      * Get the matching citizen name file of the colony .
+     *
      * @return the matching file.
      */
     CitizenNameFile getCitizenNameFile();
@@ -455,18 +474,21 @@ public interface IColony
 
     /**
      * Get the current day of the colony.
+     *
      * @return the current day progress of the colony.
      */
     int getDay();
 
     /**
      * Get the quest manager of the colony.
+     *
      * @return the quest manager.
      */
     IQuestManager getQuestManager();
 
     /**
      * Get citizen from colony.
+     *
      * @param id the id of the cit.
      * @return the cit.
      */

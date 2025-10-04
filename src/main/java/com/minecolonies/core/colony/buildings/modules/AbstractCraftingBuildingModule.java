@@ -438,24 +438,34 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
                 return true;
             }
 
-            final IRecipeStorage recipeStorage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
-            if (recipeStorage != null)
-            {
-                if (recipeStorage.getAlternateOutputs().isEmpty())
-                {
-                    building.getColony().getRequestManager().onColonyUpdate(request -> request.getRequest() instanceof IDeliverable iDeliverable && iDeliverable.matches(recipeStorage.getPrimaryOutput()));
-                    return true;
-                }
-
-                final List<ItemStack> allOutputs = Stream.concat(Stream.of(recipeStorage.getPrimaryOutput()),
-                    recipeStorage.getAlternateOutputs().stream()).filter(stack -> !stack.isEmpty()).toList();
-
-                building.getColony().getRequestManager().onColonyUpdate(request ->
-                                                                          request.getRequest() instanceof IDeliverable delivery && allOutputs.stream().anyMatch(i -> delivery.matches(i)));
-            }
+            handleRecipeUpdate(token);
             return true;
         }
         return false;
+    }
+
+    /**
+     * Handle recipe update.
+     * Adjust request system to deal with recipe update.
+     * @param token the related recipe.
+     */
+    public void handleRecipeUpdate(final IToken<?> token)
+    {
+        final IRecipeStorage recipeStorage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
+        if (recipeStorage != null)
+        {
+            if (recipeStorage.getAlternateOutputs().isEmpty())
+            {
+                building.getColony().getRequestManager().onColonyUpdate(request -> request.getRequest() instanceof IDeliverable iDeliverable && iDeliverable.matches(recipeStorage.getPrimaryOutput()));
+                return;
+            }
+
+            final List<ItemStack> allOutputs = Stream.concat(Stream.of(recipeStorage.getPrimaryOutput()),
+                recipeStorage.getAlternateOutputs().stream()).filter(stack -> !stack.isEmpty()).toList();
+
+            building.getColony().getRequestManager().onColonyUpdate(request ->
+                request.getRequest() instanceof IDeliverable delivery && allOutputs.stream().anyMatch(i -> delivery.matches(i)));
+        }
     }
 
     @Override
@@ -606,19 +616,10 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
 
             if (didReduction)
             {
-                final IRecipeStorage storage = StandardFactoryController.getInstance().getNewInstance(
-                  TypeConstants.RECIPE,
-                  StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
-                  newRecipe,
-                  1,
-                  recipe.getPrimaryOutput(),
-                  recipe.getIntermediate(),
-                  null,     // improved recipes have no source (expected by checkForWorkerSpecificRecipes)
-                  recipe.getRecipeType().getId(),
-                  recipe.getAlternateOutputs(),
-                  recipe.getSecondaryOutputs(),
-                  recipe.getLootTable(),
-                  recipe.getRequiredTool());
+                final IRecipeStorage storage = RecipeStorage.builder(recipe)
+                        .withInputs(newRecipe)
+                        .withRecipeId(null) // improved recipes have no source (expected by checkForWorkerSpecificRecipes)
+                        .build();
 
                 final IToken<?> token = IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(storage);
                 if (isRecipeCompatibleWithCraftingModule(token))
@@ -862,6 +863,7 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
             recipesDirty = true;
             disabledRecipes.remove(token);
             markDirty();
+            handleRecipeUpdate(token);
         }
         else
         {

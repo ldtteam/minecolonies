@@ -6,6 +6,7 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.client.gui.modules.WindowHutRequestTaskModule;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
@@ -31,9 +32,9 @@ public abstract class RequestTaskModuleView extends AbstractBuildingModuleView
     }
 
     @Override
-    public String getIcon()
+    public ResourceLocation getIconResourceLocation()
     {
-        return "info";
+        return new ResourceLocation(Constants.MOD_ID, "textures/gui/modules/info.png");
     }
 
     @Override

@@ -7,6 +7,7 @@ import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesRaider;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.core.MineColonies;
+import com.minecolonies.core.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.core.colony.jobs.AbstractJobGuard;
 import com.minecolonies.core.entity.ai.workers.guard.AbstractEntityAIGuard;
 import net.minecraft.core.BlockPos;
@@ -139,7 +140,7 @@ public class EntityAIBreakDoor extends BreakDoorGoal
 
                 for (int i = 0; i < possibleGuards.size() && i <= 3; i++)
                 {
-                    ((AbstractEntityAIGuard<?, ?>) possibleGuards.get(i).getCitizenData().getJob().getWorkerAI()).setNextPatrolTargetAndMove(gotoPos);
+                    ((AbstractBuildingGuards) possibleGuards.get(i).getCitizenData().getWorkBuilding()).setTempNextPatrolPoint(gotoPos);
                 }
             }
         }

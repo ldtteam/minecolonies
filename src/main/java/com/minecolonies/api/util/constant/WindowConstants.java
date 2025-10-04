@@ -1,7 +1,9 @@
 package com.minecolonies.api.util.constant;
 
 import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.common.util.Size2i;
 
+import static com.minecolonies.api.util.constant.Constants.MOD_ID;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 
 /**
@@ -1277,6 +1279,16 @@ public final class WindowConstants
      * Title label.
      */
     public static final String TITLE_LABEL = "title";
+
+    /**
+     * Crafting switch buttons texture.
+     */
+    public static final ResourceLocation CRAFTING_SWITCH_TEXTURE = new ResourceLocation(MOD_ID, "textures/gui/craftingswitch.png");
+
+    /**
+     * Switch button size.
+     */
+    public static final Size2i CRAFTING_SWITCH_SIZE = new Size2i(20, 18);
 
     /**
      * Private constructor to hide implicit public one.

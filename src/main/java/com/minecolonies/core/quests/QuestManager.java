@@ -1,10 +1,14 @@
 package com.minecolonies.core.quests;
 
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.quests.*;
+import com.minecolonies.api.quests.FinishedQuest;
+import com.minecolonies.api.quests.IQuestInstance;
+import com.minecolonies.api.quests.IQuestManager;
+import com.minecolonies.api.quests.IQuestTemplate;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 
@@ -52,6 +56,11 @@ public class QuestManager implements IQuestManager
      */
     private final IColony colony;
 
+    /**
+     * Tracks if data needs to be sent
+     */
+    private boolean isDirty = true;
+
     public QuestManager(final IColony colony)
     {
         this.colony = colony;
@@ -67,6 +76,7 @@ public class QuestManager implements IQuestManager
         }
         this.inProgressQuests.put(questID, quest);
         this.availableQuests.remove(questID);
+        markDirty();
         return true;
     }
 
@@ -74,6 +84,7 @@ public class QuestManager implements IQuestManager
     public void alterReputation(final double difference)
     {
         this.questReputation += difference;
+        markDirty();
     }
 
     @Override
@@ -89,12 +100,14 @@ public class QuestManager implements IQuestManager
         {
             inProgressQuests.remove(questId);
             finishedQuests.put(questId, finishedQuests.getOrDefault(questId, 0) + 1);
+            markDirty();
         }
         else if (availableQuests.containsKey(questId))
         {
             // When a player short-cut quits a job without accepting it. (E.g. been there, done that options).
             availableQuests.remove(questId);
             finishedQuests.put(questId, finishedQuests.getOrDefault(questId, 0) + 1);
+            markDirty();
         }
 
         finishedQuestsCache = null;
@@ -131,6 +144,7 @@ public class QuestManager implements IQuestManager
             if (colonyQuest != null)
             {
                 this.availableQuests.put(quest.getKey(), colonyQuest);
+                markDirty();
             }
         }
 
@@ -140,6 +154,7 @@ public class QuestManager implements IQuestManager
             {
                 availableQuest.getValue().onDeletion();
                 this.availableQuests.remove(availableQuest.getKey());
+                markDirty();
             }
         }
 
@@ -149,6 +164,7 @@ public class QuestManager implements IQuestManager
             {
                 inProgressQuest.getValue().onDeletion();
                 this.inProgressQuests.remove(inProgressQuest.getKey());
+                markDirty();
             }
         }
     }
@@ -158,6 +174,7 @@ public class QuestManager implements IQuestManager
     {
         this.availableQuests.remove(questID);
         this.inProgressQuests.remove(questID);
+        markDirty();
     }
 
     @Override
@@ -179,6 +196,7 @@ public class QuestManager implements IQuestManager
     public void unlockQuest(final ResourceLocation questId)
     {
         this.unlockedQuests.add(questId);
+        markDirty();
     }
 
     @Override
@@ -283,6 +301,32 @@ public class QuestManager implements IQuestManager
     }
 
     @Override
+    public void serialize(final FriendlyByteBuf buf, final boolean hasNewSubscribers)
+    {
+        buf.writeBoolean(isDirty || hasNewSubscribers);
+        if (isDirty || hasNewSubscribers)
+        {
+            buf.writeNbt(serializeNBT());
+        }
+    }
+
+    @Override
+    public void deserialize(final FriendlyByteBuf buf)
+    {
+        final boolean hasData = buf.readBoolean();
+        if (hasData)
+        {
+            deserializeNBT(buf.readNbt());
+        }
+    }
+
+    @Override
+    public void markDirty()
+    {
+        isDirty = true;
+    }
+
+    @Override
     public List<IQuestInstance> getAvailableQuests()
     {
         return new ArrayList<>(availableQuests.values());
@@ -317,5 +361,6 @@ public class QuestManager implements IQuestManager
     public void injectAvailableQuest(final IQuestInstance questInstance)
     {
         this.availableQuests.put(questInstance.getId(), questInstance);
+        markDirty();
     }
 }

@@ -17,6 +17,16 @@ import org.jetbrains.annotations.Nullable;
  */
 public final class Pond
 {
+    /*
+     * Possible pond states, with SUBOPTIMAL introduced to recognize "flowing water" ponds
+     * where it appears valid, but the water blocks below the surface are not source blocks.
+     */
+    public enum PondState {
+        INVALID,
+        SUBOPTIMAL,
+        VALID
+    }
+
     /**
      * The minimum pond requirements.
      */
@@ -31,19 +41,29 @@ public final class Pond
      * @param problematicPosition Will contain position of problematic block (if not null && pond was not found).
      * @return true if water.
      */
-    public static boolean checkPond(@NotNull final BlockGetter world, @NotNull final BlockPos water, @Nullable final MutableBlockPos problematicPosition)
+    public static PondState checkPond(@NotNull final BlockGetter world, @NotNull final BlockPos water, @Nullable final MutableBlockPos problematicPosition)
     {
+        PondState worstPondState = PondState.VALID;
+
         for (final MutableBlockPos tempPos : BlockPos.spiralAround(water, (WATER_POOL_WIDTH_REQUIREMENT - 1) / 2, Direction.SOUTH, Direction.EAST))
         {
+            PondState pondState = PondState.VALID;
+
             for (int y = 0; y < WATER_DEPTH_REQUIREMENT; y++)
             {
-                if (!isWaterForFishing(world, tempPos.setY(tempPos.getY() - y)))
+                pondState = checkWaterForFishing(world, tempPos.setY(tempPos.getY() - y));
+
+                if (pondState == PondState.INVALID)
                 {
                     if (problematicPosition != null)
                     {
                         problematicPosition.set(tempPos);
                     }
-                    return false;
+                    return PondState.INVALID;
+                }
+                else if (pondState == PondState.SUBOPTIMAL)
+                {
+                    worstPondState = PondState.SUBOPTIMAL;
                 }
 
                 // 70% chance to check, to on avg prefer cleared areas
@@ -54,7 +74,7 @@ public final class Pond
             }
         }
 
-        return true;
+        return worstPondState;
     }
 
     /**
@@ -64,15 +84,28 @@ public final class Pond
      * @param pos
      * @return
      */
-    public static boolean isWaterForFishing(final BlockGetter world, final BlockPos pos)
+    public static PondState checkWaterForFishing(final BlockGetter world, final BlockPos pos)
     {
+        PondState pondState = PondState.INVALID;
+
         final BlockState state = world.getBlockState(pos);
         if (!state.isAir() && !state.is(Blocks.LILY_PAD))
         {
             FluidState fluidstate = state.getFluidState();
-            return fluidstate.is(FluidTags.WATER) && fluidstate.isSource() && state.getCollisionShape(world, pos).isEmpty();
+
+            if  (fluidstate.is(FluidTags.WATER) && state.getCollisionShape(world, pos).isEmpty()) 
+            {
+                if (fluidstate.isSource())
+                {
+                    pondState = PondState.VALID;
+                }
+                else
+                {
+                    pondState = PondState.SUBOPTIMAL;
+                }
+            };
         }
 
-        return false;
+        return pondState;
     }
 }

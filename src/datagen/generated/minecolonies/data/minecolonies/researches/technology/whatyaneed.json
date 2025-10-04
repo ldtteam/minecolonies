@@ -1,8 +1,16 @@
 {
   "branch": "minecolonies:technology",
+  "costs": [
+    {
+      "type": "minecolonies:item_simple",
+      "item": "minecraft:redstone",
+      "quantity": 64
+    }
+  ],
   "effects": [
     {
-      "minecolonies:effects/blockhutmechanic": 1
+      "id": "minecolonies:effects/blockhutmechanic",
+      "level": 1
     }
   ],
   "icon": "minecolonies:blockhutmechanic",
@@ -10,13 +18,8 @@
   "requirements": [
     {
       "type": "minecolonies:building",
-      "building": "blacksmith",
+      "building": "minecolonies:blacksmith",
       "level": 3
-    },
-    {
-      "type": "minecolonies:item_simple",
-      "item": "minecraft:redstone",
-      "quantity": 64
     }
   ],
   "researchLevel": 2,

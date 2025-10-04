@@ -12,6 +12,8 @@ import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.api.util.StatsUtil;
+
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.core.Network;
@@ -33,6 +35,9 @@ import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.PATIENT_FULL_INVENTORY;
+import static com.minecolonies.api.util.constant.StatisticsConstants.DISEASES_TREATED;
+import static com.minecolonies.api.util.constant.StatisticsConstants.NUM_DISEASES_TREATED;
+
 
 /**
  * Healer AI class.
@@ -73,6 +78,8 @@ public class EntityAIWorkHealer extends AbstractEntityAIInteract<JobHealer, Buil
      * Player to heal.
      */
     private Player playerToHeal;
+
+    public static final String DISEASES_TREATED = "diseases_treated";
 
     /**
      * Constructor for the Cook. Defines the tasks the cook executes.
@@ -375,6 +382,7 @@ public class EntityAIWorkHealer extends AbstractEntityAIInteract<JobHealer, Buil
             }
         }
 
+        recordTreatmentStats(citizen);
         worker.getCitizenExperienceHandler().addExperience(BASE_XP_GAIN);
         currentPatient.setState(Patient.PatientState.TREATED);
         currentPatient = null;
@@ -428,6 +436,7 @@ public class EntityAIWorkHealer extends AbstractEntityAIInteract<JobHealer, Buil
         }
 
         progressTicks = 0;
+        recordTreatmentStats(citizen);
         worker.getCitizenExperienceHandler().addExperience(BASE_XP_GAIN);
         citizen.getCitizenData().getCitizenDiseaseHandler().cure();
         currentPatient.setState(Patient.PatientState.TREATED);
@@ -530,5 +539,15 @@ public class EntityAIWorkHealer extends AbstractEntityAIInteract<JobHealer, Buil
     public Class<BuildingHospital> getExpectedBuildingClass()
     {
         return BuildingHospital.class;
+    }
+
+    private void recordTreatmentStats(EntityCitizen citizen) 
+    {
+        final Disease disease = citizen.getCitizenData().getCitizenDiseaseHandler().getDisease();
+        if (disease != null)
+        {
+            StatsUtil.trackStatByName(building, DISEASES_TREATED, disease.name(), 1);
+            worker.getCitizenColonyHandler().getColonyOrRegister().getStatisticsManager().increment(NUM_DISEASES_TREATED, worker.getCitizenColonyHandler().getColonyOrRegister().getDay());
+        }
     }
 }

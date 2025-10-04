@@ -7,6 +7,7 @@ import com.minecolonies.api.entity.pathfinding.IStuckHandler;
 import com.minecolonies.core.entity.pathfinding.PathingOptions;
 import com.minecolonies.core.entity.pathfinding.pathjobs.AbstractPathJob;
 import com.minecolonies.core.entity.pathfinding.pathjobs.PathJobMoveCloseToXNearY;
+import com.minecolonies.core.entity.pathfinding.pathjobs.PathJobRandomPos;
 import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
 import com.minecolonies.core.entity.pathfinding.pathresults.TreePathResult;
 import net.minecraft.core.BlockPos;
@@ -140,6 +141,19 @@ public abstract class AbstractAdvancedPathNavigate extends GroundPathNavigation
       final int range,
       final double speed,
       final net.minecraft.util.Tuple<BlockPos, BlockPos> corners);
+
+    /**
+     * Used to path towards a random pos within some restrictions
+     *
+     * @param range   the range he should move out of.
+     * @param speed   the speed to run at.
+     * @param corners the corners they can't leave.
+     * @return the result of the pathing.
+     */
+    protected abstract PathResult<PathJobRandomPos> walkToRandomPos(
+        final int range,
+        final double speed,
+        final net.minecraft.util.Tuple<BlockPos, BlockPos> corners, final boolean preferInside);
 
     /**
      * Used to find a tree.

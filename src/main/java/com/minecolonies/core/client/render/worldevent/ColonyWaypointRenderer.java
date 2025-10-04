@@ -33,11 +33,11 @@ public class ColonyWaypointRenderer
      */
     static void render(final WorldEventContext ctx)
     {
-        if (!RenderingCache.hasBlueprint("blueprint"))
+        if (!RenderingCache.hasBlueprint("waypoint"))
         {
             return;
         }
-        final Blueprint structure = RenderingCache.getOrCreateBlueprintPreviewData("blueprint").getBlueprint();
+        final Blueprint structure = RenderingCache.getOrCreateBlueprintPreviewData("waypoint").getBlueprint();
         if (structure != null && structure.getFilePath().toString().contains(WAYPOINT_STRING) && ctx.nearestColony != null)
         {
             if (wayPointTemplate == null && pendingTemplate == null)
@@ -73,7 +73,7 @@ public class ColonyWaypointRenderer
                 return;
             }
 
-            BlueprintHandler.getInstance().drawAtListOfPositions(RenderingCache.getOrCreateBlueprintPreviewData("blueprint").getBlueprint().hashCode() == wayPointTemplate.hashCode() ? RenderingCache.getOrCreateBlueprintPreviewData("blueprint")
+            BlueprintHandler.getInstance().drawAtListOfPositions(RenderingCache.getOrCreateBlueprintPreviewData("waypoint").getBlueprint().hashCode() == wayPointTemplate.hashCode() ? RenderingCache.getOrCreateBlueprintPreviewData("waypoint")
               : wayPointTemplate, new ArrayList<>(ctx.nearestColony.getWayPoints().keySet()), ctx.stageEvent);
         }
     }

@@ -5,20 +5,21 @@ import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.storage.StructurePacks;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.workorders.IBuilderWorkOrder;
 import com.minecolonies.api.colony.workorders.IWorkOrder;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.Utils;
 import com.minecolonies.api.util.constant.NbtTagConstants;
 import com.minecolonies.core.colony.buildings.AbstractBuildingStructureBuilder;
 import com.minecolonies.core.entity.ai.workers.AbstractAISkeleton;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.Nullable;
 
 import static com.ldtteam.structurize.blockentities.interfaces.IBlueprintDataProviderBE.TAG_BLUEPRINTDATA;
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_NAME;
+import static com.ldtteam.structurize.blockentities.interfaces.IBlueprintDataProviderBE.TAG_SCHEMATIC_NAME;
 
 /**
  * Common job object for all structure AIs.
@@ -36,11 +37,6 @@ public abstract class AbstractJobStructure<AI extends AbstractAISkeleton<J>, J e
     private int workOrderId;
 
     /**
-     * The structure the job should build.
-     */
-    protected Blueprint blueprint;
-
-    /**
      * Initialize citizen data.
      *
      * @param entity the citizen data.
@@ -48,38 +44,6 @@ public abstract class AbstractJobStructure<AI extends AbstractAISkeleton<J>, J e
     public AbstractJobStructure(final ICitizenData entity)
     {
         super(entity);
-    }
-
-    /**
-     * Does this job has a loaded StructureProxy?
-     * <p>
-     * if a structure is not null there exists a location for it
-     *
-     * @return true if there is a loaded structure for this Job
-     */
-    public boolean hasBlueprint()
-    {
-        return blueprint != null;
-    }
-
-    /**
-     * Get the StructureProxy loaded by the Job.
-     *
-     * @return StructureProxy loaded by the Job
-     */
-    public Blueprint getBlueprint()
-    {
-        return blueprint;
-    }
-
-    /**
-     * Set the structure of the structure job.
-     *
-     * @param blueprint {@link Blueprint} object
-     */
-    public void setBlueprint(final Blueprint blueprint)
-    {
-        this.blueprint = blueprint;
     }
 
     /**
@@ -136,6 +100,7 @@ public abstract class AbstractJobStructure<AI extends AbstractAISkeleton<J>, J e
     {
         getWorkOrder().onCompleted(getCitizen().getColony(), this.getCitizen());
 
+        final Blueprint blueprint = getWorkOrder().getBlueprint();
         if (blueprint != null)
         {
             final CompoundTag[][][] tileEntityData = blueprint.getTileEntities();
@@ -148,24 +113,25 @@ public abstract class AbstractJobStructure<AI extends AbstractAISkeleton<J>, J e
                         final CompoundTag compoundNBT = tileEntityData[y][z][x];
                         if (compoundNBT != null && compoundNBT.contains(TAG_BLUEPRINTDATA))
                         {
-                            final BlockPos tePos = getWorkOrder().getLocation().subtract(blueprint.getPrimaryBlockOffset()).offset(x, y, z);
+                            final BlockPos offset = new BlockPos(x, y, z);
+                            final BlockPos tePos = getWorkOrder().getLocation().subtract(blueprint.getPrimaryBlockOffset()).offset(offset);
                             final BlockEntity te = getColony().getWorld().getBlockEntity(tePos);
-                            if (te instanceof IBlueprintDataProviderBE)
+                            if (te instanceof IBlueprintDataProviderBE blueprintDataProviderBE)
                             {
                                 final CompoundTag tagData = compoundNBT.getCompound(TAG_BLUEPRINTDATA);
-                                final String schematicPath = tagData.getString(TAG_NAME);
-                                final String location = StructurePacks.getStructurePack(blueprint.getPackName()).getSubPath(Utils.resolvePath(blueprint.getFilePath(), schematicPath));
-
-                                tagData.putString(TAG_NAME, location);
                                 tagData.putString(NbtTagConstants.TAG_PACK, blueprint.getPackName());
+                                if (blueprint.getPrimaryBlockOffset().equals(offset))
+                                {
+                                    tagData.putString(NbtTagConstants.TAG_PATH, StructurePacks.getStructurePack(blueprint.getPackName()).getSubPath(Utils.resolvePath(blueprint.getFilePath(), tagData.getString(TAG_SCHEMATIC_NAME))) + ".blueprint");
+                                }
 
                                 try
                                 {
-                                    ((IBlueprintDataProviderBE) te).readSchematicDataFromNBT(compoundNBT);
+                                    blueprintDataProviderBE.readSchematicDataFromNBT(compoundNBT);
                                 }
                                 catch (final Exception e)
                                 {
-                                    Log.getLogger().warn("Broken deco-controller at: " + x + " " + y + " " + z);
+                                    Log.getLogger().warn("Broken deco-controller at: {}", offset);
                                 }
                                 ((ServerLevel) getColony().getWorld()).getChunkSource().blockChanged(tePos);
                                 te.setChanged();
@@ -178,7 +144,6 @@ public abstract class AbstractJobStructure<AI extends AbstractAISkeleton<J>, J e
 
         getCitizen().getColony().getWorkManager().removeWorkOrder(workOrderId);
         setWorkOrder(null);
-        setBlueprint(null);
     }
 
     /**
@@ -186,9 +151,19 @@ public abstract class AbstractJobStructure<AI extends AbstractAISkeleton<J>, J e
      *
      * @return WorkOrderBuildDecoration for the Build
      */
-    public IWorkOrder getWorkOrder()
+    public IBuilderWorkOrder getWorkOrder()
     {
-        return getColony().getWorkManager().getWorkOrder(workOrderId, IWorkOrder.class);
+        final @Nullable IBuilderWorkOrder workOrder = getColony().getWorkManager().getWorkOrder(workOrderId, IBuilderWorkOrder.class);
+        if (workOrder == null)
+        {
+            return null;
+        }
+        else if (!workOrder.getClaimedBy().equals(getCitizen().getWorkBuilding().getID()))
+        {
+            workOrderId = 0;
+            return null;
+        }
+        return workOrder;
     }
 
     /**

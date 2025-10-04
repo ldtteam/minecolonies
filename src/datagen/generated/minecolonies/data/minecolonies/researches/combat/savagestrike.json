@@ -1,18 +1,19 @@
 {
   "branch": "minecolonies:combat",
-  "effects": [
-    {
-      "minecolonies:effects/meleedamageaddition": 5
-    }
-  ],
-  "icon": "minecraft:diamond_sword",
-  "parentResearch": "minecolonies:combat/mightycleave",
-  "requirements": [
+  "costs": [
     {
       "type": "minecolonies:item_simple",
       "item": "minecraft:iron_block",
       "quantity": 32
     }
   ],
+  "effects": [
+    {
+      "id": "minecolonies:effects/meleedamageaddition",
+      "level": 5
+    }
+  ],
+  "icon": "minecraft:diamond_sword",
+  "parentResearch": "minecolonies:combat/mightycleave",
   "researchLevel": 6
 }

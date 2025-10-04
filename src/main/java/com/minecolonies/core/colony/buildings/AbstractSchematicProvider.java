@@ -4,6 +4,8 @@ import com.ldtteam.structurize.blockentities.interfaces.IBlueprintDataProviderBE
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.storage.StructurePacks;
 import com.ldtteam.structurize.util.BlockInfo;
+import com.ldtteam.structurize.util.RotationMirror;
+import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.ISchematicProvider;
@@ -229,9 +231,9 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
             path = compound.getString(TAG_PATH);
         }
 
-        if (path == null || path.isEmpty())
+        if ((path == null || path.isEmpty()) && getBuildingType().getBuildingBlock() instanceof AbstractBlockHut<?> abstractBlockHut)
         {
-            path = BlueprintMapping.getPathMapping("", getBuildingType().getBuildingBlock().getBlueprintName()) + "1.blueprint";
+            path = BlueprintMapping.getPathMapping("", abstractBlockHut.getBlueprintName()) + "1.blueprint";
         }
 
         this.structurePack = packName;
@@ -376,7 +378,8 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
                 blueprint = blueprintFuture.get();
                 if (blueprint != null)
                 {
-                    blueprint.rotateWithMirror(BlockPosUtil.getRotationFromRotations(getRotation()), isMirrored() ? Mirror.FRONT_BACK : Mirror.NONE, colony.getWorld());
+                    blueprint.setRotationMirror(RotationMirror.of(BlockPosUtil.getRotationFromRotations(getRotation()), isMirrored() ? Mirror.FRONT_BACK : Mirror.NONE),
+                        colony.getWorld());
                     final BlockInfo info = blueprint.getBlockInfoAsMap().getOrDefault(blueprint.getPrimaryBlockOffset(), null);
                     if (info.getTileEntityData() != null)
                     {

@@ -7,6 +7,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildingextensions.registry.BuildingExtensionRegistries.BuildingExtensionEntry;
 import com.minecolonies.api.entity.ai.workers.util.IBuilderUndestroyable;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.client.gui.WindowPlantationField;
 import com.minecolonies.core.colony.buildingextensions.PlantationField;
@@ -188,12 +189,27 @@ public class BlockPlantationField extends AbstractBlockMinecoloniesHorizontal<Bl
                     final PlantationField plantationField = PlantationField.create(plantationFieldType, pos);
 
                     final List<BlockPos> workingPositions = tileEntityPlantationField.getWorkingPositions(plantationField.getModule().getWorkTag());
+                    if (workingPositions.isEmpty())
+                    {
+                        Log.getLogger()
+                            .warn("Plantation field blueprint at path {} does not have ANY tagged working positions for the tag '{}', please report this to devs!",
+                                tileEntityPlantationField.getBlueprintPath(),
+                                plantationField.getModule().getWorkTag());
+                    }
+
                     final List<BlockPos> validPositions = plantationField.getModule().getValidWorkingPositions(worldIn, workingPositions);
                     if (!validPositions.isEmpty())
                     {
                         plantationField.setWorkingPositions(validPositions);
                         colony.getBuildingManager().addBuildingExtension(plantationField);
                         colony.getBuildingManager().addLeisureSite(pos);
+                    }
+                    else
+                    {
+                        Log.getLogger()
+                            .warn("Plantation field blueprint at path {} does not have ANY VALID tagged working positions for the tag '{}', please report this to devs!",
+                                tileEntityPlantationField.getBlueprintPath(),
+                                plantationField.getModule().getWorkTag());
                     }
                 }
             }

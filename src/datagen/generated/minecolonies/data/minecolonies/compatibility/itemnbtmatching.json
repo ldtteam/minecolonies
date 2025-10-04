@@ -55,6 +55,22 @@
         "children": [
           {
             "key": "minecraft:block/oak_planks"
+          },
+          {
+            "key": "minecraft:block/dark_oak_planks"
+          }
+        ],
+        "key": "textureData"
+      }
+    ],
+    "item": "domum_ornamentum:blocktiledpaperwall"
+  },
+  {
+    "checkednbtkeys": [
+      {
+        "children": [
+          {
+            "key": "minecraft:block/oak_planks"
           }
         ],
         "key": "textureData"
@@ -180,6 +196,22 @@
       }
     ],
     "item": "domum_ornamentum:down_gated"
+  },
+  {
+    "checkednbtkeys": [
+      {
+        "children": [
+          {
+            "key": "minecraft:block/oak_planks"
+          },
+          {
+            "key": "minecraft:block/dark_oak_planks"
+          }
+        ],
+        "key": "textureData"
+      }
+    ],
+    "item": "domum_ornamentum:dynamic_timberframe"
   },
   {
     "checkednbtkeys": [
@@ -758,6 +790,39 @@
     "item": "minecolonies:apple_pie"
   },
   {
+    "checkednbtkeys": [
+      {
+        "key": "Enchantments"
+      },
+      {
+        "key": "RepairCost"
+      }
+    ],
+    "item": "minecolonies:assistanthammer_diamond"
+  },
+  {
+    "checkednbtkeys": [
+      {
+        "key": "Enchantments"
+      },
+      {
+        "key": "RepairCost"
+      }
+    ],
+    "item": "minecolonies:assistanthammer_gold"
+  },
+  {
+    "checkednbtkeys": [
+      {
+        "key": "Enchantments"
+      },
+      {
+        "key": "RepairCost"
+      }
+    ],
+    "item": "minecolonies:assistanthammer_iron"
+  },
+  {
     "item": "minecolonies:baked_salmon"
   },
   {
@@ -843,6 +908,9 @@
   },
   {
     "item": "minecolonies:blockhutflorist"
+  },
+  {
+    "item": "minecolonies:blockhutgatehouse"
   },
   {
     "item": "minecolonies:blockhutglassblower"
@@ -1010,6 +1078,12 @@
     "item": "minecolonies:colony_banner"
   },
   {
+    "item": "minecolonies:colonymap"
+  },
+  {
+    "item": "minecolonies:colonysign"
+  },
+  {
     "item": "minecolonies:compost"
   },
   {
@@ -1071,6 +1145,9 @@
   },
   {
     "item": "minecolonies:floodedfarmland"
+  },
+  {
+    "item": "minecolonies:fried_rice"
   },
   {
     "item": "minecolonies:garlic"

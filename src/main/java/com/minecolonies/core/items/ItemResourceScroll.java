@@ -130,7 +130,7 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
         }
 
         long location = currentWorkOrder.get().getLocation().asLong();
-        return location + "__" + currentWorkOrder.get().getPackName();
+        return location + "__" + currentWorkOrder.get().getStructurePack();
     }
 
     /**

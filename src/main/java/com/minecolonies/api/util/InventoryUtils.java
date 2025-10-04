@@ -8,6 +8,9 @@ import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.equipment.registry.EquipmentTypeEntry;
 import com.minecolonies.core.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.core.tileentities.TileEntityRack;
+
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerPlayer;
@@ -15,8 +18,10 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodProperties;
+import net.minecraft.world.item.BucketItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -2899,6 +2904,40 @@ public class InventoryUtils
     }
 
     /**
+     * Search for a certain itemStack in the inventory and decrease it by 1.
+     * This is "bucket-aware", in that if a full bucket is used by the decrease, an empty
+     * bucket replaces it.
+     *
+     * @param invWrapper the inventory item handler.
+     * @param itemStack  the itemStack to decrease.
+     */
+    public static void reduceBucketAwareStackInItemHandler(final IItemHandler invWrapper, final ItemStack itemStack)
+    {
+        reduceBucketAwareStackInItemHandler(invWrapper, itemStack, 1);
+    }
+
+    /**
+     * Search for a certain itemStack in the inventory and decrease it by a certain quantity.
+     * This is "bucket-aware", in that if a full bucket is used by the decrease, an empty
+     * bucket replaces it.
+     *
+     * @param invWrapper the inventory item handler.
+     * @param itemStack  the itemStack to decrease.
+     * @param quantity   the quantity.
+     */
+    public static void reduceBucketAwareStackInItemHandler(final IItemHandler invWrapper, final ItemStack itemStack, final int quantity)
+    {
+        if  (attemptReduceStackInItemHandler(invWrapper, itemStack, quantity)) 
+        {
+            if (itemStack.getItem() instanceof BucketItem && itemStack.getItem() != Items.BUCKET) 
+            {
+                addItemStackToItemHandler(invWrapper, new ItemStack(Items.BUCKET, quantity));
+            }
+            return;
+        }
+    }
+
+    /**
      * Search for a certain itemStack in the inventory and decrease it by a certain quantity.
      *
      * @param invWrapper the inventory item handler.
@@ -3060,9 +3099,9 @@ public class InventoryUtils
      * @param target             to insert intems into
      * @param requiredSaturation required saturation value
      * @param foodPredicate      food choosing predicate
-     * @return true if any food was transferred
+     * @returns a map of transferred items
      */
-    public static int transferFoodUpToSaturation(
+    public static Object2IntMap<ItemStack> transferFoodUpToSaturation(
       final ICapabilityProvider source,
       final IItemHandler target,
       final int requiredSaturation,
@@ -3071,7 +3110,10 @@ public class InventoryUtils
         Set<IItemHandler> handlers = getItemHandlersFromProvider(source);
 
         int foundSaturation = 0;
-        int transferedItems = 0;
+
+        Object2IntOpenHashMap<ItemStack> transferredItemMap = new Object2IntOpenHashMap<>();
+        transferredItemMap.defaultReturnValue(0); // avoid nulls on get()
+
         for (final IItemHandler handler : handlers)
         {
             for (int i = 0; i < handler.getSlots(); i++)
@@ -3103,7 +3145,11 @@ public class InventoryUtils
                         foundSaturation = requiredSaturation;
                     }
 
-                    transferedItems += extractedFood.getCount();
+                    if (!ItemStackUtils.isEmpty(extractedFood)) 
+                    {
+                        transferredItemMap.addTo(extractedFood, extractedFood.getCount());
+                    }
+                    
                     if (!ItemStackUtils.isEmpty(extractedFood))
                     {
                         if (!addItemStackToItemHandler(target, extractedFood))
@@ -3121,13 +3167,13 @@ public class InventoryUtils
 
                     if (foundSaturation >= requiredSaturation)
                     {
-                        return transferedItems;
+                        return transferredItemMap;
                     }
                 }
             }
         }
 
-        return transferedItems;
+        return transferredItemMap;
     }
 
     /**

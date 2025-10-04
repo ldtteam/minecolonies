@@ -15,11 +15,11 @@ import com.minecolonies.api.util.CraftingUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.OptionalPredicate;
 import com.minecolonies.core.client.gui.modules.PlantationFieldsModuleWindow;
+import com.minecolonies.core.colony.buildingextensions.PlantationField;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
 import com.minecolonies.core.colony.buildings.modules.AbstractCraftingBuildingModule;
 import com.minecolonies.core.colony.buildings.modules.BuildingExtensionsModule;
 import com.minecolonies.core.colony.buildings.moduleviews.FieldsModuleView;
-import com.minecolonies.core.colony.buildingextensions.PlantationField;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
@@ -28,7 +28,6 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
@@ -39,9 +38,9 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.research.util.ResearchConstants.PLANTATION_LARGE;
+import static com.minecolonies.api.util.constant.EquipmentLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_PLANTGROUND;
 import static com.minecolonies.api.util.constant.TagConstants.CRAFTING_PLANTATION;
-import static com.minecolonies.api.util.constant.EquipmentLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 import static com.minecolonies.api.util.constant.translation.GuiTranslationConstants.FIELD_LIST_PLANTATION_RESEARCH_REQUIRED;
 import static com.minecolonies.api.util.constant.translation.GuiTranslationConstants.FIELD_LIST_WARN_EXCEEDS_PLANT_COUNT;
 
@@ -112,7 +111,7 @@ public class BuildingPlantation extends AbstractBuilding
         }
         else
         {
-            final Optional<IBuildingExtension> existingField = colony.getBuildingManager().getBuildingExtension(field -> field.equals(plantationField));
+            final Optional<IBuildingExtension> existingField = colony.getBuildingManager().getMatchingBuildingExtension(field -> field.equals(plantationField));
             if (existingField.isPresent() && existingField.get() instanceof PlantationField existingPlantationField)
             {
                 existingPlantationField.setWorkingPositions(workingPositions);
@@ -258,21 +257,15 @@ public class BuildingPlantation extends AbstractBuilding
         }
 
         @Override
-        public @NotNull List<IBuildingExtension> getExtensions()
+        public @NotNull List<IBuildingExtension> getMatchingExtension(final Predicate<IBuildingExtension> predicateToMatch)
         {
-            return building.getColony().getBuildingManager().getBuildingExtensions(field -> field.hasModule(IPlantationModule.class));
+            return building.getColony().getBuildingManager().getBuildingExtensions(field -> field.hasModule(IPlantationModule.class) && predicateToMatch.test(field));
         }
 
         @Override
         public boolean canAssignExtensionOverride(IBuildingExtension extension)
         {
             return getCurrentPlantsPlusField(extension) <= getMaxConcurrentPlants() && hasRequiredResearchForField(extension);
-        }
-
-        @Override
-        protected int getExtensionCheckTimeoutSeconds()
-        {
-            return 60;
         }
 
         /**
@@ -462,16 +455,11 @@ public class BuildingPlantation extends AbstractBuilding
                   .filter(IPlantationModule.class::isInstance)
                   .map(m -> (IPlantationModule) m)
                   .findFirst()
-                  .ifPresent(module -> recipes.add(new GenericRecipe(null,
-                    new ItemStack(module.getItem()),
-                    Collections.emptyList(),
-                    List.of(module.getRequiredItemsForOperation()),
-                    1,
-                    Blocks.AIR,
-                    null,
-                    module.getRequiredTool(),
-                    Collections.emptyList(),
-                    -1)));
+                  .ifPresent(module -> recipes.add(GenericRecipe.builder()
+                          .withOutput(module.getItem())
+                          .withInputs(List.of(module.getRequiredItemsForOperation()))
+                          .withRequiredTool(module.getRequiredTool())
+                          .build()));
             }
 
             return recipes;

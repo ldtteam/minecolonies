@@ -1,18 +1,6 @@
 {
-  "branch": "minecolonies:civilian",
-  "effects": [
-    {
-      "minecolonies:effects/min_order": 1
-    }
-  ],
-  "icon": "minecolonies:clipboard",
-  "parentResearch": "minecolonies:civilian/rails",
-  "requirements": [
-    {
-      "type": "minecolonies:building",
-      "building": "deliveryman",
-      "level": 9
-    },
+  "branch": "minecolonies:technology",
+  "costs": [
     {
       "type": "minecolonies:item_simple",
       "item": "minecolonies:clipboard",
@@ -24,7 +12,22 @@
       "quantity": 16
     }
   ],
+  "effects": [
+    {
+      "id": "minecolonies:effects/min_order",
+      "level": 1
+    }
+  ],
+  "icon": "minecolonies:clipboard",
+  "parentResearch": "minecolonies:technology/memoryaid",
+  "requirements": [
+    {
+      "type": "minecolonies:building",
+      "building": "minecolonies:deliveryman",
+      "level": 9
+    }
+  ],
   "researchLevel": 3,
-  "sortOrder": 10,
+  "sortOrder": 3,
   "subtitle": "com.minecolonies.research.civilian.moq.subtitle"
 }

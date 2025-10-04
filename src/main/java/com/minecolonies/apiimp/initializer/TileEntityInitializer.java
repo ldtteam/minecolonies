@@ -42,5 +42,7 @@ public class TileEntityInitializer
         MinecoloniesTileEntities.STASH = BLOCK_ENTITIES.register("stash", () -> BlockEntityType.Builder.of(TileEntityStash::new, ModBlocks.blockStash).build(null));
 
         MinecoloniesTileEntities.COLONY_FLAG = BLOCK_ENTITIES.register("colony_flag", () -> BlockEntityType.Builder.of(TileEntityColonyFlag::new, ModBlocks.blockColonyBanner, ModBlocks.blockColonyWallBanner).build(null));
+
+        MinecoloniesTileEntities.COLONY_SIGN = BLOCK_ENTITIES.register("colonysign", () -> BlockEntityType.Builder.of(TileEntityColonySign::new, ModBlocks.blockColonySign).build(null));
     }
 }

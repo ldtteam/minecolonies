@@ -109,6 +109,16 @@ public interface ISchematicProvider extends INBTSerializable<CompoundTag>
     int getBuildingLevel();
 
     /**
+     * Get the equivalent building level for equipment, etc.
+     * Normally it's just the building level, but for buildings with fewer levels it can be 1,3,5 for example.
+     * @return the adjusted level.
+     */
+    default int getBuildingLevelEquivalent()
+    {
+        return getBuildingLevel();
+    }
+
+    /**
      * Sets the current level of the building.
      *
      * @param level Level of the building.

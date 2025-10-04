@@ -29,9 +29,9 @@ import com.minecolonies.api.eventbus.DefaultEventBus;
 import com.minecolonies.api.eventbus.EventBus;
 import com.minecolonies.api.quests.registries.QuestRegistries;
 import com.minecolonies.api.research.IGlobalResearchTree;
-import com.minecolonies.api.research.ModResearchCostTypes.ResearchCostType;
-import com.minecolonies.api.research.effects.registry.ResearchEffectEntry;
-import com.minecolonies.api.research.registry.ResearchRequirementEntry;
+import com.minecolonies.api.research.ModResearchCosts.ResearchCostEntry;
+import com.minecolonies.api.research.ModResearchEffects;
+import com.minecolonies.api.research.ModResearchRequirements;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.MineColonies;
 import com.minecolonies.core.colony.CitizenDataManager;
@@ -48,10 +48,6 @@ import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.NewRegistryEvent;
 import net.minecraftforge.registries.RegistryBuilder;
 import org.jetbrains.annotations.NotNull;
-
-import static com.minecolonies.api.research.ModResearchCostTypes.LIST_ITEM_COST_ID;
-import static com.minecolonies.api.research.ModResearchRequirements.RESEARCH_RESEARCH_REQ_ID;
-import static com.minecolonies.api.research.effects.ModResearchEffects.GLOBAL_EFFECT_ID;
 
 public class CommonMinecoloniesAPIImpl implements IMinecoloniesAPI
 {
@@ -72,10 +68,10 @@ public class CommonMinecoloniesAPIImpl implements IMinecoloniesAPI
     private        IForgeRegistry<ColonyEventTypeRegistryEntry>            colonyEventRegistry;
     private        IForgeRegistry<ColonyEventDescriptionTypeRegistryEntry> colonyEventDescriptionRegistry;
     private static IGlobalResearchTree                                     globalResearchTree     = new GlobalResearchTree();
-    private        IForgeRegistry<ResearchRequirementEntry>                researchRequirementRegistry;
-    private        IForgeRegistry<ResearchEffectEntry>                     researchEffectRegistry;
-    private        IForgeRegistry<ResearchCostType>                        researchCostRegistry;
-    private        IForgeRegistry<RecipeTypeEntry>                         recipeTypeEntryRegistry;
+    private        IForgeRegistry<ModResearchRequirements.ResearchRequirementEntry> researchRequirementRegistry;
+    private        IForgeRegistry<ModResearchEffects.ResearchEffectEntry>           researchEffectRegistry;
+    private        IForgeRegistry<ResearchCostEntry>                                researchCostRegistry;
+    private        IForgeRegistry<RecipeTypeEntry>     recipeTypeEntryRegistry;
     private        IForgeRegistry<CraftingType>                            craftingTypeRegistry;
     private        IForgeRegistry<QuestRegistries.ObjectiveEntry>          questObjectiveRegistry;
     private        IForgeRegistry<QuestRegistries.RewardEntry>             questRewardRegistry;
@@ -196,13 +192,13 @@ public class CommonMinecoloniesAPIImpl implements IMinecoloniesAPI
     }
 
     @Override
-    public IForgeRegistry<ResearchRequirementEntry> getResearchRequirementRegistry() {return researchRequirementRegistry;}
+    public IForgeRegistry<ModResearchRequirements.ResearchRequirementEntry> getResearchRequirementRegistry() {return researchRequirementRegistry;}
 
     @Override
-    public IForgeRegistry<ResearchEffectEntry> getResearchEffectRegistry() {return researchEffectRegistry;}
+    public IForgeRegistry<ModResearchEffects.ResearchEffectEntry> getResearchEffectRegistry() {return researchEffectRegistry;}
 
     @Override
-    public IForgeRegistry<ResearchCostType> getResearchCostRegistry()
+    public IForgeRegistry<ResearchCostEntry> getResearchCostRegistry()
     {
         return researchCostRegistry;
     }
@@ -277,24 +273,20 @@ public class CommonMinecoloniesAPIImpl implements IMinecoloniesAPI
                        .disableSaving().allowModification()
                        .setIDRange(0, Integer.MAX_VALUE - 1), (b) -> recipeTypeEntryRegistry = b);
 
-        event.create(new RegistryBuilder<ResearchRequirementEntry>()
+        event.create(new RegistryBuilder<ModResearchRequirements.ResearchRequirementEntry>()
                        .setName(new ResourceLocation(Constants.MOD_ID, "researchrequirementtypes"))
-                       .setDefaultKey(RESEARCH_RESEARCH_REQ_ID)
                        .disableSaving().allowModification()
                        .setIDRange(0, Integer.MAX_VALUE - 1), (b) -> researchRequirementRegistry = b);
 
-        event.create(new RegistryBuilder<ResearchEffectEntry>()
+        event.create(new RegistryBuilder<ModResearchEffects.ResearchEffectEntry>()
                        .setName(new ResourceLocation(Constants.MOD_ID, "researcheffecttypes"))
-                       .setDefaultKey(GLOBAL_EFFECT_ID)
                        .disableSaving().allowModification()
                        .setIDRange(0, Integer.MAX_VALUE - 1), (b) -> researchEffectRegistry = b);
 
-        event.create(new RegistryBuilder<ResearchCostType>()
+        event.create(new RegistryBuilder<ResearchCostEntry>()
                        .setName(new ResourceLocation(Constants.MOD_ID, "researchcosttypes"))
-                       .setDefaultKey(LIST_ITEM_COST_ID)
                        .disableSaving().allowModification()
                        .setIDRange(0, Integer.MAX_VALUE - 1), (b) -> researchCostRegistry = b);
-
 
         event.create(new RegistryBuilder<QuestRegistries.ObjectiveEntry>()
                        .setName(new ResourceLocation(Constants.MOD_ID, "questobjectives"))

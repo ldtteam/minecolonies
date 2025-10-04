@@ -1,22 +1,28 @@
 {
   "branch": "minecolonies:technology",
+  "costs": [
+    {
+      "type": "minecolonies:item_simple",
+      "item": "minecraft:wheat_seeds",
+      "quantity": 256
+    }
+  ],
   "effects": [
     {
-      "minecolonies:effects/farmingmultiplier": 3
+      "id": "minecolonies:effects/farmingmultiplier",
+      "level": 3
     }
   ],
   "icon": "minecraft:bone",
   "parentResearch": "minecolonies:technology/dung",
   "requirements": [
     {
-      "type": "minecolonies:building",
-      "building": "miner",
+      "type": "minecolonies:alternate-building",
+      "alternate-buildings": [
+        "minecolonies:farmer",
+        "minecolonies:composter"
+      ],
       "level": 5
-    },
-    {
-      "type": "minecolonies:item_simple",
-      "item": "minecraft:wheat_seeds",
-      "quantity": 256
     }
   ],
   "researchLevel": 4

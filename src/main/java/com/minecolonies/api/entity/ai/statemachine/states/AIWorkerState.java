@@ -54,10 +54,6 @@ public enum AIWorkerState implements IAIState
      */
     COMPLETE_BUILD(false),
     /**
-     * Pick up left over items after building.
-     */
-    PICK_UP_RESIDUALS(true),
-    /**
      * Decide what AIstate to go to next.
      */
     DECIDE(true),
@@ -65,10 +61,6 @@ public enum AIWorkerState implements IAIState
      * Do not work, can be used for freetime activities.
      */
     PAUSED(true),
-    /**
-     * Walk to goal for debugging.
-     */
-    WALK_TO(true),
     /*
 ###FISHERMAN###
      */

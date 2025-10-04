@@ -72,7 +72,9 @@ public final class RaiderConstants
      * Other various values used for AI Tasks.
      */
     public static final double AI_MOVE_SPEED      = 2.0D;
-    public static final float  MAX_WATCH_DISTANCE = 8.0F;
+    public static final float  MAX_WATCH_DISTANCE                     = 8.0F;
+    public static final double MAX_MELEE_RAIDER_PERSECUTION_DISTANCE  = 64;
+    public static final double MAX_ARCHER_RAIDER_PERSECUTION_DISTANCE = MAX_MELEE_RAIDER_PERSECUTION_DISTANCE + 16;
 
     /**
      * Values used for mob attributes.

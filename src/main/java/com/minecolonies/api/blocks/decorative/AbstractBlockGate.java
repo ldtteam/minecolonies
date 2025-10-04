@@ -20,11 +20,11 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockSetType;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.DoorHingeSide;
+import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
@@ -37,13 +37,8 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Block as one big door
  */
-public abstract class AbstractBlockGate extends DoorBlock
+public abstract class AbstractBlockGate extends DoorBlock implements LiquidBlockContainer
 {
-    /**
-     * Waterlogged property.
-     */
-    public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
-
     /**
      * Variant reg names
      */
@@ -193,6 +188,10 @@ public abstract class AbstractBlockGate extends DoorBlock
     @Override
     public BlockState updateShape(BlockState stateIn, Direction facing, BlockState facingState, LevelAccessor worldIn, BlockPos currentPos, BlockPos facingPos)
     {
+        if (stateIn.hasProperty(BlockStateProperties.WATERLOGGED))
+        {
+            stateIn = stateIn.setValue(BlockStateProperties.WATERLOGGED, false);
+        }
         return stateIn;
     }
 
@@ -364,12 +363,6 @@ public abstract class AbstractBlockGate extends DoorBlock
         }
     }
 
-    @Override
-    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder)
-    {
-        builder.add(HALF, FACING, OPEN, HINGE, POWERED, WATERLOGGED);
-    }
-
     /**
      * Finds the bottom left corner
      *
@@ -509,5 +502,17 @@ public abstract class AbstractBlockGate extends DoorBlock
     public void registerBlockItem(final IForgeRegistry<Item> registry, final Item.Properties properties)
     {
         registry.register(new ResourceLocation(Constants.MOD_ID, this.name), new BlockItem(this, properties));
+    }
+
+    @Override
+    public boolean canPlaceLiquid(@NotNull final BlockGetter blockGetter, @NotNull final BlockPos pos, @NotNull final BlockState state, @NotNull final Fluid fluid)
+    {
+        return false;
+    }
+
+    @Override
+    public boolean placeLiquid(@NotNull final LevelAccessor accessor, @NotNull final BlockPos pos, @NotNull final BlockState state, @NotNull final FluidState fluid)
+    {
+        return false;
     }
 }

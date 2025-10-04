@@ -1,8 +1,16 @@
 {
   "branch": "minecolonies:civilian",
+  "costs": [
+    {
+      "type": "minecolonies:item_simple",
+      "item": "minecraft:vine",
+      "quantity": 64
+    }
+  ],
   "effects": [
     {
-      "minecolonies:effects/vinesunlock": 1
+      "id": "minecolonies:effects/vinesunlock",
+      "level": 1
     }
   ],
   "icon": "minecraft:vine",
@@ -10,16 +18,11 @@
   "requirements": [
     {
       "type": "minecolonies:building",
-      "building": "residence",
+      "building": "minecolonies:residence",
       "level": 3
-    },
-    {
-      "type": "minecolonies:item_simple",
-      "item": "minecraft:vine",
-      "quantity": 64
     }
   ],
   "researchLevel": 2,
-  "sortOrder": 4,
+  "sortOrder": 5,
   "subtitle": "com.minecolonies.research.civilian.vines.subtitle"
 }

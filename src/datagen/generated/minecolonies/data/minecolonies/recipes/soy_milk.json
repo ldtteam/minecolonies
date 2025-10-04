@@ -1,6 +1,5 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
+  "type": "minecolonies:zero_waste",
   "ingredients": [
     {
       "item": "minecolonies:large_water_bottle"

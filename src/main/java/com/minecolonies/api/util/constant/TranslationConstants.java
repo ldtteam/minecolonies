@@ -289,6 +289,10 @@ public final class TranslationConstants
     @NonNls
     public static final String FURNACE_USER_NO_FOOD                                                 = "com.minecolonies.coremod.furnaceuser.nofood";
     @NonNls
+    public static final String POOR_MENU_INTERACTION                                                = "com.minecolonies.core.restaurant.poormenu";
+    @NonNls
+    public static final String POOR_RESTAURANT_INTERACTION                                          = "com.minecolonies.core.restaurant.poorrestaurant";
+    @NonNls
     public static final String NETHERMINER_NO_FOOD                                                  = "com.minecolonies.coremod.netherminer.nofood";
     @NonNls
     public static final String SIFTER_NO_MESH                                                       = "com.minecolonies.coremod.sifter.nomesh";
@@ -314,6 +318,8 @@ public final class TranslationConstants
     public static final String INVALID_MINESHAFT                                                    = "entity.miner.invalidmineshaft";
     @NonNls
     public static final String WATER_TOO_FAR                                                        = "entity.fisherman.messagewatertoofar";
+    @NonNls
+    public static final String SUBOPTIMAL_POND                                                      = "entity.fisherman.messagesuboptimalpond";
     @NonNls
     public static final String NO_HIVES                                                             = "entity.beekeeper.messagenohives";
     @NonNls
@@ -439,11 +445,11 @@ public final class TranslationConstants
     @NonNls
     public static final String CITIZEN_DEATH_DESC       = "block.blockhuttownhall.messagecitizendeathdesc";
     @NonNls
-    public static final String WORKER_DESC              = "block.blockhuttownhall.messageworkerdesc";
+    public static final String WORKER_DESC                       = "block.blockhuttownhall.messageworkerdesc";
     @NonNls
-    public static final String COLONIST_GRAVE_LOCATION                            = "block.blockhuttownhall.messagecolonistgravelocation";
+    public static final String COLONIST_DEATH_LOCATION           = "block.blockhuttownhall.messagecolonistgravelocation";
     @NonNls
-    public static final String HUT_BREAK_WARNING_CHILD_BUILDINGS                  = "block.minecolonies.blockhut.breakwarn.children";
+    public static final String HUT_BREAK_WARNING_CHILD_BUILDINGS = "block.minecolonies.blockhut.breakwarn.children";
     @NonNls
     public static final String HUT_BLOCK_MISSING_BUILDING                         = "com.minecolonies.coremod.gui.nobuilding";
     @NonNls
@@ -517,6 +523,12 @@ public final class TranslationConstants
     @NonNls
     public static final String BLOCK_HUT_FIELD_DIRECTION_RELATIVE_NEAREST         = "com.minecolonies.coremod.gui.field.near";
     @NonNls
+    public static final String FIELD_STATUS                                       = "com.minecolonies.coremod.gui.field.status";
+    @NonNls
+    public static final String FIELD_STATUS_CURRENT                               = "com.minecolonies.coremod.gui.field.status.current";
+    @NonNls
+    public static final String FIELD_STATUS_NEXT                                  = "com.minecolonies.coremod.gui.field.status.next";
+    @NonNls
     public static final String LABEL_X_OF_Z                                       = "com.minecolonies.coremod.gui.xofz";
     @NonNls
     public static final String MINER_REPAIR_ENQUEUED                              = "com.minecolonies.coremod.gui.workerhuts.miner.repair.enqueued";
@@ -524,6 +536,8 @@ public final class TranslationConstants
     public static final String MINER_NODES                                        = "com.minecolonies.coremod.gui.workerhuts.minernode";
     @NonNls
     public static final String MINER_MINE_NODE                                    = "com.minecolonies.coremod.gui.workerhuts.minerminenode";
+    @NonNls
+    public static final String MINER_LEVEL_DEPTH                                  = "com.minecolonies.coremod.gui.workerhuts.minerleveldepth";
     @NonNls
     public static final String WARNING_POPULATION_NEEDS_HOUSING                   = "com.minecolonies.coremod.gui.townhall.population.totalcitizens.houselimited";
     @NonNls
@@ -657,12 +671,41 @@ public final class TranslationConstants
     @NonNls
     public static final String FOOD_QUALITY_TOOLTIP                               = "com.minecolonies.core.gui.restaurant.foodquality";
     @NonNls
+    public static final String COM_MINECOLONIES_MAP_NEED_COLONY                   = "com.minecolonies.core.item.colonymap.needcolony";
+    @NonNls
+    public static final String COM_MINECOLONIES_MAP_COLONY_SET                    = "com.minecolonies.core.item.colonymap.registered";
+    @NonNls
+    public static final String VANILLA_FOOD_QUALITY_TOOLTIP                       = "com.minecolonies.core.gui.restaurant.vanillafoodquality";
+    @NonNls
+    public static final String COM_MINECOLONIES_SIGN_COLONY_SET          = "com.minecolonies.core.item.sign.registered";
+    @NonNls
+    public static final String COM_MINECOLONIES_SIGN_TOO_FAR             = "com.minecolonies.core.item.sign.toofar";
+    @NonNls
+    public static final String COM_MINECOLONIES_CORE_COLONY_SIGN_TOOLTIP = "com.minecolonies.core.item.colonysign.tip";
+    @NonNls
+    public static final String COM_MINECOLONIES_CORE_COLONY_SIGN_TOOLTIP_COLONY = "com.minecolonies.core.item.colonysign.tip.colony";
+    @NonNls
+    public static final String COM_MINECOLONIES_SIGN_NULL_COLONY                  = "com.minecolonies.core.item.sign.nullcolony";
+    @NonNls
     public static final String FOOD_QUALITY                                       = "foodquality";
     @NonNls
     public static final String FOOD_DIVERSITY                                     = "fooddiversity";
     @NonNls
     public static final String URGENT                                             = ".urgent";
-
+    @NonNls
+    public static final String COM_MINECOLONIES_SIGN_COLONY_NO_PERM            = "com.minecolonies.core.item.sign.noperm";
+    @NonNls
+    public static final String COM_MINECOLONIES_CONNECTION_FAIL                = "com.minecolonies.core.colonyconnection.fail";
+    @NonNls
+    public static final String COM_MINECOLONIES_CONNECTION_SUCCESS             = "com.minecolonies.core.colonyconnection.success";
+    @NonNls
+    public static final String COM_MINECOLONIES_SIGN_MISSING_LINK              = "com.minecolonies.core.item.sign.missinglink";
+    @NonNls
+    public static final String COM_MINECOLONIES_SIGN_CONNECTED                 = "com.minecolonies.core.item.sign.connected";
+    @NonNls
+    public static final String COM_MINECOLONIES_SIGN_DISRUPTED                 = "com.minecolonies.core.item.sign.disrupted";
+    @NonNls
+    public static final String COM_MINECOLONIES_CONNECTION_PATH_FAILURE        = "com.minecolonies.core.colonyconnection.path.failure";
     //<editor-fold desc="Partial keys">
 
     @NonNls
@@ -761,13 +804,26 @@ public final class TranslationConstants
     public static final String MESSAGE_WARNING_TOWN_HALL_NOT_PRESENT  = "tile.blockhut.messagenotownhall";
     @NonNls
     public static final String MESSAGE_WARNING_TOWN_HALL_TOO_FAR_AWAY = "tile.blockhut.messagetoofarfromtownhall";
-
+    @NonNls
+    public static final String MESSAGE_WARNING_NO_WORKER_ASSIGNED = "tile.blockhut.noworkerassigned";
+    @NonNls
+    public static final String MESSAGE_WARNING_ALREADY_CLAIMED = "tile.blockhut.alreadyclaimed";
+    @NonNls
+    public static final String MESSAGE_WARNING_NOTFORBUILDER = "tile.blockhut.notforbuilder";
+    @NonNls
+    public static final String MESSAGE_WARNING_CANNOTBUILD = "tile.blockhut.cannotbuild";
     //</editor-fold>
+
 
     //<editor-fold desc="Other keys">
 
     @NonNls
     public static final String MESSAGE_INFO_PLAYER_INVENTORY_FULL_HOTBAR_INSERT = "com.minecolonies.coremod.playerinvfull.hotbarinsert";
+
+    @NonNls
+    public static final String COLONYMAP_PLAYER_RESOLVED_REQUESTS = "com.minecolonies.core.item.colonymap.playerresolvedrequests";
+    @NonNls
+    public static final String COLONYMAP_PLAYER_RESOLVED_REQUESTS_COUNT = "com.minecolonies.core.item.colonymap.playerresolvedrequests.count";
 
     //</editor-fold>
 

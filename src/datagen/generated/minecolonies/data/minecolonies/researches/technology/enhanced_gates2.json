@@ -1,13 +1,6 @@
 {
   "branch": "minecolonies:technology",
-  "effects": [
-    {
-      "minecolonies:effects/enhancesgatedurabilityaddition": 2
-    }
-  ],
-  "icon": "minecolonies:gate_iron",
-  "parentResearch": "minecolonies:technology/enhanced_gates1",
-  "requirements": [
+  "costs": [
     {
       "type": "minecolonies:item_simple",
       "item": "minecolonies:gate_iron",
@@ -24,5 +17,13 @@
       "quantity": 32
     }
   ],
+  "effects": [
+    {
+      "id": "minecolonies:effects/enhancesgatedurabilityaddition",
+      "level": 2
+    }
+  ],
+  "icon": "minecolonies:gate_iron",
+  "parentResearch": "minecolonies:technology/enhanced_gates1",
   "researchLevel": 4
 }

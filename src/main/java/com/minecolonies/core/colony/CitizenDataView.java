@@ -181,6 +181,11 @@ public class CitizenDataView implements ICitizenDataView
     protected UUID textureUUID;
 
     /**
+     * Flag is citizen is sick.
+     */
+    private boolean isSick;
+
+    /**
      * Set View id.
      *
      * @param id the id to set.
@@ -429,6 +434,7 @@ public class CitizenDataView implements ICitizenDataView
         {
             textureUUID = buf.readUUID();
         }
+        this.isSick = buf.readBoolean();
     }
 
     @Override
@@ -476,8 +482,13 @@ public class CitizenDataView implements ICitizenDataView
     }
 
     @Override
-    public boolean hasVisibleInteractions()
+    public boolean hasVisibleStatus()
     {
+        if (statusIcon != null && statusIcon.shouldRender())
+        {
+            return true;
+        }
+
         if (sortedInteractions.isEmpty())
         {
             return false;
@@ -525,8 +536,13 @@ public class CitizenDataView implements ICitizenDataView
     }
 
     @Override
-    public ResourceLocation getInteractionIcon()
+    public ResourceLocation getStatusIcon()
     {
+        if (statusIcon != null && statusIcon.shouldRender())
+        {
+            return statusIcon.getIcon();
+        }
+
         if (sortedInteractions == null || sortedInteractions.isEmpty())
         {
             return null;
@@ -539,7 +555,7 @@ public class CitizenDataView implements ICitizenDataView
             {
                 icon = BLOCKING_RESOURCE;
             }
-            else if (hasVisibleInteractions())
+            else if (hasVisibleStatus())
             {
                 icon = PENDING_RESOURCE;
             }
@@ -649,5 +665,11 @@ public class CitizenDataView implements ICitizenDataView
         }
 
         return currentHat;
+    }
+
+    @Override
+    public boolean isSick()
+    {
+        return this.isSick;
     }
 }

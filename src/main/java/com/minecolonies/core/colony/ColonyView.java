@@ -3,14 +3,14 @@ package com.minecolonies.core.colony;
 import com.ldtteam.structurize.storage.StructurePacks;
 import com.ldtteam.structurize.storage.rendering.RenderingCache;
 import com.minecolonies.api.colony.*;
+import com.minecolonies.api.colony.buildingextensions.IBuildingExtension;
 import com.minecolonies.api.colony.buildings.registry.IBuildingDataManager;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.buildings.workerbuildings.ITownHallView;
-import com.minecolonies.api.colony.buildingextensions.IBuildingExtension;
+import com.minecolonies.api.colony.connections.IColonyConnectionManager;
 import com.minecolonies.api.colony.managers.interfaces.*;
 import com.minecolonies.api.colony.permissions.ColonyPlayer;
 import com.minecolonies.api.colony.permissions.IPermissions;
-import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
@@ -29,8 +29,10 @@ import com.minecolonies.core.client.render.worldevent.ColonyBlueprintRenderer;
 import com.minecolonies.core.colony.buildings.modules.BuildingModules;
 import com.minecolonies.core.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingTownHall;
+import com.minecolonies.core.colony.managers.ColonyConnectionManager;
 import com.minecolonies.core.colony.managers.ResearchManager;
 import com.minecolonies.core.colony.managers.StatisticsManager;
+import com.minecolonies.core.colony.managers.TravellingManager;
 import com.minecolonies.core.colony.permissions.PermissionsView;
 import com.minecolonies.core.colony.requestsystem.management.manager.StandardRequestManager;
 import com.minecolonies.core.colony.workorders.AbstractWorkOrder;
@@ -81,20 +83,20 @@ public final class ColonyView implements IColonyView
     private final int                            id;
     private final Map<Integer, IWorkOrderView>   workOrders  = new HashMap<>();
     private final Map<Integer, BlockPos>         workOrderClaimCache = new HashMap<>();
-    private int                                  workOrderCachedCount;
+    private       int                            workOrderCachedCount;
     //  Administration/permissions
     @NotNull
     private final PermissionsView                permissions = new PermissionsView();
     @NotNull
-    private final Map<BlockPos, IBuildingView>   buildings = new HashMap<>();
+    private final Map<BlockPos, IBuildingView>   buildings   = new HashMap<>();
     @NotNull
-    private final Set<IBuildingExtension>        fields    = new HashSet<>();
+    private final Set<IBuildingExtension>        fields      = new HashSet<>();
     //  Citizenry
     @NotNull
-    private final Map<Integer, ICitizenDataView> citizens  = new HashMap<>();
-    private       Map<Integer, IVisitorViewData> visitors    = new HashMap<>();
-    private       String                         name        = "Unknown";
-    private       ResourceKey<Level>                            dimensionId;
+    private final Map<Integer, ICitizenDataView> citizens = new HashMap<>();
+    private final Map<Integer, IVisitorViewData> visitors = new HashMap<>();
+    private       String                         name     = "Unknown";
+    private       ResourceKey<Level>             dimensionId;
 
     /**
      * Colony team color.
@@ -104,9 +106,9 @@ public final class ColonyView implements IColonyView
     /**
      * The colony flag (set to plain white as default)
      */
-    private ListTag        colonyFlag      = new BannerPattern.Builder()
-                                               .addPattern(BannerPatterns.BASE, DyeColor.WHITE)
-                                               .toListTag();
+    private ListTag colonyFlag = new BannerPattern.Builder()
+        .addPattern(BannerPatterns.BASE, DyeColor.WHITE)
+        .toListTag();
 
     private BlockPos center = BlockPos.ZERO;
 
@@ -190,16 +192,6 @@ public final class ColonyView implements IColonyView
     private String style = "";
 
     /**
-     * The list of allies.
-     */
-    private List<CompactColonyReference> allies;
-
-    /**
-     * The list of feuds.
-     */
-    private List<CompactColonyReference> feuds;
-
-    /**
      * The research effects of the colony.
      */
     private final IResearchManager researchManager;
@@ -223,7 +215,7 @@ public final class ColonyView implements IColonyView
     /**
      * The list of name files.
      */
-    private List<String> nameFileIds = new ArrayList<>();
+    private final List<String> nameFileIds = new ArrayList<>();
 
     /**
      * The name style of the colony citizens.
@@ -233,12 +225,22 @@ public final class ColonyView implements IColonyView
     /**
      * Statistic manager associated to the view.
      */
-    private IStatisticsManager statisticManager = new StatisticsManager();
+    private final IStatisticsManager statisticManager = new StatisticsManager();
 
     /**
      * Client side quest manager.
      */
-    private IQuestManager questManager;
+    private final IQuestManager questManager;
+
+    /**
+     * Client side travelling manager.
+     */
+    private final TravellingManager travellingManager = new TravellingManager(this);
+
+    /**
+     * Client side connection manager.
+     */
+    private final IColonyConnectionManager connectionManager = new ColonyConnectionManager(this);
 
     /**
      * Day in the colony.
@@ -365,57 +367,6 @@ public final class ColonyView implements IColonyView
         buf.writeUtf(colony.getStructurePack());
         buf.writeBoolean(colony.getRaiderManager().isRaided());
         buf.writeBoolean(colony.getRaiderManager().areSpiesEnabled());
-        // ToDo: rework ally system
-        final List<IColony> allies = new ArrayList<>();
-        for (final ColonyPlayer player : colony.getPermissions().getFilteredPlayers(Rank::isColonyManager))
-        {
-            final IColony col = IColonyManager.getInstance().getIColonyByOwner(colony.getWorld(), player.getID());
-            if (col != null)
-            {
-                for (final ColonyPlayer owner : colony.getPermissions().getPlayersByRank(colony.getPermissions().getRankOwner()))
-                {
-                    if (col.getPermissions().getRank(owner.getID()).isColonyManager() && col.getID() != colony.getID())
-                    {
-                        allies.add(col);
-                    }
-                }
-            }
-        }
-
-        buf.writeInt(allies.size());
-        for (final IColony col : allies)
-        {
-            buf.writeUtf(col.getName());
-            buf.writeBlockPos(col.getCenter());
-            buf.writeInt(col.getID());
-            buf.writeBoolean(col.hasTownHall());
-            buf.writeUtf(col.getDimension().location().toString());
-        }
-
-        final List<IColony> feuds = new ArrayList<>();
-        for (final ColonyPlayer player : colony.getPermissions().getFilteredPlayers(Rank::isHostile))
-        {
-            final IColony col = IColonyManager.getInstance().getIColonyByOwner(colony.getWorld(), player.getID());
-            if (col != null)
-            {
-                for (final ColonyPlayer owner : colony.getPermissions().getPlayersByRank(colony.getPermissions().getRankOwner()))
-                {
-                    if (col.getPermissions().getRank(owner.getID()).isHostile())
-                    {
-                        feuds.add(col);
-                    }
-                }
-            }
-        }
-
-        buf.writeInt(feuds.size());
-        for (final IColony col : feuds)
-        {
-            buf.writeUtf(col.getName());
-            buf.writeBlockPos(col.getCenter());
-            buf.writeInt(col.getID());
-            buf.writeUtf(col.getDimension().location().toString());
-        }
 
         if (hasNewSubscribers || colony.isTicketedChunksDirty())
         {
@@ -434,8 +385,10 @@ public final class ColonyView implements IColonyView
         colony.getGraveManager().write(graveTag);
         buf.writeNbt(graveTag);     // this could be more efficient, but it should usually be short anyway
         colony.getStatisticsManager().serialize(buf, hasNewSubscribers);
-        buf.writeNbt(colony.getQuestManager().serializeNBT());
+        colony.getQuestManager().serialize(buf, hasNewSubscribers);
         buf.writeInt(colony.getDay());
+        buf.writeNbt(colony.getTravellingManager().serializeNBT());
+        colony.getConnectionManager().serializeToView(buf);
     }
 
     /**
@@ -848,9 +801,9 @@ public final class ColonyView implements IColonyView
 
         this.style = buf.readUtf(32767);
         if (isNewSubscription
-              && StructurePacks.hasPack(this.style)
-              && RenderingCache.getOrCreateBlueprintPreviewData("blueprint").getBlueprint() == null
-              && this.isCoordInColony(world, Minecraft.getInstance().player.blockPosition())
+            && StructurePacks.hasPack(this.style)
+            && RenderingCache.getOrCreateBlueprintPreviewData("blueprint").getBlueprint() == null
+            && this.isCoordInColony(world, Minecraft.getInstance().player.blockPosition())
         )
         {
             StructurePacks.selectedPack = StructurePacks.getStructurePack(this.style);
@@ -858,29 +811,6 @@ public final class ColonyView implements IColonyView
 
         this.isUnderRaid = buf.readBoolean();
         this.spiesEnabled = buf.readBoolean();
-
-        this.allies = new ArrayList<>();
-        this.feuds = new ArrayList<>();
-
-        final int noOfAllies = buf.readInt();
-        for (int i = 0; i < noOfAllies; i++)
-        {
-            allies.add(new CompactColonyReference(buf.readUtf(32767),
-              buf.readBlockPos(),
-              buf.readInt(),
-              buf.readBoolean(),
-              ResourceKey.create(Registries.DIMENSION, new ResourceLocation(buf.readUtf(32767)))));
-        }
-
-        final int noOfFeuds = buf.readInt();
-        for (int i = 0; i < noOfFeuds; i++)
-        {
-            feuds.add(new CompactColonyReference(buf.readUtf(32767),
-              buf.readBlockPos(),
-              buf.readInt(),
-              false,
-              ResourceKey.create(Registries.DIMENSION, new ResourceLocation(buf.readUtf(32767)))));
-        }
 
         final int ticketChunkCount = buf.readInt();
         if (ticketChunkCount != -1)
@@ -894,8 +824,10 @@ public final class ColonyView implements IColonyView
 
         this.graveManager.read(buf.readNbt());
         this.statisticManager.deserialize(buf);
-        this.questManager.deserializeNBT(buf.readNbt());
+        this.questManager.deserialize(buf);
         this.day = buf.readInt();
+        this.travellingManager.deserializeNBT(buf.readNbt());
+        this.connectionManager.deserializeFromView(buf);
         return null;
     }
 
@@ -932,9 +864,10 @@ public final class ColonyView implements IColonyView
             @Nullable final IWorkOrderView workOrder = AbstractWorkOrder.createWorkOrderView(buf);
             if (workOrder != null)
             {
-                workOrders.put(workOrder.getId(), workOrder);
+                workOrder.setColony(this);
+                workOrders.put(workOrder.getID(), workOrder);
 
-                final BlockPos oldClaimedBy = workOrderClaimCache.put(workOrder.getId(), workOrder.getClaimedBy());
+                final BlockPos oldClaimedBy = workOrderClaimCache.put(workOrder.getID(), workOrder.getClaimedBy());
                 claimsChanged |= !Objects.equals(workOrder.getClaimedBy(), oldClaimedBy);
             }
         }
@@ -1093,16 +1026,16 @@ public final class ColonyView implements IColonyView
     public @NotNull List<IBuildingExtension> getBuildingExtensions(final Predicate<IBuildingExtension> matcher)
     {
         return fields.stream()
-                 .filter(matcher)
-                 .toList();
+            .filter(matcher)
+            .toList();
     }
 
     @Override
     public @Nullable IBuildingExtension getBuildingExtension(final Predicate<IBuildingExtension> matcher)
     {
         return getBuildingExtensions(matcher).stream()
-                 .findFirst()
-                 .orElse(null);
+            .findFirst()
+            .orElse(null);
     }
 
     /**
@@ -1167,7 +1100,7 @@ public final class ColonyView implements IColonyView
      * @return the ListNBT of flag (banner) patterns
      */
     @Override
-    public ListTag getColonyFlag() { return colonyFlag; }
+    public ListTag getColonyFlag() {return colonyFlag;}
 
     /**
      * Sets the name of the view.
@@ -1225,12 +1158,12 @@ public final class ColonyView implements IColonyView
     }
 
     @Override
-    public boolean hasBuilding(final String name, final int level, final boolean singleBuilding)
+    public boolean hasBuilding(final ResourceLocation name, final int level, final boolean singleBuilding)
     {
         int sum = 0;
         for (final IBuildingView building : buildings.values())
         {
-            if (building.getBuildingType().getRegistryName().getPath().equalsIgnoreCase(name))
+            if (building.getBuildingType().getRegistryName().equals(name))
             {
                 if (singleBuilding)
                 {
@@ -1505,6 +1438,18 @@ public final class ColonyView implements IColonyView
     }
 
     @Override
+    public ITravellingManager getTravellingManager()
+    {
+        return travellingManager;
+    }
+
+    @Override
+    public IColonyConnectionManager getConnectionManager()
+    {
+        return connectionManager;
+    }
+
+    @Override
     public boolean isRaiding()
     {
         return this.isUnderRaid;
@@ -1520,18 +1465,6 @@ public final class ColonyView implements IColonyView
     public void usedMercenaries()
     {
         mercenaryLastUseTime = world.getGameTime();
-    }
-
-    @Override
-    public List<CompactColonyReference> getAllies()
-    {
-        return allies;
-    }
-
-    @Override
-    public List<CompactColonyReference> getFeuds()
-    {
-        return feuds;
     }
 
     @Override

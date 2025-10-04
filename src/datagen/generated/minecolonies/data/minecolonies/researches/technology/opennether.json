@@ -1,19 +1,20 @@
 {
   "branch": "minecolonies:technology",
-  "effects": [
-    {
-      "minecolonies:effects/blockhutnetherworker": 1
-    }
-  ],
-  "icon": "minecolonies:blockhutnetherworker",
-  "parentResearch": "minecolonies:technology/morescrolls",
-  "requirements": [
+  "costs": [
     {
       "type": "minecolonies:item_simple",
       "item": "minecraft:gilded_blackstone",
       "quantity": 3
     }
   ],
+  "effects": [
+    {
+      "id": "minecolonies:effects/blockhutnetherworker",
+      "level": 1
+    }
+  ],
+  "icon": "minecolonies:blockhutnetherworker",
+  "parentResearch": "minecolonies:technology/morescrolls",
   "researchLevel": 2,
   "sortOrder": 1,
   "subtitle": "com.minecolonies.research.technology.opennether.subtitle"

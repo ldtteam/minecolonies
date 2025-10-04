@@ -35,6 +35,7 @@ public class ModTags
     public static final TagKey<Block> tier5blocks     = BlockTags.create(TagConstants.TIER5_BLOCKS);
     public static final TagKey<Block> tier6blocks     = BlockTags.create(TagConstants.TIER6_BLOCKS);
     public static final TagKey<Block> mangroveTree    = BlockTags.create(TagConstants.MANGROVE_TREE_BLOCKS);
+    public static final TagKey<Block> extraTree       = BlockTags.create(TagConstants.EXTRA_TREE_BLOCKS);
     public static final TagKey<Block> tree            = BlockTags.create(TagConstants.TREE_BLOCKS);
 
     public static final TagKey<Block> concreteBlocks       = BlockTags.create(TagConstants.CONCRETE_BLOCK);
@@ -67,6 +68,8 @@ public class ModTags
 
     public static final TagKey<Item> poisonous_food = ItemTags.create(TagConstants.POISONOUS_FOOD);
 
+    public static final TagKey<Item> rawMeat       = ItemTags.create(TagConstants.RAW_MEAT);
+
     public static final TagKey<EntityType<?>> hostile = TagKey.create(Registries.ENTITY_TYPE, TagConstants.HOSTILE);
     public static final TagKey<EntityType<?>> mobAttackBlacklist = TagKey.create(Registries.ENTITY_TYPE, TagConstants.MOB_ATTACK_BLACKLIST);
 
@@ -80,7 +83,6 @@ public class ModTags
     public static final TagKey<Biome> temperateBiomes = TagKey.create(Registries.BIOME, TagConstants.TEMPERATE_BIOMES);
     public static final TagKey<Biome> humidBiomes = TagKey.create(Registries.BIOME, TagConstants.HUMID_BIOMES);
     public static final TagKey<Biome> dryBiomes = TagKey.create(Registries.BIOME, TagConstants.DRY_BIOMES);
-
 
     public static final Map<String, TagKey<Item>> crafterProduct              = new HashMap<>();
     public static final Map<String, TagKey<Item>> crafterProductExclusions    = new HashMap<>();

@@ -25,9 +25,9 @@ import com.minecolonies.api.equipment.registry.EquipmentTypeEntry;
 import com.minecolonies.api.eventbus.EventBus;
 import com.minecolonies.api.quests.registries.QuestRegistries;
 import com.minecolonies.api.research.IGlobalResearchTree;
-import com.minecolonies.api.research.ModResearchCostTypes.ResearchCostType;
-import com.minecolonies.api.research.effects.registry.ResearchEffectEntry;
-import com.minecolonies.api.research.registry.ResearchRequirementEntry;
+import com.minecolonies.api.research.ModResearchCosts.ResearchCostEntry;
+import com.minecolonies.api.research.ModResearchEffects;
+import com.minecolonies.api.research.ModResearchRequirements;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.NewRegistryEvent;
 
@@ -154,13 +154,13 @@ public final class MinecoloniesAPIProxy implements IMinecoloniesAPI
     }
 
     @Override
-    public IForgeRegistry<ResearchRequirementEntry> getResearchRequirementRegistry() {return apiInstance.getResearchRequirementRegistry();}
+    public IForgeRegistry<ModResearchRequirements.ResearchRequirementEntry> getResearchRequirementRegistry() {return apiInstance.getResearchRequirementRegistry();}
 
     @Override
-    public IForgeRegistry<ResearchEffectEntry> getResearchEffectRegistry() {return apiInstance.getResearchEffectRegistry();}
+    public IForgeRegistry<ModResearchEffects.ResearchEffectEntry> getResearchEffectRegistry() {return apiInstance.getResearchEffectRegistry();}
 
     @Override
-    public IForgeRegistry<ResearchCostType> getResearchCostRegistry()
+    public IForgeRegistry<ResearchCostEntry> getResearchCostRegistry()
     {
         return apiInstance.getResearchCostRegistry();
     }

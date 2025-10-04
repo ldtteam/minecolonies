@@ -25,9 +25,9 @@ import com.minecolonies.api.equipment.registry.EquipmentTypeEntry;
 import com.minecolonies.api.eventbus.EventBus;
 import com.minecolonies.api.quests.registries.QuestRegistries;
 import com.minecolonies.api.research.IGlobalResearchTree;
-import com.minecolonies.api.research.ModResearchCostTypes.ResearchCostType;
-import com.minecolonies.api.research.effects.registry.ResearchEffectEntry;
-import com.minecolonies.api.research.registry.ResearchRequirementEntry;
+import com.minecolonies.api.research.ModResearchCosts.ResearchCostEntry;
+import com.minecolonies.api.research.ModResearchEffects;
+import com.minecolonies.api.research.ModResearchRequirements;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.NewRegistryEvent;
 
@@ -73,11 +73,11 @@ public interface IMinecoloniesAPI
 
     IGlobalResearchTree getGlobalResearchTree();
 
-    IForgeRegistry<ResearchRequirementEntry> getResearchRequirementRegistry();
+    IForgeRegistry<ModResearchRequirements.ResearchRequirementEntry> getResearchRequirementRegistry();
 
-    IForgeRegistry<ResearchEffectEntry> getResearchEffectRegistry();
+    IForgeRegistry<ModResearchEffects.ResearchEffectEntry> getResearchEffectRegistry();
 
-    IForgeRegistry<ResearchCostType> getResearchCostRegistry();
+    IForgeRegistry<ResearchCostEntry> getResearchCostRegistry();
 
     IForgeRegistry<ColonyEventTypeRegistryEntry> getColonyEventRegistry();
 

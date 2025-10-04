@@ -17,6 +17,7 @@ import com.minecolonies.api.colony.requestsystem.requestable.Stack;
 import com.minecolonies.api.colony.requestsystem.requestable.Tool;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.entity.ai.JobStatus;
 import com.minecolonies.api.entity.ai.statemachine.AIEventTarget;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.AIBlockingEventType;
@@ -71,6 +72,7 @@ import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*
 import static com.minecolonies.api.util.constant.CitizenConstants.*;
 import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.EquipmentLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
+import static com.minecolonies.api.util.constant.SchematicTagConstants.TAG_WORK;
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_ENTITY_WORKER_INVENTORYFULLCHEST;
 import static com.minecolonies.api.util.constant.TranslationConstants.WORKER_AI_EXCEPTION;
 import static com.minecolonies.core.entity.ai.workers.AbstractEntityAIInteract.RENDER_META_WORKING;
@@ -175,6 +177,11 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
     public final B building;
 
     /**
+     * Working pos index. Initialized with -1, not saved.
+     */
+    public int workPosIndex = -1;
+
+    /**
      * Sets up some important skeleton stuff for every ai.
      *
      * @param job the job class
@@ -248,10 +255,6 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
            */
           new AITarget(PAUSED, this::bePaused, 10),
           /*
-           * Walk to goal.
-           */
-          new AITarget(WALK_TO, this::walkToState, 10),
-          /*
            * Start paused with inventory dump
            */
           new AIEventTarget(AIBlockingEventType.AI_BLOCKING, this::isStartingPaused, INVENTORY_FULL, TICKS_SECOND)
@@ -267,30 +270,6 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
         return getState() != INVENTORY_FULL &&
                  (this.building.hasOpenSyncRequest(worker.getCitizenData())
                     || this.building.hasCitizenCompletedRequestsToPickup(worker.getCitizenData()));
-    }
-
-    /**
-     * Set a position to walk to.
-     *
-     * @param walkto the position to walk to.
-     */
-    public void setWalkTo(final BlockPos walkto)
-    {
-        this.walkTo = walkto;
-    }
-
-    /**
-     * Only used for command-triggered walking
-     *
-     * @return IDLE once arrived.
-     */
-    private IAIState walkToState()
-    {
-        if (!walkToSafePos(walkTo))
-        {
-            return getState();
-        }
-        return IDLE;
     }
 
     /**
@@ -400,6 +379,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
 
             // fix for printing the actual exception
             e.printStackTrace();
+            Log.getLogger().warn("AI history for citizen error:{}", getStateAI().getHistory());
         }
         catch (final RuntimeException exp)
         {
@@ -573,7 +553,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
         }
         if (building.hasCitizenCompletedRequests(worker.getCitizenData()))
         {
-            final Collection<IRequest<?>> completedRequests = building.getCompletedRequests(worker.getCitizenData());
+            final Collection<IRequest<?>> completedRequests = building.getCompletedRequestsOfCitizenOrBuilding(worker.getCitizenData());
             final List<IRequest<?>> deliverableRequests = new ArrayList<>();
             for (final IRequest<?> req : completedRequests)
             {
@@ -627,7 +607,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
                 //Check if we either have the requested Items in our inventory or if they are in the building.
                 if (InventoryUtils.areAllItemsInItemHandlerList(firstDeliverableRequest.getDeliveries(), validHandlers))
                 {
-                    final List<ItemStack> niceToHave = itemsNiceToHave();
+                    final List<ItemStorage> niceToHave = itemsNiceToHave();
                     final List<ItemStack> contained = InventoryUtils.getContainedFromItemHandler(firstDeliverableRequest.getDeliveries(), worker.getItemHandlerCitizen());
 
                     InventoryUtils.moveItemStacksWithPossibleSwap(
@@ -636,7 +616,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
                       firstDeliverableRequest.getDeliveries(),
                       itemStack ->
                         contained.stream().anyMatch(stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, stack)) ||
-                          niceToHave.stream().anyMatch(stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, stack))
+                          niceToHave.stream().anyMatch(storage -> ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, storage.getItemStack()))
                     );
                     return NEEDS_ITEM;
                 }
@@ -723,7 +703,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
      */
     private boolean cleanAsync()
     {
-        final Collection<IRequest<?>> completedRequests = building.getCompletedRequests(worker.getCitizenData());
+        final Collection<IRequest<?>> completedRequests = building.getCompletedRequestsOfCitizenOrBuilding(worker.getCitizenData());
 
         for (IRequest<?> request : completedRequests)
         {
@@ -785,6 +765,33 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
 
         return EntityNavigationUtils.walkToBuilding(worker, ownBuilding);
     }
+
+    /**
+     * Walk the worker to a tagged workpos in building, or the building pos if non existent.
+     *
+     * @return true while walking
+     */
+    protected final boolean walkToTaggedWorkPos()
+    {
+        if (building == null)
+        {
+            return walkToBuilding();
+        }
+
+        final List<BlockPos> workTags = building.getLocationsFromTag(TAG_WORK);
+        if (workTags.isEmpty())
+        {
+            return walkToBuilding();
+        }
+
+        if (workPosIndex == -1 || (MathUtils.RANDOM.nextInt(30) <= 0 && worker.getNavigation().isDone()))
+        {
+            workPosIndex = MathUtils.RANDOM.nextInt(workTags.size());
+        }
+
+        return EntityNavigationUtils.walkToPosInBuilding(worker, workTags.get(workPosIndex), building, WOKR_IN_BUILDING_DIST);
+    }
+
 
     /**
      * Walk the worker to the given building.
@@ -960,7 +967,14 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
     public boolean checkForToolOrWeapon(@NotNull final EquipmentTypeEntry toolType)
     {
         final boolean needTool = checkForToolOrWeapon(toolType, TOOL_LEVEL_WOOD_OR_GOLD);
-        worker.getCitizenData().setIdleAtJob(needTool);
+        if (needTool)
+        {
+            worker.getCitizenData().setJobStatus(JobStatus.STUCK);
+        }
+        else
+        {
+            worker.getCitizenData().setJobStatus(JobStatus.WORKING);
+        }
         return needTool;
     }
 
@@ -1151,12 +1165,6 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
             return afterDump();
         }
 
-        if (!walkToBuilding(building))
-        {
-            setDelay(WALK_DELAY);
-            return INVENTORY_FULL;
-        }
-
         if (InventoryUtils.isBuildingFull(building))
         {
             final ICitizenData citizenData = worker.getCitizenData();
@@ -1301,7 +1309,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
      * @return a list with items nice to have for the worker
      */
     @NotNull
-    protected List<ItemStack> itemsNiceToHave()
+    protected List<ItemStorage> itemsNiceToHave()
     {
         return new ArrayList<>();
     }
@@ -1339,13 +1347,13 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
         final int bestSlot = getMostEfficientTool(target, pos);
         if (bestSlot >= 0)
         {
-            worker.getCitizenData().setIdleAtJob(false);
+            worker.getCitizenData().setJobStatus(JobStatus.WORKING);
             CitizenItemUtils.setHeldItem(worker, InteractionHand.MAIN_HAND, bestSlot);
             return true;
         }
         else if (bestSlot == NO_TOOL)
         {
-            worker.getCitizenData().setIdleAtJob(false);
+            worker.getCitizenData().setJobStatus(JobStatus.WORKING);
             CitizenItemUtils.removeHeldItem(worker);
             return true;
         }
@@ -1684,6 +1692,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
         {
             return true;
         }
+
         final int updatedCount = count - invCount;
         final int updatedMinCount = Math.min(updatedCount, minCount);
 
@@ -1902,5 +1911,14 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
     {
         IPermissions permissions = building.getColony().getPermissions();
         return FakePlayerFactory.get((ServerLevel) world, new GameProfile(permissions.getOwner(), permissions.getOwnerName()));
+    }
+
+    /**
+     * If the worker currently has work to do or could also just wander around.
+     * @return true if can go idle.
+     */
+    public boolean canGoIdle()
+    {
+        return false;
     }
 }

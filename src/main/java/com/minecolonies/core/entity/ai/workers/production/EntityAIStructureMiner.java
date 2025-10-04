@@ -1,5 +1,6 @@
 package com.minecolonies.core.entity.ai.workers.production;
 
+import com.ldtteam.structurize.util.BlockUtils;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.advancements.AdvancementTriggers;
 import com.minecolonies.api.colony.IColonyManager;
@@ -16,7 +17,7 @@ import com.minecolonies.core.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.core.colony.jobs.JobMiner;
 import com.minecolonies.core.colony.workorders.WorkOrderMiner;
 import com.minecolonies.core.entity.ai.workers.AbstractEntityAIStructureWithWorkOrder;
-import com.minecolonies.core.entity.ai.workers.util.BuildingStructureHandler;
+import com.minecolonies.core.entity.ai.workers.util.BuildingProgressStage;
 import com.minecolonies.core.entity.ai.workers.util.MineNode;
 import com.minecolonies.core.entity.ai.workers.util.MinerLevel;
 import com.minecolonies.core.util.AdvancementUtils;
@@ -581,11 +582,11 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
                 block = getBlockState(curBlock);
                 if (!block.getFluidState().isEmpty())
                 {
+                    BlockUtils.removeFluid(world, curBlock);
                     setBlockFromInventory(curBlock, getMainFillBlock());
                 }
             }
         }
-
 
         //7x7 shaft find nearest block
         //Beware from positive to negative! to draw the miner to a wall to go down
@@ -605,6 +606,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
                 {
                     if (!block.getFluidState().isEmpty())
                     {
+                        BlockUtils.removeFluid(world, curBlock);
                         setBlockFromInventory(curBlock, getMainFillBlock());
                     }
                     nextBlockToMine = curBlock;
@@ -780,7 +782,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
         mineNode.setStatus(MineNode.NodeStatus.IN_PROGRESS);
         building.markDirty();
         //Preload structures
-        if (job.getBlueprint() == null)
+        if (job.getWorkOrder() == null || job.getWorkOrder().getBlueprint() == null)
         {
             initStructure(mineNode,
               rotation,
@@ -802,6 +804,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
                     final BlockState block = getBlockState(curBlock);
                     if (block.getFluidState().isSource())
                     {
+                        BlockUtils.removeFluid(world, curBlock);
                         setBlockFromInventory(curBlock, getMainFillBlock());
                     }
                 }
@@ -810,7 +813,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
 
         workingNode = null;
 
-        if (job.getBlueprint() != null)
+        if (job.getWorkOrder().getBlueprint() != null)
         {
             return LOAD_STRUCTURE;
         }
@@ -843,9 +846,11 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
         }
         if (slot != -1)
         {
-            getInventory().extractItem(slot, 1, false);
             //Flag 1+2 is needed for updates
-            WorldUtil.setBlockState(world, location, metadata);
+            if (WorldUtil.setBlockState(world, location, metadata))
+            {
+                getInventory().extractItem(slot, 1, false);
+            }
         }
     }
 
@@ -854,24 +859,15 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
         return world.getBlockState(loc).getBlock();
     }
 
-    private int getFirstLadder(@NotNull BlockPos pos)
-    {
-        while (world.getBlockState(pos).isLadder(world, pos, worker))
-        {
-            pos = pos.above();
-        }
-        return pos.getY() - 1;
-    }
-
     @Override
     public void executeSpecificCompleteActions()
     {
         final BuildingMiner minerBuilding = building;
         //If shaft isn't cleared we're in shaft clearing mode.
         final MinerLevelManagementModule module = building.getFirstModuleOccurance(MinerLevelManagementModule.class);
-        if (job.getBlueprint() != null)
+        if (job.getWorkOrder() != null && job.getWorkOrder().getBlueprint() != null)
         {
-            if (job.getBlueprint().getName().contains("minermainshaft"))
+            if (job.getWorkOrder().getBlueprint().getFileName().contains("minermainshaft"))
             {
                 final int depth = job.getWorkOrder().getLocation().getY();
                 boolean exists = false;
@@ -884,7 +880,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
                     }
                 }
 
-                @Nullable final BlockPos levelSignPos = WorkerUtil.findFirstLevelSign(job.getBlueprint(), job.getWorkOrder().getLocation());
+                @Nullable final BlockPos levelSignPos = WorkerUtil.findFirstLevelSign(job.getWorkOrder().getBlueprint(), job.getWorkOrder().getLocation());
                 @NotNull final MinerLevel currentLevel = new MinerLevel(minerBuilding, job.getWorkOrder().getLocation().getY(), levelSignPos);
                 if (!exists)
                 {
@@ -915,7 +911,10 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
 
         //Send out update to client
         building.markDirty();
-        job.setBlueprint(null);
+        if (job.getWorkOrder() != null)
+        {
+            job.getWorkOrder().clearBlueprint();
+        }
     }
 
     @Override
@@ -1021,19 +1020,18 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
     @Override
     protected boolean checkIfCanceled()
     {
-        if ((job.getWorkOrder() == null && job.getBlueprint() != null)
-              || (structurePlacer != null && !structurePlacer.getB().hasBluePrint())
-              || (job.getWorkOrder() != null && job.getWorkOrder().getStructurePath().contains("quarry")))
+        if ((job.getWorkOrder() == null && structurePlacer != null) || (structurePlacer != null && !structurePlacer.getB().hasBluePrint()) || (job.getWorkOrder() != null
+            && job.getWorkOrder().getStructurePath().contains("quarry")))
         {
-            job.setBlueprint(null);
             if (job.hasWorkOrder())
             {
+                job.getWorkOrder().clearBlueprint();
                 job.getColony().getWorkManager().removeWorkOrder(job.getWorkOrderId());
             }
             job.setWorkOrder(null);
             resetCurrentStructure();
-            building.cancelAllRequestsOfCitizen(worker.getCitizenData());
-            building.setProgressPos(null, BuildingStructureHandler.Stage.CLEAR);
+            building.cancelAllRequestsOfCitizenOrBuilding(worker.getCitizenData());
+            building.setProgressPos(null, BuildingProgressStage.CLEAR);
             return true;
         }
 
@@ -1047,7 +1045,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
                     return false;
             }
         }
-        return job.getWorkOrder() != null && (!WorldUtil.isBlockLoaded(world, job.getWorkOrder().getLocation())) && getState() != PICK_UP_RESIDUALS;
+        return job.getWorkOrder() != null && (!WorldUtil.isBlockLoaded(world, job.getWorkOrder().getLocation()));
     }
 
     private boolean ladderDamaged()

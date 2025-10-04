@@ -7,6 +7,7 @@ import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.equipment.ModEquipmentTypes;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.SoundUtils;
+import com.minecolonies.api.util.StatsUtil;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingArchery;
@@ -28,6 +29,10 @@ import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*
 import static com.minecolonies.api.util.constant.CitizenConstants.TICKS_20;
 import static com.minecolonies.api.util.constant.Constants.HALF_BLOCK;
 import static com.minecolonies.api.util.constant.GuardConstants.*;
+
+import static com.minecolonies.api.util.constant.StatisticsConstants.ARROWS_FIRED;
+import static com.minecolonies.api.util.constant.StatisticsConstants.ARROWS_HIT;
+import static com.minecolonies.api.util.constant.StatisticsConstants.LEVELS_GAINED;
 
 @SuppressWarnings("squid:MaximumInheritanceDepth")
 public class EntityAIArcherTraining extends AbstractEntityAITraining<JobArcherTraining, BuildingArchery>
@@ -210,13 +215,27 @@ public class EntityAIArcherTraining extends AbstractEntityAITraining<JobArcherTr
 
     private IAIState checkShot()
     {
+        int priorPrimaryLevel = getPrimarySkillLevel();
+        int priorSecondaryLevel = getSecondarySkillLevel();
+
         if (arrowInProgress.distanceToSqr(new Vec3(currentShootingTarget.getX(), currentShootingTarget.getY(), currentShootingTarget.getZ())) < MIN_DISTANCE_FOR_SUCCESS)
         {
             worker.getCitizenExperienceHandler().addExperience(XP_PER_SUCCESSFUL_SHOT);
+            StatsUtil.trackStat(building, ARROWS_HIT, 1);
         }
         else
         {
             worker.getCitizenExperienceHandler().addExperience(XP_BASE_RATE);
+        }
+        StatsUtil.trackStat(building, ARROWS_FIRED, 1);
+
+        if (getPrimarySkillLevel() - priorPrimaryLevel > 0)
+        {
+            StatsUtil.trackStatByName(building, LEVELS_GAINED, getModuleForJob().getPrimarySkill().name(), getPrimarySkillLevel() - priorPrimaryLevel);
+        }
+        if (getSecondarySkillLevel() - priorSecondaryLevel > 0)
+        {
+            StatsUtil.trackStatByName(building, LEVELS_GAINED, getModuleForJob().getSecondarySkill().name(), getSecondarySkillLevel() - priorSecondaryLevel);
         }
 
         worker.getCitizenData().setVisibleStatus(VisibleCitizenStatus.WORKING);

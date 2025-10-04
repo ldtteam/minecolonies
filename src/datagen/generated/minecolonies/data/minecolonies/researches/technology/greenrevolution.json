@@ -1,0 +1,28 @@
+{
+  "branch": "minecolonies:technology",
+  "costs": [
+    {
+      "type": "minecolonies:item_simple",
+      "item": "minecolonies:compost",
+      "quantity": 32
+    }
+  ],
+  "effects": [
+    {
+      "id": "minecolonies:effects/greenrevolution",
+      "level": 1
+    }
+  ],
+  "icon": "minecolonies:compost",
+  "parentResearch": "minecolonies:technology/biodegradable",
+  "requirements": [
+    {
+      "type": "minecolonies:building",
+      "building": "minecolonies:farmer",
+      "level": 4
+    }
+  ],
+  "researchLevel": 2,
+  "sortOrder": 3,
+  "subtitle": "com.minecolonies.research.technology.greenrevolution.subtitle"
+}

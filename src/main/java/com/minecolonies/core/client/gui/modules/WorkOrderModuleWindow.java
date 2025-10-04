@@ -7,6 +7,7 @@ import com.ldtteam.blockui.controls.ButtonImage;
 import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.blockui.views.ScrollingList;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
+import com.minecolonies.api.colony.workorders.IBuilderWorkOrder;
 import com.minecolonies.api.colony.workorders.IWorkOrderView;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.core.Network;
@@ -24,9 +25,10 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
-import java.util.stream.Collectors;
+import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.WindowConstants.*;
+import static com.minecolonies.api.util.constant.TranslationConstants.*;
 
 /**
  * BOWindow for the builder hut workorder list.
@@ -108,22 +110,25 @@ public class WorkOrderModuleWindow extends AbstractModuleWindow
      */
     private void updateWorkOrders()
     {
-        workOrders.clear();
-        workOrders.addAll(buildingView.getColony().getWorkOrders().stream()
-          .filter(wo -> wo.shouldShowIn(buildingView))
-          .collect(Collectors.toList()));
+        final Predicate<IWorkOrderView> shouldShow = wo -> wo.shouldShowIn(buildingView);
+        final Predicate<IWorkOrderView> isClaimedBySelf = wo -> wo.getClaimedBy().equals(buildingView.getPosition());
+        final Predicate<IWorkOrderView> isUnclaimed = wo -> wo.getClaimedBy().equals(BlockPos.ZERO);
+        final Predicate<IWorkOrderView> isInRange = wo -> wo.canBuildIgnoringDistance(buildingView.getPosition(), buildingView.getBuildingLevel());
 
+        Predicate<IWorkOrderView> finalPredicate = shouldShow.and(isInRange);
         if (manualMode)
         {
-            workOrders.removeIf(order -> !order.getClaimedBy().equals(buildingView.getPosition()) && !order.getClaimedBy().equals(BlockPos.ZERO));
+            finalPredicate = finalPredicate.and(isClaimedBySelf).or(isUnclaimed);
         }
         else
         {
-            workOrders.removeIf(order -> !order.getClaimedBy().equals(buildingView.getPosition()));
+            finalPredicate = finalPredicate.and(isClaimedBySelf);
         }
 
-        workOrders.removeIf(order -> !order.canBuildIgnoringDistance(buildingView.getPosition(), buildingView.getBuildingLevel()));
-
+        workOrders.clear();
+        workOrders.addAll(buildingView.getColony().getWorkOrders().stream()
+                            .filter(finalPredicate)
+                            .toList());
         sortWorkOrders();
     }
 
@@ -144,6 +149,8 @@ public class WorkOrderModuleWindow extends AbstractModuleWindow
     private void updateAvailableWorkOrders(final int index, @NotNull final Pane rowPane)
     {
         final IWorkOrderView order = workOrders.get(index);
+        boolean buttonEnabled = true;
+        String disabledMessage = "";
 
         Text workOrderTextPanel = rowPane.findPaneOfTypeByID(WORK_ORDER_NAME, Text.class);
         PaneBuilders.tooltipBuilder()
@@ -154,13 +161,36 @@ public class WorkOrderModuleWindow extends AbstractModuleWindow
         rowPane.findPaneOfTypeByID(WORK_ORDER_POS, Text.class)
           .setText(Component.translatable("com.minecolonies.coremod.gui.blocks.distance", BlockPosUtil.getDistance2D(order.getLocation(), buildingView.getPosition())));
 
+        if (buildingView.getAllAssignedCitizens().isEmpty())
+        {
+            disabledMessage = MESSAGE_WARNING_NO_WORKER_ASSIGNED;
+            buttonEnabled = false;
+        }
+        if (!order.getClaimedBy().equals(BlockPos.ZERO))
+        {
+            disabledMessage = MESSAGE_WARNING_ALREADY_CLAIMED;
+            buttonEnabled = false; 
+        }
+        if (!order.canBuildIgnoringDistance(buildingView.getPosition(), buildingView.getBuildingLevel()))
+        {
+            disabledMessage = MESSAGE_WARNING_CANNOTBUILD;
+            buttonEnabled = false;
+        }
+
         if (order.getClaimedBy().equals(buildingView.getPosition()))
         {
             rowPane.findPaneOfTypeByID(WORK_ORDER_SELECT, ButtonImage.class).setText(Component.translatable("com.minecolonies.coremod.gui.builder.cancel"));
         }
         else if (manualMode)
         {
-            rowPane.findPaneOfTypeByID(WORK_ORDER_SELECT, ButtonImage.class).setText(Component.translatable("com.minecolonies.coremod.gui.builder.select"));
+            Button assign = rowPane.findPaneOfTypeByID(WORK_ORDER_SELECT, ButtonImage.class);
+            assign.setText(Component.translatable("com.minecolonies.coremod.gui.builder.select"));
+
+            if (!buttonEnabled)
+            {
+                PaneBuilders.tooltipBuilder().hoverPane(assign).build().setText(Component.translatable(disabledMessage));
+                assign.setEnabled(false);
+            }
         }
     }
 
@@ -177,11 +207,11 @@ public class WorkOrderModuleWindow extends AbstractModuleWindow
         if (view.getClaimedBy().equals(buildingView.getPosition()))
         {
             view.setClaimedBy(buildingView.getPosition());
-            Network.getNetwork().sendToServer(new WorkOrderChangeMessage(buildingView, view.getId(), true, 0));
+            Network.getNetwork().sendToServer(new WorkOrderChangeMessage(buildingView, view.getID(), true, 0));
         }
         else
         {
-            Network.getNetwork().sendToServer(new BuilderSelectWorkOrderMessage(buildingView, view.getId()));
+            Network.getNetwork().sendToServer(new BuilderSelectWorkOrderMessage(buildingView, view.getID()));
         }
     }
 }

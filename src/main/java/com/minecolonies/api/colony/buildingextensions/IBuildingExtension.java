@@ -5,11 +5,17 @@ import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.buildingextensions.modules.IBuildingExtensionModule;
 import com.minecolonies.api.colony.buildingextensions.registry.BuildingExtensionRegistries;
 import com.minecolonies.api.colony.modules.IModuleContainer;
+import com.minecolonies.api.util.BlockPosUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_ID;
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_POS;
 
 /**
  * Interface for building extension instances.
@@ -107,4 +113,31 @@ public interface IBuildingExtension extends IModuleContainer<IBuildingExtensionM
      * Equals implementation for this building extension.
      */
     boolean equals(Object other);
+
+    /**
+     * Get the unique extension id.
+     * @return the unique id.
+     */
+    ExtensionId getId();
+
+    /**
+     * Unique extension id.
+     * @param pos the pos it's at.
+     * @param entry it's entry type.
+     */
+    record ExtensionId(BlockPos pos, BuildingExtensionRegistries.BuildingExtensionEntry entry)
+    {
+        public Tag serializeNBT()
+        {
+            final CompoundTag tag = new CompoundTag();
+            BlockPosUtil.write(tag, TAG_POS, pos);
+            tag.putString(TAG_ID, entry.getRegistryName().toString());
+            return tag;
+        }
+
+        public static ExtensionId deserializeNBT(final CompoundTag nbt)
+        {
+            return new ExtensionId(BlockPosUtil.read(nbt, TAG_POS), BuildingExtensionRegistries.getBuildingExtensionRegistry().getValue(ResourceLocation.tryParse(nbt.getString(TAG_ID))));
+        }
+    }
 }

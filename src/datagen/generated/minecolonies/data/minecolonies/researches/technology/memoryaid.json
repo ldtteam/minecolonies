@@ -1,8 +1,16 @@
 {
   "branch": "minecolonies:technology",
+  "costs": [
+    {
+      "type": "minecolonies:item_simple",
+      "item": "minecraft:paper",
+      "quantity": 32
+    }
+  ],
   "effects": [
     {
-      "minecolonies:effects/recipesmultiplier": 1
+      "id": "minecolonies:effects/recipesmultiplier",
+      "level": 1
     }
   ],
   "icon": "minecraft:paper",
@@ -10,13 +18,8 @@
   "requirements": [
     {
       "type": "minecolonies:building",
-      "building": "sawmill",
+      "building": "minecolonies:sawmill",
       "level": 1
-    },
-    {
-      "type": "minecolonies:item_simple",
-      "item": "minecraft:paper",
-      "quantity": 32
     }
   ],
   "researchLevel": 2,
