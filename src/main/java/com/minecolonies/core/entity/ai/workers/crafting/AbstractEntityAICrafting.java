@@ -564,13 +564,13 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
                 recordCraftingBuildingStats(currentRequest, currentRecipeStorage);
 
                 currentRequest.addDelivery(currentRecipeStorage.getPrimaryOutput());
-                if (!ItemStackUtils.isEmpty(currentRecipeStorage.getPrimaryOutput()))
+
+                // If the primary output is empty, it is not returned as part of the result list
+                // Hence, if the primary output is empty, we can start iterating from index 0
+                // If it's not empty, it is added to the beginning of the stacks list, so we start iterating from index 1
+                for (int i = ItemStackUtils.isEmpty(currentRecipeStorage.getPrimaryOutput()) ? 0 : 1; i < addedStacks.size(); i++)
                 {
-                    addedStacks.remove(0);
-                }
-                for (final ItemStack stack : addedStacks)
-                {
-                    final ItemStorage itemStorage = new ItemStorage(stack);
+                    final ItemStorage itemStorage = new ItemStorage(addedStacks.get(i));
                     job.getSecondaryOutputs().compute(itemStorage, (k, v) -> v == null ? k.getAmount() : v + k.getAmount());
                 }
 
@@ -679,13 +679,10 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
                         final IBuilding warehouse = job.getColony().getBuildingManager().getBuilding(closestWarehouse);
                         for (final Map.Entry<ItemStorage, Integer> output : job.getSecondaryOutputs().entrySet())
                         {
-                            job.getColony()
-                                .getRequestManager()
-                                .createRequest(warehouse,
-                                    new Delivery(building.getLocation(),
-                                        warehouse.getLocation(),
-                                        output.getKey().getItemStack().copyWithCount(output.getValue()),
-                                        MAX_BUILDING_PRIORITY));
+                            warehouse.createRequest(new Delivery(building.getLocation(),
+                                warehouse.getLocation(),
+                                output.getKey().getItemStack().copyWithCount(output.getValue()),
+                                MAX_BUILDING_PRIORITY), true);
                         }
                     }
                     job.getSecondaryOutputs().clear();
