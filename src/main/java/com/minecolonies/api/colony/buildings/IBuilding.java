@@ -365,21 +365,10 @@ public interface IBuilding extends IBuildingContainer, IModuleContainer<IBuildin
      * Creates a pickup request for the building. It will make sure that only one pickup request exists per building, so it's safe to call multiple times. The call will return
      * false if a pickup request already exists, or if the priority is not within the proper range, or if the pickup priority is set to NEVER (0).
      *
-     * @param priority the priority of the pickup request.
+     * @param pickUpPrio The priority of the pickup request.
      * @return true if a pickup request could be created, false if not.
      */
-    boolean createPickupRequest(final int priority);
-
-    /**
-     * Creates a pickup request for the building. It will make sure that only one pickup request exists per building, so it's safe to call multiple times. The call will return
-     * false if a pickup request already exists, or if the priority is not within the proper range, or if the pickup priority is set to NEVER (0).
-     * This overload features a filter that can be used to only pick up the one given item stack and ignore the rest.
-     *
-     * @param priority     the priority of the pickup request.
-     * @param pickupFilter the item stacks to filter for this specific pickup.
-     * @return true if a pickup request could be created, false if not.
-     */
-    boolean createPickupRequest(final int priority, final @Nullable List<ItemStack> pickupFilter);
+    boolean createPickupRequest(final int pickUpPrio);
 
     @Override
     ImmutableCollection<IRequestResolver<?>> getResolvers();

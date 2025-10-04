@@ -42,7 +42,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
@@ -247,43 +246,6 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             return false;
         }
 
-        if (request.getRequest().getPickupFilter() != null)
-        {
-            final ListIterator<ItemStack> iterator = request.getRequest().getPickupFilter().listIterator();
-            while (iterator.hasNext())
-            {
-                final ItemStack filter = iterator.next();
-                if (ItemStackUtils.compareItemStacksIgnoreStackSize(stack, filter))
-                {
-                    final ItemStack activeStack = handler.extractItem(currentSlot, filter.getCount(), false);
-                    transferItemForPickup(activeStack);
-                    if (filter.getCount() == activeStack.getCount())
-                    {
-                        iterator.remove();
-                    }
-                    else
-                    {
-                        iterator.set(filter.copyWithCount(filter.getCount() - activeStack.getCount()));
-                    }
-                }
-            }
-        }
-        else
-        {
-            final ItemStack activeStack = handler.extractItem(currentSlot, amount, false);
-            transferItemForPickup(activeStack);
-        }
-        return false;
-    }
-
-
-    /**
-     * Transfer an item to the courier for pickup.
-     *
-     * @param stack the stack to transfer.
-     */
-    private void transferItemForPickup(final ItemStack stack)
-    {
         final ItemStack activeStack = handler.extractItem(currentSlot, amount, false);
         InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(activeStack, worker.getInventoryCitizen());
         targetBuilding.markDirty();

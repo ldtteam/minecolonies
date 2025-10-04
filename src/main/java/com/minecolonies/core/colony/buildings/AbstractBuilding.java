@@ -1519,12 +1519,6 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     @Override
     public boolean createPickupRequest(final int priority)
     {
-        return createPickupRequest(priority, null);
-    }
-
-    @Override
-    public boolean createPickupRequest(final int priority, final @Nullable List<ItemStack> pickupFilter)
-    {
         int daysToPickup = 10 - priority;
         if (pickUpDay == -1 || pickUpDay > colony.getDay() + daysToPickup)
         {
@@ -1551,17 +1545,12 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
                     {
                         colony.getRequestManager().reassignRequest(req, Collections.emptyList());
                     }
-
-                    if (request instanceof PickupRequest pickup && pickupFilter != null)
-                    {
-                        pickup.getRequest().addToPickupFilter(pickupFilter);
-                    }
                 }
             }
             return false;
         }
 
-        createRequest(new Pickup(priority, pickupFilter), true);
+        createRequest(new Pickup(priority), true);
         return true;
     }
 

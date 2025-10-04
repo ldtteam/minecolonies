@@ -1,8 +1,12 @@
 package com.minecolonies.core.colony.jobs;
 
 import com.google.common.collect.ImmutableList;
+import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.core.entity.citizen.EntityCitizen;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 import com.minecolonies.api.client.render.modeltype.ModModelTypes;
 import com.minecolonies.api.colony.ICitizenData;
@@ -20,8 +24,10 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import static com.minecolonies.api.util.constant.Suppression.UNCHECKED;
 
@@ -50,6 +56,12 @@ public abstract class AbstractJobCrafter<AI extends AbstractEntityAIBasic<J, ? e
      * Progress of hitting the block.
      */
     private int progress = 0;
+
+    /**
+     * The current map of secondary outputs that need to return to the warehouse after crafting is done.
+     */
+    @NotNull
+    private final Map<ItemStorage, Integer> secondaryOutputs = new HashMap<>();
 
     /**
      * Instantiates the job for the crafter.
@@ -101,6 +113,12 @@ public abstract class AbstractJobCrafter<AI extends AbstractEntityAIBasic<J, ? e
         compound.putInt(NbtTagConstants.TAG_PROGRESS, progress);
         compound.putInt(NbtTagConstants.TAG_MAX_COUNTER, maxCraftingCount);
         compound.putInt(NbtTagConstants.TAG_CRAFT_COUNTER, craftCounter);
+        final ListTag items = new ListTag();
+        for (final Map.Entry<ItemStorage, Integer> item : secondaryOutputs.entrySet())
+        {
+            items.add(item.getKey().getItemStack().copyWithCount(item.getValue()).serializeNBT());
+        }
+        compound.put(NbtTagConstants.TAG_SECONDARY_OUTPUTS, items);
         return compound;
     }
 
@@ -112,7 +130,7 @@ public abstract class AbstractJobCrafter<AI extends AbstractEntityAIBasic<J, ? e
         if (compound.contains(NbtTagConstants.TAG_RS_DMANJOB_DATASTORE))
         {
             rsDataStoreToken = StandardFactoryController.getInstance()
-                                 .deserialize(compound.getCompound(NbtTagConstants.TAG_RS_DMANJOB_DATASTORE));
+                .deserialize(compound.getCompound(NbtTagConstants.TAG_RS_DMANJOB_DATASTORE));
         }
         else
         {
@@ -132,6 +150,22 @@ public abstract class AbstractJobCrafter<AI extends AbstractEntityAIBasic<J, ? e
         if (compound.contains(NbtTagConstants.TAG_CRAFT_COUNTER))
         {
             this.progress = compound.getInt(NbtTagConstants.TAG_CRAFT_COUNTER);
+        }
+
+        if (compound.contains(NbtTagConstants.TAG_SECONDARY_OUTPUTS))
+        {
+            final HashMap<ItemStorage, Integer> newItems = new HashMap<>();
+            final ListTag list = compound.getList(NbtTagConstants.TAG_SECONDARY_OUTPUTS, ListTag.TAG_COMPOUND);
+            for (final Tag tag : list)
+            {
+                if (tag instanceof CompoundTag compoundTag)
+                {
+                    final ItemStorage item = new ItemStorage(ItemStackUtils.deserializeFromNBT(compoundTag));
+                    newItems.put(item, item.getAmount());
+                }
+            }
+            secondaryOutputs.clear();
+            secondaryOutputs.putAll(newItems);
         }
     }
 
@@ -326,6 +360,17 @@ public abstract class AbstractJobCrafter<AI extends AbstractEntityAIBasic<J, ? e
     public void setProgress(final int progress)
     {
         this.progress = progress;
+    }
+
+    /**
+     * Get the secondary outputs that have yet to be picked up.
+     *
+     * @return the map of secondary outputs.
+     */
+    @NotNull
+    public Map<ItemStorage, Integer> getSecondaryOutputs()
+    {
+        return secondaryOutputs;
     }
 
     @Override

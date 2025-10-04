@@ -20,10 +20,6 @@ import java.util.stream.Collectors;
  */
 public class Pickup extends AbstractDeliverymanRequestable
 {
-    ////// --------------------------- NBTConstants --------------------------- \\\\\\
-    protected static final String NBT_PICKUP_FILTER = "Filter";
-    ////// --------------------------- NBTConstants --------------------------- \\\\\\
-
     /**
      * Set of type tokens belonging to this class.
      */
@@ -31,52 +27,13 @@ public class Pickup extends AbstractDeliverymanRequestable
       TYPE_TOKENS = ReflectionUtils.getSuperClasses(TypeToken.of(Pickup.class)).stream().filter(type -> !type.equals(TypeConstants.OBJECT)).collect(Collectors.toSet());
 
     /**
-     * The itemstack to filter for this specific pickup.
-     */
-    @Nullable
-    private List<ItemStack> pickupFilter;
-
-    /**
      * Constructor for Delivery requests
      *
      * @param priority the priority of the request.
-     * @param filter   a filter to apply to the pickup request.
      */
-    public Pickup(final int priority, final @Nullable List<ItemStack> filter)
+    public Pickup(final int priority)
     {
         super(priority);
-        if (filter != null)
-        {
-            this.pickupFilter = filter.stream().map(ItemStack::copy).collect(Collectors.toList());
-        }
-    }
-
-    /**
-     * Get the itemstack to filter for this specific pickup.
-     *
-     * @return the itemstack or null.
-     */
-    @Nullable
-    public List<ItemStack> getPickupFilter()
-    {
-        return pickupFilter;
-    }
-
-    /**
-     * Add or update a pickup filter.
-     *
-     * @param stacks the input stacks.
-     */
-    public void addToPickupFilter(final List<ItemStack> stacks)
-    {
-        if (pickupFilter == null)
-        {
-            pickupFilter = stacks;
-        }
-        else
-        {
-            pickupFilter.addAll(stacks);
-        }
     }
 
     @NotNull
@@ -84,15 +41,6 @@ public class Pickup extends AbstractDeliverymanRequestable
     {
         final CompoundTag compound = new CompoundTag();
         compound.put(NBT_PRIORITY, controller.serialize(pickup.getPriority()));
-        if (pickup.getPickupFilter() != null)
-        {
-            final ListTag listTag = new ListTag();
-            for (final ItemStack itemStack : pickup.getPickupFilter())
-            {
-                listTag.add(itemStack.save(new CompoundTag()));
-            }
-            compound.put(NBT_PICKUP_FILTER, listTag);
-        }
         return compound;
     }
 
@@ -100,42 +48,19 @@ public class Pickup extends AbstractDeliverymanRequestable
     public static Pickup deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundTag compound)
     {
         final int priority = controller.deserialize(compound.getCompound(NBT_PRIORITY));
-        final List<ItemStack> pickupFilter;
-        if (compound.contains(NBT_PICKUP_FILTER))
-        {
-            pickupFilter = new ArrayList<>();
-            final ListTag list = compound.getList(NBT_PICKUP_FILTER, Tag.TAG_COMPOUND);
-            for (int i = 0; i < list.size(); i++)
-            {
-                pickupFilter.add(ItemStack.of(list.getCompound(i)));
-            }
-        }
-        else
-        {
-            pickupFilter = null;
-        }
-        return new Pickup(priority, pickupFilter);
+        return new Pickup(priority);
     }
 
     /**
      * Serialize the deliverable.
      *
      * @param controller the controller.
-     * @param buffer     the buffer to write to.
+     * @param buffer     the the buffer to write to.
      * @param input      the input to serialize.
      */
     public static void serialize(final IFactoryController controller, final FriendlyByteBuf buffer, final Pickup input)
     {
         buffer.writeInt(input.getPriority());
-        buffer.writeBoolean(input.getPickupFilter() != null);
-        if (input.getPickupFilter() != null)
-        {
-            buffer.writeInt(input.getPickupFilter().size());
-            for (final ItemStack itemStack : input.getPickupFilter())
-            {
-                buffer.writeItem(itemStack);
-            }
-        }
     }
 
     /**
@@ -148,21 +73,7 @@ public class Pickup extends AbstractDeliverymanRequestable
     public static Pickup deserialize(final IFactoryController controller, final FriendlyByteBuf buffer)
     {
         final int priority = buffer.readInt();
-        final List<ItemStack> pickupFilter;
-        if (buffer.readBoolean())
-        {
-            pickupFilter = new ArrayList<>();
-            final int itemCount = buffer.readInt();
-            for (int i = 0; i < itemCount; i++)
-            {
-                pickupFilter.add(buffer.readItem());
-            }
-        }
-        else
-        {
-            pickupFilter = null;
-        }
-        return new Pickup(priority, pickupFilter);
+        return new Pickup(priority);
     }
 
     @Override
