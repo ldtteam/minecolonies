@@ -50,7 +50,6 @@ import com.minecolonies.core.colony.jobs.AbstractJobCrafter;
 import com.minecolonies.core.colony.requestsystem.management.IStandardRequestManager;
 import com.minecolonies.core.colony.requestsystem.requesters.BuildingBasedRequester;
 import com.minecolonies.core.colony.requestsystem.requests.StandardRequests;
-import com.minecolonies.core.colony.requestsystem.requests.StandardRequests.PickupRequest;
 import com.minecolonies.core.colony.requestsystem.resolvers.BuildingRequestResolver;
 import com.minecolonies.core.colony.workorders.WorkOrderBuilding;
 import com.minecolonies.core.entity.ai.workers.service.EntityAIWorkDeliveryman;
@@ -1517,9 +1516,9 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     }
 
     @Override
-    public boolean createPickupRequest(final int priority)
+    public boolean createPickupRequest(final int pickUpPrio)
     {
-        int daysToPickup = 10 - priority;
+        int daysToPickup = 10 - pickUpPrio;
         if (pickUpDay == -1 || pickUpDay > colony.getDay() + daysToPickup)
         {
             pickUpDay = colony.getDay() + daysToPickup;
@@ -1550,7 +1549,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
             return false;
         }
 
-        createRequest(new Pickup(priority), true);
+        createRequest(new Pickup(pickUpPrio), true);
         return true;
     }
 
