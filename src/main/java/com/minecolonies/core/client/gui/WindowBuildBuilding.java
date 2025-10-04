@@ -12,8 +12,6 @@ import com.ldtteam.structurize.placement.BlockPlacementResult;
 import com.ldtteam.structurize.placement.StructurePhasePlacementResult;
 import com.ldtteam.structurize.placement.StructurePlacer;
 import com.ldtteam.structurize.placement.structure.IStructureHandler;
-import com.ldtteam.structurize.storage.ClientFutureProcessor;
-import com.ldtteam.structurize.storage.StructurePacks;
 import com.ldtteam.structurize.util.BlueprintPositionInfo;
 import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.IColonyView;
@@ -22,6 +20,7 @@ import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.ai.workers.util.IBuilderUndestroyable;
+import com.minecolonies.api.util.ColonyUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.LoadOnlyStructureHandler;
 import com.minecolonies.api.util.constant.Constants;
@@ -289,7 +288,12 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
         }
 
         final Level world = Minecraft.getInstance().level;
-        int nextLevel = building.getBuildingLevel();
+        int firstLevel = building.getBuildingLevel();
+        int nextLevel = firstLevel;
+        if (building.isDeconstructed())
+        {
+            firstLevel = 0;
+        }
         if (canBeUpgraded())
         {
             nextLevel = building.getBuildingLevel() + 1;
@@ -302,16 +306,9 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
         }
 
         name = name.substring(0, name.length() - 1) + nextLevel + ".blueprint";
-        ClientFutureProcessor.queueBlueprint(new ClientFutureProcessor.BlueprintProcessingData(StructurePacks.getBlueprintFuture(styles.get(stylesDropDownList.getSelectedIndex()), name, world.registryAccess()), (blueprint -> {
+        ColonyUtils.queueBlueprintLoad(world, styles.get(stylesDropDownList.getSelectedIndex()), name, firstLevel, nextLevel, blueprint ->
+        {
             resources.clear();
-            if (blueprint == null)
-            {
-                findPaneOfTypeByID(BUTTON_BUILD, Button.class).hide();
-                findPaneOfTypeByID(BUTTON_REPAIR, Button.class).hide();
-                findPaneOfTypeByID(BUTTON_PICKUP_BUILDING, Button.class).show();
-                return;
-            }
-
             blueprint.setRotationMirror(building.getRotationMirror(), Minecraft.getInstance().level);
             StructurePlacer placer = new StructurePlacer(new LoadOnlyStructureHandler(Minecraft.getInstance().level, building.getPosition(), blueprint, RotationMirror.NONE, true));
             StructurePhasePlacementResult result;
@@ -320,7 +317,7 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
             do
             {
                 result = placer.executeStructureStep(world, null, progressPos, StructurePlacer.Operation.GET_RES_REQUIREMENTS,
-                  () -> placer.getIterator().increment(DONT_TOUCH_PREDICATE.and((info, pos, handler) -> false)), true);
+                    () -> placer.getIterator().increment(DONT_TOUCH_PREDICATE.and((info, pos, handler) -> false)), true);
 
                 progressPos = result.getIteratorPos();
                 for (final ItemStack stack : result.getBlockResult().getRequiredItems())
@@ -332,9 +329,13 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
 
             window.findPaneOfTypeByID(LIST_RESOURCES, ScrollingList.class).refreshElementPanes();
             updateResourceList();
-
-        })));
-
+        }, e ->
+        {
+            resources.clear();
+            findPaneOfTypeByID(BUTTON_BUILD, Button.class).hide();
+            findPaneOfTypeByID(BUTTON_REPAIR, Button.class).hide();
+            findPaneOfTypeByID(BUTTON_PICKUP_BUILDING, Button.class).show();
+        });
     }
 
     /**
