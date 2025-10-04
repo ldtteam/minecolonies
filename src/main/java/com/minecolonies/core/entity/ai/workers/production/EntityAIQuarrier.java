@@ -347,7 +347,7 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
     {
         final BlockState blockInfoState = info.getBlockInfo().getState();
         return !BlockUtils.isAnySolid(blockInfoState)
-                 || isDecoItem(blockInfoState.getBlock())
+                 || isDecoItem(blockInfoState)
                  || DONT_TOUCH_PREDICATE.test(info, pos, handler);
     }
 
@@ -404,7 +404,7 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
                   StructurePlacer.Operation.GET_RES_REQUIREMENTS,
                   () -> placer.getIterator()
                           .decrement(DONT_TOUCH_PREDICATE.or((info, pos, handler) -> !BlockUtils.isAnySolid(info.getBlockInfo().getState())
-                                                                                       || isDecoItem(info.getBlockInfo().getState().getBlock()))),
+                                                                                       || isDecoItem(info.getBlockInfo().getState()))),
                   false);
 
                 for (final ItemStack stack : result.getBlockResult().getRequiredItems())
@@ -442,8 +442,7 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
                   StructurePlacer.Operation.GET_RES_REQUIREMENTS,
                   () -> placer.getIterator()
                           .increment(DONT_TOUCH_PREDICATE.or((info, pos, handler) -> BlockUtils.isAnySolid(info.getBlockInfo().getState()) && !isDecoItem(info.getBlockInfo()
-                                                                                                                                                            .getState()
-                                                                                                                                                            .getBlock()))),
+                                                                                                                                                            .getState()))),
                   false);
 
                 for (final ItemStack stack : result.getBlockResult().getRequiredItems())

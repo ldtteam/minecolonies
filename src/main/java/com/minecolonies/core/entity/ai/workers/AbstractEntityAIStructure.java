@@ -1,7 +1,6 @@
 package com.minecolonies.core.entity.ai.workers;
 
 import com.ldtteam.structurize.blocks.schematic.BlockFluidSubstitution;
-import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.placement.BlockPlacementResult;
 import com.ldtteam.structurize.placement.StructurePhasePlacementResult;
 import com.ldtteam.structurize.placement.StructurePlacer;
@@ -44,7 +43,6 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.AABB;
 import net.neoforged.neoforge.common.util.TriPredicate;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -60,7 +58,6 @@ import static com.ldtteam.structurize.placement.AbstractBlueprintIterator.NULL_P
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.research.util.ResearchConstants.BLOCK_PLACE_SPEED;
 import static com.minecolonies.api.util.constant.CitizenConstants.*;
-import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.core.colony.buildings.workerbuildings.BuildingMiner.FILL_BLOCK;
 import static com.minecolonies.core.entity.ai.workers.AbstractEntityAIStructure.ItemCheckResult.*;
 import static com.minecolonies.core.entity.ai.workers.util.BuildingProgressStage.*;
@@ -295,9 +292,9 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
     /**
      * Checks for blocks that need to be treated as deco
      */
-    protected static boolean isDecoItem(Block block)
+    protected static boolean isDecoItem(BlockState block)
     {
-        return block.defaultBlockState().is(ModTags.decorationItems) || block instanceof BlockFluidSubstitution;
+        return block.is(ModTags.decorationItems) || block.getBlock() instanceof BlockFluidSubstitution || !block.getFluidState().isEmpty();
     }
 
     /**
@@ -523,7 +520,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
     private boolean skipDecorate(final BlueprintPositionInfo info, final BlockPos pos, final IStructureHandler handler)
     {
         final BlockState blockInfoState = info.getBlockInfo().getState();
-        return (!isDecoItem(blockInfoState.getBlock()) && BlockUtils.isAnySolid(blockInfoState)) || DONT_TOUCH_PREDICATE.test(info, pos, handler);
+        return (!isDecoItem(blockInfoState) && BlockUtils.isAnySolid(blockInfoState)) || DONT_TOUCH_PREDICATE.test(info, pos, handler);
     }
 
     /**
@@ -538,7 +535,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
     {
         final BlockState blockInfoState = info.getBlockInfo().getState();
         return !BlockUtils.canBlockFloatInAir(blockInfoState)
-                 || isDecoItem(blockInfoState.getBlock())
+                 || isDecoItem(blockInfoState)
                  || DONT_TOUCH_PREDICATE.test(info, pos, handler);
     }
 
