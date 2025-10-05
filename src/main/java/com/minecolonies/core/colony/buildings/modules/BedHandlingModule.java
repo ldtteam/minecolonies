@@ -100,4 +100,12 @@ public class BedHandlingModule extends AbstractBuildingModule implements IModule
         }
     }
 
+    /**
+     * Remove a bed from a pos.
+     * @param pos the pos to remove.
+     */
+    public void removeBed(final BlockPos pos)
+    {
+        bedList.remove(pos);
+    }
 }
