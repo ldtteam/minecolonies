@@ -13,6 +13,8 @@ import com.minecolonies.api.util.Utils;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
 import com.minecolonies.core.colony.buildings.modules.AbstractCraftingBuildingModule;
 import com.minecolonies.core.colony.crafting.CustomRecipe;
+import com.minecolonies.core.colony.crafting.CustomRecipeManager;
+import com.minecolonies.core.colony.crafting.LootTableAnalyzer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -179,10 +181,14 @@ public class BuildingSmeltery extends AbstractBuilding
             //noinspection ConstantConditions
             for (final Holder<Item> input : BuiltInRegistries.ITEM.getTagOrEmpty(ModTags.breakable_ore))
             {
-                recipes.add(GenericRecipe.builder()
-                        .withInputs(List.of(List.of(input.value().getDefaultInstance())))
-                        .withLootTable(getLootTable(input.value()))
-                        .build());
+                final ResourceKey<LootTable> lootTable = getLootTable(input.value());
+                if (!lootTableIsRecursive(input, lootTable))
+                {
+                    recipes.add(GenericRecipe.builder()
+                            .withInputs(List.of(List.of(input.value().getDefaultInstance())))
+                            .withLootTable(lootTable)
+                            .build());
+                }
             }
 
             return recipes;
@@ -195,6 +201,12 @@ public class BuildingSmeltery extends AbstractBuilding
 
             for (final Holder<Item> input : BuiltInRegistries.ITEM.getTagOrEmpty(ModTags.breakable_ore))
             {
+                final ResourceKey<LootTable> lootTable = getLootTable(input.value());
+                if (lootTableIsRecursive(input, lootTable))
+                {
+                    continue;
+                }
+
                 Block b = Block.byItem(input.value());
                 List<ItemStack> drops = Block.getDrops(b.defaultBlockState(), (ServerLevel) building.getColony().getWorld(), building.getID(), null);
                 for (ItemStack drop : drops)
@@ -207,8 +219,8 @@ public class BuildingSmeltery extends AbstractBuilding
 
                 final RecipeStorage tempRecipe = RecipeStorage.builder()
                         .withInputs(Collections.singletonList(new ItemStorage(new ItemStack(input.value()))))
-                        .withSecondaryOutputs(drops)
-                        .withLootTable(getLootTable(input.value()))
+                        .withSecondaryOutputs(drops)    // this is just a display example
+                        .withLootTable(lootTable)
                         .build();
                 IToken<?> token = IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(tempRecipe);
                 this.addRecipeToList(token, false);
@@ -225,6 +237,22 @@ public class BuildingSmeltery extends AbstractBuilding
                 pick.enchant(Utils.getRegistryValue(Enchantments.FORTUNE, worker.level()), fortuneLevel);
             }
             return pick;
+        }
+
+        private boolean lootTableIsRecursive(final Holder<Item> input, final ResourceKey<LootTable> lootTable)
+        {
+            final List<LootTableAnalyzer.LootDrop> drops = CustomRecipeManager.getInstance().getLootDrops(lootTable);
+            for (final LootTableAnalyzer.LootDrop drop : drops)
+            {
+                for (final ItemStack stack : drop.getItemStacks())
+                {
+                    if (stack.is(input))
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
         }
 
         protected ResourceKey<LootTable> getLootTable(Item item)
