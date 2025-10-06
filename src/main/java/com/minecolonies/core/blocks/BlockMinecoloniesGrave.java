@@ -5,7 +5,6 @@ import com.minecolonies.api.blocks.types.GraveType;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.permissions.Action;
-import com.minecolonies.api.tileentities.AbstractTileEntityGrave;
 import com.minecolonies.core.tileentities.TileEntityGrave;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.constant.Constants;
@@ -28,9 +27,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraftforge.network.NetworkHooks;
-import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -145,18 +142,6 @@ public class BlockMinecoloniesGrave extends AbstractBlockMinecoloniesGrave<Block
     }
 
     @Override
-    public void spawnAfterBreak(final BlockState state, final ServerLevel worldIn, final BlockPos pos, final ItemStack stack, final boolean p_222953_)
-    {
-        final BlockEntity tileentity = worldIn.getBlockEntity(pos);
-        if (tileentity instanceof TileEntityGrave)
-        {
-            final IItemHandler handler = ((AbstractTileEntityGrave) tileentity).getInventory();
-            InventoryUtils.dropItemHandler(handler, worldIn, pos.getX(), pos.getY(), pos.getZ());
-        }
-        super.spawnAfterBreak(state, worldIn, pos, stack, p_222953_);
-    }
-
-    @Override
     public InteractionResult use(
       final BlockState state,
       final Level worldIn,
@@ -221,14 +206,13 @@ public class BlockMinecoloniesGrave extends AbstractBlockMinecoloniesGrave<Block
         if (state.getBlock() != newState.getBlock())
         {
             BlockEntity tileEntity = worldIn.getBlockEntity(pos);
-            if (tileEntity instanceof TileEntityGrave)
+            if (tileEntity instanceof TileEntityGrave tileEntityGrave)
             {
-                TileEntityGrave tileEntityGrave = (TileEntityGrave) tileEntity;
                 InventoryUtils.dropItemHandler(tileEntityGrave.getInventory(),
-                  worldIn,
-                  tileEntityGrave.getBlockPos().getX(),
-                  tileEntityGrave.getBlockPos().getY(),
-                  tileEntityGrave.getBlockPos().getZ());
+                    worldIn,
+                    tileEntityGrave.getBlockPos().getX(),
+                    tileEntityGrave.getBlockPos().getY(),
+                    tileEntityGrave.getBlockPos().getZ());
                 worldIn.updateNeighbourForOutputSignal(pos, this);
             }
 
