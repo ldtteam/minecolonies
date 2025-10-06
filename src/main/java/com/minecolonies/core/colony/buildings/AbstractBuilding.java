@@ -440,11 +440,6 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
 
         if (tileEntityNew != null)
         {
-            InventoryUtils.dropItemHandler(tileEntityNew.getInventory(),
-              world,
-              tileEntityNew.getPosition().getX(),
-              tileEntityNew.getPosition().getY(),
-              tileEntityNew.getPosition().getZ());
             world.updateNeighbourForOutputSignal(this.getPosition(), block);
         }
 
