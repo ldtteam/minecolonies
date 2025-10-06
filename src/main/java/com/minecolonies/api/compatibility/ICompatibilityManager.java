@@ -105,6 +105,14 @@ public interface ICompatibilityManager
     boolean isMineableOre(@NotNull ItemStack stack);
 
     /**
+     * Check if a stack belongs to a breakable ore.
+     *
+     * @param stack the stack to test.
+     * @return true if so.
+     */
+    boolean isBreakableOre(@NotNull ItemStack stack);
+
+    /**
      * Get a copy of the list of compost recipes.
      *
      * @return the list of compost recipes, indexed by input item.
