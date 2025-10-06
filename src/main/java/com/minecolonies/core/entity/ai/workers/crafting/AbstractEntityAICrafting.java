@@ -565,13 +565,16 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
 
                 currentRequest.addDelivery(currentRecipeStorage.getPrimaryOutput());
 
-                // If the primary output is empty, it is not returned as part of the result list
-                // Hence, if the primary output is empty, we can start iterating from index 0
-                // If it's not empty, it is added to the beginning of the stacks list, so we start iterating from index 1
-                for (int i = ItemStackUtils.isEmpty(currentRecipeStorage.getPrimaryOutput()) ? 0 : 1; i < addedStacks.size(); i++)
+                for (final ItemStack addedStack : addedStacks)
                 {
-                    final ItemStorage itemStorage = new ItemStorage(addedStacks.get(i));
-                    job.getSecondaryOutputs().compute(itemStorage, (k, v) -> v == null ? k.getAmount() : v + k.getAmount());
+                    if (ItemStackUtils.compareItemStacksIgnoreStackSize(currentRecipeStorage.getPrimaryOutput(), addedStack))
+                    {
+                        currentRequest.addDelivery(addedStack);
+                    }
+                    else
+                    {
+                        job.getSecondaryOutputs().compute(new ItemStorage(addedStack), (k, v) -> v == null ? k.getAmount() : v + k.getAmount());
+                    }
                 }
 
                 job.setCraftCounter(job.getCraftCounter() + 1);
