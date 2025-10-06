@@ -1,5 +1,6 @@
 package com.minecolonies.core.colony.buildings.workerbuildings;
 
+import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
@@ -13,8 +14,6 @@ import com.minecolonies.api.util.Utils;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
 import com.minecolonies.core.colony.buildings.modules.AbstractCraftingBuildingModule;
 import com.minecolonies.core.colony.crafting.CustomRecipe;
-import com.minecolonies.core.colony.crafting.CustomRecipeManager;
-import com.minecolonies.core.colony.crafting.LootTableAnalyzer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -120,7 +119,7 @@ public class BuildingSmeltery extends AbstractBuilding
             final ICompatibilityManager compatibility = IColonyManager.getInstance().getCompatibilityManager();
             for (final ItemStack stack : compatibility.getListOfAllItems())
             {
-                if (ItemStackUtils.IS_SMELTABLE.and(compatibility::isOre).and(s -> !s.is(ModTags.breakable_ore)).test(stack))
+                if (ItemStackUtils.IS_SMELTABLE.and(compatibility::isOre).and(s -> !compatibility.isBreakableOre(s)).test(stack))
                 {
                     final ItemStack output = IColonyManager.getInstance().getCompatibilityManager().getFurnaceRecipes().getSmeltingResult(stack);
                     recipes.add(createSmeltingRecipe(stack, output, Blocks.FURNACE));
@@ -177,16 +176,17 @@ public class BuildingSmeltery extends AbstractBuilding
         public List<IGenericRecipe> getAdditionalRecipesForDisplayPurposesOnly(@NotNull final Level world)
         {
             final List<IGenericRecipe> recipes = new ArrayList<>(super.getAdditionalRecipesForDisplayPurposesOnly(world));
+            final ICompatibilityManager compat = IMinecoloniesAPI.getInstance().getColonyManager().getCompatibilityManager();
 
             //noinspection ConstantConditions
             for (final Holder<Item> input : BuiltInRegistries.ITEM.getTagOrEmpty(ModTags.breakable_ore))
             {
-                final ResourceKey<LootTable> lootTable = getLootTable(input.value());
-                if (!lootTableIsRecursive(input, lootTable))
+                final ItemStack inputStack = input.value().getDefaultInstance();
+                if (compat.isBreakableOre(inputStack))
                 {
                     recipes.add(GenericRecipe.builder()
-                            .withInputs(List.of(List.of(input.value().getDefaultInstance())))
-                            .withLootTable(lootTable)
+                            .withInputs(List.of(List.of(inputStack)))
+                            .withLootTable(getLootTable(input.value()))
                             .build());
                 }
             }
@@ -199,10 +199,12 @@ public class BuildingSmeltery extends AbstractBuilding
         {
             super.checkForWorkerSpecificRecipes();
 
+            final ICompatibilityManager compat = IMinecoloniesAPI.getInstance().getColonyManager().getCompatibilityManager();
+
             for (final Holder<Item> input : BuiltInRegistries.ITEM.getTagOrEmpty(ModTags.breakable_ore))
             {
-                final ResourceKey<LootTable> lootTable = getLootTable(input.value());
-                if (lootTableIsRecursive(input, lootTable))
+                final ItemStack inputStack = input.value().getDefaultInstance();
+                if (!compat.isBreakableOre(inputStack))
                 {
                     continue;
                 }
@@ -218,9 +220,9 @@ public class BuildingSmeltery extends AbstractBuilding
                 }
 
                 final RecipeStorage tempRecipe = RecipeStorage.builder()
-                        .withInputs(Collections.singletonList(new ItemStorage(new ItemStack(input.value()))))
+                        .withInputs(Collections.singletonList(new ItemStorage(inputStack)))
                         .withSecondaryOutputs(drops)    // this is just a display example
-                        .withLootTable(lootTable)
+                        .withLootTable(getLootTable(input.value()))
                         .build();
                 IToken<?> token = IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(tempRecipe);
                 this.addRecipeToList(token, false);
@@ -237,22 +239,6 @@ public class BuildingSmeltery extends AbstractBuilding
                 pick.enchant(Utils.getRegistryValue(Enchantments.FORTUNE, worker.level()), fortuneLevel);
             }
             return pick;
-        }
-
-        private boolean lootTableIsRecursive(final Holder<Item> input, final ResourceKey<LootTable> lootTable)
-        {
-            final List<LootTableAnalyzer.LootDrop> drops = CustomRecipeManager.getInstance().getLootDrops(lootTable);
-            for (final LootTableAnalyzer.LootDrop drop : drops)
-            {
-                for (final ItemStack stack : drop.getItemStacks())
-                {
-                    if (stack.is(input))
-                    {
-                        return true;
-                    }
-                }
-            }
-            return false;
         }
 
         protected ResourceKey<LootTable> getLootTable(Item item)
