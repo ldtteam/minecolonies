@@ -1,6 +1,7 @@
 package com.minecolonies.core.client.gui.modules;
 
 import com.ldtteam.blockui.Pane;
+import com.ldtteam.blockui.PaneBuilders;
 import com.ldtteam.blockui.controls.*;
 import com.ldtteam.blockui.views.ScrollingList;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
@@ -189,13 +190,24 @@ public class WindowListRecipes extends AbstractModuleWindow
                 {
                     if (module.isRecipeAlterationAllowed())
                     {
-                        removeButton.setVisible(true);
-                        removeButton.setEnabled(recipe.getRecipeSource() == null || Screen.hasControlDown());
+                        removeButton.on();
+                        if (recipe.getRecipeSource() != null && !Screen.hasControlDown())
+                        {
+                            removeButton.disable();
+                            PaneBuilders.tooltipBuilder()
+                                .append(Component.translatable("com.minecolonies.coremod.gui.workerhuts.removebuiltin",
+                                    Component.translatable("key.keyboard.left.control")))
+                                .hoverPane(removeButton)
+                                .build();
+                        }
+                        else
+                        {
+                            removeButton.setHoverPane(null);
+                        }
                     }
                     else
                     {
-                        removeButton.setVisible(false);
-                        removeButton.setEnabled(false);
+                        removeButton.off();
                     }
                 }
 
