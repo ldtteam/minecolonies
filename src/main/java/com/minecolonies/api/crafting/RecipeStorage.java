@@ -161,7 +161,7 @@ public class RecipeStorage implements IRecipeStorage
             this.input = recipe.getInput();
             this.primaryOutput = recipe.getPrimaryOutput();
             this.alternateOutputs = recipe.getAlternateOutputs();
-            this.secondaryOutputs = recipe.getSecondaryOutputs();
+            this.secondaryOutputs = recipe.getCraftingToolsAndSecondaryOutputs();
             this.intermediate = recipe.getIntermediate();
             this.gridSize = recipe.getGridSize();
             this.token = null;
