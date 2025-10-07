@@ -184,12 +184,18 @@ public class WindowListRecipes extends AbstractModuleWindow
                 List<ItemStack> displayStacks = recipe.getRecipeType().getOutputDisplayStacks();
                 icon.setItem(displayStacks.get((lifeCount / LIFE_COUNT_DIVIDER) % (displayStacks.size())));
 
-                if (!module.isRecipeAlterationAllowed())
+                final Button removeButton = rowPane.findPaneOfTypeByID(BUTTON_REMOVE, Button.class);
+                if (removeButton != null)
                 {
-                    final Button removeButton = rowPane.findPaneOfTypeByID(BUTTON_REMOVE, Button.class);
-                    if (removeButton != null)
+                    if (module.isRecipeAlterationAllowed())
+                    {
+                        removeButton.setVisible(true);
+                        removeButton.setEnabled(recipe.getRecipeSource() == null || Screen.hasControlDown());
+                    }
+                    else
                     {
                         removeButton.setVisible(false);
+                        removeButton.setEnabled(false);
                     }
                 }
 
