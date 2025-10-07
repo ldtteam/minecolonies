@@ -513,32 +513,23 @@ public class RecipeStorage implements IRecipeStorage
     private boolean canFulfillItemStorage(final int qty, final Map<ItemStorage, Integer> existingRequirements, int availableCount, final ItemStorage storage)
     {
         final ItemStack stack = storage.getItemStack();
-        final int neededCount;
+        final boolean isTool;
         if(!secondaryOutputs.isEmpty() || !tools.isEmpty())
         {
-            if(!ItemStackUtils.compareItemStackListIgnoreStackSize(this.getCraftingToolsAndSecondaryOutputs(), stack, false, !storage.ignoreNBT()))
-            {
-                neededCount = storage.getAmount() * qty;
-            }
-            else
-            {
-                neededCount = storage.getAmount();
-            }
+            isTool = ItemStackUtils.compareItemStackListIgnoreStackSize(this.getCraftingToolsAndSecondaryOutputs(), stack, false, !storage.ignoreNBT());
         }
         else
         {
             final ItemStack container = stack.getCraftingRemainingItem();
-            if(ItemStackUtils.isEmpty(container) || !ItemStackUtils.compareItemStacksIgnoreStackSize(stack, container, false, !storage.ignoreNBT()))
-            {
-                neededCount = storage.getAmount() * qty;
-            }
-            else
-            {
-                neededCount = storage.getAmount();
-            }
+            isTool = !ItemStackUtils.isEmpty(container) && ItemStackUtils.compareItemStacksIgnoreStackSize(stack, container, false, !storage.ignoreNBT());
         }
+        final int neededCount = isTool ? storage.getAmount() : storage.getAmount() * qty;
 
-        return availableCount >= neededCount + existingRequirements.getOrDefault(storage, 0);
+        final int requiredCount = isTool
+            ? Math.max(neededCount, existingRequirements.getOrDefault(storage, 0))
+            : neededCount + existingRequirements.getOrDefault(storage, 0);
+
+        return availableCount >= requiredCount;
     }
 
     @Override

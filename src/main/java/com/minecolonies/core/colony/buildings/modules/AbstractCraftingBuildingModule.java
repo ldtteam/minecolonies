@@ -363,11 +363,17 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
         {
             for (final ItemStorage itemStorage : recipeStorage.getA().getCleanedInput())
             {
-                int amount = itemStorage.getAmount() * recipeStorage.getB();
-                if (recipeOutputs.containsKey(itemStorage))
-                {
-                    amount += recipeOutputs.get(itemStorage);
-                }
+                final boolean isTool = ItemStackUtils.compareItemStackListIgnoreStackSize(
+                    recipeStorage.getA().getCraftingTools(),
+                    itemStorage.getItemStack(),
+                    !itemStorage.ignoreDamageValue(),
+                    !itemStorage.ignoreNBT()
+                );
+
+                final int amount = isTool
+                    ? Math.max(itemStorage.getAmount(), recipeOutputs.getOrDefault(itemStorage, 0))
+                    : itemStorage.getAmount() * recipeStorage.getB() + recipeOutputs.getOrDefault(itemStorage, 0);
+
                 recipeOutputs.put(itemStorage, amount);
             }
         }
@@ -802,7 +808,7 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
         return storage.fullfillRecipe(builder.create(RecipeStorage.recipeLootParameters), handlers);
     }
 
-    @Override 
+    @Override
     public ItemStack getCraftingTool(final AbstractEntityCitizen worker)
     {
         return worker != null ? worker.getMainHandItem() : ItemStack.EMPTY;
