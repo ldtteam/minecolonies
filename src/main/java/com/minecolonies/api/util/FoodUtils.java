@@ -154,11 +154,6 @@ public class FoodUtils
             {
                 final boolean isMinecolfood = invStack.getItem() instanceof IMinecoloniesFoodItem;
                 final int localScore = foodHandler.checkLastEaten(invStack.getItem()) * (isMinecolfood ? 1 : 2);
-                // If we're not at the restaurant and we've eaten this very recently, we should check out food at restaurant instead.
-                if (menu == null && foodHandler.getLastEaten() == invStack.getItem() && restaurantExists)
-                {
-                    continue;
-                }
 
                 // If the quality and diversity requirement would be fulfilled, already go ahead with this food. Don't need to check others.
                 if ((localScore < 0 && isMinecolfood)
