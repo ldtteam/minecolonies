@@ -21,7 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import static com.ldtteam.structurize.blockentities.interfaces.IBlueprintDataProviderBE.TAG_BLUEPRINTDATA;
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_NAME;
+import static com.ldtteam.structurize.blockentities.interfaces.IBlueprintDataProviderBE.TAG_SCHEMATIC_NAME;
 
 /**
  * Common job object for all structure AIs.
@@ -115,24 +115,25 @@ public abstract class AbstractJobStructure<AI extends AbstractAISkeleton<J>, J e
                         final CompoundTag compoundNBT = tileEntityData[y][z][x];
                         if (compoundNBT != null && compoundNBT.contains(TAG_BLUEPRINTDATA))
                         {
-                            final BlockPos tePos = getWorkOrder().getLocation().subtract(blueprint.getPrimaryBlockOffset()).offset(x, y, z);
+                            final BlockPos offset = new BlockPos(x, y, z);
+                            final BlockPos tePos = getWorkOrder().getLocation().subtract(blueprint.getPrimaryBlockOffset()).offset(offset);
                             final BlockEntity te = getColony().getWorld().getBlockEntity(tePos);
-                            if (te instanceof IBlueprintDataProviderBE)
+                            if (te instanceof IBlueprintDataProviderBE blueprintDataProviderBE)
                             {
                                 final CompoundTag tagData = compoundNBT.getCompound(TAG_BLUEPRINTDATA);
-                                final String schematicPath = tagData.getString(TAG_NAME);
-                                final String location = StructurePacks.getStructurePack(blueprint.getPackName()).getSubPath(Utils.resolvePath(blueprint.getFilePath(), schematicPath));
-
-                                tagData.putString(TAG_NAME, location);
                                 tagData.putString(NbtTagConstants.TAG_PACK, blueprint.getPackName());
+                                if (blueprint.getPrimaryBlockOffset().equals(offset))
+                                {
+                                    tagData.putString(NbtTagConstants.TAG_PATH, StructurePacks.getStructurePack(blueprint.getPackName()).getSubPath(Utils.resolvePath(blueprint.getFilePath(), tagData.getString(TAG_SCHEMATIC_NAME))) + ".blueprint");
+                                }
 
                                 try
                                 {
-                                    ((IBlueprintDataProviderBE) te).readSchematicDataFromNBT(compoundNBT);
+                                    blueprintDataProviderBE.readSchematicDataFromNBT(compoundNBT);
                                 }
                                 catch (final Exception e)
                                 {
-                                    Log.getLogger().warn("Broken deco-controller at: " + x + " " + y + " " + z);
+                                    Log.getLogger().warn("Broken deco-controller at: {}", offset);
                                 }
                                 ((ServerLevel) getColony().getWorld()).getChunkSource().blockChanged(tePos);
                                 te.setChanged();

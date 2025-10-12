@@ -194,9 +194,9 @@ public abstract class AbstractBuildingContainer extends AbstractSchematicProvide
     @Override
     public List<BlockPos> getLocationsFromTag(@NotNull final String tagName)
     {
-        if (tileEntity != null)
+        if (getTileEntity() != null)
         {
-            return tileEntity.getCachedWorldTagNamePosMap().getOrDefault(tagName, Collections.emptyList());
+            return getTileEntity().getCachedWorldTagNamePosMap().getOrDefault(tagName, Collections.emptyList());
         }
         return Collections.emptyList();
     }

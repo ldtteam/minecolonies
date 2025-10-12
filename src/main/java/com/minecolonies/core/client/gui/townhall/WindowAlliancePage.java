@@ -101,9 +101,11 @@ public class WindowAlliancePage extends AbstractWindowTownHall
 
     private void acceptAlly(@NotNull final Button button)
     {
-        final ConnectionEvent connectedColonyData = buildingView.getColony().getConnectionManager().getConnectionEvents().get(connectionEvents.getListElementIndexByPane(button));
+        final List<ConnectionEvent> list = buildingView.getColony().getConnectionManager().getConnectionEvents();
+        final int revIndex = list.size() - 1 - connectionEvents.getListElementIndexByPane(button);
+
         new TriggerConnectionEventMessage(buildingView.getColony(), new ConnectionEvent(buildingView.getColony().getID(), buildingView.getColony().getName(),
-            ConnectionEventType.ALLY_CONFIRMED), connectedColonyData.id()).sendToServer();
+            ConnectionEventType.ALLY_CONFIRMED), list.get(revIndex).id()).sendToServer();
     }
 
     private ColonyConnection getColonyDataFromPane(final @NotNull Button button)

@@ -251,7 +251,6 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
         incrementActionsDoneAndDecSaturation();
         executeSpecificCompleteActions();
         worker.getCitizenExperienceHandler().addExperience(XP_EACH_BUILDING);
-        fillItemsList();
         resetCurrentStructure();
         return IDLE;
     }
@@ -310,7 +309,6 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
     {
         if (structurePlacer.getB().getStage() == null)
         {
-            fillItemsList();
             resetCurrentStructure();
             return IDLE;
         }
@@ -877,24 +875,6 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
         /*
          * Override if needed.
          */
-    }
-
-    /**
-     * Fill the list of the item positions to gather.
-     */
-    @Override
-    public void fillItemsList()
-    {
-        //TODO: Make the cleanup a proper building stage in the future.
-        // Search by sections instead of huge AABB all at once.
-        if (!structurePlacer.getB().hasBluePrint())
-        {
-            return;
-        }
-        final Blueprint blueprint = structurePlacer.getB().getBluePrint();
-
-        final BlockPos leftCorner = structurePlacer.getB().getWorldPos().subtract(blueprint.getPrimaryBlockOffset());
-        searchForItems(AABB.encapsulatingFullBlocks(leftCorner, leftCorner.offset(blueprint.getSizeX(), blueprint.getSizeY(), blueprint.getSizeZ())));
     }
 
     /**

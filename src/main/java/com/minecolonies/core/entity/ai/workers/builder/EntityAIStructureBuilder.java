@@ -308,14 +308,14 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
         final MutableComponent message = Component.translatableEscape(
                 wo.getWorkOrderType().getCompletionMessageID(),
                 wo.getDisplayName(),
-                BlockPosUtil.calcDirection(position, building.getColony().getCenter()).getLongText())
+                BlockPosUtil.calcDirection(building.getColony().getCenter(), position).getLongText())
             .withStyle(style -> style
                 .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
                     Component.translatable("message.positiondist",
                         position.getX(),
                         position.getY(),
                         position.getZ(),
-                        (int) BlockPosUtil.dist(position, building.getColony().getCenter())))))
+                        (int) BlockPosUtil.dist(building.getColony().getCenter(), position)))))
             .withStyle(ChatFormatting.GREEN);
 
         if (showManualSuffix)

@@ -202,11 +202,13 @@ public class WindowListRecipes extends AbstractModuleWindow<CraftingModuleView>
                 {
                     rowPane.findPaneOfTypeByID("gradient", Gradient.class).setVisible(true);
                     rowPane.findPaneOfTypeByID(BUTTON_TOGGLE, Button.class).setText(Component.translatableEscape("com.minecolonies.coremod.gui.recipe.enable"));
+                    rowPane.findPaneOfTypeByID(BUTTON_TOGGLE, Button.class).setVisible(module.getActiveRecipes() < module.getMaxRecipes());
                 }
                 else
                 {
                     rowPane.findPaneOfTypeByID("gradient", Gradient.class).setVisible(false);
                     rowPane.findPaneOfTypeByID(BUTTON_TOGGLE, Button.class).setText(Component.translatableEscape("com.minecolonies.coremod.gui.recipe.disable"));
+                    rowPane.findPaneOfTypeByID(BUTTON_TOGGLE, Button.class).setVisible(true);
                 }
 
                 // Some special recipes might not include all necessary air blocks.
@@ -267,7 +269,7 @@ public class WindowListRecipes extends AbstractModuleWindow<CraftingModuleView>
         {
             lifeCount++;
         }
-        recipeStatus.setText(Component.translatableEscape(TranslationConstants.RECIPE_STATUS, moduleView.getRecipes().size(), moduleView.getMaxRecipes()));
+        recipeStatus.setText(Component.translatableEscape(TranslationConstants.RECIPE_STATUS, moduleView.getActiveRecipes(), moduleView.getMaxRecipes()));
         window.findPaneOfTypeByID(RECIPE_LIST, ScrollingList.class).refreshElementPanes();
     }
 }
