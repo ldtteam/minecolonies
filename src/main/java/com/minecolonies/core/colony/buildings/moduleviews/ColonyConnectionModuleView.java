@@ -40,7 +40,7 @@ public class ColonyConnectionModuleView extends AbstractBuildingModuleView
     @OnlyIn(Dist.CLIENT)
     public BOWindow getWindow()
     {
-        return new ConnectionModuleWindow(this);
+        return new ConnectionModuleWindow(buildingView, false);
     }
 
     @Override

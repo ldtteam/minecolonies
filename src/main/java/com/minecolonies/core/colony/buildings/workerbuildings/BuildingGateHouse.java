@@ -2,11 +2,13 @@ package com.minecolonies.core.colony.buildings.workerbuildings;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.core.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.core.colony.buildings.modules.GuardBuildingModule;
 import com.minecolonies.core.colony.buildings.modules.settings.GuardTaskSetting;
+import com.minecolonies.core.colony.jobs.AbstractJobGuard;
 import net.minecraft.core.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
@@ -118,19 +120,26 @@ public class BuildingGateHouse extends AbstractBuildingGuards
             return getID();
         }
 
-        final GuardBuildingModule knightWorkModule = this.getModule(KNIGHT_GATE_WORK);
-        final GuardBuildingModule archerWorkModule = this.getModule(RANGER_GATE_WORK);
+        if (worker.getCitizenData().getJob().getJobRegistryEntry() == ModJobs.archer.get())
+        {
+            final GuardBuildingModule archerWorkModule = this.getModule(RANGER_GATE_WORK);
+            int index = archerWorkModule.getAssignedCitizen().indexOf(worker.getCitizenData());
+            if (index >= 0)
+            {
+                return getLocationsFromTag(TAG_ARCHER).get(index);
+            }
+        }
+        else
+        {
+            final GuardBuildingModule knightWorkModule = this.getModule(KNIGHT_GATE_WORK);
 
-        int firstIndex = knightWorkModule.getAssignedCitizen().indexOf(worker.getCitizenData());
-        if (firstIndex >= 0)
-        {
-            return getLocationsFromTag(TAG_KNIGHT).get(firstIndex);
+            int index = knightWorkModule.getAssignedCitizen().indexOf(worker.getCitizenData());
+            if (index >= 0)
+            {
+                return getLocationsFromTag(TAG_KNIGHT).get(index);
+            }
         }
-        int secondIndex = archerWorkModule.getAssignedCitizen().indexOf(worker.getCitizenData());
-        if (secondIndex >= 0)
-        {
-            return getLocationsFromTag(TAG_ARCHER).get(secondIndex);
-        }
+
         return getID();
     }
 
