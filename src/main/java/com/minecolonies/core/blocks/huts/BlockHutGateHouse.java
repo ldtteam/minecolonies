@@ -7,11 +7,9 @@ import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.permissions.Action;
-import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.client.gui.modules.ConnectionModuleWindow;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -78,7 +76,7 @@ public class BlockHutGateHouse extends AbstractBlockHut<BlockHutGateHouse>
             @Nullable final IBuildingView building = IColonyManager.getInstance().getBuildingView(worldIn.dimension(), pos);
             if (building != null && !building.getColony().getPermissions().hasPermission(player, Action.ACCESS_HUTS))
             {
-                new ConnectionModuleWindow(Constants.MOD_ID + ":gui/layouthuts/layoutcolonyconnection.xml", building, true).open();
+                new ConnectionModuleWindow(building, true).open();
                 return ItemInteractionResult.FAIL;
             }
 
