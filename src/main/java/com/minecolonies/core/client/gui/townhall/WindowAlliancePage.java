@@ -102,11 +102,11 @@ public class WindowAlliancePage extends AbstractWindowTownHall
 
     private void acceptAlly(@NotNull final Button button)
     {
-        final List<ConnectionEvent> list = building.getColony().getConnectionManager().getConnectionEvents();
+        final List<ConnectionEvent> list = buildingView.getColony().getConnectionManager().getConnectionEvents();
         final int revIndex = list.size() - 1 - connectionEvents.getListElementIndexByPane(button);
 
-        final ConnectionEvent connectedColonyData = building.getColony().getConnectionManager().getConnectionEvents().get(revIndex);
-        Network.getNetwork().sendToServer(new TriggerConnectionEventMessage(building.getColony(), new ConnectionEvent(building.getColony().getID(), building.getColony().getName(),
+        final ConnectionEvent connectedColonyData = buildingView.getColony().getConnectionManager().getConnectionEvents().get(revIndex);
+        Network.getNetwork().sendToServer(new TriggerConnectionEventMessage(buildingView.getColony(), new ConnectionEvent(buildingView.getColony().getID(), buildingView.getColony().getName(),
             ConnectionEventType.ALLY_CONFIRMED), connectedColonyData.id()));
     }
 

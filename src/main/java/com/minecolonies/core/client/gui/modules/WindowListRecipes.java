@@ -203,7 +203,7 @@ public class WindowListRecipes extends AbstractModuleWindow<CraftingModuleView>
                 {
                     rowPane.findPaneOfTypeByID("gradient", Gradient.class).setVisible(true);
                     rowPane.findPaneOfTypeByID(BUTTON_TOGGLE, Button.class).setText(Component.translatable("com.minecolonies.coremod.gui.recipe.enable"));
-                    rowPane.findPaneOfTypeByID(BUTTON_TOGGLE, Button.class).setVisible(module.getActiveRecipes() < module.getMaxRecipes());
+                    rowPane.findPaneOfTypeByID(BUTTON_TOGGLE, Button.class).setVisible(moduleView.getActiveRecipes() < moduleView.getMaxRecipes());
                 }
                 else
                 {
