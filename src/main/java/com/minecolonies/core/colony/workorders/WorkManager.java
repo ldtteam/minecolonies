@@ -77,8 +77,12 @@ public class WorkManager implements IWorkManager
      * @param order {@link IWorkOrder} to remove.
      */
     @Override
-    public void removeWorkOrder(@NotNull final IServerWorkOrder order)
+    public void removeWorkOrder(@Nullable final IServerWorkOrder order)
     {
+        if (order == null)
+        {
+            return;
+        }
         removeWorkOrder(order.getID());
     }
 

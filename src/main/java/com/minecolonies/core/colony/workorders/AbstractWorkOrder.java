@@ -2,16 +2,16 @@ package com.minecolonies.core.colony.workorders;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
+import com.ldtteam.structurize.blockentities.interfaces.IBlueprintDataProviderBE;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
+import com.ldtteam.structurize.storage.StructurePacks;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.workorders.*;
-import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.api.util.ColonyUtils;
-import com.minecolonies.api.util.Log;
-import com.minecolonies.api.util.Tuple;
+import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.api.util.constant.NbtTagConstants;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingBuilder;
 import com.minecolonies.core.colony.workorders.view.*;
 import com.minecolonies.core.entity.ai.workers.util.BuildingProgressStage;
@@ -19,7 +19,9 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.AABB;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -31,6 +33,8 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
+import static com.ldtteam.structurize.blockentities.interfaces.IBlueprintDataProviderBE.TAG_BLUEPRINTDATA;
+import static com.ldtteam.structurize.blockentities.interfaces.IBlueprintDataProviderBE.TAG_SCHEMATIC_NAME;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_STAGE;
 import static com.minecolonies.api.util.constant.Suppression.UNUSED_METHOD_PARAMETERS_SHOULD_BE_REMOVED;
 
@@ -803,9 +807,48 @@ public abstract class AbstractWorkOrder implements IBuilderWorkOrder
     @Override
     public void onCompleted(final IColony colony, ICitizenData citizen)
     {
-        /*
-         * Intentionally left empty.
-         */
+        final Blueprint blueprint = getBlueprint();
+        if (blueprint != null)
+        {
+            final CompoundTag[][][] tileEntityData = blueprint.getTileEntities();
+            for (short x = 0; x < blueprint.getSizeX(); x++)
+            {
+                for (short y = 0; y < blueprint.getSizeY(); y++)
+                {
+                    for (short z = 0; z < blueprint.getSizeZ(); z++)
+                    {
+                        final CompoundTag compoundNBT = tileEntityData[y][z][x];
+                        if (compoundNBT != null && compoundNBT.contains(TAG_BLUEPRINTDATA))
+                        {
+                            final BlockPos offset = new BlockPos(x, y, z);
+                            final BlockPos tePos = getLocation().subtract(blueprint.getPrimaryBlockOffset()).offset(offset);
+                            final BlockEntity te = getColony().getWorld().getBlockEntity(tePos);
+                            if (te instanceof IBlueprintDataProviderBE blueprintDataProviderBE)
+                            {
+                                final CompoundTag tagData = compoundNBT.getCompound(TAG_BLUEPRINTDATA);
+                                tagData.putString(NbtTagConstants.TAG_PACK, blueprint.getPackName());
+                                if (blueprint.getPrimaryBlockOffset().equals(offset))
+                                {
+                                    tagData.putString(NbtTagConstants.TAG_PATH, StructurePacks.getStructurePack(blueprint.getPackName()).getSubPath(Utils.resolvePath(blueprint.getFilePath(), tagData.getString(TAG_SCHEMATIC_NAME))) + ".blueprint");
+                                }
+
+                                try
+                                {
+                                    blueprintDataProviderBE.readSchematicDataFromNBT(compoundNBT);
+                                }
+                                catch (final Exception e)
+                                {
+                                    Log.getLogger().warn("Broken deco-controller at: {}", offset);
+                                }
+                                ((ServerLevel) getColony().getWorld()).getChunkSource().blockChanged(tePos);
+                                te.setChanged();
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        colony.getWorkManager().removeWorkOrder(this.getID());
     }
 
     /**

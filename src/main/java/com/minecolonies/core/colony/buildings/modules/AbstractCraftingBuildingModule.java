@@ -1065,7 +1065,7 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
         public IRecipeStorage getFirstFulfillableRecipe(final Predicate<ItemStack> stackPredicate, final int count, final boolean considerReservation)
         {
             boolean hasFuel = false;
-            final ImmutableList<ItemStorage> fuelList = building.getModuleMatching(ItemListModule.class, m -> m.getId().equals(FUEL_LIST)).getList();
+            final ImmutableList<ItemStorage> fuelList = building.getModule(BuildingModules.ITEMLIST_FUEL).getList();
             for (final ItemStorage fuel : fuelList)
             {
                 if (InventoryUtils.getCountFromBuilding(building, fuel) > 0)

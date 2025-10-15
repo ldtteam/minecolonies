@@ -1,8 +1,5 @@
 package com.minecolonies.core.colony.buildings;
 
-import com.ldtteam.structurize.blockentities.interfaces.IBlueprintDataProviderBE;
-import com.ldtteam.structurize.blueprints.v1.Blueprint;
-import com.ldtteam.structurize.storage.StructurePacks;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
@@ -12,7 +9,6 @@ import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.equipment.ModEquipmentTypes;
 import com.minecolonies.api.equipment.registry.EquipmentTypeEntry;
 import com.minecolonies.api.util.*;
-import com.minecolonies.api.util.constant.NbtTagConstants;
 import com.minecolonies.core.colony.buildings.modules.BuildingModules;
 import com.minecolonies.core.colony.buildings.modules.BuildingResourcesModule;
 import com.minecolonies.core.colony.buildings.modules.WorkerBuildingModule;
@@ -25,18 +21,14 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.function.Predicate;
 
-import static com.ldtteam.structurize.blockentities.interfaces.IBlueprintDataProviderBE.TAG_BLUEPRINTDATA;
-import static com.ldtteam.structurize.blockentities.interfaces.IBlueprintDataProviderBE.TAG_SCHEMATIC_NAME;
 import static com.minecolonies.api.util.constant.EquipmentLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.core.colony.jobs.AbstractJobStructure.TAG_WORK_ORDER;
@@ -493,7 +485,7 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuilding
      *
      * @return UUID of the Work Order claimed by this Job, or null
      */
-    public int getWorkOrderId()
+    private int getWorkOrderId()
     {
         return workOrderId;
     }
@@ -558,50 +550,6 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuilding
     public void complete(ICitizenData citizen)
     {
         getWorkOrder().onCompleted(colony, citizen);
-
-        final Blueprint blueprint = getWorkOrder().getBlueprint();
-        if (blueprint != null)
-        {
-            final CompoundTag[][][] tileEntityData = blueprint.getTileEntities();
-            for (short x = 0; x < blueprint.getSizeX(); x++)
-            {
-                for (short y = 0; y < blueprint.getSizeY(); y++)
-                {
-                    for (short z = 0; z < blueprint.getSizeZ(); z++)
-                    {
-                        final CompoundTag compoundNBT = tileEntityData[y][z][x];
-                        if (compoundNBT != null && compoundNBT.contains(TAG_BLUEPRINTDATA))
-                        {
-                            final BlockPos offset = new BlockPos(x, y, z);
-                            final BlockPos tePos = getWorkOrder().getLocation().subtract(blueprint.getPrimaryBlockOffset()).offset(offset);
-                            final BlockEntity te = getColony().getWorld().getBlockEntity(tePos);
-                            if (te instanceof IBlueprintDataProviderBE blueprintDataProviderBE)
-                            {
-                                final CompoundTag tagData = compoundNBT.getCompound(TAG_BLUEPRINTDATA);
-                                tagData.putString(NbtTagConstants.TAG_PACK, blueprint.getPackName());
-                                if (blueprint.getPrimaryBlockOffset().equals(offset))
-                                {
-                                    tagData.putString(NbtTagConstants.TAG_PATH, StructurePacks.getStructurePack(blueprint.getPackName()).getSubPath(Utils.resolvePath(blueprint.getFilePath(), tagData.getString(TAG_SCHEMATIC_NAME))) + ".blueprint");
-                                }
-
-                                try
-                                {
-                                    blueprintDataProviderBE.readSchematicDataFromNBT(compoundNBT);
-                                }
-                                catch (final Exception e)
-                                {
-                                    Log.getLogger().warn("Broken deco-controller at: {}", offset);
-                                }
-                                ((ServerLevel) getColony().getWorld()).getChunkSource().blockChanged(tePos);
-                                te.setChanged();
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        colony.getWorkManager().removeWorkOrder(workOrderId);
         setWorkOrder(null);
     }
 

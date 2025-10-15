@@ -117,9 +117,9 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
             if (wo == null)
             {
                 Log.getLogger().error(
-                  String.format("Worker (%d:%d) ERROR - Starting and missing work order(%d)",
+                  String.format("Worker (%d:%d) ERROR - Starting and missing work order",
                     worker.getCitizenColonyHandler().getColonyOrRegister().getID(),
-                    worker.getCitizenData().getId(), building.getWorkOrderId()), new Exception());
+                    worker.getCitizenData().getId()), new Exception());
                 building.setWorkOrder(null);
                 return IDLE;
             }
@@ -387,10 +387,9 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
 
         if (wo == null)
         {
-            Log.getLogger().error(String.format("Worker (%d:%d) ERROR - Finished, but missing work order(%d)",
+            Log.getLogger().error(String.format("Worker (%d:%d) ERROR - Finished, but missing work order",
               worker.getCitizenColonyHandler().getColonyOrRegister().getID(),
-              worker.getCitizenData().getId(),
-                building.getWorkOrderId()));
+              worker.getCitizenData().getId()));
         }
         else
         {
@@ -485,7 +484,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
             if (building.hasWorkOrder())
             {
                 building.getWorkOrder().clearBlueprint();
-                building.getColony().getWorkManager().removeWorkOrder(building.getWorkOrderId());
+                building.getColony().getWorkManager().removeWorkOrder(building.getWorkOrder());
             }
             building.setWorkOrder(null);
             resetCurrentStructure();
@@ -540,7 +539,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
     @Override
     public void handleSpecificCancelActions()
     {
-        building.getColony().getWorkManager().removeWorkOrder(building.getWorkOrderId());
+        building.getColony().getWorkManager().removeWorkOrder(building.getWorkOrder());
         building.setWorkOrder(null);
     }
 }

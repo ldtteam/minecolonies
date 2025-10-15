@@ -1026,7 +1026,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
             if (building.hasWorkOrder())
             {
                 building.getWorkOrder().clearBlueprint();
-                job.getColony().getWorkManager().removeWorkOrder(building.getWorkOrderId());
+                job.getColony().getWorkManager().removeWorkOrder(building.getWorkOrder());
             }
             building.setWorkOrder(null);
             resetCurrentStructure();

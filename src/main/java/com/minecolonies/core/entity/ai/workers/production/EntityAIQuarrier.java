@@ -483,7 +483,7 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
         {
             if (building.hasWorkOrder())
             {
-                job.getColony().getWorkManager().removeWorkOrder(building.getWorkOrderId());
+                job.getColony().getWorkManager().removeWorkOrder(building.getWorkOrder());
                 building.setWorkOrder(null);
             }
             blockToMine = null;
