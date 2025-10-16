@@ -306,6 +306,10 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
      */
     protected IAIState structureStep()
     {
+        if (!isThereAStructureToBuild())
+        {
+            return IDLE;
+        }
         if (structurePlacer.getB().getStage() == null)
         {
             resetCurrentStructure();
