@@ -1005,6 +1005,7 @@
   "com.minecolonies.coremod.gui.recipe.done": "Successfully saved recipe!",
   "com.minecolonies.coremod.gui.workerhuts.listrecipes": "List of Recipes",
   "com.minecolonies.coremod.gui.workerhuts.recipestatus": "%s of %s",
+  "com.minecolonies.coremod.gui.workerhuts.removebuiltin": "This is a built-in recipe and you should disable it rather than removing it. Hold %s if something broke and you need to reset it.",
   "com.minecolonies.coremod.resolvers.crafter.private": "Crafting",
   "com.minecolonies.coremod.gui.workerhuts.switchstyle": "Switch Style",
   "com.minecolonies.coremod.gui.townhall.toolow": "Town Hall level too low!",

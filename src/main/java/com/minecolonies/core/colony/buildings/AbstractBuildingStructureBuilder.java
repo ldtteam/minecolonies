@@ -308,8 +308,13 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuilding
      */
     public void addNeededResource(@Nullable final ItemStack res, final int amount)
     {
-        getModule(BuildingModules.BUILDING_RESOURCES).addNeededResource(res, amount);
-        this.markDirty();
+        if (res != null)
+        {
+            final ItemStack copy = res.copy();
+            copy.setCount(1);
+            getModule(BuildingModules.BUILDING_RESOURCES).addNeededResource(copy, amount);
+            this.markDirty();
+        }
     }
 
     /**

@@ -108,7 +108,7 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
                 .addTags(Tags.Items.SEEDS, ItemTags.SAPLINGS)
                 .add(Items.PITCHER_POD, Items.SMALL_DRIPLEAF);
         tag(ModTags.compostables, "Normal-Quality Compostables")
-          .add(Items.ROTTEN_FLESH, Items.BROWN_MUSHROOM, Items.RED_MUSHROOM)
+          .add(Items.ROTTEN_FLESH)
           .add(Items.FEATHER, Items.PUMPKIN, Items.CARVED_PUMPKIN)
           .add(Items.SHORT_GRASS, Items.TALL_GRASS, Items.FERN, Items.LARGE_FERN, Items.HAY_BLOCK)
           .add(Items.BIG_DRIPLEAF, Items.SPORE_BLOSSOM, Items.GLOW_LICHEN, ModItems.mistletoe)
@@ -119,13 +119,14 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
           .add(Items.MOSS_BLOCK, Items.MOSS_CARPET, Items.SHROOMLIGHT)
           .add(Items.NETHER_WART_BLOCK, Items.WARPED_WART_BLOCK, Items.NETHER_SPROUTS, Items.MANGROVE_ROOTS, Items.HANGING_ROOTS, Items.CRIMSON_ROOTS, Items.WARPED_ROOTS)
           .addTags(Tags.Items.CROPS, Tags.Items.EGGS, ItemTags.FLOWERS, ItemTags.FISHES, ItemTags.LEAVES, ItemTags.WOOL)
-          .addTags(ModTags.fungi);
+          .addTags(Tags.Items.FOODS_RAW_FISH, Tags.Items.FOODS_RAW_MEAT, Tags.Items.MUSHROOMS, ModTags.fungi);
         tag(ModTags.compostables_rich, "Rich-Quality Compostables")
                 .add(Items.PODZOL, ModBlocks.blockCompostedDirt.asItem());
 
         // these tags are just for backwards compatibility and could be removed in a future Minecraft version
         copy(ModTags.concreteBlocks, ModTags.concreteItems, "Concrete");
         tag(ModTags.concretePowderItems, "Concrete Powder").addTag(Tags.Items.CONCRETE_POWDERS);
+        tag(ModTags.rawMeat, "Raw Meat").addTag(Tags.Items.FOODS_RAW_MEAT);
 
         // this tag is just for backwards compatibility and could be removed in a future Minecraft version
         final TagKey<Item> shulkerBoxes = ItemTags.create(new ResourceLocation(MOD_ID, "shulker_boxes"));
@@ -212,13 +213,6 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
           .add(Items.CHICKEN)
           .add(Items.SPIDER_EYE)
           .add(Items.ROTTEN_FLESH);
-
-        tag(ModTags.rawMeat)
-          .add(Items.BEEF)
-          .add(Items.CHICKEN)
-          .add(Items.PORKCHOP)
-          .add(Items.RABBIT)
-          .add(Items.MUTTON);
 
         final Item[] paperExtras = getDomumExtra(ExtraBlockType.BASE_PAPER, ExtraBlockType.LIGHT_PAPER);
 

@@ -15,6 +15,8 @@ import com.minecolonies.api.crafting.registry.ModRecipeSerializer;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.NbtTagConstants;
+import com.minecolonies.core.colony.crafting.CustomRecipeManager;
+import com.minecolonies.core.colony.crafting.LootTableAnalyzer;
 import com.minecolonies.core.util.FurnaceRecipes;
 import it.unimi.dsi.fastutil.objects.Object2IntLinkedOpenHashMap;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -483,10 +485,14 @@ public class CompatibilityManager implements ICompatibilityManager
     @Override
     public boolean isOre(@NotNull final ItemStack stack)
     {
-        if (isMineableOre(stack) || stack.is(ModTags.raw_ore) || stack.is(ModTags.breakable_ore))
+        if (isBreakableOre(stack))
+        {
+            return true;
+        }
+        if (isMineableOre(stack) || stack.is(ModTags.raw_ore))
         {
             ItemStack smeltingResult = MinecoloniesAPIProxy.getInstance().getFurnaceRecipes().getSmeltingResult(stack);
-            return stack.is(ModTags.breakable_ore) || !smeltingResult.isEmpty();
+            return !smeltingResult.isEmpty();
         }
 
         return false;
@@ -496,6 +502,31 @@ public class CompatibilityManager implements ICompatibilityManager
     public boolean isMineableOre(@NotNull final ItemStack stack)
     {
         return !isEmpty(stack) && stack.is(Tags.Items.ORES);
+    }
+
+    @Override
+    public boolean isBreakableOre(@NotNull final ItemStack stack)
+    {
+        if (stack.is(ModTags.breakable_ore))
+        {
+            final Block block = Block.byItem(stack.getItem());
+            if (!block.defaultBlockState().isAir())
+            {
+                final List<LootTableAnalyzer.LootDrop> drops = CustomRecipeManager.getInstance().getLootDrops(block.getLootTable());
+                for (final LootTableAnalyzer.LootDrop drop : drops)
+                {
+                    for (final ItemStack dropStack : drop.getItemStacks())
+                    {
+                        if (ItemStackUtils.compareItemStacksIgnoreStackSize(stack, dropStack))
+                        {
+                            return false;   // blocks that drop themselves are not breakable ore
+                        }
+                    }
+                }
+            }
+            return true;
+        }
+        return false;
     }
 
     @Override
