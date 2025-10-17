@@ -67,6 +67,9 @@ public class AddMinimumStockToBuildingModuleMessage extends AbstractBuildingServ
         if (building.hasModule(BuildingModules.MIN_STOCK))
         {
             building.getModule(BuildingModules.MIN_STOCK).addMinimumStock(itemStack, quantity);
+        } else if (building.hasModule(BuildingModules.MIN_STOCK_POSTBOX))
+        {
+            building.getModule(BuildingModules.MIN_STOCK_POSTBOX).addMinimumStock(itemStack, quantity);
         }
     }
 }

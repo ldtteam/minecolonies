@@ -1,10 +1,12 @@
 package com.minecolonies.core.client.gui;
 
 import com.ldtteam.blockui.Pane;
+import com.ldtteam.blockui.PaneBuilders;
 import com.ldtteam.blockui.controls.Button;
 import com.ldtteam.blockui.controls.ItemIcon;
 import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.blockui.controls.TextField;
+import com.ldtteam.blockui.views.BOWindow;
 import com.ldtteam.blockui.views.ScrollingList;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.Constants;
@@ -24,11 +26,12 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.WindowConstants.*;
+import static com.minecolonies.core.colony.buildings.modules.BuildingModules.MIN_STOCK_POSTBOX;
 
 /**
- * BOWindow for the replace block GUI.
+ * BOWindow for the request PostBox GUI.
  */
-public class WindowPostBox extends AbstractWindowRequestTree
+public class WindowPostBoxMain extends AbstractWindowSkeleton
 {
     /**
      * Id of the deliver available button inside the GUI.
@@ -80,9 +83,10 @@ public class WindowPostBox extends AbstractWindowRequestTree
      *
      * @param buildingView the building view.
      */
-    public WindowPostBox(final AbstractBuildingView buildingView)
+    public WindowPostBoxMain(final AbstractBuildingView buildingView)
     {
-        super(buildingView.getID(), Constants.MOD_ID + WINDOW_POSTBOX, buildingView.getColony());
+        super(Constants.MOD_ID + WINDOW_POSTBOX_REQUEST);
+
         this.buildingView = buildingView;
         this.stackList = findPaneOfTypeByID(LIST_RESOURCES, ScrollingList.class);
         registerButton(BUTTON_INVENTORY, this::inventoryClicked);
@@ -97,6 +101,29 @@ public class WindowPostBox extends AbstractWindowRequestTree
                 this.tick = 10;
             }
         });
+
+        WindowPostBoxMain.registerNavButtons(this, buildingView);
+    }
+
+    private static void registerNavButtons(AbstractWindowSkeleton window, final AbstractBuildingView buildingView)
+    {
+        window.registerButton("requestTab", () -> new WindowPostBoxMain(buildingView).open());
+        window.registerButton("requestIcon", () -> new WindowPostBoxMain(buildingView).open());
+        PaneBuilders.tooltipBuilder().hoverPane(window.findPaneByID("requestIcon")).build().setText(Component.translatable("com.minecolonies.coremod.gui.citizen.requests"));
+
+        window.registerButton("minimumStockTab", () -> openMinimumStockWindow(buildingView));
+        window.registerButton("minimumStockIcon", () -> openMinimumStockWindow(buildingView));
+        PaneBuilders.tooltipBuilder().hoverPane(window.findPaneByID("minimumStockIcon")).build().setText(Component.translatable("com.minecolonies.coremod.gui.warehouse.stock"));
+    }
+
+    private static void openMinimumStockWindow(final AbstractBuildingView buildingView)
+    {
+        final BOWindow min_stock_window = buildingView.getModuleView(MIN_STOCK_POSTBOX).getWindow();
+
+        /* We add our own nav buttons */
+        WindowPostBoxMain.registerNavButtons((AbstractWindowSkeleton) min_stock_window, buildingView);
+
+        min_stock_window.open();
     }
 
     /**
