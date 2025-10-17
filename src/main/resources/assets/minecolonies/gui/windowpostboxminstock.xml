@@ -3,9 +3,9 @@
 >
     <layout source="minecolonies:gui/windowpostboxnav.xml"/>
 
-    <text size="430 11" pos="10 14" color="black" textalign="MIDDLE" label="$(com.minecolonies.coremod.gui.warehouse.stock)"/>
+    <text size="440 13" pos="0 14" color="black" textalign="MIDDLE" label="$(com.minecolonies.coremod.gui.warehouse.stock)"/>
 
-    <list id="resourcesstock" size="170 180" pos="130 50" emptytext="$(com.minecolonies.coremod.gui.warehouse.stock.empty)" emptycolor="black">
+    <list id="resourcesstock" size="170 180" pos="135 50" emptytext="$(com.minecolonies.coremod.gui.warehouse.stock.empty)" emptycolor="black">
         <box size="100% 17" linewidth="1">
             <itemicon id="resourceIcon" size="17 17" pos="0 0"/>
             <text id="resourceName" size="90 12" pos="20 1" color="black"/>
@@ -16,7 +16,7 @@
         </box>
     </list>
 
-    <button id="addStock" size="86 17" pos="172 30" color="black"
+    <button id="addStock" size="86 17" pos="177 30" color="black"
             source="minecolonies:textures/gui/builderhut/builder_button_medium.png"
             label="$(com.minecolonies.coremod.gui.warehouse.add)"/>
 </window>
