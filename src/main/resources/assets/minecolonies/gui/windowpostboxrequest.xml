@@ -19,7 +19,7 @@
 
     <text size="158 11" pos="246 28" textalign="MIDDLE" color="black"
            label="$(com.minecolonies.coremod.gui.citizen.requests)"/>
-    <list id="requests" size="158 184" pos="266 44">
+    <list id="requests" size="158 184" pos="261 44">
         <box id="requestx" size="100% 40" linewidth="1">
             <layout source="minecolonies:gui/layouthuts/layoutrequeststree.xml"/>
         </box>

@@ -31,7 +31,7 @@ import static com.minecolonies.core.colony.buildings.modules.BuildingModules.MIN
 /**
  * BOWindow for the request PostBox GUI.
  */
-public class WindowPostBoxMain extends AbstractWindowSkeleton
+public class WindowPostBoxMain extends AbstractWindowRequestTree
 {
     /**
      * Id of the deliver available button inside the GUI.
@@ -85,7 +85,7 @@ public class WindowPostBoxMain extends AbstractWindowSkeleton
      */
     public WindowPostBoxMain(final AbstractBuildingView buildingView)
     {
-        super(Constants.MOD_ID + WINDOW_POSTBOX_REQUEST);
+        super(buildingView.getID(), Constants.MOD_ID + WINDOW_POSTBOX_REQUEST, buildingView.getColony());
 
         this.buildingView = buildingView;
         this.stackList = findPaneOfTypeByID(LIST_RESOURCES, ScrollingList.class);
