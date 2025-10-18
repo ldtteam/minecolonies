@@ -246,12 +246,12 @@ public class CitizenData implements ICitizenData
     private String textureSuffix;
 
     /**
-     * Whether this citizen has a special name (set by nametag or special visitor).
+     * Whether this citizen has a special name (nametag or custom visitor).
      */
     private boolean specialName = false;
 
     /**
-     * The name pack this citizen was created with.
+     * The name pack used for this citizen's current name.
      */
     private String assignedNamePack = "";
 
@@ -1190,10 +1190,12 @@ public class CitizenData implements ICitizenData
     }
 
     @Override
-    public void setName(final String name, final boolean isPreserved)
+    public void setName(final String name, final boolean hasSpecialName)
     {
         this.name = name;
-        this.specialName = isPreserved;
+        this.specialName = hasSpecialName;
+        // Special names don't have an associated name pack; regular names use current colony pack
+        this.assignedNamePack = hasSpecialName ? "" : getColony().getNameStyle();
         markDirty(0);
     }
 

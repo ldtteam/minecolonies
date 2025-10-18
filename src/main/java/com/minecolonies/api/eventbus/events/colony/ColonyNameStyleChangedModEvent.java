@@ -4,7 +4,7 @@ import com.minecolonies.api.colony.IColony;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Colony name style changed event.
+ * Event fired when a colony's name pack is changed.
  */
 public final class ColonyNameStyleChangedModEvent extends AbstractColonyModEvent
 {

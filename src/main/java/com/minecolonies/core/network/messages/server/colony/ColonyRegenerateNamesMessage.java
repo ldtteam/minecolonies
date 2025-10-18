@@ -6,22 +6,22 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.network.NetworkEvent;
 
 /**
- * Message to regenerate all citizen names in a colony.
+ * Message to regenerate civilian names with mismatched name packs.
  */
 public class ColonyRegenerateNamesMessage extends AbstractColonyServerMessage
 {
     /**
-     * Default constructor
-     **/
+     * Default constructor.
+     */
     public ColonyRegenerateNamesMessage()
     {
         super();
     }
 
     /**
-     * Regenerate all names in the colony.
+     * Constructs a message to regenerate names.
      *
-     * @param colony the colony to regenerate names for
+     * @param colony the colony to regenerate names for.
      */
     public ColonyRegenerateNamesMessage(final IColony colony)
     {

@@ -215,29 +215,31 @@ public interface ICivilianData extends ICitizen, INBTSerializable<CompoundTag>
     UUID getUUID();
 
     /**
-     * Set the name with optional preserved flag.
+     * Set the name with optional special name flag.
      *
      * @param name the name to set.
-     * @param isPreserved true to mark this name as preserved (from nametag or special visitor) and prevent regeneration.
+     * @param hasSpecialName true to prevent regeneration (nametag or custom visitor).
      */
-    void setName(String name, boolean isPreserved);
+    void setName(String name, boolean hasSpecialName);
 
     /**
      * Set whether this civilian has a special name.
      *
-     * @param hasSpecialName true if the name should be preserved.
+     * @param hasSpecialName true to prevent name regeneration.
      */
     void setHasSpecialName(boolean hasSpecialName);
 
     /**
-     * Check if the civilian has a special name (set by nametag or special visitor).
+     * Check if the civilian has a special name (nametag or custom visitor).
+     *
      * @return true if the civilian has a special name.
      */
     boolean hasSpecialName();
 
     /**
-     * Get the name pack this civilian was assigned when created.
-     * @return the name pack identifier.
+     * Get the name pack used for this civilian's current name.
+     *
+     * @return the name pack identifier, or empty string for special names.
      */
     String getAssignedNamePack();
 }

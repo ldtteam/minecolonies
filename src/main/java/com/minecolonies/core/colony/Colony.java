@@ -1949,11 +1949,11 @@ public class Colony implements IColony
     }
 
     /**
-     * Helper method to check if a civilian has a mismatched name pack.
+     * Check if a civilian has a mismatched name pack.
      *
      * @param civilian the civilian to check.
      * @param currentNamePack the current colony name pack.
-     * @return true if the civilian's name pack doesn't match the colony's.
+     * @return true if the name should be regenerated.
      */
     private boolean hasMismatchedNamePack(final ICivilianData civilian, final String currentNamePack)
     {
@@ -1964,6 +1964,7 @@ public class Colony implements IColony
         return civilian.getAssignedNamePack().isEmpty() || !civilian.getAssignedNamePack().equals(currentNamePack);
     }
 
+    @Override
     public boolean hasCitizensWithMismatchedNamePack()
     {
         final String currentNamePack = this.getNameStyle();
@@ -1974,6 +1975,7 @@ public class Colony implements IColony
         ).anyMatch(civilian -> hasMismatchedNamePack(civilian, currentNamePack));
     }
 
+    @Override
     public void regenerateAllNames()
     {
         final String currentNamePack = this.getNameStyle();
