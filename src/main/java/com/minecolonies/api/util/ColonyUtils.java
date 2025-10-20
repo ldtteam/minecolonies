@@ -146,7 +146,7 @@ public final class ColonyUtils
         }
 
         return CompletableFuture.allOf(blueprintFutures.toArray(new CompletableFuture[0]))
-            .thenApply(v -> blueprintFutures.stream().filter(Objects::nonNull).map(CompletableFuture::join).toList())
+            .thenApply(v -> blueprintFutures.stream().map(CompletableFuture::join).filter(Objects::nonNull).toList())
             .thenApplyAsync(ColonyUtils::composeBlueprints, Util.backgroundExecutor())
             .thenApplyAsync(blueprint ->
             {
