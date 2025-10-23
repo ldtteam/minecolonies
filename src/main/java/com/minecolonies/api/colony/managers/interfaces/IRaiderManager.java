@@ -195,6 +195,11 @@ public interface IRaiderManager
         @Nullable Integer raiderAmount,
         @Nullable BlockPos location)
     {
+        public RaidSettings withExplicitType(final @Nullable String raidType)
+        {
+            return new RaidSettings(forcedSpawn, raidType, allowShips, raiderAmount, location);
+        }
+
         public static RaidSettings defaultRaidSettings()
         {
             return new RaidSettings(false, null, true, null, null);

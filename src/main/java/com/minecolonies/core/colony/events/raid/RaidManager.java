@@ -32,6 +32,7 @@ import com.minecolonies.core.colony.jobs.AbstractJobGuard;
 import com.minecolonies.core.entity.ai.workers.guard.AbstractEntityAIGuard;
 import com.minecolonies.core.entity.citizen.citizenhandlers.CitizenSkillHandler;
 import com.minecolonies.core.entity.pathfinding.Pathfinding;
+import com.minecolonies.core.entity.pathfinding.PathfindingUtils;
 import com.minecolonies.core.entity.pathfinding.pathjobs.PathJobRaiderPathing;
 import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
 import com.minecolonies.core.network.messages.client.PlayAudioMessage;
@@ -51,6 +52,7 @@ import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.Rotation;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -251,7 +253,7 @@ public class RaidManager implements IRaiderManager
     }
 
     @Override
-    public RaidSpawnResult raiderEvent(final @NotNull RaidSettings raidSettings)
+    public RaidSpawnResult raiderEvent(@NotNull RaidSettings raidSettings)
     {
         if (colony.getWorld() == null)
         {
@@ -327,9 +329,36 @@ public class RaidManager implements IRaiderManager
         for (BlockPos targetSpawnPoint : spawnPoints)
         {
             IColonyRaidEvent raidEvent;
+
             if (MineColonies.getConfig().getServer().enableInDevelopmentFeatures.get())
             {
                 MessageUtils.format(Component.literal("Horde Spawn Point: " + targetSpawnPoint)).sendTo(colony).forAllPlayers();
+            }
+
+            final BlockState aboveState = colony.getWorld().getBlockState(targetSpawnPoint.above());
+            final BlockState spawnState = colony.getWorld().getBlockState(targetSpawnPoint);
+            final BlockState belowState = colony.getWorld().getBlockState(targetSpawnPoint.below());
+
+            if (MineColonies.getConfig().getServer().skyRaiders.get() &&
+                spawnState.isAir()
+                && belowState.isAir())
+            {
+                raidSettings = raidSettings.withExplicitType(PirateRaidEvent.PIRATE_RAID_EVENT_TYPE_ID.getPath());
+            }
+            else if ((raidSettings.raidType() == null || Objects.equals(raidSettings.raidType(), DrownedPirateRaidEvent.PIRATE_RAID_EVENT_TYPE_ID.getPath()))
+                && (PathfindingUtils.isWater(colony.getWorld(), targetSpawnPoint.above(), aboveState, null) || ColonyConstants.rand.nextInt(100) <= 20)
+                && PathfindingUtils.isWater(colony.getWorld(), targetSpawnPoint, spawnState, null)
+                && PathfindingUtils.isWater(colony.getWorld(), targetSpawnPoint.below(), belowState, null))
+            {
+                raidSettings = raidSettings.withExplicitType(DrownedPirateRaidEvent.PIRATE_RAID_EVENT_TYPE_ID.getPath());
+                for (int i = 0; i < DrownedPirateRaidEvent.DEPTH_REQ; i++)
+                {
+                    if (!PathfindingUtils.isLiquid(colony.getWorld().getBlockState(targetSpawnPoint.above())))
+                    {
+                        break;
+                    }
+                    targetSpawnPoint = targetSpawnPoint.above();
+                }
             }
 
             // No rotation till spawners are moved into schematics
