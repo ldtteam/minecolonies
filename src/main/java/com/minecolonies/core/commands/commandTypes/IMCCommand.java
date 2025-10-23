@@ -2,11 +2,16 @@ package com.minecolonies.core.commands.commandTypes;
 
 import com.minecolonies.api.util.Log;
 import com.mojang.brigadier.arguments.ArgumentType;
+import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.world.entity.player.Player;
+
+import java.util.Collection;
+import java.util.Objects;
+import java.util.function.Function;
 
 /**
  * Interface for commands, uses Mojang's Brigadier command framework, @see <a href=https://github.com/Mojang/brigadier></a> .
@@ -23,6 +28,20 @@ public interface IMCCommand
     default LiteralArgumentBuilder<CommandSourceStack> build()
     {
         return newLiteral(getName()).executes(this::checkPreConditionAndExecute);
+    }
+
+    default LiteralArgumentBuilder<CommandSourceStack> buildCommandsInSerial(final Collection<ArgumentBuilder<CommandSourceStack, ?>> arguments)
+    {
+        final LiteralArgumentBuilder<CommandSourceStack> builder = newLiteral(getName());
+
+        ArgumentBuilder<CommandSourceStack, ?> previous = null;
+        for (final ArgumentBuilder<CommandSourceStack, ?> argument : arguments)
+        {
+            Objects.requireNonNullElse(previous, builder).then(argument);
+            previous = argument;
+        }
+
+        return builder;
     }
 
     /**
@@ -49,6 +68,18 @@ public interface IMCCommand
      */
     default int checkPreConditionAndExecute(final CommandContext<CommandSourceStack> context)
     {
+        return checkPreConditionAndExecute(context, this::onExecute);
+    }
+
+    /**
+     * Executes pre-checks before issuing the command
+     *
+     * @param context   the context.
+     * @param onExecute the execution method.
+     * @return 1 if successful and 0 if incomplete.
+     */
+    default int checkPreConditionAndExecute(final CommandContext<CommandSourceStack> context, final Function<CommandContext<CommandSourceStack>, Integer> onExecute)
+    {
         try
         {
             if (!checkPreCondition(context))
@@ -56,7 +87,7 @@ public interface IMCCommand
                 return 0;
             }
 
-            return onExecute(context);
+            return onExecute.apply(context);
         }
         catch (Throwable e)
         {

@@ -2,7 +2,6 @@ package com.minecolonies.core.commands;
 
 import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.colony.colonyEvents.registry.ColonyEventTypeRegistryEntry;
-import com.minecolonies.api.colony.colonyEvents.registry.ColonyRaidEventTypeRegistryEntry;
 import com.minecolonies.api.colony.managers.interfaces.IRaiderManager;
 import com.minecolonies.core.commands.commandTypes.IMCCommand;
 import com.minecolonies.core.commands.commandTypes.IMCOPCommand;
@@ -26,10 +25,6 @@ import static com.minecolonies.core.commands.CommandArgumentNames.*;
 
 public abstract class CommandBaseRaid implements IMCOPCommand
 {
-    protected abstract int startRaidNow(final CommandContext<CommandSourceStack> context, final IRaiderManager.RaidSettings raidSettings);
-
-    protected abstract int startRaidTonight(final CommandContext<CommandSourceStack> context, final IRaiderManager.RaidSettings raidSettings);
-
     protected final Stream<ArgumentBuilder<CommandSourceStack, ?>> createSettingArguments()
     {
         String[] opt = new String[2];
@@ -37,12 +32,9 @@ public abstract class CommandBaseRaid implements IMCOPCommand
         opt[1] = RAID_TONIGHT;
 
         final List<String> raidTypes = new ArrayList<>();
-        for (final ColonyEventTypeRegistryEntry<?> type : IMinecoloniesAPI.getInstance().getColonyEventRegistry())
+        for (final ColonyEventTypeRegistryEntry type : IMinecoloniesAPI.getInstance().getColonyEventRegistry())
         {
-            if (type instanceof ColonyRaidEventTypeRegistryEntry)
-            {
-                raidTypes.add(type.getRegistryName().toString());
-            }
+            raidTypes.add(type.getRegistryName().toString());
         }
 
         final RequiredArgumentBuilder<CommandSourceStack, String> raidTimeArg = IMCCommand.newArgument(RAID_TIME_ARG, StringArgumentType.string())
@@ -89,6 +81,12 @@ public abstract class CommandBaseRaid implements IMCOPCommand
         });
     }
 
+    @Override
+    public final int onExecute(final CommandContext<CommandSourceStack> context)
+    {
+        return raidExecute(context, new IRaiderManager.RaidSettings(true, null, true, null, null));
+    }
+
     /**
      * Actually find the colony and assign the raid event.
      *
@@ -108,13 +106,12 @@ public abstract class CommandBaseRaid implements IMCOPCommand
         };
     }
 
-    @Override
-    public final int onExecute(final CommandContext<CommandSourceStack> context)
-    {
-        return raidExecute(context, new IRaiderManager.RaidSettings(true, null, true, null, null));
-    }
+    protected abstract int startRaidNow(final CommandContext<CommandSourceStack> context, final IRaiderManager.RaidSettings raidSettings);
 
-    protected enum RaidTime {
+    protected abstract int startRaidTonight(final CommandContext<CommandSourceStack> context, final IRaiderManager.RaidSettings raidSettings);
+
+    protected enum RaidTime
+    {
         NOW,
         TONIGHT;
 
