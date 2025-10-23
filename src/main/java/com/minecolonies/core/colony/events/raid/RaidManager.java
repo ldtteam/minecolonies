@@ -1,6 +1,7 @@
 package com.minecolonies.core.colony.events.raid;
 
 import com.ldtteam.structurize.api.RotationMirror;
+import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
@@ -8,6 +9,9 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.colonyEvents.EventStatus;
 import com.minecolonies.api.colony.colonyEvents.IColonyEvent;
 import com.minecolonies.api.colony.colonyEvents.IColonyRaidEvent;
+import com.minecolonies.api.colony.colonyEvents.IColonyShipRaidEvent;
+import com.minecolonies.api.colony.colonyEvents.registry.ColonyEventTypeRegistryEntry;
+import com.minecolonies.api.colony.colonyEvents.registry.ColonyRaidEventTypeRegistryEntry;
 import com.minecolonies.api.colony.managers.interfaces.IRaiderManager;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.happiness.ExpirationBasedHappinessModifier;
@@ -21,40 +25,30 @@ import com.minecolonies.core.colony.Colony;
 import com.minecolonies.core.colony.buildings.modules.LivingBuildingModule;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingGuardTower;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingTownHall;
-import com.minecolonies.core.colony.events.raid.amazonevent.AmazonRaidEvent;
-import com.minecolonies.core.colony.events.raid.barbarianEvent.BarbarianRaidEvent;
-import com.minecolonies.core.colony.events.raid.barbarianEvent.Horde;
-import com.minecolonies.core.colony.events.raid.egyptianevent.EgyptianRaidEvent;
-import com.minecolonies.core.colony.events.raid.norsemenevent.NorsemenRaidEvent;
-import com.minecolonies.core.colony.events.raid.norsemenevent.NorsemenShipRaidEvent;
-import com.minecolonies.core.colony.events.raid.pirateEvent.*;
 import com.minecolonies.core.colony.jobs.AbstractJobGuard;
 import com.minecolonies.core.entity.ai.workers.guard.AbstractEntityAIGuard;
 import com.minecolonies.core.entity.citizen.citizenhandlers.CitizenSkillHandler;
 import com.minecolonies.core.entity.pathfinding.Pathfinding;
-import com.minecolonies.core.entity.pathfinding.PathfindingUtils;
 import com.minecolonies.core.entity.pathfinding.pathjobs.PathJobRaiderPathing;
 import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
 import com.minecolonies.core.network.messages.client.PlayAudioMessage;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Holder;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.tags.BiomeTags;
 import net.minecraft.util.Mth;
+import net.minecraft.util.random.WeightedRandomList;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.Rotation;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -141,19 +135,14 @@ public class RaidManager implements IRaiderManager
     private double spawnCountAdjustedDifficulty = 1.0;
 
     /**
-     * Whether there will be a raid in this colony tonight.
-     */
-    private boolean raidTonight = false;
-
-    /**
      * Initial value for having barb events
      */
-    private static boolean INITIAL_CAN_HAVE_BARB_EVENTS = true;
+    private static final boolean INITIAL_CAN_HAVE_BARB_EVENTS = true;
 
     /**
-     * Whether or not this colony may have Raider events. (set via command)
+     * Whether this colony may have Raider events. (set via command)
      */
-    private boolean haveBarbEvents = INITIAL_CAN_HAVE_BARB_EVENTS;
+    private boolean haveRaiderEvents = INITIAL_CAN_HAVE_BARB_EVENTS;
 
     /**
      * Initial nights since the last raid
@@ -186,29 +175,15 @@ public class RaidManager implements IRaiderManager
     private int buildingPosUsage = 0;
 
     /**
-     * The initially lost citizens
+     * The next raid settings, used for the nightfall raid.
      */
-    private static final int INITIAL_LOST_CITIZENS = 0;
-
-    /**
-     * The initial next raid type
-     */
-    private static final String INITIAL_NEXT_RAID_TYPE = "";
-
-    /**
-     * The next raidType, or "" if the next raid should be determined from biome.
-     */
-    private String nextForcedType = INITIAL_NEXT_RAID_TYPE;
+    @Nullable
+    private RaidSettings nextRaid = null;
 
     /**
      * List which keeps track of raid historical data
      */
-    private List<RaidHistory> raidHistories = new ArrayList<>();
-
-    /**
-     * If ships will be allowed or not.
-     */
-    private boolean allowShips = true;
+    private final List<RaidHistory> raidHistories = new ArrayList<>();
 
     /**
      * Passing through raid timer.
@@ -233,27 +208,25 @@ public class RaidManager implements IRaiderManager
     @Override
     public boolean canHaveRaiderEvents()
     {
-        return this.haveBarbEvents;
+        return this.haveRaiderEvents;
     }
 
     @Override
     public boolean willRaidTonight()
     {
-        return this.raidTonight;
+        return this.nextRaid != null;
     }
 
     @Override
     public void setCanHaveRaiderEvents(final boolean canHave)
     {
-        this.haveBarbEvents = canHave;
+        this.haveRaiderEvents = canHave;
     }
 
     @Override
-    public void setRaidNextNight(final boolean willRaid, final String raidType, final boolean allowShips)
+    public void setRaidNextNight(final RaidSettings raidSettings)
     {
-        this.raidTonight = willRaid;
-        this.nextForcedType = raidType;
-        this.allowShips = allowShips;
+        this.nextRaid = raidSettings;
     }
 
     @Override
@@ -273,25 +246,19 @@ public class RaidManager implements IRaiderManager
     }
 
     @Override
-    public void raiderEvent()
+    public RaidSpawnResult raiderEvent(final @NotNull RaidSettings raidSettings)
     {
-        raiderEvent("", false);
-    }
-
-    @Override
-    public RaidSpawnResult raiderEvent(String raidType, final boolean forced, final boolean allowShips)
-    {
-        if (colony.getWorld() == null || raidType == null)
+        if (colony.getWorld() == null)
         {
             return RaidSpawnResult.ERROR;
         }
-        else if (!forced && !canRaid())
+        else if (!raidSettings.forcedSpawn() && !canRaid())
         {
             return RaidSpawnResult.CANNOT_RAID;
         }
 
         final int raidLevel = getColonyRaidLevel();
-        int amount = calculateRaiderAmount(raidLevel);
+        int amount = raidSettings.raiderAmount() != null ? raidSettings.raiderAmount() : calculateRaiderAmount(raidLevel);
         if (amount <= 0 || raidLevel < MIN_REQUIRED_RAIDLEVEL)
         {
             return RaidSpawnResult.TOO_SMALL;
@@ -313,8 +280,7 @@ public class RaidManager implements IRaiderManager
         for (int i = 0; i < raidCount; i++)
         {
             final BlockPos targetSpawnPoint = calculateSpawnLocation();
-            if (targetSpawnPoint == null || targetSpawnPoint.equals(colony.getCenter())
-                  || !colony.getWorld().getWorldBorder().isWithinBounds(targetSpawnPoint))
+            if (targetSpawnPoint == null || targetSpawnPoint.equals(colony.getCenter()) || !colony.getWorld().getWorldBorder().isWithinBounds(targetSpawnPoint))
             {
                 if (retries < 10)
                 {
@@ -334,124 +300,134 @@ public class RaidManager implements IRaiderManager
 
         raidHistories.add(new RaidHistory(amount, colony.getWorld().getGameTime()));
         nightsSinceLastRaid = 0;
-        raidTonight = false;
+        nextRaid = null;
         amount = (int) Math.ceil((float) amount / spawnPoints.size());
 
-        for (BlockPos targetSpawnPoint : spawnPoints)
+        for (final BlockPos targetSpawnPoint : spawnPoints)
         {
-            IColonyRaidEvent raidEvent = null;
-
             if (MineColonies.getConfig().getServer().enableInDevelopmentFeatures.get())
             {
                 MessageUtils.format(Component.literal("Horde Spawn Point: " + targetSpawnPoint)).sendTo(colony).forAllPlayers();
             }
 
-            final BlockState aboveState = colony.getWorld().getBlockState(targetSpawnPoint.above());
-            final BlockState spawnState = colony.getWorld().getBlockState(targetSpawnPoint);
-            final BlockState belowState = colony.getWorld().getBlockState(targetSpawnPoint.below());
-
-            if (MineColonies.getConfig().getServer().skyRaiders.get() &&
-                  spawnState.isAir()
-                  && belowState.isAir())
+            final List<IColonyRaidEvent> possibleRaidEvents = new ArrayList<>();
+            for (final ColonyEventTypeRegistryEntry<?> eventType : IMinecoloniesAPI.getInstance().getColonyEventRegistry())
             {
-                raidType = PirateRaidEvent.PIRATE_RAID_EVENT_TYPE_ID.getPath();
-            }
-            else if ((raidType.isEmpty() || raidType.equals(DrownedPirateRaidEvent.PIRATE_RAID_EVENT_TYPE_ID.getPath()))
-                       && (PathfindingUtils.isWater(colony.getWorld(), targetSpawnPoint.above(), aboveState, null) || ColonyConstants.rand.nextInt(100) <= 20)
-                       && PathfindingUtils.isWater(colony.getWorld(), targetSpawnPoint, spawnState, null)
-                       && PathfindingUtils.isWater(colony.getWorld(), targetSpawnPoint.below(), belowState, null))
-            {
-                raidType = DrownedPirateRaidEvent.PIRATE_RAID_EVENT_TYPE_ID.getPath();
-                for (int i = 0; i < DrownedPirateRaidEvent.DEPTH_REQ; i++)
+                if (eventType instanceof ColonyRaidEventTypeRegistryEntry<?> raidEventType)
                 {
-                    if (!PathfindingUtils.isLiquid(colony.getWorld().getBlockState(targetSpawnPoint.above())))
+                    final IColonyRaidEvent raidEvent = raidEventType.produceRaidEvent(colony, targetSpawnPoint);
+                    if (raidEvent instanceof IColonyShipRaidEvent)
                     {
-                        break;
+                        if (raidSettings.allowShips())
+                        {
+                            possibleRaidEvents.add(raidEvent);
+                        }
                     }
-                    targetSpawnPoint = targetSpawnPoint.above();
+                    else
+                    {
+                        possibleRaidEvents.add(raidEvent);
+                    }
                 }
+            }
+            final WeightedRandomList<IColonyRaidEvent> weightedRaidEvents = WeightedRandomList.create(possibleRaidEvents);
+            final IColonyRaidEvent raidEvent = weightedRaidEvents.getRandom(colony.getWorld().getRandom()).orElse(null);
+            if (raidEvent == null)
+            {
+                Log.getLogger().warn("No raid event type could satisfy spawning requirements for colony {}.", colony.getID());
+                return RaidSpawnResult.ERROR;
             }
 
-            // No rotation till spawners are moved into schematics
-            final RotationMirror shipRotMir = RotationMirror.of(Rotation.values()[colony.getWorld().random.nextInt(4)], Mirror.NONE);
-            final Holder<Biome> biome = colony.getWorld().getBiome(colony.getCenter());
-            final int rand = colony.getWorld().random.nextInt(100);
-            if (allowShips && (raidType.isEmpty() && (biome.is(BiomeTags.IS_TAIGA) || rand < IGNORE_BIOME_CHANCE)
-                   || raidType.equals(NorsemenRaidEvent.NORSEMEN_RAID_EVENT_TYPE_ID.getPath()))
-                  && ShipBasedRaiderUtils.canSpawnShipAt(colony, targetSpawnPoint, amount, shipRotMir, NorsemenShipRaidEvent.SHIP_NAME))
-            {
-                final NorsemenShipRaidEvent event = new NorsemenShipRaidEvent(colony);
-                event.setSpawnPoint(targetSpawnPoint);
-                event.setShipSize(ShipSize.getShipForRaiderAmount(amount));
-                event.setShipRotation(shipRotMir);
-                event.setSpawnPath(createSpawnPath(targetSpawnPoint, false));
-                event.setMaxRaiderCount(amount * 2);
-                raidEvent = event;
-                colony.getEventManager().addEvent(event);
-            }
-            else if (allowShips && (raidType.isEmpty() && (biome.is(BiomeTags.IS_OCEAN))
-                                 || raidType.equals(DrownedPirateRaidEvent.PIRATE_RAID_EVENT_TYPE_ID.getPath()))
-                  && ShipBasedRaiderUtils.canSpawnShipAt(colony, targetSpawnPoint, amount, shipRotMir, DrownedPirateRaidEvent.SHIP_NAME, DrownedPirateRaidEvent.DEPTH_REQ))
-            {
-                final DrownedPirateRaidEvent event = new DrownedPirateRaidEvent(colony);
-                event.setSpawnPoint(targetSpawnPoint);
-                event.setShipSize(ShipSize.getShipForRaiderAmount(amount));
-                event.setShipRotation(shipRotMir);
-                event.setSpawnPath(createSpawnPath(targetSpawnPoint, true));
-                event.setMaxRaiderCount(amount * 2);
-                raidEvent = event;
-                colony.getEventManager().addEvent(event);
-            }
-            else if (allowShips && ShipBasedRaiderUtils.canSpawnShipAt(colony, targetSpawnPoint, amount, shipRotMir, PirateRaidEvent.SHIP_NAME)
-                       && (raidType.isEmpty() || raidType.equals(PirateRaidEvent.PIRATE_RAID_EVENT_TYPE_ID.getPath())))
-            {
-                final PirateRaidEvent event = new PirateRaidEvent(colony);
-                event.setSpawnPoint(targetSpawnPoint);
-                event.setShipSize(ShipSize.getShipForRaiderAmount(amount));
-                event.setShipRotation(shipRotMir);
-                event.setSpawnPath(createSpawnPath(targetSpawnPoint, false));
-                event.setMaxRaiderCount(amount * 2);
-                raidEvent = event;
-                colony.getEventManager().addEvent(event);
-            }
-            else
-            {
-                final HordeRaidEvent event;
-                if (((biome.is(BiomeTags.HAS_DESERT_PYRAMID) || (rand > IGNORE_BIOME_CHANCE && rand < IGNORE_BIOME_CHANCE * 2))
-                       && raidType.isEmpty()) || raidType.equals(EgyptianRaidEvent.EGYPTIAN_RAID_EVENT_TYPE_ID.getPath()))
-                {
-                    event = new EgyptianRaidEvent(colony);
-                }
-                else if (((biome.is(BiomeTags.IS_JUNGLE) || (rand > IGNORE_BIOME_CHANCE * 2 && rand < IGNORE_BIOME_CHANCE * 3))
-                            && raidType.isEmpty()) || (raidType.equals(AmazonRaidEvent.AMAZON_RAID_EVENT_TYPE_ID.getPath())))
-                {
-                    event = new AmazonRaidEvent(colony);
-                }
-                else if (((biome.is(BiomeTags.IS_TAIGA) || (rand > IGNORE_BIOME_CHANCE * 3 && rand < IGNORE_BIOME_CHANCE * 4))
-                            && raidType.isEmpty()) || raidType.equals(NorsemenRaidEvent.NORSEMEN_RAID_EVENT_TYPE_ID.getPath()))
-                {
-                    event = new NorsemenRaidEvent(colony);
-                }
-                else if (raidType.equals(PirateRaidEvent.PIRATE_RAID_EVENT_TYPE_ID.getPath()))
-                {
-                    event = new PirateGroundRaidEvent(colony);
-                }
-                else if (raidType.isEmpty() || raidType.equals(BarbarianRaidEvent.BARBARIAN_RAID_EVENT_TYPE_ID.getPath()))
-                {
-                    event = new BarbarianRaidEvent(colony);
-                }
-                else
-                {
-                    return RaidSpawnResult.NO_SPAWN_POINT;
-                }
+            final BlockPos chosenSpawnPosition = raidEvent.getSpawnPos();
 
-                event.setSpawnPoint(targetSpawnPoint);
-                event.setHorde(new Horde(amount));
-
-                event.setSpawnPath(createSpawnPath(targetSpawnPoint, false));
-                raidEvent = event;
-                colony.getEventManager().addEvent(event);
+            if (raidEvent instanceof IColonyShipRaidEvent shipRaidEvent)
+            {
+                final RotationMirror shipRotMir = RotationMirror.of(Rotation.values()[colony.getWorld().getRandom().nextInt(4)], Mirror.NONE);
+                shipRaidEvent.setShipSize(IColonyShipRaidEvent.ShipSize.getShipForRaiderAmount(amount));
+                shipRaidEvent.setShipRotation(shipRotMir);
+                shipRaidEvent.setSpawnPath(createSpawnPath(chosenSpawnPosition, shipRaidEvent.isUnderWater()));
+                shipRaidEvent.setMaxRaiderCount(amount * 2);
             }
+
+            //// No rotation till spawners are moved into schematics
+            //final RotationMirror shipRotMir = RotationMirror.of(Rotation.values()[colony.getWorld().random.nextInt(4)], Mirror.NONE);
+            //final Holder<Biome> biome = colony.getWorld().getBiome(colony.getCenter());
+            //final int rand = colony.getWorld().random.nextInt(100);
+            //if (allowShips && (raidSettings.isEmpty() && (biome.is(BiomeTags.IS_TAIGA) || rand < IGNORE_BIOME_CHANCE)
+            //       || raidSettings.equals(NorsemenRaidEvent.NORSEMEN_RAID_EVENT_TYPE_ID.getPath()))
+            //      && ShipBasedRaiderUtils.canSpawnShipAt(colony, targetSpawnPoint, amount, shipRotMir, NorsemenShipRaidEvent.SHIP_NAME))
+            //{
+            //    final NorsemenShipRaidEvent event = new NorsemenShipRaidEvent(colony);
+            //    event.setSpawnPoint(targetSpawnPoint);
+            //    event.setShipSize(IColonyShipRaidEvent.ShipSize.getShipForRaiderAmount(amount));
+            //    event.setShipRotation(shipRotMir);
+            //    event.setSpawnPath(createSpawnPath(targetSpawnPoint, false));
+            //    event.setMaxRaiderCount(amount * 2);
+            //    raidEvent = event;
+            //    colony.getEventManager().addEvent(event);
+            //}
+            //else if (allowShips && (raidSettings.isEmpty() && (biome.is(BiomeTags.IS_OCEAN))
+            //                     || raidSettings.equals(DrownedPirateRaidEvent.PIRATE_RAID_EVENT_TYPE_ID.getPath()))
+            //      && ShipBasedRaiderUtils.canSpawnShipAt(colony, targetSpawnPoint, amount, shipRotMir, DrownedPirateRaidEvent.SHIP_NAME, DrownedPirateRaidEvent.DEPTH_REQ))
+            //{
+            //    final DrownedPirateRaidEvent event = new DrownedPirateRaidEvent(colony);
+            //    event.setSpawnPoint(targetSpawnPoint);
+            //    event.setShipSize(IColonyShipRaidEvent.ShipSize.getShipForRaiderAmount(amount));
+            //    event.setShipRotation(shipRotMir);
+            //    event.setSpawnPath(createSpawnPath(targetSpawnPoint, true));
+            //    event.setMaxRaiderCount(amount * 2);
+            //    raidEvent = event;
+            //    colony.getEventManager().addEvent(event);
+            //}
+            //else if (allowShips && ShipBasedRaiderUtils.canSpawnShipAt(colony, targetSpawnPoint, amount, shipRotMir, PirateRaidEvent.SHIP_NAME)
+            //           && (raidSettings.isEmpty() || raidSettings.equals(PirateRaidEvent.PIRATE_RAID_EVENT_TYPE_ID.getPath())))
+            //{
+            //    final PirateRaidEvent event = new PirateRaidEvent(colony);
+            //    event.setSpawnPoint(targetSpawnPoint);
+            //    event.setShipSize(IColonyShipRaidEvent.ShipSize.getShipForRaiderAmount(amount));
+            //    event.setShipRotation(shipRotMir);
+            //    event.setSpawnPath(createSpawnPath(targetSpawnPoint, false));
+            //    event.setMaxRaiderCount(amount * 2);
+            //    raidEvent = event;
+            //    colony.getEventManager().addEvent(event);
+            //}
+            //else
+            //{
+            //    final AbstractHordeRaidEvent event;
+            //    if (((biome.is(BiomeTags.HAS_DESERT_PYRAMID) || (rand > IGNORE_BIOME_CHANCE && rand < IGNORE_BIOME_CHANCE * 2))
+            //           && raidSettings.isEmpty()) || raidSettings.equals(EgyptianRaidEvent.EGYPTIAN_RAID_EVENT_TYPE_ID.getPath()))
+            //    {
+            //        event = new EgyptianRaidEvent(colony);
+            //    }
+            //    else if (((biome.is(BiomeTags.IS_JUNGLE) || (rand > IGNORE_BIOME_CHANCE * 2 && rand < IGNORE_BIOME_CHANCE * 3))
+            //                && raidSettings.isEmpty()) || (raidSettings.equals(AmazonRaidEvent.AMAZON_RAID_EVENT_TYPE_ID.getPath())))
+            //    {
+            //        event = new AmazonRaidEvent(colony);
+            //    }
+            //    else if (((biome.is(BiomeTags.IS_TAIGA) || (rand > IGNORE_BIOME_CHANCE * 3 && rand < IGNORE_BIOME_CHANCE * 4))
+            //                && raidSettings.isEmpty()) || raidSettings.equals(NorsemenRaidEvent.NORSEMEN_RAID_EVENT_TYPE_ID.getPath()))
+            //    {
+            //        event = new NorsemenRaidEvent(colony);
+            //    }
+            //    else if (raidSettings.equals(PirateRaidEvent.PIRATE_RAID_EVENT_TYPE_ID.getPath()))
+            //    {
+            //        event = new PirateGroundRaidEvent(colony);
+            //    }
+            //    else if (raidSettings.isEmpty() || raidSettings.equals(BarbarianRaidEvent.BARBARIAN_RAID_EVENT_TYPE_ID.getPath()))
+            //    {
+            //        event = new BarbarianRaidEvent(colony);
+            //    }
+            //    else
+            //    {
+            //        return RaidSpawnResult.NO_SPAWN_POINT;
+            //    }
+            //
+            //    event.setSpawnPoint(targetSpawnPoint);
+            //    event.setHorde(new AbstractHordeRaidEvent.Horde(amount));
+            //
+            //    event.setSpawnPath(createSpawnPath(targetSpawnPoint, false));
+            //    raidEvent = event;
+            //    colony.getEventManager().addEvent(event);
+            //}
 
             getLastRaid().spawnData.add(new RaidSpawnInfo(raidEvent.getEventTypeID(), targetSpawnPoint));
             getLastRaid().difficulty = ((int) (getRaidDifficultyModifier() * 100)) / 100.0;
@@ -461,16 +437,16 @@ public class RaidManager implements IRaiderManager
     }
 
     /**
-     * Creates and starts the pathjob towards this spawnpoint
+     * Creates and starts the path job towards this spawn point
      *
-     * @param targetSpawnPoint
-     * @return
+     * @param targetSpawnPoint the intended spawn point for the raid.
+     * @return the path result.
      */
-    private PathResult createSpawnPath(final BlockPos targetSpawnPoint, final boolean underwater)
+    private PathResult<?> createSpawnPath(final BlockPos targetSpawnPoint, final boolean underwater)
     {
         final BlockPos closestBuildingPos = colony.getBuildingManager().getBestBuilding(targetSpawnPoint, IBuilding.class);
         final PathJobRaiderPathing job =
-          new PathJobRaiderPathing(new ArrayList<>(colony.getBuildingManager().getBuildings().values()), colony.getWorld(), closestBuildingPos, targetSpawnPoint);
+            new PathJobRaiderPathing(new ArrayList<>(colony.getBuildingManager().getBuildings().values()), colony.getWorld(), closestBuildingPos, targetSpawnPoint);
         job.getPathingOptions().withWalkUnderWater(underwater);
         job.getResult().startJob(Pathfinding.getExecutor());
         return job.getResult();
@@ -690,7 +666,7 @@ public class RaidManager implements IRaiderManager
             return List.of();
         }
 
-        final RaidHistory last = raidHistories.get(raidHistories.size() - 1);
+        final RaidHistory last = raidHistories.getLast();
         return last.spawnData.stream().map(raidSpawnInfo -> raidSpawnInfo.spawnpos).collect(Collectors.toList());
     }
 
@@ -765,15 +741,13 @@ public class RaidManager implements IRaiderManager
             nightsSinceLastRaid = 0;
         }
 
-        if (raidTonight)
+        if (nextRaid != null)
         {
-            final boolean overrideConfig = !nextForcedType.isEmpty();
-            RaidSpawnResult result = raiderEvent(nextForcedType, overrideConfig, allowShips);
+            final RaidSpawnResult result = raiderEvent(nextRaid);
             if (result == RaidSpawnResult.SUCCESS || result == RaidSpawnResult.TOO_SMALL)
             {
                 extraDaysToNextRaid = 0;
-                raidTonight = false;
-                nextForcedType = INITIAL_NEXT_RAID_TYPE;
+                nextRaid = null;
             }
         }
         else
@@ -815,7 +789,7 @@ public class RaidManager implements IRaiderManager
             MessageUtils.format(Component.literal("Will raid tomorrow: " + raid)).sendTo(colony).forAllPlayers();
         }
 
-        setRaidNextNight(raid);
+        setRaidNextNight(raid ? RaidSettings.defaultRaidSettings() : null);
     }
 
     /**

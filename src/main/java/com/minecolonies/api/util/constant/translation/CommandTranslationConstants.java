@@ -116,6 +116,14 @@ public class CommandTranslationConstants
     @NonNls
     public static final String COMMAND_RAID_TONIGHT_SUCCESS                  = "com.minecolonies.command.raidtonight.success";
     @NonNls
+    public static final String COMMAND_RAID_ALL_NOW_SUCCESS                  = "com.minecolonies.command.raidallnow.success";
+    @NonNls
+    public static final String COMMAND_RAID_ALL_NOW_ROW_SUCCESS              = "com.minecolonies.command.raidallnow.row.success";
+    @NonNls
+    public static final String COMMAND_RAID_ALL_NOW_ROW_FAILURE              = "com.minecolonies.command.raidallnow.row.failure";
+    @NonNls
+    public static final String COMMAND_RAID_ALL_TONIGHT_SUCCESS              = "com.minecolonies.command.raidalltonight.success";
+    @NonNls
     public static final String COMMAND_REQUEST_SYSTEM_RESET_SUCCESS          = "com.minecolonies.command.rsreset.success";
     @NonNls
     public static final String COMMAND_REQUEST_SYSTEM_RESET_ALL_SUCCESS      = "com.minecolonies.command.rsresetall.success";
