@@ -81,11 +81,11 @@ public class CommandRaid implements IMCOPCommand
         final RequiredArgumentBuilder<CommandSourceStack, Boolean> raidShipArg =
             IMCCommand.newArgument(SHIP_ARG, BoolArgumentType.bool()).executes(this::onExecuteWithType).then(raidAmountArg);
         final RequiredArgumentBuilder<CommandSourceStack, ResourceKey<ColonyEventTypeRegistryEntry>> raidTypeArg =
-            IMCCommand.newArgument(RAID_TYPE_ARG, ResourceKeyArgument.key(CommonMinecoloniesAPIImpl.COLONY_EVENT_TYPES))
-                .executes(this::checkPreConditionAndExecute)
-                .then(raidShipArg);
-        final RequiredArgumentBuilder<CommandSourceStack, String> raidTimeArg =
-            IMCCommand.newArgument(RAID_TIME_ARG, StringArgumentType.string()).suggests((ctx, builder) -> SharedSuggestionProvider.suggest(opt, builder)).then(raidTypeArg);
+            IMCCommand.newArgument(RAID_TYPE_ARG, ResourceKeyArgument.key(CommonMinecoloniesAPIImpl.COLONY_EVENT_TYPES)).then(raidShipArg);
+        final RequiredArgumentBuilder<CommandSourceStack, String> raidTimeArg = IMCCommand.newArgument(RAID_TIME_ARG, StringArgumentType.string())
+            .suggests((ctx, builder) -> SharedSuggestionProvider.suggest(opt, builder))
+            .executes(this::checkPreConditionAndExecute)
+            .then(raidTypeArg);
 
         final RequiredArgumentBuilder<CommandSourceStack, MultipleOptionsArgument.OptionContainer<List<Integer>>> colonyIdArg =
             IMCCommand.newArgument(COLONYID_ARG, MultiColonyIdArgument.id()).then(raidTimeArg);
