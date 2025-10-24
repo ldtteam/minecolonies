@@ -90,7 +90,7 @@ public class PathfindingUtils
 
         // Check if the entity is standing ontop of another block with part of its bb
         final BlockPos.MutableBlockPos below = new BlockPos.MutableBlockPos(pos.getX(), pos.getY() - 1, pos.getZ());
-        if (b instanceof CarpetBlock || b instanceof FloatingCarpetBlock)
+        if (b instanceof CarpetBlock || b instanceof FloatingCarpetBlock || b instanceof WaterlilyBlock)
         {
             return pos.above().immutable();
         }
@@ -204,7 +204,8 @@ public class PathfindingUtils
             || (state.getBlock() instanceof PanelBlock && state.getValue(PanelBlock.OPEN))
             || !state.getBlock().hasCollision
             || state.getBlock() instanceof CarpetBlock
-            || state.getBlock() instanceof FloatingCarpetBlock;
+            || state.getBlock() instanceof FloatingCarpetBlock
+            || state.getBlock() instanceof WaterlilyBlock;
     }
 
     /**

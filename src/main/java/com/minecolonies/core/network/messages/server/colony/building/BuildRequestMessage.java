@@ -73,7 +73,7 @@ public class BuildRequestMessage extends AbstractBuildingServerMessage<IBuilding
     @Override
     protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final IBuilding building)
     {
-        if (building.hasWorkOrder())
+        if (building.isPendingConstruction())
         {
             building.removeWorkOrder();
         }
