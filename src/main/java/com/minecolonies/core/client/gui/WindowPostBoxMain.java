@@ -93,7 +93,7 @@ public class WindowPostBoxMain extends AbstractWindowRequestTree
         registerButton(BUTTON_REQUEST, this::requestClicked);
         registerButton(TAG_BUTTON_DELIVER_AVAILABLE, this::deliverPartialClicked);
 
-        window.findPaneOfTypeByID(NAME_LABEL, TextField.class).setHandler(input ->{
+        window.findPaneOfTypeByID(NAME_LABEL, TextField.class).setHandler(input -> {
             final String newFilter = input.getText();
             if (!newFilter.equals(filter))
             {
