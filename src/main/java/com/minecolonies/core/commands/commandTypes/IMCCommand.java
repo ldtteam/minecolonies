@@ -2,16 +2,11 @@ package com.minecolonies.core.commands.commandTypes;
 
 import com.minecolonies.api.util.Log;
 import com.mojang.brigadier.arguments.ArgumentType;
-import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.world.entity.player.Player;
-
-import java.util.Collection;
-import java.util.Objects;
-import java.util.function.Function;
 
 /**
  * Interface for commands, uses Mojang's Brigadier command framework, @see <a href=https://github.com/Mojang/brigadier></a> .
@@ -28,20 +23,6 @@ public interface IMCCommand
     default LiteralArgumentBuilder<CommandSourceStack> build()
     {
         return newLiteral(getName()).executes(this::checkPreConditionAndExecute);
-    }
-
-    default LiteralArgumentBuilder<CommandSourceStack> buildCommandsInSerial(final Collection<ArgumentBuilder<CommandSourceStack, ?>> arguments)
-    {
-        final LiteralArgumentBuilder<CommandSourceStack> builder = newLiteral(getName());
-
-        ArgumentBuilder<CommandSourceStack, ?> previous = null;
-        for (final ArgumentBuilder<CommandSourceStack, ?> argument : arguments)
-        {
-            Objects.requireNonNullElse(previous, builder).then(argument);
-            previous = argument;
-        }
-
-        return builder;
     }
 
     /**
@@ -78,7 +59,7 @@ public interface IMCCommand
      * @param onExecute the execution method.
      * @return 1 if successful and 0 if incomplete.
      */
-    default int checkPreConditionAndExecute(final CommandContext<CommandSourceStack> context, final Function<CommandContext<CommandSourceStack>, Integer> onExecute)
+    default int checkPreConditionAndExecute(final CommandContext<CommandSourceStack> context, final ExecutionHandler onExecute)
     {
         try
         {
@@ -131,5 +112,11 @@ public interface IMCCommand
         }
 
         return player.getServer().getPlayerList().isOp(player.getGameProfile());
+    }
+
+    @FunctionalInterface
+    interface ExecutionHandler
+    {
+        Integer apply(CommandContext<CommandSourceStack> t) throws Exception;
     }
 }
