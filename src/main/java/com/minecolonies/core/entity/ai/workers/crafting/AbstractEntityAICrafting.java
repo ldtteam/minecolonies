@@ -359,7 +359,6 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
         }
 
         currentRequest = currentTask;
-        job.setMaxCraftingCount(currentRequest.getRequest().getCount());
         final int currentCount = InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(),
           stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, currentRecipeStorage.getPrimaryOutput()));
         final int inProgressCount = getExtendedCount(currentRecipeStorage.getPrimaryOutput());
@@ -368,8 +367,8 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
         final int doneOpsCount = currentCount / countPerIteration;
         final int progressOpsCount = inProgressCount / countPerIteration;
 
-        final int remainingOpsCount = currentRequest.getRequest().getMinCount() - doneOpsCount - progressOpsCount;
-
+        final int minRemainingOpsCount = currentRequest.getRequest().getMinCount() - doneOpsCount - progressOpsCount;
+        int remainingOpsCount = currentRequest.getRequest().getCount();
         final List<ItemStorage> input = currentRecipeStorage.getCleanedInput();
         for (final ItemStorage inputStorage : input)
         {
@@ -386,12 +385,14 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
             }
             else
             {
-                remaining = inputStorage.getAmount() * remainingOpsCount;
+                remaining = inputStorage.getAmount() * minRemainingOpsCount;
             }
+
             final int availableCount = InventoryUtils.getCountFromBuilding(building, itemStack -> ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, inputStorage.getItemStack(), false, true))
                 + InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(),
                 itemStack -> ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, inputStorage.getItemStack(), false, true))
                 + getExtendedCount(inputStorage.getItemStack());
+
             if (availableCount < remaining)
             {
                 currentRecipeStorage = null;
@@ -399,8 +400,11 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
                 incrementActionsDone(getActionRewardForCraftingSuccess());
                 return START_WORKING;
             }
+
+            remainingOpsCount = Math.min(Math.min(availableCount, currentRequest.getRequest().getCount()), remainingOpsCount);
         }
 
+        job.setMaxCraftingCount(remainingOpsCount);
         job.setCraftCounter(doneOpsCount);
         return QUERY_ITEMS;
     }
