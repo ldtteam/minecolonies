@@ -36,9 +36,11 @@ public class BuildingModules
      * Global
      */
     public static final BuildingEntry.ModuleProducer<MinimumStockModule,MinimumStockModuleView> MIN_STOCK =
-      new BuildingEntry.ModuleProducer<>("min_stock", MinimumStockModule::new, () -> MinimumStockModuleView::new);
-    public static final BuildingEntry.ModuleProducer<MinimumStockModule,PostBox.PostBoxMinimumStockModuleView> MIN_STOCK_POSTBOX =
-        new BuildingEntry.ModuleProducer<>("min_stock_postbox", MinimumStockModule::new, () -> PostBox.PostBoxMinimumStockModuleView::new);
+        new BuildingEntry.ModuleProducer<>("min_stock", MinimumStockModule::new, () -> MinimumStockModuleView::new);
+
+    public static final BuildingEntry.ModuleProducer<MinimumStockModule,MinimumStockModuleView> MIN_STOCK_POSTBOX =
+        new BuildingEntry.ModuleProducer<>("min_stock_postbox", MinimumStockModule::new, 
+            () -> PostBox.PostBoxMinimumStockModuleView::new);
 
     public static final BuildingEntry.ModuleProducer<BedHandlingModule, IBuildingModuleView> BED             = new BuildingEntry.ModuleProducer<>("bed", BedHandlingModule::new, null);
     public static final BuildingEntry.ModuleProducer<FurnaceUserModule,IBuildingModuleView>  FURNACE                 = new BuildingEntry.ModuleProducer<>("furnace", FurnaceUserModule::new, null);

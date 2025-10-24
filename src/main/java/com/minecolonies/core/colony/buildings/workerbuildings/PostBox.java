@@ -69,7 +69,8 @@ public class PostBox extends AbstractBuilding implements IRSComponent
     }
 
     @Override
-    public int getBuildingLevel() {
+    public int getBuildingLevel()
+    {
         /* We set the PostBox to level 1 by force to enable the minimum stock feature */
         return 1;
     }
@@ -141,11 +142,13 @@ public class PostBox extends AbstractBuilding implements IRSComponent
     {
         @Override
         @OnlyIn(Dist.CLIENT)
-        public BOWindow getWindow() {
+        public BOWindow getWindow() 
+        {
             return new MinimumStockModuleWindow(buildingView, this, WINDOW_POSTBOX_MINIMUM_STOCK);
         }
 
-        public boolean isPageVisible() {
+        public boolean isPageVisible() 
+        {
             /* We disable the module nav elements rendering using this, as there is no other module at this time */
             return false;
         }

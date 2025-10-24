@@ -93,7 +93,7 @@ public class WindowPostBoxMain extends AbstractWindowRequestTree
         registerButton(BUTTON_REQUEST, this::requestClicked);
         registerButton(TAG_BUTTON_DELIVER_AVAILABLE, this::deliverPartialClicked);
 
-        window.findPaneOfTypeByID(NAME_LABEL, TextField.class).setHandler(input -> {
+        window.findPaneOfTypeByID(NAME_LABEL, TextField.class).setHandler(input ->{
             final String newFilter = input.getText();
             if (!newFilter.equals(filter))
             {
@@ -109,11 +109,17 @@ public class WindowPostBoxMain extends AbstractWindowRequestTree
     {
         window.registerButton("requestTab", () -> new WindowPostBoxMain(buildingView).open());
         window.registerButton("requestIcon", () -> new WindowPostBoxMain(buildingView).open());
-        PaneBuilders.tooltipBuilder().hoverPane(window.findPaneByID("requestIcon")).build().setText(Component.translatable("com.minecolonies.coremod.gui.citizen.requests"));
+        PaneBuilders.tooltipBuilder()
+            .hoverPane(window.findPaneByID("requestIcon"))
+            .build()
+            .setText(Component.translatable("com.minecolonies.coremod.gui.citizen.requests"));
 
         window.registerButton("minimumStockTab", () -> openMinimumStockWindow(buildingView));
         window.registerButton("minimumStockIcon", () -> openMinimumStockWindow(buildingView));
-        PaneBuilders.tooltipBuilder().hoverPane(window.findPaneByID("minimumStockIcon")).build().setText(Component.translatable("com.minecolonies.coremod.gui.warehouse.stock"));
+        PaneBuilders.tooltipBuilder()
+            .hoverPane(window.findPaneByID("minimumStockIcon"))
+            .build()
+            .setText(Component.translatable("com.minecolonies.coremod.gui.warehouse.stock"));
     }
 
     private static void openMinimumStockWindow(final AbstractBuildingView buildingView)
