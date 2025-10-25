@@ -366,7 +366,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
         final int doneOpsCount = currentCount / countPerIteration;
         final int progressOpsCount = inProgressCount / countPerIteration;
 
-        final int remainingOpsCount = currentRequest.getRequest().getCount() - doneOpsCount - progressOpsCount;
+        final int remainingOpsCount = currentRequest.getRequest().getMinCount() - doneOpsCount - progressOpsCount;
 
         final List<ItemStorage> input = currentRecipeStorage.getCleanedInput();
         for (final ItemStorage inputStorage : input)
@@ -386,11 +386,11 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
             {
                 remaining = inputStorage.getAmount() * remainingOpsCount;
             }
-            if (InventoryUtils.getCountFromBuilding(building, itemStack -> ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, inputStorage.getItemStack(), false, true))
-                  + InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(),
-              itemStack -> ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, inputStorage.getItemStack(), false, true))
-                  + getExtendedCount(inputStorage.getItemStack())
-                  < remaining)
+            final int availableCount = InventoryUtils.getCountFromBuilding(building, itemStack -> ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, inputStorage.getItemStack(), false, true))
+                + InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(),
+                itemStack -> ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, inputStorage.getItemStack(), false, true))
+                + getExtendedCount(inputStorage.getItemStack());
+            if (availableCount < remaining)
             {
                 currentRecipeStorage = null;
                 job.finishRequest(false);

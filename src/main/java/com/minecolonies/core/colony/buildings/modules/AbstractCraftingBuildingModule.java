@@ -1,5 +1,6 @@
 package com.minecolonies.core.colony.buildings.modules;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.MinecoloniesAPIProxy;
@@ -1068,6 +1069,34 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
         public String getId()
         {
             return MODULE_SMELTING;
+        }
+
+        @Override
+        public IRecipeStorage getFirstFulfillableRecipe(final Predicate<ItemStack> stackPredicate, final int count, final boolean considerReservation)
+        {
+            boolean hasFuel = false;
+            final ImmutableList<ItemStorage> fuelList = building.getModule(BuildingModules.ITEMLIST_FUEL).getList();
+            for (final ItemStorage fuel : fuelList)
+            {
+                if (InventoryUtils.getCountFromBuilding(building, fuel) > 0)
+                {
+                    hasFuel = true;
+                    break;
+                }
+            }
+
+            if (!hasFuel)
+            {
+                for (final ItemStorage fuel : fuelList)
+                {
+                    if (stackPredicate.test(fuel.getItemStack()))
+                    {
+                        return super.getFirstFulfillableRecipe(stackPredicate, count, considerReservation);
+                    }
+                }
+                return null;
+            }
+            return super.getFirstFulfillableRecipe(stackPredicate, count, considerReservation);
         }
     }
 
