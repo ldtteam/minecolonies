@@ -1,14 +1,6 @@
 package com.minecolonies.core.colony.jobs;
 
 import com.google.common.collect.ImmutableList;
-import com.minecolonies.api.crafting.ItemStorage;
-import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.core.entity.citizen.EntityCitizen;
-import it.unimi.dsi.fastutil.objects.Object2IntArrayMap;
-import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.Tag;
-import net.minecraft.resources.ResourceLocation;
 import com.minecolonies.api.client.render.modeltype.ModModelTypes;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
@@ -17,12 +9,20 @@ import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.requestable.crafting.PublicCrafting;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
+import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.NbtTagConstants;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
 import com.minecolonies.core.entity.ai.workers.AbstractEntityAIBasic;
+import com.minecolonies.core.entity.citizen.EntityCitizen;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -62,7 +62,7 @@ public abstract class AbstractJobCrafter<AI extends AbstractEntityAIBasic<J, ? e
      * The current map of secondary outputs that need to return to the warehouse after crafting is done.
      */
     @NotNull
-    private final Map<ItemStorage, Integer> secondaryOutputs = new Object2IntArrayMap<>();
+    private final Object2IntOpenHashMap<ItemStorage> secondaryOutputs = new Object2IntOpenHashMap<>();
 
     /**
      * Instantiates the job for the crafter.
@@ -115,7 +115,7 @@ public abstract class AbstractJobCrafter<AI extends AbstractEntityAIBasic<J, ? e
         compound.putInt(NbtTagConstants.TAG_MAX_COUNTER, maxCraftingCount);
         compound.putInt(NbtTagConstants.TAG_CRAFT_COUNTER, craftCounter);
         final ListTag items = new ListTag();
-        for (final Map.Entry<ItemStorage, Integer> item : secondaryOutputs.entrySet())
+        for (final Map.Entry<ItemStorage, Integer> item : secondaryOutputs.object2IntEntrySet())
         {
             items.add(item.getKey().getItemStack().copyWithCount(item.getValue()).serializeNBT());
         }
@@ -369,7 +369,7 @@ public abstract class AbstractJobCrafter<AI extends AbstractEntityAIBasic<J, ? e
      * @return the map of secondary outputs.
      */
     @NotNull
-    public Map<ItemStorage, Integer> getSecondaryOutputs()
+    public Object2IntOpenHashMap<ItemStorage> getSecondaryOutputs()
     {
         return secondaryOutputs;
     }

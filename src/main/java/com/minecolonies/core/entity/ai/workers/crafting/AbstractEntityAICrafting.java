@@ -582,7 +582,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
                     }
                     else
                     {
-                        job.getSecondaryOutputs().compute(new ItemStorage(addedStack), (k, v) -> v == null ? k.getAmount() : v + k.getAmount());
+                        job.getSecondaryOutputs().addTo(new ItemStorage(addedStack), addedStack.getCount());
                     }
                 }
 
