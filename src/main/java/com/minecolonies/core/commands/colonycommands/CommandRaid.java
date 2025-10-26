@@ -1,5 +1,6 @@
 package com.minecolonies.core.commands.colonycommands;
 
+import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.colonyEvents.registry.ColonyEventTypeRegistryEntry;
 import com.minecolonies.api.colony.managers.interfaces.IRaiderManager;
@@ -15,6 +16,7 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.SharedSuggestionProvider;
@@ -24,7 +26,9 @@ import net.minecraft.commands.arguments.coordinates.Coordinates;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.minecolonies.core.commands.CommandArgumentNames.*;
@@ -34,32 +38,50 @@ public class CommandRaid implements IMCOPCommand
     private static final DynamicCommandExceptionType ERROR_INVALID_COLONY_EVENT_TYPE =
         new DynamicCommandExceptionType(entry -> Component.translatableEscape("com.minecolonies.command.raid.colony_type.invalid", entry));
 
+    private static final DynamicCommandExceptionType ERROR_COLONY_EVENT_NO_RAID =
+        new DynamicCommandExceptionType(entry -> Component.translatableEscape("com.minecolonies.command.raid.colony_type.noraid", entry));
+
+    /**
+     * Run the command with all fields including the raid type and ship set.
+     *
+     * @param ctx the command context.
+     * @return the command status.
+     */
     private int onExecuteWithType(final CommandContext<CommandSourceStack> ctx)
     {
         return checkPreConditionAndExecute(ctx, (context) -> {
-            final String raidType =
-                ResourceKeyArgument.resolveKey(context, RAID_TYPE_ARG, CommonMinecoloniesAPIImpl.COLONY_EVENT_TYPES, ERROR_INVALID_COLONY_EVENT_TYPE).getKey().location().getPath();
+            final String raidType = getRaidType(context);
             final boolean allowShips = BoolArgumentType.getBool(context, SHIP_ARG);
             return raidExecute(context, new IRaiderManager.RaidSettings(true, raidType, allowShips, null, null));
         });
     }
 
+    /**
+     * Run the command with all fields including the raider amount set.
+     *
+     * @param ctx the command context.
+     * @return the command status.
+     */
     private int onExecuteWithAmount(final CommandContext<CommandSourceStack> ctx)
     {
         return checkPreConditionAndExecute(ctx, (context) -> {
-            final String raidType =
-                ResourceKeyArgument.resolveKey(context, RAID_TYPE_ARG, CommonMinecoloniesAPIImpl.COLONY_EVENT_TYPES, ERROR_INVALID_COLONY_EVENT_TYPE).getKey().location().getPath();
+            final String raidType = getRaidType(context);
             final boolean allowShips = BoolArgumentType.getBool(context, SHIP_ARG);
             final int raidAmount = IntegerArgumentType.getInteger(context, RAID_AMOUNT_ARG);
             return raidExecute(context, new IRaiderManager.RaidSettings(true, raidType, allowShips, raidAmount, null));
         });
     }
 
+    /**
+     * Run the command with all fields including the location set.
+     *
+     * @param ctx the command context.
+     * @return the command status.
+     */
     private int onExecuteWithLocation(final CommandContext<CommandSourceStack> ctx)
     {
         return checkPreConditionAndExecute(ctx, (context) -> {
-            final String raidType =
-                ResourceKeyArgument.resolveKey(context, RAID_TYPE_ARG, CommonMinecoloniesAPIImpl.COLONY_EVENT_TYPES, ERROR_INVALID_COLONY_EVENT_TYPE).getKey().location().getPath();
+            final String raidType = getRaidType(context);
             final boolean allowShips = BoolArgumentType.getBool(context, SHIP_ARG);
             final int raidAmount = IntegerArgumentType.getInteger(context, RAID_AMOUNT_ARG);
             final BlockPos raidLocation = BlockPosArgument.getBlockPos(context, RAID_LOCATION_ARG);
@@ -67,12 +89,37 @@ public class CommandRaid implements IMCOPCommand
         });
     }
 
+    /**
+     * Internal method for processing the raid type.
+     *
+     * @param context the command context.
+     * @return the raid type.
+     * @throws CommandSyntaxException if something goes wrong with the command processing.
+     */
+    private String getRaidType(final CommandContext<CommandSourceStack> context) throws CommandSyntaxException
+    {
+        final ResourceLocation raidType =
+            ResourceKeyArgument.resolveKey(context, RAID_TYPE_ARG, CommonMinecoloniesAPIImpl.COLONY_EVENT_TYPES, ERROR_INVALID_COLONY_EVENT_TYPE).getKey().location();
+        final ColonyEventTypeRegistryEntry colonyEventTypeRegistryEntry = IMinecoloniesAPI.getInstance().getColonyEventRegistry().get(raidType);
+        if (colonyEventTypeRegistryEntry != null && colonyEventTypeRegistryEntry.isRaidEvent())
+        {
+            return raidType.getPath();
+        }
+        throw ERROR_COLONY_EVENT_NO_RAID.create(raidType);
+    }
+
     @Override
     public final LiteralArgumentBuilder<CommandSourceStack> build()
     {
-        String[] opt = new String[2];
-        opt[0] = RAID_NOW;
-        opt[1] = RAID_TONIGHT;
+        final List<String> raidTimes = List.of(RAID_NOW, RAID_TONIGHT);
+        final List<ResourceLocation> raidTypes = new ArrayList<>();
+        for (final ColonyEventTypeRegistryEntry colonyEventType : IMinecoloniesAPI.getInstance().getColonyEventRegistry())
+        {
+            if (colonyEventType.isRaidEvent())
+            {
+                raidTypes.add(colonyEventType.getRegistryName());
+            }
+        }
 
         final RequiredArgumentBuilder<CommandSourceStack, Coordinates> raidLocationArg =
             IMCCommand.newArgument(RAID_LOCATION_ARG, BlockPosArgument.blockPos()).executes(this::onExecuteWithLocation);
@@ -81,9 +128,11 @@ public class CommandRaid implements IMCOPCommand
         final RequiredArgumentBuilder<CommandSourceStack, Boolean> raidShipArg =
             IMCCommand.newArgument(SHIP_ARG, BoolArgumentType.bool()).executes(this::onExecuteWithType).then(raidAmountArg);
         final RequiredArgumentBuilder<CommandSourceStack, ResourceKey<ColonyEventTypeRegistryEntry>> raidTypeArg =
-            IMCCommand.newArgument(RAID_TYPE_ARG, ResourceKeyArgument.key(CommonMinecoloniesAPIImpl.COLONY_EVENT_TYPES)).then(raidShipArg);
+            IMCCommand.newArgument(RAID_TYPE_ARG, ResourceKeyArgument.key(CommonMinecoloniesAPIImpl.COLONY_EVENT_TYPES))
+                .suggests((ctx, builder) -> SharedSuggestionProvider.suggestResource(raidTypes, builder))
+                .then(raidShipArg);
         final RequiredArgumentBuilder<CommandSourceStack, String> raidTimeArg = IMCCommand.newArgument(RAID_TIME_ARG, StringArgumentType.string())
-            .suggests((ctx, builder) -> SharedSuggestionProvider.suggest(opt, builder))
+            .suggests((ctx, builder) -> SharedSuggestionProvider.suggest(raidTimes, builder))
             .executes(this::checkPreConditionAndExecute)
             .then(raidTypeArg);
 
@@ -120,10 +169,11 @@ public class CommandRaid implements IMCOPCommand
     }
 
     /**
+     * Handler for stating a raid right now.
      *
-     * @param context
-     * @param raidSettings
-     * @return
+     * @param context      the command context.
+     * @param raidSettings the raid settings.
+     * @return the command status.
      */
     private int startRaidNow(final CommandContext<CommandSourceStack> context, final IRaiderManager.RaidSettings raidSettings)
     {
@@ -145,10 +195,11 @@ public class CommandRaid implements IMCOPCommand
     }
 
     /**
+     * Handler for stating a raid right tonight.
      *
-     * @param context
-     * @param raidSettings
-     * @return
+     * @param context      the command context.
+     * @param raidSettings the raid settings.
+     * @return the command status.
      */
     private int startRaidTonight(final CommandContext<CommandSourceStack> context, final IRaiderManager.RaidSettings raidSettings)
     {
