@@ -39,7 +39,7 @@ public class ColonyConnectionModuleView extends AbstractBuildingModuleView
     @OnlyIn(Dist.CLIENT)
     public BOWindow getWindow()
     {
-        return new ConnectionModuleWindow(Constants.MOD_ID + ":gui/layouthuts/layoutcolonyconnection.xml", buildingView, this);
+        return new ConnectionModuleWindow(Constants.MOD_ID + ":gui/layouthuts/layoutcolonyconnection.xml", buildingView, false);
     }
 
     @Override

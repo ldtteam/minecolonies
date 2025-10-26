@@ -10,6 +10,7 @@
 
             <button id="travel" size="86 17" label="$(com.minecolonies.core.gui.colonylist.travel)" pos="32 22"
                     source="minecolonies:textures/gui/builderhut/builder_button_medium.png" color="black" tooltip="$(com.minecolonies.core.gui.colonylist.travel.tooltip)"/>
+            <itemicon id="icon" size="16 16" pos="100 22"/>
         </box>
     </list>
     <text id="desc" size="170 10" textalign="MIDDLE" pos="10 110" color="black" textscale="1.0" label="$(com.minecolonies.core.gui.colonylist.indirect.desc)"/>
@@ -21,6 +22,7 @@
 
             <button id="travel" size="86 17" label="$(com.minecolonies.core.gui.colonylist.travel)" pos="32 22"
                     source="minecolonies:textures/gui/builderhut/builder_button_medium.png" color="black" tooltip="$(com.minecolonies.core.gui.colonylist.travel.tooltip)"/>
+            <itemicon id="icon" size="16 16" pos="100 22"/>
         </box>
     </list>
 </window>

@@ -4,6 +4,7 @@ import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
+import com.minecolonies.api.equipment.ModEquipmentTypes;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;
@@ -16,6 +17,7 @@ import com.minecolonies.core.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.core.colony.jobs.JobFlorist;
 import com.minecolonies.core.entity.ai.workers.AbstractEntityAIInteract;
 import com.minecolonies.core.tileentities.TileEntityCompostedDirt;
+import com.minecolonies.core.util.citizenutils.CitizenItemUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -27,7 +29,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.registries.ForgeRegistries;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -42,7 +43,6 @@ import static com.minecolonies.api.util.constant.StatisticsConstants.FLOWERS_PIC
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * Florist AI class.
@@ -162,6 +162,11 @@ public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist, Bu
             return IDLE;
         }
 
+        if (!checkOrEquipShears())
+        {
+            return IDLE;
+        }
+
         worker.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
         final long distance = BlockPosUtil.getDistance2D(worker.blockPosition(), building.getPosition());
         if (distance > MAX_DISTANCE && !walkToBuilding())
@@ -255,7 +260,7 @@ public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist, Bu
      */
     private IAIState harvest()
     {
-        if (harvestPosition == null)
+        if (harvestPosition == null || !checkOrEquipShears())
         {
             return START_WORKING;
         }
@@ -287,7 +292,38 @@ public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist, Bu
         return START_WORKING;
     }
 
+    @Override
+    public boolean holdEfficientTool(@NotNull final BlockState target, final BlockPos pos)
+    {
+        final int bestSlot = getMostEfficientTool(target, pos);
+        if (bestSlot == NO_TOOL)
+        {
+            return true;
+        }
+        return super.holdEfficientTool(target, pos);
+    }
+
     // ------------------------------------------------ HELPER METHODS ------------------------------------------------ //
+
+    /**
+     * Check if we have shears and equip, otherwise return false.
+     * @return true if have shears.
+     */
+    private boolean checkOrEquipShears()
+    {
+        if(checkForToolOrWeapon(ModEquipmentTypes.shears.get()))
+        {
+            return false;
+        }
+
+        final int shearSlot = InventoryUtils.getFirstSlotOfItemHandlerContainingEquipment(worker.getInventoryCitizen(), ModEquipmentTypes.shears.get(), 0, building.getMaxEquipmentLevel());
+        if (shearSlot >= 0)
+        {
+            CitizenItemUtils.setHeldItem(worker, InteractionHand.MAIN_HAND, shearSlot);
+            return true;
+        }
+        return false;
+    }
 
     @Override
     protected int getActionsDoneUntilDumping()

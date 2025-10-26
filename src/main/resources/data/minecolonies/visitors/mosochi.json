@@ -1,0 +1,10 @@
+{
+  "texture": "b82b3c3e-f7d9-4ade-bdc0-54089ceb20cb",
+  "citizensuffix": "_w",
+  "name": "Mosochi",
+  "chance": 0.001,
+  "storylangkey": "com.minecolonies.coremod.gui.chat.mosochi",
+  "recruitcost": "minecraft:diamond_sword",
+  "recruitcostcount": 1,
+  "gender": "female"
+}

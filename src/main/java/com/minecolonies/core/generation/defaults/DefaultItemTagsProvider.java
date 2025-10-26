@@ -564,6 +564,13 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
 
         tag(ModTags.ignoreNBT)
           .addTag(ItemTags.BANNERS);
+
+        tag(ItemTags.BOOKSHELF_BOOKS)
+            .add(ModItems.ancientTome)
+            .add(ModItems.colonyMap)
+            .add(ModItems.clipboard)
+            .add(ModItems.questLog)
+            .add(ModItems.resourceScroll);
     }
 
     @NotNull

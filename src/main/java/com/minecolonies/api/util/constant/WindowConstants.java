@@ -968,9 +968,10 @@ public final class WindowConstants
     /**
      * Postbox constants.
      */
-    public static final String INPUT_NAME     = "name";
-    public static final String WINDOW_POSTBOX = ":gui/windowpostbox.xml";
-    public static final String INPUT_QTY      = "qty";
+    public static final String INPUT_NAME             = "name";
+    public static final String WINDOW_POSTBOX_REQUEST = ":gui/windowpostboxrequest.xml";
+    public static final String WINDOW_POSTBOX_MINIMUM_STOCK = ":gui/windowpostboxminstock.xml";
+    public static final String INPUT_QTY              = "qty";
     public static final String BUTTON_REQUEST = "request";
 
     /**

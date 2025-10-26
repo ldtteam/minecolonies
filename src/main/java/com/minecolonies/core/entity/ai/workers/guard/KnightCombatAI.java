@@ -44,6 +44,7 @@ import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 
 import java.util.List;
+import java.util.Objects;
 
 import static com.minecolonies.api.research.util.ResearchConstants.*;
 import static com.minecolonies.api.util.constant.GuardConstants.*;
@@ -119,8 +120,11 @@ public class KnightCombatAI extends AttackMoveAI<EntityCitizen>
             // Apply the colony Flag to the shield
             ItemStack shieldStack = user.getInventoryCitizen().getHeldItem(InteractionHand.OFF_HAND);
             CompoundTag nbt = shieldStack.getOrCreateTagElement("BlockEntityTag");
-            nbt.put(TAG_BANNER_PATTERNS, user.getCitizenColonyHandler().getColonyOrRegister().getColonyFlag());
-
+            if (!Objects.equals(nbt.get(TAG_BANNER_PATTERNS), user.getCitizenColonyHandler().getColonyOrRegister().getColonyFlag()))
+            {
+                nbt.put(TAG_BANNER_PATTERNS, user.getCitizenColonyHandler().getColonyOrRegister().getColonyFlag());
+                user.getInventoryCitizen().markDirty();
+            }
             user.lookAt(target, (float) TURN_AROUND, (float) TURN_AROUND);
             user.decreaseSaturationForContinuousAction();
         }

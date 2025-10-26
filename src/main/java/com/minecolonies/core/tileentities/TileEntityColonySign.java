@@ -89,7 +89,10 @@ public class TileEntityColonySign extends BlockEntity implements ITickable
         super.load(compound);
         this.colonyId = compound.getInt(TAG_COLONY_ID);
         this.colonyNameCache = compound.getString(TAG_NAME);
-        this.anchor = BlockPosUtil.read(compound, TAG_POS);
+        if (compound.contains(TAG_POS))
+        {
+            this.anchor = BlockPosUtil.read(compound, TAG_POS);
+        }
         this.rotation = compound.getFloat(TAG_ROTATION);
         this.targetColonyId = compound.getInt(TAG_TARGET_COLONY_ID);
         this.targetColonyNameCache = compound.getString(TAG_TARGET_COLONY_NAME);
@@ -103,7 +106,10 @@ public class TileEntityColonySign extends BlockEntity implements ITickable
         super.saveAdditional(compound);
         compound.putInt(TAG_COLONY_ID, this.colonyId);
         compound.putString(TAG_NAME, this.colonyNameCache);
-        BlockPosUtil.write(compound, TAG_POS, anchor);
+        if (anchor != null)
+        {
+            BlockPosUtil.write(compound, TAG_POS, anchor);
+        }
         compound.putFloat(TAG_ROTATION, this.rotation);
         compound.putInt(TAG_TARGET_COLONY_ID, this.targetColonyId);
         compound.putString(TAG_TARGET_COLONY_NAME, this.targetColonyNameCache);
@@ -147,6 +153,7 @@ public class TileEntityColonySign extends BlockEntity implements ITickable
                 final ColonyConnectionNode node = colony.getConnectionManager().getNode(getBlockPos());
                 if (node != null)
                 {
+                    calculateRotation(node.getPreviousNode());
                     final BlockPos previousNodePos = node.getPreviousNode();
                     if (!previousNodePos.equals(BlockPos.ZERO) && WorldUtil.isBlockLoaded(level, previousNodePos))
                     {
@@ -193,6 +200,21 @@ public class TileEntityColonySign extends BlockEntity implements ITickable
     }
 
     /**
+     * Properly calculate position from the node this should point at.
+     * @param previousNode the node to point at.
+     */
+    private void calculateRotation(final BlockPos previousNode)
+    {
+        double dx = previousNode.getX() + 0.5 - (getBlockPos().getX() + 0.5);  // Center of block
+        double dz = previousNode.getZ() + 0.5 - (getBlockPos().getZ() + 0.5);
+
+        double angleRad = Math.atan2(-dz, dx);  // East = 0°, North = 90°, West = 180°, South = 270°
+        float angleDeg = (float) Math.toDegrees(angleRad);
+
+        this.rotation = (angleDeg + 360) % 360;
+    }
+
+    /**
      * Set the colony meta data.
      * @param colony the colony.
      * @param anchor the anchor position it points to.
@@ -205,13 +227,7 @@ public class TileEntityColonySign extends BlockEntity implements ITickable
 
         this.colonyNameCache = colony.getName();
 
-        double dx = this.anchor.getX() + 0.5 - (getBlockPos().getX() + 0.5);  // Center of block
-        double dz = this.anchor.getZ() + 0.5 - (getBlockPos().getZ() + 0.5);
-
-        double angleRad = Math.atan2(-dz, dx);  // East = 0°, North = 90°, West = 180°, South = 270°
-        float angleDeg = (float) Math.toDegrees(angleRad);
-
-        this.rotation = (angleDeg + 360) % 360;
+        calculateRotation(this.anchor);
     }
 
     /**

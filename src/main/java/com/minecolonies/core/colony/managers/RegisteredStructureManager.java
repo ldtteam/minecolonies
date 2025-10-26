@@ -891,28 +891,9 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
     @Override
     public boolean canPlaceAt(final Block block, final BlockPos pos, final Player player)
     {
-        if (block instanceof BlockHutTownHall)
+        if (block instanceof AbstractBlockHut hutblock)
         {
-            if (colony.hasTownHall())
-            {
-                if (colony.getWorld() != null && !colony.getWorld().isClientSide)
-                {
-                    MessageUtils.format(WARNING_DUPLICATE_TOWN_HALL, townHall.getPosition().toShortString()).sendTo(player);
-                }
-                return false;
-            }
-            return true;
-        }
-        else if (block instanceof BlockHutTavern)
-        {
-            for (final IBuilding building : buildings.values())
-            {
-                if (building.hasModule(BuildingModules.TAVERN_VISITOR))
-                {
-                    MessageUtils.format(WARNING_DUPLICATE_TAVERN, building.getPosition().toShortString()).sendTo(player);
-                    return false;
-                }
-            }
+            return hutblock.canPlaceAt(pos, player);
         }
 
         return true;

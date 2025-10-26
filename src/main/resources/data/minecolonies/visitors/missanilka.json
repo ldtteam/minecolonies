@@ -1,0 +1,12 @@
+{
+  "texture": "e99aad77-ecbb-47a7-9653-73ca110b1c6c",
+  "citizensuffix": "_w",
+  "name": "Ms Anilka",
+  "chance": 0.001,
+  "storylangkey": "com.minecolonies.coremod.gui.chat.missanilka",
+  "recruitcost": "minecraft:netherite_upgrade_smithing_template",
+  "recruitcostcount": 1,
+  "gender": "female",
+  "primaryskill": "Agility",
+  "secondaryskill": "Creativity"
+}

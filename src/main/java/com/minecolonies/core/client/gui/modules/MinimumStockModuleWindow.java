@@ -31,7 +31,7 @@ public class MinimumStockModuleWindow extends AbstractModuleWindow
     /**
      * The resource string.
      */
-    private static final String RESOURCE_STRING = ":gui/layouthuts/layoutminimumstock.xml";
+    private static final String DEFAULT_RESOURCE_STRING = ":gui/layouthuts/layoutminimumstock.xml";
 
     /**
      * Limit reached label.
@@ -55,10 +55,24 @@ public class MinimumStockModuleWindow extends AbstractModuleWindow
      * @param moduleView the module view.
      */
     public MinimumStockModuleWindow(
-      final IBuildingView building,
-      final IMinimumStockModuleView moduleView)
+        final IBuildingView building,
+        final IMinimumStockModuleView moduleView)
     {
-        super(building, Constants.MOD_ID + RESOURCE_STRING);
+        this(building, moduleView, DEFAULT_RESOURCE_STRING);
+    }
+
+    /**
+     * Constructor for the minimum stock window view.
+     *
+     * @param building class extending
+     * @param moduleView the module view.
+     * @param resourceString the differing ressource string, used by Postbox
+     */
+    public MinimumStockModuleWindow(
+      final IBuildingView building,
+      final IMinimumStockModuleView moduleView, final String resourceString)
+    {
+        super(building, Constants.MOD_ID + resourceString);
 
         resourceList = this.window.findPaneOfTypeByID("resourcesstock", ScrollingList.class);
         this.moduleView = moduleView;
