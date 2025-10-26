@@ -77,7 +77,7 @@ public class BuildRequestMessage extends AbstractBuildingServerMessage<IBuilding
     public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony, final IBuilding building)
     {
         final Player player = ctxIn.getSender();
-        if (building.hasWorkOrder())
+        if (building.isPendingConstruction())
         {
             building.removeWorkOrder();
         }

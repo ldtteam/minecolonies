@@ -89,8 +89,7 @@ public class BuildingResourcesModule extends AbstractBuildingModule implements I
         final ICitizenData data = set.isEmpty() ? null : set.iterator().next();
         if (data != null && data.getJob() instanceof AbstractJobStructure)
         {
-            final AbstractJobStructure<?, ?> structureBuilderJob = (AbstractJobStructure<?, ?>) data.getJob();
-            final IBuilderWorkOrder workOrder = structureBuilderJob.getWorkOrder();
+            final IBuilderWorkOrder workOrder = ((AbstractBuildingStructureBuilder) building).getWorkOrder();
             if (workOrder != null)
             {
                 buf.writeInt(workOrder.getID());

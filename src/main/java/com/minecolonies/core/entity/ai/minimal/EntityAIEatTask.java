@@ -214,7 +214,7 @@ public class EntityAIEatTask implements IStateAI
         }
 
         final ICitizenFoodHandler foodHandler = citizenData.getCitizenFoodHandler();
-        if (eatenFood.isEmpty())
+        if (eatenFood.isEmpty() && restaurant != null)
         {
             foodHandler.addLastEaten(foodStack.getItem());
         }

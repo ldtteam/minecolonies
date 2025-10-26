@@ -2,8 +2,10 @@ package com.minecolonies.core.network.messages.server.colony.building;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.buildings.modules.IBuildingModule;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.core.colony.buildings.modules.BuildingModules;
+import com.minecolonies.core.colony.buildings.modules.MinimumStockModule;
 import com.minecolonies.core.network.messages.server.AbstractBuildingServerMessage;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.network.FriendlyByteBuf;
@@ -64,9 +66,10 @@ public class AddMinimumStockToBuildingModuleMessage extends AbstractBuildingServ
     @Override
     public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony, final IBuilding building)
     {
-        if (building.hasModule(BuildingModules.MIN_STOCK))
+        IBuildingModule minStockModule = building.getFirstModuleOccurance(MinimumStockModule.class);
+        if (minStockModule != null)
         {
-            building.getModule(BuildingModules.MIN_STOCK).addMinimumStock(itemStack, quantity);
+            ((MinimumStockModule) minStockModule).addMinimumStock(itemStack, quantity);
         }
     }
 }

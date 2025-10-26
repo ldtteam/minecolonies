@@ -190,5 +190,7 @@ public abstract class AbstractWindowModuleBuilding<B extends IBuildingView> exte
             final MutableComponent componentWithLevel = component.append(" ").append(String.valueOf(buildingView.getBuildingLevel()));
             title.setText(componentWithLevel);
         }
+
+        updateButtonBuild(building);
     }
 }

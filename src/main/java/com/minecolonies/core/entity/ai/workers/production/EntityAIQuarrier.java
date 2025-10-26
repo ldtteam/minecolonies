@@ -133,7 +133,7 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
     @Override
     public IAIState loadRequirements()
     {
-        if (job.getWorkOrder() == null)
+        if (building.getWorkOrder() == null)
         {
             final IBuilding quarry = job.findQuarry();
             if (quarry == null || quarry.getFirstModuleOccurance(QuarryModule.class).isFinished())
@@ -146,7 +146,7 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
               new WorkOrderMiner(quarry.getStructurePack(), shaft.getA(), shaft.getB(), quarry.getRotation(), quarry.getPosition().below(2), false, building.getPosition());
             wo.setClaimedBy(building.getPosition());
             building.getColony().getWorkManager().addWorkOrder(wo, false);
-            job.setWorkOrder(wo);
+            building.setWorkOrder(wo);
         }
 
         return super.loadRequirements();
@@ -267,12 +267,7 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
             // Make sure the iterator is at the right Y-level
             final LayerBlueprintIterator layerBlueprintIterator = (LayerBlueprintIterator) structurePlacer.getA().getIterator();
             final BlockPos progressPos = getProgressPos() == null ? null : getProgressPos().getA();
-            if (progressPos == null)
-            {
-                // The quarrier starts building at the top
-                layerBlueprintIterator.setLayer(layerBlueprintIterator.getSize().getY() - 1);
-            }
-            else if (!progressPos.equals(NULL_POS))
+            if (progressPos != null && !progressPos.equals(NULL_POS))
             {
                 layerBlueprintIterator.setLayer(progressPos.getY());
             }
@@ -369,9 +364,9 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
         StructurePhasePlacementResult result;
         final WorkerLoadOnlyStructureHandler structure =
           new WorkerLoadOnlyStructureHandler(world, structurePlacer.getB().getWorldPos(), structurePlacer.getB().getBluePrint(), new PlacementSettings(), true, this);
-        job.getWorkOrder().setIteratorType("default");
+        building.getWorkOrder().setIteratorType("default");
 
-        final LayerBlueprintIterator iterator = new LayerBlueprintIterator(job.getWorkOrder().getIteratorType(), structure);
+        final LayerBlueprintIterator iterator = new LayerBlueprintIterator(building.getWorkOrder().getIteratorType(), structure);
         final StructurePlacer placer = new StructurePlacer(structure, iterator);
 
         if (requestProgress == null)
@@ -479,17 +474,17 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
             worker.getCitizenData().triggerInteraction(new StandardInteraction(Component.translatable(QUARRY_MINER_FINISHED_QUARRY), ChatPriority.BLOCKING));
             isCanceled = true;
         }
-        else if (job.getWorkOrder() != null && !job.getWorkOrder().getLocation().equals(job.findQuarry().getPosition().below(2)))
+        else if (building.getWorkOrder() != null && !building.getWorkOrder().getLocation().equals(job.findQuarry().getPosition().below(2)))
         {
             isCanceled = true;
         }
 
         if (isCanceled)
         {
-            if (job.hasWorkOrder())
+            if (building.hasWorkOrder())
             {
-                job.getColony().getWorkManager().removeWorkOrder(job.getWorkOrderId());
-                job.setWorkOrder(null);
+                job.getColony().getWorkManager().removeWorkOrder(building.getWorkOrder());
+                building.setWorkOrder(null);
             }
             blockToMine = null;
             building.setProgressPos(null, null);
@@ -504,6 +499,7 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
     {
         final LayerBlueprintIterator iterator = new LayerBlueprintIterator("default", structure);
         structurePlacer = new Tuple<>(new StructurePlacer(structure, iterator), structure);
+        iterator.setLayer(iterator.getSize().getY() - 1);
     }
 
     @Override
@@ -576,6 +572,11 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
         {
             blockToMine = null;
             return BUILDING_STEP;
+        }
+
+        if (!walkToConstructionSite(blockToMine))
+        {
+            return getState();
         }
 
         if (!mineBlock(blockToMine, getCurrentWorkingPosition()))

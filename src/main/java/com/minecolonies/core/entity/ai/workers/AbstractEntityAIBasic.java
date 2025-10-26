@@ -93,7 +93,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
     /**
      * The returned slot if a slot hasn't been found.
      */
-    private static final int NO_TOOL = -10;
+    protected static final int NO_TOOL = -10;
 
     /**
      * The standard delay after each terminated action.
@@ -1342,7 +1342,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
      * @param pos    the pos to mine
      * @return true if we have a tool for the job
      */
-    public final boolean holdEfficientTool(@NotNull final BlockState target, final BlockPos pos)
+    public boolean holdEfficientTool(@NotNull final BlockState target, final BlockPos pos)
     {
         final int bestSlot = getMostEfficientTool(target, pos);
         if (bestSlot >= 0)

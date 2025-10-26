@@ -25,13 +25,13 @@
     {
       "type": "minecolonies:dialogue",
       "target": 0,
-      "text": "While we are getting food from the farm, you still have to manually feed the citizens when they are hungry. How about we build a restaurant so that is taken care of automatically?",
+      "text": "While we are getting food from the farm, you still have to manually feed the citizens when they are hungry. How about we build a dining hall so that is taken care of automatically?",
       "options": [
         {
           "answer": "Sounds great!!",
           "result": {
             "type": "minecolonies:dialogue",
-            "text": "The cook in the restaurant will not only cook food for you in the furnace automatically, but they will also hand out food to citizens that are hungry. You know the drill, craft the restaurant hut block in a crafting bench. This time surround an apple with planks and the build tool at the top.'",
+            "text": "The waiter in the dining hall will not only cook food for you in the furnace automatically, but they will also hand out food to citizens that are hungry. You know the drill, craft the dining hall hut block in a crafting bench. This time surround an apple with planks and the build tool at the top.'",
             "options": [
               {
                 "answer": "On it!",
@@ -44,7 +44,7 @@
                 "answer": "Already done!",
                 "result": {
                   "type": "minecolonies:dialogue",
-                  "text": "Alrighty then! Then it's time to place the Restaurant with the Build Tool, click build and provide your Builder with the necessary items like the last time and come back once it is built!",
+                  "text": "Alrighty then! Then it's time to place the dining hall with the Build Tool, click build and provide your Builder with the necessary items like the last time and come back once it is built!",
                   "options": [
                     {
                       "answer": "Consider it done!",
@@ -86,7 +86,7 @@
     {
       "type": "minecolonies:dialogue",
       "target": 0,
-      "text": "Welcome back, were you able to craft the Restaurant hut block?",
+      "text": "Welcome back, were you able to craft the dining hall hut block?",
       "options": [
         {
           "answer": "No, I forgot the recipe!",
@@ -107,7 +107,7 @@
           "answer": "Yes, done, what's next?",
           "result": {
             "type": "minecolonies:dialogue",
-            "text": "Alrighty then! Then it's time to place the Restaurant with the Build Tool, click build and provide your Builder with the necessary items like the last time and come back once it is built!",
+            "text": "Alrighty then! Then it's time to place the dining hall with the Build Tool, click build and provide your Builder with the necessary items like the last time and come back once it is built!",
             "options": [
               {
                 "answer": "Consider it done!",
@@ -142,7 +142,7 @@
       "unlocks-rewards": [0],
       "type": "minecolonies:dialogue",
       "target": 0,
-      "text": "Neat, soon your cook will hand out food to your citizens, just make sure the restaurant is supplied with food and there is a menu setup for what the cook will hand out. Keep in mind that vanilla foods are not as saturating for citizens as they are for players. Here, have some coal to serve as initial fuel!",
+      "text": "Neat, soon the waiter will hand out food to your citizens, just make sure the dining hall is supplied with food and there is a menu setup for what the waiter will hand out. Keep in mind that vanilla foods are not as saturating for citizens as they are for players. Here, have some coal to serve as initial fuel!",
       "options": [
         {
           "answer": "See you in a bit!",
