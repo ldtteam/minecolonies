@@ -38,9 +38,6 @@ public class CommandRaid implements IMCOPCommand
     private static final DynamicCommandExceptionType ERROR_INVALID_COLONY_EVENT_TYPE =
         new DynamicCommandExceptionType(entry -> Component.translatableEscape("com.minecolonies.command.raid.colony_type.invalid", entry));
 
-    private static final DynamicCommandExceptionType ERROR_COLONY_EVENT_NO_RAID =
-        new DynamicCommandExceptionType(entry -> Component.translatableEscape("com.minecolonies.command.raid.colony_type.noraid", entry));
-
     /**
      * Run the command with all fields including the raid type and ship set.
      *
@@ -105,7 +102,7 @@ public class CommandRaid implements IMCOPCommand
         {
             return raidType.getPath();
         }
-        throw ERROR_COLONY_EVENT_NO_RAID.create(raidType);
+        throw ERROR_INVALID_COLONY_EVENT_TYPE.create(raidType);
     }
 
     @Override
