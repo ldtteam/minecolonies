@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.core.entity.citizen.EntityCitizen;
+import it.unimi.dsi.fastutil.objects.Object2IntArrayMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
@@ -61,7 +62,7 @@ public abstract class AbstractJobCrafter<AI extends AbstractEntityAIBasic<J, ? e
      * The current map of secondary outputs that need to return to the warehouse after crafting is done.
      */
     @NotNull
-    private final Map<ItemStorage, Integer> secondaryOutputs = new HashMap<>();
+    private final Map<ItemStorage, Integer> secondaryOutputs = new Object2IntArrayMap<>();
 
     /**
      * Instantiates the job for the crafter.
