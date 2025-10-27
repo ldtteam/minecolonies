@@ -12,6 +12,8 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.commands.arguments.selector.EntitySelectorParser;
 import net.minecraft.world.level.Level;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.fml.loading.FMLLoader;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -107,9 +109,9 @@ public abstract class MultipleOptionsArgument<TValue> implements ArgumentType<Mu
                 allowedOption.createSuggestions(source.getLevel(), source, builder);
             }
         }
-        else if (context.getSource() instanceof ClientSuggestionProvider suggestionProvider)
+        else if (FMLLoader.getDist().isClient())
         {
-            ClientSuggester.loadClientSuggestions(suggestionProvider, builder, allowedOptions);
+            ClientSuggester.loadClientSuggestions(context.getSource(), builder, allowedOptions);
         }
 
         return builder.buildFuture();
@@ -160,19 +162,22 @@ public abstract class MultipleOptionsArgument<TValue> implements ArgumentType<Mu
         /**
          * Load the suggestions for the client side suggestion provider.
          *
-         * @param suggestionProvider the suggestion provider.
+         * @param source             The command context source.
          * @param builder            the suggestion builder.
          * @param allowedOptions     the list of allowed options.
          * @param <TValue>           the generic argument of the option value.
          */
         private static <TValue> void loadClientSuggestions(
-            final ClientSuggestionProvider suggestionProvider,
+            final Object source,
             final SuggestionsBuilder builder,
             final List<MultipleOptionsArgument.ArgumentOption<TValue>> allowedOptions)
         {
-            for (final ArgumentOption<TValue> allowedOption : allowedOptions)
+            if (source instanceof ClientSuggestionProvider clientSuggestionProvider)
             {
-                allowedOption.createSuggestions(Minecraft.getInstance().level, suggestionProvider, builder);
+                for (final ArgumentOption<TValue> allowedOption : allowedOptions)
+                {
+                    allowedOption.createSuggestions(Minecraft.getInstance().level, clientSuggestionProvider, builder);
+                }
             }
         }
     }
