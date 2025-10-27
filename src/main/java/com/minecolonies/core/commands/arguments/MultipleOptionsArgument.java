@@ -109,10 +109,7 @@ public abstract class MultipleOptionsArgument<TValue> implements ArgumentType<Mu
         }
         else if (context.getSource() instanceof ClientSuggestionProvider suggestionProvider)
         {
-            for (final ArgumentOption<TValue> allowedOption : allowedOptions)
-            {
-                allowedOption.createSuggestions(Minecraft.getInstance().level, suggestionProvider, builder);
-            }
+            ClientSuggester.loadClientSuggestions(suggestionProvider, builder, allowedOptions);
         }
 
         return builder.buildFuture();
@@ -153,5 +150,30 @@ public abstract class MultipleOptionsArgument<TValue> implements ArgumentType<Mu
          * @param builder            the suggestion builder.
          */
         void createSuggestions(final Level world, final SharedSuggestionProvider suggestionProvider, final SuggestionsBuilder builder);
+    }
+
+    /**
+     * Special client side class to prevent side aware classloading issues.
+     */
+    private static class ClientSuggester
+    {
+        /**
+         * Load the suggestions for the client side suggestion provider.
+         *
+         * @param suggestionProvider the suggestion provider.
+         * @param builder            the suggestion builder.
+         * @param allowedOptions     the list of allowed options.
+         * @param <TValue>           the generic argument of the option value.
+         */
+        private static <TValue> void loadClientSuggestions(
+            final ClientSuggestionProvider suggestionProvider,
+            final SuggestionsBuilder builder,
+            final List<MultipleOptionsArgument.ArgumentOption<TValue>> allowedOptions)
+        {
+            for (final ArgumentOption<TValue> allowedOption : allowedOptions)
+            {
+                allowedOption.createSuggestions(Minecraft.getInstance().level, suggestionProvider, builder);
+            }
+        }
     }
 }
