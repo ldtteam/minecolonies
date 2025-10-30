@@ -459,7 +459,20 @@ public interface IColony
     void setNameStyle(final String style);
 
     /**
-     * Get the matching citizen name file of the colony .
+     * Check if any civilians have names from a different name pack.
+     *
+     * @return true if there are civilians whose names should be regenerated.
+     */
+    boolean hasCitizensWithMismatchedNamePack();
+
+    /**
+     * Regenerate names for all civilians with mismatched name packs.
+     * Special names are never regenerated.
+     */
+    void regenerateAllNames();
+
+    /**
+     * Get the matching citizen name file of the colony.
      *
      * @return the matching file.
      */

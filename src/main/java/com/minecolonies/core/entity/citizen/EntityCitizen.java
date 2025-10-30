@@ -365,6 +365,10 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
 
         if (!ItemStackUtils.isEmpty(player.getItemInHand(hand)) && player.getItemInHand(hand).is(Items.NAME_TAG))
         {
+            if (citizenData != null)
+            {
+                citizenData.setHasSpecialName(true);
+            }
             return super.checkAndHandleImportantInteractions(player, hand);
         }
 
@@ -1525,7 +1529,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     {
         return this.isBaby() ? 0.62F : 1.0F;
     }
-    
+
     /**
      * Called when the mob's health reaches 0.
      *
@@ -1954,7 +1958,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     {
         return citizenColonyHandler.getColonyId();
     }
-    
+
     /**
      * Decrease idle saturation.
      * @return saturation.

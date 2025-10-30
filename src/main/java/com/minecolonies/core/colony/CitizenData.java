@@ -246,6 +246,16 @@ public class CitizenData implements ICitizenData
     private String textureSuffix;
 
     /**
+     * Whether this citizen has a special name (nametag or custom visitor).
+     */
+    private boolean specialName = false;
+
+    /**
+     * The name pack used for this citizen's current name.
+     */
+    private String assignedNamePack = "";
+
+    /**
      * The status icon to display
      */
     private VisibleCitizenStatus status;
@@ -517,6 +527,7 @@ public class CitizenData implements ICitizenData
         paused = false;
         name = generateName(random, female, getColony(), getColony().getCitizenNameFile());
         textureId = random.nextInt(255);
+        assignedNamePack = getColony().getNameStyle();
 
         saturation = MAX_SATURATION;
 
@@ -780,6 +791,7 @@ public class CitizenData implements ICitizenData
             }
         }
         this.name = citizenName;
+        this.assignedNamePack = getColony().getNameStyle();
     }
 
     @Override
@@ -812,6 +824,24 @@ public class CitizenData implements ICitizenData
     {
         this.female = isFemale;
         this.name = generateName(random, isFemale, getColony(), getColony().getCitizenNameFile());
+        this.assignedNamePack = getColony().getNameStyle();
+        markDirty(0);
+    }
+
+    @Override
+    public void regenerateName()
+    {
+        if (specialName)
+        {
+            return;
+        }
+
+        this.name = generateName(random, this.female, getColony(), getColony().getCitizenNameFile());
+        this.assignedNamePack = getColony().getNameStyle();
+        if (getEntity().isPresent())
+        {
+            getEntity().get().setCustomName(Component.literal(this.name));
+        }
         markDirty(0);
     }
 
@@ -1134,6 +1164,8 @@ public class CitizenData implements ICitizenData
             buf.writeUUID(textureUUID);
         }
         buf.writeBoolean(citizenDiseaseHandler.isSick());
+        buf.writeUtf(assignedNamePack);
+        buf.writeBoolean(specialName);
     }
 
     @Override
@@ -1157,6 +1189,35 @@ public class CitizenData implements ICitizenData
     {
         this.name = name;
         markDirty(0);
+    }
+
+    @Override
+    public void setName(final String name, final boolean hasSpecialName)
+    {
+        this.name = name;
+        this.specialName = hasSpecialName;
+        // Special names don't have an associated name pack; regular names use current colony pack
+        this.assignedNamePack = hasSpecialName ? "" : getColony().getNameStyle();
+        markDirty(0);
+    }
+
+    @Override
+    public void setHasSpecialName(final boolean hasSpecialName)
+    {
+        this.specialName = hasSpecialName;
+        markDirty(60);
+    }
+
+    @Override
+    public boolean hasSpecialName()
+    {
+        return specialName;
+    }
+
+    @Override
+    public String getAssignedNamePack()
+    {
+        return assignedNamePack;
     }
 
     @Override
@@ -1308,6 +1369,8 @@ public class CitizenData implements ICitizenData
         nbtTagCompound.putBoolean(TAG_PAUSED, paused);
         nbtTagCompound.putBoolean(TAG_CHILD, isChild);
         nbtTagCompound.putInt(TAG_TEXTURE, textureId);
+        nbtTagCompound.putBoolean(TAG_SPECIAL_NAME, specialName);
+        nbtTagCompound.putString(TAG_NAME_PACK, assignedNamePack);
 
         nbtTagCompound.put(TAG_NEW_SKILLS, citizenSkillHandler.write());
 
@@ -1411,6 +1474,16 @@ public class CitizenData implements ICitizenData
         paused = nbtTagCompound.getBoolean(TAG_PAUSED);
         isChild = nbtTagCompound.getBoolean(TAG_CHILD);
         textureId = nbtTagCompound.getInt(TAG_TEXTURE);
+        specialName = nbtTagCompound.getBoolean(TAG_SPECIAL_NAME);
+
+        if (nbtTagCompound.contains(TAG_NAME_PACK))
+        {
+            assignedNamePack = nbtTagCompound.getString(TAG_NAME_PACK);
+        }
+        else
+        {
+            assignedNamePack = getColony() != null ? getColony().getNameStyle() : "";
+        }
 
         if (nbtTagCompound.contains(TAG_SUFFIX))
         {

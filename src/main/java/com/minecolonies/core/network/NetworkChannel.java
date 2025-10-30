@@ -204,6 +204,7 @@ public class NetworkChannel
         registerMessage(++idx, QuarryHiringModeMessage.class, QuarryHiringModeMessage::new);
         registerMessage(++idx, ToggleRecipeMessage.class, ToggleRecipeMessage::new);
         registerMessage(++idx, ColonyNameStyleMessage.class, ColonyNameStyleMessage::new);
+        registerMessage(++idx, ColonyRegenerateNamesMessage.class, ColonyRegenerateNamesMessage::new);
         registerMessage(++idx, InteractionClose.class, InteractionClose::new);
         registerMessage(++idx, GetColonyInfoMessage.class, GetColonyInfoMessage::new);
         registerMessage(++idx, PickupBlockMessage.class, PickupBlockMessage::new);

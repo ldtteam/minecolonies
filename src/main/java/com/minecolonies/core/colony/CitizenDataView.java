@@ -186,6 +186,16 @@ public class CitizenDataView implements ICitizenDataView
     private boolean isSick;
 
     /**
+     * The name pack that was used to generate this citizen's name.
+     */
+    private String assignedNamePack = "";
+
+    /**
+     * Whether this citizen has a special name (from nametag or custom visitor).
+     */
+    private boolean specialName = false;
+
+    /**
      * Set View id.
      *
      * @param id the id to set.
@@ -435,6 +445,8 @@ public class CitizenDataView implements ICitizenDataView
             textureUUID = buf.readUUID();
         }
         this.isSick = buf.readBoolean();
+        this.assignedNamePack = buf.readUtf(32767);
+        this.specialName = buf.readBoolean();
     }
 
     @Override
@@ -671,5 +683,25 @@ public class CitizenDataView implements ICitizenDataView
     public boolean isSick()
     {
         return this.isSick;
+    }
+
+    /**
+     * Get the name pack that was used to generate this citizen's name.
+     *
+     * @return The assigned name pack, or empty string if none/special name.
+     */
+    public String getAssignedNamePack()
+    {
+        return this.assignedNamePack;
+    }
+
+    /**
+     * Check if this citizen has a special name (from nametag or custom visitor).
+     *
+     * @return True if the citizen has a special name.
+     */
+    public boolean hasSpecialName()
+    {
+        return this.specialName;
     }
 }

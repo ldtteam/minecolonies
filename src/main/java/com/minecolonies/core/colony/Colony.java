@@ -67,6 +67,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Stream;
 
 import static com.minecolonies.api.colony.ColonyState.*;
 import static com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickRateConstants.MAX_TICKRATE;
@@ -735,6 +736,11 @@ public class Colony implements IColony
 
         mercenaryLastUse = compound.getLong(TAG_MERCENARY_TIME);
         additionalChildTime = compound.getInt(TAG_CHILD_TIME);
+
+        if (compound.contains(TAG_COL_NAME_STYLE))
+        {
+            this.nameStyle = compound.getString(TAG_COL_NAME_STYLE);
+        }
 
         // Permissions
         permissions.loadPermissions(compound);
@@ -1939,6 +1945,42 @@ public class Colony implements IColony
     public void setNameStyle(final String style)
     {
         this.nameStyle = style;
+        this.markDirty();
+    }
+
+    /**
+     * Check if a civilian has a mismatched name pack.
+     *
+     * @param civilian the civilian to check.
+     * @param currentNamePack the current colony name pack.
+     * @return true if the name should be regenerated.
+     */
+    private boolean hasMismatchedNamePack(final ICivilianData civilian, final String currentNamePack)
+    {
+        if (civilian.hasSpecialName())
+        {
+            return false;
+        }
+        return civilian.getAssignedNamePack().isEmpty() || !civilian.getAssignedNamePack().equals(currentNamePack);
+    }
+
+    @Override
+    public boolean hasCitizensWithMismatchedNamePack()
+    {
+        final String currentNamePack = this.getNameStyle();
+        return citizenManager.getCitizens().stream()
+            .anyMatch(civilian -> hasMismatchedNamePack(civilian, currentNamePack));
+    }
+
+    @Override
+    public void regenerateAllNames()
+    {
+        final String currentNamePack = this.getNameStyle();
+
+        citizenManager.getCitizens().stream()
+            .filter(civilian -> hasMismatchedNamePack(civilian, currentNamePack))
+            .forEach(ICivilianData::regenerateName);
+
         this.markDirty();
     }
 

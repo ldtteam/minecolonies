@@ -1493,6 +1493,22 @@ public final class ColonyView implements IColonyView
     }
 
     @Override
+    public boolean hasCitizensWithMismatchedNamePack()
+    {
+        final String currentNameStyle = this.getNameStyle();
+        return citizens.values().stream()
+            .filter(citizen -> citizen instanceof CitizenDataView)
+            .map(citizen -> (CitizenDataView) citizen)
+            .anyMatch(citizen -> !citizen.hasSpecialName() &&
+                (citizen.getAssignedNamePack().isEmpty() || !citizen.getAssignedNamePack().equals(currentNameStyle)));
+    }
+
+    @Override
+    public void regenerateAllNames()
+    {
+    }
+
+    @Override
     public String getNameStyle()
     {
         return this.nameStyle;

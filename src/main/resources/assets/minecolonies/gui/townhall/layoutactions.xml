@@ -26,12 +26,12 @@
     <text label="$(com.minecolonies.coremod.gui.townhall.visual)" textalign="MIDDLE" pos="280 35" size="129 11" color="black"/>
 
     <button id="bannerPicker" label="$(com.minecolonies.coremod.gui.townhall.edit_flag)" pos="280 57" size="129 17"
-                 source="minecolonies:textures/gui/builderhut/builder_button_medium_large_banner.png"  textcolor="black"/>bu
+                 source="minecolonies:textures/gui/builderhut/builder_button_medium_large_banner.png"  textcolor="black"/>
 
-    <text id="pickColor" label="$(com.minecolonies.coremod.gui.townhall.pickteamcolor)" pos="269 83" size="148 11" color="black"/>
+    <text id="pickColor" label="$(com.minecolonies.coremod.gui.townhall.pickteamcolor)" pos="269 82" size="148 11" color="black"/>
     <dropdown id="colorPicker"
               size="86 17"
-              pos="337 80"
+              pos="337 79"
               maxContentHeight="75"
               dropDownSize="86 75"
               source="minecolonies:textures/gui/builderhut/builder_button_medium.png"
@@ -43,24 +43,24 @@
         </view>
     </dropdown>
 
-    <text label="$(com.minecolonies.coremod.gui.townhall.pickcolonystyle)" pos="269 108" size="148 11"  color="black"/>
+    <text label="$(com.minecolonies.coremod.gui.townhall.pickcolonystyle)" pos="269 104" size="148 11"  color="black"/>
     <button id="colonyStylePicker"
                  size="86 17"
-                 pos="337 105"
+                 pos="337 101"
                  source="minecolonies:textures/gui/builderhut/builder_button_medium.png"
                  disabled="minecolonies:textures/gui/builderhut/builder_button_medium_disabled.png"
                  textcolor="black"/>
 
-    <button id="patreon" size="120 19" pos="288 133" source="minecolonies:textures/gui/patreonwidget.png"
+    <button id="patreon" size="120 19" pos="288 126" source="minecolonies:textures/gui/patreonwidget.png"
                  label="$(com.minecolonies.coremod.gui.townhall.patreon)" tooltip="$(com.minecolonies.coremod.gui.townhall.patreon.hover)" />
 
 
-    <text label="$(com.minecolonies.coremod.gui.townhall.picktexturestyle)" pos="269 168" size="148 11" color="black"/>
+    <text label="$(com.minecolonies.coremod.gui.townhall.picktexturestyle)" pos="269 153" size="148 11" color="black"/>
     <dropdown id="textureStylePicker"
               size="86 17"
-              pos="337 165"
+              pos="337 150"
               maxContentHeight="75"
-              dropDownSize="86 55"
+              dropDownSize="86 75"
               source="minecolonies:textures/gui/builderhut/builder_button_medium.png"
               disabled="minecolonies:textures/gui/builderhut/builder_button_medium_disabled.png"
               textcolor="black"
@@ -71,23 +71,31 @@
             <button id="button" size="86 17" pos="0 0" source="minecolonies:textures/gui/builderhut/builder_button_medium.png" textcolor="black"/>
         </view>
     </dropdown>
-    <button id="resettexture" size="86 17" pos="337 165" source="minecolonies:textures/gui/builderhut/builder_button_medium.png"
+    <button id="resettexture" size="86 17" pos="337 150" source="minecolonies:textures/gui/builderhut/builder_button_medium.png"
                  visible="false" textcolor="black" text="$(com.minecolonies.gui.reset)"/>
 
-    <text label="$(com.minecolonies.coremod.gui.townhall.picknamestyle)" pos="269 193" size="148 11" color="black"/>
+    <text label="$(com.minecolonies.coremod.gui.townhall.picknamestyle)" pos="269 175" size="148 11" color="black"/>
     <dropdown id="nameStylePicker"
               size="86 17"
-              pos="337 190"
-              maxContentHeight="30"
-              dropDownSize="86 30"
+              pos="337 172"
+              maxContentHeight="75"
+              dropDownSize="86 75"
               source="minecolonies:textures/gui/builderhut/builder_button_medium.png"
               disabled="minecolonies:textures/gui/builderhut/builder_button_medium_disabled.png"
               textcolor="black"
               scrollbarOffset="9 0"
-              dropfixx="30"
+              dropfixx="75"
               enabled="false">
         <view size="100% 15">
             <button id="button" size="86 17" pos="0 0" source="minecolonies:textures/gui/builderhut/builder_button_medium.png" textcolor="black"/>
         </view>
     </dropdown>
+
+    <itemicon id="regenerateNamesCostIcon" size="16 16" pos="317 195"/>
+
+    <button id="regenerateNames" size="86 17" pos="337 194"
+            source="minecolonies:textures/gui/builderhut/builder_button_medium.png"
+            label="$(com.minecolonies.coremod.gui.townhall.regeneratenames)"
+            textcolor="black"
+            tooltip="$(com.minecolonies.coremod.gui.townhall.regeneratenames.tooltip)"/>
 </window>

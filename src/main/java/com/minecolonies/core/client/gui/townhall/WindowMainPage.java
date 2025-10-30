@@ -5,6 +5,7 @@ import com.ldtteam.blockui.PaneBuilders;
 import com.ldtteam.blockui.controls.AbstractTextBuilder;
 import com.ldtteam.blockui.controls.Button;
 import com.ldtteam.blockui.controls.ButtonImage;
+import com.ldtteam.blockui.controls.ItemIcon;
 import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.blockui.views.DropDownList;
 import com.ldtteam.structurize.client.gui.WindowSwitchPack;
@@ -14,15 +15,20 @@ import com.minecolonies.core.client.gui.WindowBannerPicker;
 import com.minecolonies.core.client.gui.map.WindowColonyMap;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingTownHall;
 import com.minecolonies.core.network.messages.server.colony.ColonyNameStyleMessage;
+import com.minecolonies.core.network.messages.server.colony.ColonyRegenerateNamesMessage;
 import com.minecolonies.core.network.messages.server.colony.ColonyStructureStyleMessage;
 import com.minecolonies.core.network.messages.server.colony.ColonyTextureStyleMessage;
 import com.minecolonies.core.network.messages.server.colony.TeamColonyColorChangeMessage;
+import com.minecolonies.api.util.InventoryUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.ConfirmLinkScreen;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -100,6 +106,7 @@ public class WindowMainPage extends AbstractWindowTownHall
         registerButton(BUTTON_MERCENARY, this::mercenaryClicked);
         registerButton(BUTTON_TOWNHALLMAP, this::mapButtonClicked);
         registerButton(BUTTON_PATREON, this::patreonClicked);
+        registerButton(BUTTON_REGENERATE_NAMES, this::regenerateNamesClicked);
 
         registerButton(BUTTON_COLONY_SWITCH_STYLE, this::switchPack);
 
@@ -258,7 +265,55 @@ public class WindowMainPage extends AbstractWindowTownHall
         final Pane textPane = findPaneByID(DROPDOWN_TEXT_ID);
         final Pane namePane = findPaneByID(DROPDOWN_NAME_ID);
         final Pane resetButton = findPaneByID(BUTTON_RESET_TEXTURE);
+        final ButtonImage regenerateNamesButton = findPaneOfTypeByID(BUTTON_REGENERATE_NAMES, ButtonImage.class);
+        final ItemIcon costIcon = findPaneOfTypeByID("regenerateNamesCostIcon", ItemIcon.class);
         final boolean isOwner = building.getColony().getPermissions().getOwner().equals(Minecraft.getInstance().player.getUUID());
+
+        if (building.getColony().hasCitizensWithMismatchedNamePack())
+        {
+            // Calculate nametag cost: 1 per 25 citizens without special names, minimum 1
+            final long citizensWithoutSpecialNames = building.getColony().getCitizens().values().stream()
+                .filter(citizen -> citizen instanceof com.minecolonies.core.colony.CitizenDataView)
+                .map(citizen -> (com.minecolonies.core.colony.CitizenDataView) citizen)
+                .filter(citizen -> !citizen.hasSpecialName())
+                .count();
+            final int requiredNametags = Math.max(1, (int) (citizensWithoutSpecialNames / 25));
+
+            final int availableNametags = InventoryUtils.getItemCountInItemHandler(
+                new InvWrapper(Minecraft.getInstance().player.getInventory()),
+                Items.NAME_TAG);
+
+            regenerateNamesButton.show();
+            costIcon.show();
+
+            final ItemStack nametagStack = new ItemStack(Items.NAME_TAG, requiredNametags);
+            costIcon.setItem(nametagStack);
+
+            // Enable button only when player has enough nametags or is in creative mode
+            if (Minecraft.getInstance().player.isCreative() || availableNametags >= requiredNametags)
+            {
+                regenerateNamesButton.enable();
+                PaneBuilders.tooltipBuilder()
+                    .hoverPane(regenerateNamesButton)
+                    .build()
+                    .setText(Component.translatable("com.minecolonies.coremod.gui.townhall.regeneratenames.tooltip"));
+            }
+            else
+            {
+                regenerateNamesButton.disable();
+                PaneBuilders.tooltipBuilder()
+                    .hoverPane(regenerateNamesButton)
+                    .build()
+                    .setText(Component.translatable("com.minecolonies.coremod.gui.townhall.regeneratenames.needmore",
+                        requiredNametags - availableNametags));
+            }
+        }
+        else
+        {
+            regenerateNamesButton.hide();
+            costIcon.hide();
+        }
+
         if (isFeatureUnlocked.get() && isOwner)
         {
             findPaneByID(BUTTON_PATREON).hide();
@@ -398,6 +453,14 @@ public class WindowMainPage extends AbstractWindowTownHall
     private void mapButtonClicked()
     {
         new WindowColonyMap(true, building).open();
+    }
+
+    /**
+     * Action performed when regenerate names button is clicked.
+     */
+    private void regenerateNamesClicked()
+    {
+        Network.getNetwork().sendToServer(new ColonyRegenerateNamesMessage(building.getColony()));
     }
 
     @Override
