@@ -44,7 +44,7 @@ public class MinimumStockModuleWindow extends AbstractModuleWindow<IMinimumStock
      */
     public MinimumStockModuleWindow(final IMinimumStockModuleView moduleView)
     {
-        super(moduleView, new ResourceLocation(Constants.MOD_ID, "gui/layouthuts/layoutminimumstock.xml"));
+        this(moduleView, new ResourceLocation(Constants.MOD_ID, "gui/layouthuts/layoutminimumstock.xml"));
     }
 
     /**
