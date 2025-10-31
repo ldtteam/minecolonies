@@ -54,7 +54,7 @@ public class MinimumStockModuleWindow extends AbstractModuleWindow<IMinimumStock
      */
     public MinimumStockModuleWindow(final IMinimumStockModuleView moduleView, final ResourceLocation layoutId)
     {
-        super(moduleView, new ResourceLocation(Constants.MOD_ID, layoutId));
+        super(moduleView, layoutId);
 
         resourceList = this.window.findPaneOfTypeByID("resourcesstock", ScrollingList.class);
 

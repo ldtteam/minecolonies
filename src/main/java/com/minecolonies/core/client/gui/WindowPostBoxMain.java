@@ -85,7 +85,7 @@ public class WindowPostBoxMain extends AbstractWindowRequestTree
      */
     public WindowPostBoxMain(final AbstractBuildingView buildingView)
     {
-        super(buildingView.getColony(), buildingView.getID(), new ResourceLocation(Constants.MOD_ID, "gui/windowpostbox.xml"));
+        super(buildingView.getColony(), buildingView.getID(), new ResourceLocation(Constants.MOD_ID, "gui/windowpostboxrequest.xml"));
         this.buildingView = buildingView;
         this.stackList = findPaneOfTypeByID(LIST_RESOURCES, ScrollingList.class);
         registerButton(BUTTON_INVENTORY, this::inventoryClicked);
