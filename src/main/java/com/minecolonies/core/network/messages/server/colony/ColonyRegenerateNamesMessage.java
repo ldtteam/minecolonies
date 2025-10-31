@@ -42,11 +42,7 @@ public class ColonyRegenerateNamesMessage extends AbstractColonyServerMessage
             return;
         }
 
-        // Calculate required nametags: 1 per 25 citizens without special names, minimum 1
-        final long citizensWithoutSpecialNames = colony.getCitizenManager().getCitizens().stream()
-            .filter(citizen -> !citizen.hasSpecialName())
-            .count();
-        final int requiredNametags = Math.max(1, (int) (citizensWithoutSpecialNames / 25));
+        final int requiredNametags = colony.calculateNameRegenerationCost();
 
         // Check if player has enough nametags (skip check for creative mode)
         if (!player.isCreative())

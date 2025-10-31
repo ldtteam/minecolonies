@@ -472,6 +472,13 @@ public interface IColony
     void regenerateAllNames();
 
     /**
+     * Calculate the nametag cost for regenerating citizen names.
+     *
+     * @return The number of nametags required (1 per 25 citizens without special names, minimum 1).
+     */
+    int calculateNameRegenerationCost();
+
+    /**
      * Get the matching citizen name file of the colony.
      *
      * @return the matching file.

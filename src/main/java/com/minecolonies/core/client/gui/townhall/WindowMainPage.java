@@ -271,17 +271,7 @@ public class WindowMainPage extends AbstractWindowTownHall
 
         if (building.getColony().hasCitizensWithMismatchedNamePack())
         {
-            // Calculate nametag cost: 1 per 25 citizens without special names, minimum 1
-            final long citizensWithoutSpecialNames = building.getColony().getCitizens().values().stream()
-                .filter(citizen -> citizen instanceof com.minecolonies.core.colony.CitizenDataView)
-                .map(citizen -> (com.minecolonies.core.colony.CitizenDataView) citizen)
-                .filter(citizen -> !citizen.hasSpecialName())
-                .count();
-            final int requiredNametags = Math.max(1, (int) (citizensWithoutSpecialNames / 25));
-
-            final int availableNametags = InventoryUtils.getItemCountInItemHandler(
-                new InvWrapper(Minecraft.getInstance().player.getInventory()),
-                Items.NAME_TAG);
+            final int requiredNametags = building.getColony().calculateNameRegenerationCost();
 
             regenerateNamesButton.show();
             costIcon.show();
@@ -289,24 +279,32 @@ public class WindowMainPage extends AbstractWindowTownHall
             final ItemStack nametagStack = new ItemStack(Items.NAME_TAG, requiredNametags);
             costIcon.setItem(nametagStack);
 
-            // Enable button only when player has enough nametags or is in creative mode
-            if (Minecraft.getInstance().player.isCreative() || availableNametags >= requiredNametags)
+            final boolean isCreative = Minecraft.getInstance().player.isCreative();
+            final int availableNametags = isCreative ? requiredNametags : InventoryUtils.getItemCountInItemHandler(
+                new InvWrapper(Minecraft.getInstance().player.getInventory()),
+                Items.NAME_TAG);
+
+            final boolean hasEnoughNametags = availableNametags >= requiredNametags;
+            if (hasEnoughNametags)
             {
                 regenerateNamesButton.enable();
-                PaneBuilders.tooltipBuilder()
-                    .hoverPane(regenerateNamesButton)
-                    .build()
-                    .setText(Component.translatable("com.minecolonies.coremod.gui.townhall.regeneratenames.tooltip"));
             }
             else
             {
                 regenerateNamesButton.disable();
-                PaneBuilders.tooltipBuilder()
-                    .hoverPane(regenerateNamesButton)
-                    .build()
-                    .setText(Component.translatable("com.minecolonies.coremod.gui.townhall.regeneratenames.needmore",
-                        requiredNametags - availableNametags));
             }
+
+            final Component tooltipText = hasEnoughNametags
+                ? Component.translatable("com.minecolonies.coremod.gui.townhall.regeneratenames.tooltip",
+                    Component.translatable(Items.NAME_TAG.getDescriptionId()))
+                : Component.translatable("com.minecolonies.coremod.gui.townhall.regeneratenames.needmore",
+                    requiredNametags - availableNametags,
+                    Component.translatable(Items.NAME_TAG.getDescriptionId()));
+
+            PaneBuilders.tooltipBuilder()
+                .hoverPane(regenerateNamesButton)
+                .build()
+                .setText(tooltipText);
         }
         else
         {

@@ -177,4 +177,24 @@ public interface ICitizenManager extends IEntityManager
      * Post building load actions
      */
     void afterBuildingLoad();
+
+    /**
+     * Check if any citizens have names from a different name pack than the colony's current style.
+     *
+     * @return true if there are citizens whose names should be regenerated.
+     */
+    boolean hasCitizensWithMismatchedNamePack();
+
+    /**
+     * Regenerate names for all citizens with mismatched name packs.
+     * Citizens with special names (from nametags) are never regenerated.
+     */
+    void regenerateAllNames();
+
+    /**
+     * Calculate the nametag cost for regenerating citizen names.
+     *
+     * @return The number of nametags required (1 per 25 citizens without special names, minimum 1).
+     */
+    int calculateNameRegenerationCost();
 }

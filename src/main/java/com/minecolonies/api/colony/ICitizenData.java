@@ -463,4 +463,38 @@ public interface ICitizenData extends ICivilianData, IQuestGiver, IQuestParticip
      * @return the leftover leisure time.
      */
     int getLeisureTime();
+
+    /**
+     * Regenerates the name using the current gender and colony name pack.
+     */
+    void regenerateName();
+
+    /**
+     * Set the name with optional special name flag.
+     *
+     * @param name the name to set.
+     * @param hasSpecialName true to prevent regeneration (nametag or custom visitor).
+     */
+    void setName(String name, boolean hasSpecialName);
+
+    /**
+     * Set whether this citizen has a special name.
+     *
+     * @param hasSpecialName true to prevent name regeneration.
+     */
+    void setHasSpecialName(boolean hasSpecialName);
+
+    /**
+     * Check if the citizen has a special name (nametag or custom visitor).
+     *
+     * @return true if the citizen has a special name.
+     */
+    boolean hasSpecialName();
+
+    /**
+     * Get the name pack used for this citizen's current name.
+     *
+     * @return the name pack identifier, or empty string for special names.
+     */
+    String getAssignedNamePack();
 }

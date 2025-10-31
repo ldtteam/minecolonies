@@ -56,11 +56,6 @@ public interface ICivilianData extends ICitizen, INBTSerializable<CompoundTag>
     void setGenderAndGenerateName(boolean isFemale);
 
     /**
-     * Regenerates the name using the current gender and colony name pack.
-     */
-    void regenerateName();
-
-    /**
      * Sets the gender
      *
      * @param isFemale
@@ -213,33 +208,4 @@ public interface ICivilianData extends ICitizen, INBTSerializable<CompoundTag>
      * @return uuid
      */
     UUID getUUID();
-
-    /**
-     * Set the name with optional special name flag.
-     *
-     * @param name the name to set.
-     * @param hasSpecialName true to prevent regeneration (nametag or custom visitor).
-     */
-    void setName(String name, boolean hasSpecialName);
-
-    /**
-     * Set whether this civilian has a special name.
-     *
-     * @param hasSpecialName true to prevent name regeneration.
-     */
-    void setHasSpecialName(boolean hasSpecialName);
-
-    /**
-     * Check if the civilian has a special name (nametag or custom visitor).
-     *
-     * @return true if the civilian has a special name.
-     */
-    boolean hasSpecialName();
-
-    /**
-     * Get the name pack used for this civilian's current name.
-     *
-     * @return the name pack identifier, or empty string for special names.
-     */
-    String getAssignedNamePack();
 }

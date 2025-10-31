@@ -1509,6 +1509,17 @@ public final class ColonyView implements IColonyView
     }
 
     @Override
+    public int calculateNameRegenerationCost()
+    {
+        final long citizensWithoutSpecialNames = citizens.values().stream()
+            .filter(citizen -> citizen instanceof CitizenDataView)
+            .map(citizen -> (CitizenDataView) citizen)
+            .filter(citizen -> !citizen.hasSpecialName())
+            .count();
+        return Math.max(1, (int) (citizensWithoutSpecialNames / 25));
+    }
+
+    @Override
     public String getNameStyle()
     {
         return this.nameStyle;

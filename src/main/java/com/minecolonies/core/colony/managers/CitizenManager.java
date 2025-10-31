@@ -709,4 +709,49 @@ public class CitizenManager implements ICitizenManager
             data.onBuildingLoad();
         }
     }
+
+    /**
+     * Check if a citizen has a mismatched name pack.
+     *
+     * @param citizen the citizen to check.
+     * @param currentNamePack the current colony name pack.
+     * @return true if the name should be regenerated.
+     */
+    private boolean hasMismatchedNamePack(final ICitizenData citizen, final String currentNamePack)
+    {
+        if (citizen.hasSpecialName())
+        {
+            return false;
+        }
+        return citizen.getAssignedNamePack().isEmpty() || !citizen.getAssignedNamePack().equals(currentNamePack);
+    }
+
+    @Override
+    public boolean hasCitizensWithMismatchedNamePack()
+    {
+        final String currentNamePack = colony.getNameStyle();
+        return citizens.values().stream()
+            .anyMatch(citizen -> hasMismatchedNamePack(citizen, currentNamePack));
+    }
+
+    @Override
+    public void regenerateAllNames()
+    {
+        final String currentNamePack = colony.getNameStyle();
+
+        citizens.values().stream()
+            .filter(citizen -> hasMismatchedNamePack(citizen, currentNamePack))
+            .forEach(ICitizenData::regenerateName);
+
+        colony.markDirty();
+    }
+
+    @Override
+    public int calculateNameRegenerationCost()
+    {
+        final long citizensWithoutSpecialNames = citizens.values().stream()
+            .filter(citizen -> !citizen.hasSpecialName())
+            .count();
+        return Math.max(1, (int) (citizensWithoutSpecialNames / 25));
+    }
 }

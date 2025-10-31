@@ -3,6 +3,7 @@ package com.minecolonies.core.colony;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.ldtteam.structurize.util.BlockUtils;
+import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.*;
 import com.minecolonies.api.colony.buildings.IBuilding;
@@ -20,6 +21,7 @@ import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.ITickRat
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickRateStateMachine;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickingTransition;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.eventbus.events.colony.ColonyNameStyleChangedModEvent;
 import com.minecolonies.api.quests.IQuestManager;
 import com.minecolonies.api.research.IResearchManager;
 import com.minecolonies.api.util.*;
@@ -736,11 +738,6 @@ public class Colony implements IColony
 
         mercenaryLastUse = compound.getLong(TAG_MERCENARY_TIME);
         additionalChildTime = compound.getInt(TAG_CHILD_TIME);
-
-        if (compound.contains(TAG_COL_NAME_STYLE))
-        {
-            this.nameStyle = compound.getString(TAG_COL_NAME_STYLE);
-        }
 
         // Permissions
         permissions.loadPermissions(compound);
@@ -1946,42 +1943,25 @@ public class Colony implements IColony
     {
         this.nameStyle = style;
         this.markDirty();
-    }
-
-    /**
-     * Check if a civilian has a mismatched name pack.
-     *
-     * @param civilian the civilian to check.
-     * @param currentNamePack the current colony name pack.
-     * @return true if the name should be regenerated.
-     */
-    private boolean hasMismatchedNamePack(final ICivilianData civilian, final String currentNamePack)
-    {
-        if (civilian.hasSpecialName())
-        {
-            return false;
-        }
-        return civilian.getAssignedNamePack().isEmpty() || !civilian.getAssignedNamePack().equals(currentNamePack);
+        IMinecoloniesAPI.getInstance().getEventBus().post(new ColonyNameStyleChangedModEvent(this));
     }
 
     @Override
     public boolean hasCitizensWithMismatchedNamePack()
     {
-        final String currentNamePack = this.getNameStyle();
-        return citizenManager.getCitizens().stream()
-            .anyMatch(civilian -> hasMismatchedNamePack(civilian, currentNamePack));
+        return citizenManager.hasCitizensWithMismatchedNamePack();
     }
 
     @Override
     public void regenerateAllNames()
     {
-        final String currentNamePack = this.getNameStyle();
+        citizenManager.regenerateAllNames();
+    }
 
-        citizenManager.getCitizens().stream()
-            .filter(civilian -> hasMismatchedNamePack(civilian, currentNamePack))
-            .forEach(ICivilianData::regenerateName);
-
-        this.markDirty();
+    @Override
+    public int calculateNameRegenerationCost()
+    {
+        return citizenManager.calculateNameRegenerationCost();
     }
 
     @Override
