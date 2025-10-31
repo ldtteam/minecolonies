@@ -45,6 +45,17 @@ public class MinimumStockModuleWindow extends AbstractModuleWindow<IMinimumStock
     public MinimumStockModuleWindow(final IMinimumStockModuleView moduleView)
     {
         super(moduleView, new ResourceLocation(Constants.MOD_ID, "gui/layouthuts/layoutminimumstock.xml"));
+    }
+
+    /**
+     * Constructor for the minimum stock window view.
+     *
+     * @param moduleView the module view.
+     * @param layoutId   the layout to use for rendering this window.
+     */
+    public MinimumStockModuleWindow(final IMinimumStockModuleView moduleView, final ResourceLocation layoutId)
+    {
+        super(moduleView, layoutId);
 
         resourceList = this.window.findPaneOfTypeByID("resourcesstock", ScrollingList.class);
 

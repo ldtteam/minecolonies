@@ -280,7 +280,7 @@ public class BuildingStructureHandler<J extends AbstractJobStructure<?, J>, B ex
             {
                 if (!ItemStackUtils.isEmpty(tempStack))
                 {
-                    InventoryUtils.reduceBucketAwareStackInItemHandler(this.getInventory(), tempStack);
+                    InventoryUtils.reduceBucketAwareStackInItemHandler(this.getInventory(), tempStack, tempStack.getCount());
                 }
             }
         }

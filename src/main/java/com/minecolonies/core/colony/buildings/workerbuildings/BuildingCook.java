@@ -7,7 +7,6 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.MathUtils;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
 import com.minecolonies.core.colony.buildings.modules.ItemListModule;
-import com.minecolonies.core.colony.buildings.modules.MinimumStockModule;
 import com.minecolonies.core.entity.other.SittingEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.ItemStack;
@@ -137,12 +136,7 @@ public class BuildingCook extends AbstractBuilding
         {
             return 0;
         }
-
-        if (inventory && getFirstModuleOccurance(MinimumStockModule.class).isStocked(stack))
-        {
-            return stack.getCount();
-        }
-
+        
         final Predicate<ItemStack> allowedFuel = theStack -> getModuleMatching(ItemListModule.class, m -> m.getId().equals(FUEL_LIST)).isItemInList(new ItemStorage(theStack));
         if (allowedFuel.test(stack) && (localAlreadyKept.stream().filter(storage -> allowedFuel.test(storage.getItemStack())).mapToInt(ItemStorage::getAmount).sum() < STACKSIZE
               || !inventory))

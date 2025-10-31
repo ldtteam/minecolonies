@@ -21,12 +21,14 @@ import com.minecolonies.core.entity.pathfinding.navigation.EntityNavigationUtils
 import com.minecolonies.core.network.messages.client.SleepingParticleMessage;
 import net.minecraft.core.BlockPos;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BedBlock;
 import net.minecraft.world.level.block.TrapDoorBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BedPart;
+import net.minecraft.world.phys.AABB;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -151,6 +153,7 @@ public class EntityAISleep implements IStateAI
     public void initAI()
     {
         usedBed = null;
+        bedTicks = 0;
     }
 
     private void findBedAndTryToSleep()
@@ -164,7 +167,7 @@ public class EntityAISleep implements IStateAI
                 final List<BlockPos> bedList = hut.getModule(BuildingModules.BED).getRegisteredBlocks();
                 final int index = hut.getFirstModuleOccurance(AbstractAssignedCitizenModule.class).getAssignedCitizen().indexOf(citizen.getCitizenData());
 
-                if (index < bedList.size())
+                if (index >= 0 && index < bedList.size())
                 {
                     final BlockPos pos = bedList.get(index);
                     if (WorldUtil.isEntityBlockLoaded(citizen.level, pos))
@@ -178,8 +181,7 @@ public class EntityAISleep implements IStateAI
                             return;
                         }
 
-                        if (!state.getValue(BedBlock.OCCUPIED)
-                            && state.getValue(BedBlock.PART).equals(BedPart.HEAD)
+                        if (state.getValue(BedBlock.PART).equals(BedPart.HEAD)
                             && (above.is(BlockTags.BEDS) || above.getBlock() instanceof PanelBlock || above.getBlock() instanceof TrapDoorBlock || !above.isSolid()))
                         {
                             usedBed = pos;
@@ -194,6 +196,15 @@ public class EntityAISleep implements IStateAI
             if (EntityNavigationUtils.walkToPosInBuilding(citizen, usedBed, citizen.getCitizenData().getHomeBuilding(), 12))
             {
                 bedTicks++;
+                final BlockState state = citizen.level.getBlockState(usedBed);
+                if (state.isBed(citizen.level(), usedBed, citizen) && state.getValue(BedBlock.OCCUPIED))
+                {
+                    if (!this.citizen.level.getEntitiesOfClass(LivingEntity.class, new AABB(usedBed), LivingEntity::isSleeping).isEmpty())
+                    {
+                        usedBed = homePos;
+                    }
+                }
+
                 if (!citizen.getCitizenSleepHandler().trySleep(usedBed))
                 {
                     citizen.getCitizenData().setBedPos(BlockPos.ZERO);

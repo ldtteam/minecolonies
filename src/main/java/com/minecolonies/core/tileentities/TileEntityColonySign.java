@@ -89,7 +89,10 @@ public class TileEntityColonySign extends BlockEntity implements ITickable
         super.load(compound);
         this.colonyId = compound.getInt(TAG_COLONY_ID);
         this.colonyNameCache = compound.getString(TAG_NAME);
-        this.anchor = BlockPosUtil.read(compound, TAG_POS);
+        if (compound.contains(TAG_POS))
+        {
+            this.anchor = BlockPosUtil.read(compound, TAG_POS);
+        }
         this.rotation = compound.getFloat(TAG_ROTATION);
         this.targetColonyId = compound.getInt(TAG_TARGET_COLONY_ID);
         this.targetColonyNameCache = compound.getString(TAG_TARGET_COLONY_NAME);
@@ -103,7 +106,10 @@ public class TileEntityColonySign extends BlockEntity implements ITickable
         super.saveAdditional(compound);
         compound.putInt(TAG_COLONY_ID, this.colonyId);
         compound.putString(TAG_NAME, this.colonyNameCache);
-        BlockPosUtil.write(compound, TAG_POS, anchor);
+        if (anchor != null)
+        {
+            BlockPosUtil.write(compound, TAG_POS, anchor);
+        }
         compound.putFloat(TAG_ROTATION, this.rotation);
         compound.putInt(TAG_TARGET_COLONY_ID, this.targetColonyId);
         compound.putString(TAG_TARGET_COLONY_NAME, this.targetColonyNameCache);

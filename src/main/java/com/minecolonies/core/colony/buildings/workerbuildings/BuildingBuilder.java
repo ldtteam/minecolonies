@@ -4,7 +4,6 @@ import com.ldtteam.blockui.views.BOWindow;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
-import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
 import com.minecolonies.api.colony.workorders.IBuilderWorkOrder;
 import com.minecolonies.api.colony.workorders.IServerWorkOrder;
@@ -19,7 +18,6 @@ import com.minecolonies.core.colony.buildings.modules.settings.BuilderModeSettin
 import com.minecolonies.core.colony.buildings.modules.settings.SettingKey;
 import com.minecolonies.core.colony.buildings.modules.settings.StringSetting;
 import com.minecolonies.core.colony.buildings.views.AbstractBuildingBuilderView;
-import com.minecolonies.core.colony.jobs.JobBuilder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
@@ -167,17 +165,16 @@ public class BuildingBuilder extends AbstractBuildingStructureBuilder
             return;
         }
 
-        if (citizen.getJob(JobBuilder.class).hasWorkOrder())
+        if (hasWorkOrder())
         {
             wo.setClaimedBy(getID());
             getColony().getWorkManager().setDirty(true);
             return;
         }
 
-        final IBuilding building = citizen.getWorkBuilding();
-        if (((IBuilderWorkOrder) wo).canBuildIgnoringDistance(building, building.getPosition(), building.getBuildingLevel()))
+        if (((IBuilderWorkOrder) wo).canBuildIgnoringDistance(this, this.getPosition(), this.getBuildingLevel()))
         {
-            citizen.getJob(JobBuilder.class).setWorkOrder(wo);
+            setWorkOrder(wo);
             wo.setClaimedBy(getID());
             getColony().getWorkManager().setDirty(true);
             markDirty();

@@ -147,7 +147,6 @@ public final class ModBuildingsInitializer
           .addBuildingModuleProducer(FURNACE)
           .addBuildingModuleProducer(ITEMLIST_FUEL)
           .addBuildingModuleProducer(RESTAURANT_MENU)
-          .addBuildingModuleProducer(MIN_STOCK)
           .addBuildingModuleProducer(STATS_MODULE)
           .createBuildingEntry());
 
@@ -389,6 +388,7 @@ public final class ModBuildingsInitializer
           .setBuildingProducer(PostBox::new)
           .setBuildingViewProducer(() -> PostBox.View::new)
           .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.POSTBOX_ID))
+          .addBuildingModuleProducer(MIN_STOCK_POSTBOX)
           .createBuildingEntry());
 
         ModBuildings.florist = DEFERRED_REGISTER.register(ModBuildings.FLORIST_ID, () -> new BuildingEntry.Builder()

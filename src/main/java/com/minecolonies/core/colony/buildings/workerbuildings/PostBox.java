@@ -12,14 +12,20 @@ import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.requestable.Stack;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
-import com.minecolonies.core.client.gui.WindowPostBox;
+import com.minecolonies.core.client.gui.modules.MinimumStockModuleWindow;
+import com.minecolonies.core.client.gui.WindowPostBoxMain;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
+import com.minecolonies.core.colony.buildings.moduleviews.MinimumStockModuleView;
 import com.minecolonies.core.colony.buildings.views.AbstractBuildingView;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Tuple;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
+
+import static com.minecolonies.api.util.constant.WindowConstants.WINDOW_POSTBOX_MINIMUM_STOCK;
 
 /**
  * Class used to manage the postbox building block.
@@ -58,7 +64,15 @@ public class PostBox extends AbstractBuilding implements IRSComponent
     @Override
     public int getMaxBuildingLevel()
     {
-        return 0;
+        /* We set the PostBox to level 1 by force to enable the minimum stock feature */
+        return 1;
+    }
+
+    @Override
+    public int getBuildingLevel()
+    {
+        /* We set the PostBox to level 1 by force to enable the minimum stock feature */
+        return 1;
     }
 
     @Override
@@ -110,7 +124,7 @@ public class PostBox extends AbstractBuilding implements IRSComponent
         @Override
         public BOWindow getWindow()
         {
-            return new WindowPostBox(this);
+            return new WindowPostBoxMain(this);
         }
 
         @NotNull
@@ -118,6 +132,25 @@ public class PostBox extends AbstractBuilding implements IRSComponent
         public MutableComponent getRequesterDisplayName(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
         {
             return Component.translatable("block.minecolonies.blockpostbox.name");
+        }
+    }
+
+    /*
+     * View class for the custom minimum stock PostBox functionality
+     */
+    public static class PostBoxMinimumStockModuleView extends MinimumStockModuleView
+    {
+        @Override
+        @OnlyIn(Dist.CLIENT)
+        public BOWindow getWindow() 
+        {
+            return new MinimumStockModuleWindow(buildingView, this, WINDOW_POSTBOX_MINIMUM_STOCK);
+        }
+
+        public boolean isPageVisible() 
+        {
+            /* We disable the module nav elements rendering using this, as there is no other module at this time */
+            return false;
         }
     }
 }
