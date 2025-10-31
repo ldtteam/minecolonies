@@ -1,0 +1,15 @@
+<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" size="440 244"
+        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/ldtteam/BlockUI/version/1.20.1/src/main/resources/assets/blockui/gui/block_ui.xsd"
+>
+    <button id="requestTab" size="32 26" pos="0 36"
+            source="minecolonies:textures/gui/modules/tab_side1.png"/>
+    <button id="minimumStockTab" size="32 26" pos="0 64"
+            source="minecolonies:textures/gui/modules/tab_side2.png"/>
+
+    <image source="minecolonies:textures/gui/citizen/colonist_paper.png" size="430 244" pos="10 0"/>
+
+    <button id="requestIcon" size="20 20" pos="5 39"
+            source="minecolonies:textures/gui/modules/requests.png"/>
+    <button id="minimumStockIcon" size="20 20" pos="5 67"
+            source="minecolonies:textures/gui/modules/info.png"/>
+</window>

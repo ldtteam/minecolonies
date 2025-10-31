@@ -137,7 +137,7 @@ public interface IBuilding extends IBuildingContainer, IModuleContainer<IBuildin
      *
      * @return true if the building is building, upgrading or repairing.
      */
-    boolean hasWorkOrder();
+    boolean isPendingConstruction();
 
     /**
      * Remove the work order for the building.

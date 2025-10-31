@@ -12,6 +12,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.vehicle.AbstractMinecart;
@@ -31,6 +32,8 @@ import java.util.Map;
  */
 public class MinecoloniesMinecart extends Minecart
 {
+    private static final Vec3 LOWERED_PASSENGER_ATTACHMENT = new Vec3(0.0, 0.0, 0.0);
+
     /**
      * Railshape matrix.
      */
@@ -388,5 +391,12 @@ public class MinecoloniesMinecart extends Minecart
         {
             this.remove(RemovalReason.DISCARDED);
         }
+    }
+
+    @Override
+    @NotNull
+    protected Vec3 getPassengerAttachmentPoint(@NotNull Entity p_294753_, @NotNull EntityDimensions p_295251_, float p_296054_)
+    {
+        return LOWERED_PASSENGER_ATTACHMENT;
     }
 }

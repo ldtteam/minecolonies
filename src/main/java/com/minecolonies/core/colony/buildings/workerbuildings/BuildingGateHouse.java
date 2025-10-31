@@ -116,7 +116,7 @@ public class BuildingGateHouse extends AbstractBuildingGuards
     {
         if (getLocationsFromTag(TAG_KNIGHT).size() < 2 || getLocationsFromTag(TAG_ARCHER).size() < 2)
         {
-            Log.getLogger().error("GateHouse at " + getID().toShortString() + " missing 'work' tag for guards of: " + getStructurePack() + " : " + getBlueprintPath());
+            Log.getLogger().error("GateHouse at " + getID().toShortString() + " missing 'knight' or 'archer' tag for guards of: " + getStructurePack() + " : " + getBlueprintPath());
             return getID();
         }
 

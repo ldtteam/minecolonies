@@ -1,6 +1,7 @@
 package com.minecolonies.core.blocks.huts;
 
 import com.minecolonies.api.blocks.AbstractBlockHut;
+import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.ModBuildings;
@@ -36,6 +37,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.TOWNHALL_BREAKING_DONE_MESSAGE;
+import static com.minecolonies.api.util.constant.TranslationConstants.WARNING_DUPLICATE_TOWN_HALL;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -206,5 +208,30 @@ public class BlockHutTownHall extends AbstractBlockHut<BlockHutTownHall>
             }
         }
         return ItemInteractionResult.SUCCESS;
+    }
+
+    /**
+     * Check if the block can be placed at the given position by the player.
+     *
+     * @param pos the position to check.
+     * @param player the player trying to place the block.
+     * @return true if the block can be placed.
+     */
+    @Override
+    public boolean canPlaceAt(final BlockPos pos, final Player player)
+    {
+        IColony colony = IColonyManager.getInstance().getIColony(player.level(), pos);
+        
+        if (colony.hasTownHall())
+        {
+            IBuilding townHall = colony.getBuildingManager().getTownHall();
+            
+            if (colony.getWorld() != null && !colony.getWorld().isClientSide)
+            {
+                MessageUtils.format(WARNING_DUPLICATE_TOWN_HALL, townHall.getPosition().toShortString()).sendTo(player);
+            }
+            return false;
+        }
+        return true;
     }
 }

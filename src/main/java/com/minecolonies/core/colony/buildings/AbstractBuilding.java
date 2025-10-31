@@ -602,7 +602,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
      * @return true if the building is building, upgrading or repairing.
      */
     @Override
-    public boolean hasWorkOrder()
+    public boolean isPendingConstruction()
     {
         return getCurrentWorkOrderLevel() != NO_WORK_ORDER;
     }

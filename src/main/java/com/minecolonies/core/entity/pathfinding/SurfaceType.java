@@ -123,7 +123,8 @@ public enum SurfaceType
                && (ShapeUtil.max(shape, Direction.Axis.Z) - ShapeUtil.min(shape, Direction.Axis.Z)) >= 0.85)
               || (blockState.getBlock() == Blocks.SNOW && blockState.getValue(SnowLayerBlock.LAYERS) > 1)
               || block instanceof FloatingCarpetBlock
-              || block instanceof CarpetBlock)
+              || block instanceof CarpetBlock
+              || block instanceof WaterlilyBlock)
         {
             return SurfaceType.WALKABLE;
         }
