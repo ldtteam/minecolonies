@@ -267,7 +267,8 @@ public class CustomRecipe
                 {
                     JsonObject ingredient = e.getAsJsonObject();
                     ItemStorage parsed = new ItemStorage(ingredient);
-                    if(!parsed.isEmpty()) {
+                    if (!parsed.isEmpty())
+                    {
                         recipe.inputs.add(parsed);
                     }
                 }
@@ -815,7 +816,7 @@ public class CustomRecipe
 
             IRecipeManager recipeManager = IColonyManager.getInstance().getRecipeManager();
             IToken<?> cachedRecipeToken = recipeManager.getRecipeId(cachedRecipeStorage);
-            if(cachedRecipeToken != null && !cachedRecipeToken.equals(cachedRecipeStorage.getToken()))
+            if (cachedRecipeToken != null && !cachedRecipeToken.equals(cachedRecipeStorage.getToken()))
             {
                 cachedRecipeStorage = (RecipeStorage) recipeManager.getRecipes().get(cachedRecipeToken);
             }

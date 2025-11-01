@@ -79,7 +79,7 @@ public class ItemStorageFactory implements IItemStorageFactory
     @Override
     public ItemStorage deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundTag nbt)
     {
-        final ItemStack stack = ItemStack.of(nbt.getCompound(TAG_STACK));
+        final ItemStack stack = ItemStack.of(nbt.getCompound(TAG_STACK)).copyWithCount(1);
         final int size = nbt.getInt(TAG_SIZE);
         final boolean ignoreNBT = nbt.getBoolean(TAG_SHOULDIGNORENBT);
         final boolean ignoreDamage = nbt.getBoolean(TAG_SHOULDIGNOREDAMAGE);

@@ -2,6 +2,7 @@ package com.minecolonies.api.crafting;
 
 import com.google.gson.JsonObject;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.core.util.GsonHelper;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -46,7 +47,7 @@ public class ItemStorage
      */
     public ItemStorage(@NotNull final ItemStack stack, final int amount, final boolean ignoreDamageValue)
     {
-        this.stack = stack;
+        this.stack = stack.copyWithCount(1);
         this.shouldIgnoreDamageValue = ignoreDamageValue;
         this.shouldIgnoreNBTValue = ignoreDamageValue;
         this.amount = amount;
@@ -62,7 +63,7 @@ public class ItemStorage
      */
     public ItemStorage(@NotNull final ItemStack stack, final int amount, final boolean ignoreDamageValue, final boolean ignoreNBTValue)
     {
-        this.stack = stack;
+        this.stack = stack.copyWithCount(1);
         this.shouldIgnoreDamageValue = ignoreDamageValue;
         this.shouldIgnoreNBTValue = ignoreNBTValue;
         this.amount = amount;
@@ -88,7 +89,7 @@ public class ItemStorage
      */
     public ItemStorage(@NotNull final ItemStack stack, final boolean ignoreDamageValue, final boolean shouldIgnoreNBTValue)
     {
-        this.stack = stack;
+        this.stack = stack.copyWithCount(1);
         this.shouldIgnoreDamageValue = ignoreDamageValue;
         this.shouldIgnoreNBTValue = shouldIgnoreNBTValue;
         this.amount = ItemStackUtils.getSize(stack);
@@ -102,7 +103,7 @@ public class ItemStorage
      */
     public ItemStorage(@NotNull final ItemStack stack, final boolean ignoreDamageValue)
     {
-        this.stack = stack;
+        this.stack = stack.copyWithCount(1);
         this.shouldIgnoreDamageValue = ignoreDamageValue;
         this.shouldIgnoreNBTValue = false;
         this.amount = ItemStackUtils.getSize(stack);
@@ -115,7 +116,7 @@ public class ItemStorage
      */
     public ItemStorage(@NotNull final ItemStack stack)
     {
-        this.stack = stack;
+        this.stack = stack.copyWithCount(1);
         this.shouldIgnoreDamageValue = false;
         this.shouldIgnoreNBTValue = false;
         this.amount = ItemStackUtils.getSize(stack);
@@ -152,34 +153,10 @@ public class ItemStorage
     {
         if (jObject.has(ITEM_PROP))
         {
-            final ItemStack parsedStack = ItemStackUtils.idToItemStack(jObject.get(ITEM_PROP).getAsString());
-            if(jObject.has(COUNT_PROP))
-            {
-                parsedStack.setCount(jObject.get(COUNT_PROP).getAsInt());
-                this.amount = jObject.get(COUNT_PROP).getAsInt();
-            }
-            else
-            {
-                this.amount = parsedStack.getCount();
-            }
-            this.stack = parsedStack;
-            if(jObject.has(MATCHTYPE_PROP))
-            {
-                String matchType = jObject.get(MATCHTYPE_PROP).getAsString();
-                if(matchType.equals(MATCH_NBTIGNORE))
-                {
-                    this.shouldIgnoreNBTValue = true;
-                }
-                else // includes "exact"
-                {
-                    this.shouldIgnoreNBTValue = false;
-                }
-            }
-            else
-            {
-                this.shouldIgnoreNBTValue = false;
-            }
-            this.shouldIgnoreDamageValue= true;
+            this.stack = ItemStackUtils.idToItemStack(jObject.get(ITEM_PROP).getAsString());
+            this.amount = GsonHelper.getAsInt(jObject, COUNT_PROP, 1);
+            this.shouldIgnoreNBTValue = GsonHelper.getAsString(jObject, MATCHTYPE_PROP, "exact").equals(MATCH_NBTIGNORE);
+            this.shouldIgnoreDamageValue = true;
         }
         else
         {
