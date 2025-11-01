@@ -84,7 +84,16 @@ public abstract class MultipleOptionsArgument<TValue> implements ArgumentType<Mu
     {
         if (reader.canRead())
         {
-            final String argumentValue = reader.readString();
+            final String argumentValue;
+            if (reader.peek() == '@')
+            {
+                reader.skip();
+                argumentValue = "@" + reader.readString();
+            }
+            else
+            {
+                argumentValue = reader.readString();
+            }
             for (final ArgumentOption<TValue> allowedOption : allowedOptions)
             {
                 if (allowedOption.matches(argumentValue))

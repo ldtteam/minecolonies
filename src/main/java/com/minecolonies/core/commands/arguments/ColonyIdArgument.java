@@ -130,7 +130,7 @@ public class ColonyIdArgument extends MultipleOptionsArgument<Integer>
         @Override
         public boolean matches(final String value)
         {
-            return Objects.equals(value, "here");
+            return Objects.equals(value, "@here");
         }
 
         @Override
@@ -147,7 +147,7 @@ public class ColonyIdArgument extends MultipleOptionsArgument<Integer>
         @Override
         public void createSuggestions(final Level world, final SharedSuggestionProvider suggestionProvider, final SuggestionsBuilder builder)
         {
-            builder.suggest("here", Component.translatable("com.minecolonies.command.argument.colony.here"));
+            builder.suggest("@here", Component.translatable("com.minecolonies.command.argument.colony.here"));
         }
     }
 
@@ -156,7 +156,7 @@ public class ColonyIdArgument extends MultipleOptionsArgument<Integer>
         @Override
         public boolean matches(final String value)
         {
-            return Objects.equals(value, "mine");
+            return Objects.equals(value, "@mine");
         }
 
         @Override
@@ -168,7 +168,7 @@ public class ColonyIdArgument extends MultipleOptionsArgument<Integer>
         @Override
         public void createSuggestions(final Level world, final SharedSuggestionProvider suggestionProvider, final SuggestionsBuilder builder)
         {
-            builder.suggest("mine", Component.translatable("com.minecolonies.command.argument.colony.mine"));
+            builder.suggest("@mine", Component.translatable("com.minecolonies.command.argument.colony.mine"));
         }
     }
 

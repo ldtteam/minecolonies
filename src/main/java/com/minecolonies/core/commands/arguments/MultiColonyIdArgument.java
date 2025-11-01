@@ -89,7 +89,7 @@ public class MultiColonyIdArgument extends MultipleOptionsArgument<List<Integer>
         @Override
         public boolean matches(final String value)
         {
-            return Objects.equals(value, "all");
+            return Objects.equals(value, "@all");
         }
 
         @Override
@@ -101,7 +101,7 @@ public class MultiColonyIdArgument extends MultipleOptionsArgument<List<Integer>
         @Override
         public void createSuggestions(final Level world, final SharedSuggestionProvider suggestionProvider, final SuggestionsBuilder builder)
         {
-            builder.suggest("all", Component.translatable("com.minecolonies.command.argument.colony.all"));
+            builder.suggest("@all", Component.translatable("com.minecolonies.command.argument.colony.all"));
         }
     }
 
