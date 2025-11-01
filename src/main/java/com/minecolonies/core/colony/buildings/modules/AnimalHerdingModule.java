@@ -5,11 +5,11 @@ import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.crafting.GenericRecipe;
 import com.minecolonies.api.crafting.IGenericRecipe;
-import com.minecolonies.api.util.constant.ToolType;
+import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.equipment.ModEquipmentTypes;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
@@ -24,11 +24,11 @@ public class AnimalHerdingModule extends AbstractBuildingModule
 {
     private final JobEntry jobEntry;
     private final Predicate<Animal> animalPredicate;
-    private final ItemStack breedingItem;
+    private final ItemStorage breedingItem;
 
     public AnimalHerdingModule(@NotNull final JobEntry jobEntry,
                                @NotNull final Predicate<Animal> animalPredicate,
-                               @NotNull final ItemStack breedingItem)
+                               @NotNull final ItemStorage breedingItem)
     {
         this.jobEntry = jobEntry;
         this.animalPredicate = animalPredicate;
@@ -63,7 +63,7 @@ public class AnimalHerdingModule extends AbstractBuildingModule
      * @return The animal's preferred breeding item (as a list of alternatives).
      */
     @NotNull
-    public List<ItemStack> getBreedingItems()
+    public List<ItemStorage> getBreedingItems()
     {
         return Collections.singletonList(breedingItem);
     }
@@ -94,17 +94,12 @@ public class AnimalHerdingModule extends AbstractBuildingModule
     @NotNull
     public List<IGenericRecipe> getRecipesForDisplayPurposesOnly(@NotNull final Animal animal)
     {
-        return Collections.singletonList(new GenericRecipe(ForgeRegistries.ENTITY_TYPES.getKey(animal.getType()),
-                ItemStack.EMPTY,
-                Collections.emptyList(),
-                Collections.emptyList(),
-                Collections.singletonList(getBreedingItems()),
-                0,
-                Blocks.AIR,
-                animal.getLootTable(),
-                ToolType.AXE,
-                animal,
-                Collections.emptyList(),
-                0));
+        return List.of(GenericRecipe.builder()
+            .withRecipeId(ForgeRegistries.ENTITY_TYPES.getKey(animal.getType()))
+            .withInputs(List.of(getBreedingItems().stream().map(ItemStorage::getItemStack).toList()))
+            .withLootTable(animal.getLootTable())
+            .withRequiredTool(ModEquipmentTypes.axe.get())
+            .withRequiredEntity(animal.getType())
+            .build());
     }
 }

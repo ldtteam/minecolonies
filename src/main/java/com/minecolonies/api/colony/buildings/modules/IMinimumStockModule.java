@@ -25,14 +25,6 @@ public interface IMinimumStockModule extends IBuildingModule
     void addMinimumStock(final ItemStack itemStack, final int quantity);
 
     /**
-     * If an incoming request is a minimum stock request.
-     *
-     * @param request the request to check.
-     * @return true if so.
-     */
-    boolean isMinimumStockRequest(final IRequest<? extends IDeliverable> request);
-
-    /**
      * Check if this stack is stocked.
      * @param stack the stack to check.
      * @return true if stocked.

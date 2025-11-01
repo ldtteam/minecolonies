@@ -230,7 +230,7 @@
       "text": "Perfect! The building is placed, and a worker will start working there soon. Take this quest log and shift+right-click it on any of the hut blocks in the colony to stay updated with the next steps!",
       "options": [
         {
-          "answer": "Pefect! Thanks!",
+          "answer": "Perfect! Thanks!",
           "result": {
             "type": "minecolonies:advanceobjective",
             "go-to": 6

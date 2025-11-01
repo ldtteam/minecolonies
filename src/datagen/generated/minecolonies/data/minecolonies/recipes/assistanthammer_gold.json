@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "B": {
+      "item": "structurize:sceptergold"
+    },
+    "G": {
+      "tag": "forge:ingots/gold"
+    },
+    "S": {
+      "item": "minecraft:stick"
+    }
+  },
+  "pattern": [
+    "GGG",
+    "GBG",
+    " S "
+  ],
+  "result": {
+    "item": "minecolonies:assistanthammer_gold"
+  },
+  "show_notification": true
+}

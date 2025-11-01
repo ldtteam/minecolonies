@@ -1,9 +1,12 @@
 package com.minecolonies.api.colony.managers.interfaces;
 
 import com.minecolonies.api.colony.ICitizenData;
-import com.minecolonies.api.entity.mobs.AbstractEntityRaiderMob;
+import com.minecolonies.api.colony.colonyEvents.IColonyRaidEvent;
+import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesRaider;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -45,32 +48,9 @@ public interface IRaiderManager
     /**
      * Set if raiders will raid tonight.
      *
-     * @param willRaid true or false.
+     * @param raidSettings the settings for the next raid, or null to stop the next raid.
      */
-    default void setRaidNextNight(final boolean willRaid)
-    {
-        setRaidNextNight(willRaid, "", true);
-    }
-
-    /**
-     * Set if raiders will raid tonight.
-     *
-     * @param willRaid true or false.
-     */
-    void setRaidNextNight(final boolean willRaid, final String raidType, final boolean allowShips);
-
-    /**
-     * Set if a specific type of raiders will raid tonight.
-     *
-     * @param willRaid true or false.
-     * @param raidType string containing the name of the raider group.
-     *               Accepted names include "pirate", "egyptian", "norsemen", "barbarian", and "amazon".
-     *               Defaults to "barbarian" if unsupported type is attempted.
-     */
-    default void setRaidNextNight(final boolean willRaid, final String raidType)
-    {
-        setRaidNextNight(willRaid, raidType, true);
-    }
+    void setRaidNextNight(final RaidSettings raidSettings);
 
     /**
      * Returns whether spies are enabled
@@ -87,27 +67,11 @@ public interface IRaiderManager
     void setSpiesEnabled(boolean enabled);
 
     /**
-     * Triggers a raid on the colony
-     */
-    void raiderEvent();
-
-    /**
      * Trigger a specific type of raid on a colony.
-     * @param raidType the type of raid (or empty).
-     * @param overrideConfig if it should override the config to allow raiders.
+     *
+     * @param raidSettings the settings for this raid.
      */
-    default RaidSpawnResult raiderEvent(String raidType, final boolean overrideConfig)
-    {
-        return raiderEvent(raidType, overrideConfig, true);
-    }
-
-    /**
-     * Trigger a specific type of raid on a colony.
-     * @param raidType the type of raid (or empty).
-     * @param overrideConfig if it should override the config to allow raiders.
-     * @param allowShips if ship spawns are allowed.
-     */
-    RaidSpawnResult raiderEvent(String raidType, final boolean overrideConfig, final boolean allowShips);
+    RaidSpawnResult raiderEvent(final @NotNull RaidSettings raidSettings);
 
     /**
      * Calculates the spawn position for raids
@@ -165,14 +129,6 @@ public interface IRaiderManager
     boolean canRaid();
 
     /**
-     * Whether the colony can be raided.
-     *
-     * @param overrideConfig if the config should be overriden.
-     * @return true if possible.
-     */
-    boolean canRaid(final boolean overrideConfig);
-
-    /**
      * calculates the colonies raid level
      *
      * @return the raid level.
@@ -214,7 +170,7 @@ public interface IRaiderManager
     /**
      * Gets the amount of citizens lost in a raid.
      *
-     * @return weighted amount of list citizen
+     * @return amount
      */
     int getLostCitizen();
 
@@ -223,10 +179,30 @@ public interface IRaiderManager
      *
      * @param entity
      */
-    void onRaiderDeath(AbstractEntityRaiderMob entity);
+    void onRaiderDeath(AbstractEntityMinecoloniesRaider entity);
+
+    void onRaidEventFinished(IColonyRaidEvent event);
 
     /**
      * Notify raid manager of a passing through raid.
      */
     void setPassThroughRaid();
+
+    record RaidSettings(
+        boolean forcedSpawn,
+        @Nullable String raidType,
+        boolean allowShips,
+        @Nullable Integer raiderAmount,
+        @Nullable BlockPos location)
+    {
+        public RaidSettings withExplicitType(final @Nullable String raidType)
+        {
+            return new RaidSettings(forcedSpawn, raidType, allowShips, raiderAmount, location);
+        }
+
+        public static RaidSettings defaultRaidSettings()
+        {
+            return new RaidSettings(false, null, true, null, null);
+        }
+    }
 }

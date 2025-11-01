@@ -1,5 +1,6 @@
 package com.minecolonies.core.colony.managers;
 
+import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.ICitizenDataManager;
@@ -7,12 +8,12 @@ import com.minecolonies.api.colony.ICivilianData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.HiringMode;
 import com.minecolonies.api.colony.buildings.IBuilding;
-import com.minecolonies.api.colony.citizens.event.CitizenAddedEvent;
 import com.minecolonies.api.colony.managers.interfaces.ICitizenManager;
 import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.entity.citizen.AbstractCivilianEntity;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.happiness.IHappinessModifier;
+import com.minecolonies.api.eventbus.events.colony.citizens.CitizenAddedModEvent;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.CitizenConstants;
 import com.minecolonies.core.MineColonies;
@@ -36,10 +37,10 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.common.MinecraftForge;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -138,10 +139,9 @@ public class CitizenManager implements ICitizenManager
 
         final Optional<AbstractEntityCitizen> existingCitizen = data.getEntity();
 
-        if (!existingCitizen.isPresent())
+        if (existingCitizen.isEmpty())
         {
             data.setEntity(entity);
-            entity.level.getScoreboard().addPlayerToTeam(entity.getScoreboardName(), colony.getTeam());
             return;
         }
 
@@ -158,18 +158,6 @@ public class CitizenManager implements ICitizenManager
         final ICitizenData data = citizens.get(entity.getCivilianID());
         if (data != null && data.getEntity().isPresent() && data.getEntity().get() == entity)
         {
-            try
-            {
-                if (colony.getWorld().getScoreboard().getPlayersTeam(entity.getScoreboardName()) == colony.getTeam())
-                {
-                    colony.getWorld().getScoreboard().removePlayerFromTeam(entity.getScoreboardName(), colony.getTeam());
-                }
-            }
-            catch (Exception ignored)
-            {
-                // For some weird reason we can get an exception here, though the exception is thrown for team != colony team which we check == on before
-            }
-
             citizens.get(entity.getCivilianID()).setEntity(null);
         }
     }
@@ -297,14 +285,30 @@ public class CitizenManager implements ICitizenManager
 
             colony.getEventDescriptionManager().addEventDescription(new CitizenSpawnedEvent(spawnPoint, citizenData.getName()));
         }
+
+        if (world instanceof ServerLevel serverLevel)
+        {
+            Entity existing = serverLevel.getEntity(citizenData.getUUID());
+            if (existing != null)
+            {
+                existing.discard();
+                existing = serverLevel.getEntity(citizenData.getUUID());
+                if (existing != null)
+                {
+                    serverLevel.entityManager.stopTracking(existing);
+                }
+            }
+        }
+
         final EntityCitizen entity = (EntityCitizen) ModEntities.CITIZEN.create(world);
 
         entity.setUUID(citizenData.getUUID());
         entity.setPos(spawnPoint.getX() + HALF_BLOCK, spawnPoint.getY() + SLIGHTLY_UP, spawnPoint.getZ() + HALF_BLOCK);
-        world.addFreshEntity(entity);
 
         entity.setCitizenId(citizenData.getId());
         entity.getCitizenColonyHandler().setColonyId(colony.getID());
+
+        world.addFreshEntity(entity);
         if (entity.isAddedToWorld())
         {
             entity.getCitizenColonyHandler().registerWithColony(citizenData.getColony().getID(), citizenData.getId());
@@ -359,14 +363,7 @@ public class CitizenManager implements ICitizenManager
         citizens.put(citizenData.getId(), citizenData);
         spawnOrCreateCitizen(citizenData, world, spawnPos);
 
-        try
-        {
-            MinecraftForge.EVENT_BUS.post(new CitizenAddedEvent(citizenData, CitizenAddedEvent.Source.RESURRECTED));
-        }
-        catch (final Exception e)
-        {
-            Log.getLogger().error("Error during CitizenAddedEvent", e);
-        }
+        IMinecoloniesAPI.getInstance().getEventBus().post(new CitizenAddedModEvent(citizenData, CitizenAddedModEvent.CitizenAddedSource.RESURRECTED));
         return citizenData;
     }
 
@@ -529,7 +526,7 @@ public class CitizenManager implements ICitizenManager
     @Override
     public int getCurrentCitizenCount()
     {
-        return citizens.size() + colony.getGraveManager().getGraves().size();
+        return citizens.size();
     }
 
     @Override
@@ -563,11 +560,11 @@ public class CitizenManager implements ICitizenManager
     }
 
     @Override
-    public boolean tickCitizenData()
+    public boolean tickCitizenData(final int tickRate)
     {
         for (ICitizenData iCitizenData : this.getCitizens())
         {
-            iCitizenData.update();
+            iCitizenData.update(tickRate);
         }
         return false;
     }
@@ -624,14 +621,7 @@ public class CitizenManager implements ICitizenManager
 
                 spawnOrCreateCivilian(newCitizen, colony.getWorld(), null, true);
 
-                try
-                {
-                    MinecraftForge.EVENT_BUS.post(new CitizenAddedEvent(newCitizen, CitizenAddedEvent.Source.INITIAL));
-                }
-                catch (final Exception e)
-                {
-                    Log.getLogger().error("Error during CitizenAddedEvent", e);
-                }
+                IMinecoloniesAPI.getInstance().getEventBus().post(new CitizenAddedModEvent(newCitizen, CitizenAddedModEvent.CitizenAddedSource.INITIAL));
                 colony.getEventDescriptionManager().addEventDescription(new CitizenSpawnedEvent(colony.getBuildingManager().getTownHall().getPosition(),
                       newCitizen.getName()));
             }

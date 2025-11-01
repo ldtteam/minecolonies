@@ -1,8 +1,9 @@
 package com.minecolonies.core.colony.buildings.workerbuildings.plantation.modules.specific;
 
-import com.minecolonies.api.colony.fields.IField;
+import com.minecolonies.api.colony.buildingextensions.IBuildingExtension;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-import com.minecolonies.api.util.constant.ToolType;
+import com.minecolonies.api.equipment.ModEquipmentTypes;
+import com.minecolonies.api.equipment.registry.EquipmentTypeEntry;
 import com.minecolonies.core.colony.buildings.workerbuildings.plantation.modules.generic.BoneMealedPlantModule;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -40,7 +41,7 @@ public class SeagrassPlantModule extends BoneMealedPlantModule
      * @param workTag  the tag of the working positions.
      * @param item     the item which is harvested.
      */
-    public SeagrassPlantModule(final IField field, final String fieldTag, final String workTag, final Item item)
+    public SeagrassPlantModule(final IBuildingExtension field, final String fieldTag, final String workTag, final Item item)
     {
         super(field, fieldTag, workTag, item);
     }
@@ -59,9 +60,9 @@ public class SeagrassPlantModule extends BoneMealedPlantModule
     }
 
     @Override
-    public ToolType getRequiredTool()
+    public EquipmentTypeEntry getRequiredTool()
     {
-        return ToolType.NONE;
+        return ModEquipmentTypes.none.get();
     }
 
     @Override

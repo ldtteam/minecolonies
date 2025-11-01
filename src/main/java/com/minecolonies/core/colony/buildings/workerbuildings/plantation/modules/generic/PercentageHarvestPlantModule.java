@@ -1,6 +1,6 @@
 package com.minecolonies.core.colony.buildings.workerbuildings.plantation.modules.generic;
 
-import com.minecolonies.api.colony.fields.IField;
+import com.minecolonies.api.colony.buildingextensions.IBuildingExtension;
 import com.minecolonies.core.colony.buildings.workerbuildings.plantation.AbstractPlantationModule;
 import com.minecolonies.core.util.CollectorUtils;
 import net.minecraft.core.BlockPos;
@@ -39,7 +39,7 @@ public abstract class PercentageHarvestPlantModule extends AbstractPlantationMod
      * @param item     the item which is harvested.
      */
     protected PercentageHarvestPlantModule(
-      final IField field,
+      final IBuildingExtension field,
       final String fieldTag,
       final String workTag,
       final Item item)
@@ -162,9 +162,10 @@ public abstract class PercentageHarvestPlantModule extends AbstractPlantationMod
         else if (minimumPlantCount < harvestablePositions.size())
         {
             Set<BlockPos> duplicateLocator = new HashSet<>();
+            Set<BlockPos> harvestablePositionsSet = new HashSet<>(harvestablePositions);
             return harvestablePositions.stream()
                      .flatMap(f -> Stream.of(f, f.above(), f.below(), f.north(), f.south(), f.west(), f.east()))
-                     .filter(f -> !duplicateLocator.add(f))
+                     .filter(f -> harvestablePositionsSet.contains(f) && !duplicateLocator.add(f))
                      .findFirst()
                      .orElse(harvestablePositions.get(0));
         }

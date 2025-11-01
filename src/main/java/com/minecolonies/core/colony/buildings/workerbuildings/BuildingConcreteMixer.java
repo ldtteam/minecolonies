@@ -3,9 +3,8 @@ package com.minecolonies.core.colony.buildings.workerbuildings;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
-import com.minecolonies.api.items.ModTags;
+import com.minecolonies.api.equipment.ModEquipmentTypes;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
 import com.minecolonies.core.colony.buildings.modules.AbstractCraftingBuildingModule;
 import net.minecraft.core.BlockPos;
@@ -29,7 +28,7 @@ import java.util.*;
 import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT_MAX_BUILDING_LEVEL;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_LEVEL;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_WATER;
-import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
+import static com.minecolonies.api.util.constant.EquipmentLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 
 /**
  * Class of the concrete mason building.
@@ -52,11 +51,6 @@ public class BuildingConcreteMixer extends AbstractBuilding
     private final Map<Integer, List<BlockPos>> waterPos = new HashMap<>();
 
     /**
-     * The minimum found water level
-     */
-    private int minWaterLevel = WATER_DEPTH_SUPPORT;
-
-    /**
      * Instantiates a new concrete mason building.
      *
      * @param c the colony.
@@ -65,7 +59,7 @@ public class BuildingConcreteMixer extends AbstractBuilding
     public BuildingConcreteMixer(final IColony c, final BlockPos l)
     {
         super(c, l);
-        keepX.put(itemStack -> ItemStackUtils.hasToolLevel(itemStack, ToolType.PICKAXE, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel()), new Tuple<>(1, true));
+        keepX.put(itemStack -> ItemStackUtils.hasEquipmentLevel(itemStack, ModEquipmentTypes.pickaxe.get(), TOOL_LEVEL_WOOD_OR_GOLD, getMaxEquipmentLevel()), new Tuple<>(1, true));
     }
 
     @Override
@@ -81,7 +75,6 @@ public class BuildingConcreteMixer extends AbstractBuilding
                     fluidPos.add(pos);
                 }
                 waterPos.put(blockState.getFluidState().getAmount(), fluidPos);
-                minWaterLevel = Math.min(minWaterLevel, blockState.getFluidState().getAmount());
             }
         }
 
@@ -123,7 +116,6 @@ public class BuildingConcreteMixer extends AbstractBuilding
         {
             final CompoundTag waterCompound = waterMapList.getCompound(i);
             final int level = waterCompound.getInt(TAG_LEVEL);
-            minWaterLevel = Math.min(minWaterLevel, level);
 
             final ListTag waterTagList = waterCompound.getList(TAG_WATER, Tag.TAG_COMPOUND);
             final List<BlockPos> water = new ArrayList<>();
@@ -155,6 +147,21 @@ public class BuildingConcreteMixer extends AbstractBuilding
     }
 
     /**
+     * Get the max amount of concrete placed at once.
+     *
+     * @return the number of concrete.
+     */
+    public int getMaxConcretePlaced()
+    {
+        int size = 0;
+        for (List<BlockPos> positions : waterPos.values())
+        {
+            size += positions.size();
+        }
+        return size;
+    }
+
+    /**
      * Check if there are open positions to mine.
      *
      * @return the open position if so.
@@ -162,17 +169,18 @@ public class BuildingConcreteMixer extends AbstractBuilding
     @Nullable
     public BlockPos getBlockToMine()
     {
-        for (int i = 1; i <= minWaterLevel; i++)
+        for (int i = 1; i <= WATER_DEPTH_SUPPORT; i++)
         {
             for (final BlockPos pos : waterPos.getOrDefault(i, Collections.emptyList()))
             {
-                if (colony.getWorld().getBlockState(pos).is(ModTags.concreteBlocks))
+                final BlockState state = colony.getWorld().getBlockState(pos);
+                if (!state.isAir() && !state.is(Blocks.WATER))
                 {
                     return pos;
                 }
             }
         }
-        
+
         return null;
     }
 
@@ -184,18 +192,18 @@ public class BuildingConcreteMixer extends AbstractBuilding
     @Nullable
     public BlockPos getBlockToPlace()
     {
-        for (int i = 1; i <= minWaterLevel; i++)
+        for (int i = 1; i <= WATER_DEPTH_SUPPORT; i++)
         {
             for (final BlockPos pos : waterPos.getOrDefault(i, Collections.emptyList()))
             {
                 final BlockState state = colony.getWorld().getBlockState(pos);
-                if (!state.getFluidState().isEmpty() && state.getBlock() == Blocks.WATER)
+                if (state.is(Blocks.WATER))
                 {
                     return pos;
                 }
             }
         }
- 
+
         return null;
     }
 
@@ -210,7 +218,7 @@ public class BuildingConcreteMixer extends AbstractBuilding
         int count = 0;
         if (primaryOutput.getItem() instanceof BlockItem)
         {
-            for (int i = 1; i <= minWaterLevel; i++)
+            for (int i = 1; i <= WATER_DEPTH_SUPPORT; i++)
             {
                 for (final BlockPos pos : waterPos.getOrDefault(i, Collections.emptyList()))
                 {

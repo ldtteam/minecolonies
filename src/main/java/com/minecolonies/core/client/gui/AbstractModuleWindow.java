@@ -5,6 +5,7 @@ import com.ldtteam.blockui.controls.ButtonImage;
 import com.minecolonies.api.colony.buildings.modules.IBuildingModuleView;
 import com.minecolonies.api.colony.buildings.modules.IModuleWindow;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.colony.buildings.views.AbstractBuildingView;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.Component;
@@ -57,11 +58,12 @@ public abstract class AbstractModuleWindow extends AbstractWindowSkeleton implem
             image.setImage(new ResourceLocation("minecolonies:textures/gui/modules/tab_side" + (random.nextInt(3) + 1) + ".png"), false);
             image.setPosition(-20, 10 + offset);
             image.setSize(32, 26);
+            image.setID("background/modules/main");
             image.setHandler(button -> building.getWindow().open());
 
             final ButtonImage iconImage = new ButtonImage();
             iconImage.setImage(new ResourceLocation("minecolonies:textures/gui/modules/main.png"), false);
-            iconImage.setID("main");
+            iconImage.setID("modules/main");
             iconImage.setPosition(-15, 13 + offset);
             iconImage.setSize(20, 20);
             iconImage.setHandler(button -> building.getWindow().open());
@@ -77,21 +79,22 @@ public abstract class AbstractModuleWindow extends AbstractWindowSkeleton implem
         for (IBuildingModuleView view : building.getAllModuleViews())
         {
             if (!view.isPageVisible()) continue;
+            final ResourceLocation icon = view.getIconResourceLocation();
 
             final ButtonImage image = new ButtonImage();
             image.setImage(new ResourceLocation("minecolonies:textures/gui/modules/tab_side" + (random.nextInt(3) + 1) + ".png"), false);
             image.setPosition(-20, 10 + offset);
             image.setSize(32, 26);
+            image.setID("background/" + icon.getPath());
             image.setHandler(button -> {
                 mc.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.BOOK_PAGE_TURN, 1.0F));
                 view.getWindow().open();
             });
 
-            final String icon = view.getIcon();
             final ButtonImage iconImage = new ButtonImage();
-            iconImage.setImage(new ResourceLocation("minecolonies:textures/gui/modules/" + icon + ".png"), false);
+            iconImage.setImage(icon, false);
             iconImage.setSize(20, 20);
-            iconImage.setID(icon);
+            iconImage.setID(icon.getPath());
             iconImage.setPosition(-15, 13 + offset);
             iconImage.setHandler(button -> {
                 mc.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.BOOK_PAGE_TURN, 1.0F));

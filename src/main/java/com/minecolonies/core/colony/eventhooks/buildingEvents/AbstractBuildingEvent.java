@@ -2,6 +2,7 @@ package com.minecolonies.core.colony.eventhooks.buildingEvents;
 
 import com.minecolonies.api.colony.colonyEvents.descriptions.IBuildingEventDescription;
 import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.core.colony.eventhooks.AbstractEvent;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.core.BlockPos;
@@ -13,32 +14,33 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_EVENT_POS;
 /**
  * The abstract event handling building/upgrading huts.
  */
-public abstract class AbstractBuildingEvent implements IBuildingEventDescription
+public abstract class AbstractBuildingEvent extends AbstractEvent implements IBuildingEventDescription
 {
-
     private BlockPos eventPos;
-    private String buildingName;
-    private int level;
+    private String   buildingName;
+    private int      level;
 
     /**
      * Creates a new building event.
      */
     public AbstractBuildingEvent()
     {
+
     }
 
     /**
      * Creates a new building event.
-     * 
+     *
      * @param eventPos      the position of the hut block of the building.
      * @param buildingName  the name of the building.
      * @param buildingLevel the level of the building after this event.
      */
-    public AbstractBuildingEvent(BlockPos eventPos, String buildingName, int buildingLevel)
+    public AbstractBuildingEvent(final boolean includeInSummary, final BlockPos eventPos, final String buildingName, final int buildingLevel)
     {
+        super(includeInSummary);
         this.eventPos = eventPos;
         this.buildingName = buildingName;
-        level = buildingLevel;
+        this.level = buildingLevel;
     }
 
     @Override
@@ -56,7 +58,7 @@ public abstract class AbstractBuildingEvent implements IBuildingEventDescription
     @Override
     public CompoundTag serializeNBT()
     {
-        CompoundTag compound = new CompoundTag();
+        CompoundTag compound = super.serializeNBT();
         BlockPosUtil.write(compound, TAG_EVENT_POS, eventPos);
         compound.putString(TAG_BUILDING_NAME, buildingName);
         compound.putInt(TAG_BUILDING_LEVEL, level);
@@ -66,6 +68,7 @@ public abstract class AbstractBuildingEvent implements IBuildingEventDescription
     @Override
     public void deserializeNBT(CompoundTag compound)
     {
+        super.deserializeNBT(compound);
         eventPos = BlockPosUtil.read(compound, TAG_EVENT_POS);
         buildingName = compound.getString(TAG_BUILDING_NAME);
         level = compound.getInt(TAG_BUILDING_LEVEL);
@@ -74,6 +77,7 @@ public abstract class AbstractBuildingEvent implements IBuildingEventDescription
     @Override
     public void serialize(FriendlyByteBuf buf)
     {
+        super.serialize(buf);
         buf.writeBlockPos(eventPos);
         buf.writeUtf(buildingName);
         buf.writeInt(level);
@@ -82,6 +86,7 @@ public abstract class AbstractBuildingEvent implements IBuildingEventDescription
     @Override
     public void deserialize(FriendlyByteBuf buf)
     {
+        super.deserialize(buf);
         eventPos = buf.readBlockPos();
         buildingName = buf.readUtf();
         level = buf.readInt();

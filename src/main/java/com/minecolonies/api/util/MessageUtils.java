@@ -86,7 +86,7 @@ public class MessageUtils
      */
     public static MessageBuilder forCitizen(final AbstractEntityCitizen citizen, Component component)
     {
-        if (citizen.getCitizenColonyHandler().getColony() != null)
+        if (citizen.getCitizenColonyHandler().getColonyOrRegister() != null)
         {
             final IJob<?> job = citizen.getCitizenJobHandler().getColonyJob();
 

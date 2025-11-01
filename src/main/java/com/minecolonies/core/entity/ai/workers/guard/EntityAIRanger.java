@@ -1,12 +1,14 @@
 package com.minecolonies.core.entity.ai.workers.guard;
 
+import com.minecolonies.api.equipment.ModEquipmentTypes;
+import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;
-import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.core.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.core.colony.jobs.JobRanger;
 import com.minecolonies.core.entity.citizen.EntityCitizen;
 import com.minecolonies.core.entity.pathfinding.navigation.MinecoloniesAdvancedPathNavigate;
 import com.minecolonies.core.entity.pathfinding.pathjobs.PathJobWalkRandomEdge;
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.ArrowItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -26,7 +28,7 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger, AbstractBui
     public EntityAIRanger(@NotNull final JobRanger job)
     {
         super(job);
-        toolsNeeded.add(ToolType.BOW);
+        toolsNeeded.add(ModEquipmentTypes.bow.get());
         new RangerCombatAI((EntityCitizen) worker, getStateAI(), this);
     }
 
@@ -46,7 +48,7 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger, AbstractBui
     {
         super.atBuildingActions();
 
-        if (worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(ARCHER_USE_ARROWS) > 0)
+        if (worker.getCitizenColonyHandler().getColonyOrRegister().getResearchManager().getResearchEffects().getEffectStrength(ARCHER_USE_ARROWS) > 0)
         {
             // Pickup arrows and request arrows
             InventoryUtils.transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandler(building,
@@ -64,18 +66,23 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger, AbstractBui
     @Override
     public void guardMovement()
     {
-        if (worker.getRandom().nextInt(3) < 1)
+        if (worker.getRandom().nextInt(30) < 1)
         {
-            worker.isWorkerAtSiteWithMove(buildingGuards.getGuardPos(), 3);
+            walkToSafePos(buildingGuards.getGuardPos(worker));
             return;
         }
 
-        if (worker.isWorkerAtSiteWithMove(buildingGuards.getGuardPos(), 10) || Math.abs(buildingGuards.getGuardPos().getY() - worker.blockPosition().getY()) > 3)
+        if (!worker.getNavigation().isDone())
+        {
+            return;
+        }
+
+        final BlockPos guardPos = buildingGuards.getGuardPos(worker);
+        if ((BlockPosUtil.dist(guardPos, worker.blockPosition()) <= 10 || walkToSafePos(guardPos)))
         {
             // Moves the ranger randomly to close edges, for better vision to mobs
-            ((MinecoloniesAdvancedPathNavigate) worker.getNavigation()).setPathJob(new PathJobWalkRandomEdge(world, buildingGuards.getGuardPos(), 20, worker),
-              null,
-              1.0, true);
+             ((MinecoloniesAdvancedPathNavigate) worker.getNavigation()).setPathJob(
+                 new PathJobWalkRandomEdge(world, guardPos, 10, worker), null, 1.0, true);
         }
     }
 }

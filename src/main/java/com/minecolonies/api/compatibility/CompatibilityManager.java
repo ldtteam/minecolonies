@@ -12,11 +12,14 @@ import com.minecolonies.api.compatibility.tinkers.TinkersToolHelper;
 import com.minecolonies.api.crafting.CompostRecipe;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.crafting.registry.ModRecipeSerializer;
+import com.minecolonies.api.items.CheckedNbtKey;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.*;
+import com.minecolonies.core.generation.ItemNbtCalculator;
+import com.minecolonies.core.colony.crafting.CustomRecipeManager;
+import com.minecolonies.core.colony.crafting.LootTableAnalyzer;
 import it.unimi.dsi.fastutil.objects.Object2IntLinkedOpenHashMap;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -31,7 +34,6 @@ import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.AirBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.FurnaceBlockEntity;
@@ -51,7 +53,6 @@ import java.util.stream.Stream;
 
 import static com.minecolonies.api.util.ItemStackUtils.*;
 import static com.minecolonies.api.util.constant.Constants.DEFAULT_TAB_KEY;
-import static com.minecolonies.api.util.constant.Constants.ONE_HUNDRED_PERCENT;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_SAP_LEAF;
 
 /**
@@ -115,24 +116,9 @@ public class CompatibilityManager implements ICompatibilityManager
     private ImmutableSet<ItemStorage> beekeeperflowers = ImmutableSet.of();
 
     /**
-     * Set of all possible diseases.
-     */
-    private final Map<String, Disease> diseases = new HashMap<>();
-
-    /**
-     * List of diseases including the random factor.
-     */
-    private final List<String> diseaseList = new ArrayList<>();
-
-    /**
      * List of lucky oreBlocks which get dropped by the miner.
      */
     private final Map<Integer, List<ItemStorage>> luckyOres = new HashMap<>();
-
-    /**
-     * The items and weights of the recruitment.
-     */
-    private final List<Tuple<Item, Integer>> recruitmentCostsWeights = new ArrayList<>();
 
     /**
      * Random obj.
@@ -143,16 +129,6 @@ public class CompatibilityManager implements ICompatibilityManager
      * List of all blocks.
      */
     private static ImmutableList<ItemStack> allItems = ImmutableList.of();
-
-    /**
-     * Free block positions everyone can interact with.
-     */
-    private final Set<Block> freeBlocks = new HashSet<>();
-
-    /**
-     * Free positions everyone can interact with.
-     */
-    private final Set<BlockPos> freePositions = new HashSet<>();
 
     /**
      * Hashmap of mobs we may or may not attack.
@@ -187,12 +163,6 @@ public class CompatibilityManager implements ICompatibilityManager
         fuel.clear();
         compostRecipes.clear();
 
-        luckyOres.clear();
-        recruitmentCostsWeights.clear();
-        diseases.clear();
-        diseaseList.clear();
-        freeBlocks.clear();
-        freePositions.clear();
         monsters = ImmutableSet.of();
         creativeModeTabMap.clear();
     }
@@ -208,10 +178,6 @@ public class CompatibilityManager implements ICompatibilityManager
         clear();
         discoverAllItems(level);
 
-        discoverLuckyOres();
-        discoverRecruitCosts();
-        discoverDiseases();
-        discoverFreeBlocksAndPos();
         discoverModCompat();
 
         discoverCompostRecipes(recipeManager);
@@ -233,6 +199,17 @@ public class CompatibilityManager implements ICompatibilityManager
         serializeRegistryIds(buf, ForgeRegistries.ENTITY_TYPES, monsters);
 
         serializeCompostRecipes(buf, compostRecipes);
+
+        buf.writeInt(CHECKED_NBT_KEYS.size());
+        for (final var entry : CHECKED_NBT_KEYS.entrySet())
+        {
+            buf.writeInt(BuiltInRegistries.ITEM.getId(entry.getKey()));
+            buf.writeInt(entry.getValue().size());
+            for (final CheckedNbtKey key : entry.getValue())
+            {
+                ItemNbtCalculator.serializeKeyToBuffer(key, buf);
+            }
+        }
     }
 
     @Override
@@ -265,11 +242,19 @@ public class CompatibilityManager implements ICompatibilityManager
         discoverCompostRecipes(deserializeCompostRecipes(buf));
 
         // the below are loaded from config files, which have been synched already by this point
-        discoverLuckyOres();
-        discoverRecruitCosts();
-        discoverDiseases();
-        discoverFreeBlocksAndPos();
         discoverModCompat();
+
+        for (int i = 0, amount = buf.readInt(); i < amount; i++)
+        {
+            final Item item = BuiltInRegistries.ITEM.byId(buf.readInt());
+            Set<CheckedNbtKey> nbtKeys = new HashSet<>();
+            for (int j = 0, children = buf.readInt(); j < children; j++)
+            {
+                nbtKeys.add(ItemNbtCalculator.deSerializeKeyFromBuffer(buf));
+            }
+
+            CHECKED_NBT_KEYS.put(item, nbtKeys);
+        }
     }
 
     private static void serializeItemStorageList(
@@ -486,30 +471,6 @@ public class CompatibilityManager implements ICompatibilityManager
     }
 
     @Override
-    public String getRandomDisease()
-    {
-        return diseaseList.get(random.nextInt(diseaseList.size()));
-    }
-
-    @Override
-    public Disease getDisease(final String disease)
-    {
-        return diseases.get(disease);
-    }
-
-    @Override
-    public List<Disease> getDiseases()
-    {
-        return new ArrayList<>(diseases.values());
-    }
-
-    @Override
-    public List<Tuple<Item, Integer>> getRecruitmentCostsWeights()
-    {
-        return Collections.unmodifiableList(recruitmentCostsWeights);
-    }
-
-    @Override
     public boolean isOre(final BlockState block)
     {
         if (oreBlocks.isEmpty())
@@ -523,10 +484,14 @@ public class CompatibilityManager implements ICompatibilityManager
     @Override
     public boolean isOre(@NotNull final ItemStack stack)
     {
-        if (isMineableOre(stack) || stack.is(ModTags.raw_ore) || stack.is(ModTags.breakable_ore))
+        if (isBreakableOre(stack))
+        {
+            return true;
+        }
+        if (isMineableOre(stack) || stack.is(ModTags.raw_ore))
         {
             ItemStack smeltingResult = MinecoloniesAPIProxy.getInstance().getFurnaceRecipes().getSmeltingResult(stack);
-            return stack.is(ModTags.breakable_ore) || !smeltingResult.isEmpty();
+            return !smeltingResult.isEmpty();
         }
 
         return false;
@@ -536,6 +501,31 @@ public class CompatibilityManager implements ICompatibilityManager
     public boolean isMineableOre(@NotNull final ItemStack stack)
     {
         return !isEmpty(stack) && stack.is(Tags.Items.ORES);
+    }
+
+    @Override
+    public boolean isBreakableOre(@NotNull final ItemStack stack)
+    {
+        if (stack.is(ModTags.breakable_ore))
+        {
+            final Block block = Block.byItem(stack.getItem());
+            if (!block.defaultBlockState().isAir())
+            {
+                final List<LootTableAnalyzer.LootDrop> drops = CustomRecipeManager.getInstance().getLootDrops(block.getLootTable());
+                for (final LootTableAnalyzer.LootDrop drop : drops)
+                {
+                    for (final ItemStack dropStack : drop.getItemStacks())
+                    {
+                        if (ItemStackUtils.compareItemStacksIgnoreStackSize(stack, dropStack))
+                        {
+                            return false;   // blocks that drop themselves are not breakable ore
+                        }
+                    }
+                }
+            }
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -566,36 +556,6 @@ public class CompatibilityManager implements ICompatibilityManager
         {
             leavesToSaplingMap.put(leaf, new ItemStorage(stack, false, true));
         }
-    }
-
-    @Override
-    public ItemStack getRandomLuckyOre(final double chanceBonus, final int buildingLevel)
-    {
-        if (random.nextDouble() * ONE_HUNDRED_PERCENT <= MinecoloniesAPIProxy.getInstance().getConfig().getServer().luckyBlockChance.get() * chanceBonus)
-        {
-            // fetch default config for all level
-            // override it if specific config for this level is available.
-            List<ItemStorage> luckyOresInLevel = luckyOres.get(0);
-            if (luckyOres.containsKey(buildingLevel))
-            {
-                luckyOresInLevel = luckyOres.get(buildingLevel);
-            }
-
-            return luckyOresInLevel.get(random.nextInt(luckyOresInLevel.size())).getItemStack().copy();
-        }
-        return ItemStack.EMPTY;
-    }
-
-    @Override
-    public boolean isFreeBlock(final Block block)
-    {
-        return freeBlocks.contains(block);
-    }
-
-    @Override
-    public boolean isFreePos(final BlockPos block)
-    {
-        return freePositions.contains(block);
     }
 
     @Override
@@ -813,167 +773,11 @@ public class CompatibilityManager implements ICompatibilityManager
         if (ISFOOD.test(stack) || ISCOOKABLE.test(stack))
         {
             food.add(new ItemStorage(stack));
-            if (CAN_EAT.test(stack))
+            if (FoodUtils.EDIBLE.test(stack))
             {
                 edibles.add(new ItemStorage(stack));
             }
         }
-    }
-
-    /**
-     * Run through all blocks and check if they match one of our lucky oreBlocks.
-     */
-    private void discoverLuckyOres()
-    {
-        if (luckyOres.isEmpty())
-        {
-            for (final String ore : MinecoloniesAPIProxy.getInstance().getConfig().getServer().luckyOres.get())
-            {
-                final String[] split = ore.split("!");
-                if (split.length < 2)
-                {
-                    Log.getLogger().warn("Wrong configured ore: " + ore);
-                    continue;
-                }
-
-                final Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(split[0]));
-                if (item == null || item == Items.AIR)
-                {
-                    Log.getLogger().warn("Invalid lucky block: " + ore);
-                    continue;
-                }
-
-                final int defaultMineLevel = 0;
-                int buildingLevel = defaultMineLevel;
-                final ItemStack stack = new ItemStack(item, 1);
-                try
-                {
-                    if (split.length == 3)
-                    {
-                        buildingLevel = Integer.parseInt(split[2]);
-                    }
-
-                    final int rarity = Integer.parseInt(split[1]);
-
-                    luckyOres.putIfAbsent(buildingLevel, new ArrayList<>());
-
-                    for (int i = 0; i < rarity; i++)
-                    {
-                        List<ItemStorage> luckyOreOnLevel = luckyOres.get(buildingLevel);
-                        luckyOreOnLevel.add(new ItemStorage(stack));
-                    }
-                }
-                catch (final NumberFormatException ex)
-                {
-                    Log.getLogger().warn("Ore has invalid rarity or building level: " + ore);
-                }
-            }
-
-            List<ItemStorage> alternative = null;
-            int mineMaxLevel = 5;
-            for (int levelToTest = 0; levelToTest <= mineMaxLevel; levelToTest++)
-            {
-                if (luckyOres.containsKey(levelToTest) && !luckyOres.get(levelToTest).isEmpty())
-                {
-                    alternative = luckyOres.get(levelToTest);
-                    break;
-                }
-            }
-
-            for (int levelToReplace = 0; levelToReplace <= mineMaxLevel; levelToReplace++)
-            {
-                luckyOres.putIfAbsent(levelToReplace, alternative);
-            }
-        }
-        Log.getLogger().info("Finished discovering lucky oreBlocks " + luckyOres.size());
-    }
-
-    /**
-     * Parses recruitment costs from config
-     */
-    private void discoverRecruitCosts()
-    {
-        if (recruitmentCostsWeights.isEmpty())
-        {
-            for (final String itemString : MinecoloniesAPIProxy.getInstance().getConfig().getServer().configListRecruitmentItems.get())
-            {
-                final String[] split = itemString.split(";");
-                if (split.length < 2)
-                {
-                    Log.getLogger().warn("Wrong configured recruitment cost: " + itemString);
-                    continue;
-                }
-
-                final Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(split[0]));
-                if (item == null || item == Items.AIR)
-                {
-                    Log.getLogger().warn("Invalid recruitment item: " + item);
-                    continue;
-                }
-
-                try
-                {
-                    final int rarity = Integer.parseInt(split[split.length - 1]);
-                    recruitmentCostsWeights.add(new Tuple<>(item, rarity));
-                }
-                catch (final NumberFormatException ex)
-                {
-                    Log.getLogger().warn("Invalid recruitment weight for: " + item);
-                }
-            }
-        }
-        Log.getLogger().info("Finished discovering recruitment costs");
-    }
-
-    /**
-     * Go through the disease config and setup all possible diseases.
-     */
-    private void discoverDiseases()
-    {
-        if (diseases.isEmpty())
-        {
-            for (final String disease : MinecoloniesAPIProxy.getInstance().getConfig().getServer().diseases.get())
-            {
-                final String[] split = disease.split(",");
-                if (split.length < 3)
-                {
-                    Log.getLogger().warn("Wrongly configured disease: " + disease);
-                    continue;
-                }
-
-                try
-                {
-                    final String name = split[0];
-                    final int rarity = Integer.parseInt(split[1]);
-
-                    final List<ItemStack> cure = new ArrayList<>();
-
-                    for (int i = 2; i < split.length; i++)
-                    {
-                        final String[] theItem = split[i].split(":");
-                        final Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(theItem[0], theItem[1]));
-                        if (item == null || item == Items.AIR)
-                        {
-                            Log.getLogger().warn("Invalid cure item: " + disease);
-                            continue;
-                        }
-
-                        final ItemStack stack = new ItemStack(item, 1);
-                        cure.add(stack);
-                    }
-                    diseases.put(name, new Disease(name, rarity, cure));
-                    for (int i = 0; i < rarity; i++)
-                    {
-                        diseaseList.add(name);
-                    }
-                }
-                catch (final NumberFormatException e)
-                {
-                    Log.getLogger().warn("Wrongly configured disease: " + disease);
-                }
-            }
-        }
-        Log.getLogger().info("Finished discovering diseases");
     }
 
     private static CompoundTag writeLeafSaplingEntryToNBT(final BlockState state, final ItemStorage storage)
@@ -986,32 +790,6 @@ public class CompatibilityManager implements ICompatibilityManager
     private static Tuple<BlockState, ItemStorage> readLeafSaplingEntryFromNBT(final CompoundTag compound)
     {
         return new Tuple<>(NbtUtils.readBlockState(BuiltInRegistries.BLOCK.asLookup(), compound), new ItemStorage(ItemStack.of(compound), false, true));
-    }
-
-    /**
-     * Load free blocks and pos from the config and add to colony.
-     */
-    private void discoverFreeBlocksAndPos()
-    {
-        for (final String s : MinecoloniesAPIProxy.getInstance().getConfig().getServer().freeToInteractBlocks.get())
-        {
-            try
-            {
-                final Block block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(s));
-                if (block != null && !(block instanceof AirBlock))
-                {
-                    freeBlocks.add(block);
-                }
-            }
-            catch (final Exception ex)
-            {
-                final BlockPos pos = BlockPosUtil.getBlockPosOfString(s);
-                if (pos != null)
-                {
-                    freePositions.add(pos);
-                }
-            }
-        }
     }
 
     /**
@@ -1032,5 +810,11 @@ public class CompatibilityManager implements ICompatibilityManager
         {
             Compatibility.dynamicTreesCompat = new DynamicTreeCompat();
         }
+    }
+
+    @Override
+    public int getNumberOfSaplings()
+    {
+        return saplings.size();
     }
 }

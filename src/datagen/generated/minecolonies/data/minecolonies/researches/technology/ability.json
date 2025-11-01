@@ -1,25 +1,25 @@
 {
   "branch": "minecolonies:technology",
+  "costs": [
+    {
+      "type": "minecolonies:item_simple",
+      "item": "minecraft:iron_ingot",
+      "quantity": 64
+    }
+  ],
   "effects": [
     {
-      "minecolonies:effects/blockplacespeedmultiplier": 1
+      "id": "minecolonies:effects/blockplacespeedmultiplier",
+      "level": 1
     }
   ],
   "icon": "minecraft:glowstone_dust",
   "parentResearch": "minecolonies:technology/hittingiron",
   "requirements": [
     {
-      "building": "miner",
+      "type": "minecolonies:building",
+      "building": "minecolonies:miner",
       "level": 1
-    },
-    {
-      "type": "minecolonies:item_list",
-      "item": {
-        "items": [
-          "minecraft:iron_ingot"
-        ]
-      },
-      "quantity": 64
     }
   ],
   "researchLevel": 2

@@ -2,13 +2,16 @@ package com.minecolonies.core.colony.buildings.moduleviews;
 
 import com.minecolonies.api.colony.buildings.modules.AbstractBuildingModuleView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
-import com.minecolonies.api.colony.fields.IField;
+import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.api.colony.buildingextensions.IBuildingExtension;
 import com.minecolonies.core.Network;
 import com.minecolonies.core.network.messages.server.colony.building.fields.AssignFieldMessage;
 import com.minecolonies.core.network.messages.server.colony.building.fields.AssignmentModeMessage;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.resources.ResourceLocation;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -41,9 +44,9 @@ public abstract class FieldsModuleView extends AbstractBuildingModuleView
     }
 
     @Override
-    public String getIcon()
+    public ResourceLocation getIconResourceLocation()
     {
-        return "field";
+        return new ResourceLocation(Constants.MOD_ID, "textures/gui/modules/field.png");
     }
 
     @Override
@@ -78,7 +81,7 @@ public abstract class FieldsModuleView extends AbstractBuildingModuleView
      *
      * @param field the field to assign.
      */
-    public void assignField(final IField field)
+    public void assignField(final IBuildingExtension field)
     {
         if (buildingView != null && canAssignField(field))
         {
@@ -98,7 +101,7 @@ public abstract class FieldsModuleView extends AbstractBuildingModuleView
      * @param field the field which is being added.
      * @return true if so.
      */
-    public final boolean canAssignField(IField field)
+    public final boolean canAssignField(IBuildingExtension field)
     {
         return getOwnedFields().size() < maxFieldCount && canAssignFieldOverride(field);
     }
@@ -109,7 +112,7 @@ public abstract class FieldsModuleView extends AbstractBuildingModuleView
      * @return an unmodifiable list.
      */
     @NotNull
-    public List<IField> getOwnedFields()
+    public List<IBuildingExtension> getOwnedFields()
     {
         return getFields().stream()
                  .filter(field -> buildingView.getID().equals(field.getBuildingId()))
@@ -124,7 +127,7 @@ public abstract class FieldsModuleView extends AbstractBuildingModuleView
      * @param field the field which is being added.
      * @return true if so.
      */
-    protected abstract boolean canAssignFieldOverride(IField field);
+    protected abstract boolean canAssignFieldOverride(IBuildingExtension field);
 
     /**
      * Getter of all fields that are either free, or taken by the current building.
@@ -132,7 +135,7 @@ public abstract class FieldsModuleView extends AbstractBuildingModuleView
      * @return an unmodifiable list.
      */
     @NotNull
-    public List<IField> getFields()
+    public List<IBuildingExtension> getFields()
     {
         return getFieldsInColony().stream()
                  .filter(field -> !field.isTaken() || buildingView.getID().equals(field.getBuildingId()))
@@ -146,14 +149,14 @@ public abstract class FieldsModuleView extends AbstractBuildingModuleView
      *
      * @return the list of field instances.
      */
-    protected abstract List<IField> getFieldsInColony();
+    protected abstract List<IBuildingExtension> getFieldsInColony();
 
     /**
      * Free a field from the current worker.
      *
      * @param field the field to free.
      */
-    public void freeField(final IField field)
+    public void freeField(final IBuildingExtension field)
     {
         if (buildingView != null)
         {
@@ -174,7 +177,7 @@ public abstract class FieldsModuleView extends AbstractBuildingModuleView
      * @return a text component that should be shown if there is a problem for the specific field, else null.
      */
     @Nullable
-    public MutableComponent getFieldWarningTooltip(IField field)
+    public MutableComponent getFieldWarningTooltip(IBuildingExtension field)
     {
         if (getOwnedFields().size() >= maxFieldCount)
         {
@@ -196,7 +199,7 @@ public abstract class FieldsModuleView extends AbstractBuildingModuleView
     /**
      * Comparator class for sorting fields in a predictable order in the window.
      */
-    static class FieldsComparator implements Comparator<IField>
+    static class FieldsComparator implements Comparator<IBuildingExtension>
     {
         /**
          * The building this comparator is running on.
@@ -214,7 +217,7 @@ public abstract class FieldsModuleView extends AbstractBuildingModuleView
         }
 
         @Override
-        public int compare(final IField field1, final IField field2)
+        public int compare(final IBuildingExtension field1, final IBuildingExtension field2)
         {
             if (field1.isTaken() && field2.isTaken())
             {

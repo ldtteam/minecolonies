@@ -11,6 +11,8 @@ import net.minecraftforge.registries.DeferredRegister;
 
 import java.util.*;
 
+import static com.minecolonies.core.generation.SoundsJson.createSoundJson;
+
 /**
  * Registering of sound events for our colony.
  */
@@ -54,7 +56,6 @@ public final class ModSoundEvents
         mainTypes.remove(ModJobs.placeHolder.getId());
         mainTypes.add(new ResourceLocation(Constants.MOD_ID, "unemployed"));
         mainTypes.add(new ResourceLocation(Constants.MOD_ID, "visitor"));
-        mainTypes.add(new ResourceLocation(Constants.MOD_ID, "child"));
 
         for (final ResourceLocation job : mainTypes)
         {
@@ -77,6 +78,24 @@ public final class ModSoundEvents
             }
             CITIZEN_SOUND_EVENTS.put(job.getPath(), map);
         }
+
+        final Map<EventType, List<Tuple<SoundEvent, SoundEvent>>> map = new HashMap<>();
+        for (final EventType event : EventType.values())
+        {
+            final List<Tuple<SoundEvent, SoundEvent>> individualSounds = new ArrayList<>();
+            for (int i = 1; i <= 2; i++)
+            {
+                final SoundEvent maleSoundEvent =
+                        ModSoundEvents.getSoundID(CITIZEN_SOUND_EVENT_PREFIX + "child.male" + i + "." + event.getId());
+                final SoundEvent femaleSoundEvent =
+                        ModSoundEvents.getSoundID(CITIZEN_SOUND_EVENT_PREFIX + "child.female" + i + "." + event.getId());
+
+                individualSounds.add(new Tuple<>(maleSoundEvent, femaleSoundEvent));
+                individualSounds.add(new Tuple<>(maleSoundEvent, femaleSoundEvent));
+            }
+            map.put(event, individualSounds);
+        }
+        CITIZEN_SOUND_EVENTS.put("child", map);
 
         SOUND_EVENTS.register(TavernSounds.tavernTheme.getLocation().getPath(), () -> TavernSounds.tavernTheme);
 

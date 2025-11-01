@@ -3,7 +3,7 @@ package com.minecolonies.core.network.messages.server.colony.building.fields;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
-import com.minecolonies.core.colony.buildings.modules.FieldsModule;
+import com.minecolonies.core.colony.buildings.modules.BuildingExtensionsModule;
 import com.minecolonies.core.network.messages.server.AbstractBuildingServerMessage;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.network.NetworkEvent;
@@ -55,9 +55,9 @@ public class AssignmentModeMessage extends AbstractBuildingServerMessage<IBuildi
     @Override
     public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony, final IBuilding building)
     {
-        if (building.hasModule(FieldsModule.class))
+        if (building.hasModule(BuildingExtensionsModule.class))
         {
-            ((FieldsModule)building.getModule(id)).setAssignManually(assignmentMode);
+            ((BuildingExtensionsModule)building.getModule(id)).setAssignManually(assignmentMode);
         }
     }
 }

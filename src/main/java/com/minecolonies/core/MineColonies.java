@@ -2,6 +2,7 @@ package com.minecolonies.core;
 
 import com.ldtteam.structurize.storage.SurvivalBlueprintHandlers;
 import com.ldtteam.structurize.util.LanguageHandler;
+import com.ldtteam.structurize.util.TagManager;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.advancements.AdvancementTriggers;
 import com.minecolonies.api.colony.IChunkmanagerCapability;
@@ -12,20 +13,25 @@ import com.minecolonies.api.creativetab.ModCreativeTabs;
 import com.minecolonies.api.enchants.ModEnchants;
 import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-import com.minecolonies.api.entity.mobs.AbstractEntityRaiderMob;
+import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesRaider;
 import com.minecolonies.api.entity.mobs.RaiderMobUtils;
 import com.minecolonies.api.items.ModBannerPatterns;
 import com.minecolonies.api.items.ModTags;
+import com.minecolonies.api.equipment.ModEquipmentTypes;
 import com.minecolonies.api.loot.ModLootConditions;
 import com.minecolonies.api.sounds.ModSoundEvents;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.api.util.constant.SchematicTagConstants;
 import com.minecolonies.apiimp.ClientMinecoloniesAPIImpl;
 import com.minecolonies.apiimp.CommonMinecoloniesAPIImpl;
 import com.minecolonies.apiimp.initializer.*;
+import com.minecolonies.core.blocks.BlockPlantationField;
+import com.minecolonies.core.blocks.huts.BlockHutGateHouse;
 import com.minecolonies.core.colony.IColonyManagerCapability;
 import com.minecolonies.core.colony.requestsystem.init.RequestSystemInitializer;
 import com.minecolonies.core.colony.requestsystem.init.StandardFactoryControllerInitializer;
+import com.minecolonies.core.commands.arguments.ModArgumentTypes;
 import com.minecolonies.core.entity.mobs.EntityMercenary;
 import com.minecolonies.core.event.*;
 import com.minecolonies.core.loot.SupplyLoot;
@@ -59,6 +65,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
 
+import static com.minecolonies.api.util.constant.SchematicTagConstants.*;
+
 @Mod(Constants.MOD_ID)
 public class MineColonies
 {
@@ -73,11 +81,12 @@ public class MineColonies
 
     public MineColonies()
     {
+        ModEquipmentTypes.DEFERRED_REGISTER.register(FMLJavaModLoadingContext.get().getModEventBus());
         TileEntityInitializer.BLOCK_ENTITIES.register(FMLJavaModLoadingContext.get().getModEventBus());
         ModEnchants.ENCHANTMENTS.register(FMLJavaModLoadingContext.get().getModEventBus());
         ModContainerInitializers.CONTAINERS.register(FMLJavaModLoadingContext.get().getModEventBus());
         ModBuildingsInitializer.DEFERRED_REGISTER.register(FMLJavaModLoadingContext.get().getModEventBus());
-        ModFieldsInitializer.DEFERRED_REGISTER.register(FMLJavaModLoadingContext.get().getModEventBus());
+        ModBuildingExtensionsInitializer.DEFERRED_REGISTER.register(FMLJavaModLoadingContext.get().getModEventBus());
         ModGuardTypesInitializer.DEFERRED_REGISTER.register(FMLJavaModLoadingContext.get().getModEventBus());
         ModColonyEventDescriptionTypeInitializer.DEFERRED_REGISTER.register(FMLJavaModLoadingContext.get().getModEventBus());
         ModResearchRequirementInitializer.DEFERRED_REGISTER.register(FMLJavaModLoadingContext.get().getModEventBus());
@@ -91,10 +100,11 @@ public class MineColonies
         ModSoundEvents.SOUND_EVENTS.register(FMLJavaModLoadingContext.get().getModEventBus());
         ModInteractionsInitializer.DEFERRED_REGISTER.register(FMLJavaModLoadingContext.get().getModEventBus());
         ModResearchEffectInitializer.DEFERRED_REGISTER.register(FMLJavaModLoadingContext.get().getModEventBus());
-        ModResearchCostTypeInitializer.DEFERRED_REGISTER.register(FMLJavaModLoadingContext.get().getModEventBus());
+        ModResearchCostInitializer.DEFERRED_REGISTER.register(FMLJavaModLoadingContext.get().getModEventBus());
         ModLootConditions.DEFERRED_REGISTER.register(FMLJavaModLoadingContext.get().getModEventBus());
         SupplyLoot.GLM.register(FMLJavaModLoadingContext.get().getModEventBus());
         ModBannerPatterns.BANNER_PATTERNS.register(FMLJavaModLoadingContext.get().getModEventBus());
+        ModArgumentTypes.ARGUMENT_TYPES.register(FMLJavaModLoadingContext.get().getModEventBus());
 
         ModQuestInitializer.DEFERRED_REGISTER_OBJECTIVE.register(FMLJavaModLoadingContext.get().getModEventBus());
         ModQuestInitializer.DEFERRED_REGISTER_TRIGGER.register(FMLJavaModLoadingContext.get().getModEventBus());
@@ -118,6 +128,23 @@ public class MineColonies
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> Mod.EventBusSubscriber.Bus.FORGE.bus().get().register(ClientEventHandler.class));
         Mod.EventBusSubscriber.Bus.FORGE.bus().get().register(DataPackSyncEventHandler.ServerEvents.class);
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> Mod.EventBusSubscriber.Bus.FORGE.bus().get().register(DataPackSyncEventHandler.ClientEvents.class));
+        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
+            TagManager.registerGlobalTagOption(TAG_WORK);
+            TagManager.registerGlobalTagOption(TAG_SIT_IN);
+            TagManager.registerGlobalTagOption(TAG_SIT_OUT);
+            TagManager.registerGlobalTagOption(TAG_STAND_IN);
+            TagManager.registerGlobalTagOption(TAG_STAND_OUT);
+            TagManager.registerGlobalTagOption(BUILDING_SIGN);
+
+            TagManager.registerSpecificTagOption(TAG_GATE, b -> b instanceof BlockHutGateHouse);
+            TagManager.registerSpecificTagOption(TAG_KNIGHT, b -> b instanceof BlockHutGateHouse);
+            TagManager.registerSpecificTagOption(TAG_ARCHER, b -> b instanceof BlockHutGateHouse);
+
+            for (final String fieldTag : SchematicTagConstants.getPlantationTags())
+            {
+                TagManager.registerSpecificTagOption(fieldTag, b -> b instanceof BlockPlantationField);
+            }
+        });
 
         Mod.EventBusSubscriber.Bus.MOD.bus().get().addListener(GatherDataHandler::dataGeneratorSetup);
 
@@ -177,24 +204,43 @@ public class MineColonies
         event.put(ModEntities.CITIZEN, AbstractEntityCitizen.getDefaultAttributes().build());
         event.put(ModEntities.VISITOR, AbstractEntityCitizen.getDefaultAttributes().build());
         event.put(ModEntities.MERCENARY, EntityMercenary.getDefaultAttributes().build());
-        event.put(ModEntities.BARBARIAN, AbstractEntityRaiderMob.getDefaultAttributes().build());
-        event.put(ModEntities.ARCHERBARBARIAN, AbstractEntityRaiderMob.getDefaultAttributes().build());
-        event.put(ModEntities.CHIEFBARBARIAN, AbstractEntityRaiderMob.getDefaultAttributes().build());
-        event.put(ModEntities.PHARAO, AbstractEntityRaiderMob.getDefaultAttributes().build());
-        event.put(ModEntities.MUMMY, AbstractEntityRaiderMob.getDefaultAttributes().build());
-        event.put(ModEntities.ARCHERMUMMY, AbstractEntityRaiderMob.getDefaultAttributes().build());
-        event.put(ModEntities.PIRATE, AbstractEntityRaiderMob.getDefaultAttributes().build());
-        event.put(ModEntities.ARCHERPIRATE, AbstractEntityRaiderMob.getDefaultAttributes().build());
-        event.put(ModEntities.CHIEFPIRATE, AbstractEntityRaiderMob.getDefaultAttributes().build());
-        event.put(ModEntities.AMAZON, AbstractEntityRaiderMob.getDefaultAttributes().build());
-        event.put(ModEntities.AMAZONSPEARMAN, AbstractEntityRaiderMob.getDefaultAttributes().build());
-        event.put(ModEntities.AMAZONCHIEF, AbstractEntityRaiderMob.getDefaultAttributes().build());
-        event.put(ModEntities.NORSEMEN_ARCHER, AbstractEntityRaiderMob.getDefaultAttributes().build());
-        event.put(ModEntities.NORSEMEN_CHIEF, AbstractEntityRaiderMob.getDefaultAttributes().build());
-        event.put(ModEntities.SHIELDMAIDEN, AbstractEntityRaiderMob.getDefaultAttributes().build());
-        event.put(ModEntities.DROWNED_PIRATE, AbstractEntityRaiderMob.getDefaultAttributes().build());
-        event.put(ModEntities.DROWNED_ARCHERPIRATE, AbstractEntityRaiderMob.getDefaultAttributes().build());
-        event.put(ModEntities.DROWNED_CHIEFPIRATE, AbstractEntityRaiderMob.getDefaultAttributes().build());
+        event.put(ModEntities.BARBARIAN, AbstractEntityMinecoloniesRaider.getDefaultAttributes().build());
+        event.put(ModEntities.ARCHERBARBARIAN, AbstractEntityMinecoloniesRaider.getDefaultAttributes().build());
+        event.put(ModEntities.CHIEFBARBARIAN, AbstractEntityMinecoloniesRaider.getDefaultAttributes().build());
+        event.put(ModEntities.PHARAO, AbstractEntityMinecoloniesRaider.getDefaultAttributes().build());
+        event.put(ModEntities.MUMMY, AbstractEntityMinecoloniesRaider.getDefaultAttributes().build());
+        event.put(ModEntities.ARCHERMUMMY, AbstractEntityMinecoloniesRaider.getDefaultAttributes().build());
+        event.put(ModEntities.PIRATE, AbstractEntityMinecoloniesRaider.getDefaultAttributes().build());
+        event.put(ModEntities.ARCHERPIRATE, AbstractEntityMinecoloniesRaider.getDefaultAttributes().build());
+        event.put(ModEntities.CHIEFPIRATE, AbstractEntityMinecoloniesRaider.getDefaultAttributes().build());
+        event.put(ModEntities.AMAZON, AbstractEntityMinecoloniesRaider.getDefaultAttributes().build());
+        event.put(ModEntities.AMAZONSPEARMAN, AbstractEntityMinecoloniesRaider.getDefaultAttributes().build());
+        event.put(ModEntities.AMAZONCHIEF, AbstractEntityMinecoloniesRaider.getDefaultAttributes().build());
+        event.put(ModEntities.NORSEMEN_ARCHER, AbstractEntityMinecoloniesRaider.getDefaultAttributes().build());
+        event.put(ModEntities.NORSEMEN_CHIEF, AbstractEntityMinecoloniesRaider.getDefaultAttributes().build());
+        event.put(ModEntities.SHIELDMAIDEN, AbstractEntityMinecoloniesRaider.getDefaultAttributes().build());
+        event.put(ModEntities.DROWNED_PIRATE, AbstractEntityMinecoloniesRaider.getDefaultAttributes().build());
+        event.put(ModEntities.DROWNED_ARCHERPIRATE, AbstractEntityMinecoloniesRaider.getDefaultAttributes().build());
+        event.put(ModEntities.DROWNED_CHIEFPIRATE, AbstractEntityMinecoloniesRaider.getDefaultAttributes().build());
+
+        event.put(ModEntities.CAMP_BARBARIAN, AbstractEntityMinecoloniesRaider.getDefaultAttributes().build());
+        event.put(ModEntities.CAMP_ARCHERBARBARIAN, AbstractEntityMinecoloniesRaider.getDefaultAttributes().build());
+        event.put(ModEntities.CAMP_CHIEFBARBARIAN, AbstractEntityMinecoloniesRaider.getDefaultAttributes().build());
+        event.put(ModEntities.CAMP_PIRATE, AbstractEntityMinecoloniesRaider.getDefaultAttributes().build());
+        event.put(ModEntities.CAMP_ARCHERPIRATE, AbstractEntityMinecoloniesRaider.getDefaultAttributes().build());
+        event.put(ModEntities.CAMP_CHIEFPIRATE, AbstractEntityMinecoloniesRaider.getDefaultAttributes().build());
+        event.put(ModEntities.CAMP_PHARAO, AbstractEntityMinecoloniesRaider.getDefaultAttributes().build());
+        event.put(ModEntities.CAMP_MUMMY, AbstractEntityMinecoloniesRaider.getDefaultAttributes().build());
+        event.put(ModEntities.CAMP_ARCHERMUMMY, AbstractEntityMinecoloniesRaider.getDefaultAttributes().build());
+        event.put(ModEntities.CAMP_AMAZON, AbstractEntityMinecoloniesRaider.getDefaultAttributes().build());
+        event.put(ModEntities.CAMP_AMAZONSPEARMAN, AbstractEntityMinecoloniesRaider.getDefaultAttributes().build());
+        event.put(ModEntities.CAMP_AMAZONCHIEF, AbstractEntityMinecoloniesRaider.getDefaultAttributes().build());
+        event.put(ModEntities.CAMP_NORSEMEN_ARCHER, AbstractEntityMinecoloniesRaider.getDefaultAttributes().build());
+        event.put(ModEntities.CAMP_NORSEMEN_CHIEF, AbstractEntityMinecoloniesRaider.getDefaultAttributes().build());
+        event.put(ModEntities.CAMP_SHIELDMAIDEN, AbstractEntityMinecoloniesRaider.getDefaultAttributes().build());
+        event.put(ModEntities.CAMP_DROWNED_PIRATE, AbstractEntityMinecoloniesRaider.getDefaultAttributes().build());
+        event.put(ModEntities.CAMP_DROWNED_ARCHERPIRATE, AbstractEntityMinecoloniesRaider.getDefaultAttributes().build());
+        event.put(ModEntities.CAMP_DROWNED_CHIEFPIRATE, AbstractEntityMinecoloniesRaider.getDefaultAttributes().build());
     }
 
     @SubscribeEvent

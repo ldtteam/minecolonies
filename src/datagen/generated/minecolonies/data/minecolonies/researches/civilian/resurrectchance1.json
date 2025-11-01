@@ -1,25 +1,25 @@
 {
   "branch": "minecolonies:civilian",
+  "costs": [
+    {
+      "type": "minecolonies:item_simple",
+      "item": "minecraft:ghast_tear",
+      "quantity": 1
+    }
+  ],
   "effects": [
     {
-      "minecolonies:effects/resurrectchanceaddition": 1
+      "id": "minecolonies:effects/resurrectchanceaddition",
+      "level": 1
     }
   ],
   "icon": "minecolonies:blockhutgraveyard",
   "parentResearch": "minecolonies:civilian/remembrance",
   "requirements": [
     {
-      "building": "graveyard",
+      "type": "minecolonies:building",
+      "building": "minecolonies:graveyard",
       "level": 3
-    },
-    {
-      "type": "minecolonies:item_list",
-      "item": {
-        "items": [
-          "minecraft:ghast_tear"
-        ]
-      },
-      "quantity": 1
     }
   ],
   "researchLevel": 2,

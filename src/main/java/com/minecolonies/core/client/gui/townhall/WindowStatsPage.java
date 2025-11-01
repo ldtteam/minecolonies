@@ -34,7 +34,7 @@ public class WindowStatsPage extends AbstractWindowTownHall
     /**
      * Map of intervals.
      */
-    private static final LinkedHashMap<String, Integer> INTERVAL = new LinkedHashMap<>();
+    public static final LinkedHashMap<String, Integer> INTERVAL = new LinkedHashMap<>();
 
     static
     {

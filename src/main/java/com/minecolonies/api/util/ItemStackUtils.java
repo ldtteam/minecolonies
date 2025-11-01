@@ -1,6 +1,5 @@
 package com.minecolonies.api.util;
 
-import com.google.common.collect.Lists;
 import com.minecolonies.api.advancements.AdvancementTriggers;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
@@ -8,12 +7,17 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.compatibility.Compatibility;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.entity.citizen.happiness.ExpirationBasedHappinessModifier;
+import com.minecolonies.api.entity.citizen.happiness.StaticHappinessSupplier;
+import com.minecolonies.api.equipment.ModEquipmentTypes;
+import com.minecolonies.api.equipment.registry.EquipmentTypeEntry;
 import com.minecolonies.api.items.CheckedNbtKey;
+import com.minecolonies.api.items.IMinecoloniesFoodItem;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.items.ModTags;
-import com.minecolonies.api.util.constant.IToolType;
-import com.minecolonies.api.util.constant.ToolType;
+import com.minecolonies.core.items.ItemBowlFood;
 import com.minecolonies.core.util.AdvancementUtils;
+import com.minecolonies.core.util.FurnaceRecipes;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -23,21 +27,21 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.entity.decoration.ItemFrame;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.*;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BrewingStandBlockEntity;
 import net.minecraft.world.level.block.entity.FurnaceBlockEntity;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraftforge.common.Tags;
-import net.minecraftforge.common.ToolAction;
-import net.minecraftforge.common.ToolActions;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -49,6 +53,8 @@ import java.util.stream.Collectors;
 
 import static com.minecolonies.api.items.ModTags.fungi;
 import static com.minecolonies.api.util.constant.Constants.*;
+import static com.minecolonies.api.util.constant.HappinessConstants.HADGREATFOOD;
+import static java.util.Map.entry;
 
 /**
  * Utility methods for the inventories.
@@ -59,6 +65,37 @@ public final class ItemStackUtils
      * Pattern for {@link #parseIdTemplate}.
      */
     private static final Pattern TEMPLATE_PATH_PATTERN = Pattern.compile("\\[PATH(?::([^=]*)=([^]]*))?]");
+
+    private static final Map<Item, Integer> VANILLA_ARMOR_DISTRIBUTION = Map.ofEntries(entry(Items.LEATHER_HELMET, 1),
+      entry(Items.LEATHER_CHESTPLATE, 1),
+      entry(Items.LEATHER_LEGGINGS, 1),
+      entry(Items.LEATHER_BOOTS, 1),
+      entry(Items.GOLDEN_HELMET, 1),
+      entry(Items.GOLDEN_CHESTPLATE, 1),
+      entry(Items.GOLDEN_LEGGINGS, 1),
+      entry(Items.GOLDEN_BOOTS, 1),
+      entry(Items.CHAINMAIL_HELMET, 2),
+      entry(Items.CHAINMAIL_CHESTPLATE, 2),
+      entry(Items.CHAINMAIL_LEGGINGS, 2),
+      entry(Items.CHAINMAIL_BOOTS, 2),
+      entry(Items.IRON_HELMET, 3),
+      entry(Items.IRON_CHESTPLATE, 3),
+      entry(Items.IRON_LEGGINGS, 3),
+      entry(Items.IRON_BOOTS, 3),
+      entry(Items.DIAMOND_HELMET, 4),
+      entry(Items.DIAMOND_CHESTPLATE, 4),
+      entry(Items.DIAMOND_LEGGINGS, 4),
+      entry(Items.DIAMOND_BOOTS, 4),
+      entry(Items.NETHERITE_HELMET, 5),
+      entry(Items.NETHERITE_CHESTPLATE, 5),
+      entry(Items.NETHERITE_LEGGINGS, 5),
+      entry(Items.NETHERITE_BOOTS, 5));
+
+    private static final Map<EquipmentSlot, List<Item>> VANILLA_ARMOR_MAPPING =
+      Map.ofEntries(entry(EquipmentSlot.HEAD, List.of(Items.LEATHER_HELMET, Items.CHAINMAIL_HELMET, Items.IRON_HELMET, Items.DIAMOND_HELMET)),
+        entry(EquipmentSlot.CHEST, List.of(Items.LEATHER_CHESTPLATE, Items.CHAINMAIL_CHESTPLATE, Items.IRON_CHESTPLATE, Items.DIAMOND_CHESTPLATE)),
+        entry(EquipmentSlot.LEGS, List.of(Items.LEATHER_LEGGINGS, Items.CHAINMAIL_LEGGINGS, Items.IRON_LEGGINGS, Items.DIAMOND_LEGGINGS)),
+        entry(EquipmentSlot.FEET, List.of(Items.LEATHER_BOOTS, Items.CHAINMAIL_BOOTS, Items.IRON_BOOTS, Items.DIAMOND_BOOTS)));
 
     /**
      * Variable representing the empty itemstack in 1.10. Used for easy updating to 1.11
@@ -116,17 +153,12 @@ public final class ItemStackUtils
     /**
      * Predicate describing things which work in the furnace.
      */
-    public static Predicate<ItemStack> IS_SMELTABLE;
-
-    /**
-     * Predicate describing food which can be eaten (is not raw).
-     */
-    public static Predicate<ItemStack> CAN_EAT;
+    public static Predicate<ItemStack> IS_SMELTABLE = itemStack -> !ItemStackUtils.isEmpty(FurnaceRecipes.getInstance().getSmeltingResult(itemStack));
 
     /**
      * Predicate describing cookables.
      */
-    public static Predicate<ItemStack> ISCOOKABLE;
+    public static Predicate<ItemStack> ISCOOKABLE = itemStack -> ItemStackUtils.ISFOOD.test(FurnaceRecipes.getInstance().getSmeltingResult(itemStack));
 
     /**
      * Predicate to check for compost items.
@@ -141,80 +173,6 @@ public final class ItemStackUtils
         /*
          * Intentionally left empty.
          */
-    }
-
-    /**
-     * Get the entity of an entityInfo object.
-     *
-     * @param entityData the input.
-     * @param world      the world.
-     * @return the output object or null.
-     */
-    @Nullable
-    public static Entity getEntityFromEntityInfoOrNull(final CompoundTag entityData, final Level world)
-    {
-        try
-        {
-            final Optional<EntityType<?>> type = EntityType.by(entityData);
-            if (type.isPresent())
-            {
-                final Entity entity = type.get().create(world);
-                if (entity != null)
-                {
-                    entity.load(entityData);
-                    return entity;
-                }
-            }
-        }
-        catch (final RuntimeException e)
-        {
-            Log.getLogger().info("Couldn't restore entitiy", e);
-            return null;
-        }
-        return null;
-    }
-
-    /**
-     * Adds entities to the builder building if he needs it.
-     *
-     * @param entityData the entity info object.
-     * @param world      the world.
-     * @param placer     the entity placer.
-     * @return a list of stacks.
-     */
-    public static List<ItemStorage> getListOfStackForEntityInfo(final CompoundTag entityData, final Level world, final Entity placer)
-    {
-        if (entityData != null)
-        {
-            final Entity entity = getEntityFromEntityInfoOrNull(entityData, world);
-            if (entity != null)
-            {
-                if (EntityUtils.isEntityAtPosition(entity, world, placer))
-                {
-                    return Collections.emptyList();
-                }
-                return getListOfStackForEntity(entity, placer);
-            }
-        }
-        return Collections.emptyList();
-    }
-
-    /**
-     * Adds entities to the builder building if he needs it.
-     *
-     * @param entityData the entity info object.
-     * @param world      the world.
-     * @param placer     the entity placer.
-     * @return a list of stacks.
-     */
-    public static List<ItemStorage> getListOfStackForEntityInfo(final CompoundTag entityData, final Level world, final AbstractEntityCitizen placer)
-    {
-        if (placer != null)
-        {
-            return getListOfStackForEntityInfo(entityData, world, (Entity) placer);
-        }
-
-        return Lists.newArrayList();
     }
 
     /**
@@ -259,23 +217,22 @@ public final class ItemStackUtils
     }
 
     /**
-     * Verifies if there is one tool with an acceptable level in a worker's inventory.
+     * Verifies if there is equipment with an acceptable level in a worker's inventory.
      *
      * @param stack        the stack to test.
-     * @param toolType     the type of tool needed
-     * @param minimalLevel the minimum level for the tool to find.
-     * @param maximumLevel the maximum level for the tool to find.
-     * @return true if tool is acceptable
+     * @param equipmentType     the type of equipment needed
+     * @param minimalLevel the minimum level for the equipment to find.
+     * @param maximumLevel the maximum level for the equipment to find.
+     * @return true if equipment is acceptable
      */
-    public static boolean hasToolLevel(@Nullable final ItemStack stack, final IToolType toolType, final int minimalLevel, final int maximumLevel)
+    public static boolean hasEquipmentLevel(@Nullable final ItemStack stack, final EquipmentTypeEntry equipmentType, final int minimalLevel, final int maximumLevel)
     {
         if (isEmpty(stack))
         {
             return false;
         }
 
-        final int level = Compatibility.isTinkersWeapon(stack) ? Compatibility.getToolLevel(stack) : getMiningLevel(stack, toolType);
-        return isTool(stack, toolType) && verifyToolLevel(stack, level, minimalLevel, maximumLevel);
+        return equipmentType.checkIsEquipment(stack) && verifyEquipmentLevel(stack, equipmentType.getMiningLevel(stack), minimalLevel, maximumLevel);
     }
 
     /**
@@ -295,270 +252,27 @@ public final class ItemStackUtils
     }
 
     /**
-     * Calculate the mining level an item has as a tool of certain type.
-     *
-     * @param stack    the stack to test.
-     * @param toolType the tool category.
-     * @return integer value for mining level &gt;= 0 is okay.
-     */
-    public static int getMiningLevel(@Nullable final ItemStack stack, @Nullable final IToolType toolType)
-    {
-        if (toolType == ToolType.NONE)
-        {
-            //empty hand is best on blocks who don't care (0 better 1)
-            return stack == null ? 0 : 1;
-        }
-        if (!Compatibility.getMiningLevelCompatibility(stack, toolType.toString()))
-        {
-            return -1;
-        }
-        if (!isTool(stack, toolType))
-        {
-            return -1;
-        }
-
-        if (toolType == ToolType.SWORD && Compatibility.isTinkersWeapon(stack))
-        {
-            return Compatibility.getToolLevel(stack);
-        }
-        else if (Compatibility.isTinkersTool(stack, toolType))
-        {
-            return Compatibility.getToolLevel(stack);
-        }
-
-        if (ToolType.HELMET.equals(toolType)
-                || ToolType.BOOTS.equals(toolType)
-                || ToolType.CHESTPLATE.equals(toolType)
-                || ToolType.LEGGINGS.equals(toolType))
-        {
-            if (stack.getItem() instanceof final ArmorItem armorItem)
-            {
-                return getArmorLevel(armorItem.getMaterial());
-            }
-        }
-        else if (stack.getItem() instanceof final TieredItem tieredItem)  // most tools
-        {
-            return tieredItem.getTier().getLevel();
-        }
-        else if (toolType.equals(ToolType.FISHINGROD))
-        {
-            return getFishingRodLevel(stack);
-        }
-        else if (toolType.equals(ToolType.SHEARS))
-        {
-            return 0;
-        }
-        else if (!toolType.hasVariableMaterials())
-        {
-            //We need a hut level 1 minimum
-            return 1;
-        }
-        return -1;
-    }
-
-    /**
-     * Check if the first stack is a better tool than the second stack.
-     *
-     * @param stack1 the first stack to check.
-     * @param stack2 the second to compare with.
-     * @return true if better, false if worse or either of them is not a tool.
-     */
-    public static boolean isBetterTool(final ItemStack stack1, final ItemStack stack2)
-    {
-        for (final ToolType toolType : ToolType.values())
-        {
-            if (isTool(stack1, toolType) && isTool(stack2, toolType) && getMiningLevel(stack1, toolType) > getMiningLevel(stack2, toolType))
-            {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Checks if this ItemStack can be used as a Tool of type.
-     *
-     * @param itemStack Item to check.
-     * @param toolType  Type of the tool.
-     * @return true if item can be used, otherwise false.
-     */
-    public static boolean isTool(@Nullable final ItemStack itemStack, final IToolType toolType)
-    {
-        if (isEmpty(itemStack))
-        {
-            return false;
-        }
-
-        if (ToolType.AXE.equals(toolType) && itemStack.canPerformAction(ToolActions.AXE_DIG))
-        {
-            return true;
-        }
-
-        if (ToolType.SHOVEL.equals(toolType) && itemStack.canPerformAction(ToolActions.SHOVEL_DIG))
-        {
-            return true;
-        }
-
-        if (ToolType.PICKAXE.equals(toolType) && itemStack.canPerformAction(ToolActions.PICKAXE_DIG))
-        {
-            return true;
-        }
-
-        if (ToolType.HOE.equals(toolType))
-        {
-            for (final ToolAction action : ToolActions.DEFAULT_HOE_ACTIONS)
-            {
-                if (!itemStack.canPerformAction(action))
-                {
-                    return false;
-                }
-            }
-            return true;
-        }
-        if (ToolType.BOW.equals(toolType))
-        {
-            return itemStack.getItem() instanceof BowItem;
-        }
-        if (ToolType.SWORD.equals(toolType))
-        {
-            return itemStack.canPerformAction(ToolActions.SWORD_SWEEP) || Compatibility.isTinkersWeapon(itemStack);
-        }
-        if (ToolType.FISHINGROD.equals(toolType) && itemStack.canPerformAction(ToolActions.FISHING_ROD_CAST))
-        {
-            return true;
-        }
-        if (ToolType.SHEARS.equals(toolType) && itemStack.canPerformAction(ToolActions.SHEARS_DIG) && itemStack.canPerformAction(ToolActions.SHEARS_HARVEST))
-        {
-            return true;
-        }
-        if (ToolType.HELMET.equals(toolType))
-        {
-            return itemStack.getItem() instanceof ArmorItem armor && EquipmentSlot.HEAD.equals(armor.getEquipmentSlot());
-        }
-        if (ToolType.LEGGINGS.equals(toolType))
-        {
-            return itemStack.getItem() instanceof ArmorItem armor && EquipmentSlot.LEGS.equals(armor.getEquipmentSlot());
-        }
-        if (ToolType.CHESTPLATE.equals(toolType))
-        {
-            return itemStack.getItem() instanceof ArmorItem armor && EquipmentSlot.CHEST.equals(armor.getEquipmentSlot());
-        }
-        if (ToolType.BOOTS.equals(toolType))
-        {
-            return itemStack.getItem() instanceof ArmorItem armor && EquipmentSlot.FEET.equals(armor.getEquipmentSlot());
-        }
-        if (ToolType.SHIELD.equals(toolType))
-        {
-            return itemStack.getItem() instanceof ShieldItem;   //canPerformAction(ToolActions.SHIELD_BLOCK) ?
-        }
-        if (ToolType.FLINT_N_STEEL.equals(toolType))
-        {
-            return itemStack.getItem() instanceof FlintAndSteelItem;
-        }
-
-        return false;
-    }
-
-    /**
      * Verifies if an item has an appropriated grade.
      *
-     * @param itemStack    the type of tool needed
-     * @param toolLevel    the tool level
+     * @param itemStack    the equipment
+     * @param equipmentLevel    the equipment level
      * @param minimalLevel the minimum level needed
      * @param maximumLevel the maximum level needed (usually the worker's hut level)
-     * @return true if tool is acceptable
+     * @return true if equipment is acceptable
      */
-    public static boolean verifyToolLevel(@NotNull final ItemStack itemStack, final int toolLevel, final int minimalLevel, final int maximumLevel)
+    public static boolean verifyEquipmentLevel(@NotNull final ItemStack itemStack, final int equipmentLevel, final int minimalLevel, final int maximumLevel)
     {
-        if (toolLevel < minimalLevel)
+        if (equipmentLevel < minimalLevel)
         {
             return false;
         }
-        return (toolLevel + getMaxEnchantmentLevel(itemStack) <= maximumLevel);
+        return (equipmentLevel + getMaxEnchantmentLevel(itemStack) <= maximumLevel);
     }
 
     /**
-     * This routine converts the material type of armor into a numerical value for the request system.
+     * Calculates the max level enchantment this equipment has.
      *
-     * @param material type of material of the armor
-     * @return armor level
-     */
-    private static int getArmorLevel(final ArmorMaterial material)
-    {
-        final float armorLevel = getArmorValue(material);
-
-        if (armorLevel <= getArmorValue(ArmorMaterials.LEATHER))
-        {
-            return 0;
-        }
-        else if (armorLevel <= getArmorValue(ArmorMaterials.GOLD))
-        {
-            return 1;
-        }
-        else if (armorLevel <= getArmorValue(ArmorMaterials.CHAIN))
-        {
-            return 2;
-        }
-        else if (armorLevel <= getArmorValue(ArmorMaterials.IRON))
-        {
-            return 3;
-        }
-        else if (armorLevel <= getArmorValue(ArmorMaterials.DIAMOND))
-        {
-            return 4;
-        }
-
-        return 5;
-    }
-
-    /**
-     * Calculate the full armor level of an entire kit of armor combined.
-     *
-     * @param material type of material of the armor.
-     * @return the armor value.
-     */
-    private static float getArmorValue(final ArmorMaterial material)
-    {
-        int value = 0;
-        for (final ArmorItem.Type type : ArmorItem.Type.values())
-        {
-            value += material.getDefenseForType(type);
-        }
-        return value + material.getToughness() * 4;
-    }
-
-    /**
-     * Estimates the fishing rod tier from available durability and enchantment status.
-     *
-     * @param itemStack the tool to check.
-     * @return equivalent tool level.
-     */
-    private static int getFishingRodLevel(final ItemStack itemStack)
-    {
-        if (itemStack.getItem() == Items.FISHING_ROD)
-        {
-            return 1;
-        }
-        if (!itemStack.isDamageableItem())
-        {
-            return 5;
-        }
-        final int rodDurability = itemStack.getMaxDamage();
-        if (rodDurability <= (Tiers.WOOD.getUses() + 22))
-        {
-            return 1;
-        }
-        else if (rodDurability <= (Tiers.IRON.getUses() + 6))
-        {
-            return 2;
-        }
-        return 3;
-    }
-
-    /**
-     * Calculates the max level enchantment this tool has.
-     *
-     * @param itemStack the tool to check.
+     * @param itemStack the equipment to check.
      * @return max enchantment level.
      */
     public static int getMaxEnchantmentLevel(final ItemStack itemStack)
@@ -582,6 +296,76 @@ public final class ItemStackUtils
             }
         }
         return Math.max(maxLevel - 1, 0);
+    }
+
+    /**
+     * This routine converts the {@link ItemStackUtils#getArmorValue(ItemStack)} of an item stack into a given
+     * request system level, based on the standard leather - netherite armor levels.
+     *
+     * @param itemStack the input item stack.
+     * @return armor level
+     */
+    public static int getArmorLevel(final ItemStack itemStack)
+    {
+        final Integer value = VANILLA_ARMOR_DISTRIBUTION.get(itemStack.getItem());
+        if (value != null)
+        {
+            return value;
+        }
+
+        final EquipmentSlot targetEquipmentSlot = LivingEntity.getEquipmentSlotForItem(itemStack);
+        final List<Item> armorItems = VANILLA_ARMOR_MAPPING.get(targetEquipmentSlot);
+        if (armorItems == null)
+        {
+            return 5;
+        }
+
+        final double targetArmorLevel = getArmorValue(itemStack);
+
+        for (final Item armorItem : armorItems)
+        {
+            final double armorValue = getArmorValue(armorItem.getDefaultInstance());
+            if (targetArmorLevel <= armorValue)
+            {
+                return VANILLA_ARMOR_DISTRIBUTION.get(armorItem);
+            }
+        }
+
+        return 5;
+    }
+
+    /**
+     * Calculate the armor level for an item stack.
+     * (Level is determined by taking the base armor rating, and 4 points for each toughness level.)
+     *
+     * @param itemStack the input item stack.
+     * @return the armor value.
+     */
+    private static double getArmorValue(final ItemStack itemStack)
+    {
+        final double armor = getItemStackAttributeValue(itemStack, Attributes.ARMOR);
+        final double toughness = getItemStackAttributeValue(itemStack, Attributes.ARMOR_TOUGHNESS);
+
+        return armor + (toughness * 4);
+    }
+
+    /**
+     * Check if the first stack is better equipment than the second stack.
+     *
+     * @param stack1 the first stack to check.
+     * @param stack2 the second to compare with.
+     * @return true if better, false if worse or either of them are not equipment.
+     */
+    public static boolean isBetterEquipment(final ItemStack stack1, final ItemStack stack2)
+    {
+        for (EquipmentTypeEntry equipmentType : ModEquipmentTypes.getRegistry())
+        {
+            if (equipmentType.checkIsEquipment(stack1) && equipmentType.checkIsEquipment(stack2) && equipmentType.getMiningLevel(stack1) > equipmentType.getMiningLevel(stack2))
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -690,7 +474,7 @@ public final class ItemStackUtils
     }
 
     /**
-     * get the size of the stac
+     * get the size of the stack
      *
      * @param stack to get the size from
      * @return the size of the stack
@@ -833,6 +617,25 @@ public final class ItemStackUtils
     public static boolean compareItemStackListIgnoreStackSize(final List<ItemStack> stacks, final ItemStack stack)
     {
         return compareItemStackListIgnoreStackSize(stacks, stack, true, true);
+    }
+
+    /**
+     * Method to check if a stack is in a list of ItemStorage items.
+     *
+     * @param stacks the list of stacks.
+     * @param stack  the stack.
+     * @return true if so.
+     */
+    public static boolean compareItemStorageListIgnoreStackSize(final List<ItemStorage> stacks, final ItemStack stack)
+    {
+        for (final ItemStorage tempStack : stacks)
+        {
+            if (compareItemStacksIgnoreStackSize(tempStack.getItemStack(), stack, true, true))
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -1116,15 +919,18 @@ public final class ItemStackUtils
     public static void consumeFood(final ItemStack foodStack, final AbstractEntityCitizen citizen, final Inventory inventory)
     {
         final ICitizenData citizenData = citizen.getCitizenData();
-        ItemStack itemUseReturn = foodStack.finishUsingItem(citizen.level(), citizen);
         final double satIncrease = FoodUtils.getFoodValue(foodStack, citizen);
-
         citizenData.increaseSaturation(satIncrease);
 
+        ItemStack itemUseReturn = foodStack.finishUsingItem(citizen.level(), citizen);
         // Special handling for these as those are stackable + have a return per item.
         if (foodStack.getItem() instanceof HoneyBottleItem)
         {
             itemUseReturn = new ItemStack(Items.GLASS_BOTTLE);
+        }
+        else if (foodStack.getItem() instanceof ItemBowlFood)
+        {
+            itemUseReturn = new ItemStack(Items.BOWL);
         }
 
         if (!itemUseReturn.isEmpty() && itemUseReturn.getItem() != foodStack.getItem())
@@ -1145,12 +951,39 @@ public final class ItemStackUtils
             }
         }
 
-        IColony citizenColony = citizen.getCitizenColonyHandler().getColony();
+        if (foodStack.getItem() instanceof IMinecoloniesFoodItem foodItem && foodItem.getTier() >= 3)
+        {
+            citizen.getCitizenData().getCitizenHappinessHandler().addModifier(new ExpirationBasedHappinessModifier(HADGREATFOOD, 2.0, new StaticHappinessSupplier(2.0), 5));
+        }
+
+        IColony citizenColony = citizen.getCitizenColonyHandler().getColonyOrRegister();
         if (citizenColony != null)
         {
             AdvancementUtils.TriggerAdvancementPlayersForColony(citizenColony, playerMP -> AdvancementTriggers.CITIZEN_EAT_FOOD.trigger(playerMP, foodStack));
         }
         citizenData.markDirty(60);
+    }
+
+    /**
+     * Get an attribute value for a given item stack.
+     *
+     * @param itemStack the input item stack.
+     * @param attribute the attribute to get the value for.
+     * @return the computed value of the attribute with all modifiers.
+     */
+    public static double getItemStackAttributeValue(final ItemStack itemStack, final Attribute attribute)
+    {
+        try
+        {
+            final AttributeInstance instance = new AttributeInstance(attribute, (f) -> {});
+            itemStack.getAttributeModifiers(LivingEntity.getEquipmentSlotForItem(itemStack)).get(attribute).forEach(instance::addTransientModifier);
+            return instance.getValue();
+        }
+        catch (final Exception e)
+        {
+            Log.getLogger().warn("Could not get attribute value for '{}' on item '{}'", attribute.getDescriptionId(), itemStack.getDescriptionId(), e);
+            return 0;
+        }
     }
 }
 

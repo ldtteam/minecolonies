@@ -4,9 +4,11 @@ import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
+import com.minecolonies.api.equipment.ModEquipmentTypes;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.api.util.StatsUtil;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.api.util.constant.Constants;
@@ -15,14 +17,19 @@ import com.minecolonies.core.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.core.colony.jobs.JobFlorist;
 import com.minecolonies.core.entity.ai.workers.AbstractEntityAIInteract;
 import com.minecolonies.core.tileentities.TileEntityCompostedDirt;
+import com.minecolonies.core.util.citizenutils.CitizenItemUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -32,6 +39,10 @@ import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.core.util.WorkerUtil.isThereCompostedLand;
+import static com.minecolonies.api.util.constant.StatisticsConstants.FLOWERS_PICKED;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Florist AI class.
@@ -151,9 +162,14 @@ public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist, Bu
             return IDLE;
         }
 
+        if (!checkOrEquipShears())
+        {
+            return IDLE;
+        }
+
         worker.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
         final long distance = BlockPosUtil.getDistance2D(worker.blockPosition(), building.getPosition());
-        if (distance > MAX_DISTANCE && walkToBuilding())
+        if (distance > MAX_DISTANCE && !walkToBuilding())
         {
             return DECIDE;
         }
@@ -209,7 +225,7 @@ public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist, Bu
 
         worker.getCitizenData().setVisibleStatus(GARDENING);
 
-        if (walkToBlock(compostPosition))
+        if (!walkToWorkPos(compostPosition))
         {
             return getState();
         }
@@ -244,17 +260,19 @@ public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist, Bu
      */
     private IAIState harvest()
     {
-        if (harvestPosition == null)
+        if (harvestPosition == null || !checkOrEquipShears())
         {
             return START_WORKING;
         }
 
         worker.getCitizenData().setVisibleStatus(GARDENING);
 
-        if (walkToBlock(harvestPosition))
+        if (!walkToWorkPos(harvestPosition))
         {
             return getState();
         }
+
+        List<String> flowerDrops = getFlowerDropAtPos(world, harvestPosition);
 
         if (!mineBlock(harvestPosition))
         {
@@ -262,13 +280,50 @@ public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist, Bu
         }
 
         worker.getCitizenExperienceHandler().addExperience(XP_PER_FLOWER);
+
+        for (final String drop : flowerDrops)
+        {
+            StatsUtil.trackStatByName(building, FLOWERS_PICKED, drop, 1);
+        }
+
         incrementActionsDone();
         worker.decreaseSaturationForContinuousAction();
         harvestPosition = null;
         return START_WORKING;
     }
 
+    @Override
+    public boolean holdEfficientTool(@NotNull final BlockState target, final BlockPos pos)
+    {
+        final int bestSlot = getMostEfficientTool(target, pos);
+        if (bestSlot == NO_TOOL)
+        {
+            return true;
+        }
+        return super.holdEfficientTool(target, pos);
+    }
+
     // ------------------------------------------------ HELPER METHODS ------------------------------------------------ //
+
+    /**
+     * Check if we have shears and equip, otherwise return false.
+     * @return true if have shears.
+     */
+    private boolean checkOrEquipShears()
+    {
+        if(checkForToolOrWeapon(ModEquipmentTypes.shears.get()))
+        {
+            return false;
+        }
+
+        final int shearSlot = InventoryUtils.getFirstSlotOfItemHandlerContainingEquipment(worker.getInventoryCitizen(), ModEquipmentTypes.shears.get(), 0, building.getMaxEquipmentLevel());
+        if (shearSlot >= 0)
+        {
+            CitizenItemUtils.setHeldItem(worker, InteractionHand.MAIN_HAND, shearSlot);
+            return true;
+        }
+        return false;
+    }
 
     @Override
     protected int getActionsDoneUntilDumping()
@@ -339,5 +394,28 @@ public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist, Bu
     public Class<BuildingFlorist> getExpectedBuildingClass()
     {
         return BuildingFlorist.class;
+    }
+
+    /**
+     * Retrieves the item registry name of the first flower drop at the specified position.
+     *
+     * @param world the world in which to check for flower drops.
+     * @param pos the position to check for flower drops.
+     * @return an Optional containing the registry name of the flower drop, or an empty Optional if no flower is found.
+     */
+    protected static List<String> getFlowerDropAtPos(Level world, BlockPos pos) 
+    {
+        List<String> flowerDrops = new ArrayList<>();
+        BlockState state = world.getBlockState(pos);
+        List<ItemStack> drops = Block.getDrops(state, (ServerLevel) world, pos, null);
+        for (ItemStack drop : drops) 
+        {
+            if (drop.is(ItemTags.FLOWERS)) 
+            { 
+                flowerDrops.add(drop.getItem().getDescriptionId());
+            }
+        }
+        
+        return flowerDrops;
     }
 }

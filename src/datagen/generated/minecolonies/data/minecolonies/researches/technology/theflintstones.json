@@ -1,25 +1,25 @@
 {
   "branch": "minecolonies:technology",
+  "costs": [
+    {
+      "type": "minecolonies:item_simple",
+      "item": "minecraft:brick",
+      "quantity": 64
+    }
+  ],
   "effects": [
     {
-      "minecolonies:effects/blockhutstonesmeltery": 1
+      "id": "minecolonies:effects/blockhutstonesmeltery",
+      "level": 1
     }
   ],
   "icon": "minecolonies:blockhutstonesmeltery",
   "parentResearch": "minecolonies:technology/stonecake",
   "requirements": [
     {
-      "building": "stonemason",
+      "type": "minecolonies:building",
+      "building": "minecolonies:stonemason",
       "level": 1
-    },
-    {
-      "type": "minecolonies:item_list",
-      "item": {
-        "items": [
-          "minecraft:brick"
-        ]
-      },
-      "quantity": 64
     }
   ],
   "researchLevel": 2,

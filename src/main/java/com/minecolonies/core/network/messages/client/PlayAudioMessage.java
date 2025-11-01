@@ -5,17 +5,18 @@ import com.minecolonies.api.network.IMessage;
 import com.minecolonies.core.Network;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.client.resources.sounds.SoundInstance;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.sounds.SoundSource;
-import net.minecraft.sounds.SoundEvent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.network.NetworkEvent;
-import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -28,8 +29,8 @@ public class PlayAudioMessage implements IMessage
     /**
      * The sound event to play.
      */
-    private SoundEvent soundEvent;
-    private SoundSource category = SoundSource.MUSIC;
+    private ResourceLocation soundEvent;
+    private SoundSource      category;
 
     /**
      * Default constructor.
@@ -47,7 +48,7 @@ public class PlayAudioMessage implements IMessage
     public PlayAudioMessage(final SoundEvent event)
     {
         super();
-        this.soundEvent = event;
+        this.soundEvent = event.getLocation();
     }
 
     /**
@@ -59,23 +60,22 @@ public class PlayAudioMessage implements IMessage
     public PlayAudioMessage(final SoundEvent event, final SoundSource category)
     {
         super();
-        this.soundEvent = event;
+        this.soundEvent = event.getLocation();
         this.category = category;
     }
 
     @Override
     public void toBytes(final FriendlyByteBuf buf)
     {
-        // TODO: switch to proper registry
         buf.writeVarInt(category.ordinal());
-        buf.writeResourceLocation(ForgeRegistries.SOUND_EVENTS.getKey(this.soundEvent));
+        buf.writeResourceLocation(soundEvent);
     }
 
     @Override
     public void fromBytes(final FriendlyByteBuf buf)
     {
         this.category = SoundSource.values()[buf.readVarInt()];
-        this.soundEvent = ForgeRegistries.SOUND_EVENTS.getValue(buf.readResourceLocation());
+        this.soundEvent = buf.readResourceLocation();
     }
 
     @Nullable
@@ -89,9 +89,16 @@ public class PlayAudioMessage implements IMessage
     @Override
     public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
     {
+        final Player player = Minecraft.getInstance().player;
+
+        if (player == null)
+        {
+            return;
+        }
+
         Minecraft.getInstance().getSoundManager().play(new SimpleSoundInstance(
           soundEvent, category,
-          1.0F, 1.0F, RandomSource.create(), 0.0, 0.0, 0.0));
+            1.0F, 1.0F, RandomSource.create(), false, 0, SoundInstance.Attenuation.NONE, player.getX(), player.getY(), player.getZ(), true));
     }
 
     /**

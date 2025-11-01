@@ -6,17 +6,18 @@ import com.minecolonies.core.commands.commandTypes.IMCCommand;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
+import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.ClickEvent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Style;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import net.minecraft.ChatFormatting;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.Style;
+import static com.minecolonies.core.commands.colonycommands.CommandColonyInfo.MAYOR_TEXT;
 
 public class CommandListColonies implements IMCCommand
 {
@@ -67,7 +68,7 @@ public class CommandListColonies implements IMCCommand
 
         // check to see if we have to add one page to show the half page
         final int halfPage = (colonyCount % COLONIES_ON_PAGE == 0) ? 0 : 1;
-        final int pageCount = ((colonyCount) / COLONIES_ON_PAGE) + halfPage;
+        final int pageCount = (int) (Math.floor((double) colonyCount / COLONIES_ON_PAGE) + halfPage);
 
 
         if (page < 1 || page > pageCount)
@@ -98,13 +99,15 @@ public class CommandListColonies implements IMCCommand
         for (final IColony colony : coloniesPage)
         {
             context.getSource().sendSuccess(() -> Component.literal(String.format(
-              ID_AND_NAME_TEXT, colony.getID(), colony.getName())).setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
+                ID_AND_NAME_TEXT, colony.getID(), colony.getName()) + " " + MAYOR_TEXT + colony.getPermissions().getOwnerName())
+                                                    .setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
               String.format(COMMAND_COLONY_INFO, colony.getID())))), true);
             final BlockPos center = colony.getCenter();
 
-            final MutableComponent teleport = Component.literal(COORDINATES_TEXT + String.format(COORDINATES_XYZ, center.getX(), center.getY(), center.getZ()));
-            teleport.setStyle(Style.EMPTY.withBold(true).withColor(ChatFormatting.GOLD).withClickEvent(
-              new ClickEvent(ClickEvent.Action.RUN_COMMAND, TELEPORT_COMMAND + colony.getID())));
+            final MutableComponent teleport = Component.literal("Citizens:" + colony.getCitizenManager().getCurrentCitizenCount() + " ")
+                                                .append(Component.literal(COORDINATES_TEXT + String.format(COORDINATES_XYZ, center.getX(), center.getY(), center.getZ()))
+                                                          .setStyle(Style.EMPTY.withBold(true).withColor(ChatFormatting.GOLD).withClickEvent(
+                                                            new ClickEvent(ClickEvent.Action.RUN_COMMAND, TELEPORT_COMMAND + colony.getID()))));
 
             context.getSource().sendSuccess(() -> teleport, true);
         }

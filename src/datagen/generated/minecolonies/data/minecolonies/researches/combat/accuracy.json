@@ -1,25 +1,25 @@
 {
   "branch": "minecolonies:combat",
+  "costs": [
+    {
+      "type": "minecolonies:item_simple",
+      "item": "minecraft:iron_ingot",
+      "quantity": 16
+    }
+  ],
   "effects": [
     {
-      "minecolonies:effects/sleeplessmultiplier": 1
+      "id": "minecolonies:effects/guardcrit",
+      "level": 1
     }
   ],
   "exclusiveChildResearch": true,
-  "icon": "minecraft:lime_bed",
+  "icon": "minecraft:iron_sword",
   "requirements": [
     {
-      "building": "guardtower",
+      "type": "minecolonies:building",
+      "building": "minecolonies:guardtower",
       "level": 1
-    },
-    {
-      "type": "minecolonies:item_list",
-      "item": {
-        "items": [
-          "minecraft:iron_ingot"
-        ]
-      },
-      "quantity": 16
     }
   ],
   "researchLevel": 1

@@ -34,8 +34,10 @@ import net.minecraft.world.InteractionResultHolder;
  */
 public abstract class AbstractItemScroll extends AbstractItemMinecolonies
 {
-    public static final String TAG_COLONY_DIM       = "colony_dim";
-    public static final String TAG_BUILDING_POS     = "building_pos";
+    public static final String TAG_COLONY_DIM = "colony_dim";
+    public static final String TAG_BUILDING_POS = "building_pos";
+    public static final String TAG_CACHED_COLONY_NAME = "cached_colony_name";
+
     public static final int    FAIL_RESPONSES_TOTAL = 10;
 
     /**
@@ -125,12 +127,13 @@ public abstract class AbstractItemScroll extends AbstractItemMinecolonies
         final BlockEntity te = ctx.getLevel().getBlockEntity(ctx.getClickedPos());
         final ItemStack scroll = ctx.getPlayer().getItemInHand(ctx.getHand());
         final CompoundTag compound = checkForCompound(scroll);
-        if (te instanceof TileEntityColonyBuilding)
+        if (te instanceof TileEntityColonyBuilding buildingTe)
         {
-            compound.putInt(TAG_COLONY_ID, ((AbstractTileEntityColonyBuilding) te).getColonyId());
-            compound.putString(TAG_COLONY_DIM, ((AbstractTileEntityColonyBuilding) te).getColony().getWorld().dimension().location().toString());
+            compound.putInt(TAG_COLONY_ID, buildingTe.getColonyId());
+            compound.putString(TAG_COLONY_DIM, buildingTe.getColony().getWorld().dimension().location().toString());
             BlockPosUtil.write(compound, TAG_BUILDING_POS, ctx.getClickedPos());
-            MessageUtils.format(MESSAGE_SCROLL_REGISTERED, ((AbstractTileEntityColonyBuilding) te).getColony().getName()).sendTo(ctx.getPlayer());
+            MessageUtils.format(MESSAGE_SCROLL_REGISTERED, buildingTe.getColony().getName()).sendTo(ctx.getPlayer());
+            compound.putString(TAG_CACHED_COLONY_NAME, buildingTe.getColony().getName());
         }
 
         return InteractionResult.SUCCESS;

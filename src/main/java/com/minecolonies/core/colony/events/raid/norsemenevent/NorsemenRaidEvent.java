@@ -2,12 +2,12 @@ package com.minecolonies.core.colony.events.raid.norsemenevent;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.colonyEvents.EventStatus;
-import com.minecolonies.api.entity.mobs.AbstractEntityRaiderMob;
+import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesRaider;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.colony.events.raid.HordeRaidEvent;
-import com.minecolonies.core.entity.mobs.norsemen.EntityNorsemenArcher;
-import com.minecolonies.core.entity.mobs.norsemen.EntityNorsemenChief;
-import com.minecolonies.core.entity.mobs.norsemen.EntityShieldmaiden;
+import com.minecolonies.core.entity.mobs.raider.norsemen.EntityNorsemenArcherRaider;
+import com.minecolonies.core.entity.mobs.raider.norsemen.EntityNorsemenChiefRaider;
+import com.minecolonies.core.entity.mobs.raider.norsemen.EntityShieldmaidenRaider;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -50,25 +50,25 @@ public class NorsemenRaidEvent extends HordeRaidEvent
     @Override
     public void registerEntity(final Entity entity)
     {
-        if (!(entity instanceof AbstractEntityRaiderMob) || !entity.isAlive())
+        if (!(entity instanceof AbstractEntityMinecoloniesRaider) || !entity.isAlive())
         {
             entity.remove(Entity.RemovalReason.DISCARDED);
             return;
         }
 
-        if (entity instanceof EntityNorsemenChief && boss.keySet().size() < horde.numberOfBosses)
+        if (entity instanceof EntityNorsemenChiefRaider && boss.keySet().size() < horde.numberOfBosses)
         {
             boss.put(entity, entity.getUUID());
             return;
         }
 
-        if (entity instanceof EntityNorsemenArcher && archers.keySet().size() < horde.numberOfArchers)
+        if (entity instanceof EntityNorsemenArcherRaider && archers.keySet().size() < horde.numberOfArchers)
         {
             archers.put(entity, entity.getUUID());
             return;
         }
 
-        if (entity instanceof EntityShieldmaiden && normal.keySet().size() < horde.numberOfRaiders)
+        if (entity instanceof EntityShieldmaidenRaider && normal.keySet().size() < horde.numberOfRaiders)
         {
             normal.put(entity, entity.getUUID());
             return;
@@ -81,24 +81,24 @@ public class NorsemenRaidEvent extends HordeRaidEvent
     public void onEntityDeath(final LivingEntity entity)
     {
         super.onEntityDeath(entity);
-        if (!(entity instanceof AbstractEntityRaiderMob))
+        if (!(entity instanceof AbstractEntityMinecoloniesRaider))
         {
             return;
         }
 
-        if (entity instanceof EntityNorsemenChief)
+        if (entity instanceof EntityNorsemenChiefRaider)
         {
             boss.remove(entity);
             horde.numberOfBosses--;
         }
 
-        if (entity instanceof EntityNorsemenArcher)
+        if (entity instanceof EntityNorsemenArcherRaider)
         {
             archers.remove(entity);
             horde.numberOfArchers--;
         }
 
-        if (entity instanceof EntityShieldmaiden)
+        if (entity instanceof EntityShieldmaidenRaider)
         {
             normal.remove(entity);
             horde.numberOfRaiders--;

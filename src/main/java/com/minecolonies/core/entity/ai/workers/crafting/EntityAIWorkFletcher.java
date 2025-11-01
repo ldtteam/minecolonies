@@ -2,7 +2,6 @@ package com.minecolonies.core.entity.ai.workers.crafting;
 
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingFletcher;
 import com.minecolonies.core.colony.jobs.JobFletcher;
-import com.minecolonies.core.entity.ai.workers.crafting.AbstractEntityAICrafting;
 import org.jetbrains.annotations.NotNull;
 
 /**

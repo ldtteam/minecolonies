@@ -7,7 +7,7 @@ import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.blockui.views.Box;
 import com.ldtteam.blockui.views.ScrollingList;
 import com.minecolonies.api.colony.IColonyView;
-import com.minecolonies.api.colony.fields.plantation.IPlantationModule;
+import com.minecolonies.api.colony.buildingextensions.plantation.IPlantationModule;
 import com.minecolonies.api.colony.workorders.WorkOrderType;
 import com.minecolonies.api.tileentities.AbstractTileEntityPlantationField;
 import com.minecolonies.api.util.constant.Constants;
@@ -79,7 +79,7 @@ public class WindowPlantationField extends AbstractWindowSkeleton
         super(Constants.MOD_ID + WINDOW_RESOURCE);
         this.tileEntityPlantationField = tileEntityPlantationField;
         this.plants = tileEntityPlantationField.getPlantationFieldTypes().stream()
-                        .flatMap(f -> f.getFieldModuleProducers().stream().map(m -> m.apply(null)).filter(IPlantationModule.class::isInstance).map(m -> (IPlantationModule) m))
+                        .flatMap(f -> f.getExtensionModuleProducers().stream().map(m -> m.apply(null)).filter(IPlantationModule.class::isInstance).map(m -> (IPlantationModule) m))
                         .map(fieldType -> new ItemStack(fieldType.getItem()))
                         .toList();
 

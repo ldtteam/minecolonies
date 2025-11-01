@@ -1,11 +1,14 @@
 package com.minecolonies.core.entity.pathfinding;
 
+import com.ldtteam.domumornamentum.block.decorative.FloatingCarpetBlock;
 import com.ldtteam.domumornamentum.block.decorative.PanelBlock;
 import com.ldtteam.domumornamentum.block.vanilla.TrapdoorBlock;
 import com.minecolonies.api.blocks.huts.AbstractBlockMinecoloniesDefault;
-import com.minecolonies.api.entity.mobs.drownedpirate.AbstractDrownedEntityPirate;
+import com.minecolonies.api.entity.mobs.drownedpirate.AbstractDrownedEntityPirateRaider;
 import com.minecolonies.api.items.ModTags;
+import com.minecolonies.api.util.ShapeUtil;
 import com.minecolonies.core.Network;
+import com.minecolonies.core.entity.pathfinding.world.CachingBlockLookup;
 import com.minecolonies.core.network.messages.client.SyncPathReachedMessage;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -13,7 +16,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.Mob;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
@@ -29,9 +31,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashSet;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class PathfindingUtils
@@ -42,33 +42,33 @@ public class PathfindingUtils
     private static Object empty = Fluids.EMPTY.defaultFluidState();
 
     /**
-     * Which citizens are being tracked by which players.
+     * Which citizens are being tracked by which players. Player to entity uuid
      */
     public static final Map<UUID, UUID> trackingMap = new ConcurrentHashMap<>();
+
+    /**
+     * Map for tracking specific path types, type to player uuid
+     */
+    public static final Map<String, UUID> trackByType = new HashMap<>();
 
     /**
      * Set the set of reached blocks to the client.
      *
      * @param reached the reached blocks.
-     * @param mob     the tracked mob.
+     * @param players the tracking players.
      */
-    public static void syncDebugReachedPositions(final HashSet<BlockPos> reached, final Mob mob)
+    public static void syncDebugReachedPositions(final HashSet<BlockPos> reached, final List<ServerPlayer> players)
     {
-        if (reached.isEmpty())
+        if (reached.isEmpty() || players.isEmpty())
         {
             return;
         }
 
-        for (final Map.Entry<UUID, UUID> entry : trackingMap.entrySet())
+        final SyncPathReachedMessage message = new SyncPathReachedMessage(reached);
+
+        for (final ServerPlayer player : players)
         {
-            if (entry.getValue().equals(mob.getUUID()))
-            {
-                final ServerPlayer player = mob.level.getServer().getPlayerList().getPlayer(entry.getKey());
-                if (player != null)
-                {
-                    Network.getNetwork().sendToPlayer(new SyncPathReachedMessage(reached), player);
-                }
-            }
+            Network.getNetwork().sendToPlayer(message, player);
         }
     }
 
@@ -82,11 +82,47 @@ public class PathfindingUtils
      */
     public static BlockPos prepareStart(@NotNull final LivingEntity entity)
     {
-        @NotNull BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos(Mth.floor(entity.getX()),
-          Mth.floor(entity.getY()),
-          Mth.floor(entity.getZ()));
+        final BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos(Mth.floor(entity.getX()),
+            Mth.floor(entity.getY()),
+            Mth.floor(entity.getZ()));
         final Level level = entity.level;
         BlockState bs = level.getBlockState(pos);
+        final Block b = bs.getBlock();
+
+        // Check if the entity is standing ontop of another block with part of its bb
+        final BlockPos.MutableBlockPos below = new BlockPos.MutableBlockPos(pos.getX(), pos.getY() - 1, pos.getZ());
+        if (b instanceof CarpetBlock || b instanceof FloatingCarpetBlock || b instanceof WaterlilyBlock)
+        {
+            return pos.above().immutable();
+        }
+
+        final BlockState belowState = level.getBlockState(below);
+        if (entity.onGround() && SurfaceType.getSurfaceType(level, belowState, below) != SurfaceType.WALKABLE)
+        {
+            int minX = Mth.floor(entity.getBoundingBox().minX);
+            int minZ = Mth.floor(entity.getBoundingBox().minZ);
+            int maxX = Mth.floor(entity.getBoundingBox().maxX);
+            int maxZ = Mth.floor(entity.getBoundingBox().maxZ);
+
+            for (int x = minX; x <= maxX; x++)
+            {
+                for (int z = minZ; z <= maxZ; z++)
+                {
+                    final BlockPos toCheck = new BlockPos(x, below.getY(), z);
+                    // Only check other positions than the current
+                    if ((x != pos.getX() || z != pos.getZ())
+                        && SurfaceType.getSurfaceType(level, level.getBlockState(toCheck), toCheck) == SurfaceType.WALKABLE
+                        && Math.abs(ShapeUtil.max(level.getBlockState(toCheck).getCollisionShape(level, toCheck), Direction.Axis.Y) + toCheck.getY() - entity.getY()) < 0.1)
+                    {
+                        pos.setX(x);
+                        pos.setZ(z);
+                        below.setX(x);
+                        below.setZ(z);
+                    }
+                }
+            }
+        }
+
         // 1 Up when we're standing within this collision shape
         final VoxelShape collisionShape = bs.getCollisionShape(level, pos);
         final boolean isFineToStandIn = canStandInSolidBlock(bs);
@@ -98,8 +134,8 @@ public class PathfindingUtils
             for (final AABB box : collisionShape.toAabbs())
             {
                 if (relPosX >= box.minX && relPosX <= box.maxX
-                      && relPosZ >= box.minZ && relPosZ <= box.maxZ
-                      && box.maxY > 0)
+                    && relPosZ >= box.minZ && relPosZ <= box.maxZ
+                    && box.maxY > 0)
                 {
                     pos.set(pos.getX(), pos.getY() + 1, pos.getZ());
                     bs = level.getBlockState(pos);
@@ -121,9 +157,7 @@ public class PathfindingUtils
             }
         }
 
-        final Block b = bs.getBlock();
-
-        if (entity.isInWater() && !(entity instanceof AbstractDrownedEntityPirate))
+        if (entity.isInWater() && !(entity instanceof AbstractDrownedEntityPirateRaider))
         {
             while (!bs.getFluidState().isEmpty())
             {
@@ -166,8 +200,13 @@ public class PathfindingUtils
      */
     private static boolean canStandInSolidBlock(final BlockState state)
     {
-        return state.getBlock() instanceof DoorBlock || state.getBlock() instanceof TrapDoorBlock || (state.getBlock() instanceof PanelBlock && state.getValue(PanelBlock.OPEN))
-                 || !state.getBlock().properties.hasCollision;
+        return state.getBlock() instanceof DoorBlock
+            || state.getBlock() instanceof TrapDoorBlock
+            || (state.getBlock() instanceof PanelBlock && state.getValue(PanelBlock.OPEN))
+            || !state.getBlock().properties.hasCollision
+            || state.getBlock() instanceof CarpetBlock
+            || state.getBlock() instanceof FloatingCarpetBlock
+            || state.getBlock() instanceof WaterlilyBlock;
     }
 
     /**
@@ -269,7 +308,7 @@ public class PathfindingUtils
         }
 
         if (state.getBlock() instanceof TrapdoorBlock
-              || state.getBlock() instanceof PanelBlock && (!state.getValue(TrapdoorBlock.OPEN) && state.getValue(TrapdoorBlock.HALF) == Half.TOP))
+            || state.getBlock() instanceof PanelBlock && (!state.getValue(TrapdoorBlock.OPEN) && state.getValue(TrapdoorBlock.HALF) == Half.TOP))
         {
             return false;
         }
@@ -328,8 +367,8 @@ public class PathfindingUtils
             return true;
         }
         return blockState.is(BlockTags.CLIMBABLE) && ((options != null && options.canClimbAdvanced()) ||
-                blockState.getBlock() instanceof LadderBlock ||
-                blockState.is(ModTags.freeClimbBlocks));
+            blockState.getBlock() instanceof LadderBlock ||
+            blockState.is(ModTags.freeClimbBlocks));
     }
 
     /**
@@ -343,10 +382,132 @@ public class PathfindingUtils
         final Block block = blockState.getBlock();
 
         return blockState.is(ModTags.dangerousBlocks) ||
-                 block instanceof FireBlock ||
-                 block instanceof CampfireBlock ||
-                 block instanceof MagmaBlock ||
-                 block instanceof SweetBerryBushBlock ||
-                 block instanceof PowderSnowBlock;
+            block instanceof FireBlock ||
+            block instanceof CampfireBlock ||
+            block instanceof MagmaBlock ||
+            block instanceof SweetBerryBushBlock ||
+            block instanceof PowderSnowBlock ||
+            block == Blocks.LAVA_CAULDRON;
+    }
+
+    /**
+     * Checks for collisions along a line between two given positions
+     *
+     * @param startX
+     * @param startY
+     * @param startZ
+     * @param endX
+     * @param endY
+     * @param endZ
+     * @param blockLookup
+     * @return
+     */
+    public static boolean hasAnyCollisionAlong(int startX, int startY, int startZ, int endX, int endY, int endZ, CachingBlockLookup blockLookup)
+    {
+        int x = startX, y = startY, z = startZ;
+
+        int dx = Math.abs(endX - startX);
+        int dy = Math.abs(endY - startY);
+        int dz = Math.abs(endZ - startZ);
+
+        int stepX = (endX > startX) ? 1 : -1;
+        int stepY = (endY > startY) ? 1 : -1;
+        int stepZ = (endZ > startZ) ? 1 : -1;
+
+        double stepCostX = 1.0 / dx;
+        double stepCostY = 1.0 / dy;
+        double stepCostZ = 1.0 / dz;
+
+        // Init with step cost, to determine first step
+        double stepCostSumX = (dx == 0) ? Double.POSITIVE_INFINITY : 0.5 / dx;
+        double stepCostSumY = (dy == 0) ? Double.POSITIVE_INFINITY : 0.5 / dy;
+        double stepCostSumZ = (dz == 0) ? Double.POSITIVE_INFINITY : 0.5 / dz;
+
+        for (int i = 0; i < (dx + dy + dz) && (x != endX || y != endY || z != endZ); i++)
+        {
+            if (ShapeUtil.hasCollision(blockLookup, x, y, z, blockLookup.getBlockState(x, y, z)))
+            {
+                return true;
+            }
+
+            // Explore multiple possibilities if two options have the same cost, e.g. on quadratic distance to make sure all blocks around get checked:
+            if (doubleEquals(stepCostSumX, stepCostSumY))
+            {
+                if (ShapeUtil.hasCollision(blockLookup, x + stepX, y, z, blockLookup.getBlockState(x + stepX, y, z)))
+                {
+                    return true;
+                }
+
+                if (ShapeUtil.hasCollision(blockLookup, x + stepX, y + stepY, z, blockLookup.getBlockState(x + stepX, y + stepY, z)))
+                {
+                    return true;
+                }
+            }
+
+            if (doubleEquals(stepCostSumX, stepCostSumZ))
+            {
+                if (ShapeUtil.hasCollision(blockLookup, x + stepX, y, z, blockLookup.getBlockState(x + stepX, y, z)))
+                {
+                    return true;
+                }
+
+                if (ShapeUtil.hasCollision(blockLookup, x + stepX, y, z + stepZ, blockLookup.getBlockState(x + stepX, y, z + stepZ)))
+                {
+                    return true;
+                }
+            }
+
+            if (doubleEquals(stepCostSumY, stepCostSumZ))
+            {
+                if (ShapeUtil.hasCollision(blockLookup, x, y + stepY, z, blockLookup.getBlockState(x, y + stepY, z)))
+                {
+                    return true;
+                }
+
+                if (ShapeUtil.hasCollision(blockLookup, x, y + stepY, z + stepZ, blockLookup.getBlockState(x, y + stepY, z + stepZ)))
+                {
+                    return true;
+                }
+            }
+
+            if (stepCostSumX < stepCostSumY)
+            {
+                if (stepCostSumX < stepCostSumZ)
+                {
+                    x += stepX;
+                    stepCostSumX += stepCostX;
+                }
+                else
+                {
+                    z += stepZ;
+                    stepCostSumZ += stepCostZ;
+                }
+            }
+            else
+            {
+                if (stepCostSumY < stepCostSumZ)
+                {
+                    y += stepY;
+                    stepCostSumY += stepCostY;
+                }
+                else
+                {
+                    z += stepZ;
+                    stepCostSumZ += stepCostZ;
+                }
+            }
+        }
+
+        return ShapeUtil.hasCollision(blockLookup, endX, endY, endZ, blockLookup.getBlockState(endX, endY, endZ));
+    }
+
+    private static boolean doubleEquals(final double a, final double b)
+    {
+        if (Double.isFinite(a) || Double.isFinite(b) || Double.isNaN(a) || Double.isNaN(b))
+        {
+            return false;
+        }
+
+        return Math.abs(a - b) < 0.000005;
     }
 }

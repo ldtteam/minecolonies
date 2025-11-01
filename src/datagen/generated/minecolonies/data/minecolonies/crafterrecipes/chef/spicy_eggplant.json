@@ -1,0 +1,31 @@
+{
+  "type": "recipe",
+  "crafter": "chef_crafting",
+  "inputs": [
+    {
+      "item": "minecolonies:nether_pepper"
+    },
+    {
+      "item": "minecolonies:nether_pepper"
+    },
+    {
+      "item": "minecolonies:eggplant"
+    },
+    {
+      "item": "minecolonies:eggplant"
+    },
+    {
+      "item": "minecolonies:garlic"
+    },
+    {
+      "item": "minecolonies:onion"
+    },
+    {
+      "item": "minecraft:bowl"
+    }
+  ],
+  "intermediate": "minecraft:air",
+  "min-building-level": 4,
+  "result": "minecolonies:spicy_eggplant",
+  "show-tooltip": true
+}

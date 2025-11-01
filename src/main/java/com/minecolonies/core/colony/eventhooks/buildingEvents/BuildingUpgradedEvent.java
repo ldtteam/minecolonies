@@ -12,7 +12,6 @@ import org.jetbrains.annotations.NotNull;
  */
 public class BuildingUpgradedEvent extends AbstractBuildingEvent
 {
-
     /**
      * This events id, registry entries use res locations as ids.
      */
@@ -33,9 +32,9 @@ public class BuildingUpgradedEvent extends AbstractBuildingEvent
      * @param buildingName  the name of the building.
      * @param buildingLevel the level of the building after this event.
      */
-    public BuildingUpgradedEvent(BlockPos eventPos, String buildingName, int buildingLevel)
+    public BuildingUpgradedEvent(final BlockPos eventPos, final String buildingName, final int buildingLevel)
     {
-        super(eventPos, buildingName, buildingLevel);
+        super(false, eventPos, buildingName, buildingLevel);
     }
 
     @Override

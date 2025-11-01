@@ -1,18 +1,20 @@
 package com.minecolonies.core.entity.mobs.aitasks;
 
-import com.minecolonies.api.entity.mobs.ICustomAttackSound;
+import com.minecolonies.api.entity.ai.combat.threat.IThreatTableEntity;
 import com.minecolonies.api.entity.ai.statemachine.states.IState;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.ITickRateStateMachine;
-import com.minecolonies.api.entity.ai.combat.threat.IThreatTableEntity;
-import com.minecolonies.api.entity.mobs.AbstractEntityRaiderMob;
+import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMonster;
+import com.minecolonies.api.entity.mobs.ICustomAttackSound;
 import com.minecolonies.api.entity.mobs.IRangedMobEntity;
-import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
+import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.EntityUtils;
-import com.minecolonies.core.MineColonies;
-import com.minecolonies.core.entity.other.CustomArrowEntity;
+import com.minecolonies.api.util.constant.RaiderConstants;
 import com.minecolonies.core.entity.ai.combat.AttackMoveAI;
 import com.minecolonies.core.entity.ai.combat.CombatUtils;
 import com.minecolonies.core.entity.citizen.EntityCitizen;
+import com.minecolonies.core.entity.other.CustomArrowEntity;
+import com.minecolonies.core.entity.pathfinding.navigation.EntityNavigationUtils;
+import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
@@ -25,17 +27,17 @@ import static com.minecolonies.api.entity.mobs.RaiderMobUtils.MOB_ATTACK_DAMAGE;
 /**
  * Raider AI for shooting arrows at a target
  */
-public class RaiderRangedAI<T extends AbstractEntityRaiderMob & IThreatTableEntity & IRangedMobEntity> extends AttackMoveAI<T>
+public class RaiderRangedAI<T extends AbstractEntityMinecoloniesMonster & IThreatTableEntity & IRangedMobEntity> extends AttackMoveAI<T>
 {
     /**
      * Max delay between attacks is 3s, aka 60 ticks.
      */
-    private static final int MAX_ATTACK_DELAY = 60;
+    private static final int ATTACK_DELAY = 60;
 
     /**
-     * Min delay between attacks is 1s, aka 20 ticks.
+     * How many ticks we activate the bow before shooting
      */
-    private static final int MIN_ATTACK_DELAY = 20;
+    private static final int BOW_HOLDING_DELAY = 40;
 
     /**
      * Difficulty level at which arrows do pierce
@@ -57,7 +59,7 @@ public class RaiderRangedAI<T extends AbstractEntityRaiderMob & IThreatTableEnti
      */
     private static final double PITCH_MULTIPLIER = 0.4;
     private static final double BASE_PITCH       = 0.8D;
-    private static final double PITCH_DIVIDER    = 1.0D;
+    private static final double PITCH_DIVIDER = 1.0D;
 
     /**
      * Counter for flying time
@@ -108,7 +110,7 @@ public class RaiderRangedAI<T extends AbstractEntityRaiderMob & IThreatTableEnti
         if (flightCounter > 5 && arrowEntity instanceof CustomArrowEntity)
         {
             ((CustomArrowEntity) arrowEntity).setPlayerArmorPierce();
-            arrowEntity.setSecondsOnFire(200);
+            arrowEntity.setSecondsOnFire(10);
             arrowEntity.setBaseDamage(10);
         }
 
@@ -122,6 +124,7 @@ public class RaiderRangedAI<T extends AbstractEntityRaiderMob & IThreatTableEnti
 
         // Visuals
         user.swing(InteractionHand.MAIN_HAND);
+        user.stopUsingItem();
         SoundEvent attackSound = SoundEvents.SKELETON_SHOOT;
         if (arrowEntity instanceof ICustomAttackSound)
         {
@@ -154,14 +157,38 @@ public class RaiderRangedAI<T extends AbstractEntityRaiderMob & IThreatTableEnti
             return 10;
         }
 
-        return (int) (Math.max(MIN_ATTACK_DELAY, MAX_ATTACK_DELAY - MineColonies.getConfig().getServer().raidDifficulty.get() * 4 * user.getDifficulty())
-                        * user.getAttackDelayModifier());
+        return ATTACK_DELAY;
+    }
+
+    @Override
+    public boolean canAttack()
+    {
+        if (nextAttackTime - BOW_HOLDING_DELAY >= user.level.getGameTime() && !user.isUsingItem() && !user.getMainHandItem().isEmpty())
+        {
+            user.startUsingItem(InteractionHand.MAIN_HAND);
+        }
+
+        return true;
+    }
+
+    @Override
+    protected boolean checkForTarget()
+    {
+        final boolean validTarget = super.checkForTarget();
+
+        if (!validTarget && user.isUsingItem())
+        {
+            user.stopUsingItem();
+        }
+
+        return validTarget;
     }
 
     @Override
     protected PathResult moveInAttackPosition(final LivingEntity target)
     {
-        return user.getNavigation().moveToXYZ(target.getX(), target.getY(), target.getZ(), COMBAT_MOVEMENT_SPEED);
+        EntityNavigationUtils.walkToPos(user, target.blockPosition(), (int) getAttackDistance(), false, COMBAT_MOVEMENT_SPEED);
+        return user.getNavigation().getPathResult();
     }
 
     @Override
@@ -173,6 +200,6 @@ public class RaiderRangedAI<T extends AbstractEntityRaiderMob & IThreatTableEnti
     @Override
     protected boolean isWithinPersecutionDistance(final LivingEntity target)
     {
-        return true;
+        return BlockPosUtil.getDistanceSquared(user.blockPosition(), target.blockPosition()) <= RaiderConstants.MAX_ARCHER_RAIDER_PERSECUTION_DISTANCE * RaiderConstants.MAX_ARCHER_RAIDER_PERSECUTION_DISTANCE;
     }
 }

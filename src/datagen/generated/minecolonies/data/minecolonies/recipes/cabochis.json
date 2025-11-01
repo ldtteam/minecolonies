@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "minecolonies:onion"
+    },
+    {
+      "item": "minecolonies:cabbage"
+    },
+    {
+      "item": "minecraft:bowl"
+    },
+    {
+      "item": "minecolonies:manchet_bread"
+    }
+  ],
+  "result": {
+    "item": "minecolonies:cabochis"
+  }
+}

@@ -10,6 +10,7 @@ import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.core.colony.interactionhandling.SimpleNotificationInteraction;
 import com.minecolonies.core.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.core.colony.jobs.JobMiner;
+import com.minecolonies.core.util.citizenutils.CitizenItemUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
@@ -120,7 +121,7 @@ public class CitizenSleepHandler implements ICitizenSleepHandler
         citizen.hasImpulse = true;
 
         //Remove item while citizen is asleep.
-        citizen.getCitizenItemHandler().removeHeldItem();
+        CitizenItemUtils.removeHeldItem(citizen);
 
         setIsAsleep(true);
 
@@ -216,23 +217,6 @@ public class CitizenSleepHandler implements ICitizenSleepHandler
         citizen.getEntityData().set(DATA_BED_POS, new BlockPos(0, 0, 0));
     }
 
-    @Override
-    public BlockPos findHomePos()
-    {
-        final BlockPos pos = citizen.getRestrictCenter();
-        if (pos.equals(BlockPos.ZERO))
-        {
-            if (citizen.getCitizenColonyHandler().getColony().hasTownHall())
-            {
-                return citizen.getCitizenColonyHandler().getColony().getBuildingManager().getTownHall().getPosition();
-            }
-
-            return citizen.getCitizenColonyHandler().getColony().getCenter();
-        }
-
-        return pos;
-    }
-
     /**
      * Get the bed location of the citizen.
      *
@@ -247,8 +231,12 @@ public class CitizenSleepHandler implements ICitizenSleepHandler
     @Override
     public boolean shouldGoSleep()
     {
-        final BlockPos homePos = findHomePos();
+        final BlockPos homePos = citizen.getCitizenData().getHomePosition();
         BlockPos citizenPos = citizen.blockPosition();
+        if (homePos == null)
+        {
+            return false;
+        }
 
         int additionalDist = 0;
 
@@ -273,8 +261,8 @@ public class CitizenSleepHandler implements ICitizenSleepHandler
         final double timeNeeded = (Math.sqrt(xDiff * xDiff + zDiff * zDiff + yDiff * yDiff) + additionalDist) * TIME_PER_BLOCK;
 
         // Estimated arrival is 1hour past night
-        final double timeLeft = (citizen.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(WORK_LONGER) == 0
-                                   ? NIGHT : NIGHT + citizen.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(WORK_LONGER) * 1000) - (citizen.level.getDayTime() % 24000);
+        final double timeLeft = (citizen.getCitizenColonyHandler().getColonyOrRegister().getResearchManager().getResearchEffects().getEffectStrength(WORK_LONGER) == 0
+                                   ? NIGHT : NIGHT + citizen.getCitizenColonyHandler().getColonyOrRegister().getResearchManager().getResearchEffects().getEffectStrength(WORK_LONGER) * 1000) - (citizen.level.getDayTime() % 24000);
         if (timeLeft <= 0 || (timeLeft - timeNeeded <= 0))
         {
             if (citizen.getCitizenData().getWorkBuilding() != null)

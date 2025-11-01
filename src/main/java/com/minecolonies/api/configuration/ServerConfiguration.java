@@ -26,7 +26,6 @@ public class ServerConfiguration extends AbstractConfiguration
     public final ForgeConfigSpec.BooleanValue enableInDevelopmentFeatures;
     public final ForgeConfigSpec.BooleanValue alwaysRenderNameTag;
     public final ForgeConfigSpec.BooleanValue workersAlwaysWorkInRain;
-    public final ForgeConfigSpec.BooleanValue holidayFeatures;
     public final ForgeConfigSpec.IntValue     luckyBlockChance;
     public final ForgeConfigSpec.IntValue     minThLevelToTeleport;
     public final ForgeConfigSpec.DoubleValue  foodModifier;
@@ -55,6 +54,7 @@ public class ServerConfiguration extends AbstractConfiguration
     public final ForgeConfigSpec.BooleanValue canPlayerUseHomeTPCommand;
     public final ForgeConfigSpec.BooleanValue canPlayerUseShowColonyInfoCommand;
     public final ForgeConfigSpec.BooleanValue canPlayerUseKillCitizensCommand;
+    public final ForgeConfigSpec.BooleanValue canPlayerUseModifyCitizensCommand;
     public final ForgeConfigSpec.BooleanValue canPlayerUseAddOfficerCommand;
     public final ForgeConfigSpec.BooleanValue canPlayerUseDeleteColonyCommand;
     public final ForgeConfigSpec.BooleanValue canPlayerUseResetCommand;
@@ -63,11 +63,11 @@ public class ServerConfiguration extends AbstractConfiguration
      *  ------------------- ######## Claim settings ######## ------------------- *
      *  --------------------------------------------------------------------------- */
 
-    public final ForgeConfigSpec.IntValue     maxColonySize;
-    public final ForgeConfigSpec.IntValue     minColonyDistance;
-    public final ForgeConfigSpec.IntValue     initialColonySize;
-    public final ForgeConfigSpec.IntValue     maxDistanceFromWorldSpawn;
-    public final ForgeConfigSpec.IntValue     minDistanceFromWorldSpawn;
+    public final ForgeConfigSpec.IntValue maxColonySize;
+    public final ForgeConfigSpec.IntValue minColonyDistance;
+    public final ForgeConfigSpec.IntValue initialColonySize;
+    public final ForgeConfigSpec.IntValue maxDistanceFromWorldSpawn;
+    public final ForgeConfigSpec.IntValue minDistanceFromWorldSpawn;
 
     /*  ------------------------------------------------------------------------- *
      *  ------------------- ######## Combat Settings ######## ------------------- *
@@ -89,21 +89,16 @@ public class ServerConfiguration extends AbstractConfiguration
      *  ------------------- ######## Permission Settings ######## ------------------- *
      *  ----------------------------------------------------------------------------- */
 
-    public final ForgeConfigSpec.BooleanValue                        enableColonyProtection;
-    public final ForgeConfigSpec.EnumValue<Explosions>               turnOffExplosionsInColonies;
-    public final ForgeConfigSpec.ConfigValue<List<? extends String>> freeToInteractBlocks;
+    public final ForgeConfigSpec.BooleanValue          enableColonyProtection;
+    public final ForgeConfigSpec.EnumValue<Explosions> turnOffExplosionsInColonies;
 
     /*  -------------------------------------------------------------------------------- *
      *  ------------------- ######## Compatibility Settings ######## ------------------- *
      *  -------------------------------------------------------------------------------- */
 
-    public final ForgeConfigSpec.ConfigValue<List<? extends String>> configListStudyItems;
-    public final ForgeConfigSpec.ConfigValue<List<? extends String>> configListRecruitmentItems;
-    public final ForgeConfigSpec.ConfigValue<List<? extends String>> luckyOres;
-    public final ForgeConfigSpec.ConfigValue<List<? extends String>> diseases;
-    public final ForgeConfigSpec.BooleanValue                        auditCraftingTags;
-    public final ForgeConfigSpec.BooleanValue                        debugInventories;
-    public final ForgeConfigSpec.BooleanValue                        blueprintBuildMode;
+    public final ForgeConfigSpec.BooleanValue auditCraftingTags;
+    public final ForgeConfigSpec.BooleanValue debugInventories;
+    public final ForgeConfigSpec.BooleanValue blueprintBuildMode;
 
     /*  ------------------------------------------------------------------------------ *
      *  ------------------- ######## Pathfinding Settings ######## ------------------- *
@@ -119,6 +114,11 @@ public class ServerConfiguration extends AbstractConfiguration
 
     public final ForgeConfigSpec.BooleanValue creativeResolve;
 
+    /*  --------------------------------------------------------------------------------- *
+     *  ------------------- ######## Debugging Settings ######## ------------------- *
+     *  --------------------------------------------------------------------------------- */
+
+    public final ForgeConfigSpec.BooleanValue netherWorkerTakesDamage;
 
     /**
      * Builds server configuration.
@@ -133,11 +133,10 @@ public class ServerConfiguration extends AbstractConfiguration
         allowInfiniteSupplyChests = defineBoolean(builder, "allowinfinitesupplychests", false);
         allowInfiniteColonies = defineBoolean(builder, "allowinfinitecolonies", false);
         allowOtherDimColonies = defineBoolean(builder, "allowotherdimcolonies", true);
-        maxCitizenPerColony = defineInteger(builder, "maxcitizenpercolony", 250, 100, CitizenConstants.CITIZEN_LIMIT_MAX);
+        maxCitizenPerColony = defineInteger(builder, "maxcitizenpercolony", 250, 30, CitizenConstants.CITIZEN_LIMIT_MAX);
         enableInDevelopmentFeatures = defineBoolean(builder, "enableindevelopmentfeatures", false);
         alwaysRenderNameTag = defineBoolean(builder, "alwaysrendernametag", true);
         workersAlwaysWorkInRain = defineBoolean(builder, "workersalwaysworkinrain", false);
-        holidayFeatures = defineBoolean(builder, "holidayfeatures", true);
         luckyBlockChance = defineInteger(builder, "luckyblockchance", 1, 0, 100);
         minThLevelToTeleport = defineInteger(builder, "minthleveltoteleport", 3, 0, 5);
         foodModifier = defineDouble(builder, "foodmodifier", 1.0, 0.1, 100);
@@ -152,7 +151,7 @@ public class ServerConfiguration extends AbstractConfiguration
         swapToCategory(builder, "research");
         researchCreativeCompletion = defineBoolean(builder, "researchcreativecompletion", true);
         researchDebugLog = defineBoolean(builder, "researchdebuglog", false);
-        researchResetCost = defineList(builder, "researchresetcost", Arrays.asList("minecolonies:ancienttome:1"), s -> s instanceof String);
+        researchResetCost = defineList(builder, "researchresetcost", List.of("minecolonies:ancienttome:1"), s -> s instanceof String);
 
         swapToCategory(builder, "commands");
 
@@ -162,6 +161,7 @@ public class ServerConfiguration extends AbstractConfiguration
         canPlayerUseHomeTPCommand = defineBoolean(builder, "canplayerusehometpcommand", false);
         canPlayerUseShowColonyInfoCommand = defineBoolean(builder, "canplayeruseshowcolonyinfocommand", true);
         canPlayerUseKillCitizensCommand = defineBoolean(builder, "canplayerusekillcitizenscommand", false);
+        canPlayerUseModifyCitizensCommand = defineBoolean(builder, "canplayerusemodifycitizenscommand", false);
         canPlayerUseAddOfficerCommand = defineBoolean(builder, "canplayeruseaddofficercommand", true);
         canPlayerUseDeleteColonyCommand = defineBoolean(builder, "canplayerusedeletecolonycommand", false);
         canPlayerUseResetCommand = defineBoolean(builder, "canplayeruseresetcommand", false);
@@ -192,52 +192,8 @@ public class ServerConfiguration extends AbstractConfiguration
 
         enableColonyProtection = defineBoolean(builder, "enablecolonyprotection", true);
         turnOffExplosionsInColonies = defineEnum(builder, "turnoffexplosionsincolonies", Explosions.DAMAGE_ENTITIES);
-        freeToInteractBlocks = defineList(builder, "freetointeractblocks",
-          Arrays.asList
-                  ("dirt",
-                    "0 0 0"),
-          s -> s instanceof String);
 
         swapToCategory(builder, "compatibility");
-
-        configListStudyItems = defineList(builder, "configliststudyitems",
-          Arrays.asList
-                  ("minecraft:paper;400;100", "minecraft:book;600;10"),
-          s -> s instanceof String);
-
-        configListRecruitmentItems = defineList(builder, "configlistrecruitmentitems",
-          Arrays.asList
-                  ("minecraft:hay_block;3",
-                    "minecraft:book;2",
-                    "minecraft:enchanted_book;9",
-                    "minecraft:diamond;9",
-                    "minecraft:emerald;8",
-                    "minecraft:baked_potato;1",
-                    "minecraft:gold_ingot;2",
-                    "minecraft:redstone;2",
-                    "minecraft:lapis_lazuli;2",
-                    "minecraft:cake;11",
-                    "minecraft:sunflower;5",
-                    "minecraft:honeycomb;6",
-                    "minecraft:quartz;3"),
-          s -> s instanceof String);
-        luckyOres = defineList(builder, "luckyores",
-          Arrays.asList
-                  ("minecraft:coal_ore!64",
-                    "minecraft:copper_ore!48",
-                    "minecraft:iron_ore!32",
-                    "minecraft:gold_ore!16",
-                    "minecraft:redstone_ore!8",
-                    "minecraft:lapis_ore!4",
-                    "minecraft:diamond_ore!2",
-                    "minecraft:emerald_ore!1"),
-          s -> s instanceof String);
-
-        diseases = defineList(builder, "diseases",
-          Arrays.asList("Influenza,100,minecraft:carrot,minecraft:potato",
-            "Measles,10,minecraft:dandelion,minecraft:kelp,minecraft:poppy",
-            "Smallpox,1,minecraft:honey_bottle,minecraft:golden_apple"),
-          s -> s instanceof String);
 
         auditCraftingTags = defineBoolean(builder, "auditcraftingtags", false);
         debugInventories = defineBoolean(builder, "debuginventories", false);
@@ -247,11 +203,15 @@ public class ServerConfiguration extends AbstractConfiguration
 
         pathfindingDebugVerbosity = defineInteger(builder, "pathfindingdebugverbosity", 0, 0, 10);
         minimumRailsToPath = defineInteger(builder, "minimumrailstopath", 8, 5, 100);
-        pathfindingMaxThreadCount = defineInteger(builder, "pathfindingmaxthreadcount", 2, 1, 10);
+        pathfindingMaxThreadCount = defineInteger(builder, "pathfindingmaxthreadcount", 1, 1, 10);
 
         swapToCategory(builder, "requestSystem");
 
         creativeResolve = defineBoolean(builder, "creativeresolve", false);
+
+        swapToCategory(builder, "debugging");
+
+        netherWorkerTakesDamage = defineBoolean(builder, "netherworkertakesdamage", true);
 
         finishCategory(builder);
     }

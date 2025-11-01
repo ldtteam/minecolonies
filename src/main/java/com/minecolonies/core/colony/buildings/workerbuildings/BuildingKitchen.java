@@ -2,29 +2,32 @@ package com.minecolonies.core.colony.buildings.workerbuildings;
 
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
-import com.minecolonies.api.crafting.GenericRecipe;
+import com.minecolonies.api.colony.requestsystem.request.IRequest;
+import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
+import com.minecolonies.api.colony.requestsystem.requestable.crafting.AbstractCrafting;
+import com.minecolonies.api.colony.requestsystem.requestable.crafting.PublicCrafting;
 import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.crafting.IRecipeStorage;
+import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.CraftingUtils;
-import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.FoodUtils;
 import com.minecolonies.api.util.OptionalPredicate;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
 import com.minecolonies.core.colony.buildings.modules.AbstractCraftingBuildingModule;
-import com.minecolonies.core.colony.buildings.modules.CraftingWorkerBuildingModule;
 import com.minecolonies.core.util.FurnaceRecipes;
+import com.minecolonies.core.colony.buildings.modules.WorkerBuildingModule;
+import com.minecolonies.core.colony.jobs.AbstractJobCrafter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
-import java.util.function.Predicate;
+import java.util.Optional;
 
-import static com.minecolonies.api.util.ItemStackUtils.ISFOOD;
 import static com.minecolonies.api.util.constant.Suppression.OVERRIDE_EQUALS;
 import static com.minecolonies.api.util.constant.TagConstants.CRAFTING_COOK;
+import static com.minecolonies.core.colony.buildings.modules.BuildingModules.CHEF_WORK;
 
 /**
  * Class of the kitchen building.
@@ -66,6 +69,43 @@ public class BuildingKitchen extends AbstractBuilding
         return MAX_BUILDING_LEVEL;
     }
 
+    @Override
+    protected boolean keepFood()
+    {
+        return false;
+    }
+
+    @Override
+    public boolean canEat(final ItemStack stack)
+    {
+        final ICitizenData citizenData = getModule(CHEF_WORK).getFirstCitizen();
+        if (citizenData != null)
+        {
+            final IRequest<? extends IRequestable> currentTask = ((AbstractJobCrafter<?, ?>) citizenData.getJob()).getCurrentTask();
+            if (currentTask == null)
+            {
+                return super.canEat(stack);
+            }
+            final IRequestable request = currentTask.getRequest();
+            if (request instanceof AbstractCrafting craftingRequest)
+            {
+                final IRecipeStorage recipe = IColonyManager.getInstance().getRecipeManager().getRecipe(craftingRequest.getRecipeID());
+                if (recipe != null)
+                {
+                    if (recipe.getCleanedInput().contains(new ItemStorage(stack)))
+                    {
+                        return false;
+                    }
+
+                    if (ItemStack.isSameItem(recipe.getPrimaryOutput(), stack))
+                    {
+                        return false;
+                    }
+                }
+            }
+        }
+        return super.canEat(stack);
+    }
 
     public static class CraftingModule extends AbstractCraftingBuildingModule.Crafting
     {
@@ -96,8 +136,8 @@ public class BuildingKitchen extends AbstractBuilding
             if (isRecipeAllowed.isPresent()) return isRecipeAllowed.get();
 
             final ItemStack output = recipe.getPrimaryOutput();
-            return ItemStackUtils.CAN_EAT.test(output)
-                    || ItemStackUtils.CAN_EAT.test(FurnaceRecipes.getInstance()
+            return FoodUtils.EDIBLE.test(output)
+                || FoodUtils.EDIBLE.test(FurnaceRecipes.getInstance()
                     .getSmeltingResult(output));
         }
     }
@@ -126,62 +166,7 @@ public class BuildingKitchen extends AbstractBuilding
         public boolean isRecipeCompatible(@NotNull final IGenericRecipe recipe)
         {
             if (!super.isRecipeCompatible(recipe)) return false;
-            return CraftingUtils.isRecipeCompatibleBasedOnTags(recipe, CRAFTING_COOK).orElse(ItemStackUtils.CAN_EAT.test(recipe.getPrimaryOutput()));
-        }
-
-        @Override
-        @Nullable
-        public IRecipeStorage getFirstRecipe(final Predicate<ItemStack> stackPredicate)
-        {
-            if (building.getModuleMatching(CraftingWorkerBuildingModule.class, m -> m.getJobEntry() == jobEntry).getAssignedCitizen().isEmpty())
-            {
-                return null;
-            }
-
-            //First, do the normal check against taught recipes, and return those if found
-            IRecipeStorage storage = super.getFirstRecipe(stackPredicate);
-            if (storage != null)
-            {
-                return storage;
-            }
-
-
-            //If we didn't have a stored recipe, see if there is a smelting recipe that is also a food output, and use it.
-            storage = FurnaceRecipes.getInstance().getFirstSmeltingRecipeByResult(stackPredicate);
-            if (storage != null && storage.getRecipeSource() != null && ISFOOD.test(storage.getPrimaryOutput()) && isRecipeCompatible(GenericRecipe.of(storage)))
-            {
-                return storage;
-            }
-
-            return null;
-        }
-
-        @Override
-        public IRecipeStorage getFirstFulfillableRecipe(final Predicate<ItemStack> stackPredicate, final int count, final boolean considerReservation)
-        {
-            //Try to fulfill normally
-            IRecipeStorage storage = super.getFirstFulfillableRecipe(stackPredicate, count, considerReservation);
-
-            //Couldn't fulfill normally, let's try to fulfill with a temporary smelting recipe.
-            if (storage == null)
-            {
-                storage = FurnaceRecipes.getInstance().getFirstSmeltingRecipeByResult(stackPredicate);
-                if (storage != null)
-                {
-                    final Set<IItemHandler> handlers = new HashSet<>();
-                    for (final ICitizenData workerEntity :  building.getModuleMatching(CraftingWorkerBuildingModule.class, m -> m.getJobEntry() == jobEntry).getAssignedCitizen())
-                    {
-                        handlers.add(workerEntity.getInventory());
-                    }
-
-                    if (!storage.canFullFillRecipe(count, Collections.emptyMap(), new ArrayList<>(handlers), building))
-                    {
-                        return null;
-                    }
-                }
-            }
-
-            return storage;
+            return CraftingUtils.isRecipeCompatibleBasedOnTags(recipe, CRAFTING_COOK).orElse(FoodUtils.EDIBLE.test(recipe.getPrimaryOutput()));
         }
     }
 }

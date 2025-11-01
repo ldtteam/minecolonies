@@ -117,7 +117,7 @@ public class JobNetherWorker extends AbstractJobCrafter<EntityAIWorkNether, JobN
     }
 
     @Override
-    public int getDiseaseModifier()
+    public double getDiseaseModifier()
     {
         if(this.getCitizen().getEntity().isPresent() && this.getCitizen().getEntity().get().isInvisible())
         {

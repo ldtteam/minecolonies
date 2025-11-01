@@ -3,8 +3,8 @@ package com.minecolonies.api.entity.citizen.citizenhandlers;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.entity.citizen.Skill;
+import com.minecolonies.core.entity.citizen.citizenhandlers.CitizenSkillHandler;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.util.Tuple;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -110,5 +110,5 @@ public interface ICitizenSkillHandler
      *
      * @return the skills.
      */
-    Map<Skill, Tuple<Integer, Double>> getSkills();
+    Map<Skill, CitizenSkillHandler.SkillData> getSkills();
 }

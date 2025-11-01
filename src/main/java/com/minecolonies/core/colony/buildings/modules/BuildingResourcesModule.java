@@ -9,7 +9,7 @@ import com.minecolonies.api.colony.buildings.modules.IPersistentModule;
 import com.minecolonies.api.colony.jobs.IJobWithExternalWorkStations;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requestable.Stack;
-import com.minecolonies.api.colony.workorders.IWorkOrder;
+import com.minecolonies.api.colony.workorders.IBuilderWorkOrder;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.api.util.InventoryUtils;
@@ -18,11 +18,11 @@ import com.minecolonies.core.colony.buildings.AbstractBuildingStructureBuilder;
 import com.minecolonies.core.colony.buildings.utils.BuilderBucket;
 import com.minecolonies.core.colony.buildings.utils.BuildingBuilderResource;
 import com.minecolonies.core.colony.jobs.AbstractJobStructure;
-import com.minecolonies.core.entity.ai.workers.util.BuildingStructureHandler;
-
-import net.minecraft.world.item.ItemStack;
+import com.minecolonies.core.entity.ai.workers.util.BuildingProgressStage;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -30,7 +30,6 @@ import java.util.*;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_CURR_STAGE;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_TOTAL_STAGES;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
 
 /**
  * The structureBuilder building.
@@ -90,8 +89,7 @@ public class BuildingResourcesModule extends AbstractBuildingModule implements I
         final ICitizenData data = set.isEmpty() ? null : set.iterator().next();
         if (data != null && data.getJob() instanceof AbstractJobStructure)
         {
-            final AbstractJobStructure<?, ?> structureBuilderJob = (AbstractJobStructure<?, ?>) data.getJob();
-            final IWorkOrder workOrder = structureBuilderJob.getWorkOrder();
+            final IBuilderWorkOrder workOrder = ((AbstractBuildingStructureBuilder) building).getWorkOrder();
             if (workOrder != null)
             {
                 buf.writeInt(workOrder.getID());
@@ -176,8 +174,9 @@ public class BuildingResourcesModule extends AbstractBuildingModule implements I
     @Nullable
     public BuilderBucket getRequiredResources()
     {
-        return (buckets.isEmpty() || ((AbstractBuildingStructureBuilder) building).getProgress() == null
-                  || ((AbstractBuildingStructureBuilder) building).getProgress().getB() == BuildingStructureHandler.Stage.CLEAR) ? null : buckets.getFirst();
+        return (buckets.isEmpty()
+            || ((AbstractBuildingStructureBuilder) building).getProgress() == null
+            || ((AbstractBuildingStructureBuilder) building).getProgress().getB() == BuildingProgressStage.CLEAR) ? null : buckets.getFirst();
     }
 
     /**
@@ -327,16 +326,21 @@ public class BuildingResourcesModule extends AbstractBuildingModule implements I
      *
      * @param requiredResources the bucket to check and request.
      * @param worker            the worker.
-     * @param workerInv         if the worker inv should be checked too.
      */
-    public void checkOrRequestBucket(@Nullable final BuilderBucket requiredResources, final ICitizenData worker, final boolean workerInv)
+    public void checkOrRequestBucket(@Nullable final BuilderBucket requiredResources, final ICitizenData worker)
     {
         if (requiredResources == null)
         {
             return;
         }
 
-        resourceloop:
+        final ImmutableList<IRequest<? extends Stack>> list = building.getOpenRequestsOfType(-1, TypeToken.of(Stack.class));
+        final Set<ItemStorage> requestedItems = new HashSet<>();
+        for (final IRequest<? extends Stack> request : list)
+        {
+            requestedItems.add(new ItemStorage(request.getRequest().getStack()));
+        }
+
         for (final Map.Entry<String, Integer> entry : requiredResources.getResourceMap().entrySet())
         {
             final ItemStorage itemStack = neededResources.get(entry.getKey());
@@ -353,26 +357,19 @@ public class BuildingResourcesModule extends AbstractBuildingModule implements I
                 continue;
             }
 
-            if (workerInv)
+            count += InventoryUtils.getItemCountInItemHandler(worker.getInventory(), stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, itemStack.getItemStack()));
+            if (count >= entry.getValue())
             {
-                count += InventoryUtils.getItemCountInItemHandler(worker.getInventory(), stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, itemStack.getItemStack()));
-                if (count >= entry.getValue())
-                {
-                    continue;
-                }
+                continue;
             }
 
             int requestCount = entry.getValue() - count;
-            final ImmutableList<IRequest<? extends Stack>> list = building.getOpenRequestsOfType(worker.getId(), TypeToken.of(Stack.class));
-            for (final IRequest<? extends Stack> request : list)
+            if (requestedItems.contains(new ItemStorage(itemStack.getItemStack())))
             {
-                if (ItemStackUtils.compareItemStacksIgnoreStackSize(request.getRequest().getStack(), itemStack.getItemStack()))
-                {
-                    continue resourceloop;
-                }
+                continue;
             }
 
-            worker.createRequestAsync(new Stack(itemStack.getItemStack(), requestCount * ((AbstractBuildingStructureBuilder) building).getResourceBatchMultiplier(), 1));
+            building.createRequest(new Stack(itemStack.getItemStack(), requestCount * ((AbstractBuildingStructureBuilder) building).getResourceBatchMultiplier(), 1), true);
         }
     }
 

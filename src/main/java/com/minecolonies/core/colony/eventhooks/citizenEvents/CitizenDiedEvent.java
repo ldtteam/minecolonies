@@ -37,9 +37,9 @@ public class CitizenDiedEvent extends AbstractCitizenEvent
      * @param citizenName the name of the building.
      * @param deathCause  the cause of the citizen death.
      */
-    public CitizenDiedEvent(BlockPos eventPos, String citizenName, String deathCause)
+    public CitizenDiedEvent(final BlockPos eventPos, final String citizenName, final String deathCause)
     {
-        super(eventPos, citizenName);
+        super(true, eventPos, citizenName);
         this.deathCause = deathCause;
     }
 
@@ -128,5 +128,11 @@ public class CitizenDiedEvent extends AbstractCitizenEvent
         final CitizenDiedEvent deathEvent = new CitizenDiedEvent();
         deathEvent.deserialize(buf);
         return deathEvent;
+    }
+
+    @Override
+    public String getSummaryTranslationKey()
+    {
+        return "com.minecolonies.core.event.summary.citizen.died";
     }
 }

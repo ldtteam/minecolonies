@@ -1,25 +1,25 @@
 {
   "branch": "minecolonies:civilian",
+  "costs": [
+    {
+      "type": "minecolonies:item_simple",
+      "item": "minecraft:cookie",
+      "quantity": 32
+    }
+  ],
   "effects": [
     {
-      "minecolonies:effects/saturationmultiplier": 1
+      "id": "minecolonies:effects/saturationmultiplier",
+      "level": 1
     }
   ],
   "icon": "minecolonies:textures/icons/research/saturation1.png",
   "parentResearch": "minecolonies:civilian/firstaid",
   "requirements": [
     {
-      "building": "cook",
+      "type": "minecolonies:building",
+      "building": "minecolonies:cook",
       "level": 2
-    },
-    {
-      "type": "minecolonies:item_list",
-      "item": {
-        "items": [
-          "minecraft:cookie"
-        ]
-      },
-      "quantity": 32
     }
   ],
   "researchLevel": 2,

@@ -240,7 +240,14 @@ public abstract class AbstractWindowRequestTree extends AbstractWindowSkeleton
         if (getOpenRequestTreeOfBuilding().size() > row && row >= 0)
         {
             @NotNull final IRequest<?> request = getOpenRequestTreeOfBuilding().get(row).getRequest();
-            fulfill(request);
+            try
+            {
+                fulfill(request);
+            }
+            catch (final Exception e)
+            {
+                Log.getLogger().warn("Failed to fulfill request. This could happen by double clicking the fulfill button.", e);
+            }
         }
         button.disable();
         updateRequests();

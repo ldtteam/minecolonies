@@ -1,6 +1,6 @@
 package com.minecolonies.api.entity.mobs.vikings;
 
-import com.minecolonies.api.entity.mobs.AbstractEntityRaiderMob;
+import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMonster;
 import com.minecolonies.api.entity.mobs.RaiderType;
 import com.minecolonies.core.entity.pathfinding.navigation.AbstractAdvancedPathNavigate;
 import net.minecraft.sounds.SoundEvent;
@@ -10,15 +10,13 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Random;
-
 import static com.minecolonies.api.util.constant.RaiderConstants.ONE;
 import static com.minecolonies.api.util.constant.RaiderConstants.OUT_OF_ONE_HUNDRED;
 
 /**
  * Abstract for all norsemen entities.
  */
-public abstract class AbstractEntityNorsemen extends AbstractEntityRaiderMob
+public abstract class AbstractEntityNorsemen extends AbstractEntityMinecoloniesMonster
 {
     /**
      * Swim speed for pirates
@@ -31,11 +29,6 @@ public abstract class AbstractEntityNorsemen extends AbstractEntityRaiderMob
     private static final int NORSEMEN_TEXTURES = 3;
 
     /**
-     * Texture id of the norsemen.
-     */
-    private int textureId;
-
-    /**
      * Constructor method for Abstract norsemen..
      *
      * @param type  the type.
@@ -43,8 +36,7 @@ public abstract class AbstractEntityNorsemen extends AbstractEntityRaiderMob
      */
     public AbstractEntityNorsemen(final EntityType<? extends AbstractEntityNorsemen> type, final Level world)
     {
-        super(type, world);
-        this.textureId = new Random().nextInt(NORSEMEN_TEXTURES);
+        super(type, world, NORSEMEN_TEXTURES);
     }
 
     @Override
@@ -68,16 +60,6 @@ public abstract class AbstractEntityNorsemen extends AbstractEntityRaiderMob
     public boolean checkSpawnRules(final LevelAccessor worldIn, final MobSpawnType spawnReasonIn)
     {
         return true;
-    }
-
-    /**
-     * Get the unique texture id.
-     *
-     * @return the texture id.
-     */
-    public int getTextureId()
-    {
-        return this.textureId;
     }
 
     @NotNull

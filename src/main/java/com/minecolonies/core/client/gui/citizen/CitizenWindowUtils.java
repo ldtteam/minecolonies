@@ -16,9 +16,10 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.client.gui.AbstractWindowSkeleton;
 import com.minecolonies.core.colony.buildings.moduleviews.WorkerBuildingModuleView;
 import com.minecolonies.core.colony.buildings.views.AbstractBuildingView;
+import com.minecolonies.core.entity.citizen.citizenhandlers.CitizenSkillHandler;
 import net.minecraft.client.Minecraft;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.Tuple;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -32,8 +33,6 @@ import static com.minecolonies.core.client.gui.modules.WindowBuilderResModule.BL
 import static com.minecolonies.core.entity.citizen.citizenhandlers.CitizenExperienceHandler.PRIMARY_DEPENDENCY_SHARE;
 import static com.minecolonies.core.entity.citizen.citizenhandlers.CitizenExperienceHandler.SECONDARY_DEPENDENCY_SHARE;
 import static net.minecraft.client.gui.Gui.GUI_ICONS_LOCATION;
-
-import net.minecraft.network.chat.Component;
 
 /**
  * BOWindow for the citizen.
@@ -387,10 +386,10 @@ public class CitizenWindowUtils
     public static void createSkillContent(final ICitizenDataView citizen, final AbstractWindowSkeleton window)
     {
         final boolean isCreative = Minecraft.getInstance().player.isCreative();
-        for (final Map.Entry<Skill, Tuple<Integer, Double>> entry : citizen.getCitizenSkillHandler().getSkills().entrySet())
+        for (final Map.Entry<Skill, CitizenSkillHandler.SkillData> entry : citizen.getCitizenSkillHandler().getSkills().entrySet())
         {
             final String id = entry.getKey().name().toLowerCase(Locale.US);
-            window.findPaneOfTypeByID(id, Text.class).setText(Component.literal(Integer.toString(entry.getValue().getA())));
+            window.findPaneOfTypeByID(id, Text.class).setText(Component.literal(Integer.toString(entry.getValue().getLevel())));
 
             final Pane buttons = window.findPaneByID(id + "_bts");
             if (buttons != null)

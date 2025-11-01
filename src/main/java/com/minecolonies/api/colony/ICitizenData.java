@@ -2,16 +2,14 @@ package com.minecolonies.api.colony;
 
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.jobs.IJob;
+import com.minecolonies.api.entity.ai.JobStatus;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
-import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenHappinessHandler;
-import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenMournHandler;
-import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenSkillHandler;
+import com.minecolonies.api.entity.citizen.citizenhandlers.*;
 import com.minecolonies.api.quests.IQuestGiver;
 import com.minecolonies.api.quests.IQuestParticipant;
 import com.minecolonies.api.util.Tuple;
 import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -154,6 +152,8 @@ public interface ICitizenData extends ICivilianData, IQuestGiver, IQuestParticip
      */
     ICitizenSkillHandler getCitizenSkillHandler();
 
+    ICitizenDiseaseHandler getCitizenDiseaseHandler();
+
     /**
      * Schedule restart and cleanup.
      *
@@ -202,11 +202,16 @@ public interface ICitizenData extends ICivilianData, IQuestGiver, IQuestParticip
     boolean isIdleAtJob();
 
     /**
-     * Set idle at job.
-     *
-     * @param idle true if so.
+     * Queries the citizen's job status.
      */
-    void setIdleAtJob(final boolean idle);
+    JobStatus getJobStatus();
+
+    /**
+     * Set the working status of the citizen.
+     *
+     * @param status the job status
+     */
+    void setJobStatus(final JobStatus status);
 
     /**
      * Gets the entity
@@ -432,4 +437,30 @@ public interface ICitizenData extends ICivilianData, IQuestGiver, IQuestParticip
      * @return true if so.
      */
     boolean hasQuestAssignment();
+
+    /**
+     * Get the home position of the citizen.
+     * @return the pos to go home to.
+     */
+    @Nullable
+    BlockPos getHomePosition();
+
+    /**
+     * Personal citizen disease modifier.
+     * @return the disease modifier.
+     */
+    double getDiseaseModifier();
+
+    /**
+     * The Handler for the citizens food.
+     *
+     * @return the instance of the handler
+     */
+    ICitizenFoodHandler getCitizenFoodHandler();
+
+    /**
+     * Get leisure time. Time in ticks citizens might be wanting to do leisure instead of work.
+     * @return the leftover leisure time.
+     */
+    int getLeisureTime();
 }

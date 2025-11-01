@@ -1,5 +1,6 @@
 package com.minecolonies.core.compatibility.jei;
 
+import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -10,10 +11,10 @@ import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.crafting.registry.CraftingType;
 import com.minecolonies.api.entity.ModEntities;
-import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.equipment.ModEquipmentTypes;
+import com.minecolonies.api.equipment.registry.EquipmentTypeEntry;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.api.util.constant.IToolType;
-import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.core.colony.CitizenData;
 import com.minecolonies.core.colony.crafting.LootTableAnalyzer;
@@ -49,7 +50,9 @@ import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import java.time.Duration;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -59,6 +62,7 @@ import java.util.stream.Collectors;
  */
 public abstract class JobBasedRecipeCategory<T> implements IRecipeCategory<T>
 {
+    protected static final JeiFakeLevel FAKE_LEVEL = new JeiFakeLevel();
     protected static final ResourceLocation TEXTURE = new ResourceLocation(Constants.MOD_ID, "textures/gui/jei_recipe.png");
     @NotNull protected final IJob<?> job;
     @NotNull private final RecipeType<T> type;
@@ -67,9 +71,12 @@ public abstract class JobBasedRecipeCategory<T> implements IRecipeCategory<T>
     @NotNull private final IDrawable icon;
     @NotNull protected final IDrawableStatic slot;
     @NotNull protected final IDrawableStatic chanceSlot;
-    @NotNull private final EntityCitizen citizen;
     @NotNull private final List<FormattedText> description;
     @NotNull private final LoadingCache<T, List<InfoBlock>> infoBlocksCache;
+
+    private static final Cache<IJob<?>, EntityCitizen> citizenCache = CacheBuilder.newBuilder()
+            .expireAfterAccess(Duration.ofMinutes(2))
+            .build();
 
     protected static final int WIDTH = 167;
     protected static final int HEIGHT = 120;
@@ -91,8 +98,6 @@ public abstract class JobBasedRecipeCategory<T> implements IRecipeCategory<T>
         this.icon = guiHelper.createDrawableIngredient(VanillaTypes.ITEM_STACK, icon);
         this.slot = guiHelper.getSlotDrawable();
         this.chanceSlot = guiHelper.createDrawable(TEXTURE, 0, 121, 18, 18);
-
-        this.citizen = createCitizenWithJob(this.job);
 
         this.description = wordWrap(breakLines(translateDescription(
                 TranslationConstants.PARTIAL_JEI_INFO +
@@ -179,21 +184,21 @@ public abstract class JobBasedRecipeCategory<T> implements IRecipeCategory<T>
      * @param withBackground true to display a slot background when present (no background is shown when no tool)
      */
     protected void addToolSlot(@NotNull final IRecipeLayoutBuilder builder,
-                               @NotNull final IToolType requiredTool,
+                               @NotNull final EquipmentTypeEntry requiredTool,
                                final int x, final int y, final boolean withBackground)
     {
-        final IRecipeSlotBuilder slot = builder.addSlot(RecipeIngredientRole.CATALYST, x, y).setSlotName("tool");
-
-        if (requiredTool != ToolType.NONE)
+        if (requiredTool != ModEquipmentTypes.none.get())
         {
+            final IRecipeSlotBuilder slot = builder.addSlot(RecipeIngredientRole.CATALYST, x, y).setSlotName("tool");
+
             if (withBackground)
             {
                 slot.setBackground(this.slot, -1, -1);
             }
 
             slot.addItemStacks(MinecoloniesAPIProxy.getInstance().getColonyManager().getCompatibilityManager().getListOfAllItems().stream()
-                    .filter(stack -> ItemStackUtils.isTool(stack, requiredTool))
-                    .sorted(Comparator.comparing(stack -> ItemStackUtils.getMiningLevel(stack, requiredTool)))
+                    .filter(requiredTool::checkIsEquipment)
+                    .sorted(Comparator.comparing(requiredTool::getMiningLevel))
                     .toList());
         }
     }
@@ -210,12 +215,16 @@ public abstract class JobBasedRecipeCategory<T> implements IRecipeCategory<T>
         final int citizen_by = CITIZEN_Y + CITIZEN_H;
         final int offsetY = 4;
 
-        final float headYaw = (float) Math.atan((citizen_cx - mouseX) / 40.0F) * 40.0F;
-        final float yaw = (float) Math.atan((citizen_cx - mouseX) / 40.0F) * 20.0F;
-        final float pitch = (float) Math.atan((citizen_cy - offsetY - mouseY) / 40.0F) * 20.0F;
-        Lighting.setupForFlatItems();
-        UiRenderMacros.drawEntity(stack.pose(), citizen_cx, citizen_by - offsetY, scale, headYaw, yaw, pitch, this.citizen);
-        Lighting.setupFor3DItems();
+        final EntityCitizen citizen = createCitizenWithJob(this.job);
+        if (citizen != null)
+        {
+            final float headYaw = (float) Math.atan((citizen_cx - mouseX) / 40.0F) * 40.0F;
+            final float yaw = (float) Math.atan((citizen_cx - mouseX) / 40.0F) * 20.0F;
+            final float pitch = (float) Math.atan((citizen_cy - offsetY - mouseY) / 40.0F) * 20.0F;
+            Lighting.setupForFlatItems();
+            UiRenderMacros.drawEntity(stack.pose(), citizen_cx, citizen_by - offsetY, scale, headYaw, yaw, pitch, citizen);
+            Lighting.setupFor3DItems();
+        }
 
         int y = 0;
         final Minecraft mc = Minecraft.getInstance();
@@ -245,7 +254,7 @@ public abstract class JobBasedRecipeCategory<T> implements IRecipeCategory<T>
             if (block.tip == null) continue;
             if (block.bounds.contains((int) mouseX, (int) mouseY))
             {
-                tooltips.add(Component.literal(block.tip));
+                tooltips.add(block.tip);
             }
         }
 
@@ -262,20 +271,19 @@ public abstract class JobBasedRecipeCategory<T> implements IRecipeCategory<T>
         int y = CITIZEN_Y;
         for (final Component line : lines)
         {
-            final String text = line.getString();
-            final int width = (int) mc.font.getSplitter().stringWidth(text);
+            final int width = (int) mc.font.getSplitter().stringWidth(line.getString());
             final int height = mc.font.lineHeight;
             final int x = WIDTH - width;
-            String tip = null;
+            Component tip = null;
             if (line.getContents() instanceof TranslatableContents contents)
             {
                 final String key = contents.getKey() + ".tip";
                 if (I18n.exists(key))
                 {
-                    tip = (Component.translatable(key, contents.getArgs())).getString();
+                    tip = Component.translatable(key, contents.getArgs());
                 }
             }
-            result.add(new InfoBlock(text, tip, new Rect2i(x, y, width, height)));
+            result.add(new InfoBlock(line, tip, new Rect2i(x, y, width, height)));
             y += height + 2;
         }
         return result;
@@ -284,29 +292,30 @@ public abstract class JobBasedRecipeCategory<T> implements IRecipeCategory<T>
     @NotNull
     protected abstract List<Component> generateInfoBlocks(@NotNull T recipe);
 
-    private static class InfoBlock
+    private record InfoBlock(@NotNull Component text, @Nullable Component tip, @NotNull Rect2i bounds)
     {
-        public InfoBlock(final String text, final String tip, final Rect2i bounds)
-        {
-            this.text = text;
-            this.tip = tip;
-            this.bounds = bounds;
-        }
-
-        public final String text;
-        public final String tip;
-        public final Rect2i bounds;
     }
 
-    @NotNull
+    @Nullable
     private static EntityCitizen createCitizenWithJob(@NotNull final IJob<?> job)
     {
-        final EntityCitizen citizen = new EntityCitizen(ModEntities.CITIZEN, Minecraft.getInstance().level);
-        citizen.setFemale(citizen.getRandom().nextBoolean());
-        citizen.setTextureId(citizen.getRandom().nextInt(255));
-        citizen.getEntityData().set(EntityCitizen.DATA_TEXTURE_SUFFIX, CitizenData.SUFFIXES.get(citizen.getRandom().nextInt(CitizenData.SUFFIXES.size())));
-        citizen.setModelId(job.getModel());
-        return citizen;
+        try
+        {
+            return citizenCache.get(job, () ->
+            {
+                final EntityCitizen citizen = new EntityCitizen(ModEntities.CITIZEN, FAKE_LEVEL);
+                citizen.setFemale(citizen.getRandom().nextBoolean());
+                citizen.setTextureId(citizen.getRandom().nextInt(255));
+                citizen.getEntityData().set(EntityCitizen.DATA_TEXTURE_SUFFIX, CitizenData.SUFFIXES.get(citizen.getRandom().nextInt(CitizenData.SUFFIXES.size())));
+                citizen.setModelId(job.getModel());
+                return citizen;
+            });
+        }
+        catch (final Throwable e)
+        {
+            Log.getLogger().error("Error creating citizen for {}", job.getJobRegistryEntry().getTranslationKey(), e);
+            return null;
+        }
     }
 
     @NotNull

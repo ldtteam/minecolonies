@@ -1,0 +1,14 @@
+{
+	"name": "com.minecolonies.coremod.diseases.smallpox",
+	"rarity": 1,
+	"items": [
+		{
+			"item": "minecraft:honey_bottle",
+			"count": 1
+		},
+		{
+			"item": "minecraft:golden_apple",
+			"count": 1
+		}
+	]
+}

@@ -1,7 +1,7 @@
 package com.minecolonies.core.network.messages.client.colony;
 
 import com.minecolonies.api.colony.IColonyManager;
-import com.minecolonies.api.colony.workorders.IWorkOrder;
+import com.minecolonies.api.colony.workorders.IServerWorkOrder;
 import com.minecolonies.api.network.IMessage;
 import com.minecolonies.core.colony.Colony;
 import com.minecolonies.core.colony.workorders.view.AbstractWorkOrderView;
@@ -41,14 +41,14 @@ public class ColonyViewWorkOrderMessage implements IMessage
      * @param colony        colony of the workOrder.
      * @param workOrderList list of workorders to send to the client
      */
-    public ColonyViewWorkOrderMessage(@NotNull final Colony colony, @NotNull final List<IWorkOrder> workOrderList)
+    public ColonyViewWorkOrderMessage(@NotNull final Colony colony, @NotNull final List<IServerWorkOrder> workOrderList)
     {
         this.colonyId = colony.getID();
         this.workOrderBuffer = new FriendlyByteBuf(Unpooled.buffer());
         this.dimension = colony.getDimension();
 
         workOrderBuffer.writeInt(workOrderList.size());
-        for (final IWorkOrder workOrder : workOrderList)
+        for (final IServerWorkOrder workOrder : workOrderList)
         {
             workOrder.serializeViewNetworkData(workOrderBuffer);
         }

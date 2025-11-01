@@ -1,19 +1,18 @@
 package com.minecolonies.core.commands.colonycommands;
 
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.core.colony.events.raid.RaidManager;
+import com.minecolonies.core.commands.arguments.ColonyIdArgument;
 import com.minecolonies.core.commands.commandTypes.IMCCommand;
 import com.minecolonies.core.commands.commandTypes.IMCOPCommand;
 import com.minecolonies.core.research.LocalResearchTree;
-import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.contents.LiteralContents;
@@ -22,7 +21,6 @@ import net.minecraft.resources.ResourceLocation;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.minecolonies.api.util.constant.translation.CommandTranslationConstants.COMMAND_COLONY_ID_NOT_FOUND;
 import static com.minecolonies.core.commands.CommandArgumentNames.COLONYID_ARG;
 
 /**
@@ -50,15 +48,7 @@ public class CommandColonyPrintStats implements IMCOPCommand
     public int onExecute(final CommandContext<CommandSourceStack> context)
     {
         fullLog = "\n";
-        // Colony
-        final int colonyID = IntegerArgumentType.getInteger(context, COLONYID_ARG);
-        final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, context.getSource().getLevel().dimension());
-        if (colony == null)
-        {
-            context.getSource().sendSuccess(() -> Component.translatable(COMMAND_COLONY_ID_NOT_FOUND, colonyID), false);
-            return 0;
-        }
-
+        final IColony colony = ColonyIdArgument.getColony(context, COLONYID_ARG);
         final BlockPos position = colony.getCenter();
         context.getSource().sendSuccess(() -> literalAndRemember(ID_TEXT + colony.getID() + NAME_TEXT + colony.getName()), false);
         final String mayor = colony.getPermissions().getOwnerName();
@@ -83,16 +73,24 @@ public class CommandColonyPrintStats implements IMCOPCommand
             context.getSource().sendSuccess(() -> literalAndRemember(last.toString()), false);
         }
 
-        if (colony.getBuildingManager().getBuildings().size() > 0)
+        if (!colony.getBuildingManager().getBuildings().isEmpty())
         {
+            int count = 0;
+            int levels = 0;
+
+            for (final IBuilding building : colony.getBuildingManager().getBuildings().values())
+            {
+                if (building.getBuildingLevel() != 0)
+                {
+                    count++;
+                    levels += building.getBuildingLevel();
+                }
+            }
+
+            final double average = (double) levels / count;
+
             context.getSource()
-              .sendSuccess(() -> literalAndRemember("Buildings:" + colony.getBuildingManager().getBuildings().size() + " average level:" + colony.getBuildingManager()
-                .getBuildings()
-                .values()
-                .stream()
-                .filter(iBuilding -> iBuilding.getBuildingLevel() != 0)
-                .collect(
-                  Collectors.summingInt(ibuilding -> ibuilding.getBuildingLevel())) / colony.getBuildingManager().getBuildings().size()), false);
+                .sendSuccess(() -> literalAndRemember("Buildings:" + colony.getBuildingManager().getBuildings().size() + " average level:" + average), false);
             context.getSource()
               .sendSuccess(() -> literalAndRemember(colony.getBuildingManager()
                 .getBuildings()
@@ -137,6 +135,6 @@ public class CommandColonyPrintStats implements IMCOPCommand
     public LiteralArgumentBuilder<CommandSourceStack> build()
     {
         return IMCCommand.newLiteral(getName())
-          .then(IMCCommand.newArgument(COLONYID_ARG, IntegerArgumentType.integer(1)).executes(this::checkPreConditionAndExecute));
+          .then(IMCCommand.newArgument(COLONYID_ARG, ColonyIdArgument.id()).executes(this::checkPreConditionAndExecute));
     }
 }

@@ -264,6 +264,7 @@ public class ClientRegistryHandler
     @SubscribeEvent
     public static void onRegisterItemDecorations(final RegisterItemDecorationsEvent event)
     {
+        event.register(ModItems.colonyMap, new ColonyMapDecorator());
         event.register(ModItems.clipboard, new ClipBoardDecorator());
     }
 
@@ -279,6 +280,8 @@ public class ClientRegistryHandler
 
         event.registerEntityRenderer(ModEntities.MC_NORMAL_ARROW, TippableArrowRenderer::new);
         event.registerEntityRenderer(ModEntities.DRUID_POTION, m -> new ThrownItemRenderer<>(m, 1.0F, true));
+
+        // Raiders
 
         event.registerEntityRenderer(ModEntities.BARBARIAN, RendererBarbarian::new);
         event.registerEntityRenderer(ModEntities.ARCHERBARBARIAN, RendererBarbarian::new);
@@ -304,6 +307,34 @@ public class ClientRegistryHandler
         event.registerEntityRenderer(ModEntities.DROWNED_ARCHERPIRATE, RendererDrownedArcherPirate::new);
         event.registerEntityRenderer(ModEntities.DROWNED_CHIEFPIRATE, RendererDrownedChiefPirate::new);
 
+        // Camp Raiders
+
+        event.registerEntityRenderer(ModEntities.CAMP_BARBARIAN, RendererBarbarian::new);
+        event.registerEntityRenderer(ModEntities.CAMP_ARCHERBARBARIAN, RendererBarbarian::new);
+        event.registerEntityRenderer(ModEntities.CAMP_CHIEFBARBARIAN, RendererChiefBarbarian::new);
+
+        event.registerEntityRenderer(ModEntities.CAMP_PIRATE, RendererPirate::new);
+        event.registerEntityRenderer(ModEntities.CAMP_ARCHERPIRATE, RendererArcherPirate::new);
+        event.registerEntityRenderer(ModEntities.CAMP_CHIEFPIRATE, RendererChiefPirate::new);
+
+        event.registerEntityRenderer(ModEntities.CAMP_MUMMY, RendererMummy::new);
+        event.registerEntityRenderer(ModEntities.CAMP_ARCHERMUMMY, RendererArcherMummy::new);
+        event.registerEntityRenderer(ModEntities.CAMP_PHARAO, RendererPharao::new);
+
+        event.registerEntityRenderer(ModEntities.CAMP_SHIELDMAIDEN, RendererShieldmaidenNorsemen::new);
+        event.registerEntityRenderer(ModEntities.CAMP_NORSEMEN_ARCHER, RendererArcherNorsemen::new);
+        event.registerEntityRenderer(ModEntities.CAMP_NORSEMEN_CHIEF, RendererChiefNorsemen::new);
+
+        event.registerEntityRenderer(ModEntities.CAMP_AMAZON, RendererAmazon::new);
+        event.registerEntityRenderer(ModEntities.CAMP_AMAZONCHIEF, RendererChiefAmazon::new);
+        event.registerEntityRenderer(ModEntities.CAMP_AMAZONSPEARMAN, RendererAmazonSpearman::new);
+
+        event.registerEntityRenderer(ModEntities.CAMP_DROWNED_PIRATE, RendererDrownedPirate::new);
+        event.registerEntityRenderer(ModEntities.CAMP_DROWNED_ARCHERPIRATE, RendererDrownedArcherPirate::new);
+        event.registerEntityRenderer(ModEntities.CAMP_DROWNED_CHIEFPIRATE, RendererDrownedChiefPirate::new);
+
+        // Misc
+
         event.registerEntityRenderer(ModEntities.MERCENARY, RenderMercenary::new);
         event.registerEntityRenderer(ModEntities.SITTINGENTITY, RenderSitting::new);
         event.registerEntityRenderer(ModEntities.MINECART, (context) -> new MinecartRenderer<>(context, ModelLayers.MINECART));
@@ -314,6 +345,7 @@ public class ClientRegistryHandler
         event.registerBlockEntityRenderer(MinecoloniesTileEntities.COLONY_FLAG.get(), TileEntityColonyFlagRenderer::new);
         event.registerBlockEntityRenderer(MinecoloniesTileEntities.NAMED_GRAVE.get(), TileEntityNamedGraveRenderer::new);
         event.registerBlockEntityRenderer(MinecoloniesTileEntities.DECO_CONTROLLER.get(), TileEntityDecoControllerRenderer::new);
+        event.registerBlockEntityRenderer(MinecoloniesTileEntities.COLONY_SIGN.get(), TileEntityColonySignRenderer::new);
 
         Arrays.stream(ModBlocks.getHuts())
           .forEach(hut -> ItemBlockRenderTypes.setRenderLayer(hut, renderType -> renderType.equals(RenderType.cutout()) || renderType.equals(RenderType.solid())));

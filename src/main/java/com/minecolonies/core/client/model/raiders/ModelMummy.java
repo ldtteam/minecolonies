@@ -1,7 +1,7 @@
 package com.minecolonies.core.client.model.raiders;
 
 import com.minecolonies.api.client.render.modeltype.EgyptianModel;
-import com.minecolonies.api.entity.mobs.egyptians.AbstractEntityEgyptian;
+import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMonster;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
@@ -11,7 +11,7 @@ import net.minecraft.util.Mth;
 /**
  * Create a mummy model. Created using Tabula 7.0.0
  */
-public class ModelMummy extends EgyptianModel<AbstractEntityEgyptian>
+public class ModelMummy extends EgyptianModel<AbstractEntityMinecoloniesMonster>
 {
     private ModelPart stripRightA;
     private ModelPart stripRightB;
@@ -106,7 +106,7 @@ public class ModelMummy extends EgyptianModel<AbstractEntityEgyptian>
     }
 
     @Override
-    public void setupAnim(AbstractEntityEgyptian entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
+    public void setupAnim(AbstractEntityMinecoloniesMonster entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
     {
         super.setupAnim(entityIn, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
         float f = 0.05F * Mth.sin((float) Math.PI * ageInTicks / 30.0F) % 2.0F;

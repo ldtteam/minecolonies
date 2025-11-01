@@ -1,23 +1,25 @@
 {
   "branch": "minecolonies:technology",
+  "costs": [
+    {
+      "type": "minecolonies:item_tag",
+      "quantity": 64,
+      "tag": "minecraft:iron_ores"
+    }
+  ],
   "effects": [
     {
-      "minecolonies:effects/moreoresmultiplier": 2
+      "id": "minecolonies:effects/moreoresmultiplier",
+      "level": 2
     }
   ],
   "icon": "minecraft:coal_block",
   "parentResearch": "minecolonies:technology/veinminer",
   "requirements": [
     {
-      "building": "miner",
+      "type": "minecolonies:building",
+      "building": "minecolonies:miner",
       "level": 2
-    },
-    {
-      "type": "minecolonies:item_tag",
-      "item": {
-        "tag": "minecraft:iron_ores"
-      },
-      "quantity": 64
     }
   ],
   "researchLevel": 3

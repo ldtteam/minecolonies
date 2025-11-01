@@ -7,7 +7,7 @@ import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.buildings.registry.IBuildingDataManager;
 import com.minecolonies.api.colony.colonyEvents.registry.ColonyEventDescriptionTypeRegistryEntry;
 import com.minecolonies.api.colony.colonyEvents.registry.ColonyEventTypeRegistryEntry;
-import com.minecolonies.api.colony.fields.registry.FieldRegistries;
+import com.minecolonies.api.colony.buildingextensions.registry.BuildingExtensionRegistries.BuildingExtensionEntry;
 import com.minecolonies.api.colony.guardtype.GuardType;
 import com.minecolonies.api.colony.guardtype.registry.IGuardTypeDataManager;
 import com.minecolonies.api.colony.interactionhandling.registry.IInteractionResponseHandlerDataManager;
@@ -21,17 +21,19 @@ import com.minecolonies.api.crafting.registry.RecipeTypeEntry;
 import com.minecolonies.api.entity.mobs.registry.IMobAIRegistry;
 import com.minecolonies.api.entity.citizen.happiness.HappinessRegistry;
 import com.minecolonies.api.entity.pathfinding.registry.IPathNavigateRegistry;
+import com.minecolonies.api.equipment.registry.EquipmentTypeEntry;
+import com.minecolonies.api.eventbus.EventBus;
 import com.minecolonies.api.quests.registries.QuestRegistries;
 import com.minecolonies.api.research.IGlobalResearchTree;
-import com.minecolonies.api.research.ModResearchCostTypes.ResearchCostType;
-import com.minecolonies.api.research.effects.registry.ResearchEffectEntry;
-import com.minecolonies.api.research.registry.ResearchRequirementEntry;
+import com.minecolonies.api.research.ModResearchCosts.ResearchCostEntry;
+import com.minecolonies.api.research.ModResearchEffects;
+import com.minecolonies.api.research.ModResearchRequirements;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.NewRegistryEvent;
 
 public final class MinecoloniesAPIProxy implements IMinecoloniesAPI
 {
-    private static MinecoloniesAPIProxy ourInstance = new MinecoloniesAPIProxy();
+    private static final MinecoloniesAPIProxy ourInstance = new MinecoloniesAPIProxy();
 
     private IMinecoloniesAPI apiInstance;
 
@@ -86,9 +88,9 @@ public final class MinecoloniesAPIProxy implements IMinecoloniesAPI
     }
 
     @Override
-    public IForgeRegistry<FieldRegistries.FieldEntry> getFieldRegistry()
+    public IForgeRegistry<BuildingExtensionEntry> getBuildingExtensionRegistry()
     {
-        return apiInstance.getFieldRegistry();
+        return apiInstance.getBuildingExtensionRegistry();
     }
 
     @Override
@@ -152,13 +154,13 @@ public final class MinecoloniesAPIProxy implements IMinecoloniesAPI
     }
 
     @Override
-    public IForgeRegistry<ResearchRequirementEntry> getResearchRequirementRegistry() {return apiInstance.getResearchRequirementRegistry();}
+    public IForgeRegistry<ModResearchRequirements.ResearchRequirementEntry> getResearchRequirementRegistry() {return apiInstance.getResearchRequirementRegistry();}
 
     @Override
-    public IForgeRegistry<ResearchEffectEntry> getResearchEffectRegistry() {return apiInstance.getResearchEffectRegistry();}
+    public IForgeRegistry<ModResearchEffects.ResearchEffectEntry> getResearchEffectRegistry() {return apiInstance.getResearchEffectRegistry();}
 
     @Override
-    public IForgeRegistry<ResearchCostType> getResearchCostRegistry()
+    public IForgeRegistry<ResearchCostEntry> getResearchCostRegistry()
     {
         return apiInstance.getResearchCostRegistry();
     }
@@ -227,5 +229,17 @@ public final class MinecoloniesAPIProxy implements IMinecoloniesAPI
     public void onRegistryNewRegistry(final NewRegistryEvent event)
     {
         apiInstance.onRegistryNewRegistry(event);
+    }
+
+    @Override
+    public IForgeRegistry<EquipmentTypeEntry> getEquipmentTypeRegistry()
+    {
+        return apiInstance.getEquipmentTypeRegistry();
+    }
+
+    @Override
+    public EventBus getEventBus()
+    {
+        return apiInstance.getEventBus();
     }
 }

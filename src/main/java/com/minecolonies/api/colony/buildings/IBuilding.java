@@ -33,9 +33,9 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.function.Predicate;
 
+import static com.minecolonies.api.util.constant.EquipmentLevelConstants.BASIC_TOOL_LEVEL;
+import static com.minecolonies.api.util.constant.EquipmentLevelConstants.TOOL_LEVEL_MAXIMUM;
 import static com.minecolonies.api.util.constant.Suppression.GENERIC_WILDCARD;
-import static com.minecolonies.api.util.constant.ToolLevelConstants.BASIC_TOOL_LEVEL;
-import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_MAXIMUM;
 
 public interface IBuilding extends IBuildingContainer, IModuleContainer<IBuildingModule>, IRequestResolverProvider, IRequester, ISchematicProvider
 {
@@ -136,7 +136,7 @@ public interface IBuilding extends IBuildingContainer, IModuleContainer<IBuildin
      *
      * @return true if the building is building, upgrading or repairing.
      */
-    boolean hasWorkOrder();
+    boolean isPendingConstruction();
 
     /**
      * Remove the work order for the building.
@@ -319,7 +319,12 @@ public interface IBuilding extends IBuildingContainer, IModuleContainer<IBuildin
 
     boolean hasCitizenCompletedRequestsToPickup(@NotNull ICitizenData data);
 
-    Collection<IRequest<?>> getCompletedRequests(@NotNull ICitizenData data);
+    /**
+     * Get completed requests for citizen or building (citizen independent, so if data is null)
+     * @param data the citizen data (or null).
+     * @return a collection of request.
+     */
+    Collection<IRequest<?>> getCompletedRequestsOfCitizenOrBuilding(@Nullable ICitizenData data);
 
     @SuppressWarnings(GENERIC_WILDCARD)
     <R> ImmutableList<IRequest<? extends R>> getCompletedRequestsOfType(@NotNull ICitizenData citizenData, TypeToken<R> requestType);
@@ -332,7 +337,11 @@ public interface IBuilding extends IBuildingContainer, IModuleContainer<IBuildin
 
     void markRequestAsAccepted(@NotNull ICitizenData data, @NotNull IToken<?> token);
 
-    void cancelAllRequestsOfCitizen(@NotNull ICitizenData data);
+    /**
+     * Cancel all requests of citizen or building (if citizen data is null)
+     * @param data the citizen data (or null).
+     */
+    void cancelAllRequestsOfCitizenOrBuilding(@Nullable ICitizenData data);
 
     /**
      * Overrule the next open request with a give stack.
@@ -440,11 +449,11 @@ public interface IBuilding extends IBuildingContainer, IModuleContainer<IBuildin
     boolean isItemStackInRequest(@Nullable ItemStack stack);
 
     /**
-     * Get the max tool level useable by the worker.
+     * Get the max equipment level useable by the worker.
      *
      * @return the integer.
      */
-    default int getMaxToolLevel()
+    default int getMaxEquipmentLevel()
     {
         if (getBuildingLevel() >= getMaxBuildingLevel())
         {
@@ -502,5 +511,16 @@ public interface IBuilding extends IBuildingContainer, IModuleContainer<IBuildin
      * @param stack the stack to test.
      * @return true if so.
      */
-    boolean canEat(final ItemStack stack);
+    default boolean canEat(final ItemStack stack)
+    {
+        return true;
+    }
+
+    /**
+     * Gets the list of tags, and finds all locations registered there.
+     * @param tagName the name of the tag to query
+     * @return all the matching BlockPos, or an empty list if not found
+     */
+    @NotNull
+    List<BlockPos> getLocationsFromTag(@NotNull final String tagName);
 }

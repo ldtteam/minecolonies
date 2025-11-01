@@ -1,25 +1,25 @@
 {
   "branch": "minecolonies:civilian",
+  "costs": [
+    {
+      "type": "minecolonies:item_simple",
+      "item": "minecraft:rotten_flesh",
+      "quantity": 64
+    }
+  ],
   "effects": [
     {
-      "minecolonies:effects/gravedecaybonus": 1
+      "id": "minecolonies:effects/gravedecaybonus",
+      "level": 1
     }
   ],
   "icon": "minecolonies:blockminecoloniesgrave",
   "parentResearch": "minecolonies:civilian/remembrance",
   "requirements": [
     {
-      "building": "graveyard",
+      "type": "minecolonies:building",
+      "building": "minecolonies:graveyard",
       "level": 3
-    },
-    {
-      "type": "minecolonies:item_list",
-      "item": {
-        "items": [
-          "minecraft:rotten_flesh"
-        ]
-      },
-      "quantity": 64
     }
   ],
   "researchLevel": 2,

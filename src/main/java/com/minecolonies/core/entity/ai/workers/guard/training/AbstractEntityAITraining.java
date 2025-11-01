@@ -5,6 +5,7 @@ import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
 import com.minecolonies.core.colony.jobs.AbstractJob;
 import com.minecolonies.core.entity.ai.workers.AbstractEntityAIInteract;
+import com.minecolonies.core.entity.pathfinding.navigation.EntityNavigationUtils;
 import net.minecraft.core.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
@@ -93,19 +94,12 @@ public abstract class AbstractEntityAITraining<J extends AbstractJob<?, J>, B ex
      */
     private IAIState wander()
     {
-        if (currentPathingTarget == null)
+        if (!EntityNavigationUtils.walkToRandomPosWithin(worker, 20, 0.6, building.getCorners()))
         {
-            currentPathingTarget = getWanderPosition();
             return getState();
         }
 
-        if (!walkToBlock(currentPathingTarget))
-        {
-            currentPathingTarget = null;
-            return DECIDE;
-        }
-
-        return TRAINING_WANDER;
+        return DECIDE;
     }
 
     /**
@@ -115,32 +109,11 @@ public abstract class AbstractEntityAITraining<J extends AbstractJob<?, J>, B ex
      */
     private IAIState pathToTarget()
     {
-        if (walkToBlock(currentPathingTarget, 2))
+        if (!walkToWorkPos(currentPathingTarget))
         {
             return getState();
         }
         return stateAfterPathing;
-    }
-
-    /**
-     * Get a wander position within the archer training camp to walk to.
-     *
-     * @return the position or the location of the hut chest if not found.
-     */
-    private BlockPos getWanderPosition()
-    {
-        final BlockPos pos = findRandomPositionToWalkTo(20);
-        if (pos == null)
-        {
-            return null;
-        }
-
-        if (building.isInBuilding(pos))
-        {
-            return pos;
-        }
-
-        return building.getPosition();
     }
 
     /**

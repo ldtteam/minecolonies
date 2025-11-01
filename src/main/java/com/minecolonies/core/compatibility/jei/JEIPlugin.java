@@ -7,6 +7,8 @@ import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
+import com.minecolonies.api.compatibility.Compatibility;
+import com.minecolonies.api.compatibility.IJeiProxy;
 import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.crafting.registry.CraftingType;
 import com.minecolonies.api.util.Log;
@@ -21,8 +23,12 @@ import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.helpers.IJeiHelpers;
 import mezz.jei.api.helpers.IModIdHelper;
+import mezz.jei.api.recipe.IFocus;
+import mezz.jei.api.recipe.IFocusFactory;
+import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.registration.*;
+import mezz.jei.api.runtime.IJeiRuntime;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.network.chat.Component;
@@ -31,6 +37,7 @@ import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.function.BiConsumer;
@@ -38,6 +45,36 @@ import java.util.function.BiConsumer;
 @mezz.jei.api.JeiPlugin
 public class JEIPlugin implements IModPlugin
 {
+    public JEIPlugin()
+    {
+        Compatibility.jeiProxy = new IJeiProxy()
+        {
+            @Override
+            public boolean isLoaded()
+            {
+                return true;
+            }
+
+            @Override
+            public boolean showRecipes(final Collection<ItemStack> stacks)
+            {
+                final IJeiRuntime jei = JEIPlugin.this.jei;
+
+                if (jei != null && !stacks.isEmpty())
+                {
+                    final IFocusFactory focusFactory = jei.getJeiHelpers().getFocusFactory();
+                    final List<IFocus<?>> focuses = stacks.stream()
+                        .<IFocus<?>>map(stack -> focusFactory.createFocus(RecipeIngredientRole.OUTPUT, VanillaTypes.ITEM_STACK, stack))
+                        .toList();
+                    jei.getRecipesGui().show(focuses);
+                    return true;
+                }
+
+                return false;
+            }
+        };
+    }
+
     @NotNull
     @Override
     public ResourceLocation getPluginUid()
@@ -46,6 +83,8 @@ public class JEIPlugin implements IModPlugin
     }
 
     private final List<JobBasedRecipeCategory<?>> categories = new ArrayList<>();
+    @Nullable
+    private IJeiRuntime jei;
 
     @Override
     public void registerCategories(@NotNull final IRecipeCategoryRegistration registration)
@@ -55,8 +94,10 @@ public class JEIPlugin implements IModPlugin
         final IModIdHelper modIdHelper = jeiHelpers.getModIdHelper();
 
         registration.addRecipeCategories(new ToolRecipeCategory(guiHelper));
+        registration.addRecipeCategories(new CropRecipeCategory(guiHelper));
         registration.addRecipeCategories(new CompostRecipeCategory(guiHelper));
         registration.addRecipeCategories(new FishermanRecipeCategory(guiHelper));
+        registration.addRecipeCategories(new FloristRecipeCategory(guiHelper));
 
         categories.clear();
         for (final BuildingEntry building : IMinecoloniesAPI.getInstance().getBuildingRegistry())
@@ -125,8 +166,10 @@ public class JEIPlugin implements IModPlugin
                 Component.translatable(TranslationConstants.PARTIAL_JEI_INFO + ModJobs.COMPOSTER_ID.getPath()));
 
         registration.addRecipes(ModRecipeTypes.TOOLS, ToolRecipeCategory.findRecipes());
+        registration.addRecipes(ModRecipeTypes.CROPS, CropRecipeCategory.findRecipes());
         registration.addRecipes(ModRecipeTypes.COMPOSTING, CompostRecipeCategory.findRecipes());
         registration.addRecipes(ModRecipeTypes.FISHING, FishermanRecipeCategory.findRecipes());
+        registration.addRecipes(ModRecipeTypes.FLOWERS, FloristRecipeCategory.findRecipes());
 
         final ClientLevel level = Objects.requireNonNull(Minecraft.getInstance().level);
         final Map<CraftingType, List<IGenericRecipe>> vanilla = RecipeAnalyzer.buildVanillaRecipesMap(level.getRecipeManager(), level);
@@ -160,6 +203,7 @@ public class JEIPlugin implements IModPlugin
         registration.addRecipeCatalyst(new ItemStack(ModBlocks.blockBarrel), ModRecipeTypes.COMPOSTING);
         registration.addRecipeCatalyst(new ItemStack(ModBlocks.blockHutComposter), ModRecipeTypes.COMPOSTING);
         registration.addRecipeCatalyst(new ItemStack(ModBlocks.blockHutFisherman), ModRecipeTypes.FISHING);
+        registration.addRecipeCatalyst(new ItemStack(ModBlocks.blockHutFlorist), ModRecipeTypes.FLOWERS);
 
         for (final JobBasedRecipeCategory<?> category : this.categories)
         {
@@ -181,5 +225,17 @@ public class JEIPlugin implements IModPlugin
         new CraftingGuiHandler(this.categories).register(registration);
         new FurnaceCraftingGuiHandler(this.categories).register(registration);
         new BrewingCraftingGuiHandler(this.categories).register(registration);
+    }
+
+    @Override
+    public void onRuntimeAvailable(@NotNull final IJeiRuntime jeiRuntime)
+    {
+        this.jei = jeiRuntime;
+    }
+
+    @Override
+    public void onRuntimeUnavailable()
+    {
+        this.jei = null;
     }
 }

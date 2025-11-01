@@ -1,7 +1,6 @@
 package com.minecolonies.core.entity.pathfinding.pathjobs;
 
 import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.api.util.ShapeUtil;
 import com.minecolonies.core.entity.pathfinding.MNode;
 import com.minecolonies.core.entity.pathfinding.PathfindingUtils;
 import com.minecolonies.core.entity.pathfinding.SurfaceType;
@@ -15,22 +14,22 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Job that handles moving close to a position near another
  */
-public class PathJobMoveCloseToXNearY extends AbstractPathJob
+public class PathJobMoveCloseToXNearY extends AbstractPathJob implements IDestinationPathJob
 {
     /**
      * Position to go close to
      */
-    protected final BlockPos desiredPosition;
+    public final BlockPos desiredPosition;
 
     /**
      * Position to stay nearby
      */
-    protected final BlockPos nearbyPosition;
+    public final BlockPos nearbyPosition;
 
     /**
      * Required distance to reach
      */
-    protected final int distToDesired;
+    public final int distToDesired;
 
     public PathJobMoveCloseToXNearY(
       final Level world,
@@ -45,13 +44,12 @@ public class PathJobMoveCloseToXNearY extends AbstractPathJob
         this.nearbyPosition = nearbyPosition;
         this.distToDesired = distToDesired;
         extraNodes = 20;
-        maxNodes /= 2;
     }
 
     @Override
     protected double computeHeuristic(final int x, final int y, final int z)
     {
-        return BlockPosUtil.distManhattan(desiredPosition, x, y, z) * 2 + BlockPosUtil.distManhattan(nearbyPosition, x, y, z);
+        return BlockPosUtil.distManhattan(desiredPosition, x, y, z) + BlockPosUtil.distManhattan(nearbyPosition, x, y, z) * 2;
     }
 
     @Override
@@ -62,7 +60,7 @@ public class PathJobMoveCloseToXNearY extends AbstractPathJob
             return false;
         }
 
-        return BlockPosUtil.distManhattan(desiredPosition, n.x, n.y, n.z) < distToDesired
+        return BlockPosUtil.distManhattan(desiredPosition, n.x, n.y, n.z) <= distToDesired
                  && SurfaceType.getSurfaceType(world, cachedBlockLookup.getBlockState(n.x, n.y - 1, n.z), tempWorldPos.set(n.x, n.y - 1, n.z), getPathingOptions())
                       == SurfaceType.WALKABLE;
     }
@@ -100,5 +98,26 @@ public class PathJobMoveCloseToXNearY extends AbstractPathJob
             maxNodes += 200;
             return false;
         }
+    }
+
+    @Override
+    public BlockPos getDestination()
+    {
+        return desiredPosition;
+    }
+
+    /**
+     * Helper to compare if the given move close to X near Y job matches the input parameters
+     *
+     * @return true if the given job is the same
+     */
+    public static boolean isJobFor(final AbstractPathJob job, final BlockPos desiredPosition, final BlockPos nearbyPosition, final int distance)
+    {
+        if (job instanceof PathJobMoveCloseToXNearY pathJob)
+        {
+            return pathJob.desiredPosition.equals(desiredPosition) && pathJob.nearbyPosition.equals(nearbyPosition) && pathJob.distToDesired == distance;
+        }
+
+        return false;
     }
 }

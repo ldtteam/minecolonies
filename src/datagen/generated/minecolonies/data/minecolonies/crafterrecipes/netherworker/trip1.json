@@ -2,9 +2,6 @@
   "type": "recipe",
   "additional-output": [
     {
-      "item": "minecraft:gold_ingot"
-    },
-    {
       "item": "minecraft:netherrack"
     },
     {
@@ -42,9 +39,6 @@
     },
     {
       "item": "minecraft:magma_cream"
-    },
-    {
-      "item": "minecraft:blaze_rod"
     }
   ],
   "crafter": "netherworker_custom",

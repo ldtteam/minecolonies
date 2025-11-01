@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "minecolonies:cornmeal"
+    },
+    {
+      "item": "minecolonies:cornmeal"
+    },
+    {
+      "item": "minecolonies:large_water_bottle"
+    },
+    {
+      "item": "minecraft:bowl"
+    }
+  ],
+  "result": {
+    "count": 2,
+    "item": "minecolonies:polenta"
+  }
+}

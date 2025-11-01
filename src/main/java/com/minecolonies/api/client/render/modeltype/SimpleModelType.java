@@ -9,6 +9,11 @@ import net.minecraft.resources.ResourceLocation;
 public class SimpleModelType implements ISimpleModelType
 {
     /**
+     * Halloween style string. Null = uninitialized.
+     */
+    static String cachedHalloweenStyle = null;
+
+    /**
      * String describing the citizen. Used by the renderer. Starts with a capital, and does not contain spaces or other special characters.
      */
     private final ResourceLocation name;

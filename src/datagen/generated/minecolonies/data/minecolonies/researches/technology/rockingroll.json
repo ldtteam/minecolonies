@@ -1,25 +1,25 @@
 {
   "branch": "minecolonies:technology",
+  "costs": [
+    {
+      "type": "minecolonies:item_simple",
+      "item": "minecraft:stone",
+      "quantity": 64
+    }
+  ],
   "effects": [
     {
-      "minecolonies:effects/blockhutcrusher": 1
+      "id": "minecolonies:effects/blockhutcrusher",
+      "level": 1
     }
   ],
   "icon": "minecolonies:blockhutcrusher",
   "parentResearch": "minecolonies:technology/stonecake",
   "requirements": [
     {
-      "building": "stonemason",
+      "type": "minecolonies:building",
+      "building": "minecolonies:stonemason",
       "level": 1
-    },
-    {
-      "type": "minecolonies:item_list",
-      "item": {
-        "items": [
-          "minecraft:stone"
-        ]
-      },
-      "quantity": 64
     }
   ],
   "researchLevel": 2

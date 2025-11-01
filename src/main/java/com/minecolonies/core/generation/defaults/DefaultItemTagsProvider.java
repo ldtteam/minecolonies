@@ -44,17 +44,21 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
     {
         ModTags.init();     // apparently runData doesn't run work queued in common setup
 
-        tag(ModTags.compostables_poor).addTags(Tags.Items.SEEDS, ItemTags.SAPLINGS);
+        tag(ModTags.compostables_poor).addTags(Tags.Items.SEEDS, ItemTags.SAPLINGS)
+                .add(Items.PITCHER_POD, Items.SMALL_DRIPLEAF);
         tag(ModTags.compostables)
           .add(Items.ROTTEN_FLESH, Items.BROWN_MUSHROOM, Items.RED_MUSHROOM)
           .add(Items.FEATHER, Items.PUMPKIN, Items.CARVED_PUMPKIN)
-          .add(Items.GRASS, Items.TALL_GRASS, Items.FERN, Items.LARGE_FERN)
-          .add(Items.KELP, Items.SEAGRASS, Items.CACTUS, Items.SUGAR_CANE, Items.VINE)
+          .add(Items.GRASS, Items.TALL_GRASS, Items.FERN, Items.LARGE_FERN, Items.HAY_BLOCK)
+          .add(Items.BIG_DRIPLEAF, Items.SPORE_BLOSSOM, Items.GLOW_LICHEN, ModItems.mistletoe)
+          .add(Items.KELP, Items.DRIED_KELP_BLOCK, Items.SEAGRASS, Items.CACTUS, Items.SUGAR_CANE, Items.VINE, Items.TWISTING_VINES, Items.WEEPING_VINES)
           .add(Items.COCOA_BEANS, Items.LILY_PAD, Items.SEA_PICKLE)
           .add(Items.BROWN_MUSHROOM_BLOCK, Items.RED_MUSHROOM_BLOCK, Items.MUSHROOM_STEM)
-          .add(Items.CAKE, Items.RABBIT_FOOT, Items.FERMENTED_SPIDER_EYE)
-          .add(Items.NETHER_WART_BLOCK, Items.WARPED_WART_BLOCK, Items.MANGROVE_ROOTS)
-          .addTags(Tags.Items.CROPS, Tags.Items.EGGS, ItemTags.FLOWERS, ItemTags.FISHES, ItemTags.LEAVES, ItemTags.WOOL);
+          .add(Items.CAKE, Items.MELON, Items.RABBIT_FOOT, Items.FERMENTED_SPIDER_EYE)
+          .add(Items.MOSS_BLOCK, Items.MOSS_CARPET, Items.SHROOMLIGHT)
+          .add(Items.NETHER_WART_BLOCK, Items.WARPED_WART_BLOCK, Items.NETHER_SPROUTS, Items.MANGROVE_ROOTS, Items.HANGING_ROOTS, Items.CRIMSON_ROOTS, Items.WARPED_ROOTS)
+          .addTags(Tags.Items.CROPS, Tags.Items.EGGS, ItemTags.FLOWERS, ItemTags.FISHES, ItemTags.LEAVES, ItemTags.WOOL)
+          .addTags(ModTags.fungi);
         tag(ModTags.compostables_rich).add(Items.PODZOL, ModBlocks.blockCompostedDirt.asItem());
 
         copy(ModTags.concreteBlocks, ModTags.concreteItems);
@@ -171,15 +175,33 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
           .add(Items.RAW_COPPER)
           .add(Items.RAW_GOLD);
 
+        tag(ModTags.poisonous_food)
+          .add(Items.POISONOUS_POTATO)
+          .add(Items.CHICKEN)
+          .add(Items.SPIDER_EYE)
+          .add(Items.ROTTEN_FLESH);
+
+        tag(ModTags.rawMeat)
+          .add(Items.BEEF)
+          .add(Items.CHICKEN)
+          .add(Items.PORKCHOP)
+          .add(Items.RABBIT)
+          .add(Items.MUTTON);
+
         final Item[] paperExtras = getDomumExtra(ExtraBlockType.BASE_PAPER, ExtraBlockType.LIGHT_PAPER);
 
         tag(ModTags.crafterIngredient.get(TagConstants.CRAFTING_BAKER))
           .addTag(Tags.Items.CROPS_WHEAT);
         tag(ModTags.crafterIngredientExclusions.get(TagConstants.CRAFTING_BAKER));
-        tag(ModTags.crafterProduct.get(TagConstants.CRAFTING_BAKER));
+        tag(ModTags.crafterProduct.get(TagConstants.CRAFTING_BAKER))
+          .add(ModItems.cornmeal)
+          .add(ModItems.cheese_pizza)
+          .add(ModItems.plain_cheesecake)
+          .add(ModItems.apple_pie);
         tag(ModTags.crafterProductExclusions.get(TagConstants.CRAFTING_BAKER))
           .add(Items.BREAD, Items.CAKE, Items.COOKIE, Items.PUMPKIN_PIE)
-          .add(Items.PACKED_MUD);
+          .add(Items.PACKED_MUD)
+          .addTag(ModTags.crafterProduct.get(TagConstants.CRAFTING_COOK));
 
         tag(ModTags.crafterIngredient.get(TagConstants.CRAFTING_BLACKSMITH))
           .add(Items.DIAMOND_BLOCK, Items.EMERALD_BLOCK)
@@ -220,10 +242,53 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
 
         tag(ModTags.crafterIngredientExclusions.get(TagConstants.CRAFTING_COOK))
           .addTag(Tags.Items.CROPS_WHEAT);
-        tag(ModTags.crafterProduct.get(TagConstants.CRAFTING_COOK));
-        tag(ModTags.crafterProductExclusions.get(TagConstants.CRAFTING_COOK))
-          .add(Items.BREAD, Items.CAKE, Items.COOKIE, Items.PUMPKIN_PIE);
+        tag(ModTags.crafterProduct.get(TagConstants.CRAFTING_COOK))
+          .add(ModItems.baked_salmon)
+          .add(ModItems.butter)
+          .add(ModItems.cabochis)
+          .add(ModItems.cheddar_cheese)
+          .add(ModItems.congee)
+          .add(ModItems.cooked_rice)
+          .add(ModItems.eggplant_dolma)
+          .add(ModItems.feta_cheese)
+          .add(ModItems.lamb_stew)
+          .add(ModItems.pasta_plain)
+          .add(ModItems.pasta_tomato)
+          .add(ModItems.pepper_hummus)
+          .add(ModItems.pottage)
+          .add(ModItems.raw_noodle)
+          .add(ModItems.rice_ball)
+          .add(ModItems.tofu)
+          .add(ModItems.creamcheese)
+          .add(ModItems.soysauce)
+          .add(ModItems.cheese_ravioli)
+          .add(ModItems.chicken_broth)
+          .add(ModItems.corn_chowder)
+          .add(ModItems.spicy_grilled_chicken)
+          .add(ModItems.kebab)
+          .add(ModItems.meat_ravioli)
+          .add(ModItems.mint_jelly)
+          .add(ModItems.mint_tea)
+          .add(ModItems.pea_soup)
+          .add(ModItems.polenta)
+          .add(ModItems.potato_soup)
+          .add(ModItems.squash_soup)
+          .add(ModItems.veggie_ravioli)
+          .add(ModItems.yogurt)
+          .add(ModItems.baked_salmon)
+          .add(ModItems.eggdrop_soup)
+          .add(ModItems.fish_n_chips)
+          .add(ModItems.kimchi)
+          .add(ModItems.pierogi)
+          .add(ModItems.veggie_quiche)
+          .add(ModItems.veggie_soup)
+          .add(ModItems.yogurt_with_berries)
+          .add(ModItems.mutton_dinner)
+          .add(ModItems.tortillas)
+          .add(ModItems.spicy_eggplant);
 
+        tag(ModTags.crafterProductExclusions.get(TagConstants.CRAFTING_COOK))
+          .add(Items.BREAD, Items.CAKE, Items.COOKIE, Items.PUMPKIN_PIE, ModItems.cheese_pizza, ModItems.plain_cheesecake, ModItems.apple_pie, ModItems.cornmeal);
         tag(ModTags.crafterIngredient.get(TagConstants.CRAFTING_DYER))
           .addTag(Tags.Items.DYES);
         tag(ModTags.crafterIngredientExclusions.get(TagConstants.CRAFTING_DYER));
@@ -242,9 +307,9 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
           .forEach(item -> tag(ModTags.crafterProduct.get(TagConstants.CRAFTING_DYER)).add(item));
 
         tag(ModTags.crafterIngredient.get(TagConstants.CRAFTING_FARMER))
-                .add(Items.HAY_BLOCK)
-                .add(Items.GRASS)
-                .add(Items.FERN);
+          .add(Items.HAY_BLOCK)
+          .add(Items.GRASS)
+          .add(Items.FERN);
         tag(ModTags.crafterIngredientExclusions.get(TagConstants.CRAFTING_FARMER));
         tag(ModTags.crafterProduct.get(TagConstants.CRAFTING_FARMER))
           .add(Items.HAY_BLOCK)
@@ -258,6 +323,7 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
         tag(ModTags.crafterProductExclusions.get(TagConstants.CRAFTING_FARMER));
 
         tag(ModTags.crafterIngredient.get(TagConstants.CRAFTING_FLETCHER))
+          .addTag(ItemTags.LEAVES)
           .addTag(Tags.Items.STRING)
           .addTag(ItemTags.WOOL)
           .add(Items.RABBIT_HIDE)
@@ -367,8 +433,8 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
           .addTag(ModTags.crafterProduct.get(TagConstants.CRAFTING_MECHANIC))
           .add(Items.MAGMA_CREAM);
         tag(ModTags.crafterDoIngredient.get(TagConstants.CRAFTING_SAWMILL))
-                .add(Items.BAMBOO_BLOCK, Items.BAMBOO_MOSAIC, Items.BAMBOO_PLANKS, Items.STRIPPED_BAMBOO_BLOCK)
-                .add(Items.CRIMSON_NYLIUM, Items.WARPED_NYLIUM);
+          .add(Items.BAMBOO_BLOCK, Items.BAMBOO_MOSAIC, Items.BAMBOO_PLANKS, Items.STRIPPED_BAMBOO_BLOCK)
+          .add(Items.CRIMSON_NYLIUM, Items.WARPED_NYLIUM);
 
         tag(ModTags.crafterIngredient.get(TagConstants.CRAFTING_STONEMASON))
           .add(Items.BRICK, Items.BRICKS, Items.STONE_BRICKS, Items.CHISELED_STONE_BRICKS, Items.CRACKED_STONE_BRICKS, Items.MOSSY_STONE_BRICKS)
@@ -428,13 +494,13 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
           .add(paperExtras);
 
         tag(ModTags.crafterDoIngredient.get(TagConstants.CRAFTING_STONEMASON))
-                .add(Items.STONE, Items.CALCITE)
-                .add(Items.MUD_BRICKS)
-                .add(Items.QUARTZ_BLOCK, Items.SMOOTH_QUARTZ, Items.QUARTZ_BRICKS, Items.QUARTZ_PILLAR, Items.CHISELED_QUARTZ_BLOCK)
-                .add(Items.NETHERRACK)
-                .add(Items.BLACKSTONE, Items.CHISELED_POLISHED_BLACKSTONE, Items.CRACKED_POLISHED_BLACKSTONE_BRICKS)
-                .add(Items.PRISMARINE, Items.PRISMARINE_BRICKS, Items.DARK_PRISMARINE)
-                .add(Items.END_STONE_BRICKS);
+          .add(Items.STONE, Items.CALCITE)
+          .add(Items.MUD_BRICKS)
+          .add(Items.QUARTZ_BLOCK, Items.SMOOTH_QUARTZ, Items.QUARTZ_BRICKS, Items.QUARTZ_PILLAR, Items.CHISELED_QUARTZ_BLOCK)
+          .add(Items.NETHERRACK)
+          .add(Items.BLACKSTONE, Items.CHISELED_POLISHED_BLACKSTONE, Items.CRACKED_POLISHED_BLACKSTONE_BRICKS)
+          .add(Items.PRISMARINE, Items.PRISMARINE_BRICKS, Items.DARK_PRISMARINE)
+          .add(Items.END_STONE_BRICKS);
 
         tag(ModTags.crafterIngredient.get(TagConstants.CRAFTING_STONE_SMELTERY))
           .addTag(ModTags.crafterProduct.get(TagConstants.CRAFTING_STONEMASON));
@@ -498,6 +564,13 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
 
         tag(ModTags.ignoreNBT)
           .addTag(ItemTags.BANNERS);
+
+        tag(ItemTags.BOOKSHELF_BOOKS)
+            .add(ModItems.ancientTome)
+            .add(ModItems.colonyMap)
+            .add(ModItems.clipboard)
+            .add(ModItems.questLog)
+            .add(ModItems.resourceScroll);
     }
 
     @NotNull

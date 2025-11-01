@@ -3,23 +3,27 @@ package com.minecolonies.core.entity.ai.workers.guard.training;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.equipment.ModEquipmentTypes;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.DamageSourceKeys;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.SoundUtils;
-import com.minecolonies.api.util.constant.ToolType;
+import com.minecolonies.api.util.StatsUtil;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingCombatAcademy;
 import com.minecolonies.core.colony.jobs.JobCombatTraining;
+import com.minecolonies.core.entity.pathfinding.navigation.EntityNavigationUtils;
 import com.minecolonies.core.util.WorkerUtil;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.sounds.SoundEvents;
+import com.minecolonies.core.util.citizenutils.CitizenItemUtils;
 import net.minecraft.core.BlockPos;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.constant.CitizenConstants.TICKS_20;
 import static com.minecolonies.api.util.constant.GuardConstants.*;
+import static com.minecolonies.api.util.constant.StatisticsConstants.LEVELS_GAINED;
 
 @SuppressWarnings("squid:MaximumInheritanceDepth")
 public class EntityAICombatTraining extends AbstractEntityAITraining<JobCombatTraining, BuildingCombatAcademy>
@@ -144,7 +148,7 @@ public class EntityAICombatTraining extends AbstractEntityAITraining<JobCombatTr
             return COMBAT_TRAINING;
         }
 
-        if (BlockPosUtil.getDistance2D(worker.blockPosition(), trainingPartner.blockPosition()) > MIN_DISTANCE_TO_TRAIN && walkToBlock(trainingPartner.blockPosition()))
+        if (BlockPosUtil.getDistance2D(worker.blockPosition(), trainingPartner.blockPosition()) > MIN_DISTANCE_TO_TRAIN && !walkToWorkPos(trainingPartner.blockPosition()))
         {
             return KNIGHT_TRAIN_WITH_PARTNER;
         }
@@ -173,11 +177,23 @@ public class EntityAICombatTraining extends AbstractEntityAITraining<JobCombatTr
 
         if (currentAttackDelay <= 0)
         {
+            int priorPrimaryLevel = getPrimarySkillLevel();
+            int priorSecondaryLevel = getSecondarySkillLevel();
+
             worker.getCitizenExperienceHandler().addExperience(XP_BASE_RATE);
             worker.decreaseSaturationForAction();
             worker.lookAt(trainingPartner, (float) TURN_AROUND, (float) TURN_AROUND);
             WorkerUtil.faceBlock(trainingPartner.blockPosition().above(), worker);
             worker.stopUsingItem();
+
+            if (getPrimarySkillLevel() - priorPrimaryLevel > 0)
+            {
+                StatsUtil.trackStatByName(building, LEVELS_GAINED, getModuleForJob().getPrimarySkill().name(), getPrimarySkillLevel() - priorPrimaryLevel);
+            }
+            if (getSecondarySkillLevel() - priorSecondaryLevel > 0)
+            {
+                StatsUtil.trackStatByName(building, LEVELS_GAINED, getModuleForJob().getSecondarySkill().name(), getSecondarySkillLevel() - priorSecondaryLevel);
+            }
 
             if (worker.getRandom().nextBoolean())
             {
@@ -185,7 +201,7 @@ public class EntityAICombatTraining extends AbstractEntityAITraining<JobCombatTr
                 if (shieldSlot != -1)
                 {
                     worker.playSound(SoundEvents.SHIELD_BLOCK, (float) BASIC_VOLUME, (float) SoundUtils.getRandomPitch(worker.getRandom()));
-                    worker.getCitizenItemHandler().setHeldItem(InteractionHand.OFF_HAND, shieldSlot);
+                    CitizenItemUtils.setHeldItem(worker, InteractionHand.OFF_HAND, shieldSlot);
                     worker.startUsingItem(InteractionHand.OFF_HAND);
                     worker.getLookControl().setLookAt(trainingPartner, (float) TURN_AROUND, (float) TURN_AROUND);
                 }
@@ -195,9 +211,9 @@ public class EntityAICombatTraining extends AbstractEntityAITraining<JobCombatTr
                 worker.swing(InteractionHand.MAIN_HAND);
                 worker.playSound(SoundEvents.PLAYER_ATTACK_SWEEP, (float) BASIC_VOLUME, (float) SoundUtils.getRandomPitch(worker.getRandom()));
                 trainingPartner.hurt(world.damageSources().source(DamageSourceKeys.TRAINING, worker), 0.0F);
-                worker.getCitizenItemHandler().damageItemInHand(InteractionHand.MAIN_HAND, 1);
+                CitizenItemUtils.damageItemInHand(worker, InteractionHand.MAIN_HAND, 1);
             }
-            worker.getNavigation().moveAwayFromXYZ(trainingPartner.blockPosition(), 4.0, 1.0, true);
+            EntityNavigationUtils.walkAwayFrom(worker, trainingPartner.blockPosition(), 4, 1.0);
             targetCounter++;
 
             if (targetCounter > building.getBuildingLevel() * ACTIONS_PER_BUILDING_LEVEL)
@@ -266,10 +282,23 @@ public class EntityAICombatTraining extends AbstractEntityAITraining<JobCombatTr
 
         if (currentAttackDelay <= 0)
         {
+            int priorPrimaryLevel = getPrimarySkillLevel();
+            int priorSecondaryLevel = getSecondarySkillLevel();
+
             worker.getCitizenExperienceHandler().addExperience(XP_BASE_RATE);
             worker.decreaseSaturationForAction();
             WorkerUtil.faceBlock(currentCombatTarget, worker);
             worker.stopUsingItem();
+
+            if (getPrimarySkillLevel() - priorPrimaryLevel > 0)
+            {
+                StatsUtil.trackStatByName(building, LEVELS_GAINED, getModuleForJob().getPrimarySkill().name(), getPrimarySkillLevel() - priorPrimaryLevel);
+            }
+            if (getSecondarySkillLevel() - priorSecondaryLevel > 0)
+            {
+                StatsUtil.trackStatByName(building, LEVELS_GAINED, getModuleForJob().getSecondarySkill().name(), getSecondarySkillLevel() - priorSecondaryLevel);
+            }
+
 
             if (worker.getRandom().nextBoolean())
             {
@@ -278,7 +307,7 @@ public class EntityAICombatTraining extends AbstractEntityAITraining<JobCombatTr
                 if (shieldSlot != -1)
                 {
                     worker.playSound(SoundEvents.SHIELD_BLOCK, (float) BASIC_VOLUME, (float) SoundUtils.getRandomPitch(worker.getRandom()));
-                    worker.getCitizenItemHandler().setHeldItem(InteractionHand.OFF_HAND, shieldSlot);
+                    CitizenItemUtils.setHeldItem(worker, InteractionHand.OFF_HAND, shieldSlot);
                     worker.startUsingItem(InteractionHand.OFF_HAND);
                 }
             }
@@ -286,7 +315,7 @@ public class EntityAICombatTraining extends AbstractEntityAITraining<JobCombatTr
             {
                 worker.swing(InteractionHand.MAIN_HAND);
                 worker.playSound(SoundEvents.PLAYER_ATTACK_SWEEP, (float) BASIC_VOLUME, (float) SoundUtils.getRandomPitch(worker.getRandom()));
-                worker.getCitizenItemHandler().damageItemInHand(InteractionHand.MAIN_HAND, 1);
+                CitizenItemUtils.damageItemInHand(worker, InteractionHand.MAIN_HAND, 1);
             }
 
             currentAttackDelay = RANGED_ATTACK_DELAY_BASE;
@@ -303,20 +332,20 @@ public class EntityAICombatTraining extends AbstractEntityAITraining<JobCombatTr
     @Override
     protected boolean isSetup()
     {
-        if (checkForToolOrWeapon(ToolType.SWORD))
+        if (checkForToolOrWeapon(ModEquipmentTypes.sword.get()))
         {
             return false;
         }
 
-        if (checkForToolOrWeapon(ToolType.SHIELD))
+        if (checkForToolOrWeapon(ModEquipmentTypes.shield.get()))
         {
             return false;
         }
 
-        final int weaponSlot = InventoryUtils.getFirstSlotOfItemHandlerContainingTool(getInventory(), ToolType.SWORD, 0, building.getMaxToolLevel());
+        final int weaponSlot = InventoryUtils.getFirstSlotOfItemHandlerContainingEquipment(getInventory(), ModEquipmentTypes.sword.get(), 0, building.getMaxEquipmentLevel());
         if (weaponSlot != -1)
         {
-            worker.getCitizenItemHandler().setHeldItem(InteractionHand.MAIN_HAND, weaponSlot);
+            CitizenItemUtils.setHeldItem(worker, InteractionHand.MAIN_HAND, weaponSlot);
         }
         return true;
     }

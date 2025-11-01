@@ -2,9 +2,10 @@ package com.minecolonies.core.colony.workorders;
 
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.jobs.IJob;
+import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.workorders.WorkOrderType;
 import com.minecolonies.api.util.MessageUtils;
+import com.minecolonies.core.colony.buildings.workerbuildings.BuildingBuilder;
 import com.minecolonies.core.colony.jobs.JobBuilder;
 import com.minecolonies.core.entity.ai.workers.util.ConstructionTapeHelper;
 import net.minecraft.core.BlockPos;
@@ -71,22 +72,27 @@ public class WorkOrderDecoration extends AbstractWorkOrder
 
     /**
      * Checks if a builder may accept this workOrder.
-     * <p>
-     * Suppressing Sonar Rule squid:S1172 This rule does "Unused method parameters should be removed" But in this case extending class may need to use the citizen parameter
      *
-     * @param citizen which could build it or not
+     * @param building which could build it or not
      * @return true if he is able to.
      */
     @SuppressWarnings(UNUSED_METHOD_PARAMETERS_SHOULD_BE_REMOVED)
-    public boolean canBuild(@NotNull final ICitizenData citizen)
+    public boolean canBuild(final IBuilding building)
     {
-        return true;
+        return building instanceof BuildingBuilder && building.getBuildingLevel() > 0;
     }
 
-    @Override
-    public boolean canBeMadeBy(final IJob<?> job)
+    /**
+     * Checks if a builder may accept this workOrder while ignoring the distance to the builder.
+     * <p>
+     * @param position position of the builders own hut.
+     * @param level    level of the builders hut.
+     * @return true if so.
+     */
+    @SuppressWarnings(UNUSED_METHOD_PARAMETERS_SHOULD_BE_REMOVED)
+    public boolean canBuildIgnoringDistance(@NotNull IBuilding building, final BlockPos position, final int level)
     {
-        return job instanceof JobBuilder;
+        return level > 0;
     }
 
     @Override

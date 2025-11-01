@@ -1,25 +1,25 @@
 {
   "branch": "minecolonies:civilian",
+  "costs": [
+    {
+      "type": "minecolonies:item_simple",
+      "item": "minecraft:cooked_beef",
+      "quantity": 128
+    }
+  ],
   "effects": [
     {
-      "minecolonies:effects/citizencapaddition": 3
+      "id": "minecolonies:effects/citizencapaddition",
+      "level": 3
     }
   ],
   "icon": "minecolonies:blockhutcitizen:75",
   "parentResearch": "minecolonies:civilian/outpost",
   "requirements": [
     {
-      "building": "residence",
+      "type": "minecolonies:building",
+      "building": "minecolonies:residence",
       "level": 5
-    },
-    {
-      "type": "minecolonies:item_list",
-      "item": {
-        "items": [
-          "minecraft:cooked_beef"
-        ]
-      },
-      "quantity": 128
     }
   ],
   "researchLevel": 3

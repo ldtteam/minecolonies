@@ -1,10 +1,10 @@
 package com.minecolonies.core.colony.buildings.workerbuildings.plantation;
 
-import com.minecolonies.api.colony.fields.IField;
-import com.minecolonies.api.colony.fields.plantation.IPlantationModule;
+import com.minecolonies.api.colony.buildingextensions.IBuildingExtension;
+import com.minecolonies.api.colony.buildingextensions.plantation.IPlantationModule;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-import com.minecolonies.core.colony.fields.PlantationField;
-import com.minecolonies.core.colony.fields.modules.AbstractFieldModule;
+import com.minecolonies.core.colony.buildingextensions.PlantationField;
+import com.minecolonies.core.colony.buildingextensions.modules.AbstractBuildingExtensionModule;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
@@ -21,7 +21,7 @@ import java.util.List;
 /**
  * Base class for planter modules that determines how the AI should work specific fields.
  */
-public abstract class AbstractPlantationModule extends AbstractFieldModule implements IPlantationModule
+public abstract class AbstractPlantationModule extends AbstractBuildingExtensionModule implements IPlantationModule
 {
     /**
      * The default maximum amount of plants the field can have.
@@ -52,7 +52,7 @@ public abstract class AbstractPlantationModule extends AbstractFieldModule imple
      * @param item     the item which is harvested.
      */
     protected AbstractPlantationModule(
-      final IField field, final String fieldTag, final String workTag, final Item item)
+      final IBuildingExtension field, final String fieldTag, final String workTag, final Item item)
     {
         super(field);
         this.fieldTag = fieldTag;
@@ -149,7 +149,7 @@ public abstract class AbstractPlantationModule extends AbstractFieldModule imple
      */
     protected final List<BlockPos> getWorkingPositions()
     {
-        if (field instanceof PlantationField plantationField)
+        if (extension instanceof PlantationField plantationField)
         {
             return plantationField.getWorkingPositions();
         }

@@ -67,7 +67,7 @@ public class EntityAIWorkResearcher extends AbstractEntityAIInteract<JobResearch
             studyPos = building.getRandomBookShelf();
         }
 
-        if (walkToBlock(studyPos))
+        if (!walkToWorkPos(studyPos))
         {
             return getState();
         }
@@ -103,7 +103,7 @@ public class EntityAIWorkResearcher extends AbstractEntityAIInteract<JobResearch
      */
     private IAIState startWorkingAtOwnBuilding()
     {
-        if (walkToBuilding())
+        if (!walkToBuilding())
         {
             return getState();
         }

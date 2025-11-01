@@ -2,6 +2,7 @@ package com.minecolonies.core.entity.ai.workers.service;
 
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IRecipeStorage;
@@ -12,7 +13,7 @@ import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.util.*;
 import com.minecolonies.core.Network;
-import com.minecolonies.core.colony.buildings.AbstractBuilding;
+import com.minecolonies.core.colony.buildings.modules.BuildingModules;
 import com.minecolonies.core.colony.buildings.modules.EnchanterStationsModule;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingEnchanter;
 import com.minecolonies.core.colony.interactionhandling.StandardInteraction;
@@ -21,17 +22,18 @@ import com.minecolonies.core.entity.ai.workers.crafting.AbstractEntityAICrafting
 import com.minecolonies.core.network.messages.client.CircleParticleEffectMessage;
 import com.minecolonies.core.network.messages.client.StreamParticleEffectMessage;
 import com.minecolonies.core.util.WorkerUtil;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.ComponentUtils;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.EnchantedBookItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.core.BlockPos;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -42,6 +44,8 @@ import java.util.function.Predicate;
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.api.util.constant.TranslationConstants.NO_WORKERS_TO_DRAIN_SET;
+import static com.minecolonies.api.util.constant.StatisticsConstants.ITEMS_ENCHANTED;
+import static com.minecolonies.api.util.constant.StatisticsConstants.CITIZENS_VISITED;
 
 /**
  * Enchanter AI class.
@@ -117,7 +121,7 @@ public class EntityAIWorkEnchanter extends AbstractEntityAICrafting<JobEnchanter
     protected IAIState decide()
     {
         worker.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
-        if (walkToBuilding())
+        if (!walkToBuilding())
         {
             return START_WORKING;
         }
@@ -137,7 +141,7 @@ public class EntityAIWorkEnchanter extends AbstractEntityAICrafting<JobEnchanter
         if (getPrimarySkillLevel() < building.getBuildingLevel() * MANA_REQ_PER_LEVEL)
         {
             final BuildingEnchanter enchanterBuilding = building;
-            final EnchanterStationsModule module = enchanterBuilding.getFirstModuleOccurance(EnchanterStationsModule.class);
+            final EnchanterStationsModule module = enchanterBuilding.getModule(BuildingModules.ENCHANTER_STATIONS);
             if (module.getBuildingsToGatherFrom().isEmpty())
             {
                 if (worker.getCitizenData() != null)
@@ -170,7 +174,7 @@ public class EntityAIWorkEnchanter extends AbstractEntityAICrafting<JobEnchanter
             return ENCHANTER_DRAIN;
         }
 
-        final BuildingEnchanter.@NotNull CraftingModule craftingModule = building.getFirstModuleOccurance(BuildingEnchanter.CraftingModule.class);
+        final BuildingEnchanter.CraftingModule craftingModule = building.getFirstModuleOccurance(BuildingEnchanter.CraftingModule.class);
         boolean ancientTomeCraftingDisabled = false;
         for (final IToken<?> token : craftingModule.getRecipes())
         {
@@ -198,6 +202,13 @@ public class EntityAIWorkEnchanter extends AbstractEntityAICrafting<JobEnchanter
         }
 
         return ENCHANT;
+    }
+
+    @Override
+    public boolean hasWorkToDo()
+    {
+        // Enchanter can always work to either craft or go gather xp
+        return true;
     }
 
     @Override
@@ -266,6 +277,7 @@ public class EntityAIWorkEnchanter extends AbstractEntityAICrafting<JobEnchanter
 
                 //Decrement mana.
                 data.getCitizenSkillHandler().incrementLevel(Skill.Mana, -enchantmentLevel);
+                recordEnchantmentStats(loot);
                 incrementActionsDoneAndDecSaturation();
             }
         }
@@ -298,12 +310,11 @@ public class EntityAIWorkEnchanter extends AbstractEntityAICrafting<JobEnchanter
             return IDLE;
         }
 
-        if (walkToBlock(job.getPosToDrainFrom()))
+        final IBuilding buildingWorker = building.getColony().getBuildingManager().getBuilding(job.getPosToDrainFrom());
+        if (!walkToBuilding(buildingWorker))
         {
             return getState();
         }
-
-        final AbstractBuilding buildingWorker = building.getColony().getBuildingManager().getBuilding(job.getPosToDrainFrom(), AbstractBuilding.class);
 
         if (buildingWorker == null)
         {
@@ -415,6 +426,7 @@ public class EntityAIWorkEnchanter extends AbstractEntityAICrafting<JobEnchanter
             worker.getCitizenData().getCitizenSkillHandler().incrementLevel(Skill.Mana, 1);
             worker.getCitizenExperienceHandler().addExperience(XP_PER_DRAIN);
             worker.getCitizenData().markDirty(80);
+            StatsUtil.trackStat(building, CITIZENS_VISITED, 1);
         }
         resetDraining();
         return IDLE;
@@ -437,5 +449,50 @@ public class EntityAIWorkEnchanter extends AbstractEntityAICrafting<JobEnchanter
     public Class<BuildingEnchanter> getExpectedBuildingClass()
     {
         return BuildingEnchanter.class;
+    }
+
+    /**
+     * Records stats for items enchanted by the enchanter.
+     *
+     * @param loot the items to record stats for
+     */
+    public void recordEnchantmentStats(List<ItemStack> loot)
+    {
+        for (ItemStack stack : loot)
+        {
+            Component name = stack.getHoverName();
+
+            if (stack.is(Items.ENCHANTED_BOOK))
+            {
+                var enchants = EnchantmentHelper.getEnchantments(stack);
+
+                if (!enchants.isEmpty())
+                {
+                    if (enchants.size() == 1)
+                    {
+                        var e = enchants.entrySet().iterator().next();
+                        name = e.getKey().getFullname(e.getValue());
+                    }
+                    else
+                    {
+                        name = ComponentUtils.formatList(
+                            enchants.entrySet().stream().map(e -> e.getKey().getFullname(e.getValue())).toList(),
+                            Component.literal(", "));
+                    }
+                }
+            }
+
+            StatsUtil.trackStatByName(building, ITEMS_ENCHANTED, name, stack.getCount());
+        }
+    }
+
+    /**
+     * Returns the name of the crafting stat used in the building's statistics.
+     * @return The name of the enchanting statistic.
+     */
+
+    protected String getCraftingStatName()
+    {
+        return ITEMS_ENCHANTED;
     }
 }

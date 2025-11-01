@@ -1,25 +1,25 @@
 {
   "branch": "minecolonies:combat",
+  "costs": [
+    {
+      "type": "minecolonies:item_simple",
+      "item": "minecraft:diamond",
+      "quantity": 16
+    }
+  ],
   "effects": [
     {
-      "minecolonies:effects/archerarmormultiplier": 4
+      "id": "minecolonies:effects/archerarmormultiplier",
+      "level": 4
     }
   ],
   "icon": "minecraft:golden_boots",
   "parentResearch": "minecolonies:combat/evasion",
   "requirements": [
     {
-      "building": "archery",
+      "type": "minecolonies:building",
+      "building": "minecolonies:archery",
       "level": 5
-    },
-    {
-      "type": "minecolonies:item_list",
-      "item": {
-        "items": [
-          "minecraft:diamond"
-        ]
-      },
-      "quantity": 16
     }
   ],
   "researchLevel": 5,

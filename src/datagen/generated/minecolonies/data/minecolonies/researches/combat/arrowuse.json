@@ -1,25 +1,25 @@
 {
   "branch": "minecolonies:combat",
+  "costs": [
+    {
+      "type": "minecolonies:item_simple",
+      "item": "minecraft:arrow",
+      "quantity": 64
+    }
+  ],
   "effects": [
     {
-      "minecolonies:effects/consumearrowsunlock": 1
+      "id": "minecolonies:effects/consumearrowsunlock",
+      "level": 1
     }
   ],
   "icon": "minecraft:arrow",
   "parentResearch": "minecolonies:combat/taunt",
   "requirements": [
     {
-      "building": "guardtower",
+      "type": "minecolonies:building",
+      "building": "minecolonies:guardtower",
       "level": 2
-    },
-    {
-      "type": "minecolonies:item_list",
-      "item": {
-        "items": [
-          "minecraft:arrow"
-        ]
-      },
-      "quantity": 64
     }
   ],
   "researchLevel": 2,

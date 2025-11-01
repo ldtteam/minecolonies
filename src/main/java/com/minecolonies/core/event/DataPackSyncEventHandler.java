@@ -6,6 +6,7 @@ import com.minecolonies.core.MineColonies;
 import com.minecolonies.core.Network;
 import com.minecolonies.core.colony.crafting.CustomRecipeManager;
 import com.minecolonies.core.compatibility.CraftingTagAuditor;
+import com.minecolonies.core.datalistener.DiseasesListener;
 import com.minecolonies.core.datalistener.QuestJsonListener;
 import com.minecolonies.core.network.messages.client.UpdateClientWithCompatibilityMessage;
 import com.minecolonies.core.util.FurnaceRecipes;
@@ -69,6 +70,7 @@ public class DataPackSyncEventHandler
             CustomRecipeManager.getInstance().sendCustomRecipeManagerPackets(player);
             IGlobalResearchTree.getInstance().sendGlobalResearchTreePackets(player);
             QuestJsonListener.sendGlobalQuestPackets(player);
+            DiseasesListener.sendGlobalDiseasesPackets(player);
         }
 
         /**

@@ -1,11 +1,10 @@
 package com.minecolonies.core.commands.colonycommands;
 
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.core.MineColonies;
+import com.minecolonies.core.commands.arguments.ColonyIdArgument;
 import com.minecolonies.core.commands.commandTypes.IMCColonyOfficerCommand;
 import com.minecolonies.core.commands.commandTypes.IMCCommand;
-import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.ChatFormatting;
@@ -14,7 +13,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 
-import static com.minecolonies.api.util.constant.translation.CommandTranslationConstants.COMMAND_COLONY_ID_NOT_FOUND;
 import static com.minecolonies.api.util.constant.translation.CommandTranslationConstants.COMMAND_DISABLED_IN_CONFIG;
 import static com.minecolonies.core.commands.CommandArgumentNames.COLONYID_ARG;
 
@@ -22,7 +20,7 @@ public class CommandColonyInfo implements IMCColonyOfficerCommand
 {
     public static final  String ID_TEXT           = "ID: ";
     public static final  String NAME_TEXT         = "Name: ";
-    private static final String MAYOR_TEXT        = "Mayor: ";
+    public static final String MAYOR_TEXT = "Mayor: ";
     private static final String COORDINATES_TEXT  = "Coordinates: ";
     private static final String COORDINATES_XYZ   = "x=%s y=%s z=%s";
     private static final String CITIZENS          = "Citizens: ";
@@ -38,14 +36,7 @@ public class CommandColonyInfo implements IMCColonyOfficerCommand
     @Override
     public int onExecute(final CommandContext<CommandSourceStack> context)
     {
-        // Colony
-        final int colonyID = IntegerArgumentType.getInteger(context, COLONYID_ARG);
-        final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, context.getSource().getLevel().dimension());
-        if (colony == null)
-        {
-            context.getSource().sendSuccess(() -> Component.translatable(COMMAND_COLONY_ID_NOT_FOUND, colonyID), true);
-            return 0;
-        }
+        final IColony colony = ColonyIdArgument.getColony(context, COLONYID_ARG);
 
         if (!context.getSource().hasPermission(OP_PERM_LEVEL) && !MineColonies.getConfig().getServer().canPlayerUseShowColonyInfoCommand.get())
         {
@@ -54,7 +45,7 @@ public class CommandColonyInfo implements IMCColonyOfficerCommand
         }
 
         final BlockPos position = colony.getCenter();
-        context.getSource().sendSuccess(() -> Component.literal(ID_TEXT + colony.getID() + NAME_TEXT + colony.getName()), true);
+        context.getSource().sendSuccess(() -> Component.literal(ID_TEXT + colony.getID() + " " + NAME_TEXT + colony.getName()), true);
         final String mayor = colony.getPermissions().getOwnerName();
         context.getSource().sendSuccess(() -> Component.literal(MAYOR_TEXT + mayor), true);
         context.getSource()
@@ -63,7 +54,6 @@ public class CommandColonyInfo implements IMCColonyOfficerCommand
           .sendSuccess(() -> Component.literal(COORDINATES_TEXT + String.format(COORDINATES_XYZ, position.getX(), position.getY(), position.getZ())).setStyle(Style.EMPTY.withColor(
             ChatFormatting.GREEN)), true);
         context.getSource().sendSuccess(() -> Component.literal(String.format(LAST_CONTACT_TEXT, colony.getLastContactInHours())), true);
-        context.getSource().sendSuccess(() -> Component.literal(IS_DELETABLE + !colony.canBeAutoDeleted()), true);
 
         if (!colony.getRaiderManager().canHaveRaiderEvents())
         {
@@ -86,6 +76,6 @@ public class CommandColonyInfo implements IMCColonyOfficerCommand
     public LiteralArgumentBuilder<CommandSourceStack> build()
     {
         return IMCCommand.newLiteral(getName())
-                 .then(IMCCommand.newArgument(COLONYID_ARG, IntegerArgumentType.integer(1)).executes(this::checkPreConditionAndExecute));
+                 .then(IMCCommand.newArgument(COLONYID_ARG, ColonyIdArgument.id()).executes(this::checkPreConditionAndExecute));
     }
 }

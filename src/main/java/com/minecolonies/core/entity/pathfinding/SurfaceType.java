@@ -13,6 +13,7 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.level.pathfinder.PathFinder;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -67,14 +68,17 @@ public enum SurfaceType
         }
 
         if (block instanceof FenceBlock
-              || block instanceof FenceGateBlock
               || block instanceof WallBlock
               || block instanceof AbstractBlockMinecoloniesDefault
               || block instanceof BambooStalkBlock
-              || block instanceof BambooSaplingBlock
-              || block instanceof DoorBlock)
+              || block instanceof BambooSaplingBlock)
         {
             return SurfaceType.NOT_PASSABLE;
+        }
+
+        if (block instanceof FenceGateBlock || block instanceof DoorBlock)
+        {
+            return SurfaceType.DROPABLE;
         }
 
         final VoxelShape shape = blockState.getCollisionShape(world, pos);
@@ -115,11 +119,12 @@ public enum SurfaceType
             return SurfaceType.DROPABLE;
         }
 
-        if ((BlockUtils.isAnySolid(blockState) && ShapeUtil.max(shape, Direction.Axis.X) - ShapeUtil.min(shape, Direction.Axis.X) > 0.75
-               && (ShapeUtil.max(shape, Direction.Axis.Z) - ShapeUtil.min(shape, Direction.Axis.Z)) > 0.75)
+        if ((blockState.getBlock().hasCollision && ShapeUtil.max(shape, Direction.Axis.X) - ShapeUtil.min(shape, Direction.Axis.X) >= 0.85
+               && (ShapeUtil.max(shape, Direction.Axis.Z) - ShapeUtil.min(shape, Direction.Axis.Z)) >= 0.85)
               || (blockState.getBlock() == Blocks.SNOW && blockState.getValue(SnowLayerBlock.LAYERS) > 1)
               || block instanceof FloatingCarpetBlock
-              || block instanceof CarpetBlock)
+              || block instanceof CarpetBlock
+              || block instanceof WaterlilyBlock)
         {
             return SurfaceType.WALKABLE;
         }

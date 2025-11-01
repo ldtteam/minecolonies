@@ -1,23 +1,20 @@
 {
   "branch": "minecolonies:technology",
+  "costs": [
+    {
+      "type": "minecolonies:item_simple",
+      "item": "minecraft:emerald",
+      "quantity": 256
+    }
+  ],
   "effects": [
     {
-      "minecolonies:effects/citizeninvslotsaddition": 3
+      "id": "minecolonies:effects/citizeninvslotsaddition",
+      "level": 3
     }
   ],
   "icon": "minecraft:blue_shulker_box",
   "no-reset": true,
   "parentResearch": "minecolonies:technology/loaded",
-  "requirements": [
-    {
-      "type": "minecolonies:item_list",
-      "item": {
-        "items": [
-          "minecraft:emerald"
-        ]
-      },
-      "quantity": 256
-    }
-  ],
   "researchLevel": 6
 }

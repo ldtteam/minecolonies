@@ -1,7 +1,7 @@
 package com.minecolonies.apiimp.initializer;
 
+import com.ldtteam.blockui.Color;
 import com.minecolonies.api.blocks.ModBlocks;
-import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.util.constant.Constants;
@@ -10,6 +10,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.ComposterBlock;
 import net.minecraftforge.common.ForgeSpawnEggItem;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -32,8 +34,6 @@ public final class ModItemsInitializer
     private static final int SECONDARY_COLOR_BARBARIAN = 700;
     private static final int PRIMARY_COLOR_PIRATE      = 7;
     private static final int SECONDARY_COLOR_PIRATE    = 600;
-    private static final int PRIMARY_COLOR_MERC        = 8;
-    private static final int SECONDARY_COLOR_MERC      = 300;
     private static final int PRIMARY_COLOR_EG          = 10;
     private static final int SECONDARY_COLOR_EG        = 400;
 
@@ -48,6 +48,8 @@ public final class ModItemsInitializer
         if (event.getRegistryKey().equals(ForgeRegistries.Keys.ITEMS))
         {
             ModItemsInitializer.init(event.getForgeRegistry());
+
+            registerCompostItems();
         }
     }
 
@@ -63,6 +65,9 @@ public final class ModItemsInitializer
         ModItems.supplyChest = new ItemSupplyChestDeployer(new Item.Properties());
         ModItems.permTool = new ItemScepterPermission(new Item.Properties());
         ModItems.scepterGuard = new ItemScepterGuard(new Item.Properties());
+        ModItems.assistantHammer_Gold = new ItemAssistantHammer("assistanthammer_gold", new Item.Properties().durability(200), 1);
+        ModItems.assistantHammer_Iron = new ItemAssistantHammer("assistanthammer_iron", new Item.Properties().durability(400), 2);
+        ModItems.assistantHammer_Diamond = new ItemAssistantHammer("assistanthammer_diamond", new Item.Properties().durability(1000), 3);
         ModItems.bannerRallyGuards = new ItemBannerRallyGuards(new Item.Properties());
         ModItems.supplyCamp = new ItemSupplyCampDeployer(new Item.Properties());
         ModItems.ancientTome = new ItemAncientTome(new Item.Properties());
@@ -133,61 +138,113 @@ public final class ModItemsInitializer
         ModItems.magicpotion = new ItemMagicPotion("magicpotion", new Item.Properties());
         ModItems.buildGoggles = new ItemBuildGoggles("build_goggles", new Item.Properties());
         ModItems.scanAnalyzer = new ItemScanAnalyzer("scan_analyzer", new Item.Properties());
+        ModItems.colonyMap = new ItemColonyMap(new Item.Properties());
 
-        // Tier 1 Food Items
-        ModItems.cheddar_cheese = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(4).saturationMod(0.6F).build()), ModJobs.CHEF_ID.getPath(), 1);
-        ModItems.feta_cheese = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(4).saturationMod(0.6F).build()), ModJobs.CHEF_ID.getPath(), 1);
-        ModItems.cooked_rice = new ItemBowlFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(4).saturationMod(0.6F).build()), ModJobs.CHEF_ID.getPath(), 1);
-        ModItems.tofu = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(4).saturationMod(0.6F).build()), ModJobs.CHEF_ID.getPath(), 1);
-        ModItems.flatbread = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(4).saturationMod(0.6F).build()), ModJobs.BAKER_ID.getPath(), 1);
+
 
         // Tier 2 Food Items
-        ModItems.manchet_bread = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(6).saturationMod(1.0F).build()), ModJobs.BAKER_ID.getPath(), 2);
-        ModItems.lembas_scone = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(6).saturationMod(1.0F).build()), ModJobs.BAKER_ID.getPath(), 2);
-        ModItems.muffin = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(6).saturationMod(1.0F).build()), ModJobs.BAKER_ID.getPath(), 2);
-        ModItems.pottage = new ItemBowlFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(6).saturationMod(1.0F).build()), ModJobs.CHEF_ID.getPath(), 2);
-        ModItems.pasta_plain = new ItemBowlFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(6).saturationMod(1.0F).build()), ModJobs.CHEF_ID.getPath(), 2);
 
         // Tier 3 Food items
-        ModItems.hand_pie = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(8).saturationMod(1.2F).build()), ModJobs.CHEF_ID.getPath(), 3);
+
+        // All Biomes
+        // Tier 1 Food Items
+        ModItems.cheddar_cheese = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(4).saturationMod(0.6F).build()), 1);
+        ModItems.feta_cheese = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(4).saturationMod(0.6F).build()), 1);
+        ModItems.cooked_rice = new ItemBowlFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(4).saturationMod(0.6F).build()), 1);
+        ModItems.tofu = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(4).saturationMod(0.6F).build()), 1);
+        ModItems.flatbread = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(4).saturationMod(0.6F).build()), 1);
+        ModItems.cheese_ravioli = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(4).saturationMod(0.6F).build()), 1);
+        ModItems.chicken_broth = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(4).saturationMod(0.6F).build()), 1);
+        ModItems.meat_ravioli = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(4).saturationMod(0.6F).build()), 1);
+        ModItems.mint_jelly = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(4).saturationMod(0.6F).build()), 1);
+        ModItems.mint_tea = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(4).saturationMod(0.6F).build()), 1);
+        ModItems.polenta = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(4).saturationMod(0.6F).build()), 1);
+        ModItems.potato_soup = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(4).saturationMod(0.6F).build()), 1);
+        ModItems.veggie_ravioli = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(4).saturationMod(0.6F).build()), 1);
+        ModItems.yogurt = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(4).saturationMod(0.6F).build()), 1);
+
+        // Tier 2 Food Items
+        ModItems.manchet_bread = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(6).saturationMod(1.0F).build()), 2);
+        ModItems.lembas_scone = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(6).saturationMod(1.0F).build()), 2);
+        ModItems.muffin = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(6).saturationMod(1.0F).build()), 2);
+        ModItems.pottage = new ItemBowlFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(6).saturationMod(1.0F).build()), 2);
+        ModItems.pasta_plain = new ItemBowlFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(6).saturationMod(1.0F).build()), 2);
+        ModItems.apple_pie = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(6).saturationMod(1.0F).build()), 2);
+        ModItems.plain_cheesecake = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(6).saturationMod(1.0F).build()), 2);
+        ModItems.baked_salmon = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(6).saturationMod(1.0F).build()), 2);
+        ModItems.eggdrop_soup = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(6).saturationMod(1.0F).build()), 2);
+        ModItems.fish_n_chips = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(6).saturationMod(1.0F).build()), 2);
+        ModItems.pierogi = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(6).saturationMod(1.0F).build()), 2);
+        ModItems.veggie_soup = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(6).saturationMod(1.0F).build()), 2);
+        ModItems.yogurt_with_berries = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(6).saturationMod(1.0F).build()), 2);
+
+        // Tier 3 Food items
+        ModItems.hand_pie = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(8).saturationMod(1.2F).build()), 3);
+        ModItems.mintchoco_cheesecake = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(8).saturationMod(1.2F).build()), 3);
+        ModItems.borscht = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(8).saturationMod(1.2F).build()), 3);
+        ModItems.schnitzel = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(8).saturationMod(1.2F).build()), 3);
+        ModItems.steak_dinner = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(8).saturationMod(1.2F).build()), 3);
 
         // Cold Biomes
+        // Tier 1
+        ModItems.squash_soup = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(4).saturationMod(0.6F).build()), 1);
         // Tier 2
-        ModItems.cabochis = new ItemBowlFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(6).saturationMod(1.0F).build()), ModJobs.CHEF_ID.getPath(), 2);
+        ModItems.cabochis = new ItemBowlFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(6).saturationMod(1.0F).build()), 2);
+        ModItems.veggie_quiche = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(6).saturationMod(1.0F).build()), 2);
         // Tier 3
-        ModItems.lamb_stew = new ItemBowlFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(8).saturationMod(1.2F).build()), ModJobs.CHEF_ID.getPath(), 3);
+        ModItems.lamb_stew = new ItemBowlFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(8).saturationMod(1.2F).build()), 3);
+        ModItems.fish_dinner = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(8).saturationMod(1.2F).build()), 3);
 
         // Hot Humid Biomes
+        // Tier 1
+        ModItems.pea_soup = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(4).saturationMod(0.6F).build()), 1);
         // Tier 2
-        ModItems.rice_ball = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(6).saturationMod(1.0F).build()), ModJobs.CHEF_ID.getPath(), 2);
+        ModItems.rice_ball = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(6).saturationMod(1.0F).build()), 2);
+        ModItems.mutton_dinner = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(6).saturationMod(1.0F).build()), 3);
         // Tier 3
-        ModItems.sushi_roll = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(8).saturationMod(1.2F).build()), ModJobs.CHEF_ID.getPath(), 3);
+        ModItems.sushi_roll = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(8).saturationMod(1.2F).build()), 3);
+        ModItems.ramen = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(8).saturationMod(1.2F).build()), 3);
+        ModItems.fried_rice = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(8).saturationMod(1.2F).build()), 3);
 
         // Temperate Biomes
+        // Tier 1
+        ModItems.corn_chowder = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(4).saturationMod(0.6F).build()), 1);
+        ModItems.tortillas = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(4).saturationMod(0.6F).build()), 1);
         // Tier 2
-        ModItems.pasta_tomato = new ItemBowlFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(6).saturationMod(1.0F).build()), ModJobs.CHEF_ID.getPath(), 2);
+        ModItems.pasta_tomato = new ItemBowlFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(6).saturationMod(1.0F).build()), 2);
+        ModItems.cheese_pizza = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(6).saturationMod(1.0F).build()), 2);
         // Tier 3
-        ModItems.eggplant_dolma = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(8).saturationMod(1.2F).build()), ModJobs.CHEF_ID.getPath(), 3);
-        ModItems.stuffed_pita = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(8).saturationMod(1.2F).build()), ModJobs.CHEF_ID.getPath(), 3);
+        ModItems.eggplant_dolma = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(8).saturationMod(1.2F).build()), 3);
+        ModItems.stuffed_pita = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(8).saturationMod(1.2F).build()), 3);
+        ModItems.mushroom_pizza = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(8).saturationMod(1.2F).build()), 3);
 
         // Hot Dry Biomes
+        // Tier 1
+        ModItems.spicy_grilled_chicken = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(4).saturationMod(0.6F).build()), 1);
         // Tier 2
-        ModItems.pepper_hummus = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(6).saturationMod(1.0F).build()), ModJobs.CHEF_ID.getPath(), 2);
+        ModItems.pepper_hummus = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(6).saturationMod(1.0F).build()), 2);
+        ModItems.kebab = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(6).saturationMod(1.0F).build()), 1);
         // Tier 3
-        ModItems.pita_hummus = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(8).saturationMod(1.2F).build()), ModJobs.CHEF_ID.getPath(), 3);
+        ModItems.pita_hummus = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(8).saturationMod(1.2F).build()), 3);
+        ModItems.spicy_eggplant = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(8).saturationMod(1.2F).build()), 3);
 
         // Require trading
         // Tier 2
-        ModItems.congee = new ItemBowlFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(6).saturationMod(1.0F).build()), ModJobs.CHEF_ID.getPath(), 2);
+        ModItems.congee = new ItemBowlFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(6).saturationMod(1.0F).build()), 2);
+        ModItems.kimchi = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(6).saturationMod(1.0F).build()), 2);
         // Tier 3
-        ModItems.stew_trencher = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(8).saturationMod(1.2F).build()), ModJobs.CHEF_ID.getPath(), 3);
-        ModItems.stuffed_pepper = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(8).saturationMod(1.2F).build()), ModJobs.CHEF_ID.getPath(), 3);
+        ModItems.stew_trencher = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(8).saturationMod(1.2F).build()), 3);
+        ModItems.stuffed_pepper = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(8).saturationMod(1.2F).build()), 3);
+        ModItems.tacos = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(8).saturationMod(1.2F).build()), 3);
 
         // Just dough
         ModItems.muffin_dough = new Item((new Item.Properties()));
         ModItems.manchet_dough = new Item((new Item.Properties()));
         ModItems.raw_noodle = new Item((new Item.Properties()));
         ModItems.butter = new Item((new Item.Properties()));
+        ModItems.cornmeal = new Item((new Item.Properties()));
+        ModItems.creamcheese = new Item((new Item.Properties()));
+        ModItems.soysauce = new Item((new Item.Properties()));
 
         ModItems.large_empty_bottle = new ItemLargeBottle((new Item.Properties()));
         ModItems.large_milk_bottle = new ItemLargeBottle((new Item.Properties().craftRemainder(ModItems.large_empty_bottle)));
@@ -198,6 +255,9 @@ public final class ModItemsInitializer
         registry.register(new ResourceLocation(Constants.MOD_ID, "scan_analyzer"), ModItems.scanAnalyzer);
         registry.register(new ResourceLocation(Constants.MOD_ID, "scepterpermission"), ModItems.permTool);
         registry.register(new ResourceLocation(Constants.MOD_ID, "scepterguard"), ModItems.scepterGuard);
+        registry.register(new ResourceLocation(Constants.MOD_ID, "assistanthammer_gold"), ModItems.assistantHammer_Gold);
+        registry.register(new ResourceLocation(Constants.MOD_ID, "assistanthammer_iron"), ModItems.assistantHammer_Iron);
+        registry.register(new ResourceLocation(Constants.MOD_ID, "assistanthammer_diamond"), ModItems.assistantHammer_Diamond);
         registry.register(new ResourceLocation(Constants.MOD_ID, "banner_rally_guards"), ModItems.bannerRallyGuards);
         registry.register(new ResourceLocation(Constants.MOD_ID, "supplycampdeployer"), ModItems.supplyCamp);
         registry.register(new ResourceLocation(Constants.MOD_ID, "ancienttome"), ModItems.ancientTome);
@@ -213,6 +273,7 @@ public final class ModItemsInitializer
         registry.register(new ResourceLocation(Constants.MOD_ID, "mistletoe"), ModItems.mistletoe);
         registry.register(new ResourceLocation(Constants.MOD_ID, "spear"), ModItems.spear);
         registry.register(new ResourceLocation(Constants.MOD_ID, "questlog"), ModItems.questLog);
+        registry.register(new ResourceLocation(Constants.MOD_ID, "colonymap"), ModItems.colonyMap);
 
         registry.register(new ResourceLocation(Constants.MOD_ID, "bread_dough"), ModItems.breadDough);
         registry.register(new ResourceLocation(Constants.MOD_ID, "cookie_dough"), ModItems.cookieDough);
@@ -284,70 +345,161 @@ public final class ModItemsInitializer
         registry.register(new ResourceLocation(Constants.MOD_ID, "sushi_roll"), ModItems.sushi_roll);
         registry.register(new ResourceLocation(Constants.MOD_ID, "tofu"), ModItems.tofu);
 
+        registry.register(new ResourceLocation(Constants.MOD_ID, "cheese_ravioli"), ModItems.cheese_ravioli);
+        registry.register(new ResourceLocation(Constants.MOD_ID, "chicken_broth"), ModItems.chicken_broth);
+        registry.register(new ResourceLocation(Constants.MOD_ID, "corn_chowder"), ModItems.corn_chowder);
+        registry.register(new ResourceLocation(Constants.MOD_ID, "spicy_grilled_chicken"), ModItems.spicy_grilled_chicken);
+        registry.register(new ResourceLocation(Constants.MOD_ID, "kebab"), ModItems.kebab);
+        registry.register(new ResourceLocation(Constants.MOD_ID, "meat_ravioli"), ModItems.meat_ravioli);
+        registry.register(new ResourceLocation(Constants.MOD_ID, "mint_jelly"), ModItems.mint_jelly);
+        registry.register(new ResourceLocation(Constants.MOD_ID, "mint_tea"), ModItems.mint_tea);
+        registry.register(new ResourceLocation(Constants.MOD_ID, "pea_soup"), ModItems.pea_soup);
+        registry.register(new ResourceLocation(Constants.MOD_ID, "polenta"), ModItems.polenta);
+        registry.register(new ResourceLocation(Constants.MOD_ID, "potato_soup"), ModItems.potato_soup);
+        registry.register(new ResourceLocation(Constants.MOD_ID, "squash_soup"), ModItems.squash_soup);
+        registry.register(new ResourceLocation(Constants.MOD_ID, "veggie_ravioli"), ModItems.veggie_ravioli);
+        registry.register(new ResourceLocation(Constants.MOD_ID, "yogurt"), ModItems.yogurt);
+        registry.register(new ResourceLocation(Constants.MOD_ID, "baked_salmon"), ModItems.baked_salmon);
+        registry.register(new ResourceLocation(Constants.MOD_ID, "eggdrop_soup"), ModItems.eggdrop_soup);
+        registry.register(new ResourceLocation(Constants.MOD_ID, "fish_n_chips"), ModItems.fish_n_chips);
+        registry.register(new ResourceLocation(Constants.MOD_ID, "kimchi"), ModItems.kimchi);
+        registry.register(new ResourceLocation(Constants.MOD_ID, "pierogi"), ModItems.pierogi);
+        registry.register(new ResourceLocation(Constants.MOD_ID, "veggie_quiche"), ModItems.veggie_quiche);
+        registry.register(new ResourceLocation(Constants.MOD_ID, "veggie_soup"), ModItems.veggie_soup);
+        registry.register(new ResourceLocation(Constants.MOD_ID, "yogurt_with_berries"), ModItems.yogurt_with_berries);
+        registry.register(new ResourceLocation(Constants.MOD_ID, "borscht"), ModItems.borscht);
+        registry.register(new ResourceLocation(Constants.MOD_ID, "fish_dinner"), ModItems.fish_dinner);
+        registry.register(new ResourceLocation(Constants.MOD_ID, "mutton_dinner"), ModItems.mutton_dinner);
+        registry.register(new ResourceLocation(Constants.MOD_ID, "ramen"), ModItems.ramen);
+        registry.register(new ResourceLocation(Constants.MOD_ID, "fried_rice"), ModItems.fried_rice);
+        registry.register(new ResourceLocation(Constants.MOD_ID, "schnitzel"), ModItems.schnitzel);
+        registry.register(new ResourceLocation(Constants.MOD_ID, "steak_dinner"), ModItems.steak_dinner);
+        registry.register(new ResourceLocation(Constants.MOD_ID, "tacos"), ModItems.tacos);
+        registry.register(new ResourceLocation(Constants.MOD_ID, "cornmeal"), ModItems.cornmeal);
+        registry.register(new ResourceLocation(Constants.MOD_ID, "creamcheese"), ModItems.creamcheese);
+        registry.register(new ResourceLocation(Constants.MOD_ID, "soysauce"), ModItems.soysauce);
+        registry.register(new ResourceLocation(Constants.MOD_ID, "tortillas"), ModItems.tortillas);
+        registry.register(new ResourceLocation(Constants.MOD_ID, "apple_pie"), ModItems.apple_pie);
+        registry.register(new ResourceLocation(Constants.MOD_ID, "cheese_pizza"), ModItems.cheese_pizza);
+        registry.register(new ResourceLocation(Constants.MOD_ID, "mushroom_pizza"), ModItems.mushroom_pizza);
+        registry.register(new ResourceLocation(Constants.MOD_ID, "plain_cheesecake"), ModItems.plain_cheesecake);
+        registry.register(new ResourceLocation(Constants.MOD_ID, "mintchoco_cheesecake"), ModItems.mintchoco_cheesecake);
+        registry.register(new ResourceLocation(Constants.MOD_ID, "spicy_eggplant"), ModItems.spicy_eggplant);
+
         registry.register(new ResourceLocation(Constants.MOD_ID, "large_empty_bottle"), ModItems.large_empty_bottle);
         registry.register(new ResourceLocation(Constants.MOD_ID, "large_water_bottle"), ModItems.large_water_bottle);
         registry.register(new ResourceLocation(Constants.MOD_ID, "large_milk_bottle"), ModItems.large_milk_bottle);
         registry.register(new ResourceLocation(Constants.MOD_ID, "large_soy_milk_bottle"), ModItems.large_soy_milk_bottle);
 
-        registry.register(new ResourceLocation(Constants.MOD_ID, "barbarianegg"), new ForgeSpawnEggItem(() -> ModEntities.BARBARIAN,
-          PRIMARY_COLOR_BARBARIAN,
-          SECONDARY_COLOR_BARBARIAN,
-          (new Item.Properties())));
-        registry.register(new ResourceLocation(Constants.MOD_ID, "barbarcheregg"), new ForgeSpawnEggItem(() -> ModEntities.ARCHERBARBARIAN,
-          PRIMARY_COLOR_BARBARIAN,
-          SECONDARY_COLOR_BARBARIAN,
-          (new Item.Properties())));
-        registry.register(new ResourceLocation(Constants.MOD_ID, "barbchiefegg"), new ForgeSpawnEggItem(() -> ModEntities.CHIEFBARBARIAN,
-          PRIMARY_COLOR_BARBARIAN,
-          SECONDARY_COLOR_BARBARIAN,
-          (new Item.Properties())));
+        registry.register(new ResourceLocation(Constants.MOD_ID, "barbarianegg"), new ForgeSpawnEggItem(() -> ModEntities.CAMP_BARBARIAN,
+                Color.getByName("orange"),
+                Color.getByName("black"),
+                (new Item.Properties())));
+        registry.register(new ResourceLocation(Constants.MOD_ID, "barbarcheregg"), new ForgeSpawnEggItem(() -> ModEntities.CAMP_ARCHERBARBARIAN,
+                Color.getByName("orange"),
+                Color.getByName("green"),
+                (new Item.Properties())));
+        registry.register(new ResourceLocation(Constants.MOD_ID, "barbchiefegg"), new ForgeSpawnEggItem(() -> ModEntities.CAMP_CHIEFBARBARIAN,
+                Color.getByName("orange"),
+                Color.getByName("yellow"),
+                (new Item.Properties())));
 
-        registry.register(new ResourceLocation(Constants.MOD_ID, "pirateegg"), new ForgeSpawnEggItem(() -> ModEntities.PIRATE,
-          PRIMARY_COLOR_PIRATE,
-          SECONDARY_COLOR_PIRATE,
-          (new Item.Properties())));
-        registry.register(new ResourceLocation(Constants.MOD_ID, "piratearcheregg"), new ForgeSpawnEggItem(() -> ModEntities.ARCHERPIRATE,
-          PRIMARY_COLOR_PIRATE,
-          SECONDARY_COLOR_PIRATE,
-          (new Item.Properties())));
-        registry.register(new ResourceLocation(Constants.MOD_ID, "piratecaptainegg"), new ForgeSpawnEggItem(() -> ModEntities.CHIEFPIRATE,
-          PRIMARY_COLOR_PIRATE,
-          SECONDARY_COLOR_PIRATE,
-          (new Item.Properties())));
+        registry.register(new ResourceLocation(Constants.MOD_ID, "pirateegg"), new ForgeSpawnEggItem(() -> ModEntities.CAMP_PIRATE,
+                Color.getByName("red"),
+                Color.getByName("white"),
+                (new Item.Properties())));
+        registry.register(new ResourceLocation(Constants.MOD_ID, "piratearcheregg"), new ForgeSpawnEggItem(() -> ModEntities.CAMP_ARCHERPIRATE,
+                Color.getByName("red"),
+                Color.getByName("green"),
+                (new Item.Properties())));
+        registry.register(new ResourceLocation(Constants.MOD_ID, "piratecaptainegg"), new ForgeSpawnEggItem(() -> ModEntities.CAMP_CHIEFPIRATE,
+                Color.getByName("red"),
+                Color.getByName("yellow"),
+                (new Item.Properties())));
 
-        registry.register(new ResourceLocation(Constants.MOD_ID, "mummyegg"), new ForgeSpawnEggItem(() -> ModEntities.MUMMY, PRIMARY_COLOR_EG, SECONDARY_COLOR_EG, (new Item.Properties())));
-        registry.register(new ResourceLocation(Constants.MOD_ID, "mummyarcheregg"), new ForgeSpawnEggItem(() -> ModEntities.ARCHERMUMMY,
-          PRIMARY_COLOR_EG,
-          SECONDARY_COLOR_EG,
-          (new Item.Properties())));
-        registry.register(new ResourceLocation(Constants.MOD_ID, "pharaoegg"), new ForgeSpawnEggItem(() -> ModEntities.PHARAO, PRIMARY_COLOR_EG, SECONDARY_COLOR_EG, (new Item.Properties())));
+        registry.register(new ResourceLocation(Constants.MOD_ID, "mummyegg"), new ForgeSpawnEggItem(() -> ModEntities.CAMP_MUMMY,
+                Color.getByName("yellow"),
+                Color.getByName("white"),
+                (new Item.Properties())));
+        registry.register(new ResourceLocation(Constants.MOD_ID, "mummyarcheregg"), new ForgeSpawnEggItem(() -> ModEntities.CAMP_ARCHERMUMMY,
+                Color.getByName("yellow"),
+                Color.getByName("green"),
+                (new Item.Properties())));
+        registry.register(new ResourceLocation(Constants.MOD_ID, "pharaoegg"), new ForgeSpawnEggItem(() -> ModEntities.CAMP_PHARAO,
+                Color.getByName("yellow"),
+                Color.getByName("yellow"),
+                (new Item.Properties())));
 
-        registry.register(new ResourceLocation(Constants.MOD_ID, "shieldmaidenegg"), new ForgeSpawnEggItem(() -> ModEntities.SHIELDMAIDEN,
-          PRIMARY_COLOR_EG,
-          SECONDARY_COLOR_EG,
-          (new Item.Properties())));
-        registry.register(new ResourceLocation(Constants.MOD_ID, "norsemenarcheregg"), new ForgeSpawnEggItem(() -> ModEntities.NORSEMEN_ARCHER,
-          PRIMARY_COLOR_EG,
-          SECONDARY_COLOR_EG,
-          (new Item.Properties())));
-        registry.register(new ResourceLocation(Constants.MOD_ID, "norsemenchiefegg"), new ForgeSpawnEggItem(() -> ModEntities.NORSEMEN_CHIEF,
-          PRIMARY_COLOR_EG,
-          SECONDARY_COLOR_EG,
-          (new Item.Properties())));
+        registry.register(new ResourceLocation(Constants.MOD_ID, "shieldmaidenegg"), new ForgeSpawnEggItem(() -> ModEntities.CAMP_SHIELDMAIDEN,
+                Color.getByName("black"),
+                Color.getByName("white"),
+                (new Item.Properties())));
+        registry.register(new ResourceLocation(Constants.MOD_ID, "norsemenarcheregg"), new ForgeSpawnEggItem(() -> ModEntities.CAMP_NORSEMEN_ARCHER,
+                Color.getByName("black"),
+                Color.getByName("green"),
+                (new Item.Properties())));
+        registry.register(new ResourceLocation(Constants.MOD_ID, "norsemenchiefegg"), new ForgeSpawnEggItem(() -> ModEntities.CAMP_NORSEMEN_CHIEF,
+                Color.getByName("black"),
+                Color.getByName("yellow"),
+                (new Item.Properties())));
 
-        registry.register(new ResourceLocation(Constants.MOD_ID, "amazonegg"), new ForgeSpawnEggItem(() -> ModEntities.AMAZON, PRIMARY_COLOR_EG, SECONDARY_COLOR_EG, (new Item.Properties())));
-        registry.register(new ResourceLocation(Constants.MOD_ID, "amazonspearmanegg"), new ForgeSpawnEggItem(() -> ModEntities.AMAZONSPEARMAN,
-          PRIMARY_COLOR_EG,
-          SECONDARY_COLOR_EG,
-          new Item.Properties()));
-        registry.register(new ResourceLocation(Constants.MOD_ID, "amazonchiefegg"), new ForgeSpawnEggItem(() -> ModEntities.AMAZONCHIEF,
-          PRIMARY_COLOR_EG,
-          SECONDARY_COLOR_EG,
-          (new Item.Properties())));
+        registry.register(new ResourceLocation(Constants.MOD_ID, "amazonegg"), new ForgeSpawnEggItem(() -> ModEntities.CAMP_AMAZON,
+                Color.getByName("green"),
+                Color.getByName("white"),
+                (new Item.Properties())));
+        registry.register(new ResourceLocation(Constants.MOD_ID, "amazonspearmanegg"), new ForgeSpawnEggItem(() -> ModEntities.CAMP_AMAZONSPEARMAN,
+                Color.getByName("green"),
+                Color.getByName("green"),
+                new Item.Properties()));
+        registry.register(new ResourceLocation(Constants.MOD_ID, "amazonchiefegg"), new ForgeSpawnEggItem(() -> ModEntities.CAMP_AMAZONCHIEF,
+                Color.getByName("green"),
+                Color.getByName("yellow"),
+                (new Item.Properties())));
 
-        registry.register(new ResourceLocation(Constants.MOD_ID, "mercegg"), new ForgeSpawnEggItem(() -> ModEntities.MERCENARY,
-          PRIMARY_COLOR_MERC,
-          SECONDARY_COLOR_MERC,
-          (new Item.Properties())));
+        registry.register(new ResourceLocation(Constants.MOD_ID, "drownedpirateegg"), new ForgeSpawnEggItem(() -> ModEntities.CAMP_DROWNED_PIRATE,
+                Color.getByName("blue"),
+                Color.getByName("white"),
+                (new Item.Properties())));
+        registry.register(new ResourceLocation(Constants.MOD_ID, "drownedpiratearcheregg"), new ForgeSpawnEggItem(() -> ModEntities.CAMP_DROWNED_ARCHERPIRATE,
+                Color.getByName("blue"),
+                Color.getByName("green"),
+                new Item.Properties()));
+        registry.register(new ResourceLocation(Constants.MOD_ID, "drownedpiratecaptainegg"), new ForgeSpawnEggItem(() -> ModEntities.CAMP_DROWNED_CHIEFPIRATE,
+                Color.getByName("blue"),
+                Color.getByName("yellow"),
+                (new Item.Properties())));
+    }
+
+    private static void registerCompostItems()
+    {
+        // these items aren't registered in "getAllFoods"
+        registerCompostItemFromNutrition(ModItems.milkyBread.asItem(), 6f);
+        registerCompostItemFromNutrition(ModItems.sugaryBread.asItem(), 6f);
+        registerCompostItemFromNutrition(ModItems.goldenBread.asItem(), 6f);
+        registerCompostItemFromNutrition(ModItems.chorusBread.asItem(), 6f);
+
+        for (final Item item : ModItems.getAllIngredients())
+        {
+            registerCompostItemFromNutrition(item, 10f);
+        }
+        for (final Item item : ModItems.getAllFoods())
+        {
+            registerCompostItemFromNutrition(item, 6f);
+        }
+
+        ComposterBlock.COMPOSTABLES.put(ModItems.mistletoe, 0.5f);
+    }
+
+    private static void registerCompostItemFromNutrition(final Item item, final float factor)
+    {
+        final FoodProperties food = item.getFoodProperties(new ItemStack(item), null);
+        if (food != null)
+        {
+            final float strength = Math.min(1.0f, food.getNutrition() / factor);
+            if (strength > 0)
+            {
+                ComposterBlock.COMPOSTABLES.put(item, strength);
+            }
+        }
     }
 }

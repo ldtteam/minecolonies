@@ -12,7 +12,6 @@ import org.jetbrains.annotations.NotNull;
  */
 public class VisitorSpawnedEvent extends AbstractCitizenEvent
 {
-
     /**
      * This events id, registry entries use res locations as ids.
      */
@@ -32,9 +31,9 @@ public class VisitorSpawnedEvent extends AbstractCitizenEvent
      * @param eventPos    the position of the hut block of the building.
      * @param citizenName the name of the building.
      */
-    public VisitorSpawnedEvent(BlockPos eventPos, String citizenName)
+    public VisitorSpawnedEvent(final BlockPos eventPos, final String citizenName)
     {
-        super(eventPos, citizenName);
+        super(false, eventPos, citizenName);
     }
 
     @Override

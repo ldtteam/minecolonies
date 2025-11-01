@@ -7,17 +7,19 @@ import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.api.util.StatsUtil;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.core.colony.buildings.modules.WorkerBuildingModule;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingSchool;
 import com.minecolonies.core.colony.jobs.JobPupil;
 import com.minecolonies.core.colony.jobs.JobTeacher;
-import com.minecolonies.core.entity.other.SittingEntity;
 import com.minecolonies.core.entity.ai.workers.AbstractEntityAIInteract;
+import com.minecolonies.core.entity.other.SittingEntity;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -26,6 +28,8 @@ import java.util.function.Predicate;
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.research.util.ResearchConstants.TEACHING;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
+import static com.minecolonies.api.util.constant.StatisticsConstants.LEVELS_GAINED;
+import static com.minecolonies.api.util.constant.StatisticsConstants.LESSONS_GIVEN;
 
 public class EntityAIWorkTeacher extends AbstractEntityAIInteract<JobTeacher, BuildingSchool>
 {
@@ -118,7 +122,7 @@ public class EntityAIWorkTeacher extends AbstractEntityAIInteract<JobTeacher, Bu
         }
         worker.getCitizenData().setVisibleStatus(TEACHING_ICON);
 
-        if (walkToBlock(pupilToTeach.blockPosition()))
+        if (!walkToWorkPos(pupilToTeach.blockPosition()))
         {
             return getState();
         }
@@ -157,10 +161,10 @@ public class EntityAIWorkTeacher extends AbstractEntityAIInteract<JobTeacher, Bu
 
         // Intelligence + PrimarySkill(Knowledge) for amount gained per Teach state.
         double xp = 1.5 * (1.0 + worker.getCitizenData().getCitizenSkillHandler().getLevel(Skill.Intelligence) / 10.0);
-        xp *= (1 + worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(TEACHING));
+        xp *= (1 + worker.getCitizenColonyHandler().getColonyOrRegister().getResearchManager().getResearchEffects().getEffectStrength(TEACHING));
         xp *= (1 + (getPrimarySkillLevel() / 10.0));
 
-        pupilToTeach.getCitizenData().getCitizenSkillHandler().addXpToSkill(Skill.Intelligence, xp, pupilToTeach.getCitizenData());
+        teachPupil(pupilToTeach, xp);
 
         worker.getCitizenExperienceHandler().addExperience(0.1);
         worker.decreaseSaturationForContinuousAction();
@@ -169,6 +173,28 @@ public class EntityAIWorkTeacher extends AbstractEntityAIInteract<JobTeacher, Bu
         maxSittingTicks = 0;
         sittingTicks = 0;
         return START_WORKING;
+    }
+
+    /**
+     * Teach the pupil given the xp gained during the teach action.
+     * Tracks primary and secondary skill levels gained in the building's stats.
+     * @param pupil the pupil to teach.
+     * @param xp the experience points gained during the teach action.
+     */
+    protected void teachPupil(final AbstractEntityCitizen pupil, double xp) 
+    {
+        int priorIntLevel = pupil.getCitizenData().getCitizenSkillHandler().getLevel(Skill.Intelligence);
+
+        pupil.getCitizenData().getCitizenSkillHandler().addXpToSkill(Skill.Intelligence, xp, pupil.getCitizenData());
+
+        int intGain = pupil.getCitizenData().getCitizenSkillHandler().getLevel(Skill.Intelligence) - priorIntLevel;
+
+        if (intGain > 0)
+        {
+            StatsUtil.trackStatByName(building, LEVELS_GAINED, Skill.Intelligence.name(), intGain);
+        }
+
+        StatsUtil.trackStat(building, LESSONS_GIVEN, 1);
     }
 
     @Override
@@ -202,7 +228,7 @@ public class EntityAIWorkTeacher extends AbstractEntityAIInteract<JobTeacher, Bu
      */
     private IAIState startWorkingAtOwnBuilding()
     {
-        if (walkToBuilding())
+        if (!walkToBuilding())
         {
             return getState();
         }

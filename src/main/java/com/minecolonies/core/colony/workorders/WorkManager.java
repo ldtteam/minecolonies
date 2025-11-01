@@ -6,18 +6,23 @@ import com.minecolonies.api.advancements.AdvancementTriggers;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.workorders.IBuilderWorkOrder;
+import com.minecolonies.api.colony.workorders.IServerWorkOrder;
 import com.minecolonies.api.colony.workorders.IWorkManager;
 import com.minecolonies.api.colony.workorders.IWorkOrder;
+import com.minecolonies.api.util.ColonyUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.core.colony.Colony;
+import com.minecolonies.core.colony.buildings.AbstractBuildingStructureBuilder;
+import com.minecolonies.core.colony.buildings.modules.WorkerBuildingModule;
+import com.minecolonies.core.colony.buildings.modules.settings.StringSetting;
 import com.minecolonies.core.util.AdvancementUtils;
-import com.minecolonies.api.util.ColonyUtils;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.util.Tuple;
-import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
@@ -28,6 +33,8 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.OUT_OF_COLONY;
+import static com.minecolonies.core.colony.buildings.workerbuildings.BuildingBuilder.MANUAL_SETTING;
+import static com.minecolonies.core.colony.buildings.workerbuildings.BuildingBuilder.MODE;
 
 /**
  * Handles work orders for a colony.
@@ -45,10 +52,10 @@ public class WorkManager implements IWorkManager
     /**
      * The Colony the workManager takes part of.
      */
-    private final        Colony                   colony;
+    private final Colony                         colony;
     @NotNull
-    private final        Map<Integer, IWorkOrder> workOrders      = new LinkedHashMap<>();
-    private              int                      topWorkOrderId  = 0;
+    private final Map<Integer, IServerWorkOrder> workOrders     = new LinkedHashMap<>();
+    private       int                            topWorkOrderId = 0;
     /**
      * Checks if there has been changes.
      */
@@ -70,8 +77,12 @@ public class WorkManager implements IWorkManager
      * @param order {@link IWorkOrder} to remove.
      */
     @Override
-    public void removeWorkOrder(@NotNull final IWorkOrder order)
+    public void removeWorkOrder(@Nullable final IServerWorkOrder order)
     {
+        if (order == null)
+        {
+            return;
+        }
         removeWorkOrder(order.getID());
     }
 
@@ -86,10 +97,22 @@ public class WorkManager implements IWorkManager
         final IWorkOrder workOrder = workOrders.get(orderId);
         if (workOrder != null)
         {
+            if (workOrder.isClaimed())
+            {
+                final IBuilding building = colony.getBuildingManager().getBuilding(workOrder.getClaimedBy());
+                if (building instanceof AbstractBuildingStructureBuilder abstractBuildingStructureBuilder)
+                {
+                    abstractBuildingStructureBuilder.onWorkOrderCancellation(workOrder);
+                }
+            }
+
             dirty = true;
             workOrders.remove(orderId);
             colony.removeWorkOrderInView(orderId);
-            workOrder.onRemoved(colony);
+            if (workOrder instanceof IBuilderWorkOrder builderWorkOrder)
+            {
+                builderWorkOrder.onRemoved(colony);
+            }
             colony.markDirty();
         }
     }
@@ -104,7 +127,7 @@ public class WorkManager implements IWorkManager
      */
     @Override
     @Nullable
-    public <W extends IWorkOrder> W getWorkOrder(final int id, @NotNull final Class<W> type)
+    public <W extends IServerWorkOrder> W getWorkOrder(final int id, @NotNull final Class<W> type)
     {
         final IWorkOrder workOrder = getWorkOrder(id);
         if (type.isInstance(workOrder))
@@ -122,7 +145,7 @@ public class WorkManager implements IWorkManager
      * @return the work order of the specified id, or null.
      */
     @Override
-    public IWorkOrder getWorkOrder(final int id)
+    public IServerWorkOrder getWorkOrder(final int id)
     {
         return workOrders.get(id);
     }
@@ -136,7 +159,7 @@ public class WorkManager implements IWorkManager
      */
     @Override
     @Nullable
-    public <W extends IWorkOrder> W getUnassignedWorkOrder(@NotNull final Class<W> type)
+    public <W extends IServerWorkOrder> W getUnassignedWorkOrder(@NotNull final Class<W> type)
     {
         for (@NotNull final IWorkOrder o : workOrders.values())
         {
@@ -157,7 +180,7 @@ public class WorkManager implements IWorkManager
      * @return a list of all work orders of the given type.
      */
     @Override
-    public <W extends IWorkOrder> List<W> getWorkOrdersOfType(@NotNull final Class<W> type)
+    public <W extends IServerWorkOrder> List<W> getWorkOrdersOfType(@NotNull final Class<W> type)
     {
         return workOrders.values().stream().filter(type::isInstance).map(type::cast).collect(Collectors.toList());
     }
@@ -168,8 +191,7 @@ public class WorkManager implements IWorkManager
      * @return a list of all work orders.
      */
     @Override
-    @NotNull
-    public Map<Integer, IWorkOrder> getWorkOrders()
+    public @NotNull Map<Integer, IServerWorkOrder> getWorkOrders()
     {
         return workOrders;
     }
@@ -183,7 +205,16 @@ public class WorkManager implements IWorkManager
     public void clearWorkForCitizen(@NotNull final ICitizenData citizen)
     {
         dirty = true;
-        workOrders.values().stream().filter(o -> o != null && o.isClaimedBy(citizen)).forEach(IWorkOrder::clearClaimedBy);
+        if (citizen.getWorkBuilding() != null)
+        {
+            for (final IWorkOrder workOrder : workOrders.values())
+            {
+                if (citizen.getWorkBuilding().getPosition().equals(workOrder.getClaimedBy()))
+                {
+                    workOrder.setClaimedBy(null);
+                }
+            }
+        }
     }
 
     /**
@@ -196,7 +227,7 @@ public class WorkManager implements IWorkManager
     {
         //  Work Orders
         @NotNull final ListTag list = new ListTag();
-        for (@NotNull final IWorkOrder o : workOrders.values())
+        for (@NotNull final IServerWorkOrder o : workOrders.values())
         {
             @NotNull final CompoundTag orderCompound = new CompoundTag();
             o.write(orderCompound);
@@ -227,7 +258,7 @@ public class WorkManager implements IWorkManager
         for (int i = 0; i < list.size(); ++i)
         {
             final CompoundTag orderCompound = list.getCompound(i);
-            @Nullable final IWorkOrder o = AbstractWorkOrder.createFromNBT(orderCompound, this);
+            @Nullable final IServerWorkOrder o = AbstractWorkOrder.createFromNBT(orderCompound, this);
             if (o != null)
             {
                 addWorkOrder(o, true);
@@ -237,7 +268,7 @@ public class WorkManager implements IWorkManager
                 //  This is just a failsafe cleanup; this should not happen under normal circumstances
                 if (o.isClaimed() && colony.getBuildingManager().getBuilding(o.getClaimedBy()) == null)
                 {
-                    o.clearClaimedBy();
+                    o.setClaimedBy(null);
                 }
 
                 topWorkOrderId = Math.max(topWorkOrderId, o.getID());
@@ -252,13 +283,13 @@ public class WorkManager implements IWorkManager
      * @param readingFromNbt if being read from NBT.
      */
     @Override
-    public void addWorkOrder(@NotNull final IWorkOrder order, final boolean readingFromNbt)
+    public void addWorkOrder(@NotNull final IServerWorkOrder order, final boolean readingFromNbt)
     {
         dirty = true;
 
         if (!(order instanceof WorkOrderMiner))
         {
-            for (final IWorkOrder or : workOrders.values())
+            for (final IServerWorkOrder or : workOrders.values())
             {
                 if (or.getLocation().equals(order.getLocation()) && or.getStructurePath().equals(order.getStructurePath()) && or.getStructurePack().equals(order.getStructurePack()))
                 {
@@ -289,7 +320,7 @@ public class WorkManager implements IWorkManager
                 if (building != null)
                 {
                     AdvancementUtils.TriggerAdvancementPlayersForColony(colony,
-                            player -> AdvancementTriggers.CREATE_BUILD_REQUEST.trigger(player, building.getBuildingType().getBuildingBlock().getBlueprintName(), level));
+                            player -> AdvancementTriggers.CREATE_BUILD_REQUEST.trigger(player, building.getBuildingType().getRegistryName().getPath(), level));
                 }
             }
             else if (order instanceof WorkOrderDecoration)
@@ -355,19 +386,80 @@ public class WorkManager implements IWorkManager
     @Override
     public void onColonyTick(@NotNull final IColony colony)
     {
-        @NotNull final Iterator<IWorkOrder> iter = workOrders.values().iterator();
+        @NotNull final Iterator<IServerWorkOrder> iter = workOrders.values().iterator();
         while (iter.hasNext())
         {
-            final IWorkOrder o = iter.next();
-            if (!o.isValid(this.colony))
+            final IServerWorkOrder order = iter.next();
+            if (!order.isValid(this.colony))
             {
                 iter.remove();
                 dirty = true;
+                continue;
             }
-            else if (o.isDirty())
+            else if (order.isDirty())
             {
                 dirty = true;
-                o.resetChange();
+                order.resetChange();
+            }
+
+            if (order.isClaimed() && getColony().getBuildingManager().getBuildings().get(order.getClaimedBy()) == null)
+            {
+                order.setClaimedBy(BlockPos.ZERO);
+            }
+
+            tryAssignWorkOrder(order, (b) -> order.getClaimedBy().equals(b.getPosition()));
+        }
+
+        for (final IServerWorkOrder wo : colony.getWorkManager().getWorkOrders().values())
+        {
+            tryAssignWorkOrder(wo, wo::canBuild);
+        }
+    }
+
+    /**
+     * Try assign a workorder to a structure builder (miner, builder, etc).
+     * @param order the workorder to assign.
+     * @param predicate checks to execute before assignment.
+     */
+    private void tryAssignWorkOrder(final IServerWorkOrder order, @NotNull Predicate<IBuilding> predicate)
+    {
+        for (IBuilding building : colony.getBuildingManager().getBuildings().values())
+        {
+            if (building instanceof AbstractBuildingStructureBuilder abstractBuildingStructureBuilder)
+            {
+                final @Nullable ICitizenData citizen = building.getFirstModuleOccurance(WorkerBuildingModule.class).getFirstCitizen();
+                if (citizen == null)
+                {
+                    continue;
+                }
+
+                if (abstractBuildingStructureBuilder.hasWorkOrder())
+                {
+                    continue;
+                }
+
+                if (order.isClaimed())
+                {
+                    if (order.getClaimedBy().equals(building.getPosition()))
+                    {
+                        abstractBuildingStructureBuilder.setWorkOrder(order);
+                        order.setClaimedBy(building.getID());
+                        continue;
+                    }
+                    continue;
+                }
+
+                final StringSetting setting = building.getSetting(MODE);
+                if (setting != null && setting.getValue().equals(MANUAL_SETTING))
+                {
+                    continue;
+                }
+
+                if (predicate.test(building))
+                {
+                    abstractBuildingStructureBuilder.setWorkOrder(order);
+                    order.setClaimedBy(building.getID());
+                }
             }
         }
     }
@@ -381,7 +473,7 @@ public class WorkManager implements IWorkManager
      * @return the list.
      */
     @Override
-    public <W extends IWorkOrder> List<W> getOrderedList(Class<W> type, BlockPos builder)
+    public <W extends IServerWorkOrder> List<W> getOrderedList(Class<W> type, BlockPos builder)
     {
         return getOrderedList(type::isInstance, builder)
           .stream()
@@ -397,7 +489,7 @@ public class WorkManager implements IWorkManager
      * @return the list.
      */
     @Override
-    public List<IWorkOrder> getOrderedList(@NotNull Predicate<IWorkOrder> predicate, final BlockPos builder)
+    public List<IServerWorkOrder> getOrderedList(@NotNull Predicate<IServerWorkOrder> predicate, final BlockPos builder)
     {
         return workOrders.values().stream()
           .filter(o -> (!o.isClaimed() || o.getClaimedBy().equals(builder)))

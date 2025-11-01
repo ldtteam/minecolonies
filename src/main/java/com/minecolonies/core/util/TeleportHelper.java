@@ -6,13 +6,13 @@ import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.EntityUtils;
 import com.minecolonies.api.util.MessageUtils;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.level.TicketType;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.TicketType;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.translation.CommandTranslationConstants.COMMAND_COLONY_ID_NOT_FOUND;
@@ -51,6 +51,7 @@ public final class TeleportHelper
             citizen.getCitizenSleepHandler().onWakeUp();
         }
 
+        citizen.getNavigation().stop();
         citizen.stopRiding();
         citizen.moveTo(
           spawnPoint.getX() + MIDDLE_BLOCK_OFFSET,
@@ -58,16 +59,6 @@ public final class TeleportHelper
           spawnPoint.getZ() + MIDDLE_BLOCK_OFFSET,
           citizen.getRotationYaw(),
           citizen.getRotationPitch());
-        if (citizen.getProxy() != null)
-        {
-            citizen.getProxy().reset();
-        }
-        citizen.getNavigation().stop();
-        if (citizen.getProxy() != null)
-        {
-            citizen.getProxy().reset();
-        }
-
         return true;
     }
 
@@ -131,20 +122,34 @@ public final class TeleportHelper
     /**
      * Teleports the player to the given colony.
      *
-     * @param colony the colony to teleport to.
      * @param player the player to teleport.
+     * @param colony the colony to teleport to.
      */
     public static void colonyTeleport(@NotNull final ServerPlayer player, @NotNull final IColony colony)
     {
-        BlockPos position;
+        colonyTeleport(player, colony, null);
+    }
 
-        if (colony.getBuildingManager().getTownHall() != null)
+    /**
+     * Teleports the player to the given colony.
+     *
+     * @param player the player to teleport.
+     * @param colony the colony to teleport to.
+     * @param pos the preferred position to teleport to.
+     */
+    public static void colonyTeleport(@NotNull final ServerPlayer player, @NotNull final IColony colony, final BlockPos pos)
+    {
+        BlockPos position = pos;
+        if (pos == null)
         {
-            position = colony.getBuildingManager().getTownHall().getPosition();
-        }
-        else
-        {
-            position = colony.getCenter();
+            if (colony.getBuildingManager().getTownHall() != null)
+            {
+                position = colony.getBuildingManager().getTownHall().getPosition();
+            }
+            else
+            {
+                position = colony.getCenter();
+            }
         }
 
         final ServerLevel world = player.getServer().getLevel(colony.getDimension());

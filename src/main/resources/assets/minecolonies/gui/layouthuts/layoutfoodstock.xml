@@ -1,0 +1,33 @@
+<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/ldtteam/BlockUI/version/1.20.1/src/main/resources/assets/blockui/gui/block_ui.xsd"
+        size="380 255" >
+    <image source="minecolonies:textures/gui/builderhut/builder_paper.png" size="190 244"/>
+    <text id="title" size="130 11" pos="30 14" textalign="MIDDLE" color="black"
+           label="$(com.minecolonies.core.menu.title)"/>
+    <text id="warning" size="150 22" pos="13 50" color="black" textalign="MIDDLE" label="$(com.minecolonies.core.menu.warning)"/>
+    <text id="poorwarning" size="160 22" pos="14 25" color="red" textalign="MIDDLE" label="$(com.minecolonies.core.poor.menu.warning)" visible="false"/>
+
+    <list id="resourcesstock" size="164 180" pos="13 50">
+        <box size="100% 17" linewidth="1">
+            <gradient id="gradient" size="162 15" pos="1 1"/>
+            <itemicon id="resourceIcon" size="16 16" pos="0 0"/>
+            <text id="resourceName" size="100 12" pos="20 1" color="black"/>
+
+            <button label="X" id="removeStock" pos="126 1" size="29 15"
+                         source="minecolonies:textures/gui/builderhut/builder_button_very_small.png" textcolor="red"/>
+        </box>
+    </list>
+
+    <image source="minecolonies:textures/gui/builderhut/builder_paper.png" size="190 244" pos="190 0"/>
+    <text id="desc" size="130 11" pos="220 14" color="black" textalign="MIDDLE" label="$(com.minecolonies.core.food_list.title)"/>
+    <input id="input" size="150 18" pos="210 28" maxlength="25"/>
+
+    <list id="resources" size="164 180" pos="203 50">
+        <box size="100% 17" linewidth="1">
+            <gradient id="gradient" size="162 15" pos="1 1"/>
+            <itemicon id="resourceIcon" size="16 16" pos="20 0"/>
+            <text id="resourceName" size="100 12" pos="40 3" color="white"/>
+            <button label="&lt;&lt;" id="switch" pos="3 1" size="14 15"
+                         source="minecolonies:textures/gui/builderhut/builder_button_mini.png" textcolor="black"/>
+        </box>
+    </list>
+</window>

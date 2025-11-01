@@ -1,0 +1,28 @@
+{
+  "branch": "minecolonies:civilian",
+  "costs": [
+    {
+      "type": "minecolonies:item_simple",
+      "item": "minecraft:rabbit_foot",
+      "quantity": 1
+    }
+  ],
+  "effects": [
+    {
+      "id": "minecolonies:effects/walkingmultiplier",
+      "level": 1
+    }
+  ],
+  "icon": "minecolonies:textures/icons/research/speed1.png",
+  "parentResearch": "minecolonies:civilian/keen",
+  "requirements": [
+    {
+      "type": "minecolonies:single-building",
+      "building": "minecolonies:townhall",
+      "level": 3
+    }
+  ],
+  "researchLevel": 2,
+  "sortOrder": 3,
+  "subtitle": "com.minecolonies.research.civilian.haste.subtitle"
+}

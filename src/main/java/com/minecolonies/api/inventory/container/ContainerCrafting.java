@@ -416,7 +416,7 @@ public class ContainerCrafting extends AbstractContainerMenu
     }
 
     /**
-     * Get for the remaining items. 
+     * Get for the remaining items.
      * @return
      */
     public List<ItemStack> getRemainingItems()

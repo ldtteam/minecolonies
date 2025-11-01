@@ -5,13 +5,14 @@
   "inputs": [
     {
       "count": 8,
-      "item": "minecraft:wheat"
+      "item": "minecolonies:durum"
     },
     {
       "item": "minecraft:honey_bottle"
     }
   ],
   "intermediate": "minecraft:air",
+  "loot-table": "minecolonies:recipes/glass_bottle",
   "min-building-level": 3,
   "result": "minecolonies:sugary_bread",
   "show-tooltip": true

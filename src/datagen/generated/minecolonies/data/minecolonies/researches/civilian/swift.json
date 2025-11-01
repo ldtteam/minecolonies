@@ -1,25 +1,25 @@
 {
   "branch": "minecolonies:civilian",
+  "costs": [
+    {
+      "type": "minecolonies:item_simple",
+      "item": "minecraft:rabbit_foot",
+      "quantity": 32
+    }
+  ],
   "effects": [
     {
-      "minecolonies:effects/walkingmultiplier": 3
+      "id": "minecolonies:effects/walkingmultiplier",
+      "level": 4
     }
   ],
   "icon": "minecolonies:textures/icons/research/speed3.png",
   "parentResearch": "minecolonies:civilian/agile",
   "requirements": [
     {
-      "building": "townhall",
+      "type": "minecolonies:single-building",
+      "building": "minecolonies:townhall",
       "level": 5
-    },
-    {
-      "type": "minecolonies:item_list",
-      "item": {
-        "items": [
-          "minecraft:rabbit_foot"
-        ]
-      },
-      "quantity": 32
     }
   ],
   "researchLevel": 5,

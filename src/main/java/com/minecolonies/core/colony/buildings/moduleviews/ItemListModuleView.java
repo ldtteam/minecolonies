@@ -9,6 +9,8 @@ import com.minecolonies.core.Network;
 import com.minecolonies.core.client.gui.modules.ItemListModuleWindow;
 import com.minecolonies.core.network.messages.server.colony.building.AssignFilterableItemMessage;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
+
 import com.minecolonies.core.network.messages.server.colony.building.ResetFilterableItemMessage;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -142,8 +144,8 @@ public class ItemListModuleView extends AbstractBuildingModuleView implements II
     }
 
     @Override
-    public String getIcon()
+    public ResourceLocation getIconResourceLocation()
     {
-        return this.getId();
+        return new ResourceLocation(Constants.MOD_ID, "textures/gui/modules/" + this.getId() + ".png");
     }
 }

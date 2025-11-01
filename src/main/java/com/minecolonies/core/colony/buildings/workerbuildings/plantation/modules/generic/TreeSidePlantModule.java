@@ -1,6 +1,6 @@
 package com.minecolonies.core.colony.buildings.workerbuildings.plantation.modules.generic;
 
-import com.minecolonies.api.colony.fields.IField;
+import com.minecolonies.api.colony.buildingextensions.IBuildingExtension;
 import com.minecolonies.api.util.constant.CitizenConstants;
 import com.minecolonies.core.colony.buildings.workerbuildings.plantation.AbstractPlantationModule;
 import com.minecolonies.core.util.CollectorUtils;
@@ -39,7 +39,7 @@ public abstract class TreeSidePlantModule extends AbstractPlantationModule
      * @param item     the item which is harvested.
      */
     protected TreeSidePlantModule(
-      final IField field,
+      final IBuildingExtension field,
       final String fieldTag,
       final String workTag,
       final Item item)

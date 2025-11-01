@@ -130,7 +130,7 @@ public interface ICitizenManager extends IEntityManager
     /**
      * Tick the citizen data of all active citizens.
      */
-    boolean tickCitizenData();
+    boolean tickCitizenData(int tickRate);
 
     /**
      * Call this to set all the citizens in the colony to mourn or not.

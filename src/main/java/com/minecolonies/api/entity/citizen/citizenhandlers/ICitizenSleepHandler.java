@@ -25,13 +25,6 @@ public interface ICitizenSleepHandler
     void onWakeUp();
 
     /**
-     * Determines the home position
-     *
-     * @return home pos or null
-     */
-    BlockPos findHomePos();
-
-    /**
      * Get the bed location of the citizen.
      *
      * @return the bed location.

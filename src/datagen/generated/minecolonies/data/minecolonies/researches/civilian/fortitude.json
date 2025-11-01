@@ -1,25 +1,25 @@
 {
   "branch": "minecolonies:civilian",
+  "costs": [
+    {
+      "type": "minecolonies:item_simple",
+      "item": "minecraft:golden_apple",
+      "quantity": 32
+    }
+  ],
   "effects": [
     {
-      "minecolonies:effects/healingsaturationlimitaddition": 4
+      "id": "minecolonies:effects/healingsaturationlimitaddition",
+      "level": 4
     }
   ],
   "icon": "minecraft:honey_bottle",
   "parentResearch": "minecolonies:civilian/vitality",
   "requirements": [
     {
-      "building": "cook",
+      "type": "minecolonies:building",
+      "building": "minecolonies:cook",
       "level": 5
-    },
-    {
-      "type": "minecolonies:item_list",
-      "item": {
-        "items": [
-          "minecraft:golden_apple"
-        ]
-      },
-      "quantity": 32
     }
   ],
   "researchLevel": 5

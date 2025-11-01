@@ -10,12 +10,13 @@ import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
-import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.SoundUtils;
+import com.minecolonies.api.util.StatsUtil;
 import com.minecolonies.api.util.constant.translation.RequestSystemTranslationConstants;
 import com.minecolonies.core.Network;
+import com.minecolonies.core.colony.buildings.modules.BuildingModules;
 import com.minecolonies.core.colony.buildings.modules.FurnaceUserModule;
 import com.minecolonies.core.colony.buildings.modules.ItemListModule;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingSmeltery;
@@ -25,21 +26,22 @@ import com.minecolonies.core.colony.requestable.SmeltableOre;
 import com.minecolonies.core.entity.ai.workers.AbstractEntityAIUsesFurnace;
 import com.minecolonies.core.network.messages.client.LocalizedParticleEffectMessage;
 import com.minecolonies.core.util.WorkerUtil;
-
+import net.minecraft.network.chat.Component;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.FurnaceBlockEntity;
-import net.minecraft.network.chat.Component;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.minecolonies.api.util.constant.Constants.*;
-import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
+import static com.minecolonies.api.util.constant.Constants.*;
+import static com.minecolonies.api.util.constant.StatisticsConstants.ITEMS_SMELTED_DETAIL;
+import static com.minecolonies.api.util.constant.StatisticsConstants.ORES_BROKEN;
+import static com.minecolonies.api.util.constant.TranslationConstants.FURNACE_USER_NO_ORE;
 
 /**
  * Smelter AI class.
@@ -75,7 +77,7 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter,
      */
     private IAIState breakOres()
     {
-        final ICraftingBuildingModule module = building.getFirstModuleOccurance(BuildingSmeltery.OreBreakingModule.class);
+        final BuildingSmeltery.OreBreakingModule module = building.getModule(BuildingModules.SMELTER_OREBREAK);
         final IRecipeStorage currentRecipeStorage = module.getFirstFulfillableRecipe(ItemStackUtils::isEmpty, 1, false);
 
         if (currentRecipeStorage == null)
@@ -91,6 +93,8 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter,
         {
             return IDLE;
         }
+        Component statsName = inputItem.getHoverName();
+        int quantity = inputItem.getCount();
 
         WorkerUtil.faceBlock(building.getPosition(), worker);
 
@@ -101,6 +105,7 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter,
         else
         {
             worker.decreaseSaturationForContinuousAction();
+            StatsUtil.trackStatByName(building, ORES_BROKEN, statsName, quantity);
             worker.getCitizenExperienceHandler().addExperience(0.2);
         }
 
@@ -130,9 +135,12 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter,
     @Override
     protected void extractFromFurnace(final FurnaceBlockEntity furnace)
     {
+        StatsUtil.trackStatFromFurnace(building, ITEMS_SMELTED_DETAIL, furnace, RESULT_SLOT);
+
         InventoryUtils.transferItemStackIntoNextFreeSlotInItemHandler(
           new InvWrapper(furnace), RESULT_SLOT,
           worker.getInventoryCitizen());
+
         worker.getCitizenExperienceHandler().addExperience(BASE_XP_GAIN);
         this.incrementActionsDoneAndDecSaturation();
     }
@@ -151,7 +159,7 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter,
             worker.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
         }
 
-        if (InventoryUtils.isItemHandlerFull(worker.getInventoryCitizen()))
+        if (!worker.getInventoryCitizen().hasSpace())
         {
             return INVENTORY_FULL;
         }
@@ -181,7 +189,7 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter,
         {
             return false;
         }
-        if (stack.is(ModTags.breakable_ore))
+        if (IColonyManager.getInstance().getCompatibilityManager().isBreakableOre(stack))
         {
             return false;
         }

@@ -1,8 +1,8 @@
 package com.minecolonies.core.entity.citizen.citizenhandlers;
 
 import com.minecolonies.api.IMinecoloniesAPI;
+import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenDiseaseHandler;
@@ -10,9 +10,14 @@ import com.minecolonies.core.MineColonies;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingCook;
 import com.minecolonies.core.colony.jobs.AbstractJobGuard;
 import com.minecolonies.core.colony.jobs.JobHealer;
+import com.minecolonies.core.datalistener.model.Disease;
+import com.minecolonies.core.datalistener.DiseasesListener;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
-import org.jetbrains.annotations.NotNull;
+import net.minecraft.nbt.Tag;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.RandomSource;
+import org.jetbrains.annotations.Nullable;
 
 import static com.minecolonies.api.research.util.ResearchConstants.MASKS;
 import static com.minecolonies.api.research.util.ResearchConstants.VACCINES;
@@ -33,12 +38,12 @@ public class CitizenDiseaseHandler implements ICitizenDiseaseHandler
     /**
      * Base likelihood of a citizen getting a disease.
      */
-    private static final int DISEASE_FACTOR = 10000;
+    private static final int DISEASE_FACTOR = 100000 / 3;
 
     /**
-     * Number of seconds after recovering a citizen is immune against any illness.
+     * Number of ticks after recovering a citizen is immune against any illness. 90 Minutes currently.
      */
-    private static final int IMMUNITY_TIME = 60 * 10 * 7;
+    private static final int IMMUNITY_TIME = 20 * 60 * 90;
 
     /**
      * Additional immunity time through vaccines.
@@ -48,12 +53,13 @@ public class CitizenDiseaseHandler implements ICitizenDiseaseHandler
     /**
      * The citizen assigned to this manager.
      */
-    private final AbstractEntityCitizen citizen;
+    private final ICitizenData citizenData;
 
     /**
      * The disease the citizen has, empty if none.
      */
-    private String disease = "";
+    @Nullable
+    private Disease disease;
 
     /**
      * Special immunity time after being cured.
@@ -64,6 +70,7 @@ public class CitizenDiseaseHandler implements ICitizenDiseaseHandler
      * Whether the citizen sleeps at the hostpital
      */
     private boolean sleepsAtHospital = false;
+
 
     /**
      * The initial citizen count
@@ -77,32 +84,45 @@ public class CitizenDiseaseHandler implements ICitizenDiseaseHandler
      *
      * @param citizen the citizen owning the handler.
      */
-    public CitizenDiseaseHandler(final AbstractEntityCitizen citizen)
+    public CitizenDiseaseHandler(final ICitizenData citizen)
     {
-        this.citizen = citizen;
+        this.citizenData = citizen;
     }
 
     /**
-     * Called in the citizen every few ticks to check for illness.
+     * Called in the citizen every few ticks to check for illness. Called every 60 ticks
      */
     @Override
-    public void tick()
+    public void update(final int tickRate)
     {
         if (canBecomeSick())
         {
-            final int citizenModifier = citizen.getCitizenJobHandler().getColonyJob() == null ? 1 : citizen.getCitizenJobHandler().getColonyJob().getDiseaseModifier();
+            final double citizenModifier = citizenData.getDiseaseModifier();
             final int configModifier = MineColonies.getConfig().getServer().diseaseModifier.get();
-            if (!IColonyManager.getInstance().getCompatibilityManager().getDiseases().isEmpty() &&
-                  citizen.getRandom().nextInt(configModifier * DISEASE_FACTOR) < citizenModifier)
+
+            // normally it's one in 5 x 10.000
+
+            if (citizenData.getRandom().nextInt(configModifier * DISEASE_FACTOR) < citizenModifier * 10)
             {
-                this.disease = IColonyManager.getInstance().getCompatibilityManager().getRandomDisease();
+                this.disease = DiseasesListener.getRandomDisease(citizenData.getEntity().map(AbstractEntityCitizen::getRandom).orElse(RandomSource.create()));
             }
         }
 
         if (immunityTicks > 0)
         {
-            immunityTicks--;
+            immunityTicks -= tickRate;
         }
+    }
+
+    @Override
+    public boolean setDisease(final @Nullable Disease disease)
+    {
+        if (canBecomeSick())
+        {
+            this.disease = disease;
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -113,22 +133,21 @@ public class CitizenDiseaseHandler implements ICitizenDiseaseHandler
     private boolean canBecomeSick()
     {
         return !isSick()
-                 && citizen.getCitizenColonyHandler().getColony() != null
-                 && citizen.getCitizenColonyHandler().getColony().isActive()
-                 && !(citizen.getCitizenJobHandler().getColonyJob() instanceof JobHealer)
+            && citizenData.getEntity().isPresent()
+            && citizenData.getColony().isActive()
+            && !(citizenData.getJob() instanceof JobHealer)
                  && immunityTicks <= 0
-                 && citizen.getCitizenColonyHandler().getColony().getCitizenManager().getCurrentCitizenCount() > initialCitizenCount;
+            && citizenData.getColony().getCitizenManager().getCurrentCitizenCount() > initialCitizenCount;
     }
 
     @Override
-    public void onCollission(@NotNull final AbstractEntityCitizen citizen)
+    public void onCollission(final ICitizenData citizen)
     {
         if (citizen.getCitizenDiseaseHandler().isSick()
               && canBecomeSick()
               && citizen.getRandom().nextInt(ONE_HUNDRED_PERCENT) < 1)
         {
-            if (citizen.getCitizenColonyHandler().getColony() != null
-                  && (citizen.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(MASKS) <= 0 || citizen.getRandom().nextBoolean()))
+            if (citizen.getColony().getResearchManager().getResearchEffects().getEffectStrength(MASKS) <= 0 || citizen.getRandom().nextBoolean())
             {
                 this.disease = citizen.getCitizenDiseaseHandler().getDisease();
             }
@@ -138,35 +157,47 @@ public class CitizenDiseaseHandler implements ICitizenDiseaseHandler
     @Override
     public boolean isHurt()
     {
-        return !(citizen.getCitizenJobHandler() instanceof AbstractJobGuard) && citizen.getHealth() < SEEK_DOCTOR_HEALTH && citizen.getCitizenData().getSaturation() > LOW_SATURATION;
+        return citizenData.getEntity().isPresent() && !(citizenData.getJob() instanceof AbstractJobGuard) && citizenData.getEntity().get().getHealth() < SEEK_DOCTOR_HEALTH
+            && citizenData.getSaturation() > LOW_SATURATION;
     }
 
     @Override
     public boolean isSick()
     {
-        return !disease.isEmpty();
+        return disease != null;
     }
 
     @Override
     public void write(final CompoundTag compound)
     {
-        compound.putString(TAG_DISEASE, disease);
-        compound.putInt(TAG_IMMUNITY, immunityTicks);
+        CompoundTag diseaseTag = new CompoundTag();
+        if (disease != null)
+        {
+            diseaseTag.putString(TAG_DISEASE_ID, disease.id().toString());
+        }
+        diseaseTag.putInt(TAG_IMMUNITY, immunityTicks);
+        compound.put(TAG_DISEASE, diseaseTag);
     }
 
     @Override
     public void read(final CompoundTag compound)
     {
-        // cure diseases that have been removed from the configuration file.
-        if (IColonyManager.getInstance().getCompatibilityManager().getDisease(compound.getString(TAG_DISEASE)) != null)
+        if (!compound.contains(TAG_DISEASE, Tag.TAG_COMPOUND))
         {
-            this.disease = compound.getString(TAG_DISEASE);
+            return;
         }
-        this.immunityTicks = compound.getInt(TAG_IMMUNITY);
+
+        CompoundTag diseaseTag = compound.getCompound(TAG_DISEASE);
+        if (diseaseTag.contains(TAG_DISEASE_ID))
+        {
+            this.disease = DiseasesListener.getDisease(new ResourceLocation(diseaseTag.getString(TAG_DISEASE_ID)));
+        }
+        this.immunityTicks = diseaseTag.getInt(TAG_IMMUNITY);
     }
 
     @Override
-    public String getDisease()
+    @Nullable
+    public Disease getDisease()
     {
         return this.disease;
     }
@@ -174,20 +205,20 @@ public class CitizenDiseaseHandler implements ICitizenDiseaseHandler
     @Override
     public void cure()
     {
-        this.disease = "";
+        this.disease = null;
         sleepsAtHospital = false;
-        if (citizen.getCitizenSleepHandler().isAsleep())
+        if (citizenData.isAsleep() && citizenData.getEntity().isPresent())
         {
-            citizen.stopSleeping();
-            final BlockPos hospitalPos = citizen.getCitizenColonyHandler().getColony().getBuildingManager().getBestBuilding(citizen, BuildingCook.class);
-            final IColony colony = citizen.getCitizenColonyHandler().getColony();
+            citizenData.getEntity().get().stopSleeping();
+            final BlockPos hospitalPos = citizenData.getColony().getBuildingManager().getBestBuilding(citizenData.getEntity().get(), BuildingCook.class);
+            final IColony colony = citizenData.getColony();
             final IBuilding hospital = colony.getBuildingManager().getBuilding(hospitalPos);
             if (hospital != null)
             {
                 hospital.onWakeUp();
             }
 
-            if (citizen.getCitizenColonyHandler().getColony() != null && citizen.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(VACCINES) > 0)
+            if (citizenData.getColony().getResearchManager().getResearchEffects().getEffectStrength(VACCINES) > 0)
             {
                 immunityTicks = IMMUNITY_TIME * VACCINE_MODIFIER;
             }
@@ -195,11 +226,15 @@ public class CitizenDiseaseHandler implements ICitizenDiseaseHandler
             {
                 immunityTicks = IMMUNITY_TIME;
             }
-
-            citizen.getCitizenColonyHandler().getColony().getStatisticsManager().increment(CITIZENS_HEALED, citizen.getCitizenColonyHandler().getColony().getDay());
+        }
+        else
+        {
+            // Less immunity time if not cored in bed, but still have immunity time.
+            immunityTicks = IMMUNITY_TIME / 2;
         }
 
-        citizen.markDirty(0);
+        citizenData.getColony().getStatisticsManager().increment(CITIZENS_HEALED, citizenData.getColony().getDay());
+        citizenData.markDirty(0);
     }
 
     @Override

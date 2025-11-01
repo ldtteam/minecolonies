@@ -11,8 +11,8 @@ import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.requestable.INonExhaustiveDeliverable;
+import com.minecolonies.api.colony.requestsystem.requestable.MinimumStack;
 import com.minecolonies.api.colony.requestsystem.requestable.deliveryman.Delivery;
-import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.BlockPosUtil;
@@ -24,17 +24,17 @@ import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.core.colony.Colony;
 import com.minecolonies.core.colony.buildings.modules.BuildingModules;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingWareHouse;
-import com.minecolonies.core.colony.requestsystem.requesters.BuildingBasedRequester;
 import com.minecolonies.core.tileentities.TileEntityWareHouse;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.level.Level;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static com.minecolonies.api.colony.requestsystem.requestable.deliveryman.AbstractDeliverymanRequestable.getDefaultDeliveryPriority;
 import static com.minecolonies.api.util.constant.RSConstants.CONST_WAREHOUSE_RESOLVER_PRIORITY;
@@ -58,12 +58,12 @@ public abstract class AbstractWarehouseRequestResolver extends AbstractRequestRe
     }
 
     /**
-     * Override to implement decendent specific checks during canResolveRequest
-     * @param wareHouses
-     * @param requestToCheck
-     * @return
+     * Override to implement specific warehouse counting rules.
+     * @param wareHouse the warehouse to check.
+     * @param requestToCheck the requested item.
+     * @return the available quantity.
      */
-    protected abstract boolean internalCanResolve(final Level level, final List<BuildingWareHouse> wareHouses, final IRequest<? extends IDeliverable> requestToCheck);
+    protected abstract int getWarehouseInternalCount(final BuildingWareHouse wareHouse, final IRequest<? extends IDeliverable> requestToCheck);
 
     @Override
     public boolean canResolveRequest(@NotNull final IRequestManager manager, final IRequest<? extends IDeliverable> requestToCheck)
@@ -83,22 +83,40 @@ public abstract class AbstractWarehouseRequestResolver extends AbstractRequestRe
                 return false;
             }
 
+            if (requestToCheck.getRequest() instanceof MinimumStack)
+            {
+                final IBuilding otherWarehouse = colony.getBuildingManager().getBuilding(requestToCheck.getRequester().getLocation().getInDimensionLocation());
+                if (otherWarehouse.getBuildingType() == ModBuildings.wareHouse.get())
+                {
+                    return false;
+                }
+            }
+
             if (!isRequestChainValid(manager, requestToCheck))
+            {
+                return false;
+            }
+
+            int totalCount = getWarehouseInternalCount((BuildingWareHouse) wareHouse, requestToCheck);
+            if (totalCount <= 0)
             {
                 return false;
             }
 
             try
             {
-                final List<BuildingWareHouse> wareHouses = new ArrayList<>();
                 for (final Map.Entry<BlockPos, IBuilding> building : colony.getBuildingManager().getBuildings().entrySet())
                 {
-                    if (building.getValue().getBuildingType() == ModBuildings.wareHouse.get())
+                    if (building.getValue().getBuildingType() == ModBuildings.wareHouse.get() && building.getValue() != wareHouse)
                     {
-                        wareHouses.add((BuildingWareHouse) building.getValue());
+                        totalCount += getWarehouseInternalCount((BuildingWareHouse) building.getValue(), requestToCheck);
+                        if (totalCount >= requestToCheck.getRequest().getCount())
+                        {
+                            return true;
+                        }
                     }
                 }
-                return internalCanResolve(colony.getWorld(), wareHouses, requestToCheck);
+                return totalCount >= requestToCheck.getRequest().getMinimumCount();
             }
             catch (Exception e)
             {
@@ -147,9 +165,11 @@ public abstract class AbstractWarehouseRequestResolver extends AbstractRequestRe
         }
 
         final Colony colony = (Colony) manager.getColony();
-
         final TileEntityWareHouse wareHouse = (TileEntityWareHouse) colony.getBuildingManager().getBuilding(getLocation().getInDimensionLocation()).getTileEntity();
-
+        if (wareHouse == null)
+        {
+            return Lists.newArrayList();
+        }
         final int totalRequested = request.getRequest().getCount();
         int totalAvailable = 0;
         if (request.getRequest() instanceof INonExhaustiveDeliverable)
@@ -197,6 +217,11 @@ public abstract class AbstractWarehouseRequestResolver extends AbstractRequestRe
 
         final Colony colony = (Colony) manager.getColony();
         final TileEntityWareHouse wareHouse = (TileEntityWareHouse) colony.getBuildingManager().getBuilding(getLocation().getInDimensionLocation()).getTileEntity();
+
+        if (wareHouse == null)
+        {
+            return null;
+        }
 
         List<IRequest<?>> deliveries = Lists.newArrayList();
         int remainingCount = completedRequest.getRequest().getCount();

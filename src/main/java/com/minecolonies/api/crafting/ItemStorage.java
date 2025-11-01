@@ -71,6 +71,17 @@ public class ItemStorage
     /**
      * Creates an instance of the storage.
      *
+     * @param stack             the stack.
+     * @param amount            the amount.
+     */
+    public ItemStorage(@NotNull final ItemStack stack, final int amount)
+    {
+        this(stack, amount, false, false);
+    }
+
+    /**
+     * Creates an instance of the storage.
+     *
      * @param stack                the stack.
      * @param ignoreDamageValue    should the damage value be ignored?
      * @param shouldIgnoreNBTValue should the nbt value be ignored?
@@ -108,6 +119,18 @@ public class ItemStorage
         this.shouldIgnoreDamageValue = false;
         this.shouldIgnoreNBTValue = false;
         this.amount = ItemStackUtils.getSize(stack);
+    }
+
+    /**
+     * Creates an instance of the storage.
+     *
+     * @param item the item.
+     * @param amount the number of items.
+     */
+    public ItemStorage(@NotNull final Item item, final int amount)
+    {
+        this(item);
+        this.amount = amount;
     }
 
     /**

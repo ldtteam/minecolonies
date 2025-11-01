@@ -2,12 +2,9 @@ package com.minecolonies.core.entity.ai.workers.guard;
 
 import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.colony.guardtype.registry.ModGuardTypes;
+import com.minecolonies.api.entity.ai.combat.threat.IThreatTableEntity;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.ITickRateStateMachine;
 import com.minecolonies.api.entity.citizen.Skill;
-import com.minecolonies.api.entity.ai.combat.threat.IThreatTableEntity;
-import com.minecolonies.core.entity.pathfinding.PathfindingUtils;
-import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
-import com.minecolonies.core.entity.pathfinding.PathingOptions;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;
@@ -15,11 +12,17 @@ import com.minecolonies.core.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.core.colony.buildings.modules.settings.GuardTaskSetting;
 import com.minecolonies.core.colony.jobs.AbstractJobGuard;
 import com.minecolonies.core.colony.jobs.JobDruid;
-import com.minecolonies.core.entity.other.DruidPotionEntity;
 import com.minecolonies.core.entity.ai.combat.AttackMoveAI;
 import com.minecolonies.core.entity.citizen.EntityCitizen;
+import com.minecolonies.core.entity.other.DruidPotionEntity;
+import com.minecolonies.core.entity.pathfinding.PathfindingUtils;
+import com.minecolonies.core.entity.pathfinding.PathingOptions;
+import com.minecolonies.core.entity.pathfinding.navigation.EntityNavigationUtils;
 import com.minecolonies.core.entity.pathfinding.navigation.MinecoloniesAdvancedPathNavigate;
-import com.minecolonies.core.entity.pathfinding.pathjobs.*;
+import com.minecolonies.core.entity.pathfinding.pathjobs.PathJobCanSee;
+import com.minecolonies.core.entity.pathfinding.pathjobs.PathJobMoveAwayFromLocation;
+import com.minecolonies.core.entity.pathfinding.pathjobs.PathJobMoveToLocation;
+import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -114,7 +117,7 @@ public class DruidCombatAI extends AttackMoveAI<EntityCitizen>
             if (user.getRandom().nextInt(FLEE_CHANCE) == 0 &&
                   !((AbstractBuildingGuards) user.getCitizenData().getWorkBuilding()).getTask().equals(GuardTaskSetting.GUARD))
             {
-                user.getNavigation().moveAwayFromLivingEntity(target, getAttackDistance() / 2.0, getCombatMovementSpeed());
+                EntityNavigationUtils.walkAwayFrom(user, target.blockPosition(), (int) (getAttackDistance() / 2.0), getCombatMovementSpeed());
             }
         }
         else
@@ -132,7 +135,7 @@ public class DruidCombatAI extends AttackMoveAI<EntityCitizen>
         final ItemStack stack = new ItemStack(Items.SPLASH_POTION);
         boolean gotMaterial = false;
         BiPredicate<LivingEntity, MobEffect> predicate;
-        if (user.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(DRUID_USE_POTIONS) > 0
+        if (user.getCitizenColonyHandler().getColonyOrRegister().getResearchManager().getResearchEffects().getEffectStrength(DRUID_USE_POTIONS) > 0
               && InventoryUtils.hasItemInItemHandler(user.getInventoryCitizen(), item -> item.getItem() == ModItems.magicpotion))
         {
             gotMaterial = true;
@@ -179,7 +182,7 @@ public class DruidCombatAI extends AttackMoveAI<EntityCitizen>
         // + 1 Blockrange per building level for a total of +5 from building level
         if (user.getCitizenData().getWorkBuilding() != null)
         {
-            attackDist += user.getCitizenData().getWorkBuilding().getBuildingLevel();
+            attackDist += user.getCitizenData().getWorkBuilding().getBuildingLevelEquivalent();
         }
 
         if (target != null)
@@ -212,7 +215,7 @@ public class DruidCombatAI extends AttackMoveAI<EntityCitizen>
             job.setPathingOptions(combatPathingOptions);
             return pathResult;
         }
-        final PathJobCanSee job = new PathJobCanSee(user, target, user.level, ((AbstractBuildingGuards) user.getCitizenData().getWorkBuilding()).getGuardPos(), 40);
+        final PathJobCanSee job = new PathJobCanSee(user, target, user.level, ((AbstractBuildingGuards) user.getCitizenData().getWorkBuilding()).getGuardPos(user), 40);
         final PathResult pathResult = ((MinecoloniesAdvancedPathNavigate) user.getNavigation()).setPathJob(job, null, getCombatMovementSpeed(), true);
         job.setPathingOptions(combatPathingOptions);
         return pathResult;
@@ -226,7 +229,7 @@ public class DruidCombatAI extends AttackMoveAI<EntityCitizen>
     protected double getCombatMovementSpeed()
     {
         double levelAdjustment = user.getCitizenData().getCitizenSkillHandler().getLevel(Skill.Mana) * SPEED_LEVEL_BONUS;
-        levelAdjustment += (user.getCitizenData().getWorkBuilding().getBuildingLevel() - 1) * SPEED_LEVEL_BONUS;
+        levelAdjustment += (user.getCitizenData().getWorkBuilding().getBuildingLevelEquivalent() - 1) * SPEED_LEVEL_BONUS;
 
         levelAdjustment = Math.min(levelAdjustment, 0.3);
         return COMBAT_SPEED + levelAdjustment;
@@ -285,7 +288,7 @@ public class DruidCombatAI extends AttackMoveAI<EntityCitizen>
             }
         }
 
-        return foundTarget && targetsUnderEffect <= parentAI.building.getBuildingLevel() * 2;
+        return foundTarget && targetsUnderEffect <= parentAI.building.getBuildingLevelEquivalent() * 2;
     }
 
     /**

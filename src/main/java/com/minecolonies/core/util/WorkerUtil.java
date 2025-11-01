@@ -6,19 +6,18 @@ import com.ldtteam.structurize.util.BlockInfo;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.equipment.ModEquipmentTypes;
+import com.minecolonies.api.equipment.registry.EquipmentTypeEntry;
 import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.EntityUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.WorldUtil;
-import com.minecolonies.api.util.constant.IToolType;
-import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
 import com.minecolonies.core.colony.buildings.modules.SettingsModule;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingFlorist;
 import com.minecolonies.core.entity.ai.workers.util.MinerLevel;
-import com.minecolonies.core.entity.citizen.EntityCitizen;
 import com.minecolonies.core.tileentities.TileEntityCompostedDirt;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -73,7 +72,7 @@ public final class WorkerUtil
     /**
      * List of tools to test blocks against, used for finding right tool.
      */
-    public static List<Tuple<ToolType, ItemStack>> tools;
+    public static List<Tuple<EquipmentTypeEntry, ItemStack>> tools;
 
     private WorkerUtil()
     {
@@ -85,15 +84,15 @@ public final class WorkerUtil
      *
      * @return the list of possible tools.
      */
-    public static List<Tuple<ToolType, ItemStack>> getOrInitTestTools()
+    public static List<Tuple<EquipmentTypeEntry, ItemStack>> getOrInitTestTools()
     {
         if (tools == null)
         {
             tools = new ArrayList<>();
-            tools.add(new Tuple<>(ToolType.HOE, new ItemStack(Items.NETHERITE_HOE)));
-            tools.add(new Tuple<>(ToolType.SHOVEL, new ItemStack(Items.NETHERITE_SHOVEL)));
-            tools.add(new Tuple<>(ToolType.AXE, new ItemStack(Items.NETHERITE_AXE)));
-            tools.add(new Tuple<>(ToolType.PICKAXE, new ItemStack(Items.NETHERITE_PICKAXE)));
+            tools.add(new Tuple<>(ModEquipmentTypes.hoe.get(), new ItemStack(Items.NETHERITE_HOE)));
+            tools.add(new Tuple<>(ModEquipmentTypes.shovel.get(), new ItemStack(Items.NETHERITE_SHOVEL)));
+            tools.add(new Tuple<>(ModEquipmentTypes.axe.get(), new ItemStack(Items.NETHERITE_AXE)));
+            tools.add(new Tuple<>(ModEquipmentTypes.pickaxe.get(), new ItemStack(Items.NETHERITE_PICKAXE)));
         }
         return tools;
     }
@@ -107,43 +106,6 @@ public final class WorkerUtil
     public static boolean isPathBlock(final Block block)
     {
         return block.defaultBlockState().is(ModTags.pathingBlocks);
-    }
-
-    /**
-     * {@link WorkerUtil#isWorkerAtSiteWithMove(AbstractEntityCitizen, int, int, int, int)}.
-     *
-     * @param worker Worker to check.
-     * @param site   Chunk coordinates of site to check.
-     * @param range  Range to check in.
-     * @return True when within range, otherwise false.
-     */
-    public static boolean isWorkerAtSiteWithMove(@NotNull final EntityCitizen worker, @NotNull final BlockPos site, final int range)
-    {
-        return isWorkerAtSiteWithMove(worker, site.getX(), site.getY(), site.getZ(), range);
-    }
-
-    /**
-     * Checks if a worker is at his working site. If he isn't, sets it's path to the location.
-     *
-     * @param worker Worker to check
-     * @param x      X-coordinate
-     * @param y      Y-coordinate
-     * @param z      Z-coordinate
-     * @param range  Range to check in
-     * @return True if worker is at site, otherwise false.
-     */
-    public static boolean isWorkerAtSiteWithMove(@NotNull final AbstractEntityCitizen worker, final int x, final int y, final int z, final int range)
-    {
-        if (!EntityUtils.isLivingAtSiteWithMove(worker, x, y, z, range))
-        {
-            //If not moving the try setting the point where the entity should move to
-            if (worker.getNavigation().isDone())
-            {
-                EntityUtils.tryMoveLivingToXYZ(worker, x, y, z);
-            }
-            return false;
-        }
-        return true;
     }
 
     /**
@@ -177,16 +139,16 @@ public final class WorkerUtil
      * @param blockHardness the hardness.
      * @return the toolType to use.
      */
-    public static IToolType getBestToolForBlock(final BlockState state, float blockHardness, final AbstractBuilding building, final BlockGetter level, final BlockPos pos)
+    public static EquipmentTypeEntry getBestToolForBlock(final BlockState state, float blockHardness, final AbstractBuilding building, final BlockGetter level, final BlockPos pos)
     {
         if (state.getBlock() instanceof IForgeShearable && building.hasModule(SettingsModule.class) && building.getFirstModuleOccurance(SettingsModule.class).getSettingValueOrDefault(USE_SHEARS, true))
         {
-            return ToolType.SHEARS;
+            return ModEquipmentTypes.shears.get();
         }
 
         if (blockHardness > 0f)
         {
-            for (final Tuple<ToolType, ItemStack> tool : getOrInitTestTools())
+            for (final Tuple<EquipmentTypeEntry, ItemStack> tool : getOrInitTestTools())
             {
                 if (tool.getB() != null && tool.getB().getItem() instanceof DiggerItem)
                 {
@@ -205,7 +167,7 @@ public final class WorkerUtil
             }
         }
 
-        return ToolType.NONE;
+        return ModEquipmentTypes.none.get();
     }
 
     /**

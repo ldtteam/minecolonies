@@ -7,6 +7,10 @@ import com.minecolonies.api.network.IMessage;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.colony.crafting.CustomRecipeManagerMessage;
+import com.minecolonies.core.debug.messages.DebugEnableMessage;
+import com.minecolonies.core.debug.messages.DebugEnablePathfindingMessage;
+import com.minecolonies.core.debug.messages.DebugOutputMessage;
+import com.minecolonies.core.debug.messages.QueryCitizenAIHistoryMessage;
 import com.minecolonies.core.network.messages.PermissionsMessage;
 import com.minecolonies.core.network.messages.client.*;
 import com.minecolonies.core.network.messages.client.colony.*;
@@ -112,7 +116,7 @@ public class NetworkChannel
         registerMessage(++idx, ColonyViewRemoveCitizenMessage.class, ColonyViewRemoveCitizenMessage::new);
         registerMessage(++idx, ColonyViewBuildingViewMessage.class, ColonyViewBuildingViewMessage::new);
         registerMessage(++idx, ColonyViewRemoveBuildingMessage.class, ColonyViewRemoveBuildingMessage::new);
-        registerMessage(++idx, ColonyViewFieldsUpdateMessage.class, ColonyViewFieldsUpdateMessage::new);
+        registerMessage(++idx, ColonyViewBuildingExtensionsUpdateMessage.class, ColonyViewBuildingExtensionsUpdateMessage::new);
         registerMessage(++idx, PermissionsMessage.View.class, PermissionsMessage.View::new);
         registerMessage(++idx, ColonyViewWorkOrderMessage.class, ColonyViewWorkOrderMessage::new);
         registerMessage(++idx, ColonyViewRemoveWorkOrderMessage.class, ColonyViewRemoveWorkOrderMessage::new);
@@ -150,6 +154,7 @@ public class NetworkChannel
         registerMessage(++idx, ColonyViewRemoveMessage.class, ColonyViewRemoveMessage::new);
         registerMessage(++idx, GiveToolMessage.class, GiveToolMessage::new);
         registerMessage(++idx, ColonyAbandonOwnMessage.class, ColonyAbandonOwnMessage::new);
+        registerMessage(++idx, TriggerConnectionEventMessage.class, TriggerConnectionEventMessage::new);
 
         registerMessage(++idx, AssignUnassignMessage.class, AssignUnassignMessage::new);
         registerMessage(++idx, OpenCraftingGUIMessage.class, OpenCraftingGUIMessage::new);
@@ -202,7 +207,8 @@ public class NetworkChannel
         registerMessage(++idx, InteractionClose.class, InteractionClose::new);
         registerMessage(++idx, GetColonyInfoMessage.class, GetColonyInfoMessage::new);
         registerMessage(++idx, PickupBlockMessage.class, PickupBlockMessage::new);
-        registerMessage(++idx, MarkStoryReadOnItem.class, MarkStoryReadOnItem::new);
+        registerMessage(++idx, MarkStoryReadOnItemMessage.class, MarkStoryReadOnItemMessage::new);
+        registerMessage(++idx, AlterRestaurantMenuItemMessage.class, AlterRestaurantMenuItemMessage::new);
 
         //Client side only
         registerMessage(++idx, BlockParticleEffectMessage.class, BlockParticleEffectMessage::new);
@@ -228,6 +234,7 @@ public class NetworkChannel
         registerMessage(++idx, OpenPlantationFieldBuildWindowMessage.class, OpenPlantationFieldBuildWindowMessage::new);
         registerMessage(++idx, SaveStructureNBTMessage.class, SaveStructureNBTMessage::new);
         registerMessage(++idx, GlobalQuestSyncMessage.class, GlobalQuestSyncMessage::new);
+        registerMessage(++idx, GlobalDiseaseSyncMessage.class, GlobalDiseaseSyncMessage::new);
         registerMessage(++idx, OpenColonyFoundingCovenantMessage.class, OpenColonyFoundingCovenantMessage::new);
         registerMessage(++idx, OpenBuildingUIMessage.class, OpenBuildingUIMessage::new);
         registerMessage(++idx, OpenCantFoundColonyWarningMessage.class, OpenCantFoundColonyWarningMessage::new);
@@ -258,6 +265,18 @@ public class NetworkChannel
 
         // Crafting GUI
         registerMessage(++idx, SwitchRecipeCraftingTeachingMessage.class, SwitchRecipeCraftingTeachingMessage::new);
+
+        // Assistant block place request
+        registerMessage(++idx, PlayerAssistantBuildRequestMessage.class, PlayerAssistantBuildRequestMessage::new);
+
+        // Debug messages
+        registerMessage(++idx, QueryCitizenAIHistoryMessage.class, QueryCitizenAIHistoryMessage::new);
+        registerMessage(++idx, DebugEnablePathfindingMessage.class, DebugEnablePathfindingMessage::new);
+        registerMessage(++idx, DebugOutputMessage.class, DebugOutputMessage::new);
+        registerMessage(++idx, DebugEnableMessage.class, DebugEnableMessage::new);
+
+        // Item Setting Messages
+        registerMessage(++idx, ItemSettingMessage.class, ItemSettingMessage::new);
     }
 
     private void setupInternalMessages()

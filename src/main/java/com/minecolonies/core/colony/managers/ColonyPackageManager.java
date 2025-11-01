@@ -1,8 +1,8 @@
 package com.minecolonies.core.colony.managers;
 
 import com.minecolonies.api.colony.managers.interfaces.IColonyPackageManager;
+import com.minecolonies.api.colony.workorders.IServerWorkOrder;
 import com.minecolonies.api.colony.workorders.IWorkManager;
-import com.minecolonies.api.colony.workorders.IWorkOrder;
 import com.minecolonies.api.util.ColonyUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.WorldUtil;
@@ -211,11 +211,9 @@ public class ColonyPackageManager implements IColonyPackageManager
             }
             players.addAll(newSubscribers);
 
-            final ColonyViewMessage message = new ColonyViewMessage(colony, colonyFriendlyByteBuf);
             for (ServerPlayer player : players)
             {
-                message.setIsNewSubscription(newSubscribers.contains(player));
-                Network.getNetwork().sendToPlayer(message, player);
+                Network.getNetwork().sendToPlayer(new ColonyViewMessage(colony, colonyFriendlyByteBuf, newSubscribers.contains(player)), player);
             }
         }
         colony.getRequestManager().setDirty(false);
@@ -248,7 +246,7 @@ public class ColonyPackageManager implements IColonyPackageManager
             players.addAll(closeSubscribers);
             players.addAll(newSubscribers);
 
-            List<IWorkOrder> workOrders = new ArrayList<>(workManager.getWorkOrders().values());
+            List<IServerWorkOrder> workOrders = new ArrayList<>(workManager.getWorkOrders().values());
             final ColonyViewWorkOrderMessage message = new ColonyViewWorkOrderMessage(colony, workOrders);
             players.forEach(player -> Network.getNetwork().sendToPlayer(message, player));
 

@@ -417,7 +417,7 @@ public class ColonyPermissionEventHandler
      */
     private boolean isFreeToInteractWith(@Nullable final Block block, final BlockPos pos)
     {
-        return (block != null && (IColonyManager.getInstance().getCompatibilityManager().isFreeBlock(block) || colony.getFreeBlocks().contains(block) || block.defaultBlockState().is(ModTags.colonyProtectionException))) || colony.getFreePositions().contains(pos) || IColonyManager.getInstance().getCompatibilityManager().isFreePos(pos);
+        return (block != null && (colony.getFreeBlocks().contains(block) || block.defaultBlockState().is(ModTags.colonyProtectionException))) || colony.getFreePositions().contains(pos);
     }
 
     /**
@@ -526,6 +526,8 @@ public class ColonyPermissionEventHandler
     @SubscribeEvent
     public void on(final EntityItemPickupEvent event)
     {
+        if (event.getEntity().equals(event.getItem().getOwner())) return;   // always allowed to pick up your own thrown items
+
         checkEventCancelation(Action.PICKUP_ITEM, event.getEntity(), event.getEntity().getCommandSenderWorld(), event, event.getEntity().blockPosition());
     }
 

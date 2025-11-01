@@ -1,25 +1,25 @@
 {
   "branch": "minecolonies:civilian",
+  "costs": [
+    {
+      "type": "minecolonies:item_simple",
+      "item": "minecraft:nether_wart_block",
+      "quantity": 8
+    }
+  ],
   "effects": [
     {
-      "minecolonies:effects/gravedecaybonus": 2
+      "id": "minecolonies:effects/gravedecaybonus",
+      "level": 2
     }
   ],
   "icon": "minecolonies:blockminecoloniesgrave",
   "parentResearch": "minecolonies:civilian/gravedecaybonus1",
   "requirements": [
     {
-      "building": "graveyard",
+      "type": "minecolonies:building",
+      "building": "minecolonies:graveyard",
       "level": 5
-    },
-    {
-      "type": "minecolonies:item_list",
-      "item": {
-        "items": [
-          "minecraft:nether_wart_block"
-        ]
-      },
-      "quantity": 8
     }
   ],
   "researchLevel": 3,

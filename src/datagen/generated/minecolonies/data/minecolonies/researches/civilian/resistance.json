@@ -1,25 +1,25 @@
 {
   "branch": "minecolonies:civilian",
+  "costs": [
+    {
+      "type": "minecolonies:item_simple",
+      "item": "minecraft:golden_apple",
+      "quantity": 1
+    }
+  ],
   "effects": [
     {
-      "minecolonies:effects/healingsaturationlimitaddition": 1
+      "id": "minecolonies:effects/healingsaturationlimitaddition",
+      "level": 1
     }
   ],
   "icon": "minecraft:glass_bottle",
   "parentResearch": "minecolonies:civilian/stamina",
   "requirements": [
     {
-      "building": "cook",
+      "type": "minecolonies:building",
+      "building": "minecolonies:cook",
       "level": 2
-    },
-    {
-      "type": "minecolonies:item_list",
-      "item": {
-        "items": [
-          "minecraft:golden_apple"
-        ]
-      },
-      "quantity": 1
     }
   ],
   "researchLevel": 2,

@@ -94,7 +94,7 @@ public class ItemPharaoScepter extends BowItem
 
                     if (EnchantmentHelper.getItemEnchantmentLevel(Enchantments.FLAMING_ARROWS, stack) > 0)
                     {
-                        abstractarrowentity.setSecondsOnFire(100);
+                        abstractarrowentity.setSecondsOnFire(5);
                     }
 
                     stack.hurtAndBreak(1, playerentity, new Consumer<Player>() {

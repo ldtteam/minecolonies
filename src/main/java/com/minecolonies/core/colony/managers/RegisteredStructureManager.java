@@ -2,15 +2,19 @@ package com.minecolonies.core.colony.managers;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.minecolonies.api.IMinecoloniesAPI;
+import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.*;
 import com.minecolonies.api.colony.buildings.registry.IBuildingDataManager;
 import com.minecolonies.api.colony.buildings.workerbuildings.ITownHall;
 import com.minecolonies.api.colony.buildings.workerbuildings.IWareHouse;
-import com.minecolonies.api.colony.fields.IField;
+import com.minecolonies.api.colony.buildingextensions.IBuildingExtension;
 import com.minecolonies.api.colony.managers.interfaces.IRegisteredStructureManager;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.eventbus.events.colony.buildings.BuildingAddedModEvent;
+import com.minecolonies.api.eventbus.events.colony.buildings.BuildingRemovedModEvent;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.util.*;
 import com.minecolonies.core.MineColonies;
@@ -20,17 +24,14 @@ import com.minecolonies.core.blocks.huts.BlockHutTownHall;
 import com.minecolonies.core.colony.Colony;
 import com.minecolonies.core.colony.buildings.BuildingMysticalSite;
 import com.minecolonies.core.colony.buildings.modules.BuildingModules;
-import com.minecolonies.core.colony.buildings.modules.FieldsModule;
+import com.minecolonies.core.colony.buildings.modules.BuildingExtensionsModule;
 import com.minecolonies.core.colony.buildings.modules.LivingBuildingModule;
-import com.minecolonies.core.colony.buildings.workerbuildings.BuildingBarracks;
-import com.minecolonies.core.colony.buildings.workerbuildings.BuildingLibrary;
-import com.minecolonies.core.colony.buildings.workerbuildings.BuildingTownHall;
-import com.minecolonies.core.colony.buildings.workerbuildings.BuildingWareHouse;
-import com.minecolonies.core.colony.fields.registry.FieldDataManager;
+import com.minecolonies.core.colony.buildings.workerbuildings.*;
+import com.minecolonies.core.colony.buildingextensions.registry.BuildingExtensionDataManager;
 import com.minecolonies.core.entity.ai.workers.util.ConstructionTapeHelper;
 import com.minecolonies.core.event.QuestObjectiveEventHandler;
 import com.minecolonies.core.network.messages.client.colony.ColonyViewBuildingViewMessage;
-import com.minecolonies.core.network.messages.client.colony.ColonyViewFieldsUpdateMessage;
+import com.minecolonies.core.network.messages.client.colony.ColonyViewBuildingExtensionsUpdateMessage;
 import com.minecolonies.core.network.messages.client.colony.ColonyViewRemoveBuildingMessage;
 import com.minecolonies.core.tileentities.TileEntityDecorationController;
 import net.minecraft.core.BlockPos;
@@ -47,7 +48,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.MathUtils.RANDOM;
@@ -64,9 +64,9 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
     private ImmutableMap<BlockPos, IBuilding> buildings = ImmutableMap.of();
 
     /**
-     * List of fields of the colony.
+     * List of building extensions of the colony.
      */
-    private final Set<IField> fields = ConcurrentHashMap.newKeySet();
+    private final Map<IBuildingExtension.ExtensionId, IBuildingExtension> buildingExtensions = new HashMap<>();
 
     /**
      * The warehouse building position. Initially null.
@@ -95,9 +95,9 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
     private boolean isBuildingsDirty = false;
 
     /**
-     * Variable to check if the fields needs to be synced.
+     * Variable to check if the building extensions needs to be synced.
      */
-    private boolean isFieldsDirty = false;
+    private boolean isBuildingExtensionsDirty = false;
 
     /**
      * The colony of the manager.
@@ -131,18 +131,23 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
         maxChunkZ = colony.getCenter().getZ() >> 4;
         minChunkZ = colony.getCenter().getZ() >> 4;
 
-        // Fields
+        // Building extensions (previously fields)
+        final ListTag extensionsTagList;
         if (compound.contains(TAG_FIELDS))
         {
-            final ListTag fieldsTagList = compound.getList(TAG_FIELDS, Tag.TAG_COMPOUND);
-            for (int i = 0; i < fieldsTagList.size(); ++i)
+            extensionsTagList = compound.getList(TAG_FIELDS, Tag.TAG_COMPOUND);
+        }
+        else
+        {
+            extensionsTagList = compound.getList(TAG_BUILDING_EXTENSIONS, Tag.TAG_COMPOUND);
+        }
+        for (int i = 0; i < extensionsTagList.size(); ++i)
+        {
+            final CompoundTag extensionCompound = extensionsTagList.getCompound(i);
+            final IBuildingExtension extension = BuildingExtensionDataManager.compoundToExtension(extensionCompound);
+            if (extension != null)
             {
-                final CompoundTag fieldCompound = fieldsTagList.getCompound(i);
-                final IField field = FieldDataManager.compoundToField(fieldCompound);
-                if (field != null)
-                {
-                    addField(field);
-                }
+                addBuildingExtension(extension);
             }
         }
 
@@ -174,23 +179,27 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
             leisureSites = ImmutableList.copyOf(leisureSitesList);
         }
 
-        // Ensure fields are still tied to an appropriate building
-        for (IField field : fields.stream().filter(IField::isTaken).toList())
+        // Ensure building extensions are still tied to an appropriate building
+        for (final IBuildingExtension extension : buildingExtensions.values())
         {
-            final IBuilding building = buildings.get(field.getBuildingId());
+            if (!extension.isTaken())
+            {
+                continue;
+            }
+            final IBuilding building = buildings.get(extension.getBuildingId());
             if (building == null)
             {
-                field.resetOwningBuilding();
+                extension.resetOwningBuilding();
                 continue;
             }
 
-            final FieldsModule fieldsModule = building.getFirstModuleOccurance(FieldsModule.class);
-            if (fieldsModule == null || !field.getClass().equals(fieldsModule.getExpectedFieldType()))
+            final BuildingExtensionsModule extensionsModule = building.getFirstModuleOccurance(BuildingExtensionsModule.class);
+            if (extensionsModule == null || !extension.getClass().equals(extensionsModule.getExpectedExtensionType()))
             {
-                field.resetOwningBuilding();
-                if (fieldsModule != null)
+                extension.resetOwningBuilding();
+                if (extensionsModule != null)
                 {
-                    fieldsModule.freeField(field);
+                    extensionsModule.freeExtension(extension);
                 }
             }
         }
@@ -238,10 +247,8 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
         }
         compound.put(TAG_BUILDINGS, buildingTagList);
 
-        // Fields
-        compound.put(TAG_FIELDS, fields.stream()
-                                   .map(FieldDataManager::fieldToCompound)
-                                   .collect(NBTUtils.toListNBT()));
+        // Building extensions
+        compound.put(TAG_BUILDING_EXTENSIONS, buildingExtensions.values().stream().map(BuildingExtensionDataManager::extensionToCompound).collect(NBTUtils.toListNBT()));
 
         // Leisure sites
         @NotNull final ListTag leisureTagList = new ListTag();
@@ -258,7 +265,7 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
     public void clearDirty()
     {
         isBuildingsDirty = false;
-        isFieldsDirty = false;
+        isBuildingExtensionsDirty = false;
         buildings.values().forEach(IBuilding::clearDirty);
     }
 
@@ -266,9 +273,9 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
     public void sendPackets(final Set<ServerPlayer> closeSubscribers, final Set<ServerPlayer> newSubscribers)
     {
         sendBuildingPackets(closeSubscribers, newSubscribers);
-        sendFieldPackets(closeSubscribers, newSubscribers);
+        sendBuildingExtensionPackets(closeSubscribers, newSubscribers);
         isBuildingsDirty = false;
-        isFieldsDirty = false;
+        isBuildingExtensionsDirty = false;
     }
 
     @Override
@@ -308,12 +315,10 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
             }
         }
 
-        for (final IField field : fields)
+        if (buildingExtensions.entrySet().removeIf(extension -> WorldUtil.isBlockLoaded(colony.getWorld(), extension.getValue().getPosition())
+            && (!colony.isCoordInColony(colony.getWorld(), extension.getValue().getPosition()) || !extension.getValue().isValidPlacement(colony))))
         {
-            if (WorldUtil.isBlockLoaded(colony.getWorld(), field.getPosition()) && (!colony.isCoordInColony(colony.getWorld(), field.getPosition()) || !field.isValidPlacement(colony)))
-            {
-                removeField(f -> f.equals(field));
-            }
+            markBuildingExtensionsDirty();
         }
 
         for (@NotNull final BlockPos pos : leisureSites)
@@ -355,14 +360,14 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
     {
         final boolean isRaining = colony.getWorld().isRaining();
 
-        BlockPos pos = null;
+        BlockPos building = null;
         final int randomDist = RANDOM.nextInt(4);
         if (randomDist < 1)
         {
-            pos = getFirstBuildingMatching(b -> b instanceof BuildingTownHall && b.getBuildingLevel() >= 3);
-            if (pos != null)
+            building = townHall != null && townHall.getBuildingLevel() >= 3 ? townHall.getPosition() : null;
+            if (building != null)
             {
-                return pos;
+                return building;
             }
         }
 
@@ -370,34 +375,35 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
         {
             if (!isRaining && RANDOM.nextBoolean())
             {
-                pos = getFirstBuildingMatching(b -> b instanceof BuildingMysticalSite && b.getBuildingLevel() >= 1);
-                if (pos != null)
-                {
-                    return pos;
-                }
+                building = getRandomBuilding(b -> b instanceof BuildingMysticalSite && b.getBuildingLevel() >= 1);
+            }
+            else if (RANDOM.nextBoolean())
+            {
+                building = getRandomBuilding(b -> b instanceof BuildingLibrary && b.getBuildingLevel() >= 1);
             }
             else
             {
-                pos = getFirstBuildingMatching(b -> b instanceof BuildingLibrary && b.getBuildingLevel() >= 1);
-                if (pos != null)
-                {
-                    return pos;
-                }
+                building = getRandomBuilding(b -> b instanceof BuildingUniversity && b.getBuildingLevel() >= 1);
             }
         }
 
-        if (randomDist < 3)
+        if (building != null)
         {
-            pos = getFirstBuildingMatching(b -> b.hasModule(BuildingModules.TAVERN_VISITOR) && b.getBuildingLevel() >= 1);
-            if (pos != null)
+            return building;
+        }
+
+        if (randomDist < 3 || (isRaining && (townHall == null || townHall.getBuildingLevel() < 1)))
+        {
+            building = getRandomBuilding(b -> b.hasModule(BuildingModules.TAVERN_VISITOR) && b.getBuildingLevel() >= 1);
+            if (building != null)
             {
-                return pos;
+                return building;
             }
         }
 
         if (isRaining)
         {
-            return null;
+            return townHall == null ? null : townHall.getPosition();
         }
 
         return leisureSites.isEmpty() ? null : leisureSites.get(RANDOM.nextInt(leisureSites.size()));
@@ -405,13 +411,13 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
 
     @Nullable
     @Override
-    public BlockPos getFirstBuildingMatching(final Predicate<IBuilding> predicate)
+    public IBuilding getFirstBuildingMatching(final Predicate<IBuilding> predicate)
     {
         for (final IBuilding building : buildings.values())
         {
             if (predicate.test(building))
             {
-                return building.getPosition();
+                return building;
             }
         }
         return null;
@@ -574,14 +580,17 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
                   tileEntity.getPosition()));
 
                 building.setIsMirrored(tileEntity.isMirrored());
-                if (tileEntity.getStructurePack() != null)
+                if (tileEntity.getBlockState().getBlock() instanceof AbstractBlockHut<?>)
                 {
-                    building.setStructurePack(tileEntity.getStructurePack().getName());
-                    building.setBlueprintPath(tileEntity.getBlueprintPath());
-                }
-                else
-                {
-                    building.setStructurePack(colony.getStructurePack());
+                    if (tileEntity.getStructurePack() != null)
+                    {
+                        building.setStructurePack(tileEntity.getStructurePack().getName());
+                        building.setBlueprintPath(tileEntity.getBlueprintPath());
+                    }
+                    else
+                    {
+                        building.setStructurePack(colony.getStructurePack());
+                    }
                 }
 
                 if (world != null && !(building instanceof IRSComponent))
@@ -604,6 +613,9 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
 
             colony.getCitizenManager().calculateMaxCitizens();
             colony.getPackageManager().updateSubscribers();
+
+            IMinecoloniesAPI.getInstance().getEventBus().post(new BuildingAddedModEvent(building));
+
             return building;
         }
         return null;
@@ -653,35 +665,50 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
         for (@NotNull final ICitizenData citizen : colony.getCitizenManager().getCitizens())
         {
             citizen.onRemoveBuilding(building);
-            building.cancelAllRequestsOfCitizen(citizen);
+            building.cancelAllRequestsOfCitizenOrBuilding(citizen);
         }
 
         colony.getRequestManager().onProviderRemovedFromColony(building);
         colony.getRequestManager().onRequesterRemovedFromColony(building.getRequester());
 
         colony.getCitizenManager().calculateMaxCitizens();
+
+        IMinecoloniesAPI.getInstance().getEventBus().post(new BuildingRemovedModEvent(building));
     }
 
     @Override
-    public BlockPos getBestBuilding(final AbstractEntityCitizen citizen, final Class<? extends IBuilding> clazz)
+    public BlockPos getBestBuilding(final AbstractEntityCitizen citizen, final Class<? extends IBuilding> building)
     {
-        return getBestBuilding(citizen.blockPosition(), clazz);
+        return getBestBuilding(citizen.blockPosition(), building);
     }
 
     @Override
-    public BlockPos getBestBuilding(final BlockPos citizen, final Class<? extends IBuilding> clazz)
+    public <T extends IBuilding> BlockPos getBestBuilding(final AbstractEntityCitizen citizen, final Class<T> building, @NotNull final Predicate<T> filter)
+    {
+        return getBestBuilding(citizen.blockPosition(), building, filter);
+    }
+
+    @Override
+    public BlockPos getBestBuilding(final BlockPos pos, final Class<? extends IBuilding> building)
+    {
+        return getBestBuilding(pos, building, b -> true);
+    }
+
+    @Override
+    public <T extends IBuilding> BlockPos getBestBuilding(final BlockPos pos, final Class<T> building, @NotNull final Predicate<T> filter)
     {
         double distance = Double.MAX_VALUE;
         BlockPos goodCook = null;
-        for (final IBuilding building : buildings.values())
+        for (final IBuilding currentBuilding : buildings.values())
         {
-            if (clazz.isInstance(building) && building.getBuildingLevel() > 0)
+            if (building.isInstance(currentBuilding) && currentBuilding.getBuildingLevel() > 0 && WorldUtil.isBlockLoaded(colony.getWorld(), currentBuilding.getPosition()) && filter.test(
+                (T) currentBuilding))
             {
-                final double localDistance = building.getPosition().distSqr(citizen);
+                final double localDistance = currentBuilding.getPosition().distSqr(pos);
                 if (localDistance < distance)
                 {
                     distance = localDistance;
-                    goodCook = building.getPosition();
+                    goodCook = currentBuilding.getPosition();
                 }
             }
         }
@@ -724,7 +751,7 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
 
         for (final IBuilding colonyBuilding : getBuildings().values())
         {
-            if (colonyBuilding instanceof IGuardBuilding || colonyBuilding instanceof BuildingBarracks)
+            if (colonyBuilding.getBuildingLevel() > 0 && (colonyBuilding instanceof IGuardBuilding || colonyBuilding instanceof BuildingBarracks))
             {
                 final BoundingBox guardedRegion = BlockPosUtil.getChunkAlignedBB(colonyBuilding.getPosition(), colonyBuilding.getClaimRadius(colonyBuilding.getBuildingLevel()));
                 if (guardedRegion.isInside(building.getPosition()))
@@ -781,13 +808,10 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
         mysticalSites.remove(mysticalSite);
     }
 
-    /**
-     * Updates all subscribers of fields etc.
-     */
     @Override
-    public void markFieldsDirty()
+    public void markBuildingExtensionsDirty()
     {
-        isFieldsDirty = true;
+        isBuildingExtensionsDirty = true;
     }
 
     /**
@@ -845,50 +869,31 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
     }
 
     /**
-     * Sends packages to update the fields.
+     * Sends packages to update the building extensions.
      *
      * @param closeSubscribers the current event subscribers.
      * @param newSubscribers   the new event subscribers.
      */
-    private void sendFieldPackets(final Set<ServerPlayer> closeSubscribers, final Set<ServerPlayer> newSubscribers)
+    private void sendBuildingExtensionPackets(final Set<ServerPlayer> closeSubscribers, final Set<ServerPlayer> newSubscribers)
     {
-        if (isFieldsDirty || !newSubscribers.isEmpty())
+        if (isBuildingExtensionsDirty || !newSubscribers.isEmpty())
         {
             final Set<ServerPlayer> players = new HashSet<>();
-            if (isFieldsDirty)
+            if (isBuildingExtensionsDirty)
             {
                 players.addAll(closeSubscribers);
             }
             players.addAll(newSubscribers);
-            players.forEach(player -> Network.getNetwork().sendToPlayer(new ColonyViewFieldsUpdateMessage(colony, fields), player));
+            players.forEach(player -> Network.getNetwork().sendToPlayer(new ColonyViewBuildingExtensionsUpdateMessage(colony, buildingExtensions.values()), player));
         }
     }
 
     @Override
     public boolean canPlaceAt(final Block block, final BlockPos pos, final Player player)
     {
-        if (block instanceof BlockHutTownHall)
+        if (block instanceof AbstractBlockHut hutblock)
         {
-            if (colony.hasTownHall())
-            {
-                if (colony.getWorld() != null && !colony.getWorld().isClientSide)
-                {
-                    MessageUtils.format(WARNING_DUPLICATE_TOWN_HALL, townHall.getPosition().toShortString()).sendTo(player);
-                }
-                return false;
-            }
-            return true;
-        }
-        else if (block instanceof BlockHutTavern)
-        {
-            for (final IBuilding building : buildings.values())
-            {
-                if (building.hasModule(BuildingModules.TAVERN_VISITOR))
-                {
-                    MessageUtils.format(WARNING_DUPLICATE_TAVERN, building.getPosition().toShortString()).sendTo(player);
-                    return false;
-                }
-            }
+            return hutblock.canPlaceAt(pos, player);
         }
 
         return true;
@@ -905,47 +910,49 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
         }
     }
 
+    @NotNull
     @Override
-    public @NotNull List<IField> getFields(Predicate<IField> matcher)
+    public List<IBuildingExtension> getBuildingExtensions(Predicate<IBuildingExtension> matcher)
     {
-        return fields.stream()
+        return buildingExtensions.values().stream()
                  .filter(matcher)
                  .toList();
     }
 
     @Override
-    public Optional<IField> getField(Predicate<IField> matcher)
+    public Optional<IBuildingExtension> getMatchingBuildingExtension(Predicate<IBuildingExtension> matcher)
     {
-        return getFields(matcher)
+        return getBuildingExtensions(matcher)
                  .stream()
                  .findFirst();
     }
 
     @Override
-    public boolean addField(IField field)
+    public boolean addBuildingExtension(IBuildingExtension extension)
     {
-        if (fields.add(field))
+        if (buildingExtensions.putIfAbsent(extension.getId(), extension) == null)
         {
-            markFieldsDirty();
+            markBuildingExtensionsDirty();
             return true;
         }
         return false;
     }
 
     @Override
-    public void removeField(Predicate<IField> matcher)
+    public void removeBuildingExtension(Predicate<IBuildingExtension> matcher)
     {
-        final List<IField> fieldsToRemove = fields.stream()
-                                              .filter(matcher)
-                                              .toList();
+        buildingExtensions.entrySet().removeIf(entry -> matcher.test(entry.getValue()));
 
-        // We must send the message to everyone since fields here will be permanently removed from the list.
-        // And the clients have no way to later on also get their fields removed, thus every client has to be told
-        // immediately that the field is gone.
-        for (IField field : fieldsToRemove)
-        {
-            fields.remove(field);
-            markFieldsDirty();
-        }
+        // We must send the message to everyone since building extensions here will be permanently removed from the list.
+        // And the clients have no way to later on also get their building extensions removed, thus every client has to be told
+        // immediately that the building extension is gone.
+        markBuildingExtensionsDirty();
+    }
+
+    @Override
+    @Nullable
+    public IBuildingExtension getMatchingBuildingExtension(final IBuildingExtension.ExtensionId extensionId)
+    {
+        return buildingExtensions.get(extensionId);
     }
 }

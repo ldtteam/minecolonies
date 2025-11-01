@@ -3,7 +3,8 @@
   "branch": "minecolonies:unlockable",
   "effects": [
     {
-      "minecolonies:effects/sifterstringunlock": 1
+      "id": "minecolonies:effects/sifterstringunlock",
+      "level": 1
     }
   ],
   "hidden": true,
@@ -11,8 +12,9 @@
   "instant": true,
   "requirements": [
     {
-      "level": 1,
-      "mandatory-building": "sifter"
+      "type": "minecolonies:single-building",
+      "building": "minecolonies:sifter",
+      "level": 1
     }
   ],
   "researchLevel": 1

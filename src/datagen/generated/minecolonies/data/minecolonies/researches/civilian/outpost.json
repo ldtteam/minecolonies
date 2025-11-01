@@ -1,25 +1,25 @@
 {
   "branch": "minecolonies:civilian",
+  "costs": [
+    {
+      "type": "minecolonies:item_simple",
+      "item": "minecraft:cooked_beef",
+      "quantity": 64
+    }
+  ],
   "effects": [
     {
-      "minecolonies:effects/citizencapaddition": 2
+      "id": "minecolonies:effects/citizencapaddition",
+      "level": 2
     }
   ],
   "icon": "minecolonies:blockhutcitizen:50",
   "parentResearch": "minecolonies:civilian/keen",
   "requirements": [
     {
-      "building": "residence",
+      "type": "minecolonies:building",
+      "building": "minecolonies:residence",
       "level": 4
-    },
-    {
-      "type": "minecolonies:item_list",
-      "item": {
-        "items": [
-          "minecraft:cooked_beef"
-        ]
-      },
-      "quantity": 64
     }
   ],
   "researchLevel": 2

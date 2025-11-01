@@ -2,26 +2,21 @@ package com.minecolonies.core.entity.pathfinding.pathjobs;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.core.entity.pathfinding.MNode;
+import com.minecolonies.core.entity.pathfinding.PathingOptions;
 import com.minecolonies.core.entity.pathfinding.SurfaceType;
 import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
-import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.api.util.Log;
-import com.minecolonies.core.MineColonies;
-import com.minecolonies.core.entity.pathfinding.MNode;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.pathfinder.Path;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import static com.minecolonies.api.util.constant.PathingConstants.DEBUG_VERBOSITY_NONE;
 
 /**
  * Job that handles moving away from something.
  */
-public class PathJobMoveAwayFromLocation extends AbstractPathJob
+public class PathJobMoveAwayFromLocation extends AbstractPathJob implements IDestinationPathJob
 {
     /**
      * Position to run to, in order to avoid something.
@@ -64,30 +59,12 @@ public class PathJobMoveAwayFromLocation extends AbstractPathJob
         preferredDirection = entity.blockPosition().offset(entity.blockPosition().subtract(avoid).multiply(range));
         if (entity instanceof AbstractEntityCitizen)
         {
-            final IColony colony = ((AbstractEntityCitizen) entity).getCitizenColonyHandler().getColony();
+            final IColony colony = ((AbstractEntityCitizen) entity).getCitizenColonyHandler().getColonyOrRegister();
             if (colony != null)
             {
                 preferredDirection = colony.getCenter();
             }
         }
-    }
-
-    /**
-     * Perform the search.
-     *
-     * @return Path of a path to the given location, a best-effort, or null.
-     */
-    @Nullable
-    @Override
-    protected Path search()
-    {
-        if (MineColonies.getConfig().getServer().pathfindingDebugVerbosity.get() > DEBUG_VERBOSITY_NONE)
-        {
-            Log.getLogger().info(String.format("Pathfinding from [%d,%d,%d] away from [%d,%d,%d]",
-              start.getX(), start.getY(), start.getZ(), avoid.getX(), avoid.getY(), avoid.getZ()));
-        }
-
-        return super.search();
     }
 
     /**
@@ -144,5 +121,33 @@ public class PathJobMoveAwayFromLocation extends AbstractPathJob
     protected double getEndNodeScore(@NotNull final MNode n)
     {
         return -BlockPosUtil.dist(avoid, n.x, n.y, n.z);
+    }
+
+    @Override
+    public void setPathingOptions(final PathingOptions pathingOptions)
+    {
+        super.setPathingOptions(pathingOptions);
+        pathingOptions.dropCost = 5;
+    }
+
+    @Override
+    public BlockPos getDestination()
+    {
+        return preferredDirection;
+    }
+
+    /**
+     * Helper to compare if the given move away job matches the input parameters
+     *
+     * @return true if the given job is the same
+     */
+    public static boolean isJobFor(final AbstractPathJob job, final int avoidDistance, final BlockPos toAvoid)
+    {
+        if (job instanceof PathJobMoveAwayFromLocation pathJob)
+        {
+            return pathJob.avoidDistance == avoidDistance && pathJob.avoid.equals(toAvoid);
+        }
+
+        return false;
     }
 }

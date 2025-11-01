@@ -54,10 +54,6 @@ public enum AIWorkerState implements IAIState
      */
     COMPLETE_BUILD(false),
     /**
-     * Pick up left over items after building.
-     */
-    PICK_UP_RESIDUALS(true),
-    /**
      * Decide what AIstate to go to next.
      */
     DECIDE(true),
@@ -65,10 +61,6 @@ public enum AIWorkerState implements IAIState
      * Do not work, can be used for freetime activities.
      */
     PAUSED(true),
-    /**
-     * Walk to goal for debugging.
-     */
-    WALK_TO(true),
     /*
 ###FISHERMAN###
      */
@@ -342,9 +334,13 @@ public enum AIWorkerState implements IAIState
      */
 
     /**
-     * Serve food to the citizen inside the building.
+     * Serve food to the citizens inside the building.
      */
     COOK_SERVE_FOOD_TO_CITIZEN(true),
+    /**
+     * Serve food to the players inside the building.
+     */
+    COOK_SERVE_FOOD_TO_PLAYER(true),
 
     /*
 ### Herders ###
@@ -649,7 +645,21 @@ public enum AIWorkerState implements IAIState
     /**
      * Harvest the netherwart.
      */
-    HARVEST_NETHERWART(true);
+    HARVEST_NETHERWART(true),
+
+        /*
+###Concrete mixers###
+     */
+
+    /**
+     * Continues placing blocks until can't place anymore.
+     */
+    CONCRETE_MIXER_PLACING(true),
+
+    /**
+     * Harvest all blocks placed in the water.
+     */
+    CONCRETE_MIXER_HARVESTING(true);
 
     /**
      * Is it okay to eat.

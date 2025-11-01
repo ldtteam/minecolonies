@@ -4,13 +4,15 @@ import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
+import com.minecolonies.api.equipment.ModEquipmentTypes;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.SoundUtils;
+import com.minecolonies.api.util.StatsUtil;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingArchery;
 import com.minecolonies.core.colony.jobs.JobArcherTraining;
+import com.minecolonies.core.util.citizenutils.CitizenItemUtils;
 import com.minecolonies.core.util.WorkerUtil;
 import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.projectile.Arrow;
@@ -27,6 +29,10 @@ import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*
 import static com.minecolonies.api.util.constant.CitizenConstants.TICKS_20;
 import static com.minecolonies.api.util.constant.Constants.HALF_BLOCK;
 import static com.minecolonies.api.util.constant.GuardConstants.*;
+
+import static com.minecolonies.api.util.constant.StatisticsConstants.ARROWS_FIRED;
+import static com.minecolonies.api.util.constant.StatisticsConstants.ARROWS_HIT;
+import static com.minecolonies.api.util.constant.StatisticsConstants.LEVELS_GAINED;
 
 @SuppressWarnings("squid:MaximumInheritanceDepth")
 public class EntityAIArcherTraining extends AbstractEntityAITraining<JobArcherTraining, BuildingArchery>
@@ -187,7 +193,7 @@ public class EntityAIArcherTraining extends AbstractEntityAITraining<JobArcherTr
 
             if (worker.getRandom().nextBoolean())
             {
-                worker.getCitizenItemHandler().damageItemInHand(InteractionHand.MAIN_HAND, 1);
+                CitizenItemUtils.damageItemInHand(worker, InteractionHand.MAIN_HAND, 1);
             }
             worker.stopUsingItem();
             this.incrementActionsDoneAndDecSaturation();
@@ -209,13 +215,27 @@ public class EntityAIArcherTraining extends AbstractEntityAITraining<JobArcherTr
 
     private IAIState checkShot()
     {
+        int priorPrimaryLevel = getPrimarySkillLevel();
+        int priorSecondaryLevel = getSecondarySkillLevel();
+
         if (arrowInProgress.distanceToSqr(new Vec3(currentShootingTarget.getX(), currentShootingTarget.getY(), currentShootingTarget.getZ())) < MIN_DISTANCE_FOR_SUCCESS)
         {
             worker.getCitizenExperienceHandler().addExperience(XP_PER_SUCCESSFUL_SHOT);
+            StatsUtil.trackStat(building, ARROWS_HIT, 1);
         }
         else
         {
             worker.getCitizenExperienceHandler().addExperience(XP_BASE_RATE);
+        }
+        StatsUtil.trackStat(building, ARROWS_FIRED, 1);
+
+        if (getPrimarySkillLevel() - priorPrimaryLevel > 0)
+        {
+            StatsUtil.trackStatByName(building, LEVELS_GAINED, getModuleForJob().getPrimarySkill().name(), getPrimarySkillLevel() - priorPrimaryLevel);
+        }
+        if (getSecondarySkillLevel() - priorSecondaryLevel > 0)
+        {
+            StatsUtil.trackStatByName(building, LEVELS_GAINED, getModuleForJob().getSecondarySkill().name(), getSecondarySkillLevel() - priorSecondaryLevel);
         }
 
         worker.getCitizenData().setVisibleStatus(VisibleCitizenStatus.WORKING);
@@ -225,14 +245,14 @@ public class EntityAIArcherTraining extends AbstractEntityAITraining<JobArcherTr
     @Override
     protected boolean isSetup()
     {
-        if (checkForToolOrWeapon(ToolType.BOW))
+        if (checkForToolOrWeapon(ModEquipmentTypes.bow.get()))
         {
             setDelay(REQUEST_DELAY);
             return false;
         }
 
-        final int bowSlot = InventoryUtils.getFirstSlotOfItemHandlerContainingTool(getInventory(), ToolType.BOW, 0, building.getMaxToolLevel());
-        worker.getCitizenItemHandler().setHeldItem(InteractionHand.MAIN_HAND, bowSlot);
+        final int bowSlot = InventoryUtils.getFirstSlotOfItemHandlerContainingEquipment(getInventory(), ModEquipmentTypes.bow.get(), 0, building.getMaxEquipmentLevel());
+        CitizenItemUtils.setHeldItem(worker, InteractionHand.MAIN_HAND, bowSlot);
         return true;
     }
 

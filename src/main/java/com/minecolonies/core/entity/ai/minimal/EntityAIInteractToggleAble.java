@@ -166,7 +166,7 @@ public class EntityAIInteractToggleAble extends Goal
         }
 
         final int maxLengthToCheck = Math.min(path.getNextNodeIndex() + LENGTH_TO_CHECK, path.getNodeCount());
-        for (int i = Math.max(0, path.getNextNodeIndex() - 1); i < maxLengthToCheck; i++)
+        for (int i = Math.max(0, path.getNextNodeIndex() - 2); i < maxLengthToCheck; i++)
         {
             if (i == path.getNodeCount() - 1)
             {
@@ -249,7 +249,7 @@ public class EntityAIInteractToggleAble extends Goal
         }
 
         final int maxLengthToCheck = Math.min(path.getNextNodeIndex() + LENGTH_TO_CHECK, path.getNodeCount());
-        for (int i = Math.max(0, path.getNextNodeIndex() - 1); i < maxLengthToCheck; ++i)
+        for (int i = Math.max(0, path.getNextNodeIndex() - 2); i < maxLengthToCheck; ++i)
         {
             final Node pathpoint = path.getNode(i);
 
@@ -275,7 +275,8 @@ public class EntityAIInteractToggleAble extends Goal
                     {
                         // Check if the next pathing node is below
                         final Node nextPoint = path.getNode(i + 1);
-                        if (pos.getX() == nextPoint.x && pos.getY() > nextPoint.y && pos.getZ() == nextPoint.z)
+                        if ((pos.getX() == nextPoint.x && pos.getY() > nextPoint.y && pos.getZ() == nextPoint.z) ||
+                              entity.getY() - pos.getY() > 1)
                         {
                             toggleAblePositions.put(pos, entity.level.getBlockState(pos).getValue(BlockStateProperties.OPEN));
                         }

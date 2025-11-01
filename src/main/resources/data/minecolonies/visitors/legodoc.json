@@ -1,0 +1,12 @@
+{
+  "texture": "1e79f62a-d205-4f56-bc15-1dcd6d50a52c",
+  "citizensuffix": "_w",
+  "name": "Lupin Vulpes",
+  "chance": 0.001,
+  "storylangkey": "com.minecolonies.coremod.gui.chat.legodoc",
+  "recruitcost": "minecraft:piston",
+  "recruitcostcount": 5,
+  "gender": "male",
+  "primaryskill": "Knowledge",
+  "secondaryskill": "Agility"
+}

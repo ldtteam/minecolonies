@@ -13,6 +13,7 @@
     }
   ],
   "intermediate": "minecraft:air",
-  "min-building-level": 1,
-  "result": "minecolonies:flatbread"
+  "loot-table": "minecolonies:recipes/large_bottle",
+  "result": "minecolonies:flatbread",
+  "show-tooltip": true
 }

@@ -1,16 +1,17 @@
 package com.minecolonies.core.entity.mobs.aitasks;
 
+import com.minecolonies.api.entity.ai.combat.threat.IThreatTableEntity;
 import com.minecolonies.api.entity.ai.statemachine.states.IState;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.ITickRateStateMachine;
-import com.minecolonies.api.entity.ai.combat.threat.IThreatTableEntity;
-import com.minecolonies.api.entity.mobs.AbstractEntityRaiderMob;
-import com.minecolonies.api.util.DamageSourceKeys;
-import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
+import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMonster;
+import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.core.MineColonies;
+import com.minecolonies.api.util.constant.RaiderConstants;
 import com.minecolonies.core.entity.ai.combat.AttackMoveAI;
 import com.minecolonies.core.entity.citizen.EntityCitizen;
+import com.minecolonies.core.entity.pathfinding.navigation.EntityNavigationUtils;
+import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.resources.ResourceKey;
@@ -25,7 +26,7 @@ import static com.minecolonies.api.entity.mobs.RaiderMobUtils.MOB_ATTACK_DAMAGE;
 /**
  * Raider AI for melee attacking a target
  */
-public class RaiderMeleeAI<T extends AbstractEntityRaiderMob & IThreatTableEntity> extends AttackMoveAI<T>
+public class RaiderMeleeAI<T extends AbstractEntityMinecoloniesMonster & IThreatTableEntity> extends AttackMoveAI<T>
 {
     /**
      * Extended reach based on difficulty
@@ -37,7 +38,7 @@ public class RaiderMeleeAI<T extends AbstractEntityRaiderMob & IThreatTableEntit
     /**
      * Attack delay
      */
-    private static final int MAX_ATTACK_DELAY = 60;
+    private static final int ATTACK_DELAY = 30;
 
     /**
      * Additional movement speed difficulty
@@ -79,14 +80,18 @@ public class RaiderMeleeAI<T extends AbstractEntityRaiderMob & IThreatTableEntit
     @Override
     protected int getAttackDelay()
     {
-        return MAX_ATTACK_DELAY - MineColonies.getConfig().getServer().raidDifficulty.get() * 4;
+        return ATTACK_DELAY;
     }
 
     @Override
     protected PathResult moveInAttackPosition(final LivingEntity target)
     {
-        return user.getNavigation()
-                 .moveToXYZ(target.getX(), target.getY(), target.getZ(), user.getDifficulty() < ADD_SPEED_DIFFICULTY ? BASE_COMBAT_SPEED : BASE_COMBAT_SPEED * BONUS_SPEED);
+        EntityNavigationUtils.walkToPos(user,
+            target.blockPosition(),
+            (int) getAttackDistance(),
+            false,
+            user.getDifficulty() < ADD_SPEED_DIFFICULTY ? BASE_COMBAT_SPEED : BASE_COMBAT_SPEED * BONUS_SPEED);
+        return user.getNavigation().getPathResult();
     }
 
     @Override
@@ -98,7 +103,7 @@ public class RaiderMeleeAI<T extends AbstractEntityRaiderMob & IThreatTableEntit
     @Override
     protected boolean isWithinPersecutionDistance(final LivingEntity target)
     {
-        return true;
+        return BlockPosUtil.getDistanceSquared(user.blockPosition(), target.blockPosition()) <= RaiderConstants.MAX_MELEE_RAIDER_PERSECUTION_DISTANCE * RaiderConstants.MAX_MELEE_RAIDER_PERSECUTION_DISTANCE;
     }
 
     @Override

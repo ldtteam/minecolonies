@@ -5,13 +5,14 @@ import com.minecolonies.api.entity.ai.statemachine.states.IState;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.ITickRateStateMachine;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickRateStateMachine;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickingTransition;
-import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
 import com.minecolonies.api.sounds.MercenarySounds;
 import com.minecolonies.api.util.*;
+import com.minecolonies.core.entity.pathfinding.navigation.EntityNavigationUtils;
+import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.core.BlockPos;
 import net.minecraftforge.items.IItemHandler;
 
 import java.util.ArrayList;
@@ -226,8 +227,8 @@ public class EntityMercenaryAI extends Goal
 
         if (attackPath == null || !attackPath.isInProgress())
         {
-            entity.getNavigation().moveToLivingEntity(entity.getTarget(), 1);
-            entity.getLookControl().setLookAt(entity.getTarget(), 180f, 180f);
+            EntityNavigationUtils.walkToPos(entity, entity.getTarget().blockPosition(), false);
+            entity.getLookControl().setLookAt(entity.getTarget());
         }
 
         final int distance = BlockPosUtil.getMaxDistance2D(entity.blockPosition(), entity.getTarget().blockPosition());

@@ -1,11 +1,11 @@
 package com.minecolonies.core.colony.buildings.workerbuildings.plantation.modules.specific;
 
-import com.minecolonies.api.colony.fields.IField;
+import com.minecolonies.api.colony.buildingextensions.IBuildingExtension;
+import com.minecolonies.api.equipment.ModEquipmentTypes;
+import com.minecolonies.api.equipment.registry.EquipmentTypeEntry;
 import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.core.colony.buildings.workerbuildings.plantation.modules.generic.TreeSidePlantModule;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
@@ -38,7 +38,7 @@ public class CocoaPlantModule extends TreeSidePlantModule
      * @param workTag  the tag of the working positions.
      * @param item     the item which is harvested.
      */
-    public CocoaPlantModule(final IField field, final String fieldTag, final String workTag, final Item item)
+    public CocoaPlantModule(final IBuildingExtension field, final String fieldTag, final String workTag, final Item item)
     {
         super(field, fieldTag, workTag, item);
     }
@@ -63,9 +63,9 @@ public class CocoaPlantModule extends TreeSidePlantModule
     }
 
     @Override
-    public ToolType getRequiredTool()
+    public EquipmentTypeEntry getRequiredTool()
     {
-        return ToolType.AXE;
+        return ModEquipmentTypes.axe.get();
     }
 
     @Override

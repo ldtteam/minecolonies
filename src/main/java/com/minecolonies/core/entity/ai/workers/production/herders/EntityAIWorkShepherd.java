@@ -2,11 +2,13 @@ package com.minecolonies.core.entity.ai.workers.production.herders;
 
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
+import com.minecolonies.api.equipment.ModEquipmentTypes;
+import com.minecolonies.api.equipment.registry.EquipmentTypeEntry;
 import com.minecolonies.api.util.InventoryUtils;
-import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.core.Network;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingShepherd;
 import com.minecolonies.core.colony.jobs.JobShepherd;
+import com.minecolonies.core.util.citizenutils.CitizenItemUtils;
 import com.minecolonies.core.network.messages.client.LocalizedParticleEffectMessage;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
@@ -51,12 +53,12 @@ public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, Bu
 
     @NotNull
     @Override
-    public List<ToolType> getExtraToolsNeeded()
+    public List<EquipmentTypeEntry> getExtraToolsNeeded()
     {
-        final List<ToolType> toolsNeeded = super.getExtraToolsNeeded();
+        final List<EquipmentTypeEntry> toolsNeeded = super.getExtraToolsNeeded();
         if (building.getSetting(BuildingShepherd.SHEARING).getValue())
         {
-            toolsNeeded.add(ToolType.SHEARS);
+            toolsNeeded.add(ModEquipmentTypes.shears.get());
         }
         return toolsNeeded;
     }
@@ -115,7 +117,7 @@ public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, Bu
             return DECIDE;
         }
 
-        if (!equipTool(InteractionHand.MAIN_HAND, ToolType.SHEARS))
+        if (!equipTool(InteractionHand.MAIN_HAND, ModEquipmentTypes.shears.get()))
         {
             return PREPARING;
         }
@@ -148,7 +150,7 @@ public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, Bu
             Network.getNetwork().sendToTrackingEntity(new LocalizedParticleEffectMessage(new ItemStack(ITEM_BY_DYE.get(sheep.getColor())), sheep.getOnPos().above()), worker);
             dyeSheepChance(sheep);
 
-            worker.getCitizenItemHandler().damageItemInHand(InteractionHand.MAIN_HAND, 1);
+            CitizenItemUtils.damageItemInHand(worker, InteractionHand.MAIN_HAND, 1);
 
             worker.getCitizenExperienceHandler().addExperience(XP_PER_ACTION);
             incrementActionsDoneAndDecSaturation();

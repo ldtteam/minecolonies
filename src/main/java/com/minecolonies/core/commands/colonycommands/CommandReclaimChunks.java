@@ -2,14 +2,13 @@ package com.minecolonies.core.commands.colonycommands;
 
 import com.minecolonies.api.colony.IChunkmanagerCapability;
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.constant.translation.CommandTranslationConstants;
+import com.minecolonies.core.commands.arguments.ColonyIdArgument;
 import com.minecolonies.core.commands.commandTypes.IMCCommand;
 import com.minecolonies.core.commands.commandTypes.IMCOPCommand;
 import com.minecolonies.core.util.BackUpHelper;
-import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.commands.CommandSourceStack;
@@ -38,8 +37,7 @@ public class CommandReclaimChunks implements IMCOPCommand
             return 0;
         }
 
-        // Colony
-        final int colonyID = IntegerArgumentType.getInteger(context, COLONYID_ARG);
+        final IColony colony = ColonyIdArgument.getColony(context, COLONYID_ARG);
 
         final IChunkmanagerCapability chunkManager = sender.level.getCapability(CHUNK_STORAGE_UPDATE_CAP, null).resolve().orElse(null);
         if (chunkManager == null)
@@ -54,7 +52,6 @@ public class CommandReclaimChunks implements IMCOPCommand
             return 0;
         }
 
-        final IColony colony = IColonyManager.getInstance().getColonyByWorld(colonyID, sender.level);
         BackUpHelper.reclaimChunks(colony);
         MessageUtils.format(CommandTranslationConstants.COMMAND_CLAIM_SUCCESS).sendTo((Player) sender);
         return 1;
@@ -72,6 +69,6 @@ public class CommandReclaimChunks implements IMCOPCommand
     public LiteralArgumentBuilder<CommandSourceStack> build()
     {
         return IMCCommand.newLiteral(getName())
-          .then(IMCCommand.newArgument(COLONYID_ARG, IntegerArgumentType.integer(1)).executes(this::checkPreConditionAndExecute));
+          .then(IMCCommand.newArgument(COLONYID_ARG, ColonyIdArgument.id()).executes(this::checkPreConditionAndExecute));
     }
 }

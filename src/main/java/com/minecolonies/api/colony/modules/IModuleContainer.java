@@ -27,7 +27,7 @@ public interface IModuleContainer<T>
      * @param producer the module producer for the module
      * @return true if so.
      */
-    boolean hasModule(final BuildingEntry.ModuleProducer producer);
+    boolean hasModule(final BuildingEntry.ModuleProducer<?, ?> producer);
 
     /**
      * Get the first module with a particular class or interface.

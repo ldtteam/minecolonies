@@ -1,25 +1,25 @@
 {
   "branch": "minecolonies:combat",
+  "costs": [
+    {
+      "type": "minecolonies:item_simple",
+      "item": "minecraft:emerald",
+      "quantity": 16
+    }
+  ],
   "effects": [
     {
-      "minecolonies:effects/telescope": 1
+      "id": "minecolonies:effects/telescope",
+      "level": 1
     }
   ],
   "icon": "minecolonies:banner_rally_guards",
   "parentResearch": "minecolonies:combat/ironskin",
   "requirements": [
     {
-      "building": "barracks",
+      "type": "minecolonies:building",
+      "building": "minecolonies:barracks",
       "level": 3
-    },
-    {
-      "type": "minecolonies:item_list",
-      "item": {
-        "items": [
-          "minecraft:emerald"
-        ]
-      },
-      "quantity": 16
     }
   ],
   "researchLevel": 4

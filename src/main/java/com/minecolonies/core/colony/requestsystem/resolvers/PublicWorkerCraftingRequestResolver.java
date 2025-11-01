@@ -111,6 +111,6 @@ public class PublicWorkerCraftingRequestResolver extends AbstractCraftingRequest
     @Override
     protected IRequestable createNewRequestableForStack(final ItemStack stack, final int count, final int minCount, final IToken<?> recipeStorage)
     {
-        return new PublicCrafting(stack, count, recipeStorage);
+        return new PublicCrafting(stack, count, minCount, recipeStorage);
     }
 }

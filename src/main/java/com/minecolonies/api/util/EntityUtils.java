@@ -1,12 +1,13 @@
 package com.minecolonies.api.util;
 
 import com.ldtteam.structurize.util.BlockUtils;
-import com.minecolonies.api.crafting.ItemStorage;
-import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-import com.minecolonies.core.entity.pathfinding.SurfaceType;
+import com.minecolonies.api.entity.other.AbstractFastMinecoloniesEntity;
 import com.minecolonies.api.items.ModTags;
+import com.minecolonies.core.entity.pathfinding.PathfindingUtils;
+import com.minecolonies.core.entity.pathfinding.SurfaceType;
+import com.minecolonies.core.entity.pathfinding.navigation.EntityNavigationUtils;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Vec3i;
+import net.minecraft.core.Direction;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
@@ -16,7 +17,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.AABB;
 import net.minecraftforge.common.util.FakePlayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -26,6 +26,7 @@ import java.util.UUID;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import static com.minecolonies.api.util.BlockPosUtil.HORIZONTAL_DIRS;
 import static net.minecraft.world.entity.EntitySelector.NO_SPECTATORS;
 
 /**
@@ -173,7 +174,21 @@ public final class EntityUtils
     @Nullable
     public static BlockPos getSpawnPoint(final Level world, final BlockPos nearPoint)
     {
-        return BlockPosUtil.findAround(world, nearPoint, SCAN_RADIUS, SCAN_RADIUS, (w, p) -> checkValidSpawn(w, p, 2));
+        return BlockPosUtil.findAround(world, nearPoint, SCAN_RADIUS, SCAN_RADIUS, (w, p) -> {
+            if (checkValidSpawn(w, p, 2))
+            {
+                // Also find a valid neighbouring space, to decrease stuck chance
+                for (final Direction dir : HORIZONTAL_DIRS)
+                {
+                    if (checkValidSpawn(w, p.relative(dir, 1), 2))
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        });
     }
 
 
@@ -190,7 +205,7 @@ public final class EntityUtils
         for (int dy = 0; dy < height; dy++)
         {
             final BlockState state = world.getBlockState(pos.above(dy));
-            if (!state.is(ModTags.validSpawn) && BlockUtils.isAnySolid(state))
+            if (!state.is(ModTags.validSpawn) && (PathfindingUtils.isLiquid(state) || ShapeUtil.hasCollision(world, pos.above(dy), state)))
             {
                 return false;
             }
@@ -200,6 +215,7 @@ public final class EntityUtils
          || SurfaceType.getSurfaceType(world, world.getBlockState(pos.below(2)), pos.below(2)) == SurfaceType.WALKABLE;
     }
 
+    // TODO: Move out movement stuff
 
     /**
      * Sets the movement of the entity to specific point. Returns true if direction is set, otherwise false.
@@ -223,27 +239,15 @@ public final class EntityUtils
      * @param y      y-coordinate
      * @param z      z-coordinate
      * @param speedFactor  Speedfactor to modify base speed with
-     * @return True if the path is set to destination, otherwise false
+     * @return true if arrived
      */
     public static boolean tryMoveLivingToXYZ(@NotNull final Mob living, final int x, final int y, final int z, final double speedFactor)
     {
-        return living.getNavigation().moveTo(x, y, z, speedFactor);
-    }
-
-    /**
-     * {@link #isLivingAtSiteWithMove(LivingEntity, int, int, int)}
-     *
-     * @param entity entity to check
-     * @param x      X-coordinate
-     * @param y      Y-coordinate
-     * @param z      Z-coordinate
-     * @return True if entity is at site, otherwise false
-     */
-    public static boolean isLivingAtSiteWithMove(@NotNull final LivingEntity entity, final int x, final int y, final int z)
-    {
-        //Default range of 3 works better
-        //Range of 2 get some entitys stuck
-        return isLivingAtSiteWithMove(entity, x, y, z, DEFAULT_MOVE_RANGE);
+        if (living instanceof AbstractFastMinecoloniesEntity entity)
+        {
+            return EntityNavigationUtils.walkToPos(entity, new BlockPos(x, y, z), 4, true, speedFactor);
+        }
+        return true;
     }
 
     /**
@@ -285,34 +289,6 @@ public final class EntityUtils
     }
 
     /**
-     * Checks if a certain entity is in the world at a certain position already.
-     *
-     * @param entity the entity.
-     * @param world  the world.
-     * @param placer the entity to get the itemstacks from to check.
-     * @return true if there.
-     */
-    public static boolean isEntityAtPosition(final Entity entity, final Level world, final Entity placer)
-    {
-        final List<ItemStorage> existingReq = ItemStackUtils.getListOfStackForEntity(entity, placer);
-        final BlockPos pos = BlockPos.containing(entity.getX(), entity.getY(), entity.getZ());
-        return world.getEntitiesOfClass(Entity.class, new AABB(pos.offset(1, 1, 1), pos.offset(-1, -1, -1)))
-                 .stream()
-                 .anyMatch(ent -> ent.getX() == entity.getX() && ent.getY() == entity.getY() && ent.getZ() == entity.getZ() && ItemStackUtils.getListOfStackForEntity(entity, placer)
-                                                                                                                     .equals(existingReq));
-    }
-
-    public static boolean isEntityAtPosition(final Entity entity, final Level world, final AbstractEntityCitizen entityCitizen)
-    {
-        if (entity != null)
-        {
-            return EntityUtils.isEntityAtPosition(entity, world, (Entity) entityCitizen);
-        }
-
-        return false;
-    }
-
-    /**
      * Returns whether or not the entity is within a specific range of his working site.
      *
      * @param entityLiving entity to check
@@ -325,7 +301,7 @@ public final class EntityUtils
     public static boolean isLivingAtSite(@NotNull final LivingEntity entityLiving, final int x, final int y, final int z, final int range)
     {
         final BlockPos pos = BlockPos.containing(entityLiving.getX(), entityLiving.getY(), entityLiving.getZ());
-        return pos.distSqr(new Vec3i(x, y, z)) < MathUtils.square(range);
+        return BlockPosUtil.distSqr(pos, x, y, z) < MathUtils.square(range);
     }
 
     /**

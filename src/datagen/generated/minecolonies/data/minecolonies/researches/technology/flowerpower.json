@@ -1,25 +1,25 @@
 {
   "branch": "minecolonies:technology",
+  "costs": [
+    {
+      "type": "minecolonies:item_simple",
+      "item": "minecolonies:compost",
+      "quantity": 64
+    }
+  ],
   "effects": [
     {
-      "minecolonies:effects/blockhutflorist": 1
+      "id": "minecolonies:effects/blockhutflorist",
+      "level": 1
     }
   ],
   "icon": "minecolonies:blockhutflorist",
   "parentResearch": "minecolonies:technology/biodegradable",
   "requirements": [
     {
-      "building": "composter",
+      "type": "minecolonies:building",
+      "building": "minecolonies:composter",
       "level": 3
-    },
-    {
-      "type": "minecolonies:item_list",
-      "item": {
-        "items": [
-          "minecolonies:compost"
-        ]
-      },
-      "quantity": 64
     }
   ],
   "researchLevel": 2

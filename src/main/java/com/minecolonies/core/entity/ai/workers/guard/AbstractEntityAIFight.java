@@ -4,13 +4,15 @@ import com.minecolonies.api.entity.ai.workers.util.GuardGear;
 import com.minecolonies.api.entity.ai.workers.util.GuardGearBuilder;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
+import com.minecolonies.api.equipment.ModEquipmentTypes;
+import com.minecolonies.api.equipment.registry.EquipmentTypeEntry;
 import com.minecolonies.api.util.InventoryFunctions;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.core.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.core.colony.jobs.AbstractJobGuard;
 import com.minecolonies.core.entity.ai.workers.AbstractEntityAIInteract;
+import com.minecolonies.core.util.citizenutils.CitizenItemUtils;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ArmorItem;
@@ -24,7 +26,7 @@ import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*
 import static com.minecolonies.api.research.util.ResearchConstants.SHIELD_USAGE;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.api.util.constant.GuardConstants.*;
-import static com.minecolonies.api.util.constant.ToolLevelConstants.*;
+import static com.minecolonies.api.util.constant.EquipmentLevelConstants.*;
 
 /**
  * Class taking of the abstract guard methods for both archer and knights.
@@ -37,7 +39,7 @@ public abstract class AbstractEntityAIFight<J extends AbstractJobGuard<J>, B ext
     /**
      * Tools and Items needed by the worker.
      */
-    public final List<ToolType> toolsNeeded = new ArrayList<>();
+    public final List<EquipmentTypeEntry> toolsNeeded = new ArrayList<>();
 
     /**
      * List of items that are required by the guard based on building level and guard level.  This array holds a pointer to the building level and then pointer to GuardGear
@@ -88,7 +90,7 @@ public abstract class AbstractEntityAIFight<J extends AbstractJobGuard<J>, B ext
      */
     protected IAIState startWorkingAtOwnBuilding()
     {
-        if (walkToBuilding())
+        if (!walkToBuilding())
         {
             return getState();
         }
@@ -114,7 +116,7 @@ public abstract class AbstractEntityAIFight<J extends AbstractJobGuard<J>, B ext
      */
     private IAIState prepare()
     {
-        for (final ToolType tool : toolsNeeded)
+        for (final EquipmentTypeEntry tool : toolsNeeded)
         {
             if (checkForToolOrWeapon(tool))
             {
@@ -123,8 +125,8 @@ public abstract class AbstractEntityAIFight<J extends AbstractJobGuard<J>, B ext
             InventoryFunctions.matchFirstInProviderWithSimpleAction(worker,
               stack -> !ItemStackUtils.isEmpty(stack)
                          && ItemStackUtils.doesItemServeAsWeapon(stack)
-                         && ItemStackUtils.hasToolLevel(stack, tool, 0, building.getMaxToolLevel()),
-              itemStack -> worker.getCitizenItemHandler().setMainHeldItem(itemStack));
+                         && ItemStackUtils.hasEquipmentLevel(stack, tool, 0, building.getMaxEquipmentLevel()),
+              itemStack -> CitizenItemUtils.setMainHeldItem(worker, itemStack));
         }
 
         equipInventoryArmor();
@@ -144,14 +146,14 @@ public abstract class AbstractEntityAIFight<J extends AbstractJobGuard<J>, B ext
      */
     protected void atBuildingActions()
     {
-        for (final GuardGear item : itemsNeeded.get(building.getBuildingLevel() - 1))
+        for (final GuardGear item : itemsNeeded.get(building.getBuildingLevelEquivalent() - 1))
         {
-            if (!(building.getBuildingLevel() >= item.getMinBuildingLevelRequired() && building.getBuildingLevel() <= item.getMaxBuildingLevelRequired()))
+            if (!(building.getBuildingLevelEquivalent() >= item.getMinBuildingLevelRequired() && building.getBuildingLevelEquivalent() <= item.getMaxBuildingLevelRequired()))
             {
                 continue;
             }
-            if (item.getItemNeeded() == ToolType.SHIELD
-                  && worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(SHIELD_USAGE) <= 0)
+            if (item.getItemNeeded() == ModEquipmentTypes.shield.get()
+                  && worker.getCitizenColonyHandler().getColonyOrRegister().getResearchManager().getResearchEffects().getEffectStrength(SHIELD_USAGE) <= 0)
             {
                 continue;
             }
@@ -164,14 +166,14 @@ public abstract class AbstractEntityAIFight<J extends AbstractJobGuard<J>, B ext
             {
                 if (!ItemStackUtils.isEmpty(worker.getInventoryCitizen().getArmorInSlot(item.getType())))
                 {
-                    bestLevel = ItemStackUtils.getMiningLevel(worker.getInventoryCitizen().getArmorInSlot(item.getType()), item.getItemNeeded());
+                    bestLevel = item.getItemNeeded().getMiningLevel(worker.getInventoryCitizen().getArmorInSlot(item.getType()));
                 }
             }
             else
             {
                 if (!ItemStackUtils.isEmpty(worker.getItemBySlot(item.getType())))
                 {
-                    bestLevel = ItemStackUtils.getMiningLevel(worker.getItemBySlot(item.getType()), item.getItemNeeded());
+                    bestLevel = item.getItemNeeded().getMiningLevel(worker.getItemBySlot(item.getType()));
                 }
             }
 
@@ -201,7 +203,7 @@ public abstract class AbstractEntityAIFight<J extends AbstractJobGuard<J>, B ext
                             continue;
                         }
 
-                        int currentLevel = ItemStackUtils.getMiningLevel(stack, item.getItemNeeded());
+                        int currentLevel = item.getItemNeeded().getMiningLevel(stack);
 
                         if (currentLevel > bestLevel)
                         {
@@ -273,7 +275,7 @@ public abstract class AbstractEntityAIFight<J extends AbstractJobGuard<J>, B ext
     {
         cleanVisibleSlots();
         final Set<EquipmentSlot> equipment = new HashSet<>();
-        for (final GuardGear item : itemsNeeded.get(building.getBuildingLevel() - 1))
+        for (final GuardGear item : itemsNeeded.get(building.getBuildingLevelEquivalent() - 1))
         {
             if (equipment.contains(item.getType()))
             {
@@ -281,7 +283,7 @@ public abstract class AbstractEntityAIFight<J extends AbstractJobGuard<J>, B ext
             }
             if (item.getType().isArmor())
             {
-                if (building.getBuildingLevel() >= item.getMinBuildingLevelRequired() && building.getBuildingLevel() <= item.getMaxBuildingLevelRequired())
+                if (building.getBuildingLevelEquivalent() >= item.getMinBuildingLevelRequired() && building.getBuildingLevelEquivalent() <= item.getMaxBuildingLevelRequired())
                 {
                     int slot = InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(worker.getInventoryCitizen(), item);
                     if (slot <= -1)
@@ -293,8 +295,8 @@ public abstract class AbstractEntityAIFight<J extends AbstractJobGuard<J>, B ext
                     final ItemStack current = worker.getInventoryCitizen().getArmorInSlot(item.getType());
                     if (!current.isEmpty() && current.getItem() instanceof ArmorItem)
                     {
-                        final int currentLevel = ItemStackUtils.getMiningLevel(current, item.getItemNeeded());
-                        final int newLevel = ItemStackUtils.getMiningLevel(worker.getInventoryCitizen().getStackInSlot(slot), item.getItemNeeded());
+                        final int currentLevel = item.getItemNeeded().getMiningLevel(current);
+                        final int newLevel = item.getItemNeeded().getMiningLevel(worker.getInventoryCitizen().getStackInSlot(slot));
                         if (currentLevel > newLevel)
                         {
                             continue;
@@ -305,8 +307,8 @@ public abstract class AbstractEntityAIFight<J extends AbstractJobGuard<J>, B ext
             }
             else
             {
-                if (ItemStackUtils.isEmpty(worker.getItemBySlot(item.getType())) && building.getBuildingLevel() >= item.getMinBuildingLevelRequired()
-                      && building.getBuildingLevel() <= item.getMaxBuildingLevelRequired())
+                if (ItemStackUtils.isEmpty(worker.getItemBySlot(item.getType())) && building.getBuildingLevelEquivalent() >= item.getMinBuildingLevelRequired()
+                      && building.getBuildingLevelEquivalent() <= item.getMaxBuildingLevelRequired())
                 {
                     equipment.add(item.getType());
                     int slot = InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(worker.getInventoryCitizen(), item);

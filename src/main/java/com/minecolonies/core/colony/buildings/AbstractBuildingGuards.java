@@ -10,10 +10,10 @@ import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.entity.ai.statemachine.AIOneTimeEventTarget;
 import com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.equipment.ModEquipmentTypes;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.MessageUtils;
-import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.core.colony.buildings.modules.BuildingModules;
 import com.minecolonies.core.colony.buildings.modules.settings.*;
 import com.minecolonies.core.colony.buildings.views.AbstractBuildingView;
@@ -21,7 +21,6 @@ import com.minecolonies.core.colony.buildings.workerbuildings.BuildingMiner;
 import com.minecolonies.core.colony.jobs.AbstractJobGuard;
 import com.minecolonies.core.colony.requestsystem.locations.EntityLocation;
 import com.minecolonies.core.colony.requestsystem.locations.StaticLocation;
-import com.minecolonies.core.entity.ai.workers.guard.AbstractEntityAIGuard;
 import com.minecolonies.core.entity.pathfinding.Pathfinding;
 import com.minecolonies.core.entity.pathfinding.pathjobs.PathJobRandomPos;
 import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
@@ -50,7 +49,7 @@ import static com.minecolonies.api.research.util.ResearchConstants.ARCHER_USE_AR
 import static com.minecolonies.api.research.util.ResearchConstants.TELESCOPE;
 import static com.minecolonies.api.util.constant.CitizenConstants.GUARD_HEALTH_MOD_BUILDING_NAME;
 import static com.minecolonies.api.util.constant.CitizenConstants.LOW_SATURATION;
-import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
+import static com.minecolonies.api.util.constant.EquipmentLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 import static com.minecolonies.api.util.constant.TranslationConstants.WARNING_RALLYING_POINT_OUT_OF_RANGE;
 import static com.minecolonies.core.util.ServerUtils.getPlayerFromUUID;
 
@@ -97,17 +96,17 @@ public abstract class AbstractBuildingGuards extends AbstractBuilding implements
     /**
      * The Bonus Health for each building level
      */
-    private static final int BONUS_HEALTH_PER_LEVEL = 2;
+    protected static final int BONUS_HEALTH_PER_LEVEL = 2;
 
     /**
      * Vision range per building level.
      */
-    private static final int VISION_RANGE_PER_LEVEL = 3;
+    protected static final int VISION_RANGE_PER_LEVEL = 3;
 
     /**
      * Base Vision range per building level.
      */
-    private static final int BASE_VISION_RANGE = 15;
+    protected static final int BASE_VISION_RANGE = 15;
 
     /**
      * The position at which the guard should guard at.
@@ -159,7 +158,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuilding implements
     {
         super(c, l);
 
-        keepX.put(itemStack -> ItemStackUtils.hasToolLevel(itemStack, ToolType.BOW, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel()), new Tuple<>(1, true));
+        keepX.put(itemStack -> ItemStackUtils.hasEquipmentLevel(itemStack, ModEquipmentTypes.bow.get(), TOOL_LEVEL_WOOD_OR_GOLD, getMaxEquipmentLevel()), new Tuple<>(1, true));
         keepX.put(itemStack -> !ItemStackUtils.isEmpty(itemStack) && ItemStackUtils.doesItemServeAsWeapon(itemStack), new Tuple<>(1, true));
 
         keepX.put(itemStack -> !ItemStackUtils.isEmpty(itemStack)
@@ -385,21 +384,10 @@ public abstract class AbstractBuildingGuards extends AbstractBuilding implements
     /**
      * Starts the patrol to the next point
      */
-    private void startPatrolNext()
+    public void startPatrolNext()
     {
         getNextPatrolTarget(true);
         patrolTimer = 5;
-
-        for (final ICitizenData curguard : getAllAssignedCitizen())
-        {
-            if (curguard.getEntity().isPresent())
-            {
-                if (curguard.getEntity().get().getCitizenJobHandler().getColonyJob() instanceof AbstractJobGuard guardEntity)
-                {
-                    ((AbstractEntityAIGuard<?, ?>) guardEntity.getWorkerAI()).setNextPatrolTarget(lastPatrolPoint);
-                }
-            }
-        }
         arrivedAtPatrol.clear();
     }
 
@@ -452,7 +440,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuilding implements
 
             if (pos != null)
             {
-                if (BlockPosUtil.getDistance2D(pos, getPosition()) > getPatrolDistance())
+                if (BlockPosUtil.getDistance(pos, getPosition()) > getPatrolDistance())
                 {
                     lastPatrolPoint = getPosition();
                     return lastPatrolPoint;
@@ -536,7 +524,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuilding implements
     }
 
     @Override
-    public BlockPos getGuardPos()
+    public BlockPos getGuardPos(final @NotNull AbstractEntityCitizen worker)
     {
         return guardPos;
     }
@@ -673,12 +661,12 @@ public abstract class AbstractBuildingGuards extends AbstractBuilding implements
     }
 
     /**
-     * Adds new patrolTargets.
+     * Adds new patrolTarget.
      *
      * @param target the target to add
      */
     @Override
-    public void addPatrolTargets(final BlockPos target)
+    public void addPatrolTarget(final BlockPos target)
     {
         this.patrolTargets.add(target);
         this.markDirty();
@@ -802,5 +790,11 @@ public abstract class AbstractBuildingGuards extends AbstractBuilding implements
          * @param pos the position of the mine
          */
         public void setMinePos(BlockPos pos) { this.minePos = pos; }
+
+        @Override
+        public int getRange()
+        {
+            return getClaimRadius() * 16;
+        }
     }
 }

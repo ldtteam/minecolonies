@@ -1,7 +1,8 @@
 package com.minecolonies.core.colony.buildings.workerbuildings.plantation.modules.specific;
 
-import com.minecolonies.api.colony.fields.IField;
-import com.minecolonies.api.util.constant.ToolType;
+import com.minecolonies.api.colony.buildingextensions.IBuildingExtension;
+import com.minecolonies.api.equipment.ModEquipmentTypes;
+import com.minecolonies.api.equipment.registry.EquipmentTypeEntry;
 import com.minecolonies.core.colony.buildings.workerbuildings.plantation.modules.generic.UpwardsGrowingPlantModule;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
@@ -41,7 +42,7 @@ public class BambooPlantModule extends UpwardsGrowingPlantModule
      * @param workTag  the tag of the working positions.
      * @param item     the item which is harvested.
      */
-    public BambooPlantModule(final IField field, final String fieldTag, final String workTag, final Item item)
+    public BambooPlantModule(final IBuildingExtension field, final String fieldTag, final String workTag, final Item item)
     {
         super(field, fieldTag, workTag, item);
     }
@@ -71,8 +72,8 @@ public class BambooPlantModule extends UpwardsGrowingPlantModule
     }
 
     @Override
-    public ToolType getRequiredTool()
+    public EquipmentTypeEntry getRequiredTool()
     {
-        return ToolType.AXE;
+        return ModEquipmentTypes.axe.get();
     }
 }

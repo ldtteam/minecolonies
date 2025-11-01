@@ -198,7 +198,7 @@ public class StandardPlayerRequestResolver implements IPlayerRequestResolver
                   else
                   {
                       IRequest<?> req = request;
-                      while (req.hasParent())
+                      while (req != null && req.hasParent())
                       {
                           req = manager.getRequestForToken(req.getParent());
                           if (req != null && shouldTriggerReassign.test(req))

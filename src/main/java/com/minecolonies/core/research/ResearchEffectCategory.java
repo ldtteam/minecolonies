@@ -1,6 +1,5 @@
 package com.minecolonies.core.research;
 
-import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.ArrayList;
@@ -12,16 +11,6 @@ import java.util.List;
 public class ResearchEffectCategory
 {
     /**
-     * The property name that indicates this recipe describes a research effect.
-     */
-    public static final String RESEARCH_EFFECT_PROP = "effect";
-
-    /**
-     * The property name that indicates this recipe describes a research effect.
-     */
-    public static final String RESEARCH_EFFECT_LEVELS_PROP = "levels";
-
-    /**
      * The unique effect identifier, used to apply the effect category, and to determine translation lookups.
      */
     private final ResourceLocation effectId;
@@ -29,12 +18,12 @@ public class ResearchEffectCategory
     /**
      * The optional effect category name, uses for display purposes if present.  Overrides default translation lookups.
      */
-    private final TranslatableContents effectName;
+    private final String effectName;
 
     /**
      * The optional subtitle, uses for display purposes if present.
      */
-    private final TranslatableContents subtitle;
+    private final String subtitle;
 
     /**
      * The absolute value of each level of an effect.
@@ -47,68 +36,31 @@ public class ResearchEffectCategory
     private final List<Double> levelsRelative = new ArrayList<>();
 
     /**
-     *  Constructor for the Research Effect Category, including Id, display name, effect type.
-     * @param effectId              The unique identifier of the effect category.
-     * @param effectName            The display name of the effect category.
-     * @param subtitle              The optional subtitle.
+     * Constructor for the research effect Category, including effect id, display name, effect type.
+     *
+     * @param effectId   the unique identifier of the effect category.
+     * @param effectName the display name of the effect category.
+     * @param subtitle   the optional subtitle.
      */
-    public ResearchEffectCategory(final String effectId, final String effectName, final String subtitle)
+    public ResearchEffectCategory(final ResourceLocation effectId, final String effectName, final String subtitle, final List<Double> levels)
     {
-        this.effectId = new ResourceLocation(effectId);
-        if(effectName != null)
-        {
-            this.effectName = new TranslatableContents(effectName, null, TranslatableContents.NO_ARGS);
-        }
-        else
-        {
-            this.effectName = new TranslatableContents("com." + this.effectId.getNamespace() + ".research." + this.effectId.getPath().replaceAll("[ /]", ".") + ".description", null, TranslatableContents.NO_ARGS);
-        }
-        this.subtitle = new TranslatableContents(subtitle, null, TranslatableContents.NO_ARGS);
+        this.effectId = effectId;
+        this.effectName = effectName;
+        this.subtitle = subtitle;
         levelsAbsolute.add(0d);
         levelsRelative.add(0d);
-    }
-
-    /**
-     *  Constructor for the Research Effect Category, including Id, display name, effect type.
-     * @param effectId              The unique identifier of the effect category.
-     */
-    public ResearchEffectCategory(final String effectId, final String effectName)
-    {
-        this.effectId = new ResourceLocation(effectId);
-        this.effectName = new TranslatableContents(effectName, null, TranslatableContents.NO_ARGS);
-        this.subtitle = new TranslatableContents("", null, TranslatableContents.NO_ARGS);
-        levelsAbsolute.add(0d);
-        levelsRelative.add(0d);
-    }
-
-    /**
-     *  Constructor for the Research Effect Category, including Id and effect type.
-     * @param effectId              The unique identifier of the effect category.
-     */
-    public ResearchEffectCategory(final String effectId)
-    {
-        this.effectId = new ResourceLocation(effectId);
-        this.effectName = new TranslatableContents("com." + this.effectId.getNamespace() + ".research." + this.effectId.getPath().replaceAll("[ /]",".") + ".description", null, TranslatableContents.NO_ARGS);
-        this.subtitle = new TranslatableContents("", null, TranslatableContents.NO_ARGS);
-        levelsAbsolute.add(0d);
-        levelsRelative.add(0d);
-    }
-
-    /**
-     * Adds an additional level of strength to the effect.
-     * @param newVal        The value of the newest level of effect.
-     */
-    public void add(final double newVal)
-    {
-        levelsRelative.add(newVal - levelsAbsolute.get(levelsAbsolute.size() - 1));
-        levelsAbsolute.add(newVal);
+        levels.forEach(level -> {
+            levelsRelative.add(level - levelsAbsolute.get(levelsAbsolute.size() - 1));
+            levelsAbsolute.add(level);
+        });
     }
 
     /**
      * Gets the relative strength of the effect for a given level of effect
-     * compared to the strength of the previous level.  Generally used for display purposes.
-     * @param level        The level of effect.
-     * @return             The relative strength of the effect at that level.
+     * compared to the strength of the previous level. Generally used for display purposes.
+     *
+     * @param level the level of effect.
+     * @return the relative strength of the effect at that level.
      */
     public double getDisplay(final int level)
     {
@@ -117,8 +69,9 @@ public class ResearchEffectCategory
 
     /**
      * Gets the absolute strength of the effect for a given level
-     * @param level        The level of effect.
-     * @return             The absolute strength of the effect at that level.
+     *
+     * @param level the level of effect.
+     * @return the absolute strength of the effect at that level.
      */
     public double get(final int level)
     {
@@ -127,7 +80,8 @@ public class ResearchEffectCategory
 
     /**
      * Gets the maximum registered level for the effect.
-     * @return             The maximum level of the effect.
+     *
+     * @return the maximum level of the effect.
      */
     public int getMaxLevel()
     {
@@ -136,7 +90,8 @@ public class ResearchEffectCategory
 
     /**
      * Gets the unique identifier of the effect.
-     * @return             The effect Id, as a ResourceLocation.
+     *
+     * @return the effect id, as a {@link ResourceLocation}.
      */
     public ResourceLocation getId()
     {
@@ -145,18 +100,20 @@ public class ResearchEffectCategory
 
     /**
      * Gets the name identifier of the effect.
-     * @return             The effect's display name, as a human-readable text or translation key.
+     *
+     * @return the effect's display name, as a human-readable text or translation key.
      */
-    public TranslatableContents getName()
+    public String getName()
     {
         return this.effectName;
     }
 
     /**
      * Gets the subtitle of the effect.
-     * @return             The effect's display name, as a string.
+     *
+     * @return the effect's display name, as a string.
      */
-    public TranslatableContents getSubtitle()
+    public String getSubtitle()
     {
         return this.subtitle;
     }

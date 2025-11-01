@@ -1,14 +1,11 @@
 package com.minecolonies.core.entity.pathfinding.pathjobs;
 
 import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.ShapeUtil;
 import com.minecolonies.api.util.constant.ColonyConstants;
-import com.minecolonies.core.MineColonies;
 import com.minecolonies.core.entity.pathfinding.MNode;
 import com.minecolonies.core.entity.pathfinding.PathfindingUtils;
 import com.minecolonies.core.entity.pathfinding.SurfaceType;
-import com.minecolonies.core.entity.pathfinding.navigation.IDynamicHeuristicNavigator;
 import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Mob;
@@ -17,25 +14,18 @@ import net.minecraft.world.level.pathfinder.Path;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static com.minecolonies.api.util.constant.PathingConstants.DEBUG_VERBOSITY_NONE;
-
 /**
  * Job that handles moving to a location.
  */
-public class PathJobMoveToLocation extends AbstractPathJob
+public class PathJobMoveToLocation extends AbstractPathJob implements IDestinationPathJob
 {
     private static final float    DESTINATION_SLACK_NONE     = 0.1F;
     // 1^2 + 1^2 + 1^2 + (epsilon of 0.1F)
     private static final float    DESTINATION_SLACK_ADJACENT = (float) Math.sqrt(2f);
     @NotNull
-    private final        BlockPos destination;
+    protected final BlockPos destination;
     // 0 = exact match
     private              float    destinationSlack           = DESTINATION_SLACK_NONE;
-
-    /**
-     * Modifier to the heuristics
-     */
-    private double heuristicModifier = 1;
 
     /**
      * Prepares the PathJob for the path finding system.
@@ -53,13 +43,6 @@ public class PathJobMoveToLocation extends AbstractPathJob
         maxNodes += range;
         this.destination = new BlockPos(end);
 
-        if (entity != null && entity.getNavigation() instanceof IDynamicHeuristicNavigator)
-        {
-            heuristicModifier = ((IDynamicHeuristicNavigator) entity.getNavigation()).getAvgHeuristicModifier();
-        }
-
-        // Overestimate for long distances, +1 per 100 blocks
-        heuristicModifier += BlockPosUtil.distManhattan(start, end) / 100.0;
         extraNodes = 4;
     }
 
@@ -72,12 +55,6 @@ public class PathJobMoveToLocation extends AbstractPathJob
     @Override
     protected Path search()
     {
-        if (MineColonies.getConfig().getServer().pathfindingDebugVerbosity.get() > DEBUG_VERBOSITY_NONE)
-        {
-            Log.getLogger().info(String.format("Pathfinding from [%d,%d,%d] to [%d,%d,%d]",
-              start.getX(), start.getY(), start.getZ(), destination.getX(), destination.getY(), destination.getZ()));
-        }
-
         //  Compute destination slack - if the destination point cannot be stood in
         if (getGroundHeight(null, destination.getX(), destination.getY(), destination.getZ()) != destination.getY())
         {
@@ -90,7 +67,7 @@ public class PathJobMoveToLocation extends AbstractPathJob
     @Override
     protected double computeHeuristic(final int x, final int y, final int z)
     {
-        return BlockPosUtil.distManhattan(destination, x, y, z) * heuristicModifier;
+        return BlockPosUtil.distManhattan(destination, x, y, z);
     }
 
     /**
@@ -171,5 +148,32 @@ public class PathJobMoveToLocation extends AbstractPathJob
         }
 
         return true;
+    }
+
+    @Override
+    public String toString()
+    {
+        return super.toString() + " destination:" + destination;
+    }
+
+    @Override
+    public BlockPos getDestination()
+    {
+        return destination;
+    }
+
+    /**
+     * Helper to compare if the given move to location job matches the input parameters
+     *
+     * @return true if the given job is the same
+     */
+    public static boolean isJobFor(final AbstractPathJob job, final BlockPos desiredPosition)
+    {
+        if (job instanceof PathJobMoveToLocation pathJob)
+        {
+            return pathJob.getDestination().equals(desiredPosition);
+        }
+
+        return false;
     }
 }

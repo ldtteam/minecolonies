@@ -51,7 +51,7 @@ public class MNode implements Comparable<MNode>
     /**
      * Checks if the node has been closed already.
      */
-    private boolean visited = false;
+    private int visitedCount = 0;
 
     /**
      * Checks if the node is on a ladder.
@@ -190,7 +190,17 @@ public class MNode implements Comparable<MNode>
      */
     public boolean isVisited()
     {
-        return visited;
+        return visitedCount != 0;
+    }
+
+    /**
+     * Get the visited count
+     *
+     * @return
+     */
+    public int getVisitedCount()
+    {
+        return visitedCount;
     }
 
     /**
@@ -216,9 +226,9 @@ public class MNode implements Comparable<MNode>
     /**
      * Sets the node as closed.
      */
-    public void setVisited()
+    public void increaseVisited()
     {
-        visited = true;
+        visitedCount++;
     }
 
     /**
@@ -387,5 +397,11 @@ public class MNode implements Comparable<MNode>
         return ((x & 0xFFF) << SHIFT_X_BY)
                  | ((y & 0xFF) << SHIFT_Y_BY)
                  | (z & 0xFFF);
+    }
+
+    @Override
+    public String toString()
+    {
+        return "Node: [" + x + "," + y + "," + z + "] visited:" + visitedCount + " cost:" + cost + " heuristic:" + heuristic;
     }
 }

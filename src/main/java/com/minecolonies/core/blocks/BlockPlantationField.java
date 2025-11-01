@@ -5,11 +5,12 @@ import com.minecolonies.api.blocks.AbstractBlockMinecoloniesHorizontal;
 import com.minecolonies.api.blocks.interfaces.IBuildingBrowsableBlock;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
-import com.minecolonies.api.colony.fields.registry.FieldRegistries;
+import com.minecolonies.api.colony.buildingextensions.registry.BuildingExtensionRegistries.BuildingExtensionEntry;
 import com.minecolonies.api.entity.ai.workers.util.IBuilderUndestroyable;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.client.gui.WindowPlantationField;
-import com.minecolonies.core.colony.fields.PlantationField;
+import com.minecolonies.core.colony.buildingextensions.PlantationField;
 import com.minecolonies.core.tileentities.TileEntityPlantationField;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -183,17 +184,32 @@ public class BlockPlantationField extends AbstractBlockMinecoloniesHorizontal<Bl
             final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld(worldIn, pos);
             if (colony != null)
             {
-                for (FieldRegistries.FieldEntry plantationFieldType : tileEntityPlantationField.getPlantationFieldTypes())
+                for (BuildingExtensionEntry plantationFieldType : tileEntityPlantationField.getPlantationFieldTypes())
                 {
                     final PlantationField plantationField = PlantationField.create(plantationFieldType, pos);
 
                     final List<BlockPos> workingPositions = tileEntityPlantationField.getWorkingPositions(plantationField.getModule().getWorkTag());
+                    if (workingPositions.isEmpty())
+                    {
+                        Log.getLogger()
+                            .warn("Plantation field blueprint at path {} does not have ANY tagged working positions for the tag '{}', please report this to devs!",
+                                tileEntityPlantationField.getBlueprintPath(),
+                                plantationField.getModule().getWorkTag());
+                    }
+
                     final List<BlockPos> validPositions = plantationField.getModule().getValidWorkingPositions(worldIn, workingPositions);
                     if (!validPositions.isEmpty())
                     {
                         plantationField.setWorkingPositions(validPositions);
-                        colony.getBuildingManager().addField(plantationField);
+                        colony.getBuildingManager().addBuildingExtension(plantationField);
                         colony.getBuildingManager().addLeisureSite(pos);
+                    }
+                    else
+                    {
+                        Log.getLogger()
+                            .warn("Plantation field blueprint at path {} does not have ANY VALID tagged working positions for the tag '{}', please report this to devs!",
+                                tileEntityPlantationField.getBlueprintPath(),
+                                plantationField.getModule().getWorkTag());
                     }
                 }
             }
@@ -229,9 +245,9 @@ public class BlockPlantationField extends AbstractBlockMinecoloniesHorizontal<Bl
                 final BlockEntity blockEntity = worldIn.getBlockEntity(pos);
                 if (blockEntity instanceof TileEntityPlantationField plantationField)
                 {
-                    for (FieldRegistries.FieldEntry plantationFieldType : plantationField.getPlantationFieldTypes())
+                    for (BuildingExtensionEntry plantationFieldType : plantationField.getPlantationFieldTypes())
                     {
-                        colony.getBuildingManager().removeField(field -> field.getFieldType().equals(plantationFieldType) && field.getPosition().equals(pos));
+                        colony.getBuildingManager().removeBuildingExtension(field -> field.getBuildingExtensionType().equals(plantationFieldType) && field.getPosition().equals(pos));
                         colony.getBuildingManager().removeLeisureSite(pos);
                     }
                 }

@@ -3,23 +3,27 @@ package com.minecolonies.core.entity.ai.workers.service;
 import com.minecolonies.api.advancements.AdvancementTriggers;
 import com.minecolonies.api.colony.GraveData;
 import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.entity.ai.JobStatus;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
-import com.minecolonies.core.tileentities.TileEntityGrave;
+import com.minecolonies.api.equipment.ModEquipmentTypes;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.MessageUtils;
+import com.minecolonies.api.util.StatsUtil;
 import com.minecolonies.api.util.Tuple;
-import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.core.Network;
 import com.minecolonies.core.colony.buildings.modules.GraveyardManagementModule;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingGraveyard;
 import com.minecolonies.core.colony.jobs.JobUndertaker;
 import com.minecolonies.core.entity.ai.workers.AbstractEntityAIInteract;
+import com.minecolonies.core.entity.pathfinding.navigation.EntityNavigationUtils;
 import com.minecolonies.core.network.messages.client.VanillaParticleMessage;
+import com.minecolonies.core.tileentities.TileEntityGrave;
 import com.minecolonies.core.util.AdvancementUtils;
+import com.minecolonies.core.util.citizenutils.CitizenItemUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
@@ -38,11 +42,12 @@ import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*
 import static com.minecolonies.api.research.util.ResearchConstants.*;
 import static com.minecolonies.api.util.constant.CitizenConstants.FACING_DELTA_YAW;
 import static com.minecolonies.api.util.constant.Constants.DEFAULT_SPEED;
-import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
+import static com.minecolonies.api.util.constant.EquipmentLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
+import static com.minecolonies.api.util.constant.StatisticsConstants.CITIZENS_RESURRECTED;
+import static com.minecolonies.api.util.constant.StatisticsConstants.GRAVES_DUG;
 import static com.minecolonies.api.util.constant.TranslationConstants.MESSAGE_INFO_CITIZEN_UNDERTAKER_GRAVEYARD_NO_SPACE;
 import static com.minecolonies.api.util.constant.TranslationConstants.MESSAGE_INFO_CITIZEN_UNDERTAKER_RESURRECTED_SUCCESS;
 import static com.minecolonies.api.util.constant.UndertakerConstants.*;
-
 /**
  * Undertaker AI class.
  */
@@ -109,12 +114,11 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
     private IAIState startWorking()
     {
         worker.getCitizenData().setVisibleStatus(VisibleCitizenStatus.WORKING);
-        worker.getCitizenData().setIdleAtJob(false);
 
         @Nullable final BlockPos currentGrave = building.getGraveToWorkOn();
         if (currentGrave != null)
         {
-            if (walkToBuilding())
+            if (!walkToBuilding())
             {
                 return getState();
             }
@@ -122,11 +126,12 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
             final BlockEntity entity = world.getBlockEntity(currentGrave);
             if (entity instanceof TileEntityGrave)
             {
+                worker.getCitizenData().setJobStatus(JobStatus.WORKING);
                 return EMPTY_GRAVE;
             }
             building.ClearCurrentGrave();
         }
-
+        worker.getCitizenData().setJobStatus(JobStatus.IDLE);
         return WANDER;
     }
 
@@ -142,7 +147,7 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
         {
             if (building.isInBuilding(worker.blockPosition()))
             {
-                worker.getNavigation().moveToRandomPos(10, DEFAULT_SPEED, building.getCorners());
+                EntityNavigationUtils.walkToRandomPosWithin(worker, 10, DEFAULT_SPEED, building.getCorners());
             }
             else
             {
@@ -163,19 +168,19 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
     {
         @Nullable final BuildingGraveyard buildingGraveyard = building;
 
-        if (buildingGraveyard == null || checkForToolOrWeapon(ToolType.SHOVEL) || buildingGraveyard.getGraveToWorkOn() == null)
+        if (buildingGraveyard == null || checkForToolOrWeapon(ModEquipmentTypes.shovel.get()) || buildingGraveyard.getGraveToWorkOn() == null)
         {
             return IDLE;
         }
 
         worker.getCitizenData().setVisibleStatus(EMPTYING_ICON);
-        worker.setSprinting(worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(UNDERTAKER_RUN) > 0);
+        worker.setSprinting(worker.getCitizenColonyHandler().getColonyOrRegister().getResearchManager().getResearchEffects().getEffectStrength(UNDERTAKER_RUN) > 0);
         unequip();
 
         @Nullable final BlockPos gravePos = buildingGraveyard.getGraveToWorkOn();
 
         // Still moving to the block
-        if (walkToBlock(gravePos, 3))
+        if (walkWithProxy(gravePos, 3))
         {
             return getState();
         }
@@ -220,13 +225,13 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
     {
         @Nullable final BuildingGraveyard buildingGraveyard = building;
 
-        if (checkForToolOrWeapon(ToolType.SHOVEL) || buildingGraveyard.getGraveToWorkOn() == null)
+        if (checkForToolOrWeapon(ModEquipmentTypes.shovel.get()) || buildingGraveyard.getGraveToWorkOn() == null)
         {
             return IDLE;
         }
 
         worker.getCitizenData().setVisibleStatus(DIGGING_ICON);
-        worker.setSprinting(worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(UNDERTAKER_RUN) > 0);
+        worker.setSprinting(worker.getCitizenColonyHandler().getColonyOrRegister().getResearchManager().getResearchEffects().getEffectStrength(UNDERTAKER_RUN) > 0);
 
         @Nullable final BlockPos gravePos = buildingGraveyard.getGraveToWorkOn();
 
@@ -236,7 +241,7 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
         }
 
         // Still moving to the block
-        if (walkToBlock(gravePos, 3))
+        if (walkWithProxy(gravePos, 3))
         {
             return getState();
         }
@@ -254,6 +259,8 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
 
             worker.decreaseSaturationForAction();
             worker.getCitizenData().getCitizenSkillHandler().addXpToSkill(getModuleForJob().getPrimarySkill(), XP_PER_DIG, worker.getCitizenData());
+            StatsUtil.trackStat(building, GRAVES_DUG, 1);
+            building.getColony().getStatisticsManager().increment(GRAVES_DUG, worker.getCitizenColonyHandler().getColonyOrRegister().getDay());
             return BURY_CITIZEN;
         }
 
@@ -269,7 +276,7 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
      */
     private boolean digIfAble(final BlockPos position, final BlockEntity entity)
     {
-        if (!checkForToolOrWeapon(ToolType.SHOVEL))
+        if (!checkForToolOrWeapon(ModEquipmentTypes.shovel.get()))
         {
             equipShovel();
             final GraveData graveData = (GraveData) ((TileEntityGrave) entity).getGraveData();
@@ -294,7 +301,7 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
     {
         @Nullable final BuildingGraveyard buildingGraveyard = building;
 
-        if (checkForToolOrWeapon(ToolType.SHOVEL)
+        if (checkForToolOrWeapon(ModEquipmentTypes.shovel.get())
               || buildingGraveyard.getGraveToWorkOn() == null)
         {
             return IDLE;
@@ -310,7 +317,7 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
         }
 
         // Still moving to the block
-        if (walkToBlock(gravePos, 3))
+        if (walkWithProxy(gravePos, 3))
         {
             return getState();
         }
@@ -348,8 +355,10 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
                                                    .getCitizenManager()
                                                    .resurrectCivilianData(graveData.getCitizenDataNBT(), true, world, gravePos);
                 MessageUtils.format(MESSAGE_INFO_CITIZEN_UNDERTAKER_RESURRECTED_SUCCESS, citizenData.getName()).sendTo(buildingGraveyard.getColony()).forManagers();
-                worker.getCitizenColonyHandler().getColony().getCitizenManager().updateCitizenMourn(citizenData, false);
-                AdvancementUtils.TriggerAdvancementPlayersForColony(worker.getCitizenColonyHandler().getColony(),
+                StatsUtil.trackStat(building, CITIZENS_RESURRECTED, 1);
+                building.getColony().getStatisticsManager().increment(CITIZENS_RESURRECTED, worker.getCitizenColonyHandler().getColonyOrRegister().getDay());
+                worker.getCitizenColonyHandler().getColonyOrRegister().getCitizenManager().updateCitizenMourn(citizenData, false);
+                AdvancementUtils.TriggerAdvancementPlayersForColony(worker.getCitizenColonyHandler().getColonyOrRegister(),
                   playerMP -> AdvancementTriggers.CITIZEN_RESURRECT.trigger(playerMP));
                 buildingGraveyard.getFirstModuleOccurance(GraveyardManagementModule.class).setLastGraveData(null);
                 world.setBlockAndUpdate(gravePos, Blocks.AIR.defaultBlockState());
@@ -371,11 +380,11 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
         double totemChance = getTotemResurrectChance();
         double chance = buildingGraveyard.getBuildingLevel() * RESURRECT_BUILDING_LVL_WEIGHT +
                           worker.getCitizenData().getCitizenSkillHandler().getLevel(Skill.Mana) * RESURRECT_WORKER_MANA_LVL_WEIGHT +
-                          worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(RESURRECT_CHANCE) +
+                          worker.getCitizenColonyHandler().getColonyOrRegister().getResearchManager().getResearchEffects().getEffectStrength(RESURRECT_CHANCE) +
                           totemChance;
 
         final double cap =
-          MAX_RESURRECTION_CHANCE + worker.getCitizenColonyHandler().getColony().getBuildingManager().getMysticalSiteMaxBuildingLevel() * MAX_RESURRECTION_CHANCE_MYSTICAL_LVL_BONUS
+          MAX_RESURRECTION_CHANCE + worker.getCitizenColonyHandler().getColonyOrRegister().getBuildingManager().getMysticalSiteMaxBuildingLevel() * MAX_RESURRECTION_CHANCE_MYSTICAL_LVL_BONUS
             + totemChance;
         if (chance > cap)
         {
@@ -391,13 +400,13 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
      */
     private double getTotemResurrectChance()
     {
-        if (worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(USE_TOTEM) > 0)
+        if (worker.getCitizenColonyHandler().getColonyOrRegister().getResearchManager().getResearchEffects().getEffectStrength(USE_TOTEM) > 0)
         {
             final int totems = InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), Items.TOTEM_OF_UNDYING);
 
             if (totems > 0)
             {
-                AdvancementUtils.TriggerAdvancementPlayersForColony(worker.getCitizenColonyHandler().getColony(), AdvancementTriggers.UNDERTAKER_TOTEM::trigger);
+                AdvancementUtils.TriggerAdvancementPlayersForColony(worker.getCitizenColonyHandler().getColonyOrRegister(), AdvancementTriggers.UNDERTAKER_TOTEM::trigger);
             }
 
             if (totems == 1)
@@ -424,7 +433,7 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
         @Nullable final BuildingGraveyard buildingGraveyard = building;
         final GraveyardManagementModule module = buildingGraveyard.getFirstModuleOccurance(GraveyardManagementModule.class);
 
-        if (checkForToolOrWeapon(ToolType.SHOVEL) || module.getLastGraveData() == null)
+        if (checkForToolOrWeapon(ModEquipmentTypes.shovel.get()) || module.getLastGraveData() == null)
         {
             return IDLE;
         }
@@ -439,11 +448,11 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
         {
             // couldn't find a place to dig a grave
             MessageUtils.forCitizen(worker, Component.translatable(MESSAGE_INFO_CITIZEN_UNDERTAKER_GRAVEYARD_NO_SPACE, module.getLastGraveData().getCitizenName()))
-              .sendTo(worker.getCitizenColonyHandler().getColony().getMessagePlayerEntities());
+              .sendTo(worker.getCitizenColonyHandler().getColonyOrRegister().getMessagePlayerEntities());
             return IDLE;
         }
 
-        if (walkToBlock(burialPos.getA(), 4))
+        if (walkWithProxy(burialPos.getA(), 4))
         {
             return getState();
         }
@@ -451,7 +460,7 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
         if (effortCounter < EFFORT_BURY)
         {
             equipShovel();
-            worker.getCitizenItemHandler().hitBlockWithToolInHand(burialPos.getA(), false);
+            CitizenItemUtils.hitBlockWithToolInHand(worker, burialPos.getA(), false);
             effortCounter += getPrimarySkillLevel();
             return getState();
         }
@@ -460,7 +469,7 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
 
         module.buryCitizenHere(burialPos, worker);
         //Disabled until Mourning AI update: worker.getCitizenColonyHandler().getColony().setNeedToMourn(false, buildingGraveyard.getLastGraveData().getCitizenName());
-        AdvancementUtils.TriggerAdvancementPlayersForColony(worker.getCitizenColonyHandler().getColony(), playerMP -> AdvancementTriggers.CITIZEN_BURY.trigger(playerMP));
+        AdvancementUtils.TriggerAdvancementPlayersForColony(worker.getCitizenColonyHandler().getColonyOrRegister(), playerMP -> AdvancementTriggers.CITIZEN_BURY.trigger(playerMP));
 
         module.setLastGraveData(null);
         burialPos = null;
@@ -490,7 +499,7 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
      */
     private void equipShovel()
     {
-        worker.getCitizenItemHandler().setHeldItem(InteractionHand.MAIN_HAND, getShovelSlot());
+        CitizenItemUtils.setHeldItem(worker, InteractionHand.MAIN_HAND, getShovelSlot());
     }
 
     /**
@@ -498,7 +507,7 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
      */
     private void unequip()
     {
-        worker.getCitizenItemHandler().removeHeldItem();
+        CitizenItemUtils.removeHeldItem(worker);
     }
 
     /**
@@ -508,7 +517,7 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
      */
     private int getShovelSlot()
     {
-        return InventoryUtils.getFirstSlotOfItemHandlerContainingTool(getInventory(), ToolType.SHOVEL, TOOL_LEVEL_WOOD_OR_GOLD, building.getMaxToolLevel());
+        return InventoryUtils.getFirstSlotOfItemHandlerContainingEquipment(getInventory(), ModEquipmentTypes.shovel.get(), TOOL_LEVEL_WOOD_OR_GOLD, building.getMaxEquipmentLevel());
     }
 
     /**

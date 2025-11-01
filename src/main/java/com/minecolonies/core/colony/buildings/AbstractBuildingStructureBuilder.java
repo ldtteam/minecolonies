@@ -3,22 +3,25 @@ package com.minecolonies.core.colony.buildings;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
+import com.minecolonies.api.colony.workorders.IBuilderWorkOrder;
+import com.minecolonies.api.colony.workorders.IWorkOrder;
 import com.minecolonies.api.crafting.ItemStorage;
-import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.Tuple;
-import com.minecolonies.api.util.constant.ToolType;
+import com.minecolonies.api.equipment.ModEquipmentTypes;
+import com.minecolonies.api.equipment.registry.EquipmentTypeEntry;
+import com.minecolonies.api.util.*;
 import com.minecolonies.core.colony.buildings.modules.BuildingModules;
 import com.minecolonies.core.colony.buildings.modules.BuildingResourcesModule;
 import com.minecolonies.core.colony.buildings.modules.WorkerBuildingModule;
 import com.minecolonies.core.colony.buildings.utils.BuilderBucket;
 import com.minecolonies.core.colony.buildings.utils.BuildingBuilderResource;
-import com.minecolonies.core.entity.ai.workers.util.BuildingStructureHandler;
-import net.minecraft.world.item.ItemStack;
+import com.minecolonies.core.colony.jobs.AbstractJobStructure;
+import com.minecolonies.core.entity.ai.workers.AbstractEntityAIStructureWithWorkOrder;
+import com.minecolonies.core.entity.ai.workers.util.BuildingProgressStage;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.core.BlockPos;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -26,8 +29,9 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.function.Predicate;
 
+import static com.minecolonies.api.util.constant.EquipmentLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
-import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
+import static com.minecolonies.core.colony.jobs.AbstractJobStructure.TAG_WORK_ORDER;
 
 /**
  * The structureBuilder building.
@@ -52,7 +56,7 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuilding
     /**
      * Progress stage of the builder.
      */
-    private BuildingStructureHandler.Stage progressStage;
+    private BuildingProgressStage progressStage;
 
     /**
      * The progress counter of the builder.
@@ -63,6 +67,11 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuilding
      * all the fluids to be removed in fluids_remove.
      */
     private Map<Integer, List<BlockPos>> fluidsToRemove = new LinkedHashMap<>();
+
+    /**
+     * The id of the current workOrder.
+     */
+    private int workOrderId;
 
     /**
      * Public constructor of the building, creates an object of the building.
@@ -134,10 +143,10 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuilding
                     }
                 }
             }
-            if (checkIfShouldKeepTool(ToolType.PICKAXE, stack, localAlreadyKept)
-                  || checkIfShouldKeepTool(ToolType.SHOVEL, stack, localAlreadyKept)
-                  || checkIfShouldKeepTool(ToolType.AXE, stack, localAlreadyKept)
-                  || checkIfShouldKeepTool(ToolType.HOE, stack, localAlreadyKept))
+            if (checkIfShouldKeepEquipment(ModEquipmentTypes.pickaxe.get(), stack, localAlreadyKept)
+                  || checkIfShouldKeepEquipment(ModEquipmentTypes.shovel.get(), stack, localAlreadyKept)
+                  || checkIfShouldKeepEquipment(ModEquipmentTypes.axe.get(), stack, localAlreadyKept)
+                  || checkIfShouldKeepEquipment(ModEquipmentTypes.hoe.get(), stack, localAlreadyKept))
             {
                 localAlreadyKept.add(new ItemStorage(stack, 1, true));
                 return 0;
@@ -147,20 +156,20 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuilding
     }
 
     /**
-     * Check if a certain tool should be kept or dumped.
+     * Check if certain equipment should be kept or dumped.
      *
-     * @param type             the type of the tool.
+     * @param type             the type of the equipment.
      * @param stack            the stack to check.
      * @param localAlreadyKept the already kept stacks.
      * @return true if should keep.
      */
-    private boolean checkIfShouldKeepTool(final ToolType type, final ItemStack stack, final List<ItemStorage> localAlreadyKept)
+    private boolean checkIfShouldKeepEquipment(final EquipmentTypeEntry type, final ItemStack stack, final List<ItemStorage> localAlreadyKept)
     {
-        if (ItemStackUtils.hasToolLevel(stack, type, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel()))
+        if (ItemStackUtils.hasEquipmentLevel(stack, type, TOOL_LEVEL_WOOD_OR_GOLD, getMaxEquipmentLevel()))
         {
             for (final ItemStorage storage : localAlreadyKept)
             {
-                if (ItemStackUtils.getMiningLevel(stack, type) <= ItemStackUtils.getMiningLevel(storage.getItemStack(), type))
+                if (type.getMiningLevel(stack) <= type.getMiningLevel(storage.getItemStack()))
                 {
                     return false;
                 }
@@ -203,7 +212,7 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuilding
         if (compound.contains(TAG_PROGRESS_POS))
         {
             progressPos = BlockPosUtil.read(compound, TAG_PROGRESS_POS);
-            progressStage = BuildingStructureHandler.Stage.values()[compound.getInt(TAG_PROGRESS_STAGE)];
+            progressStage = BuildingProgressStage.values()[compound.getInt(TAG_PROGRESS_STAGE)];
         }
 
         if (compound.contains(TAG_FLUIDS_REMOVE))
@@ -220,6 +229,11 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuilding
                 }
                 this.fluidsToRemove.put(y, fluids);
             });
+        }
+
+        if (compound.contains(TAG_WORK_ORDER))
+        {
+            this.workOrderId = compound.getInt(TAG_WORK_ORDER);
         }
     }
 
@@ -243,6 +257,12 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuilding
             fluidsToRemove.add(fluidsRemove);
         });
         compound.put(TAG_FLUIDS_REMOVE, fluidsToRemove);
+
+        if (workOrderId != 0)
+        {
+            compound.putInt(TAG_WORK_ORDER, workOrderId);
+        }
+
         return compound;
     }
 
@@ -302,8 +322,13 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuilding
      */
     public void addNeededResource(@Nullable final ItemStack res, final int amount)
     {
-        getModule(BuildingModules.BUILDING_RESOURCES).addNeededResource(res, amount);
-        this.markDirty();
+        if (res != null)
+        {
+            final ItemStack copy = res.copy();
+            copy.setCount(1);
+            getModule(BuildingModules.BUILDING_RESOURCES).addNeededResource(copy, amount);
+            this.markDirty();
+        }
     }
 
     /**
@@ -339,17 +364,12 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuilding
     }
 
     /**
-     * Search a workOrder for the worker.
-     */
-    public abstract void searchWorkOrder();
-
-    /**
      * Set the progress position of the builder.
      *
      * @param blockPos the last blockPos.
      * @param stage    the stage to set.
      */
-    public void setProgressPos(final BlockPos blockPos, final BuildingStructureHandler.Stage stage)
+    public void setProgressPos(final BlockPos blockPos, final BuildingProgressStage stage)
     {
         this.progressPos = blockPos;
         if (this.progressCounter > COUNT_TO_STORE_POS || blockPos == null || stage != progressStage)
@@ -370,7 +390,7 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuilding
      * @return the current progress and stage.
      */
     @Nullable
-    public Tuple<BlockPos, BuildingStructureHandler.Stage> getProgress()
+    public Tuple<BlockPos, BuildingProgressStage> getProgress()
     {
         if (this.progressPos == null)
         {
@@ -403,11 +423,10 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuilding
      *
      * @param requiredResources the bucket to check and request.
      * @param worker            the worker.
-     * @param workerInv         if the worker inv should be checked too.
      */
-    public void checkOrRequestBucket(@Nullable final BuilderBucket requiredResources, final ICitizenData worker, final boolean workerInv)
+    public void checkOrRequestBucket(@Nullable final BuilderBucket requiredResources, final ICitizenData worker)
     {
-        getFirstModuleOccurance(BuildingResourcesModule.class).checkOrRequestBucket(requiredResources, worker, workerInv);
+        getFirstModuleOccurance(BuildingResourcesModule.class).checkOrRequestBucket(requiredResources, worker);
     }
 
     /**
@@ -436,5 +455,116 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuilding
     public BuilderBucket getNextBucket()
     {
         return getFirstModuleOccurance(BuildingResourcesModule.class).getNextBucket();
+    }
+
+    /**
+     * Handle workorder cancellation, reset requests and progress.
+     * @param workOrder the cancelled workorder.
+     */
+    public void onWorkOrderCancellation(final IWorkOrder workOrder)
+    {
+        if (workOrderId != workOrder.getID())
+        {
+            return;
+        }
+        for (final ICitizenData citizen : getAllAssignedCitizen())
+        {
+            if (citizen.getJob() instanceof AbstractJobStructure<?, ?> abstractJobStructure)
+            {
+                this.cancelAllRequestsOfCitizenOrBuilding(citizen);
+                if (abstractJobStructure.getWorkerAI() instanceof AbstractEntityAIStructureWithWorkOrder<?, ?> abstractEntityAIStructure)
+                {
+                    abstractEntityAIStructure.resetCurrentStructure();
+                }
+            }
+        }
+
+        setWorkOrder(null);
+        resetNeededResources();
+        this.setProgressPos(null, null);
+        this.cancelAllRequestsOfCitizenOrBuilding(null);
+    }
+
+    /**
+     * Get the Work Order ID for this Job.
+     *
+     * @return UUID of the Work Order claimed by this Job, or null
+     */
+    private int getWorkOrderId()
+    {
+        return workOrderId;
+    }
+
+    /**
+     * Does this job have a Work Order it has claimed?
+     *
+     * @return true if there is a Work Order claimed by this Job
+     */
+    public boolean hasWorkOrder()
+    {
+        if (workOrderId == 0 || getWorkOrder() == null)
+        {
+            workOrderId = 0;
+            return false;
+        }
+        return true;
+    }
+
+
+    /**
+     * Get the Work Order for the Job. Warning: WorkOrder is not cached
+     *
+     * @return WorkOrderBuildDecoration for the Build
+     */
+    public IBuilderWorkOrder getWorkOrder()
+    {
+        final @Nullable IBuilderWorkOrder workOrder = getColony().getWorkManager().getWorkOrder(workOrderId, IBuilderWorkOrder.class);
+        if (workOrder == null)
+        {
+            return null;
+        }
+        else if (!workOrder.getClaimedBy().equals(getID()))
+        {
+            workOrderId = 0;
+            return null;
+        }
+        return workOrder;
+    }
+
+    /**
+     * Set a Work Order for this Job.
+     *
+     * @param order Work Order to associate with this job, or null
+     */
+    public void setWorkOrder(@Nullable final IWorkOrder order)
+    {
+        if (order == null)
+        {
+            workOrderId = 0;
+            resetNeededResources();
+        }
+        else
+        {
+            workOrderId = order.getID();
+        }
+    }
+
+    /**
+     * Do final completion when the Job's current work is complete.
+     */
+    public void complete(ICitizenData citizen)
+    {
+        getWorkOrder().onCompleted(colony, citizen);
+        setWorkOrder(null);
+    }
+
+    /**
+     * @deprecated
+     * Set workorder ID. Only for backwards compatibility.
+     * @param id the work order id.
+     */
+    public void setWorkOrderId(final int id)
+    {
+        this.workOrderId = id;
     }
 }

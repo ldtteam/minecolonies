@@ -12,6 +12,7 @@ public class ClientConfiguration extends AbstractConfiguration
     public final ForgeConfigSpec.IntValue neighborbuildingrange;
     public final ForgeConfigSpec.IntValue buildgogglerange;
     public final ForgeConfigSpec.BooleanValue colonyteamborders;
+    public final ForgeConfigSpec.BooleanValue holidayFeatures;
 
     /**
      * Builds client configuration.
@@ -26,6 +27,7 @@ public class ClientConfiguration extends AbstractConfiguration
         neighborbuildingrange = defineInteger(builder, "neighborbuildingrange", 4, -2, 16);
         buildgogglerange = defineInteger(builder, "buildgogglerange", 50, 1, 250);
         colonyteamborders = defineBoolean(builder, "colonyteamborders", true);
+        holidayFeatures = defineBoolean(builder, "holidayfeatures", true);
 
         swapToCategory(builder, "pathfinding");
 

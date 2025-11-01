@@ -53,7 +53,7 @@ public class TileEntityColonyFlagRenderer implements BlockEntityRenderer<TileEnt
     @Override
     public void render(TileEntityColonyFlag flagIn, float partialTicks, PoseStack transform, MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn)
     {
-        List<Pair<Holder<BannerPattern>, DyeColor>> list = flagIn.getPatternList();
+        List<Pair<Holder<BannerPattern>, DyeColor>> list = flagIn.getPatterns();
 
         boolean noWorld = flagIn.getLevel() == null;
         transform.pushPose();

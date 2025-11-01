@@ -70,7 +70,7 @@ public interface IBuildingWorker extends IBuilding
      *
      * @return the integer.
      */
-    int getMaxToolLevel();
+    int getMaxEquipmentLevel();
 
     /**
      * Method which defines if a worker should be allowed to work during the rain.

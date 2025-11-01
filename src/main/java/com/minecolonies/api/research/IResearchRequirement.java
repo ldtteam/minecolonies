@@ -1,7 +1,6 @@
 package com.minecolonies.api.research;
 
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.research.registry.ResearchRequirementEntry;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.MutableComponent;
 
@@ -11,12 +10,11 @@ import net.minecraft.network.chat.MutableComponent;
 public interface IResearchRequirement
 {
     /**
-     * Check if this requirement is fulfilled for a certain colony.
+     * Get the {@link ModResearchRequirements.ResearchRequirementEntry} for this Research Requirement.
      *
-     * @param colony the colony to check.
-     * @return true if so.
+     * @return a registry entry.
      */
-    boolean isFulfilled(final IColony colony);
+    ModResearchRequirements.ResearchRequirementEntry getRegistryEntry();
 
     /**
      * Get a human-readable description of the requirement, or a translation key.
@@ -26,11 +24,12 @@ public interface IResearchRequirement
     MutableComponent getDesc();
 
     /**
-     * Get the {@link ResearchRequirementEntry} for this Research Requirement.
+     * Check if this requirement is fulfilled for a certain colony.
      *
-     * @return a registry entry.
+     * @param colony the colony to check.
+     * @return true if so.
      */
-    ResearchRequirementEntry getRegistryEntry();
+    boolean isFulfilled(final IColony colony);
 
     /**
      * Write the ResearchRequirement's traits to NBT, to simplify serialization for client-viewable data.

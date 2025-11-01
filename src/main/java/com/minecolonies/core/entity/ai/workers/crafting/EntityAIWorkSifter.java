@@ -9,23 +9,27 @@ import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.SoundUtils;
+import com.minecolonies.api.util.StatsUtil;
 import com.minecolonies.core.Network;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingSifter;
 import com.minecolonies.core.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.core.colony.jobs.JobSifter;
-import com.minecolonies.core.entity.ai.workers.crafting.AbstractEntityAICrafting;
 import com.minecolonies.core.network.messages.client.LocalizedParticleEffectMessage;
 import com.minecolonies.core.util.WorkerUtil;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.network.chat.Component;
-
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.constant.Constants.ONE_HUNDRED_PERCENT;
 import static com.minecolonies.api.util.constant.TranslationConstants.SIFTER_NO_MESH;
+
+import java.util.List;
+
+import static com.minecolonies.api.util.constant.StatisticsConstants.ITEM_USED;
+import static com.minecolonies.api.util.constant.StatisticsConstants.ITEM_OBTAINED;
 
 /**
  * Sifter AI class.
@@ -89,6 +93,12 @@ public class EntityAIWorkSifter extends AbstractEntityAICrafting<JobSifter, Buil
         return SIFT;
     }
 
+    @Override
+    public boolean hasWorkToDo()
+    {
+        return super.hasWorkToDo() || building.getCurrentDailyQuantity() < building.getMaxDailyQuantity();
+    }
+
     /**
      * The sifting process.
      *
@@ -96,20 +106,18 @@ public class EntityAIWorkSifter extends AbstractEntityAICrafting<JobSifter, Buil
      */
     protected IAIState sift()
     {
-        final BuildingSifter sifterBuilding = building;
-
         // Go idle if we can't do any more today
-        if (sifterBuilding.getCurrentDailyQuantity() >= sifterBuilding.getMaxDailyQuantity())
+        if (building.getCurrentDailyQuantity() >= building.getMaxDailyQuantity())
         {
             return IDLE;
         }
 
-        if (walkToBuilding())
+        if (!walkToBuilding())
         {
             return getState();
         }
 
-        if (InventoryUtils.isItemHandlerFull(worker.getInventoryCitizen()))
+        if (!worker.getInventoryCitizen().hasSpace())
         {
             return INVENTORY_FULL;
         }
@@ -122,7 +130,7 @@ public class EntityAIWorkSifter extends AbstractEntityAICrafting<JobSifter, Buil
 
         if (currentRecipeStorage == null)
         {
-            if (InventoryUtils.hasBuildingEnoughElseCount(sifterBuilding, i -> i.is(ModTags.meshes), 1) == 0)
+            if (InventoryUtils.hasBuildingEnoughElseCount(building, i -> i.is(ModTags.meshes), 1) == 0)
             {
                 if (InventoryUtils.getItemCountInProvider(worker, i -> i.is(ModTags.meshes)) > 0)
                 {
@@ -180,15 +188,23 @@ public class EntityAIWorkSifter extends AbstractEntityAICrafting<JobSifter, Buil
         if (progress > MAX_LEVEL - (getEffectiveSkillLevel(getSecondarySkillLevel()) / 2))
         {
             progress = 0;
-            sifterBuilding.setCurrentDailyQuantity(sifterBuilding.getCurrentDailyQuantity() + 1);
-            if (sifterBuilding.getCurrentDailyQuantity() >= sifterBuilding.getMaxDailyQuantity() || worker.getRandom().nextInt(ONE_HUNDRED_PERCENT) < CHANCE_TO_DUMP_INV)
+            building.setCurrentDailyQuantity(building.getCurrentDailyQuantity() + 1);
+            if (building.getCurrentDailyQuantity() >= building.getMaxDailyQuantity() || worker.getRandom().nextInt(ONE_HUNDRED_PERCENT) < CHANCE_TO_DUMP_INV)
             {
                 incrementActionsDoneAndDecSaturation();
             }
-            if (!currentRecipeStorage.fullfillRecipe(getLootContext(), sifterBuilding.getHandlers()))
+
+            StatsUtil.trackStatByName(building, ITEM_USED, inputItem.getHoverName(), inputItem.getCount()); 
+            List<ItemStack> outputs = currentRecipeStorage.fullfillRecipeAndCopy(getLootContext(), building.getHandlers(), true);
+            if (outputs == null)
             {
                 currentRecipeStorage = null;
                 return getState();
+            }    
+
+            for (ItemStack stackForStats : outputs)
+            {
+                StatsUtil.trackStatByName(building, ITEM_OBTAINED, stackForStats.getHoverName(), stackForStats.getCount());
             }
 
             worker.decreaseSaturationForContinuousAction();
@@ -196,9 +212,9 @@ public class EntityAIWorkSifter extends AbstractEntityAICrafting<JobSifter, Buil
         }
 
         Network.getNetwork()
-          .sendToTrackingEntity(new LocalizedParticleEffectMessage(meshItem, sifterBuilding.getID()), worker);
+          .sendToTrackingEntity(new LocalizedParticleEffectMessage(meshItem, building.getID()), worker);
         Network.getNetwork()
-          .sendToTrackingEntity(new LocalizedParticleEffectMessage(inputItem, sifterBuilding.getID().below()), worker);
+          .sendToTrackingEntity(new LocalizedParticleEffectMessage(inputItem, building.getID().below()), worker);
 
         worker.swing(InteractionHand.MAIN_HAND);
         SoundUtils.playSoundAtCitizen(world, building.getID(), SoundEvents.LEASH_KNOT_BREAK);

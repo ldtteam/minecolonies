@@ -1,34 +1,30 @@
 {
   "branch": "minecolonies:technology",
+  "costs": [
+    {
+      "type": "minecolonies:item_simple",
+      "item": "minecraft:leather",
+      "quantity": 32
+    },
+    {
+      "type": "minecolonies:item_simple",
+      "item": "minecraft:iron_ingot",
+      "quantity": 16
+    }
+  ],
   "effects": [
     {
-      "minecolonies:effects/minerfireresunlock": 1
+      "id": "minecolonies:effects/minerfireresunlock",
+      "level": 1
     }
   ],
   "icon": "minecraft:campfire",
   "parentResearch": "minecolonies:technology/stringwork",
   "requirements": [
     {
-      "building": "fletcher",
+      "type": "minecolonies:building",
+      "building": "minecolonies:fletcher",
       "level": 1
-    },
-    {
-      "type": "minecolonies:item_list",
-      "item": {
-        "items": [
-          "minecraft:leather"
-        ]
-      },
-      "quantity": 32
-    },
-    {
-      "type": "minecolonies:item_list",
-      "item": {
-        "items": [
-          "minecraft:iron_ingot"
-        ]
-      },
-      "quantity": 16
     }
   ],
   "researchLevel": 3,

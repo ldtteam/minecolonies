@@ -44,7 +44,7 @@ public interface ICitizenColonyHandler
      * @return the colony of the citizen or null.
      */
     @Nullable
-    IColony getColony();
+    IColony getColonyOrRegister();
 
     /**
      * Getter for the colony id.
@@ -71,4 +71,12 @@ public interface ICitizenColonyHandler
      * @param dataAccessor
      */
     void onSyncDataUpdate(EntityDataAccessor<?> dataAccessor);
+
+    boolean registered();
+
+    /**
+     * Unsafe colony getter, doesn't run registration.
+     * @return the colony.
+     */
+    IColony getColony();
 }

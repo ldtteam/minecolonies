@@ -1,0 +1,12 @@
+{
+  "texture": "fab41220-f8a0-456c-99a2-9fa73520e46e",
+  "citizensuffix": "_w",
+  "name": "Drace Karaki",
+  "chance": 0.001,
+  "storylangkey": "com.minecolonies.coremod.gui.chat.sparky",
+  "recruitcost": "minecraft:snowball",
+  "recruitcostcount": 32,
+  "gender": "male",
+  "primaryskill": "Knowledge",
+  "secondaryskill": "Intelligence"
+}

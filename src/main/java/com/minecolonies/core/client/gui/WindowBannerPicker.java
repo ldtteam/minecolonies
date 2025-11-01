@@ -8,6 +8,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.model.geom.ModelLayers;
@@ -108,6 +109,11 @@ public class WindowBannerPicker extends Screen
     /** The assigned renderer for the banner models */
     private final ModelPart modelRender;
 
+    /**
+     * Local reference of feature unlocked flag.
+     */
+    private final AtomicBoolean isFeatureUnlocked;
+
     /** The currently selected palette color. */
     private ColorPalette colors;
 
@@ -145,10 +151,7 @@ public class WindowBannerPicker extends Screen
 
         this.patterns = BuiltInRegistries.BANNER_PATTERN.holders().collect(Collectors.toCollection(LinkedList::new));
         this.patterns.removeAll(exclusion);
-        if (!isFeatureUnlocked.get())
-        {
-            this.patterns.removeIf(key -> key.unwrapKey().get().location().getNamespace().equals(Constants.MOD_ID));
-        }
+        this.isFeatureUnlocked = isFeatureUnlocked;
 
         // Fetch the patterns as a List and not ListNBT
         this.layers = BannerBlockEntity.createPatterns(DyeColor.WHITE, colony.getColonyFlag());
@@ -207,7 +210,14 @@ public class WindowBannerPicker extends Screen
             int posX = center(this.width, PATTERN_COLUMNS, PATTERN_WIDTH, i % PATTERN_COLUMNS, PATTERN_MARGIN);
             int posY = center(this.height+30, PATTERN_ROWS, PATTERN_HEIGHT, Math.floorDiv(i, PATTERN_COLUMNS), PATTERN_MARGIN);
 
-            this.addRenderableWidget(new PatternButton(posX, posY, PATTERN_HEIGHT, patterns.get(i)));
+            final PatternButton button = new PatternButton(posX, posY, PATTERN_HEIGHT, patterns.get(i));
+            this.addRenderableWidget(button);
+
+            if (!isFeatureUnlocked.get() && patterns.get(i).unwrapKey().get().location().getNamespace().equals(Constants.MOD_ID))
+            {
+                button.setTooltip(Tooltip.create(Component.translatable("com.minecolonies.core.gui.banner.patreon")));
+                button.blocked = true;
+            }
         }
     }
 
@@ -335,7 +345,15 @@ public class WindowBannerPicker extends Screen
 
         List<Pair<Holder<BannerPattern>, DyeColor>> list = new ArrayList<>();
         list.add(new Pair<>(BuiltInRegistries.BANNER_PATTERN.getHolder(BannerPatterns.BASE).get(), DyeColor.GRAY));
-        list.add(new Pair<>(pattern, DyeColor.WHITE));
+        if (!isFeatureUnlocked.get() && pattern.unwrapKey().get().location().getNamespace().equals(Constants.MOD_ID))
+        {
+            list.add(new Pair<>(pattern, DyeColor.BLACK));
+        }
+        else
+        {
+            list.add(new Pair<>(pattern, DyeColor.WHITE));
+        }
+
 
         PoseStack transform = new PoseStack();
         transform.pushPose();
@@ -343,7 +361,6 @@ public class WindowBannerPicker extends Screen
         transform.scale(10.0F, -11.0F, 1.0F);
         transform.translate(0.5D, 0.5D, 0.5D);
         transform.scale(1F, -1F, -1F);
-
         renderBanner(transform, list);
     }
 
@@ -476,6 +493,7 @@ public class WindowBannerPicker extends Screen
     {
         private final Holder<BannerPattern> pattern;
         private int index = -1;
+        private boolean blocked = false;
 
         /**
          * @param x the left x position of the button
@@ -500,7 +518,13 @@ public class WindowBannerPicker extends Screen
         }
 
         @Override
-        public void onPress() { setLayer(this.pattern, colors.getSelected()); }
+        public void onPress()
+        {
+            if (!this.blocked)
+            {
+                setLayer(this.pattern, colors.getSelected());
+            }
+        }
 
         @Override
         public void render(final GuiGraphics stack, int p_render_1_, int p_render_2_, float p_render_3_)
@@ -529,7 +553,11 @@ public class WindowBannerPicker extends Screen
         @Override
         public void renderWidget(final GuiGraphics stack, int p_renderButton_1_, int p_renderButton_2_, float p_renderButton_3_)
         {
-            if (this.visible)
+            if (this.blocked)
+            {
+                stack.fill(this.getX(), this.getY(), this.getX()+this.width, this.getY()+this.height, 0xFF000000);
+            }
+            else if (this.visible)
             {
                 if (this.isHovered && this.active)
                     stack.fill(this.getX(), this.getY(), this.getX()+this.width, this.getY()+this.height, 0xDDFFFFFF);

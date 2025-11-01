@@ -1,23 +1,20 @@
 {
   "branch": "minecolonies:technology",
+  "costs": [
+    {
+      "type": "minecolonies:item_simple",
+      "item": "minecraft:redstone",
+      "quantity": 2048
+    }
+  ],
   "effects": [
     {
-      "minecolonies:effects/blockbreakspeedmultiplier": 5
+      "id": "minecolonies:effects/blockbreakspeedmultiplier",
+      "level": 5
     }
   ],
   "icon": "minecraft:repeater",
   "parentResearch": "minecolonies:technology/whatisthisspeed",
-  "requirements": [
-    {
-      "type": "minecolonies:item_list",
-      "item": {
-        "items": [
-          "minecraft:redstone"
-        ]
-      },
-      "quantity": 2048
-    }
-  ],
   "researchLevel": 6,
   "subtitle": "com.minecolonies.research.technology.lightning.subtitle"
 }

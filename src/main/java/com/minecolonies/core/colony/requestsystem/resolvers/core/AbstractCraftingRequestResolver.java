@@ -16,14 +16,13 @@ import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.crafting.ItemStorage;
-import com.minecolonies.api.research.effects.AbstractResearchEffect;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
 import com.minecolonies.core.colony.buildings.modules.WorkerBuildingModule;
 import com.minecolonies.core.colony.requestsystem.requesters.IBuildingBasedRequester;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Blocks;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -134,7 +133,7 @@ public abstract class AbstractCraftingRequestResolver extends AbstractRequestRes
     {
         if (building.getBuildingLevel() <= 0
               || !building.hasModule(WorkerBuildingModule.class)
-              || building.getModuleMatching(WorkerBuildingModule.class, m -> m.getJobEntry() == jobEntry).getAssignedCitizen().isEmpty())
+            || !hasModuleForJob(building, jobEntry))
         {
             return false;
         }
@@ -166,6 +165,26 @@ public abstract class AbstractCraftingRequestResolver extends AbstractRequestRes
                 {
                     return true;
                 }
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Checks whether a fitting module for the job exists
+     *
+     * @param building
+     * @param jobEntry
+     * @return
+     */
+    private boolean hasModuleForJob(final AbstractBuilding building, final JobEntry jobEntry)
+    {
+        for (final var module : building.getModulesByType(WorkerBuildingModule.class))
+        {
+            if (module.getJobEntry() == jobEntry && module.hasAssignedCitizen())
+            {
+                return true;
             }
         }
 
@@ -296,8 +315,7 @@ public abstract class AbstractCraftingRequestResolver extends AbstractRequestRes
         final List<ItemStorage> inputs = recipeRequest.getCleanedInput();
         final ItemStack requestStack = recipeRequest.getPrimaryOutput();
         final List<ItemStack> secondaryStacks = recipeRequest.getCraftingToolsAndSecondaryOutputs();
-        final AbstractResearchEffect<Double> researchEffect =  manager.getColony().getResearchManager().getResearchEffects().getEffect(CITIZEN_INV_SLOTS, AbstractResearchEffect.class);
-        final int extraSlots = researchEffect != null ? researchEffect.getEffect().intValue() : 0;         
+        final int extraSlots = (int) manager.getColony().getResearchManager().getResearchEffects().getEffectStrength(CITIZEN_INV_SLOTS);
         final int maxSlots = (27 + extraSlots) - (27 + extraSlots) % 8;  // retaining 1 slot per row for 'overhead'
 
         int recipeExecutionsCount = (int) Math.ceil((double) count / requestStack.getCount());

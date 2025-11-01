@@ -1,16 +1,26 @@
 package com.minecolonies.core.entity.mobs.aitasks;
 
 import com.minecolonies.api.blocks.decorative.AbstractBlockGate;
+import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.entity.mobs.AbstractEntityRaiderMob;
+import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesRaider;
+import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.core.MineColonies;
+import com.minecolonies.core.colony.buildings.AbstractBuildingGuards;
+import com.minecolonies.core.colony.jobs.AbstractJobGuard;
+import com.minecolonies.core.entity.ai.workers.guard.AbstractEntityAIGuard;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.goal.BreakDoorGoal;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.phys.Vec3;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.EnumSet;
+import java.util.List;
 
 import static com.minecolonies.api.research.util.ResearchConstants.MECHANIC_ENHANCED_GATES;
 
@@ -58,9 +68,9 @@ public class EntityAIBreakDoor extends BreakDoorGoal
         hardness = (int) (1 + mob.level.getBlockState(doorPos).getDestroySpeed(mob.level, doorPos));
 
         // No stuck during door break
-        if (mob instanceof AbstractEntityRaiderMob)
+        if (mob instanceof AbstractEntityMinecoloniesRaider)
         {
-            ((AbstractEntityRaiderMob) mob).setCanBeStuck(false);
+            ((AbstractEntityMinecoloniesRaider) mob).setCanBeStuck(false);
         }
     }
 
@@ -68,9 +78,9 @@ public class EntityAIBreakDoor extends BreakDoorGoal
     {
         super.stop();
         this.mob.level.destroyBlockProgress(this.mob.getId(), this.doorPos, -1);
-        if (mob instanceof AbstractEntityRaiderMob)
+        if (mob instanceof AbstractEntityMinecoloniesRaider)
         {
-            ((AbstractEntityRaiderMob) mob).setCanBeStuck(true);
+            ((AbstractEntityMinecoloniesRaider) mob).setCanBeStuck(true);
         }
     }
 
@@ -90,16 +100,49 @@ public class EntityAIBreakDoor extends BreakDoorGoal
         }
         else
         {
-            int fasterBreakPerXNearby = 5;
+            double fasterBreakPerXNearby = 5;
 
-            if (mob instanceof AbstractEntityRaiderMob && !mob.level.isClientSide())
+            if (mob instanceof AbstractEntityMinecoloniesRaider && !mob.level.isClientSide() && mob.level.getBlockState(doorPos).getBlock() instanceof AbstractBlockGate)
             {
-                final IColony colony = ((AbstractEntityRaiderMob) mob).getColony();
+                final IColony colony = ((AbstractEntityMinecoloniesRaider) mob).getColony();
 
                 fasterBreakPerXNearby += colony.getResearchManager().getResearchEffects().getEffectStrength(MECHANIC_ENHANCED_GATES);
             }
-            breakChance = Math.max(1,
-              hardness / (1 + (mob.level.getEntitiesOfClass(AbstractEntityRaiderMob.class, mob.getBoundingBox().inflate(5)).size() / fasterBreakPerXNearby)));
+
+            fasterBreakPerXNearby /= 2;
+            breakChance = (int) Math.max(1,
+              hardness / (1 + (mob.level.getEntitiesOfClass(AbstractEntityMinecoloniesRaider.class, mob.getBoundingBox().inflate(5)).size() / fasterBreakPerXNearby)));
+
+            // Alert nearby guards
+            if (this.mob.getRandom().nextInt(breakChance) == 0 && mob instanceof AbstractEntityMinecoloniesRaider raider && mob.level.getBlockState(doorPos)
+                .getBlock() instanceof AbstractBlockGate)
+            {
+                // Alerts guards of raiders reaching a building
+                final List<AbstractEntityCitizen> possibleGuards = new ArrayList<>();
+
+                for (final ICitizenData entry : raider.getColony().getCitizenManager().getCitizens())
+                {
+                    if (entry.getEntity().isPresent()
+                        && entry.getJob() instanceof AbstractJobGuard
+                        && BlockPosUtil.getDistanceSquared(entry.getEntity().get().blockPosition(), doorPos) < 100 * 100 && entry.getJob().getWorkerAI() != null)
+                    {
+                        if (((AbstractEntityAIGuard<?, ?>) entry.getJob().getWorkerAI()).canHelp(doorPos) && !doorPos.equals(((AbstractEntityAIGuard<?, ?>) entry.getJob()
+                            .getWorkerAI()).getCurrentPatrolPoint()))
+                        {
+                            possibleGuards.add(entry.getEntity().get());
+                        }
+                    }
+                }
+
+                possibleGuards.sort(Comparator.comparingInt(guard -> (int) doorPos.distSqr(guard.blockPosition())));
+                BlockPos gotoPos = BlockPos.containing(Vec3.atCenterOf(doorPos)
+                    .add(Vec3.atCenterOf(raider.getColony().getCenter()).subtract(Vec3.atCenterOf(doorPos)).normalize().multiply(3, 0, 3)));
+
+                for (int i = 0; i < possibleGuards.size() && i <= 3; i++)
+                {
+                    ((AbstractBuildingGuards) possibleGuards.get(i).getCitizenData().getWorkBuilding()).setTempNextPatrolPoint(gotoPos);
+                }
+            }
         }
 
         if (this.breakTime == this.getDoorBreakTime() - 1)

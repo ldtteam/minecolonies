@@ -197,6 +197,12 @@ public class BlockMinecoloniesGrave extends AbstractBlockMinecoloniesGrave<Block
     }
 
     @Override
+    public VoxelShape getCollisionShape(final BlockState p_60572_, final BlockGetter p_60573_, final BlockPos p_60574_, final CollisionContext p_60575_)
+    {
+        return Shapes.empty();
+    }
+
+    @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder)
     {
         builder.add(FACING, VARIANT);

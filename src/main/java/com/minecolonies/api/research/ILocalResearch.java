@@ -1,6 +1,5 @@
 package com.minecolonies.api.research;
 
-import com.minecolonies.api.research.effects.IResearchEffectManager;
 import com.minecolonies.api.research.util.ResearchState;
 import net.minecraft.resources.ResourceLocation;
 

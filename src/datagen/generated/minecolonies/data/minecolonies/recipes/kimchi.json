@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "minecolonies:cabbage"
+    },
+    {
+      "item": "minecolonies:cabbage"
+    },
+    {
+      "item": "minecolonies:nether_pepper"
+    },
+    {
+      "item": "minecolonies:onion"
+    },
+    {
+      "item": "minecraft:carrot"
+    }
+  ],
+  "result": {
+    "item": "minecolonies:kimchi"
+  }
+}

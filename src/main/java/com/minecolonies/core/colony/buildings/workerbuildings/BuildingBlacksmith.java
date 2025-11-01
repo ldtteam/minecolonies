@@ -4,10 +4,9 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.compatibility.Compatibility;
 import com.minecolonies.api.crafting.IGenericRecipe;
+import com.minecolonies.api.equipment.ModEquipmentTypes;
 import com.minecolonies.api.util.CraftingUtils;
-import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.OptionalPredicate;
-import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
 import com.minecolonies.core.colony.buildings.modules.AbstractCraftingBuildingModule;
 import net.minecraft.core.BlockPos;
@@ -85,17 +84,17 @@ public class BuildingBlacksmith extends AbstractBuilding
                 return false;
             }
             if (recipe.matchesOutput(OptionalPredicate.passIf(output ->
-                                    ItemStackUtils.isTool(output, ToolType.AXE) ||
-                                    ItemStackUtils.isTool(output, ToolType.PICKAXE) ||
-                                    ItemStackUtils.isTool(output, ToolType.SHOVEL) ||
-                                    ItemStackUtils.isTool(output, ToolType.HOE) ||
-                                    ItemStackUtils.isTool(output, ToolType.SHEARS) ||
-                                    ItemStackUtils.isTool(output, ToolType.SWORD) ||
-                                    ItemStackUtils.isTool(output, ToolType.SHIELD) ||
-                                    ItemStackUtils.isTool(output, ToolType.HELMET) ||
-                                    ItemStackUtils.isTool(output, ToolType.CHESTPLATE) ||
-                                    ItemStackUtils.isTool(output, ToolType.LEGGINGS) ||
-                                    ItemStackUtils.isTool(output, ToolType.BOOTS) ||
+                                    ModEquipmentTypes.axe.get().checkIsEquipment(output) ||
+                                    ModEquipmentTypes.pickaxe.get().checkIsEquipment(output) ||
+                                    ModEquipmentTypes.shovel.get().checkIsEquipment(output) ||
+                                    ModEquipmentTypes.hoe.get().checkIsEquipment(output) ||
+                                    ModEquipmentTypes.shears.get().checkIsEquipment(output) ||
+                                    ModEquipmentTypes.sword.get().checkIsEquipment(output) ||
+                                    ModEquipmentTypes.shield.get().checkIsEquipment(output) ||
+                                    ModEquipmentTypes.helmet.get().checkIsEquipment(output) ||
+                                    ModEquipmentTypes.chestplate.get().checkIsEquipment(output) ||
+                                    ModEquipmentTypes.leggings.get().checkIsEquipment(output) ||
+                                    ModEquipmentTypes.boots.get().checkIsEquipment(output) ||
                                     // deliberately excluding FISHINGROD and FLINT_N_STEEL
                                     Compatibility.isTinkersWeapon(output)))
                     .equals(Optional.of(true)))

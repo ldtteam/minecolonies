@@ -6,14 +6,12 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.core.MineColonies;
 import com.minecolonies.core.entity.pathfinding.MNode;
-import com.minecolonies.core.entity.pathfinding.PathfindingUtils;
 import com.minecolonies.core.entity.pathfinding.PathingOptions;
 import com.minecolonies.core.entity.pathfinding.SurfaceType;
 import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.pathfinder.Path;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -23,7 +21,7 @@ import static com.minecolonies.api.util.constant.PathingConstants.DEBUG_VERBOSIT
 /**
  * Job that handles moving away from something.
  */
-public class PathJobEscapeWater extends AbstractPathJob
+public class PathJobEscapeWater extends AbstractPathJob implements IDestinationPathJob
 {
     /**
      * Position to run to, in order to avoid something.
@@ -56,7 +54,7 @@ public class PathJobEscapeWater extends AbstractPathJob
         preferredDirection = entity.blockPosition().offset(entity.blockPosition().subtract(avoid).multiply(range));
         if (entity instanceof AbstractEntityCitizen)
         {
-            final IColony colony = ((AbstractEntityCitizen) entity).getCitizenColonyHandler().getColony();
+            final IColony colony = ((AbstractEntityCitizen) entity).getCitizenColonyHandler().getColonyOrRegister();
             if (colony != null)
             {
                 preferredDirection = colony.getCenter();
@@ -115,5 +113,11 @@ public class PathJobEscapeWater extends AbstractPathJob
         getPathingOptions().swimCost = 1;
         getPathingOptions().swimCostEnter = 1;
         getPathingOptions().nonLadderClimbableCost = 1;
+    }
+
+    @Override
+    public BlockPos getDestination()
+    {
+        return preferredDirection;
     }
 }

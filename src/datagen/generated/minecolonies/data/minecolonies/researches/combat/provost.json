@@ -1,25 +1,25 @@
 {
   "branch": "minecolonies:combat",
+  "costs": [
+    {
+      "type": "minecolonies:item_simple",
+      "item": "minecraft:diamond",
+      "quantity": 16
+    }
+  ],
   "effects": [
     {
-      "minecolonies:effects/meleearmormultiplier": 4
+      "id": "minecolonies:effects/meleearmormultiplier",
+      "level": 4
     }
   ],
   "icon": "minecraft:golden_chestplate",
   "parentResearch": "minecolonies:combat/duelist",
   "requirements": [
     {
-      "building": "combatacademy",
+      "type": "minecolonies:building",
+      "building": "minecolonies:combatacademy",
       "level": 5
-    },
-    {
-      "type": "minecolonies:item_list",
-      "item": {
-        "items": [
-          "minecraft:diamond"
-        ]
-      },
-      "quantity": 16
     }
   ],
   "researchLevel": 5

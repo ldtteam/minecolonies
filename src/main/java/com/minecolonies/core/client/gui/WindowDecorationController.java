@@ -59,7 +59,8 @@ public class WindowDecorationController extends AbstractWindowSkeleton
         registerButton(BUTTON_REPAIR, this::repairClicked);
         registerButton(BUTTON_CANCEL, this::cancelClicked);
 
-        findPaneOfTypeByID(LABEL_NAME, Text.class).setText(Component.literal(controller.getBlueprintPath()));
+        findPaneOfTypeByID(LABEL_NAME, Text.class).setText(Component.literal(controller.getBlueprintPath()
+                .replace(".blueprint", "").replace("\\", "/").replace("/", "\n")));
 
         final IColonyView view = IColonyManager.getInstance().getClosestColonyView(world, controller.getBlockPos());
 

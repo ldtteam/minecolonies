@@ -28,9 +28,6 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
 public class TileEntityColonyFlag extends BlockEntity
 {
-    /** The last known flag. Required for when the colony is not available. */
-    private ListTag flag = new ListTag();
-
     /** A list of the default banner patterns, for colonies that have not chosen a flag */
     private ListTag patterns = new ListTag();
 
@@ -44,7 +41,6 @@ public class TileEntityColonyFlag extends BlockEntity
     {
         super.saveAdditional(compound);
 
-        compound.put(TAG_FLAG_PATTERNS, this.flag);
         compound.put(TAG_BANNER_PATTERNS, this.patterns);
 
         compound.putInt(TAG_COLONY_ID, colonyId);
@@ -55,7 +51,6 @@ public class TileEntityColonyFlag extends BlockEntity
     {
         super.load(compound);
 
-        this.flag = compound.getList(TAG_FLAG_PATTERNS, 10);
         this.patterns = compound.getList(TAG_BANNER_PATTERNS, 10);
         this.colonyId = compound.getInt(TAG_COLONY_ID);
 
@@ -87,27 +82,29 @@ public class TileEntityColonyFlag extends BlockEntity
     }
 
     /**
-     * Retrieves the patterns for the renderer
+     * Retrieves the patterns, similar to {@link BannerBlockEntity#getPatterns()}
      * @return the list of pattern-color pairs
      */
-    @OnlyIn(Dist.CLIENT)
-    public List<Pair<Holder<BannerPattern>, DyeColor>> getPatternList()
+    public List<Pair<Holder<BannerPattern>, DyeColor>> getPatterns()
     {
         // Structurize will cause the second condition to be false
         if (level != null && level.dimension() != null)
         {
             IColonyView colony = IColonyManager.getInstance().getColonyView(this.colonyId, level.dimension());
-            if (colony != null && this.flag != colony.getColonyFlag())
+            if (colony != null && this.patterns != colony.getColonyFlag())
             {
-                this.flag = colony.getColonyFlag();
+                this.patterns = colony.getColonyFlag();
                 setChanged();
             }
         }
 
-        return BannerBlockEntity.createPatterns(
+        List<Pair<Holder<BannerPattern>, DyeColor>> pattern = BannerBlockEntity.createPatterns(
                 DyeColor.WHITE,
-                this.flag.size() > 1 ? this.flag : this.patterns
+                this.patterns
         );
+	//remove the first base layer
+	pattern.remove(0);
+    	return pattern;
     }
 
     /**
@@ -118,7 +115,7 @@ public class TileEntityColonyFlag extends BlockEntity
     public ItemStack getItemClient()
     {
         ItemStack itemstack = new ItemStack(ModBlocks.blockColonyBanner);
-        List<Pair<Holder<BannerPattern>, DyeColor>> list = getPatternList();
+        List<Pair<Holder<BannerPattern>, DyeColor>> list = getPatterns();
         ListTag nbt = new ListTag();
 
         for (Pair<Holder<BannerPattern>, DyeColor> pair : list)

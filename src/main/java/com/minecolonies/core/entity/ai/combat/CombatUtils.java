@@ -4,7 +4,7 @@ import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-import com.minecolonies.api.entity.mobs.AbstractEntityRaiderMob;
+import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesRaider;
 import com.minecolonies.core.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.core.entity.citizen.EntityCitizen;
 import com.minecolonies.core.items.ItemSpear;
@@ -98,9 +98,9 @@ public class CombatUtils
             }
         }
 
-        if (target instanceof AbstractEntityRaiderMob)
+        if (target instanceof AbstractEntityMinecoloniesRaider)
         {
-            for (final Map.Entry<BlockPos, IBuilding> entry : user.getCitizenColonyHandler().getColony().getBuildingManager().getBuildings().entrySet())
+            for (final Map.Entry<BlockPos, IBuilding> entry : user.getCitizenColonyHandler().getColonyOrRegister().getBuildingManager().getBuildings().entrySet())
             {
                 if (entry.getValue() instanceof AbstractBuildingGuards &&
                       user.blockPosition().distSqr(entry.getKey()) < callRange)

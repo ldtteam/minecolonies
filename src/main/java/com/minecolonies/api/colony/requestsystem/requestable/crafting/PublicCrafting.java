@@ -27,6 +27,18 @@ public class PublicCrafting extends AbstractCrafting
      *
      * @param stack the required stack.
      * @param count the crafting count.
+     * @param minCount the min count.
+     */
+    public PublicCrafting(@NotNull final ItemStack stack, final int count, final int minCount, final IToken<?> recipeToken)
+    {
+        super(stack, count, minCount, recipeToken);
+    }
+
+    /**
+     * Create a Stack deliverable.
+     *
+     * @param stack the required stack.
+     * @param count the crafting count.
      */
     public PublicCrafting(@NotNull final ItemStack stack, final int count, final IToken<?> recipeToken)
     {

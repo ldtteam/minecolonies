@@ -12,7 +12,6 @@ import com.minecolonies.api.crafting.GenericRecipe;
 import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.items.ModItems;
-import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
 import com.minecolonies.core.colony.buildings.modules.AnimalHerdingModule;
 import com.minecolonies.core.colony.buildings.modules.settings.IntSetting;
@@ -25,9 +24,9 @@ import net.minecraft.util.Tuple;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.animal.Cow;
 import net.minecraft.world.entity.animal.MushroomCow;
+import net.minecraft.world.entity.animal.goat.Goat;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.level.block.Blocks;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -148,7 +147,7 @@ public class BuildingCowboy extends AbstractBuilding
 
         public HerdingModule()
         {
-            super(ModJobs.cowboy.get(), a -> a instanceof Cow, new ItemStack(Items.WHEAT, 2));
+            super(ModJobs.cowboy.get(), a -> a instanceof Cow || a instanceof Goat, new ItemStorage(Items.WHEAT, 2));
         }
 
         @Override
@@ -162,11 +161,14 @@ public class BuildingCowboy extends AbstractBuilding
             if (bucketsToKeep > 0)
             {
                 requiredItems.put(s -> s.is(Items.BUCKET), new Tuple<>(bucketsToKeep, false));
+                requiredItems.put(s -> s.is(ModItems.large_empty_bottle), new Tuple<>(bucketsToKeep, true));
             }
+
             if (bowlsToKeep > 0)
             {
                 requiredItems.put(s -> s.is(Items.BOWL), new Tuple<>(bowlsToKeep, false));
             }
+
             return requiredItems;
         }
 
@@ -184,27 +186,38 @@ public class BuildingCowboy extends AbstractBuilding
 
             if (animal instanceof MushroomCow)
             {
-                recipes.add(new GenericRecipe(null,
-                        new ItemStack(Items.MUSHROOM_STEW),                                                 // output
-                        Collections.singletonList(new ItemStack(Items.SUSPICIOUS_STEW)),                    // alt output
-                        Collections.emptyList(),                                                            // extra output
-                        Collections.singletonList(Collections.singletonList(new ItemStack(Items.BOWL))),    // input
-                        1, Blocks.AIR, null, ToolType.NONE, animal, Collections.emptyList(), 0));
+                recipes.add(GenericRecipe.builder()
+                        .withOutputs(List.of(Items.MUSHROOM_STEW.getDefaultInstance(),
+                                Items.SUSPICIOUS_STEW.getDefaultInstance()))
+                        .withInputs(List.of(List.of(Items.BOWL.getDefaultInstance())))
+                        .withRequiredEntity(animal.getType())
+                        .build());
             }
             else if (animal instanceof Cow)
             {
-                recipes.add(new GenericRecipe(null,
-                        new ItemStack(Items.MILK_BUCKET),                                                   // output
-                        Collections.emptyList(),                                                            // alt output
-                        Collections.emptyList(),                                                            // extra output
-                        Collections.singletonList(Collections.singletonList(new ItemStack(Items.BUCKET))),  // input
-                        1, Blocks.AIR, null, ToolType.NONE, animal, Collections.emptyList(), 0));
-                recipes.add(new GenericRecipe(null,
-                        new ItemStack(ModItems.large_milk_bottle),                                          // output
-                        Collections.emptyList(),                                                            // alt output
-                        Collections.emptyList(),                                                            // extra output
-                        Collections.singletonList(Collections.singletonList(new ItemStack(ModItems.large_empty_bottle))),  // input
-                        1, Blocks.AIR, null, ToolType.NONE, animal, Collections.emptyList(), 0));
+                recipes.add(GenericRecipe.builder()
+                        .withOutput(Items.MILK_BUCKET)
+                        .withInputs(List.of(List.of(Items.BUCKET.getDefaultInstance())))
+                        .withRequiredEntity(animal.getType())
+                        .build());
+                recipes.add(GenericRecipe.builder()
+                        .withOutput(ModItems.large_milk_bottle)
+                        .withInputs(List.of(List.of(ModItems.large_empty_bottle.getDefaultInstance())))
+                        .withRequiredEntity(animal.getType())
+                        .build());
+            }
+            else if (animal instanceof Goat)
+            {
+                recipes.add(GenericRecipe.builder()
+                    .withOutput(Items.MILK_BUCKET)
+                    .withInputs(List.of(List.of(Items.BUCKET.getDefaultInstance())))
+                    .withRequiredEntity(animal.getType())
+                    .build());
+                recipes.add(GenericRecipe.builder()
+                    .withOutput(ModItems.large_milk_bottle)
+                    .withInputs(List.of(List.of(ModItems.large_empty_bottle.getDefaultInstance())))
+                    .withRequiredEntity(animal.getType())
+                    .build());
             }
 
             return recipes;

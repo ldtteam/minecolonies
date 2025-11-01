@@ -1,6 +1,19 @@
+configurations {
+    library
+    implementation.extendsFrom library
+}
+
+minecraft.runs.all {
+    lazyToken('minecraft_classpath') {
+        configurations.library.copyRecursive().resolve().collect { it.absolutePath }.join(File.pathSeparator)
+    }
+}
+
+project.tasks.getByName("processResources", {task ->
+    task.duplicatesStrategy 'include'
+})
+
 repositories {
-    mavenLocal()
-    mavenCentral()
     maven {
         name "JEI"
         url 'https://maven.blamejared.com/'
@@ -17,12 +30,15 @@ repositories {
         name "Dynamic Trees"
         url "https://harleyoconnor.com/maven"
     }
+    maven { url = 'https://files.minecraftforge.net/maven' }
+    mavenLocal()
+    mavenCentral()
+    maven {
+        url "https://plugins.gradle.org/m2/"
+    }
 }
 
 dependencies {
-    apiCompileOnly (fg.deobf("com.ldtteam:domum_ornamentum:${project.domumOrnamentumVersion}:universal")){
-        transitive = false
-    }
     compileOnly (fg.deobf("com.ldtteam:domum_ornamentum:${project.domumOrnamentumVersion}:universal")){
         transitive = false
     }
@@ -30,16 +46,10 @@ dependencies {
         transitive = false
     }
 
-    apiImplementation (fg.deobf("com.ldtteam:blockui:${project.blockUI_version}")){
-        transitive = false
-    }
     implementation (fg.deobf("com.ldtteam:blockui:${project.blockUI_version}")){
         transitive = false
     }
 
-    apiImplementation (fg.deobf("com.ldtteam:structurize:${project.structurize_version}")){
-        transitive = false
-    }
     implementation (fg.deobf("com.ldtteam:structurize:${project.structurize_version}")){
         transitive = false
     }

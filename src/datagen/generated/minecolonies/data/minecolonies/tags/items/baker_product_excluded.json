@@ -4,6 +4,7 @@
     "minecraft:cake",
     "minecraft:cookie",
     "minecraft:pumpkin_pie",
-    "minecraft:packed_mud"
+    "minecraft:packed_mud",
+    "#minecolonies:cook_product"
   ]
 }

@@ -3,7 +3,8 @@
   "branch": "minecolonies:unlockable",
   "effects": [
     {
-      "minecolonies:effects/sifterdiamondunlock": 1
+      "id": "minecolonies:effects/sifterdiamondunlock",
+      "level": 1
     }
   ],
   "hidden": true,
@@ -12,8 +13,9 @@
   "parentResearch": "minecolonies:unlockable/ironmesh",
   "requirements": [
     {
-      "level": 5,
-      "mandatory-building": "sifter"
+      "type": "minecolonies:single-building",
+      "building": "minecolonies:sifter",
+      "level": 5
     }
   ],
   "researchLevel": 4

@@ -56,6 +56,11 @@ public final class CitizenConstants
     public static final int HEAL_CITIZENS_AFTER = 100;
 
     /**
+     * Number of ticks to decrease saturation after.
+     */
+    public static final int SATURATION_DECREASE_AFTER = 20 * 60;
+
+    /**
      * The delta yaw value for looking at things.
      */
     public static final float  FACING_DELTA_YAW           = 10F;
@@ -212,6 +217,11 @@ public final class CitizenConstants
      * Disease tag,
      */
     public static final String TAG_DISEASE = "disease";
+
+    /**
+     * Disease iod tag.
+     */
+    public static final String TAG_DISEASE_ID = "disease_id";
 
     /**
      * Disease immunity tag,

@@ -5,7 +5,7 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IMysticalSite;
 import com.minecolonies.api.colony.buildings.workerbuildings.ITownHall;
 import com.minecolonies.api.colony.buildings.workerbuildings.IWareHouse;
-import com.minecolonies.api.colony.fields.IField;
+import com.minecolonies.api.colony.buildingextensions.IBuildingExtension;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import net.minecraft.core.BlockPos;
@@ -26,7 +26,7 @@ import java.util.function.Predicate;
 
 /**
  * Interface for the managers for registered structures.
- * Buildings, Fields, Decorations, etc.
+ * Buildings + Extensions, Decorations, etc.
  */
 public interface IRegisteredStructureManager
 {
@@ -90,10 +90,10 @@ public interface IRegisteredStructureManager
      * Get the first building matching the conditions.
      *
      * @param predicate the predicate matching the building.
-     * @return the position or null.
+     * @return the building or null.
      */
     @Nullable
-    BlockPos getFirstBuildingMatching(final Predicate<IBuilding> predicate);
+    IBuilding getFirstBuildingMatching(final Predicate<IBuilding> predicate);
 
     /**
      * Register a new leisure site.
@@ -185,9 +185,9 @@ public interface IRegisteredStructureManager
     void markBuildingsDirty();
 
     /**
-     * Marks fields data dirty.
+     * Marks building extensions data dirty.
      */
-    void markFieldsDirty();
+    void markBuildingExtensionsDirty();
 
     /**
      * Creates a building from a tile entity and adds it to the colony.
@@ -200,7 +200,7 @@ public interface IRegisteredStructureManager
     IBuilding addNewBuilding(@NotNull final AbstractTileEntityColonyBuilding tileEntity, final Level world);
 
     /**
-     * Calculate a good cook for a certain citizen.
+     * Searches for the closest building to a given citizen.
      *
      * @param citizen  the citizen.
      * @param building the type of building.
@@ -209,13 +209,33 @@ public interface IRegisteredStructureManager
     BlockPos getBestBuilding(final AbstractEntityCitizen citizen, final Class<? extends IBuilding> building);
 
     /**
-     * Calculate a good building for a certain pos.
+     * Searches for the closest building to a given citizen, with an additional filter predicate.
+     *
+     * @param citizen  the citizen.
+     * @param building the type of building.
+     * @param filter   the filter to match a building against to further specialize the needs.
+     * @return the Position of it.
+     */
+    <T extends IBuilding> BlockPos getBestBuilding(final AbstractEntityCitizen citizen, final Class<T> building, @NotNull final Predicate<T> filter);
+
+    /**
+     * Searches for the closest building to a given position.
      *
      * @param pos      the pos.
      * @param building the building class type.
      * @return the Position of it.
      */
     BlockPos getBestBuilding(final BlockPos pos, final Class<? extends IBuilding> building);
+
+    /**
+     * Searches for the closest building to a given position, with an additional filter predicate.
+     *
+     * @param pos      the pos.
+     * @param building the building class type.
+     * @param filter   the filter to match a building against to further specialize the needs.
+     * @return the Position of it.
+     */
+    <T extends IBuilding> BlockPos getBestBuilding(final BlockPos pos, final Class<T> building, @NotNull final Predicate<T> filter);
 
     /**
      * Returns a random building in the colony, matching the filter predicate.
@@ -317,34 +337,41 @@ public interface IRegisteredStructureManager
     BlockPos getRandomLeisureSite();
 
     /**
-     * Get all the fields
+     * Get all the building extensions.
      *
-     * @param matcher the field matcher predicate.
-     * @return an unmodifiable collection of all fields.
+     * @param matcher the building extension matcher predicate.
+     * @return an unmodifiable collection of all building extensions.
      */
-    @NotNull List<IField> getFields(Predicate<IField> matcher);
+    @NotNull List<IBuildingExtension> getBuildingExtensions(Predicate<IBuildingExtension> matcher);
 
     /**
-     * Get a specific field on the given location.
+     * Get a specific building extension on the given location.
      *
-     * @param matcher the field matcher predicate.
-     * @return the field, if any.
+     * @param matcher the building extension matcher predicate.
+     * @return the building extension, if any.
      */
-    Optional<IField> getField(Predicate<IField> matcher);
+    Optional<IBuildingExtension> getMatchingBuildingExtension(Predicate<IBuildingExtension> matcher);
 
     /**
-     * Add a new field to the building manager.
-     * If an identical field already exists, this field won't be added.
+     * Add a new building extension to the building manager.
+     * If an identical building extension already exists, this building extension won't be added.
      *
-     * @param field the new field to add.
-     * @return true if the field was added.
+     * @param extension the new building extension to add.
+     * @return true if the building extension was added.
      */
-    boolean addField(IField field);
+    boolean addBuildingExtension(IBuildingExtension extension);
 
     /**
-     * Remove a field from the field collection.
+     * Remove a building extension from the building extension collection.
      *
-     * @param matcher the field matcher predicate.
+     * @param matcher the building extension matcher predicate.
      */
-    void removeField(Predicate<IField> matcher);
+    void removeBuildingExtension(Predicate<IBuildingExtension> matcher);
+
+    /**
+     * Get a building extension by id.
+     * @param extensionId the id of the extension.
+     * @return the building extension or null.
+     */
+    @Nullable IBuildingExtension getMatchingBuildingExtension(IBuildingExtension.ExtensionId extensionId);
 }

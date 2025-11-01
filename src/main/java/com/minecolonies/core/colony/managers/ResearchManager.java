@@ -6,8 +6,8 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.research.*;
-import com.minecolonies.api.research.effects.IResearchEffect;
-import com.minecolonies.api.research.effects.IResearchEffectManager;
+import com.minecolonies.api.research.IResearchEffect;
+import com.minecolonies.api.research.IResearchEffectManager;
 import com.minecolonies.api.research.util.ResearchState;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.SoundUtils;
@@ -147,7 +147,7 @@ public class ResearchManager implements IResearchManager
         final List<IGlobalResearch> removes = new ArrayList<>();
         for(IGlobalResearch research : autoStartResearch)
         {
-            if (!IGlobalResearchTree.getInstance().isResearchRequirementsFulfilled(research.getResearchRequirement(), colony))
+            if (!IGlobalResearchTree.getInstance().isResearchRequirementsFulfilled(research.getResearchRequirements(), colony))
             {
                 continue;
             }
@@ -233,7 +233,7 @@ public class ResearchManager implements IResearchManager
             localResearch.setProgress(IGlobalResearchTree.getInstance().getBranchData(research.getBranch()).getBaseTime(research.getDepth()));
             localResearch.setState(ResearchState.FINISHED);
             tree.finishResearch(research.getId());
-            for (IResearchEffect<?> effect : IGlobalResearchTree.getInstance().getResearch(research.getBranch(), research.getId()).getEffects())
+            for (IResearchEffect effect : IGlobalResearchTree.getInstance().getResearch(research.getBranch(), research.getId()).getEffects())
             {
                 effects.applyEffect(effect);
             }

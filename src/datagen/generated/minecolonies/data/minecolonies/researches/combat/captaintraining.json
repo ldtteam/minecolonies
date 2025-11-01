@@ -1,25 +1,25 @@
 {
   "branch": "minecolonies:combat",
+  "costs": [
+    {
+      "type": "minecolonies:item_simple",
+      "item": "minecraft:shield",
+      "quantity": 16
+    }
+  ],
   "effects": [
     {
-      "minecolonies:effects/blockattacksmultiplier": 3
+      "id": "minecolonies:effects/blockattacksmultiplier",
+      "level": 3
     }
   ],
   "icon": "minecraft:iron_bars",
   "parentResearch": "minecolonies:combat/knighttraining",
   "requirements": [
     {
-      "building": "combatacademy",
+      "type": "minecolonies:building",
+      "building": "minecolonies:combatacademy",
       "level": 5
-    },
-    {
-      "type": "minecolonies:item_list",
-      "item": {
-        "items": [
-          "minecraft:shield"
-        ]
-      },
-      "quantity": 16
     }
   ],
   "researchLevel": 5

@@ -5,7 +5,8 @@ import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.crafting.GenericRecipe;
 import com.minecolonies.api.crafting.IGenericRecipe;
-import com.minecolonies.api.util.constant.ToolType;
+import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.equipment.ModEquipmentTypes;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
 import com.minecolonies.core.colony.buildings.modules.AnimalHerdingModule;
 import com.minecolonies.core.colony.buildings.modules.settings.BoolSetting;
@@ -17,12 +18,10 @@ import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.animal.Sheep;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -96,7 +95,7 @@ public class BuildingShepherd extends AbstractBuilding
     {
         public HerdingModule()
         {
-            super(ModJobs.shepherd.get(), a -> a instanceof Sheep, new ItemStack(Items.WHEAT, 2));
+            super(ModJobs.shepherd.get(), a -> a instanceof Sheep, new ItemStorage(Items.WHEAT, 2));
         }
 
         @NotNull
@@ -105,10 +104,11 @@ public class BuildingShepherd extends AbstractBuilding
         {
             final List<IGenericRecipe> recipes = new ArrayList<>(super.getRecipesForDisplayPurposesOnly(animal));
 
-            recipes.add(new GenericRecipe(null, ItemStack.EMPTY,
-                    ForgeRegistries.ITEMS.tags().getTag(ItemTags.WOOL).stream().map(ItemStack::new).toList(),
-                    Collections.emptyList(), Collections.emptyList(),
-                    0, Blocks.AIR, null, ToolType.SHEARS, animal, Collections.emptyList(), 0));
+            recipes.add(GenericRecipe.builder()
+                    .withOutputs(ForgeRegistries.ITEMS.tags().getTag(ItemTags.WOOL).stream().map(ItemStack::new).toList())
+                    .withRequiredTool(ModEquipmentTypes.shears.get())
+                    .withRequiredEntity(animal.getType())
+                    .build());
 
             return recipes;
         }

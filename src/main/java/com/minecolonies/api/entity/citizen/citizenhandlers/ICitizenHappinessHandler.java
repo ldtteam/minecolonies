@@ -53,15 +53,17 @@ public interface ICitizenHappinessHandler
      * Read the handler from NBT.
      *
      * @param compound the compound to read it from.
+     * @param persist  whether we're reading from persisted data or from networking.
      */
-    void read(CompoundTag compound);
+    void read(CompoundTag compound, final boolean persist);
 
     /**
      * Write the handler to NBT.
      *
      * @param compound the compound to write it to.
+     * @param persist  whether we're reading from persisted data or from networking.
      */
-    void write(CompoundTag compound);
+    void write(CompoundTag compound, final boolean persist);
 
     /**
      * Get a list of all modifiers.

@@ -17,6 +17,7 @@ public class DataGeneratorConstants
 
     public static final String ASSETS_DIR = "assets/" + Constants.MOD_ID + "/";
 
-    public static final String COLONY_STORIES_DIR = "colony/stories";
-    public static final String COLONY_QUESTS_DIR = "colony/quests";
+    public static final String COLONY_STORIES_DIR           = "colony/stories";
+    public static final String COLONY_QUESTS_DIR            = "colony/quests";
+    public static final String COLONY_RECRUITMENT_ITEMS_DIR = "colony/recruitment_items";
 }

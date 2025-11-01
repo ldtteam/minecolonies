@@ -2,6 +2,9 @@
   "values": [
     "#minecolonies:concrete",
     "#minecraft:stone_bricks",
+    "#minecraft:planks",
+    "#minecraft:wooden_slabs",
+    "#minecraft:wool_carpets",
     "minecraft:stone_brick_stairs",
     "minecraft:stone_brick_slab",
     "minecraft:mossy_stone_brick_slab",

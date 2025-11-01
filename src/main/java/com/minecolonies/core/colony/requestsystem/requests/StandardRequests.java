@@ -16,7 +16,7 @@ import com.minecolonies.api.colony.requestsystem.requestable.deliveryman.Pickup;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.constant.ToolLevelConstants;
+import com.minecolonies.api.util.constant.EquipmentLevelConstants;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.api.util.constant.translation.RequestSystemTranslationConstants;
 import com.minecolonies.core.colony.buildings.modules.BuildingModules;
@@ -579,9 +579,9 @@ public final class StandardRequests
         public Component getLongDisplayString()
         {
             final MutableComponent result = Component.literal("");
-            result.append(getRequest().getToolClass().getDisplayName());
+            result.append(getRequest().getEquipmentType().getDisplayName());
 
-            if (getRequest().getMinLevel() > ToolLevelConstants.TOOL_LEVEL_HAND)
+            if (getRequest().getMinLevel() > EquipmentLevelConstants.TOOL_LEVEL_HAND)
             {
                 result.append(Component.literal(" "));
                 result.append(Component.translatable(RequestSystemTranslationConstants.REQUESTS_TYPE_TOOL_MINIMUM_LEVEL_PREFIX));
@@ -589,9 +589,9 @@ public final class StandardRequests
                 result.append(getRequest().isArmor() ? ItemStackUtils.swapArmorGrade(getRequest().getMinLevel()) : ItemStackUtils.swapToolGrade(getRequest().getMinLevel()));
             }
 
-            if (getRequest().getMaxLevel() < ToolLevelConstants.TOOL_LEVEL_MAXIMUM)
+            if (getRequest().getMaxLevel() < EquipmentLevelConstants.TOOL_LEVEL_MAXIMUM)
             {
-                if (getRequest().getMinLevel() > ToolLevelConstants.TOOL_LEVEL_HAND)
+                if (getRequest().getMinLevel() > EquipmentLevelConstants.TOOL_LEVEL_HAND)
                 {
                     result.append(Component.literal(" "));
                     result.append(Component.translatable(TranslationConstants.COM_MINECOLONIES_GENERAL_AND));
@@ -611,7 +611,7 @@ public final class StandardRequests
         public Component getShortDisplayString()
         {
             final MutableComponent result = Component.literal("");
-            result.append(getRequest().getToolClass().getDisplayName());
+            result.append(getRequest().getEquipmentType().getDisplayName());
             return result;
         }
     }
@@ -770,6 +770,49 @@ public final class StandardRequests
             }
 
             return burnableExamples;
+        }
+    }
+
+    /**
+     * Request for a single ItemStack.
+     */
+    public static class MinStackRequest extends AbstractRequest<MinimumStack>
+    {
+        public MinStackRequest(@NotNull final IRequester requester, @NotNull final IToken<?> token, @NotNull final MinimumStack requested)
+        {
+            super(requester, token, requested);
+        }
+
+        public MinStackRequest(@NotNull final IRequester requester, @NotNull final IToken<?> token, @NotNull final RequestState state, @NotNull final MinimumStack requested)
+        {
+            super(requester, token, state, requested);
+        }
+
+        @NotNull
+        @Override
+        public Component getShortDisplayString()
+        {
+            final MutableComponent combined = Component.literal("");
+
+            if (getRequest().getMinimumCount() == getRequest().getCount())
+            {
+                combined.append(Component.literal(getRequest().getCount() + " "));
+                combined.append(getRequest().getStack().getHoverName());
+            }
+            else
+            {
+                combined.append(Component.literal(getRequest().getMinimumCount() + "-" + getRequest().getCount() + " "));
+                combined.append(getRequest().getStack().getHoverName());
+            }
+
+            return combined;
+        }
+
+        @NotNull
+        @Override
+        public List<ItemStack> getDisplayStacks()
+        {
+            return getRequest().getRequestedItems();
         }
     }
 

@@ -5,13 +5,15 @@ import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.api.util.StatsUtil;
 import com.minecolonies.core.Network;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingSchool;
 import com.minecolonies.core.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.core.colony.jobs.JobPupil;
-import com.minecolonies.core.entity.other.SittingEntity;
 import com.minecolonies.core.entity.ai.workers.AbstractEntityAIInteract;
 import com.minecolonies.core.entity.citizen.EntityCitizen;
+import com.minecolonies.core.entity.other.SittingEntity;
+import com.minecolonies.core.entity.pathfinding.navigation.EntityNavigationUtils;
 import com.minecolonies.core.network.messages.client.CircleParticleEffectMessage;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
@@ -26,8 +28,11 @@ import java.util.function.Predicate;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.research.util.ResearchConstants.TEACHING;
+import static com.minecolonies.api.util.constant.Constants.DEFAULT_SPEED;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.api.util.constant.TranslationConstants.PUPIL_NO_CARPET;
+import static com.minecolonies.api.util.constant.StatisticsConstants.LEVELS_GAINED;
+import static com.minecolonies.api.util.constant.StatisticsConstants.ITEM_USED;
 
 public class EntityAIWorkPupil extends AbstractEntityAIInteract<JobPupil, BuildingSchool>
 {
@@ -57,11 +62,6 @@ public class EntityAIWorkPupil extends AbstractEntityAIInteract<JobPupil, Buildi
     private BlockPos studyPos;
 
     /**
-     * Next recess pos to run to.
-     */
-    private BlockPos recessPos;
-
-    /**
      * Constructor for the AI
      *
      * @param job the job to fulfill
@@ -88,7 +88,6 @@ public class EntityAIWorkPupil extends AbstractEntityAIInteract<JobPupil, Buildi
     {
         if (worker.getRandom().nextInt(STUDY_TO_RECESS_RATIO) < 1)
         {
-            recessPos = building.getPosition();
             return RECESS;
         }
 
@@ -111,21 +110,12 @@ public class EntityAIWorkPupil extends AbstractEntityAIInteract<JobPupil, Buildi
      */
     private IAIState recess()
     {
-        if (recessPos == null || worker.getRandom().nextInt(STUDY_TO_RECESS_RATIO) < 1)
+        if (worker.getNavigation().isDone() && worker.getRandom().nextInt(STUDY_TO_RECESS_RATIO) < 1)
         {
             return START_WORKING;
         }
 
-        if (walkToBlock(recessPos))
-        {
-            return getState();
-        }
-
-        final BlockPos newRecessPos = findRandomPositionToWalkTo(10);
-        if (newRecessPos != null)
-        {
-            recessPos = newRecessPos;
-        }
+        EntityNavigationUtils.walkToRandomPosWithin(worker, 10, DEFAULT_SPEED, building.getCorners());
         return getState();
     }
 
@@ -141,7 +131,7 @@ public class EntityAIWorkPupil extends AbstractEntityAIInteract<JobPupil, Buildi
             return DECIDE;
         }
 
-        if (walkToBlock(studyPos, 1))
+        if (!walkToWorkPos(studyPos))
         {
             return getState();
         }
@@ -188,10 +178,21 @@ public class EntityAIWorkPupil extends AbstractEntityAIInteract<JobPupil, Buildi
 
         if (slot != -1)
         {
+            int priorIntLevel = worker.getCitizenData().getCitizenSkillHandler().getLevel(Skill.Intelligence);
+
             InventoryUtils.reduceStackInItemHandler(worker.getInventoryCitizen(), new ItemStack(Items.PAPER), 1);
-            final double bonus = 50.0 * (1 + worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(TEACHING));
+            StatsUtil.trackStatByName(building, ITEM_USED, new ItemStack(Items.PAPER).getHoverName(), 1);
+
+            final double bonus = 50.0 * (1 + worker.getCitizenColonyHandler().getColonyOrRegister().getResearchManager().getResearchEffects().getEffectStrength(TEACHING));
 
             worker.getCitizenData().getCitizenSkillHandler().addXpToSkill(Skill.Intelligence, bonus, worker.getCitizenData());
+
+            int intGain = worker.getCitizenData().getCitizenSkillHandler().getLevel(Skill.Intelligence) - priorIntLevel;
+
+            if (intGain > 0)
+            {
+                StatsUtil.trackStatByName(building, LEVELS_GAINED, Skill.Intelligence.name(), intGain);
+            }
         }
 
         worker.decreaseSaturationForContinuousAction();
@@ -214,7 +215,7 @@ public class EntityAIWorkPupil extends AbstractEntityAIInteract<JobPupil, Buildi
      */
     private IAIState startWorkingAtOwnBuilding()
     {
-        if (walkToBuilding())
+        if (!walkToBuilding())
         {
             return getState();
         }

@@ -3,6 +3,7 @@ package com.minecolonies.api.util.constant;
 import com.minecolonies.api.colony.IColony;
 import net.minecraft.server.level.TicketType;
 import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.scores.Scoreboard;
 
 import java.util.Comparator;
 import java.util.Random;
@@ -34,12 +35,6 @@ public final class ColonyConstants
     public static final TicketType<ChunkPos> KEEP_LOADED_TYPE = TicketType.create(TICKET_ID, Comparator.comparingLong(ChunkPos::toLong));
 
     //  Settings
-
-    /**
-     * The colony name prefix. Use {@link IColony#getTeamName()} to access the full name.
-     */
-    public static final String TEAM_COLONY_NAME = "c";
-
     /**
      * Amount of ticks to wait until checking if a waypoint is still valid.
      */
@@ -49,6 +44,11 @@ public final class ColonyConstants
      * How often the subscribers get updated in ticks.
      */
     public static final int UPDATE_SUBSCRIBERS_INTERVAL = 20;
+
+    /**
+     * How often the travelers get updated in ticks.
+     */
+    public static final int UPDATE_TRAVELING_INTERVAL = 20;
 
     /**
      * How often the colony state gets updated in ticks.
@@ -71,8 +71,8 @@ public final class ColonyConstants
     /**
      * Barbarian Constants.
      */
-    public static final double           ARCHER_BARBARIANS_MULTIPLIER = 0.30;
-    public static final double           CHIEF_BARBARIANS_MULTIPLIER  = 0.1;
+    public static final double ARCHER_BARBARIANS_MULTIPLIER = 0.30;
+    public static final double CHIEF_BARBARIANS_MULTIPLIER  = 0.1;
 
     /**
      * Different horde ids and their sizes.
@@ -94,6 +94,11 @@ public final class ColonyConstants
 
     public static final long ONE_HOUR_IN_MILLIS = 3600000;
     public static final int CHUNK_UNLOAD_DELAY = 20 * 60 * 10;
+
+    /**
+     * Empty scoreboard
+     */
+    public static final Scoreboard EMPTY_SCOREBOARD = new Scoreboard();
 
     /**
      * Private constructor to hide the implicit one.

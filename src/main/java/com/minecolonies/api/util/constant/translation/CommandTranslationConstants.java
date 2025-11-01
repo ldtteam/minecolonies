@@ -8,6 +8,8 @@ import org.jetbrains.annotations.NonNls;
 public class CommandTranslationConstants
 {
     @NonNls
+    public static final String COMMAND_REQUIRES_CREATIVE                     = "com.minecolonies.command.notcreative";
+    @NonNls
     public static final String COMMAND_REQUIRES_OP                           = "com.minecolonies.command.notop";
     @NonNls
     public static final String COMMAND_DISABLED_IN_CONFIG                    = "com.minecolonies.command.notenabledinconfig";
@@ -38,6 +40,8 @@ public class CommandTranslationConstants
     @NonNls
     public static final String COMMAND_CITIZEN_INFO_JOB                      = "com.minecolonies.command.citizeninfo.job";
     @NonNls
+    public static final String COMMAND_CITIZEN_INFO_FOOD                     = "com.minecolonies.command.citizeninfo.food";
+    @NonNls
     public static final String COMMAND_CITIZEN_INFO_NO_JOB                   = "com.minecolonies.command.citizeninfo.jobnull";
     @NonNls
     public static final String COMMAND_CITIZEN_INFO_ACTIVITY                 = "com.minecolonies.command.citizeninfo.activity";
@@ -55,6 +59,8 @@ public class CommandTranslationConstants
     public static final String COMMAND_CITIZEN_LIST_PREVIOUS                 = "com.minecolonies.command.citizenlist.prev";
     @NonNls
     public static final String COMMAND_CITIZEN_LIST_NEXT                     = "com.minecolonies.command.citizenlist.next";
+    @NonNls
+    public static final String COMMAND_CITIZEN_MODIFY_SUCCESS                = "com.minecolonies.command.citizenmodify.success";
     @NonNls
     public static final String COMMAND_CITIZEN_RELOAD_SUCCESS                = "com.minecolonies.command.citizenreload.success";
     @NonNls
@@ -123,8 +129,6 @@ public class CommandTranslationConstants
     public static final String COMMAND_HELP_INFO_DISCORD                     = "com.minecolonies.command.help.discord";
     @NonNls
     public static final String COMMAND_PRUNE_WORLD_WARNING                   = "com.minecolonies.command.prune.next";
-    @NonNls
-    public static final String COMMAND_RAID_TONIGHT_WARNING                  = "com.minecolonies.command.raidtonight";
     @NonNls
     public static final String COMMAND_RESET_SUPPLY_SUCCESS                  = "com.minecolonies.command.resetsupply";
     @NonNls

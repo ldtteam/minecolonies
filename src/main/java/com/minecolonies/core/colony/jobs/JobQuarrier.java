@@ -53,7 +53,7 @@ public class JobQuarrier extends AbstractJobStructure<EntityAIQuarrier, JobQuarr
     }
 
     @Override
-    public int getDiseaseModifier()
+    public double getDiseaseModifier()
     {
         return 2;
     }

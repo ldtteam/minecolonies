@@ -1,17 +1,23 @@
 package com.minecolonies.api.creativetab;
 
-import com.minecolonies.api.blocks.AbstractBlockHut;
+import com.minecolonies.api.blocks.AbstractColonyBlock;
 import com.minecolonies.api.blocks.ModBlocks;
+import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.SpawnEggItem;
 import net.minecraft.world.level.block.Block;
+import net.minecraftforge.common.ForgeSpawnEggItem;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.RegistryObject;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Class used to handle the creativeTab of minecolonies.
@@ -24,7 +30,7 @@ public final class ModCreativeTabs
     public static final RegistryObject<CreativeModeTab> HUTS = TAB_REG.register("mchuts", () -> new CreativeModeTab.Builder(CreativeModeTab.Row.TOP, 1)
                                                                                                       .icon(() -> new ItemStack(ModBlocks.blockHutTownHall))
                                                                                                       .title(Component.translatable("com.minecolonies.creativetab.huts")).displayItems((config, output) -> {
-          for (final AbstractBlockHut<?> hut : ModBlocks.getHuts())
+          for (final AbstractColonyBlock<?> hut : ModBlocks.getHuts())
           {
               output.accept(hut);
           }
@@ -43,10 +49,14 @@ public final class ModCreativeTabs
           output.accept(ModBlocks.blockDecorationPlaceholder);
           output.accept(ModBlocks.blockCompostedDirt);
           output.accept(ModBlocks.blockConstructionTape);
+          output.accept(ModBlocks.blockColonySign);
 
           output.accept(ModItems.scepterLumberjack);
           output.accept(ModItems.permTool);
           output.accept(ModItems.scepterGuard);
+            output.accept(ModItems.assistantHammer_Gold);
+            output.accept(ModItems.assistantHammer_Iron);
+            output.accept(ModItems.assistantHammer_Diamond);
           output.accept(ModItems.scepterBeekeeper);
 
           output.accept(ModItems.bannerRallyGuards);
@@ -62,6 +72,7 @@ public final class ModCreativeTabs
           output.accept(ModItems.buildGoggles);
           output.accept(ModItems.scanAnalyzer);
           output.accept(ModItems.questLog);
+          output.accept(ModItems.colonyMap);
 
           output.accept(ModItems.scrollColonyTP);
           output.accept(ModItems.scrollColonyAreaTP);
@@ -101,18 +112,6 @@ public final class ModCreativeTabs
           output.accept(ModItems.sifterMeshFlint);
           output.accept(ModItems.sifterMeshIron);
           output.accept(ModItems.sifterMeshDiamond);
-      }).build());
-
-    public static final RegistryObject<CreativeModeTab> FOOD = TAB_REG.register("mcfood", () -> new CreativeModeTab.Builder(CreativeModeTab.Row.TOP, 1)
-                                                                                                      .icon(() -> new ItemStack(ModBlocks.blockTomato))
-                                                                                                      .title(Component.translatable("com.minecolonies.creativetab.food")).displayItems((config, output) -> {
-          output.accept(ModBlocks.farmland);
-          output.accept(ModBlocks.floodedFarmland);
-
-          for (final Block crop : ModBlocks.getCrops())
-          {
-              output.accept(crop);
-          }
 
           output.accept(ModItems.breadDough);
           output.accept(ModItems.cookieDough);
@@ -124,38 +123,68 @@ public final class ModCreativeTabs
           output.accept(ModItems.goldenBread);
           output.accept(ModItems.chorusBread);
 
-          output.accept(ModItems.butter);
-          output.accept(ModItems.cabochis);
-          output.accept(ModItems.cheddar_cheese);
-          output.accept(ModItems.congee);
-          output.accept(ModItems.cooked_rice);
-          output.accept(ModItems.eggplant_dolma);
-          output.accept(ModItems.feta_cheese);
-          output.accept(ModItems.flatbread);
-          output.accept(ModItems.hand_pie);
-          output.accept(ModItems.lamb_stew);
-          output.accept(ModItems.lembas_scone);
-          output.accept(ModItems.manchet_bread);
-          output.accept(ModItems.pasta_plain);
-          output.accept(ModItems.pasta_tomato);
-          output.accept(ModItems.pita_hummus);
-          output.accept(ModItems.pottage);
-          output.accept(ModItems.rice_ball);
-          output.accept(ModItems.stew_trencher);
-          output.accept(ModItems.stuffed_pepper);
-          output.accept(ModItems.stuffed_pita);
-          output.accept(ModItems.sushi_roll);
-          output.accept(ModItems.tofu);
+          safeAddSpawnEgg(output, ModEntities.CAMP_BARBARIAN);
+          safeAddSpawnEgg(output, ModEntities.CAMP_ARCHERBARBARIAN);
+          safeAddSpawnEgg(output, ModEntities.CAMP_CHIEFBARBARIAN);
 
+          safeAddSpawnEgg(output, ModEntities.CAMP_PIRATE);
+          safeAddSpawnEgg(output, ModEntities.CAMP_ARCHERPIRATE);
+          safeAddSpawnEgg(output, ModEntities.CAMP_CHIEFPIRATE);
+
+          safeAddSpawnEgg(output, ModEntities.CAMP_MUMMY);
+          safeAddSpawnEgg(output, ModEntities.CAMP_ARCHERMUMMY);
+          safeAddSpawnEgg(output, ModEntities.CAMP_PHARAO);
+
+          safeAddSpawnEgg(output, ModEntities.CAMP_SHIELDMAIDEN);
+          safeAddSpawnEgg(output, ModEntities.CAMP_NORSEMEN_ARCHER);
+          safeAddSpawnEgg(output, ModEntities.CAMP_NORSEMEN_CHIEF);
+
+          safeAddSpawnEgg(output, ModEntities.CAMP_AMAZON);
+          safeAddSpawnEgg(output, ModEntities.CAMP_AMAZONSPEARMAN);
+          safeAddSpawnEgg(output, ModEntities.CAMP_AMAZONCHIEF);
+
+          safeAddSpawnEgg(output, ModEntities.CAMP_DROWNED_PIRATE);
+          safeAddSpawnEgg(output, ModEntities.CAMP_DROWNED_ARCHERPIRATE);
+          safeAddSpawnEgg(output, ModEntities.CAMP_DROWNED_CHIEFPIRATE);
+
+      }).build());
+
+      private static void safeAddSpawnEgg(@NotNull final CreativeModeTab.Output output,
+                                          @NotNull final EntityType<?> entityType)
+      {
+            final SpawnEggItem egg = ForgeSpawnEggItem.fromEntityType(entityType);
+            if (egg != null)
+            {
+                  output.accept(egg);
+            }
+      }
+
+      public static final RegistryObject<CreativeModeTab> FOOD = TAB_REG.register("mcfood", () -> new CreativeModeTab.Builder(CreativeModeTab.Row.TOP, 1)
+                                                                                                      .icon(() -> new ItemStack(ModBlocks.blockTomato))
+                                                                                                      .title(Component.translatable("com.minecolonies.creativetab.food")).displayItems((config, output) -> {
+          output.accept(ModBlocks.farmland);
+          output.accept(ModBlocks.floodedFarmland);
+
+          for (final Block crop : ModBlocks.getCrops())
+          {
+              output.accept(crop);
+          }
+
+          // bottles
+          output.accept(ModItems.large_empty_bottle);
           output.accept(ModItems.large_water_bottle);
           output.accept(ModItems.large_milk_bottle);
           output.accept(ModItems.large_soy_milk_bottle);
-          output.accept(ModItems.large_empty_bottle);
 
-          output.accept(ModItems.muffin);
-          output.accept(ModItems.muffin_dough);
-          output.accept(ModItems.manchet_dough);
-          output.accept(ModItems.raw_noodle);
+          for (final Item food : ModItems.getAllIngredients())
+          {
+              output.accept(food);
+          }
+
+          for (final Item food : ModItems.getAllFoods())
+          {
+              output.accept(food);
+          }
       }).build());
 
     /**

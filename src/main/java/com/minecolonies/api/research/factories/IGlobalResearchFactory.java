@@ -6,7 +6,6 @@ import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.research.IGlobalResearch;
 import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.Constants.PARAMS_GLOBAL_RESEARCH;
@@ -25,117 +24,96 @@ public interface IGlobalResearchFactory extends IFactory<FactoryVoidInput, IGlob
             throw new IllegalArgumentException("Unsupported context - Not correct number of parameters. Only " + PARAMS_GLOBAL_RESEARCH + " are allowed!");
         }
 
-        if (!(context[0] instanceof ResourceLocation))
+        if (!(context[0] instanceof final ResourceLocation id))
         {
-            throw new IllegalArgumentException("First parameter is supposed to be the ID (ResourceLocation)!");
+            throw new IllegalArgumentException("Parameter 1 is supposed to be the ID property (ResourceLocation)!");
         }
 
-        if (!(context[1] instanceof ResourceLocation))
+        if (!(context[1] instanceof final ResourceLocation parent))
         {
-            throw new IllegalArgumentException("Second parameter is supposed to be the branchID (ResourceLocation)!");
+            throw new IllegalArgumentException("Parameter 2 is supposed to be the parent property (ResourceLocation)!");
         }
 
-        if (!(context[2] instanceof ResourceLocation))
+        if (!(context[2] instanceof final ResourceLocation branch))
         {
-            throw new IllegalArgumentException("Third parameter is supposed to be the parent (ResourceLocation)!");
+            throw new IllegalArgumentException("Parameter 3 is supposed to be the branch property (ResourceLocation)!");
         }
 
-        if (!(context[3] instanceof TranslatableContents))
+        if (!(context[3] instanceof final TranslatableContents name))
         {
-            throw new IllegalArgumentException("Fourth parameter is supposed to be the description (Translation Text Component)!");
+            throw new IllegalArgumentException("Parameter 4 is supposed to be the name property (Translation Text Component)!");
         }
 
-        if (!(context[4] instanceof Integer))
+        if (!(context[4] instanceof final TranslatableContents subtitle))
         {
-            throw new IllegalArgumentException("Fifth parameter is supposed to be the Depth (int)!");
+            throw new IllegalArgumentException("Parameter 5 is supposed to be the subtitle property (Translation Text Component)!");
         }
 
-        final ResourceLocation id = (ResourceLocation) context[0];
-        final ResourceLocation branch = (ResourceLocation) context[1];
-        final ResourceLocation parent = (ResourceLocation) context[2];
-        final TranslatableContents desc = (TranslatableContents) context[3];
-        final int depth = (int) context[4];
-        final int sortOrder;
-        if(context.length > 5)
+        if (!(context[5] instanceof Integer depth))
         {
-            sortOrder = (int) context[5];
+            throw new IllegalArgumentException("Parameter 6 is supposed to be the depth property (int)!");
         }
-        else
+
+        if (!(context[6] instanceof Integer sortOrder))
         {
-            sortOrder = 1;
+            throw new IllegalArgumentException("Parameter 7 is supposed to be the sort order property (int)!");
         }
-        final ResourceLocation iconTexture;
-        if(context.length > 6)
+
+        if (!(context[7] instanceof Boolean onlyChild))
         {
-            iconTexture = (ResourceLocation) context[6];
+            throw new IllegalArgumentException("Parameter 8 is supposed to be the only child property (boolean)!");
         }
-        else
+
+        if (!(context[8] instanceof Boolean hidden))
         {
-            iconTexture = new ResourceLocation("");
+            throw new IllegalArgumentException("Parameter 9 is supposed to be the hidden property (boolean)!");
         }
-        final ItemStack iconStack;
-        if(context.length > 7)
+
+        if (!(context[9] instanceof Boolean autostart))
         {
-            iconStack = (ItemStack) context[7];
+            throw new IllegalArgumentException("Parameter 10 is supposed to be the autostart property (boolean)!");
         }
-        else
+
+        if (!(context[10] instanceof Boolean instant))
         {
-            iconStack = ItemStack.EMPTY;
+            throw new IllegalArgumentException("Parameter 11 is supposed to be the instant property (boolean)!");
         }
-        final TranslatableContents subtitle;
-        if(context.length > 8)
+
+        if (!(context[11] instanceof Boolean immutable))
         {
-            subtitle = (TranslatableContents) context[8];
+            throw new IllegalArgumentException("Parameter 12 is supposed to be the immutable property (boolean)!");
         }
-        else
-        {
-            subtitle = new TranslatableContents("", (String) null, TranslatableContents.NO_ARGS);
-        }
-        final boolean onlyChild;
-        final boolean hidden;
-        final boolean autostart;
-        final boolean instant;
-        final boolean immutable;
-        if (context.length == 14)
-        {
-            onlyChild = (boolean) context[9];
-            hidden = (boolean) context[10];
-            autostart = (boolean) context[11];
-            instant = (boolean) context[12];
-            immutable = (boolean) context[13];
-        }
-        else
-        {
-            onlyChild = false;
-            hidden = false;
-            autostart = false;
-            instant = false;
-            immutable = false;
-        }
-        return getNewInstance(id, branch, parent, desc, depth, sortOrder, iconTexture, iconStack, subtitle, onlyChild, hidden, autostart, instant, immutable);
+        return getNewInstance(id, parent, branch, name, subtitle, depth, sortOrder, onlyChild, hidden, autostart, instant, immutable);
     }
 
     /**
-     * Method to get a new Instance of a Research.
+     * Method to get a new Instance of research.
      *
-     * @param id                the id.
-     * @param branch            the branch.
-     * @param parent            the research's parent, or "" if no parent.
-     * @param desc              the description of the research.
-     * @param universityLevel   the university tier of the research.
-     * @param sortOrder         the sorting order for display of the research in comparison to its siblings.
-     * @param iconTexture       the resource location of the icon's texture, if one is present.
-     * @param iconStack         the ItemStack for an icon, if one is used.
-     * @param subtitle          the optional subtitle description of the research.
-     * @param onlyChild         if the research's completion prohibits its siblings from being completed.
-     * @param hidden            if the research is visible only when it is eligible for research.
-     * @param autostart         if the research attempts to automatically start when eligible, or reports to the player if unable.
-     * @param instant           if the research should complete immediately.
-     * @param immutable         if the research is locking, and can not be undone once completed.
-     * @return a new Instance of Research.
+     * @param id        its id.
+     * @param parent    the research's parent, if one is present, or null if not.
+     * @param branch    the branch it is on.
+     * @param name      the optional name of the research. If empty, a key generated from the id will be used instead.
+     * @param subtitle  the optional short description of the research, in plaintext or as a translation key.
+     * @param depth     the depth in the tree.
+     * @param sortOrder the relative vertical order of the research's display, in relation to its siblings.
+     * @param onlyChild if the research allows only one child research to be completed.
+     * @param hidden    if the research is only visible when eligible to be researched.
+     * @param autostart if the research should begin automatically, or notify the player, when it is eligible.
+     * @param instant   if the research should be completed instantly (ish) from when begun.
+     * @param immutable if the research can not be reset once unlocked.
+     * @return a new instance of research.
      */
-    @NotNull
-    IGlobalResearch getNewInstance(final ResourceLocation id, final ResourceLocation branch, final ResourceLocation parent, final TranslatableContents desc, final int universityLevel, final int sortOrder,
-      final ResourceLocation iconTexture, final ItemStack iconStack, final TranslatableContents subtitle, final boolean onlyChild,
-      final boolean hidden, final boolean autostart, final boolean instant, final boolean immutable);
+    @NotNull IGlobalResearch getNewInstance(
+        final ResourceLocation id,
+        final ResourceLocation parent,
+        final ResourceLocation branch,
+        final TranslatableContents name,
+        final TranslatableContents subtitle,
+        final int depth,
+        final int sortOrder,
+        final boolean onlyChild,
+        final boolean hidden,
+        final boolean autostart,
+        final boolean instant,
+        final boolean immutable);
 }

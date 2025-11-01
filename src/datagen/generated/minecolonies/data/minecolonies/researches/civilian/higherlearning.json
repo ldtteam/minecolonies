@@ -1,25 +1,25 @@
 {
   "branch": "minecolonies:civilian",
+  "costs": [
+    {
+      "type": "minecolonies:item_simple",
+      "item": "minecraft:book",
+      "quantity": 3
+    }
+  ],
   "effects": [
     {
-      "minecolonies:effects/blockhutschool": 1
+      "id": "minecolonies:effects/blockhutschool",
+      "level": 1
     }
   ],
   "exclusiveChildResearch": true,
   "icon": "minecolonies:blockhutschool",
   "requirements": [
     {
-      "building": "residence",
+      "type": "minecolonies:building",
+      "building": "minecolonies:residence",
       "level": 3
-    },
-    {
-      "type": "minecolonies:item_list",
-      "item": {
-        "items": [
-          "minecraft:book"
-        ]
-      },
-      "quantity": 3
     }
   ],
   "researchLevel": 1,

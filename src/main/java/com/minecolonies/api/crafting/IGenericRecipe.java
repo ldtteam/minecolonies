@@ -1,10 +1,10 @@
 package com.minecolonies.api.crafting;
 
+import com.minecolonies.api.equipment.registry.EquipmentTypeEntry;
 import com.minecolonies.api.util.OptionalPredicate;
-import com.minecolonies.api.util.constant.IToolType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import org.jetbrains.annotations.NotNull;
@@ -12,6 +12,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Supplier;
 
 /**
  * This is a generic recipe wrapper, used to abstract both potential
@@ -126,7 +127,7 @@ public interface IGenericRecipe
      * @return The required tool.
      */
     @NotNull
-    IToolType getRequiredTool();
+    EquipmentTypeEntry getRequiredTool();
 
     /**
      * Gets a creature required to produce this recipe, if any.
@@ -134,7 +135,7 @@ public interface IGenericRecipe
      * @return The required creature.
      */
     @Nullable
-    LivingEntity getRequiredEntity();
+    EntityType<?> getRequiredEntity();
 
     /**
      * Gets some human-readable restrictions on when this recipe is valid.
@@ -142,7 +143,7 @@ public interface IGenericRecipe
      * @return A list of restrictions.
      */
     @NotNull
-    List<Component> getRestrictions();
+    Supplier<List<Component>> getRestrictions();
 
     /**
      * Returns an arbitrary integer that influences recipe sort order based on level.

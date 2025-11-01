@@ -7,9 +7,10 @@ import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.crafting.GenericRecipe;
 import com.minecolonies.api.crafting.IGenericRecipe;
+import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.equipment.ModEquipmentTypes;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.api.util.constant.NbtTagConstants;
-import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
 import com.minecolonies.core.colony.buildings.modules.AnimalHerdingModule;
 import com.minecolonies.core.colony.buildings.modules.settings.BeekeeperCollectionSetting;
@@ -27,7 +28,6 @@ import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.animal.Bee;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.level.block.Blocks;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -240,12 +240,12 @@ public class BuildingBeekeeper extends AbstractBuilding
 
         public HerdingModule()
         {
-            super(ModJobs.beekeeper.get(), a -> a instanceof Bee, ItemStack.EMPTY);
+            super(ModJobs.beekeeper.get(), a -> a instanceof Bee, new ItemStorage(ItemStack.EMPTY, 1));
         }
 
         @NotNull
         @Override
-        public List<ItemStack> getBreedingItems()
+        public List<ItemStorage> getBreedingItems()
         {
             if (building != null)
             {
@@ -253,7 +253,7 @@ public class BuildingBeekeeper extends AbstractBuilding
             }
 
             return IColonyManager.getInstance().getCompatibilityManager().getImmutableFlowers().stream()
-              .map(flower -> new ItemStack(flower.getItem(), 2))
+              .map(flower -> new ItemStorage(flower.getItem(), 2))
               .collect(Collectors.toList());
         }
 
@@ -263,14 +263,17 @@ public class BuildingBeekeeper extends AbstractBuilding
         {
             final List<IGenericRecipe> recipes = new ArrayList<>(); // we don't kill the bees so don't use the default
 
-            recipes.add(new GenericRecipe(null, new ItemStack(Items.HONEYCOMB),
-                    Collections.emptyList(), Collections.emptyList(), Collections.emptyList(),
-                    0, Blocks.AIR, null, ToolType.SHEARS, animal, Collections.emptyList(), 0));
+            recipes.add(GenericRecipe.builder()
+                    .withOutput(Items.HONEYCOMB)
+                    .withRequiredTool(ModEquipmentTypes.shears.get())
+                    .withRequiredEntity(animal.getType())
+                    .build());
 
-            recipes.add(new GenericRecipe(null, new ItemStack(Items.HONEY_BOTTLE),
-                    Collections.emptyList(), Collections.emptyList(),
-                    Collections.singletonList(Collections.singletonList(new ItemStack(Items.GLASS_BOTTLE))),
-                    0, Blocks.AIR, null, ToolType.NONE, animal, Collections.emptyList(), 0));
+            recipes.add(GenericRecipe.builder()
+                    .withOutput(Items.HONEY_BOTTLE)
+                    .withInputs(List.of(List.of(Items.GLASS_BOTTLE.getDefaultInstance())))
+                    .withRequiredEntity(animal.getType())
+                    .build());
 
             return recipes;
         }

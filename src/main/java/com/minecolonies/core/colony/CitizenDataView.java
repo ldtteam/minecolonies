@@ -13,9 +13,11 @@ import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenHappinessHandler;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenSkillHandler;
 import com.minecolonies.api.inventory.InventoryCitizen;
+import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.Suppression;
+import com.minecolonies.core.MineColonies;
 import com.minecolonies.core.colony.interactionhandling.ServerCitizenInteraction;
 import com.minecolonies.core.entity.citizen.citizenhandlers.CitizenHappinessHandler;
 import com.minecolonies.core.entity.citizen.citizenhandlers.CitizenSkillHandler;
@@ -28,10 +30,15 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.time.Clock;
+import java.time.LocalDate;
+import java.time.Month;
 import java.util.*;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_OFFHAND_HELD_ITEM_SLOT;
@@ -43,6 +50,11 @@ import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECO
  */
 public class CitizenDataView implements ICitizenDataView
 {
+    /**
+     * Santa Hat.
+     */
+    private static ItemStack cachedDisplaySantaHat = null;
+
     private static final String TAG_HELD_ITEM_SLOT = "HeldItemSlot";
 
     /**
@@ -167,6 +179,11 @@ public class CitizenDataView implements ICitizenDataView
      * Texture UUID.
      */
     protected UUID textureUUID;
+
+    /**
+     * Flag is citizen is sick.
+     */
+    private boolean isSick;
 
     /**
      * Set View id.
@@ -362,7 +379,7 @@ public class CitizenDataView implements ICitizenDataView
         sortedInteractions = new ArrayList<>(citizenChatOptions.values());
         sortedInteractions.sort(Comparator.comparingInt(e -> -e.getPriority().getPriority()));
 
-        citizenHappinessHandler.read(buf.readNbt());
+        citizenHappinessHandler.read(buf.readNbt(), false);
 
         int statusindex = buf.readInt();
         statusIcon = statusindex >= 0 ? VisibleCitizenStatus.getForId(statusindex) : null;
@@ -417,6 +434,7 @@ public class CitizenDataView implements ICitizenDataView
         {
             textureUUID = buf.readUUID();
         }
+        this.isSick = buf.readBoolean();
     }
 
     @Override
@@ -464,8 +482,13 @@ public class CitizenDataView implements ICitizenDataView
     }
 
     @Override
-    public boolean hasVisibleInteractions()
+    public boolean hasVisibleStatus()
     {
+        if (statusIcon != null && statusIcon.shouldRender())
+        {
+            return true;
+        }
+
         if (sortedInteractions.isEmpty())
         {
             return false;
@@ -513,8 +536,13 @@ public class CitizenDataView implements ICitizenDataView
     }
 
     @Override
-    public ResourceLocation getInteractionIcon()
+    public ResourceLocation getStatusIcon()
     {
+        if (statusIcon != null && statusIcon.shouldRender())
+        {
+            return statusIcon.getIcon();
+        }
+
         if (sortedInteractions == null || sortedInteractions.isEmpty())
         {
             return null;
@@ -527,7 +555,7 @@ public class CitizenDataView implements ICitizenDataView
             {
                 icon = BLOCKING_RESOURCE;
             }
-            else if (hasVisibleInteractions())
+            else if (hasVisibleStatus())
             {
                 icon = PENDING_RESOURCE;
             }
@@ -613,5 +641,35 @@ public class CitizenDataView implements ICitizenDataView
         final ICitizenDataView data = (ICitizenDataView) o;
 
         return id == data.getId();
+    }
+
+    @Override
+    public ItemStack getDisplayArmor(final EquipmentSlot equipmentSlot)
+    {
+        if (cachedDisplaySantaHat == null)
+        {
+            if (MineColonies.getConfig().getClient().holidayFeatures.get() && LocalDate.now(Clock.systemDefaultZone()).getMonth() == Month.DECEMBER)
+            {
+                cachedDisplaySantaHat = new ItemStack(ModItems.santaHat);
+            }
+            else
+            {
+                cachedDisplaySantaHat = ItemStack.EMPTY;
+            }
+        }
+
+        final ItemStack currentHat = getInventory().getArmorInSlot(equipmentSlot);
+        if (currentHat.isEmpty() && cachedDisplaySantaHat != null && cachedDisplaySantaHat != ItemStack.EMPTY && equipmentSlot == EquipmentSlot.HEAD)
+        {
+            return cachedDisplaySantaHat;
+        }
+
+        return currentHat;
+    }
+
+    @Override
+    public boolean isSick()
+    {
+        return this.isSick;
     }
 }

@@ -3,17 +3,14 @@ package com.minecolonies.core.client.render.worldevent;
 import com.minecolonies.core.client.render.worldevent.highlightmanager.IHighlightRenderData;
 
 import java.time.Duration;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class HighlightManager
 {
     /**
-     * A position to highlight with a unique id.
+     * A position to highlight with a group and key.
      */
-    private static final Map<String, HighlightRenderDataContainer> HIGHLIGHT_ITEMS = new HashMap<>();
+    private static final Map<String, Map<String, HighlightRenderDataContainer>> HIGHLIGHT_ITEMS = new HashMap<>();
 
     /**
      * Highlights positions
@@ -29,31 +26,37 @@ public class HighlightManager
 
         final long worldTime = context.clientLevel.getGameTime();
 
-        List<HighlightRenderDataContainer> itemsToRemove = new ArrayList<>();
-        for (final HighlightRenderDataContainer renderDataContainer : HIGHLIGHT_ITEMS.values())
+        for (final Iterator<Map<String, HighlightRenderDataContainer>> groups = HIGHLIGHT_ITEMS.values().iterator(); groups.hasNext(); )
         {
-            renderDataContainer.attemptStart(context);
-            IHighlightRenderData renderData = renderDataContainer.data;
+            final Map<String, HighlightRenderDataContainer> group = groups.next();
 
-            if (renderDataContainer.isExpired(worldTime))
+            for (final Iterator<HighlightRenderDataContainer> containers = group.values().iterator(); containers.hasNext(); )
             {
-                renderData.stopRender(context);
-                itemsToRemove.add(renderDataContainer);
-            }
-            else
-            {
-                renderData.render(context);
-            }
-        }
+                final HighlightRenderDataContainer renderDataContainer = containers.next();
 
-        for (HighlightRenderDataContainer container : itemsToRemove)
-        {
-            HIGHLIGHT_ITEMS.remove(container.key);
+                renderDataContainer.attemptStart(context);
+                IHighlightRenderData renderData = renderDataContainer.data;
+
+                if (renderDataContainer.isExpired(worldTime))
+                {
+                    renderData.stopRender(context);
+                    containers.remove();
+                }
+                else
+                {
+                    renderData.render(context);
+                }
+            }
+
+            if (group.isEmpty())
+            {
+                groups.remove();
+            }
         }
     }
 
     /**
-     * Clears all highlight items for the given key.
+     * Clears all highlight items for the given group key.
      *
      * @param key the key to remove the render data for.
      */
@@ -65,12 +68,13 @@ public class HighlightManager
     /**
      * Adds a highlight item for the given key.
      *
-     * @param key  the key of the item to render.
-     * @param data the highlight render data.
+     * @param key    the group key of the item to render.
+     * @param subKey the subkey of the item within the group (if non-unique, an existing item will be replaced).
+     * @param data   the highlight render data.
      */
-    public static void addHighlight(final String key, final IHighlightRenderData data)
+    public static void addHighlight(final String key, final String subKey, final IHighlightRenderData data)
     {
-        HIGHLIGHT_ITEMS.put(key, new HighlightRenderDataContainer(key, data));
+        HIGHLIGHT_ITEMS.computeIfAbsent(key, k -> new HashMap<>()).put(subKey, new HighlightRenderDataContainer(data));
     }
 
     /**
@@ -78,11 +82,6 @@ public class HighlightManager
      */
     private static class HighlightRenderDataContainer
     {
-        /**
-         * The key for this renderer.
-         */
-        private final String key;
-
         /**
          * The data for this renderer.
          */
@@ -96,9 +95,8 @@ public class HighlightManager
         /**
          * Default constructor.
          */
-        private HighlightRenderDataContainer(String key, IHighlightRenderData data)
+        private HighlightRenderDataContainer(IHighlightRenderData data)
         {
-            this.key = key;
             this.data = data;
         }
 

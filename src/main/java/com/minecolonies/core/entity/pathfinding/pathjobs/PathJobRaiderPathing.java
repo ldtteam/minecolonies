@@ -23,7 +23,7 @@ import static com.minecolonies.api.util.BlockPosUtil.HORIZONTAL_DIRS;
 /**
  * Special raider pathfinding, can go through blocks and place ladders, is finished when reaching close to the intended spawn and is a legit spawn point.
  */
-public class PathJobRaiderPathing extends AbstractPathJob
+public class PathJobRaiderPathing extends AbstractPathJob implements IDestinationPathJob
 {
     /**
      * Cost for moving through a block
@@ -53,8 +53,9 @@ public class PathJobRaiderPathing extends AbstractPathJob
         super(world, start, targetSpawnPoint, new PathResult<PathJobRaiderPathing>(), null);
         this.buildings = buildings;
         direction = targetSpawnPoint;
-        maxNodes = 5000;
-        setPathingOptions(new PathingOptions().withJumpCost(1).withStartSwimCost(1).withSwimCost(1).withCanSwim(true).withCanEnterDoors(true));
+        maxNodes = 20000;
+        heuristicMod = 5.0;
+        setPathingOptions(new PathingOptions().withJumpCost(1).withStartSwimCost(1).withSwimCost(1).withCanSwim(true).withCanEnterDoors(true).withDropCost(5));
     }
 
     @Override
@@ -160,16 +161,22 @@ public class PathJobRaiderPathing extends AbstractPathJob
     {
         double modifier = addCost;
         addCost = 1.0;
-        if (!super.isPassable(x, y, z, false, null))
+        if (!super.isPassable(x, y, z, true, null))
         {
-            modifier *= THROUGH_BLOCK_COST;
+            modifier = THROUGH_BLOCK_COST;
         }
 
         if (SurfaceType.getSurfaceType(cachedBlockLookup, cachedBlockLookup.getBlockState(x, y - 1, z), tempWorldPos.set(x, y - 1, z), getPathingOptions()) != SurfaceType.WALKABLE)
         {
-            modifier *= THROUGH_BLOCK_COST;
+            modifier = THROUGH_BLOCK_COST;
         }
 
         return cost * modifier;
+    }
+
+    @Override
+    public BlockPos getDestination()
+    {
+        return direction;
     }
 }

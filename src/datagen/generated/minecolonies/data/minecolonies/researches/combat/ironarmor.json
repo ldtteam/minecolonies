@@ -1,25 +1,25 @@
 {
   "branch": "minecolonies:combat",
+  "costs": [
+    {
+      "type": "minecolonies:item_simple",
+      "item": "minecraft:iron_ingot",
+      "quantity": 32
+    }
+  ],
   "effects": [
     {
-      "minecolonies:effects/armordurabilitymultiplier": 4
+      "id": "minecolonies:effects/armordurabilitymultiplier",
+      "level": 4
     }
   ],
   "icon": "minecraft:iron_helmet",
   "parentResearch": "minecolonies:combat/ironskin",
   "requirements": [
     {
-      "building": "townhall",
+      "type": "minecolonies:single-building",
+      "building": "minecolonies:townhall",
       "level": 4
-    },
-    {
-      "type": "minecolonies:item_list",
-      "item": {
-        "items": [
-          "minecraft:iron_ingot"
-        ]
-      },
-      "quantity": 32
     }
   ],
   "researchLevel": 4

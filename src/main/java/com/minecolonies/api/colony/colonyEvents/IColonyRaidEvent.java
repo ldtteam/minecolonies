@@ -51,9 +51,4 @@ public interface IColonyRaidEvent extends IColonyEntitySpawnEvent
     {
         return getStatus() == EventStatus.PROGRESSING ||getStatus() == EventStatus.PREPARING;
     }
-
-    /**
-     * Set the raid event to mercy.
-     */
-    void setMercyEnd();
 }

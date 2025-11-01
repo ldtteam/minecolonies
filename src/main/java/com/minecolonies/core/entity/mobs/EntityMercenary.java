@@ -10,7 +10,6 @@ import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.ITickRat
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickRateStateMachine;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickingTransition;
 import com.minecolonies.api.entity.other.AbstractFastMinecoloniesEntity;
-import com.minecolonies.core.entity.pathfinding.navigation.AbstractAdvancedPathNavigate;
 import com.minecolonies.api.sounds.MercenarySounds;
 import com.minecolonies.api.util.DamageSourceKeys;
 import com.minecolonies.api.util.ItemStackUtils;
@@ -18,27 +17,36 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.core.entity.ai.minimal.EntityAIInteractToggleAble;
 import com.minecolonies.core.entity.citizen.EntityCitizen;
-import com.minecolonies.core.entity.pathfinding.proxy.GeneralEntityWalkToProxy;
+import com.minecolonies.core.entity.pathfinding.navigation.AbstractAdvancedPathNavigate;
+import com.minecolonies.core.entity.pathfinding.navigation.EntityNavigationUtils;
 import com.minecolonies.core.entity.pathfinding.navigation.MinecoloniesAdvancedPathNavigate;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.item.enchantment.Enchantments;
+import com.minecolonies.core.entity.pathfinding.proxy.GeneralEntityWalkToProxy;
+import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.util.Tuple;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
+import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
+import net.minecraft.world.entity.animal.horse.Llama;
 import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.monster.Monster;
-import net.minecraft.world.entity.animal.horse.Llama;
+import net.minecraft.world.entity.npc.Npc;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.util.*;
-import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.Component;
-import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
@@ -55,14 +63,6 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_TIME;
 import static com.minecolonies.api.util.constant.RaiderConstants.FOLLOW_RANGE;
 import static com.minecolonies.api.util.constant.TranslationConstants.MESSAGE_INFO_COLONY_MERCENARY_STEAL_CITIZEN;
 import static com.minecolonies.core.entity.ai.minimal.EntityAIInteractToggleAble.*;
-
-import net.minecraft.sounds.SoundEvent;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.npc.Npc;
 
 
 /**
@@ -131,6 +131,11 @@ public class EntityMercenary extends AbstractFastMinecoloniesEntity implements N
      * The entities name.
      */
     private static final String ENTITY_NAME = "Mercenary";
+
+    /**
+     * Colony id of the assigned colony.
+     */
+    private int colonyId;
 
     /**
      * Constructor method for Mercenaries.
@@ -257,11 +262,11 @@ public class EntityMercenary extends AbstractFastMinecoloniesEntity implements N
         playSound(MercenarySounds.mercenaryCelebrate, 2.0f, 1.0f);
         if (blockPosition().equals(first))
         {
-            getNavigation().tryMoveToBlockPos(last, 0.5);
+            EntityNavigationUtils.walkToPos(this, last, 2, true, 0.5);
         }
         else
         {
-            getNavigation().tryMoveToBlockPos(first, 0.5);
+            EntityNavigationUtils.walkToPos(this, first, 2, true, 0.5);
         }
 
         return false;
@@ -338,7 +343,7 @@ public class EntityMercenary extends AbstractFastMinecoloniesEntity implements N
         worldTimeAtSpawn = compound.getLong(TAG_TIME);
         if (compound.contains(TAG_COLONY_ID))
         {
-            final int colonyId = compound.getInt(TAG_COLONY_ID);
+            colonyId = compound.getInt(TAG_COLONY_ID);
             if (colonyId != 0)
             {
                 setColony(IColonyManager.getInstance().getColonyByWorld(colonyId, level));
@@ -562,5 +567,11 @@ public class EntityMercenary extends AbstractFastMinecoloniesEntity implements N
             }
         }
         return true;
+    }
+
+    @Override
+    public int getTeamId()
+    {
+        return colonyId;
     }
 }

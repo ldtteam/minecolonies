@@ -1,10 +1,12 @@
 package com.minecolonies.core.entity.pathfinding.pathjobs;
 
-import com.minecolonies.core.entity.pathfinding.PathfindingUtils;
-import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.constant.ColonyConstants;
 import com.minecolonies.core.entity.pathfinding.MNode;
+import com.minecolonies.core.entity.pathfinding.PathfindingUtils;
+import com.minecolonies.core.entity.pathfinding.PathingOptions;
+import com.minecolonies.core.entity.pathfinding.SurfaceType;
+import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.Mob;
@@ -14,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Walks to a random edge block nearby, a block next to air. Does not use ladders
  */
-public class PathJobWalkRandomEdge extends AbstractPathJob
+public class PathJobWalkRandomEdge extends AbstractPathJob implements ISearchPathJob
 {
     /**
      * The chance to check if the node is an edge, determines the random edge behaviour
@@ -32,6 +34,7 @@ public class PathJobWalkRandomEdge extends AbstractPathJob
     {
         super(world, PathfindingUtils.prepareStart(entity), range, new PathResult<PathJobWalkRandomEdge>(), entity);
         this.searchAroundPos = searchAroundPos;
+        extraNodes = 20;
     }
 
     @Override
@@ -41,21 +44,26 @@ public class PathJobWalkRandomEdge extends AbstractPathJob
     }
 
     @Override
+    public void setPathingOptions(final PathingOptions pathingOptions)
+    {
+        super.setPathingOptions(pathingOptions);
+        pathingOptions.canDrop = false;
+    }
+
+    @Override
     protected boolean isAtDestination(final MNode n)
     {
-        if (searchAroundPos.getY() - n.y > 3)
+        if (searchAroundPos.getY() - n.y > 3 || searchAroundPos.getY() - n.y < -3)
         {
             return false;
         }
 
         if (ColonyConstants.rand.nextInt(NODE_EDGE_CHANCE) == 0)
         {
-            for (final Direction direction : Direction.Plane.HORIZONTAL)
+            if (SurfaceType.getSurfaceType(world, cachedBlockLookup.getBlockState(n.x, n.y - 1, n.z), tempWorldPos.set(n.x, n.y - 1, n.z), getPathingOptions())
+                == SurfaceType.WALKABLE)
             {
-                if (cachedBlockLookup.getBlockState(n.x + direction.getStepX(), n.y - 1 + direction.getStepY(), n.z + direction.getStepZ()).isAir())
-                {
-                    return true;
-                }
+                return true;
             }
         }
 
@@ -63,8 +71,8 @@ public class PathJobWalkRandomEdge extends AbstractPathJob
     }
 
     @Override
-    protected double getEndNodeScore(final MNode n)
+    public double getEndNodeScore(final MNode n)
     {
-        return BlockPosUtil.distManhattan(start, n.x, n.y, n.z);
+        return -BlockPosUtil.distManhattan(searchAroundPos, n.x, n.y, n.z);
     }
 }

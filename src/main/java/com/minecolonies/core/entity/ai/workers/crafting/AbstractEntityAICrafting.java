@@ -12,18 +12,17 @@ import com.minecolonies.api.crafting.RecipeStorage;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
-import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.api.util.InventoryUtils;
-import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.Tuple;
-import com.minecolonies.api.util.constant.ColonyConstants;
-import com.minecolonies.api.util.constant.ToolType;
+import com.minecolonies.api.equipment.ModEquipmentTypes;
+import com.minecolonies.api.util.*;
 import com.minecolonies.core.Network;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
 import com.minecolonies.core.colony.buildings.modules.CraftingWorkerBuildingModule;
 import com.minecolonies.core.colony.jobs.AbstractJobCrafter;
 import com.minecolonies.core.entity.ai.workers.AbstractEntityAIInteract;
 import com.minecolonies.core.entity.citizen.EntityCitizen;
+import com.minecolonies.core.entity.other.SittingEntity;
+import com.minecolonies.core.entity.pathfinding.navigation.EntityNavigationUtils;
+import com.minecolonies.core.util.citizenutils.CitizenItemUtils;
 import com.minecolonies.core.network.messages.client.BlockParticleEffectMessage;
 import com.minecolonies.core.network.messages.client.LocalizedParticleEffectMessage;
 import net.minecraft.core.BlockPos;
@@ -39,20 +38,30 @@ import net.minecraftforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.constant.CitizenConstants.*;
 import static com.minecolonies.api.util.constant.Constants.DEFAULT_SPEED;
+import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
+import static com.minecolonies.api.util.constant.SchematicTagConstants.*;
 import static com.minecolonies.api.util.constant.StatisticsConstants.ITEMS_CRAFTED;
 import static com.minecolonies.core.util.WorkerUtil.hasTooManyExternalItemsInInv;
+
+import static com.minecolonies.api.util.constant.StatisticsConstants.ITEMS_CRAFTED_DETAIL;
 
 /**
  * Abstract class for the principal crafting AIs.
  */
 public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J>, B extends AbstractBuilding> extends AbstractEntityAIInteract<J, B>
 {
+    /**
+     * Allow transitioning to any other state, otherwise stay in current.
+     */
+    public static IAIState NO_CHANGE = null;
+
     /**
      * Time the worker delays until the next hit.
      */
@@ -94,6 +103,11 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
     private boolean dumped = false;
 
     /**
+     * Idle pos.
+     */
+    public BlockPos idlePos = null;
+
+    /**
      * The number of actions a crafting "success" is worth. By default, that's 1 action for 1 crafting success. Override this in your subclass to make crafting recipes worth more
      * actions :-)
      *
@@ -103,6 +117,32 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
     {
         return 1;
     }
+
+    /**
+     * Returns the name of the crafting stat that is used in the building's statistics.
+     * Override this in your subclass to change the description of the smelting stat.
+     * @return The name of the crafting statistic.
+     */
+    protected String getCraftingStatName()
+    {
+        return ITEMS_CRAFTED_DETAIL;
+    }
+
+    /**
+     * Records the crafting request in the building's statistics.
+     * Override this in your subclass to change the description of the crafting stat.
+     * @param request the request to record.
+     */
+    protected void recordCraftingBuildingStats(IRequest<?> request, IRecipeStorage recipe)
+    {
+        if (recipe == null) 
+        {
+            return;
+        }
+
+        StatsUtil.trackStatByName(building, getCraftingStatName(), recipe.getPrimaryOutput().getHoverName(), recipe.getPrimaryOutput().getCount());
+    }
+
 
     /**
      * Initialize the crafter job and add all his tasks.
@@ -116,7 +156,8 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
           /*
            * Check if tasks should be executed.
            */
-          new AITarget(IDLE, () -> START_WORKING, 1),
+          new AITarget(IDLE, this::hasWorkToDo, () -> START_WORKING, TICKS_SECOND),
+          new AITarget(IDLE, this::idle, TICKS_SECOND),
           new AITarget(START_WORKING, this::decide, STANDARD_DELAY),
           new AITarget(QUERY_ITEMS, this::queryItems, STANDARD_DELAY),
           new AITarget(GET_RECIPE, this::getRecipe, STANDARD_DELAY),
@@ -131,6 +172,92 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
         worker.setRenderMetadata(getState() == CRAFT ? RENDER_META_WORKING : "");
     }
 
+    protected IAIState idle()
+    {
+        if ((idlePos != null && !walkToSafePos(idlePos)) || !worker.getNavigation().isDone())
+        {
+            return NO_CHANGE;
+        }
+
+        if (!building.isInBuilding(worker.blockPosition()))
+        {
+            walkToBuilding();
+            return NO_CHANGE;
+        }
+
+        setDelay(TICKS_20 * 20);
+
+        if (idlePos != null)
+        {
+            if (building.getLocationsFromTag(TAG_SITTING).contains(idlePos)
+                || building.getLocationsFromTag(TAG_SIT_IN).contains(idlePos)
+                || building.getLocationsFromTag(TAG_SIT_OUT).contains(idlePos))
+            {
+                SittingEntity.sitDown(idlePos, worker, TICKS_SECOND * 20);
+                idlePos = null;
+                return NO_CHANGE;
+            }
+            idlePos = null;
+        }
+
+        if (MathUtils.RANDOM.nextBoolean())
+        {
+            final List<BlockPos> sitPositions = new ArrayList<>(building.getLocationsFromTag(TAG_SITTING));
+            sitPositions.addAll(building.getLocationsFromTag(TAG_SIT_IN));
+            if (worker.level.isRaining())
+            {
+                if (!sitPositions.isEmpty())
+                {
+                    idlePos = sitPositions.get(MathUtils.RANDOM.nextInt(sitPositions.size()));
+                    return NO_CHANGE;
+                }
+            }
+            else
+            {
+                sitPositions.addAll(building.getLocationsFromTag(TAG_SIT_OUT));
+                if (!sitPositions.isEmpty())
+                {
+                    idlePos = sitPositions.get(MathUtils.RANDOM.nextInt(sitPositions.size()));
+                    return NO_CHANGE;
+                }
+            }
+        }
+
+        if (MathUtils.RANDOM.nextBoolean())
+        {
+            final List<BlockPos> standPositions = new ArrayList<>(building.getLocationsFromTag(TAG_STAND_IN));
+            if (worker.level.isRaining())
+            {
+                if (!standPositions.isEmpty())
+                {
+                    idlePos = standPositions.get(MathUtils.RANDOM.nextInt(standPositions.size()));
+                    return NO_CHANGE;
+                }
+            }
+            else
+            {
+                standPositions.addAll(building.getLocationsFromTag(TAG_STAND_OUT));
+                if (!standPositions.isEmpty())
+                {
+                    idlePos = standPositions.get(MathUtils.RANDOM.nextInt(standPositions.size()));
+                    return NO_CHANGE;
+                }
+            }
+        }
+
+        EntityNavigationUtils.walkToRandomPosWithin(worker, 10, DEFAULT_SPEED, building.getCorners());
+        return NO_CHANGE;
+    }
+
+    /**
+     * If the crafter should go in idle mode or not.
+     * @return true if so.
+     */
+    public boolean hasWorkToDo()
+    {
+        return !job.getTaskQueue().isEmpty() && job.getCurrentTask() != null;
+    }
+
     /**
      * Main method to decide on what to do.
      *
@@ -138,30 +265,13 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
      */
     protected IAIState decide()
     {
+        if (!hasWorkToDo())
+        {
+            return IDLE;
+        }
         worker.getCitizenData().setVisibleStatus(VisibleCitizenStatus.WORKING);
-        if (job.getTaskQueue().isEmpty())
-        {
-            if (worker.getNavigation().isDone())
-            {
-                if (building.isInBuilding(worker.blockPosition()) && ColonyConstants.rand.nextInt(20) != 0)
-                {
-                    setDelay(TICKS_20 * 20);
-                    worker.getNavigation().moveToRandomPos(10, DEFAULT_SPEED, building.getCorners());
-                }
-                else
-                {
-                    walkToBuilding();
-                }
-            }
-            return IDLE;
-        }
 
-        if (job.getCurrentTask() == null)
-        {
-            return IDLE;
-        }
-
-        if (walkToBuilding())
+        if (!walkToBuilding())
         {
             return START_WORKING;
         }
@@ -184,7 +294,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
     {
         if (job.getCurrentTask() == null)
         {
-            return getState();
+            return IDLE;
         }
 
         if (currentRecipeStorage != null && !dumped && hasTooManyExternalItemsInInv(currentRecipeStorage, worker.getInventoryCitizen()))
@@ -237,7 +347,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
             return INVENTORY_FULL;
         }
 
-        if (currentRecipeStorage.getRequiredTool() != ToolType.NONE)
+        if (currentRecipeStorage.getRequiredTool() != ModEquipmentTypes.none.get())
         {
             if (checkForToolOrWeapon(currentRecipeStorage.getRequiredTool()))
             {
@@ -249,7 +359,6 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
         }
 
         currentRequest = currentTask;
-        job.setMaxCraftingCount(currentRequest.getRequest().getCount());
         final int currentCount = InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(),
           stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, currentRecipeStorage.getPrimaryOutput()));
         final int inProgressCount = getExtendedCount(currentRecipeStorage.getPrimaryOutput());
@@ -258,12 +367,13 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
         final int doneOpsCount = currentCount / countPerIteration;
         final int progressOpsCount = inProgressCount / countPerIteration;
 
-        final int remainingOpsCount = currentRequest.getRequest().getCount() - doneOpsCount - progressOpsCount;
-
+        final int minRemainingOpsCount = currentRequest.getRequest().getMinCount() - doneOpsCount - progressOpsCount;
+        int availableOpsCount = currentRequest.getRequest().getCount();
         final List<ItemStorage> input = currentRecipeStorage.getCleanedInput();
         for (final ItemStorage inputStorage : input)
         {
             final ItemStack container = inputStorage.getItemStack().getCraftingRemainingItem();
+            boolean isToolOrContainer = true;
             final int remaining;
             if (!currentRecipeStorage.getCraftingToolsAndSecondaryOutputs().isEmpty()
                   && ItemStackUtils.compareItemStackListIgnoreStackSize(currentRecipeStorage.getCraftingToolsAndSecondaryOutputs(), inputStorage.getItemStack(), false, true))
@@ -276,21 +386,30 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
             }
             else
             {
-                remaining = inputStorage.getAmount() * remainingOpsCount;
+                remaining = inputStorage.getAmount() * minRemainingOpsCount;
+                isToolOrContainer = false;
             }
-            if (InventoryUtils.getCountFromBuilding(building, itemStack -> ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, inputStorage.getItemStack(), false, true))
-                  + InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(),
-              itemStack -> ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, inputStorage.getItemStack(), false, true))
-                  + getExtendedCount(inputStorage.getItemStack())
-                  < remaining)
+
+            final int availableCount = InventoryUtils.getCountFromBuilding(building, itemStack -> ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, inputStorage.getItemStack(), false, true))
+                + InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(),
+                itemStack -> ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, inputStorage.getItemStack(), false, true))
+                + getExtendedCount(inputStorage.getItemStack());
+
+            if (availableCount < remaining)
             {
                 currentRecipeStorage = null;
                 job.finishRequest(false);
                 incrementActionsDone(getActionRewardForCraftingSuccess());
                 return START_WORKING;
             }
+
+            if (!isToolOrContainer)
+            {
+                availableOpsCount = Math.min(Math.min(availableCount, currentRequest.getRequest().getCount()), availableOpsCount);
+            }
         }
 
+        job.setMaxCraftingCount(Math.min(availableOpsCount + doneOpsCount, currentRequest.getRequest().getCount()));
         job.setCraftCounter(doneOpsCount);
         return QUERY_ITEMS;
     }
@@ -394,7 +513,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
             return GET_RECIPE;
         }
 
-        if (walkToBuilding())
+        if (!walkToTaggedWorkPos())
         {
             return getState();
         }
@@ -402,9 +521,9 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
         job.setProgress(job.getProgress() + 1);
 
         int toolSlot = -1;
-        if (currentRecipeStorage.getRequiredTool() != ToolType.NONE)
+        if (currentRecipeStorage.getRequiredTool() != ModEquipmentTypes.none.get())
         {
-            toolSlot = InventoryUtils.findFirstSlotInItemHandlerWith(worker.getInventoryCitizen(), stack -> ItemStackUtils.isTool(stack, currentRecipeStorage.getRequiredTool()));
+            toolSlot = InventoryUtils.findFirstSlotInItemHandlerWith(worker.getInventoryCitizen(), stack -> currentRecipeStorage.getRequiredTool().checkIsEquipment(stack));
         }
         if (toolSlot >= 0)
         {
@@ -445,12 +564,12 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
                     resetValues();
                     return START_WORKING;
                 }
-
+                recordCraftingBuildingStats(currentRequest, currentRecipeStorage);
                 currentRequest.addDelivery(currentRecipeStorage.getPrimaryOutput());
                 job.setCraftCounter(job.getCraftCounter() + 1);
                 if (toolSlot != -1)
                 {
-                    worker.getCitizenItemHandler().damageItemInHand(InteractionHand.MAIN_HAND, 1);
+                    CitizenItemUtils.damageItemInHand(worker, InteractionHand.MAIN_HAND, 1);
                 }
 
                 if (job.getCraftCounter() >= job.getMaxCraftingCount())
@@ -538,9 +657,9 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
             if (currentRequest.getState() == RequestState.IN_PROGRESS)
             {
                 worker.getCitizenColonyHandler()
-                  .getColony()
+                  .getColonyOrRegister()
                   .getStatisticsManager()
-                  .incrementBy(ITEMS_CRAFTED, currentRequest.getRequest().getCount(), worker.getCitizenColonyHandler().getColony().getDay());
+                  .incrementBy(ITEMS_CRAFTED, currentRequest.getRequest().getCount(), worker.getCitizenColonyHandler().getColonyOrRegister().getDay());
                 job.finishRequest(true);
                 worker.getCitizenExperienceHandler().addExperience(currentRequest.getRequest().getCount() / 2.0);
             }

@@ -1,13 +1,14 @@
 package com.minecolonies.core.compatibility.journeymap;
 
+import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.colony.IColonyView;
-import com.minecolonies.api.colony.event.ClientChunkUpdatedEvent;
-import com.minecolonies.api.colony.event.ColonyViewUpdatedEvent;
+import com.minecolonies.core.event.ClientChunkUpdatedEvent;
+import com.minecolonies.api.eventbus.events.colony.ColonyViewUpdatedModEvent;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.jobs.registry.IJobRegistry;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-import com.minecolonies.api.entity.mobs.AbstractEntityRaiderMob;
+import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesRaider;
 import com.minecolonies.core.colony.jobs.AbstractJobGuard;
 import com.minecolonies.core.entity.visitor.VisitorCitizen;
 import journeymap.client.api.display.Context;
@@ -50,6 +51,7 @@ public class EventListener
         this.jmap = jmap;
 
         MinecraftForge.EVENT_BUS.register(this);
+        IMinecoloniesAPI.getInstance().getEventBus().subscribe(ColonyViewUpdatedModEvent.class, this::onColonyViewUpdated);
     }
 
     @SubscribeEvent
@@ -80,8 +82,7 @@ public class EventListener
         ColonyBorderMapping.updateChunk(this.jmap, dimension, event.getChunk());
     }
 
-    @SubscribeEvent
-    public void onColonyViewUpdated(@NotNull final ColonyViewUpdatedEvent event)
+    public void onColonyViewUpdated(@NotNull final ColonyViewUpdatedModEvent event)
     {
         final IColonyView colony = event.getColony();
         final Set<BlockPos> graves = colony.getGraveManager().getGraves().keySet();
@@ -152,7 +153,7 @@ public class EventListener
                 wrapper.setColor(entity.getTeamColor());
             }
         }
-        else if (entity instanceof AbstractEntityRaiderMob)
+        else if (entity instanceof AbstractEntityMinecoloniesRaider)
         {
             final JourneymapOptions.RaiderColor color = JourneymapOptions.getRaiderColor(this.jmap.getOptions());
 

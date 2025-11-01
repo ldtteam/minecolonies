@@ -49,6 +49,18 @@ public interface IMCCommand
      */
     default int checkPreConditionAndExecute(final CommandContext<CommandSourceStack> context)
     {
+        return checkPreConditionAndExecute(context, this::onExecute);
+    }
+
+    /**
+     * Executes pre-checks before issuing the command
+     *
+     * @param context   the context.
+     * @param onExecute the execution method.
+     * @return 1 if successful and 0 if incomplete.
+     */
+    default int checkPreConditionAndExecute(final CommandContext<CommandSourceStack> context, final ExecutionHandler onExecute)
+    {
         try
         {
             if (!checkPreCondition(context))
@@ -56,7 +68,7 @@ public interface IMCCommand
                 return 0;
             }
 
-            return onExecute(context);
+            return onExecute.apply(context);
         }
         catch (Throwable e)
         {
@@ -100,5 +112,11 @@ public interface IMCCommand
         }
 
         return player.getServer().getPlayerList().isOp(player.getGameProfile());
+    }
+
+    @FunctionalInterface
+    interface ExecutionHandler
+    {
+        Integer apply(CommandContext<CommandSourceStack> t) throws Exception;
     }
 }

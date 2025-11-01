@@ -3,10 +3,8 @@ package com.minecolonies.api.compatibility;
 import com.google.common.collect.ImmutableSet;
 import com.minecolonies.api.crafting.CompostRecipe;
 import com.minecolonies.api.crafting.ItemStorage;
-import com.minecolonies.api.util.Disease;
 import com.minecolonies.api.util.Tuple;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
@@ -107,6 +105,14 @@ public interface ICompatibilityManager
     boolean isMineableOre(@NotNull ItemStack stack);
 
     /**
+     * Check if a stack belongs to a breakable ore.
+     *
+     * @param stack the stack to test.
+     * @return true if so.
+     */
+    boolean isBreakableOre(@NotNull ItemStack stack);
+
+    /**
      * Get a copy of the list of compost recipes.
      *
      * @return the list of compost recipes, indexed by input item.
@@ -139,35 +145,6 @@ public interface ICompatibilityManager
      * @return the set.
      */
     ImmutableSet<ResourceLocation> getAllMonsters();
-
-    /**
-     * Get a random disease of the compat manager.
-     *
-     * @return a randomly chosen disease.
-     */
-    String getRandomDisease();
-
-    /**
-     * Get a disease by the ID.
-     *
-     * @param disease the id.
-     * @return the disease.
-     */
-    Disease getDisease(String disease);
-
-    /**
-     * Get the list of diseases.
-     *
-     * @return a copy of the list.
-     */
-    List<Disease> getDiseases();
-
-    /**
-     * Gets the list of recruitment costs with weights
-     *
-     * @return list of costs
-     */
-    List<Tuple<Item, Integer>> getRecruitmentCostsWeights();
 
     /**
      * Checks if a certain Block is an ore.
@@ -238,30 +215,6 @@ public interface ICompatibilityManager
     boolean isLuckyBlock(final Block block);
 
     /**
-     * Get a random lucky ore from a luckyblock.
-     * Loot may change depending on the mine level
-     *
-     * @param chanceBonus the chance bonus.
-     * @param buildingLevel level of the mine
-     * @return the lucky ore.
-     */
-    ItemStack getRandomLuckyOre(final double chanceBonus, final int buildingLevel);
-
-    /**
-     * Check if the block is configured to bypass the colony restrictions.
-     * @param block the block to check.
-     * @return true if so.
-     */
-    boolean isFreeBlock(Block block);
-
-    /**
-     * Check if the position is configured to bypass the colony restrictions.
-     * @param block the position to check.
-     * @return true if so.
-     */
-    boolean isFreePos(BlockPos block);
-
-    /**
      * Get the creative tab for a stack.
      * @param checkItem the storage wrapper.
      */
@@ -273,4 +226,10 @@ public interface ICompatibilityManager
      * @return the number or default.
      */
     int getCreativeTabKey(ItemStorage checkItem);
+
+    /**
+     * Get number of detected saplings.
+     * @return the number of saplings.
+     */
+    int getNumberOfSaplings();
 }

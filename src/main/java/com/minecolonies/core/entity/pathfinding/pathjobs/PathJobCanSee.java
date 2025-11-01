@@ -1,10 +1,10 @@
 package com.minecolonies.core.entity.pathfinding.pathjobs;
 
+import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.core.entity.pathfinding.MNode;
 import com.minecolonies.core.entity.pathfinding.PathfindingUtils;
 import com.minecolonies.core.entity.pathfinding.SurfaceType;
 import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
-import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.core.entity.pathfinding.MNode;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
@@ -17,7 +17,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Pathing job for moving into vision of the given entity
  */
-public class PathJobCanSee extends AbstractPathJob
+public class PathJobCanSee extends AbstractPathJob implements ISearchPathJob
 {
     /**
      * The entity to see
@@ -67,7 +67,7 @@ public class PathJobCanSee extends AbstractPathJob
      * @return double of the distance.
      */
     @Override
-    protected double getEndNodeScore(@NotNull final MNode n)
+    public double getEndNodeScore(@NotNull final MNode n)
     {
         return BlockPosUtil.distManhattan(start, n.x, n.y, n.z);
     }

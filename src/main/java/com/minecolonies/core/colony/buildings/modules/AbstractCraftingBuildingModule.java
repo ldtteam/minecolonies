@@ -1,5 +1,6 @@
 package com.minecolonies.core.colony.buildings.modules;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.MinecoloniesAPIProxy;
@@ -146,7 +147,15 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
      */
     private boolean hasSpaceForMoreRecipes()
     {
-        return getMaxRecipes() > recipes.size();
+        return getMaxRecipes() > getActiveRecipes();
+    }
+
+    /**
+     * Gets the number of currently enabled recipes.
+     */
+    private int getActiveRecipes()
+    {
+        return Math.max(0, recipes.size() - disabledRecipes.size());
     }
 
     /**
@@ -438,24 +447,34 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
                 return true;
             }
 
-            final IRecipeStorage recipeStorage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
-            if (recipeStorage != null)
-            {
-                if (recipeStorage.getAlternateOutputs().isEmpty())
-                {
-                    building.getColony().getRequestManager().onColonyUpdate(request -> request.getRequest() instanceof IDeliverable iDeliverable && iDeliverable.matches(recipeStorage.getPrimaryOutput()));
-                    return true;
-                }
-
-                final List<ItemStack> allOutputs = Stream.concat(Stream.of(recipeStorage.getPrimaryOutput()),
-                    recipeStorage.getAlternateOutputs().stream()).filter(stack -> !stack.isEmpty()).toList();
-
-                building.getColony().getRequestManager().onColonyUpdate(request ->
-                                                                          request.getRequest() instanceof IDeliverable delivery && allOutputs.stream().anyMatch(i -> delivery.matches(i)));
-            }
+            handleRecipeUpdate(token);
             return true;
         }
         return false;
+    }
+
+    /**
+     * Handle recipe update.
+     * Adjust request system to deal with recipe update.
+     * @param token the related recipe.
+     */
+    public void handleRecipeUpdate(final IToken<?> token)
+    {
+        final IRecipeStorage recipeStorage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
+        if (recipeStorage != null)
+        {
+            if (recipeStorage.getAlternateOutputs().isEmpty())
+            {
+                building.getColony().getRequestManager().onColonyUpdate(request -> request.getRequest() instanceof IDeliverable iDeliverable && iDeliverable.matches(recipeStorage.getPrimaryOutput()));
+                return;
+            }
+
+            final List<ItemStack> allOutputs = Stream.concat(Stream.of(recipeStorage.getPrimaryOutput()),
+                recipeStorage.getAlternateOutputs().stream()).filter(stack -> !stack.isEmpty()).toList();
+
+            building.getColony().getRequestManager().onColonyUpdate(request ->
+                request.getRequest() instanceof IDeliverable delivery && allOutputs.stream().anyMatch(i -> delivery.matches(i)));
+        }
     }
 
     @Override
@@ -606,13 +625,10 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
 
             if (didReduction)
             {
-                final IRecipeStorage storage = StandardFactoryController.getInstance().getNewInstance(
-                  TypeConstants.RECIPE,
-                  StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
-                  newRecipe,
-                  1,
-                  recipe.getPrimaryOutput(),
-                  Blocks.AIR);
+                final IRecipeStorage storage = RecipeStorage.builder(recipe)
+                        .withInputs(newRecipe)
+                        .withRecipeId(null) // improved recipes have no source (expected by checkForWorkerSpecificRecipes)
+                        .build();
 
                 final IToken<?> token = IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(storage);
                 if (isRecipeCompatibleWithCraftingModule(token))
@@ -653,8 +669,13 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
                 continue;
             }
             final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
-            if (storage != null && (stackPredicate.test(storage.getPrimaryOutput()) || storage.getAlternateOutputs().stream().anyMatch(stackPredicate::test)))
+            if (storage != null && (stackPredicate.test(storage.getPrimaryOutput()) || InventoryUtils.getFirstMatch(storage.getAlternateOutputs(), stackPredicate) != null))
             {
+                if (storage.getRecipeType() instanceof MultiOutputRecipe && storage.getClassicForMultiOutput(stackPredicate) == null)
+                {
+                    continue;
+                }
+
                 if(foundRecipe == null)
                 {
                     foundRecipe = storage;
@@ -851,6 +872,7 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
             recipesDirty = true;
             disabledRecipes.remove(token);
             markDirty();
+            handleRecipeUpdate(token);
         }
         else
         {
@@ -1045,6 +1067,34 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
         public String getId()
         {
             return MODULE_SMELTING;
+        }
+
+        @Override
+        public IRecipeStorage getFirstFulfillableRecipe(final Predicate<ItemStack> stackPredicate, final int count, final boolean considerReservation)
+        {
+            boolean hasFuel = false;
+            final ImmutableList<ItemStorage> fuelList = building.getModule(BuildingModules.ITEMLIST_FUEL).getList();
+            for (final ItemStorage fuel : fuelList)
+            {
+                if (InventoryUtils.getCountFromBuilding(building, fuel) > 0)
+                {
+                    hasFuel = true;
+                    break;
+                }
+            }
+
+            if (!hasFuel)
+            {
+                for (final ItemStorage fuel : fuelList)
+                {
+                    if (stackPredicate.test(fuel.getItemStack()))
+                    {
+                        return super.getFirstFulfillableRecipe(stackPredicate, count, considerReservation);
+                    }
+                }
+                return null;
+            }
+            return super.getFirstFulfillableRecipe(stackPredicate, count, considerReservation);
         }
     }
 

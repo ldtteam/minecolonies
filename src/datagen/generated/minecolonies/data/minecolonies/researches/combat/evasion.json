@@ -1,25 +1,25 @@
 {
   "branch": "minecolonies:combat",
+  "costs": [
+    {
+      "type": "minecolonies:item_simple",
+      "item": "minecraft:leather",
+      "quantity": 64
+    }
+  ],
   "effects": [
     {
-      "minecolonies:effects/archerarmormultiplier": 3
+      "id": "minecolonies:effects/archerarmormultiplier",
+      "level": 3
     }
   ],
   "icon": "minecraft:iron_boots",
   "parentResearch": "minecolonies:combat/improveddodge",
   "requirements": [
     {
-      "building": "smeltery",
+      "type": "minecolonies:building",
+      "building": "minecolonies:smeltery",
       "level": 3
-    },
-    {
-      "type": "minecolonies:item_list",
-      "item": {
-        "items": [
-          "minecraft:leather"
-        ]
-      },
-      "quantity": 64
     }
   ],
   "researchLevel": 4,

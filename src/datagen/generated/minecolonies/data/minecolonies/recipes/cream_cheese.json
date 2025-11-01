@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "M": {
+      "item": "minecolonies:large_milk_bottle"
+    }
+  },
+  "pattern": [
+    " M ",
+    "MMM"
+  ],
+  "result": {
+    "count": 2,
+    "item": "minecolonies:creamcheese"
+  },
+  "show_notification": true
+}

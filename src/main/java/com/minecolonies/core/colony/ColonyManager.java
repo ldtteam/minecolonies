@@ -1,16 +1,21 @@
 package com.minecolonies.core.colony;
 
+import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.blocks.AbstractBlockHut;
-import com.minecolonies.api.colony.*;
+import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
-import com.minecolonies.api.colony.event.ColonyViewUpdatedEvent;
-import com.minecolonies.api.colony.managers.events.ColonyManagerLoadedEvent;
-import com.minecolonies.api.colony.managers.events.ColonyManagerUnloadedEvent;
 import com.minecolonies.api.colony.permissions.ColonyPlayer;
 import com.minecolonies.api.compatibility.CompatibilityManager;
 import com.minecolonies.api.compatibility.ICompatibilityManager;
 import com.minecolonies.api.crafting.IRecipeManager;
+import com.minecolonies.api.eventbus.events.ColonyManagerLoadedModEvent;
+import com.minecolonies.api.eventbus.events.ColonyManagerUnloadedModEvent;
+import com.minecolonies.api.eventbus.events.colony.ColonyDeletedModEvent;
+import com.minecolonies.api.eventbus.events.colony.ColonyViewUpdatedModEvent;
 import com.minecolonies.api.sounds.SoundManager;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ColonyUtils;
@@ -201,6 +206,7 @@ public final class ColonyManager implements IColonyManager
                 return;
             }
 
+            IMinecoloniesAPI.getInstance().getEventBus().post(new ColonyDeletedModEvent(colony));
             cap.deleteColony(id);
             BackUpHelper.markColonyDeleted(colony.getID(), colony.getDimension());
             colony.getImportantMessageEntityPlayers()
@@ -378,6 +384,13 @@ public final class ColonyManager implements IColonyManager
     }
 
     @Override
+    @NotNull
+    public List<IColony> getIColonies(@NotNull final Level w)
+    {
+        return w.isClientSide() ? new ArrayList<>(getColonyViews(w)) : getColonies(w);
+    }
+
+    @Override
     @Nullable
     public IColony getIColony(@NotNull final Level w, @NotNull final BlockPos pos)
     {
@@ -390,6 +403,15 @@ public final class ColonyManager implements IColonyManager
         new WindowReactivateBuilding(pos).open();
     }
 
+    @Override
+    @NotNull
+    public List<IColonyView> getColonyViews(@NotNull final Level w)
+    {
+        // this might be a subset of colonies since it's only those known to the player right now
+        final ColonyList<IColonyView> colonies = colonyViews.get(w.dimension());
+        return colonies == null ? List.of() : new ArrayList<>(colonies.getCopyAsList());
+    }
+
     /**
      * Get Colony that contains a given (x, y, z).
      *
@@ -397,7 +419,8 @@ public final class ColonyManager implements IColonyManager
      * @param pos coordinates.
      * @return returns the view belonging to the colony at x, y, z.
      */
-    private IColonyView getColonyView(@NotNull final Level w, @NotNull final BlockPos pos)
+    @Override
+    public IColonyView getColonyView(@NotNull final Level w, @NotNull final BlockPos pos)
     {
         final LevelChunk centralChunk = w.getChunkAt(pos);
 
@@ -611,7 +634,17 @@ public final class ColonyManager implements IColonyManager
     {
         if (event.phase == TickEvent.Phase.END)
         {
-            getColonies(event.level).forEach(c -> c.onWorldTick(event));
+            for (final IColony colony : getColonies(event.level))
+            {
+                try
+                {
+                    colony.onWorldTick(event);
+                }
+                catch (final Exception ex)
+                {
+                    Log.getLogger().error("Something went wrong ticking colony: " + colony.getID(), ex);
+                }
+            }
         }
     }
 
@@ -633,14 +666,7 @@ public final class ColonyManager implements IColonyManager
                 c.onWorldLoad(world);
             }
 
-            try
-            {
-                MinecraftForge.EVENT_BUS.post(new ColonyManagerLoadedEvent(this));
-            }
-            catch (final Exception e)
-            {
-                Log.getLogger().error("Error during ColonyManagerLoadedEvent", e);
-            }
+            IMinecoloniesAPI.getInstance().getEventBus().post(new ColonyManagerLoadedModEvent(this));
         }
     }
 
@@ -667,14 +693,7 @@ public final class ColonyManager implements IColonyManager
                 BackUpHelper.backupColonyData();
             }
 
-            try
-            {
-                MinecraftForge.EVENT_BUS.post(new ColonyManagerUnloadedEvent(this));
-            }
-            catch (final Exception e)
-            {
-                Log.getLogger().error("Error during ColonyManagerUnloadedEvent", e);
-            }
+            IMinecoloniesAPI.getInstance().getEventBus().post(new ColonyManagerUnloadedModEvent(this));
         }
     }
 
@@ -703,14 +722,7 @@ public final class ColonyManager implements IColonyManager
         }
         view.handleColonyViewMessage(colonyData, world, isNewSubscription);
 
-        try
-        {
-            MinecraftForge.EVENT_BUS.post(new ColonyViewUpdatedEvent(view));
-        }
-        catch (final Exception e)
-        {
-            Log.getLogger().error("Error during ColonyViewUpdatedEvent", e);
-        }
+        IMinecoloniesAPI.getInstance().getEventBus().post(new ColonyViewUpdatedModEvent(view));
     }
 
     @Override

@@ -2,12 +2,10 @@ package com.minecolonies.core.tileentities;
 
 import com.ldtteam.structurize.api.util.IRotatableBlockEntity;
 import com.ldtteam.structurize.blockentities.interfaces.IBlueprintDataProviderBE;
-import com.ldtteam.structurize.storage.StructurePacks;
-import com.ldtteam.structurize.util.RotationMirror;
-import com.minecolonies.api.compatibility.newstruct.BlueprintMapping;
 import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
-import com.minecolonies.api.util.Utils;
+import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.WorldUtil;
+import com.minecolonies.core.util.BuildingUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
@@ -17,15 +15,14 @@ import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
-import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.minecolonies.api.util.constant.Constants.DEFAULT_STYLE;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
 public class TileEntityDecorationController extends BlockEntity implements IBlueprintDataProviderBE, IRotatableBlockEntity
@@ -54,7 +51,8 @@ public class TileEntityDecorationController extends BlockEntity implements IBlue
     /**
      * The used rotation/mirror.
      */
-    private RotationMirror rotMir = RotationMirror.NONE;
+    private int cachedRotation = -1;
+    private boolean isMirrored = false;
 
     /**
      * Map of block positions relative to TE pos and string tags
@@ -145,83 +143,33 @@ public class TileEntityDecorationController extends BlockEntity implements IBlue
     {
         IBlueprintDataProviderBE.super.readSchematicDataFromNBT(compound);
         final CompoundTag blueprintDataProvider = compound.getCompound(TAG_BLUEPRINTDATA);
-        if (compound.contains(TAG_PACK)) // New structure
-        {
-            // path is the folder containing the schematic
-            final String path = blueprintDataProvider.getString(TAG_NAME);
-            this.schematicPath = path + File.separator + this.schematicName + ".blueprint";
-        }
-        else
-        {
-            // This is only recovery handling for old structures, it shouldn't be called otherwise.
-            if (compound.contains(TAG_NAME))
-            {
-                this.schematicPath = compound.getString(TAG_NAME);
-                final String[] split = Utils.splitPath(this.schematicPath);
-                this.schematicName = split[split.length - 1].replace(".blueprint", "");
-            }
 
-            final String[] split = Utils.splitPath(this.schematicPath);
-            if (split.length >= 4)
-            {
-                this.packName = BlueprintMapping.getStyleMapping(split[2]);
-            }
-
-            if (this.packName == null || this.packName.isEmpty())
-            {
-                this.packName = DEFAULT_STYLE;
-            }
-
-            if (this.schematicName.contains("/") || this.schematicName.contains("\\"))
-            {
-                final String[] splitName = Utils.splitPath(this.schematicPath);
-                this.schematicName = splitName[splitName.length - 1].replace(".blueprint", "");
-            }
-
-            if (compound.contains(TAG_LEVEL))
-            {
-                this.schematicName += compound.getInt(TAG_LEVEL);
-            }
-
-            if (StructurePacks.hasPack(this.packName))
-            {
-                this.schematicPath = StructurePacks.getStructurePack(this.packName).getSubPath(StructurePacks.findBlueprint(this.packName, schematicName));
-            }
-            else
-            {
-                this.schematicPath = this.schematicName;
-            }
-
-            if (!this.schematicPath.endsWith(".blueprint"))
-            {
-                this.schematicPath = this.schematicPath + ".blueprint";
-            }
-        }
-
-        if (blueprintDataProvider.contains(TAG_PACK))
-        {
-            this.packName = blueprintDataProvider.getString(TAG_PACK);
-        }
-
-        if (this.packName == null)
-        {
-            this.packName = DEFAULT_STYLE;
-        }
+        this.packName = blueprintDataProvider.getString(TAG_PACK);
+        this.schematicPath = blueprintDataProvider.getString(TAG_PATH);
     }
 
     @Override
-    public void load(final CompoundTag compound)
+    public void load(@NotNull final CompoundTag compound)
     {
         super.load(compound);
         IBlueprintDataProviderBE.super.readSchematicDataFromNBT(compound);
-        this.rotMir = RotationMirror.of(Rotation.values()[compound.getInt(TAG_ROTATION)],
-                compound.getBoolean(TAG_MIRROR) ? Mirror.FRONT_BACK : Mirror.NONE);
-        if(compound.contains(TAG_PATH))
+        this.cachedRotation = -1;
+        this.isMirrored = compound.getBoolean(TAG_MIRROR);
+
+        // inexplicably IBlueprintDataProviderBE does not load the pack/path even though it saved them
+        this.packName = compound.getCompound(TAG_BLUEPRINTDATA).getString(TAG_PACK);
+        this.schematicPath = compound.getCompound(TAG_BLUEPRINTDATA).getString(TAG_PATH);
+
+        // the rest of this is backwards compat code that can be removed at some point (maybe even now)
+        if(compound.contains(TAG_PATH) && StringUtils.isEmpty(this.schematicPath))
         {
             this.schematicPath = compound.getString(TAG_PATH);
         }
-
-        if(compound.contains(TAG_NAME))
+        if(compound.contains(TAG_PACK) && StringUtils.isEmpty(this.packName))
+        {
+            this.packName = compound.getString(TAG_PACK);
+        }
+        if(compound.contains(TAG_NAME) && StringUtils.isEmpty(this.schematicName))
         {
             this.schematicName = compound.getString(TAG_NAME);
             if (this.schematicPath == null || this.schematicPath.isEmpty())
@@ -231,7 +179,7 @@ public class TileEntityDecorationController extends BlockEntity implements IBlue
                 this.schematicName = "";
             }
         }
-        this.packName = compound.getString(TAG_PACK);
+        // end of backwards compat code
 
         if (!this.schematicPath.endsWith(".blueprint"))
         {
@@ -240,15 +188,11 @@ public class TileEntityDecorationController extends BlockEntity implements IBlue
     }
 
     @Override
-    public void saveAdditional(final CompoundTag compound)
+    public void saveAdditional(@NotNull final CompoundTag compound)
     {
         super.saveAdditional(compound);
         writeSchematicDataToNBT(compound);
-        compound.putInt(TAG_ROTATION, this.rotMir.rotation().ordinal());
-        compound.putBoolean(TAG_MIRROR, this.rotMir.isMirrored());
-        compound.putString(TAG_NAME, schematicName == null ? "" : schematicName);
-        compound.putString(TAG_PATH, schematicPath == null ? "" : schematicPath);
-        compound.putString(TAG_PACK, (packName == null || packName.isEmpty()) ? "" : packName);
+        compound.putBoolean(TAG_MIRROR, this.isMirrored);
     }
 
     @Nullable
@@ -299,13 +243,13 @@ public class TileEntityDecorationController extends BlockEntity implements IBlue
     @Override
     public void rotate(final Rotation rotationIn)
     {
-        this.rotMir = this.rotMir.rotate(rotationIn);
+        this.cachedRotation = -1;
     }
 
     @Override
     public void mirror(final Mirror mirror)
     {
-        this.rotMir = this.rotMir.mirrorate(mirror);
+        this.isMirrored = mirror != Mirror.NONE;
     }
 
     /**
@@ -314,7 +258,11 @@ public class TileEntityDecorationController extends BlockEntity implements IBlue
      */
     public Rotation getRotation()
     {
-        return this.rotMir.rotation();
+        if (this.cachedRotation == -1)
+        {
+            this.cachedRotation = BuildingUtils.getRotationFromBlueprint(getLevel(), getBlockPos());
+        }
+        return BlockPosUtil.getRotationFromRotations(this.cachedRotation);
     }
 
     /**
@@ -323,6 +271,6 @@ public class TileEntityDecorationController extends BlockEntity implements IBlue
      */
     public boolean getMirror()
     {
-        return this.rotMir.isMirrored();
+        return this.isMirrored;
     }
 }

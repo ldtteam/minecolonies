@@ -1,12 +1,12 @@
 package com.minecolonies.core.entity.pathfinding.pathjobs;
 
 import com.minecolonies.api.colony.buildings.IBuilding;
-import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
-import com.minecolonies.core.entity.pathfinding.PathingOptions;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ColonyUtils;
 import com.minecolonies.core.entity.citizen.EntityCitizen;
 import com.minecolonies.core.entity.pathfinding.MNode;
+import com.minecolonies.core.entity.pathfinding.PathingOptions;
+import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
@@ -18,7 +18,7 @@ import java.util.List;
 /**
  * Path job to find a path between buildings
  */
-public class PathJobPathway extends AbstractPathJob
+public class PathJobPathway extends AbstractPathJob implements IDestinationPathJob
 {
     /**
      * Buildings to avoid
@@ -124,5 +124,11 @@ public class PathJobPathway extends AbstractPathJob
         }
 
         return stepCost;
+    }
+
+    @Override
+    public BlockPos getDestination()
+    {
+        return end;
     }
 }

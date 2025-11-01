@@ -1,0 +1,25 @@
+{
+  "variants": {
+    "age=0": {
+      "model": "minecolonies:block/crops/peas/stage0"
+    },
+    "age=1": {
+      "model": "minecolonies:block/crops/peas/stage1"
+    },
+    "age=2": {
+      "model": "minecolonies:block/crops/peas/stage2"
+    },
+    "age=3": {
+      "model": "minecolonies:block/crops/peas/stage3"
+    },
+    "age=4": {
+      "model": "minecolonies:block/crops/peas/stage4"
+    },
+    "age=5": {
+      "model": "minecolonies:block/crops/peas/stage5"
+    },
+    "age=6": {
+      "model": "minecolonies:block/crops/peas/stage6"
+    }
+  }
+}

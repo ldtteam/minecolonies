@@ -8,20 +8,24 @@ import com.ldtteam.domumornamentum.block.IMateriallyTexturedBlockComponent;
 import com.minecolonies.api.items.CheckedNbtKey;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.CraftingUtils;
+import io.netty.buffer.Unpooled;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.PackOutput;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.flag.FeatureFlags;
-import net.minecraft.world.item.*;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.DyeableLeatherItem;
+import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
-import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.Constants.MOD_ID;
 
@@ -161,6 +165,48 @@ public class ItemNbtCalculator implements DataProvider
     }
 
     /**
+     * Serialize a checked nbt key to buffer
+     *
+     * @param keyObject the key object to serialize.
+     */
+    public static void serializeKeyToBuffer(final CheckedNbtKey keyObject, final FriendlyByteBuf buf)
+    {
+        buf.writeUtf(keyObject.key);
+        if (!keyObject.children.isEmpty())
+        {
+            FriendlyByteBuf childBuf = new FriendlyByteBuf(Unpooled.buffer());
+            buf.writeInt(keyObject.children.size());
+            for (final var child : keyObject.children)
+            {
+                serializeKeyToBuffer(child, childBuf);
+            }
+            buf.writeBytes(childBuf);
+        }
+        else
+        {
+            buf.writeInt(0);
+        }
+    }
+
+    /**
+     * Deserialize key from buffer
+     *
+     * @param buf the buf to deserialize.
+     */
+    public static CheckedNbtKey deSerializeKeyFromBuffer(final FriendlyByteBuf buf)
+    {
+        String key = buf.readUtf();
+        Set<CheckedNbtKey> children = new HashSet<>();
+        for (int i = 0, limit = buf.readInt(); i < limit; i++)
+        {
+            CheckedNbtKey keyFromBuffer = deSerializeKeyFromBuffer(buf);
+            children.add(keyFromBuffer);
+        }
+
+        return new CheckedNbtKey(key, children);
+    }
+
+    /**
      * Create a checked nbt key from nbt.
      * @param key the key to retrieve.
      * @param tag the tag to deserialize it from.
@@ -171,7 +217,13 @@ public class ItemNbtCalculator implements DataProvider
         if (tag.get(key) instanceof CompoundTag)
         {
             final CompoundTag subTag = tag.getCompound(key);
-            return new CheckedNbtKey(key, subTag.getAllKeys().stream().map(subKey -> createKeyFromNbt(subKey, subTag)).collect(Collectors.toSet()));
+            Set<CheckedNbtKey> set = new HashSet<>();
+            for (String subKey : subTag.getAllKeys())
+            {
+                CheckedNbtKey keyFromNbt = createKeyFromNbt(subKey, subTag);
+                set.add(keyFromNbt);
+            }
+            return new CheckedNbtKey(key, set);
         }
         else
         {

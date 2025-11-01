@@ -1,0 +1,44 @@
+{
+  "processors": [
+    {
+      "blocks": [
+        {
+          "Name": "structurize:blocksubstitution"
+        },
+        {
+          "Name": "minecolonies:blockwaypoint"
+        }
+      ],
+      "processor_type": "minecraft:block_ignore"
+    },
+    {
+      "rules": [
+        {
+          "output_state": {
+            "Name": "minecraft:grass_block"
+          },
+          "input_predicate": {
+            "block": "structurize:blocksolidsubstitution",
+            "predicate_type": "minecraft:block_match"
+          },
+          "location_predicate": {
+            "predicate_type": "minecraft:always_true"
+          }
+        },
+        {
+          "output_state": {
+            "Name": "minecraft:water"
+          },
+          "input_predicate": {
+            "block": "structurize:blockfluidsubstitution",
+            "predicate_type": "minecraft:block_match"
+          },
+          "location_predicate": {
+            "predicate_type": "minecraft:always_true"
+          }
+        }
+      ],
+      "processor_type": "minecraft:rule"
+    }
+  ]
+}

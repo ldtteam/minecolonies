@@ -6,7 +6,6 @@ import com.minecolonies.api.entity.ai.statemachine.states.IState;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.function.Consumer;
 
 /**
@@ -32,9 +31,9 @@ public class TickRateStateMachine<S extends IState> extends BasicStateMachine<IT
     /**
      * Reference to our used global transition lists
      */
-    private final List<ITickingTransition<S>> aiBlockingTransitions;
-    private final List<ITickingTransition<S>> stateBlockingTransitions;
-    private final List<ITickingTransition<S>> eventTransitions;
+    private final ArrayList<ITickingTransition<S>> aiBlockingTransitions;
+    private final ArrayList<ITickingTransition<S>> stateBlockingTransitions;
+    private final ArrayList<ITickingTransition<S>> eventTransitions;
 
     /**
      * Construct a new StateMachine

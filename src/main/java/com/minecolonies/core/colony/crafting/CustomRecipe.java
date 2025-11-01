@@ -10,13 +10,12 @@ import com.minecolonies.api.colony.buildings.modules.ICraftingBuildingModule;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.*;
+import com.minecolonies.api.equipment.ModEquipmentTypes;
+import com.minecolonies.api.equipment.registry.EquipmentTypeEntry;
 import com.minecolonies.api.research.IGlobalResearchTree;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.Tuple;
-import com.minecolonies.api.util.constant.IToolType;
-import com.minecolonies.api.util.constant.ToolType;
-import com.minecolonies.api.util.constant.TypeConstants;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
@@ -230,7 +229,7 @@ public class CustomRecipe
     /**
      * The tool required to craft this recipe
      */
-    private IToolType requiredTool = ToolType.NONE;
+    private EquipmentTypeEntry requiredTool = ModEquipmentTypes.none.get();
 
     /**
      * Cache of the recipe storage for performance
@@ -291,7 +290,8 @@ public class CustomRecipe
 
         if (recipeJson.has(RECIPE_TOOL_PROP))
         {
-            recipe.requiredTool = ToolType.getToolType(recipeJson.get(RECIPE_TOOL_PROP).getAsString());
+            String resLoc = recipeJson.get(RECIPE_TOOL_PROP).getAsString();
+            recipe.requiredTool = ModEquipmentTypes.getRegistry().getValue(EquipmentTypeEntry.parseResourceLocation(resLoc));
         }
 
         if (recipeJson.has(RECIPE_SECONDARY_PROP))
@@ -588,7 +588,7 @@ public class CustomRecipe
      * @param altOutputs        Alternative outputs of the recipe.  Used to allow one taught recipe to result in multiple effective choices for the request system.
      */
     public CustomRecipe(final String crafter, final int minBldgLevel, final int maxBldgLevel, final boolean mustExist, final boolean showTooltip, final ResourceLocation recipeId,
-      final Set<ResourceLocation> researchReqs, final Set<ResourceLocation> researchExcludes, @Nullable final ResourceLocation lootTable, final IToolType requiredTool,
+      final Set<ResourceLocation> researchReqs, final Set<ResourceLocation> researchExcludes, @Nullable final ResourceLocation lootTable, final EquipmentTypeEntry requiredTool,
       final List<ItemStorage> inputs, final ItemStack primaryOutput, final List<ItemStack> secondaryOutput, final List<ItemStack> altOutputs, Block intermediate)
     {
         this.crafter = crafter;
@@ -677,7 +677,7 @@ public class CustomRecipe
      * @return the tool required to perform this craft
      */
     @NotNull
-    public IToolType getRequiredTool()
+    public EquipmentTypeEntry getRequiredTool()
     {
         return requiredTool;
     }
@@ -802,40 +802,17 @@ public class CustomRecipe
     {
         if(cachedRecipeStorage == null)
         {
-            if(altOutputs.isEmpty())
-            {
-                cachedRecipeStorage = StandardFactoryController.getInstance().getNewInstance(
-                    TypeConstants.RECIPE,
-                    StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
-                    inputs,
-                    1,
-                    result,
-                    intermediate,
-                    this.getRecipeId(),
-                    ModRecipeTypes.CLASSIC_ID,
-                    null, //alternate outputs
-                    secondary, //secondary output
-                    lootTable,
-                    requiredTool
-                    );
-            }
-            else
-            {
-                cachedRecipeStorage = StandardFactoryController.getInstance().getNewInstance(
-                    TypeConstants.RECIPE,
-                    StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
-                    inputs,
-                    1,
-                    result,
-                    intermediate,
-                    this.getRecipeId(),
-                    ModRecipeTypes.MULTI_OUTPUT_ID,
-                    altOutputs, //alternate outputs
-                    secondary, //secondary output
-                    lootTable,
-                    requiredTool
-                    );
-            }
+            cachedRecipeStorage = RecipeStorage.builder()
+                    .withInputs(inputs)
+                    .withPrimaryOutput(result)
+                    .withIntermediate(intermediate)
+                    .withRecipeId(this.getRecipeId())
+                    .withAlternateOutputs(altOutputs)
+                    .withSecondaryOutputs(secondary)
+                    .withLootTable(lootTable)
+                    .withRequiredTool(requiredTool)
+                    .build();
+
             IRecipeManager recipeManager = IColonyManager.getInstance().getRecipeManager();
             IToken<?> cachedRecipeToken = recipeManager.getRecipeId(cachedRecipeStorage);
             if(cachedRecipeToken != null && !cachedRecipeToken.equals(cachedRecipeStorage.getToken()))
@@ -916,7 +893,7 @@ public class CustomRecipe
         {
             packetBuffer.writeResourceLocation(getLootTable());
         }
-        packetBuffer.writeUtf(getRequiredTool().getName());
+        packetBuffer.writeResourceLocation(getRequiredTool().getRegistryName());
         packetBuffer.writeVarInt(getMinBuildingLevel());
         packetBuffer.writeVarInt(getMaxBuildingLevel());
         packetBuffer.writeBoolean(getMustExist());
@@ -960,7 +937,7 @@ public class CustomRecipe
         {
             lootTable = null;
         }
-        final IToolType requiredTool = ToolType.getToolType(buffer.readUtf());
+        final EquipmentTypeEntry requiredTool = ModEquipmentTypes.getRegistry().getValue(buffer.readResourceLocation());
         final int minBldgLevel = buffer.readVarInt();
         final int maxBldgLevel = buffer.readVarInt();
         final boolean mustExist = buffer.readBoolean();

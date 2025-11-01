@@ -4,7 +4,7 @@ import com.minecolonies.api.compatibility.dynamictrees.DynamicTreeProxy;
 import com.minecolonies.api.compatibility.resourcefulbees.IBeehiveCompat;
 import com.minecolonies.api.compatibility.tinkers.SlimeTreeProxy;
 import com.minecolonies.api.compatibility.tinkers.TinkersToolProxy;
-import com.minecolonies.api.util.constant.IToolType;
+import com.minecolonies.api.equipment.registry.EquipmentTypeEntry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
 import net.minecraft.resources.ResourceKey;
@@ -15,13 +15,10 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.fml.ModList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-
-import static com.minecolonies.api.util.constant.Constants.HARVESTCRAFTMODID;
 
 /**
  * This class is to store the methods that call the methods to check for miscellaneous compatibility problems.
@@ -34,6 +31,7 @@ public final class Compatibility
         throw new IllegalAccessError("Utility class");
     }
 
+    public static IJeiProxy jeiProxy = new IJeiProxy() {};
     public static IBeehiveCompat beeHiveCompat = new IBeehiveCompat() {};
     public static SlimeTreeProxy   tinkersSlimeCompat = new SlimeTreeProxy();
     public static TinkersToolProxy tinkersCompat      = new TinkersToolProxy();
@@ -123,7 +121,7 @@ public final class Compatibility
      * @param toolType the tool type.
      * @return true if so.
      */
-    public static boolean isTinkersTool(@Nullable final ItemStack stack, IToolType toolType) { return tinkersCompat.isTinkersTool(stack, toolType); }
+    public static boolean isTinkersTool(@Nullable final ItemStack stack, final EquipmentTypeEntry toolType) { return tinkersCompat.isTinkersTool(stack, toolType); }
 
     /**
      * Calculate the actual attack damage of the tinkers weapon.
@@ -145,16 +143,6 @@ public final class Compatibility
     public static int getToolLevel(@NotNull final ItemStack stack)
     {
         return tinkersCompat.getToolLevel(stack);
-    }
-
-    /**
-     * Check if Pams harvestcraft is installed.
-     *
-     * @return true if so.
-     */
-    public static boolean isPamsInstalled()
-    {
-        return ModList.get().isLoaded(HARVESTCRAFTMODID);
     }
 
     /**

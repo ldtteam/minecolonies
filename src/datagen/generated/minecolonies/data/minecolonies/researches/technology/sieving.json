@@ -1,25 +1,25 @@
 {
   "branch": "minecolonies:technology",
+  "costs": [
+    {
+      "type": "minecolonies:item_simple",
+      "item": "minecraft:string",
+      "quantity": 64
+    }
+  ],
   "effects": [
     {
-      "minecolonies:effects/blockhutsifter": 1
+      "id": "minecolonies:effects/blockhutsifter",
+      "level": 1
     }
   ],
   "icon": "minecolonies:blockhutsifter",
   "parentResearch": "minecolonies:technology/woodwork",
   "requirements": [
     {
-      "building": "fisherman",
+      "type": "minecolonies:building",
+      "building": "minecolonies:fisherman",
       "level": 3
-    },
-    {
-      "type": "minecolonies:item_list",
-      "item": {
-        "items": [
-          "minecraft:string"
-        ]
-      },
-      "quantity": 64
     }
   ],
   "researchLevel": 2,

@@ -1,12 +1,13 @@
 package com.minecolonies.core.client.gui.modules;
 
 import com.ldtteam.blockui.Pane;
+import com.ldtteam.blockui.PaneBuilders;
 import com.ldtteam.blockui.controls.*;
 import com.ldtteam.blockui.views.ScrollingList;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.crafting.ItemStorage;
-import com.minecolonies.api.util.constant.ToolType;
+import com.minecolonies.api.equipment.ModEquipmentTypes;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.core.Network;
 import com.minecolonies.core.client.gui.AbstractModuleWindow;
@@ -184,18 +185,35 @@ public class WindowListRecipes extends AbstractModuleWindow
                 List<ItemStack> displayStacks = recipe.getRecipeType().getOutputDisplayStacks();
                 icon.setItem(displayStacks.get((lifeCount / LIFE_COUNT_DIVIDER) % (displayStacks.size())));
 
-                if (!module.isRecipeAlterationAllowed())
+                final Button removeButton = rowPane.findPaneOfTypeByID(BUTTON_REMOVE, Button.class);
+                if (removeButton != null)
                 {
-                    final Button removeButton = rowPane.findPaneOfTypeByID(BUTTON_REMOVE, Button.class);
-                    if (removeButton != null)
+                    if (module.isRecipeAlterationAllowed())
                     {
-                        removeButton.setVisible(false);
+                        removeButton.on();
+                        if (recipe.getRecipeSource() != null && !Screen.hasControlDown())
+                        {
+                            removeButton.disable();
+                            PaneBuilders.tooltipBuilder()
+                                .append(Component.translatable("com.minecolonies.coremod.gui.workerhuts.removebuiltin",
+                                    Component.translatable("key.keyboard.left.control")))
+                                .hoverPane(removeButton)
+                                .build();
+                        }
+                        else
+                        {
+                            removeButton.setHoverPane(null);
+                        }
+                    }
+                    else
+                    {
+                        removeButton.off();
                     }
                 }
 
                 final Text intermediate = rowPane.findPaneOfTypeByID("intermediate", Text.class);
                 intermediate.setVisible(false);
-                if(recipe.getRequiredTool() != ToolType.NONE)
+                if (recipe.getRequiredTool() != ModEquipmentTypes.none.get())
                 {
                     intermediate.setText(recipe.getRequiredTool().getDisplayName());
                     intermediate.setVisible(true);
@@ -210,11 +228,13 @@ public class WindowListRecipes extends AbstractModuleWindow
                 {
                     rowPane.findPaneOfTypeByID("gradient", Gradient.class).setVisible(true);
                     rowPane.findPaneOfTypeByID(BUTTON_TOGGLE, Button.class).setText(Component.translatable("com.minecolonies.coremod.gui.recipe.enable"));
+                    rowPane.findPaneOfTypeByID(BUTTON_TOGGLE, Button.class).setVisible(module.getActiveRecipes() < module.getMaxRecipes());
                 }
                 else
                 {
                     rowPane.findPaneOfTypeByID("gradient", Gradient.class).setVisible(false);
                     rowPane.findPaneOfTypeByID(BUTTON_TOGGLE, Button.class).setText(Component.translatable("com.minecolonies.coremod.gui.recipe.disable"));
+                    rowPane.findPaneOfTypeByID(BUTTON_TOGGLE, Button.class).setVisible(true);
                 }
 
                 // Some special recipes might not include all necessary air blocks.
@@ -246,7 +266,7 @@ public class WindowListRecipes extends AbstractModuleWindow
                 }
                 else
                 {
-                    for (int i = 0; i < recipe.getInput().size(); i++)
+                    for (int i = 0; i < Math.min(9, recipe.getInput().size()); i++)
                     {
                         rowPane.findPaneOfTypeByID(String.format(RESOURCE, i + 1), ItemIcon.class).setItem(getStackWithCount(recipe.getInput().get(i)));
                     }
@@ -275,7 +295,7 @@ public class WindowListRecipes extends AbstractModuleWindow
         {
             lifeCount++;
         }
-        recipeStatus.setText(Component.translatable(TranslationConstants.RECIPE_STATUS, module.getRecipes().size(), module.getMaxRecipes()));
+        recipeStatus.setText(Component.translatable(TranslationConstants.RECIPE_STATUS, module.getActiveRecipes(), module.getMaxRecipes()));
         window.findPaneOfTypeByID(RECIPE_LIST, ScrollingList.class).refreshElementPanes();
     }
 }

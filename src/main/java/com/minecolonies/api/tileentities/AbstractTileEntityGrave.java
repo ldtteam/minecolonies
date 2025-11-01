@@ -8,7 +8,8 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 
-import static com.minecolonies.api.util.constant.Constants.*;
+import static com.minecolonies.api.util.constant.Constants.DEFAULT_SIZE;
+import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 
 /**
  * Abstract class for minecolonies graves.
@@ -18,7 +19,7 @@ public abstract class AbstractTileEntityGrave extends TileEntityRack implements 
     /**
      * default duration of the countdown before the grave disapear, in ticks (20 ticks / seconds)
      */
-    protected static final int DEFAULT_DECAY_TIMER = TICKS_FIVE_MIN;
+    protected static final int DEFAULT_DECAY_TIMER = TICKS_SECOND * 60 * 10;
 
     /**
      * Is this grave decayed or not

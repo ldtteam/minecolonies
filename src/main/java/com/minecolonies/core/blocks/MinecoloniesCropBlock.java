@@ -1,7 +1,10 @@
 package com.minecolonies.core.blocks;
 
 import com.minecolonies.api.blocks.AbstractBlockMinecolonies;
+import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.core.colony.Colony;
 import com.minecolonies.core.items.ItemCrop;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -29,6 +32,11 @@ import net.minecraftforge.registries.IForgeRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
+
+import static com.minecolonies.api.research.util.ResearchConstants.GREEN_REVOLUTION;
+import static com.minecolonies.api.util.constant.Constants.UPDATE_FLAG;
+
 /**
  * Abstract Minecolonies crop type. We have our own to avoid cheesing the crop.s
  */
@@ -45,6 +53,12 @@ public class MinecoloniesCropBlock extends AbstractBlockMinecolonies<Minecolonie
     public static String TOMATO = "tomato";
     public static String RICE = "rice";
 
+    public static String BUTTERNUT_SQUASH = "butternut_squash";
+    public static String CORN = "corn";
+    public static String MINT = "mint";
+    public static String NETHER_PEPPER = "nether_pepper";
+    public static String PEAS = "peas";
+
     public static final  IntegerProperty AGE = IntegerProperty.create("age", 0, 6);
     private static final VoxelShape[] SHAPE_BY_AGE = new VoxelShape[] {
       Block.box(0.0, 0.0, 0.0, 16.0, 2.0, 16.0),
@@ -56,6 +70,7 @@ public class MinecoloniesCropBlock extends AbstractBlockMinecolonies<Minecolonie
       Block.box(0.0, 0.0, 0.0, 16.0, 14.0, 16.0)};
 
     private final Block preferredFarmland;
+    private final List<Block> droppedFrom;
 
     private final ResourceLocation blockId;
     private final TagKey<Biome>    preferredBiome;
@@ -64,12 +79,13 @@ public class MinecoloniesCropBlock extends AbstractBlockMinecolonies<Minecolonie
      * Constructor to create a block of this type.
      * @param blockName the block id.
      */
-    public MinecoloniesCropBlock(final String blockName, final Block preferredFarmland, @Nullable final TagKey<Biome> preferredBiome)
+    public MinecoloniesCropBlock(final String blockName, final Block preferredFarmland, final List<Block> droppedFrom, @Nullable final TagKey<Biome> preferredBiome)
     {
         super(BlockBehaviour.Properties.of().mapColor(MapColor.PLANT).noCollission().instabreak().sound(SoundType.CROP).pushReaction(PushReaction.DESTROY));
         this.registerDefaultState(this.stateDefinition.any().setValue(AGE, 0));
         this.blockId = new ResourceLocation(Constants.MOD_ID, blockName);
         this.preferredFarmland = preferredFarmland;
+        this.droppedFrom = droppedFrom;
         this.preferredBiome = preferredBiome;
     }
 
@@ -111,10 +127,22 @@ public class MinecoloniesCropBlock extends AbstractBlockMinecolonies<Minecolonie
         {
             if (level.getRawBrightness(pos, 0) >= 9)
             {
-                int i = state.getValue(AGE);
-                if (i < this.getMaxAge())
+                final BlockPos offset = pos.relative(Direction.Plane.HORIZONTAL.getRandomDirection(level.random));
+                if (WorldUtil.isBlockLoaded(level, offset)
+                    && level.getBlockState(offset.below()).getBlock() == level.getBlockState(pos.below()).getBlock()
+                    && level.getBlockState(offset).isAir()
+                    && IColonyManager.getInstance().getColonyByPosFromWorld(level, pos) instanceof Colony colony && colony.getResearchManager().getResearchEffects().getEffectStrength(
+                    GREEN_REVOLUTION) > 0)
                 {
-                    level.setBlock(pos, state.setValue(AGE, (i + 1)), 2);
+                    level.setBlock(offset, defaultBlockState(), UPDATE_FLAG);
+                }
+                else
+                {
+                    int i = state.getValue(AGE);
+                    if (i < this.getMaxAge())
+                    {
+                        level.setBlock(pos, state.setValue(AGE, (i + 1)), 2);
+                    }
                 }
             }
         }
@@ -170,5 +198,23 @@ public class MinecoloniesCropBlock extends AbstractBlockMinecolonies<Minecolonie
     public Block getPreferredFarmland()
     {
         return preferredFarmland;
+    }
+
+    /**
+     * Get the blocks that this crop drops from.
+     */
+    public List<Block> getDroppedFrom()
+    {
+        return droppedFrom;
+    }
+
+    /**
+     * Get the preferred biome for this crop.
+     * @return the preferred biome, or null if not picky.
+     */
+    @Nullable
+    public TagKey<Biome> getPreferredBiome()
+    {
+        return preferredBiome;
     }
 }

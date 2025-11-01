@@ -1,25 +1,25 @@
 {
   "branch": "minecolonies:combat",
+  "costs": [
+    {
+      "type": "minecolonies:item_simple",
+      "item": "minecraft:flint",
+      "quantity": 64
+    }
+  ],
   "effects": [
     {
-      "minecolonies:effects/archerdamageaddition": 3
+      "id": "minecolonies:effects/archerdamageaddition",
+      "level": 3
     }
   ],
   "icon": "minecraft:crossbow",
   "parentResearch": "minecolonies:combat/penetratingshot",
   "requirements": [
     {
-      "building": "guardtower",
+      "type": "minecolonies:building",
+      "building": "minecolonies:guardtower",
       "level": 10
-    },
-    {
-      "type": "minecolonies:item_list",
-      "item": {
-        "items": [
-          "minecraft:flint"
-        ]
-      },
-      "quantity": 64
     }
   ],
   "researchLevel": 4

@@ -22,6 +22,7 @@
     }
   ],
   "intermediate": "minecraft:air",
-  "min-building-level": 1,
-  "result": "minecolonies:pita_hummus"
+  "min-building-level": 4,
+  "result": "minecolonies:pita_hummus",
+  "show-tooltip": true
 }

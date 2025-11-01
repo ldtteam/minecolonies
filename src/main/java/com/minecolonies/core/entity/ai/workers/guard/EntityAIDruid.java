@@ -1,6 +1,7 @@
 package com.minecolonies.core.entity.ai.workers.guard;
 
 import com.minecolonies.api.items.ModItems;
+import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.core.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.core.colony.jobs.JobDruid;
@@ -47,7 +48,7 @@ public class EntityAIDruid extends AbstractEntityAIGuard<JobDruid, AbstractBuild
     {
         super.atBuildingActions();
 
-        if (worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(DRUID_USE_POTIONS) > 0)
+        if (worker.getCitizenColonyHandler().getColonyOrRegister().getResearchManager().getResearchEffects().getEffectStrength(DRUID_USE_POTIONS) > 0)
         {
             // Mistletoes and water bottles
             InventoryUtils.transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandler(building,
@@ -67,16 +68,17 @@ public class EntityAIDruid extends AbstractEntityAIGuard<JobDruid, AbstractBuild
     {
         if (worker.getRandom().nextInt(3) < 1)
         {
-            worker.isWorkerAtSiteWithMove(buildingGuards.getGuardPos(), 3);
+            walkToSafePos(buildingGuards.getGuardPos(worker));
             return;
         }
 
-        if (worker.isWorkerAtSiteWithMove(buildingGuards.getGuardPos(), 10) || Math.abs(buildingGuards.getGuardPos().getY() - worker.blockPosition().getY()) > 3)
+        if ((BlockPosUtil.dist(buildingGuards.getGuardPos(worker), worker.blockPosition()) <= 10 || walkToSafePos(buildingGuards.getGuardPos(worker)))
+            || Math.abs(buildingGuards.getGuardPos(worker).getY() - worker.blockPosition().getY()) > 3)
         {
             // Moves the druid randomly to close edges, for better vision to mobs
-            ((MinecoloniesAdvancedPathNavigate) worker.getNavigation()).setPathJob(new PathJobWalkRandomEdge(world, buildingGuards.getGuardPos(), 20, worker),
-              null,
-              1.0, true);
+            ((MinecoloniesAdvancedPathNavigate) worker.getNavigation()).setPathJob(new PathJobWalkRandomEdge(world, buildingGuards.getGuardPos(worker), 20, worker),
+                null,
+                1.0, true);
         }
     }
 }

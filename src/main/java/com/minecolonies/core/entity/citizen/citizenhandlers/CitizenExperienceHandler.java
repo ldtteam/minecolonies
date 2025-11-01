@@ -7,13 +7,14 @@ import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenExperienceHandler;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.WorldUtil;
+import com.minecolonies.core.colony.buildings.modules.WorkerBuildingModule;
+import com.minecolonies.core.util.citizenutils.CitizenItemUtils;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.ExperienceOrb;
-import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.world.level.GameRules;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.world.level.GameRules;
-import com.minecolonies.core.colony.buildings.modules.WorkerBuildingModule;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.research.util.ResearchConstants.LEVELING;
@@ -72,7 +73,7 @@ public class CitizenExperienceHandler implements ICitizenExperienceHandler
     public void addExperience(final double xp)
     {
         final IBuilding home = citizen.getCitizenColonyHandler().getHomeBuilding();
-        final double citizenHutLevel = home == null ? 0 : home.getBuildingLevel();
+        final double citizenHutLevel = home == null ? 0 : home.getBuildingLevelEquivalent();
 
         final ICitizenData data = citizen.getCitizenData();
         final IBuilding workBuilding = data.getWorkBuilding();
@@ -81,7 +82,7 @@ public class CitizenExperienceHandler implements ICitizenExperienceHandler
             return;
         }
 
-        final double workBuildingLevel = workBuilding.getBuildingLevel();
+        final double workBuildingLevel = workBuilding.getBuildingLevelEquivalent();
         final double buildingXPModifier = 1 + (workBuildingLevel + citizenHutLevel) / 10;
         double localXp = xp * buildingXPModifier;
         final double saturation = citizen.getCitizenData().getSaturation();
@@ -93,19 +94,34 @@ public class CitizenExperienceHandler implements ICitizenExperienceHandler
             return;
         }
 
-        localXp *= (1 + citizen.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(LEVELING));
+        localXp *= (1 + citizen.getCitizenColonyHandler().getColonyOrRegister().getResearchManager().getResearchEffects().getEffectStrength(LEVELING));
 
         final WorkerBuildingModule module = workBuilding.getModuleMatching(WorkerBuildingModule.class, m -> m.getAssignedCitizen().contains(data));
         final Skill primary = module.getPrimarySkill();
         final Skill secondary = module.getSecondarySkill();
 
         data.getCitizenSkillHandler().addXpToSkill(primary, localXp, data);
-        data.getCitizenSkillHandler().addXpToSkill(primary.getComplimentary(), localXp / (100.0 / PRIMARY_DEPENDENCY_SHARE), data);
-        data.getCitizenSkillHandler().removeXpFromSkill(primary.getAdverse(), localXp / (100.0 / PRIMARY_DEPENDENCY_SHARE), data);
+        if (primary.getComplimentary() != null)
+        {
+            data.getCitizenSkillHandler().addXpToSkill(primary.getComplimentary(), localXp / (100.0 / PRIMARY_DEPENDENCY_SHARE), data);
+        }
+
+        if (primary.getAdverse() != null)
+        {
+            data.getCitizenSkillHandler().removeXpFromSkill(primary.getAdverse(), localXp / (100.0 / PRIMARY_DEPENDENCY_SHARE), data);
+        }
 
         data.getCitizenSkillHandler().addXpToSkill(secondary, localXp / 2.0, data);
-        data.getCitizenSkillHandler().addXpToSkill(secondary.getComplimentary(), localXp / (100.0 / SECONDARY_DEPENDENCY_SHARE), data);
-        data.getCitizenSkillHandler().removeXpFromSkill(secondary.getAdverse(), localXp / (100.0 / SECONDARY_DEPENDENCY_SHARE), data);
+
+        if (secondary.getComplimentary() != null)
+        {
+            data.getCitizenSkillHandler().addXpToSkill(secondary.getComplimentary(), localXp / (100.0 / SECONDARY_DEPENDENCY_SHARE), data);
+        }
+
+        if (secondary.getAdverse() != null)
+        {
+            data.getCitizenSkillHandler().removeXpFromSkill(secondary.getAdverse(), localXp / (100.0 / SECONDARY_DEPENDENCY_SHARE), data);
+        }
     }
 
     @Override
@@ -175,7 +191,7 @@ public class CitizenExperienceHandler implements ICitizenExperienceHandler
             if (d1 < 1.0D)
             {
                 double localXp = orb.getValue();
-                localXp = citizen.getCitizenItemHandler().applyMending(localXp);
+                localXp = CitizenItemUtils.applyMending(citizen, localXp);
                 addExperience(localXp);
                 orb.remove(Entity.RemovalReason.DISCARDED);
                 counterMovedXp = 0;
@@ -183,7 +199,7 @@ public class CitizenExperienceHandler implements ICitizenExperienceHandler
             else if (counterMovedXp > MAX_XP_PICKUP_ATTEMPTS)
             {
                 double localXp = orb.getValue();
-                localXp = citizen.getCitizenItemHandler().applyMending(localXp);
+                localXp = CitizenItemUtils.applyMending(citizen, localXp);
                 addExperience(localXp);
                 orb.remove(Entity.RemovalReason.DISCARDED);
                 counterMovedXp = 0;

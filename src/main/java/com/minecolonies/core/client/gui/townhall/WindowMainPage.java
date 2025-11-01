@@ -13,7 +13,10 @@ import com.minecolonies.core.Network;
 import com.minecolonies.core.client.gui.WindowBannerPicker;
 import com.minecolonies.core.client.gui.map.WindowColonyMap;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingTownHall;
-import com.minecolonies.core.network.messages.server.colony.*;
+import com.minecolonies.core.network.messages.server.colony.ColonyNameStyleMessage;
+import com.minecolonies.core.network.messages.server.colony.ColonyStructureStyleMessage;
+import com.minecolonies.core.network.messages.server.colony.ColonyTextureStyleMessage;
+import com.minecolonies.core.network.messages.server.colony.TeamColonyColorChangeMessage;
 import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
@@ -43,7 +46,6 @@ import static com.minecolonies.core.event.TextureReloadListener.TEXTURE_PACKS;
  */
 public class WindowMainPage extends AbstractWindowTownHall
 {
-
     /**
      * Is the special feature unlocked.
      */
@@ -74,13 +76,10 @@ public class WindowMainPage extends AbstractWindowTownHall
      */
     private int initialNamePackIndex;
 
-
-
     /**
      * Label for the colony name.
      */
     private final Text title;
-
 
     /**
      * Constructor for the town hall window.
@@ -93,6 +92,8 @@ public class WindowMainPage extends AbstractWindowTownHall
         initDropDowns();
 
         title = findPaneOfTypeByID(LABEL_BUILDING_NAME, Text.class);
+        findPaneOfTypeByID("actions1", Button.class).setText(Component.translatable(building.getBuildingDisplayName())
+            .append(Component.literal(" " + building.getBuildingLevel())));
 
         registerButton(BUTTON_CHANGE_SPEC, this::doNothing);
         registerButton(BUTTON_RENAME, this::renameClicked);
@@ -115,7 +116,6 @@ public class WindowMainPage extends AbstractWindowTownHall
 
         checkFeatureUnlock();
     }
-
 
     /**
      * Switch the structure style pack.
@@ -258,9 +258,10 @@ public class WindowMainPage extends AbstractWindowTownHall
         final Pane textPane = findPaneByID(DROPDOWN_TEXT_ID);
         final Pane namePane = findPaneByID(DROPDOWN_NAME_ID);
         final Pane resetButton = findPaneByID(BUTTON_RESET_TEXTURE);
-
-        if (isFeatureUnlocked.get())
+        final boolean isOwner = building.getColony().getPermissions().getOwner().equals(Minecraft.getInstance().player.getUUID());
+        if (isFeatureUnlocked.get() && isOwner)
         {
+            findPaneByID(BUTTON_PATREON).hide();
             textPane.enable();
             namePane.enable();
             textPane.show();
@@ -268,6 +269,7 @@ public class WindowMainPage extends AbstractWindowTownHall
         }
         else
         {
+            findPaneByID(BUTTON_PATREON).show();
             textPane.disable();
             namePane.disable();
 
@@ -281,20 +283,20 @@ public class WindowMainPage extends AbstractWindowTownHall
                 textPane.show();
             }
 
-
-            final AbstractTextBuilder.TooltipBuilder textPaneToolTipBuilder = PaneBuilders.tooltipBuilder().hoverPane(textPane).append(Component.translatable("com.minecolonies.core.townhall.patreon.textures"))
-              .paragraphBreak()
-              .appendNL(Component.empty())
-              .appendNL(Component.translatable("com.minecolonies.core.townhall.patreon"))
-              .paragraphBreak();
+            final AbstractTextBuilder.TooltipBuilder textPaneToolTipBuilder =
+                PaneBuilders.tooltipBuilder().hoverPane(textPane).append(Component.translatable("com.minecolonies.core.townhall.patreon.textures"))
+                    .paragraphBreak()
+                    .appendNL(Component.empty())
+                    .appendNL(Component.translatable("com.minecolonies.core.townhall.patreon"))
+                    .paragraphBreak();
 
 
             final AbstractTextBuilder.TooltipBuilder namePaneToolTipBuilder = PaneBuilders.tooltipBuilder().hoverPane(namePane)
-              .append(Component.translatable("com.minecolonies.core.townhall.patreon.names")).paragraphBreak()
-              .appendNL(Component.empty())
-              .appendNL(Component.translatable("com.minecolonies.core.townhall.patreon")).paragraphBreak();
+                .append(Component.translatable("com.minecolonies.core.townhall.patreon.names")).paragraphBreak()
+                .appendNL(Component.empty())
+                .appendNL(Component.translatable("com.minecolonies.core.townhall.patreon")).paragraphBreak();
 
-            if (isFeatureUnlocked.get() && !building.getColony().getPermissions().getOwner().equals(Minecraft.getInstance().player.getUUID()))
+            if (isFeatureUnlocked.get() && !isOwner)
             {
                 textPaneToolTipBuilder.appendNL(Component.empty());
                 namePaneToolTipBuilder.appendNL(Component.empty());
@@ -311,7 +313,7 @@ public class WindowMainPage extends AbstractWindowTownHall
      */
     public void checkFeatureUnlock()
     {
-        if (!building.getColony().getPermissions().getOwner().equals(Minecraft.getInstance().player.getUUID()))
+        if (isFeatureUnlocked.get())
         {
             return;
         }
@@ -351,7 +353,8 @@ public class WindowMainPage extends AbstractWindowTownHall
     private void patreonClicked()
     {
         Minecraft.getInstance().setScreen(new ConfirmLinkScreen((check) -> {
-            if (check) {
+            if (check)
+            {
                 Util.getPlatform().openUri("https://www.patreon.com/Minecolonies");
             }
 
@@ -367,7 +370,7 @@ public class WindowMainPage extends AbstractWindowTownHall
         title.setText(Component.literal(building.getColony().getName()));
 
         if (building.getColony().getMercenaryUseTime() != 0
-              && building.getColony().getWorld().getGameTime() - building.getColony().getMercenaryUseTime() < TICKS_FOURTY_MIN)
+            && building.getColony().getWorld().getGameTime() - building.getColony().getMercenaryUseTime() < TICKS_FOURTY_MIN)
         {
             findPaneOfTypeByID(BUTTON_MERCENARY, Button.class).disable();
         }
@@ -394,7 +397,7 @@ public class WindowMainPage extends AbstractWindowTownHall
      */
     private void mapButtonClicked()
     {
-        new WindowColonyMap(building).open();
+        new WindowColonyMap(true, building).open();
     }
 
     @Override

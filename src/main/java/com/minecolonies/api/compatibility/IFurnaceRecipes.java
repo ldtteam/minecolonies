@@ -1,5 +1,7 @@
 package com.minecolonies.api.compatibility;
 
+import com.minecolonies.api.crafting.IRecipeStorage;
+import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.crafting.RecipeStorage;
 import net.minecraft.world.item.ItemStack;
 
@@ -19,10 +21,10 @@ public interface IFurnaceRecipes
     ItemStack getSmeltingResult(final ItemStack itemStack);
 
     /**
-     * Get the first smelting recipe by result for a certain itemStack predicate.
+     * Get the first smelting recipe by result for a certain itemStorage.
      *
-     * @param stackPredicate the predicate to test.
+     * @param storage the itemStorage to test.
      * @return the result or null if not existent.
      */
-    public RecipeStorage getFirstSmeltingRecipeByResult(final Predicate<ItemStack> stackPredicate);
+    IRecipeStorage getFirstSmeltingRecipeByResult(final ItemStorage storage);
 }

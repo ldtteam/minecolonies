@@ -1,27 +1,28 @@
 {
   "branch": "minecolonies:civilian",
+  "costs": [
+    {
+      "type": "minecolonies:item_simple",
+      "item": "minecraft:rabbit_foot",
+      "quantity": 4
+    }
+  ],
   "effects": [
     {
-      "minecolonies:effects/walkingmultiplier": 1
+      "id": "minecolonies:effects/walkingmultiplier",
+      "level": 2
     }
   ],
   "icon": "minecolonies:textures/icons/research/speed1.png",
-  "parentResearch": "minecolonies:civilian/rails",
+  "parentResearch": "minecolonies:civilian/haste",
   "requirements": [
     {
-      "building": "townhall",
+      "type": "minecolonies:single-building",
+      "building": "minecolonies:townhall",
       "level": 3
-    },
-    {
-      "type": "minecolonies:item_list",
-      "item": {
-        "items": [
-          "minecraft:rabbit_foot"
-        ]
-      },
-      "quantity": 1
     }
   ],
   "researchLevel": 3,
+  "sortOrder": 3,
   "subtitle": "com.minecolonies.research.civilian.nimble.subtitle"
 }

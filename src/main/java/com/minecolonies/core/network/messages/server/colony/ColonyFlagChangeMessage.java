@@ -1,14 +1,13 @@
 package com.minecolonies.core.network.messages.server.colony;
 
+import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.event.ColonyInformationChangedEvent;
-import com.minecolonies.api.util.Log;
+import com.minecolonies.api.eventbus.events.colony.ColonyFlagChangedModEvent;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.network.messages.server.AbstractColonyServerMessage;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.network.NetworkEvent;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_BANNER_PATTERNS;
@@ -18,18 +17,23 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_BANNER_PATT
  */
 public class ColonyFlagChangeMessage extends AbstractColonyServerMessage
 {
-    /** The chosen list of patterns from the window */
+    /**
+     * The chosen list of patterns from the window
+     */
     private ListTag patterns;
 
-    /** Default constructor **/
-    public ColonyFlagChangeMessage () { super(); }
+    /**
+     * Default constructor
+     **/
+    public ColonyFlagChangeMessage() {super();}
 
     /**
      * Spawn a new change message
-     * @param colony the colony the player changed the banner in
+     *
+     * @param colony      the colony the player changed the banner in
      * @param patternList the list of patterns they set in the banner picker
      */
-    public ColonyFlagChangeMessage (IColony colony, ListTag patternList)
+    public ColonyFlagChangeMessage(IColony colony, ListTag patternList)
     {
         super(colony);
 
@@ -40,14 +44,7 @@ public class ColonyFlagChangeMessage extends AbstractColonyServerMessage
     protected void onExecute(NetworkEvent.Context ctxIn, boolean isLogicalServer, IColony colony)
     {
         colony.setColonyFlag(patterns);
-        try
-        {
-            MinecraftForge.EVENT_BUS.post(new ColonyInformationChangedEvent(colony, ColonyInformationChangedEvent.Type.FLAG));
-        }
-        catch (final Exception e)
-        {
-            Log.getLogger().error("Error during ColonyInformationChangedEvent", e);
-        }
+        IMinecoloniesAPI.getInstance().getEventBus().post(new ColonyFlagChangedModEvent(colony));
     }
 
     @Override
@@ -63,6 +60,8 @@ public class ColonyFlagChangeMessage extends AbstractColonyServerMessage
     {
         CompoundTag nbt = buf.readNbt();
         if (nbt != null)
+        {
             this.patterns = nbt.getList(TAG_BANNER_PATTERNS, Constants.TAG_COMPOUND);
+        }
     }
 }
