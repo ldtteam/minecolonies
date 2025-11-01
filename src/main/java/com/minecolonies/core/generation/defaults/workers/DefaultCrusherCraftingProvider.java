@@ -46,11 +46,11 @@ public class DefaultCrusherCraftingProvider extends CustomRecipeProvider
         crush(consumer, "bonemeal2", new ItemStack(Items.BONE), new ItemStack(Items.BONE_MEAL, 5), withGildedHammer);
         crush(consumer, "bonemeal3", new ItemStack(Items.BONE_BLOCK), new ItemStack(Items.BONE_MEAL, 9));
 
-        crush(consumer, "gravel1", new ItemStack(Items.COBBLESTONE, 2), new ItemStack(Items.GRAVEL), noGildedHammer, gravelLoot);
-        crush(consumer, "gravel2", new ItemStack(Items.COBBLESTONE), new ItemStack(Items.GRAVEL), withGildedHammer, gravelLoot);
+        crush(consumer, "gravel1", new ItemStack(Items.COBBLESTONE, 2), new ItemStack(Items.GRAVEL), noGildedHammer);
+        crush(consumer, "gravel2", new ItemStack(Items.COBBLESTONE), new ItemStack(Items.GRAVEL), withGildedHammer);
 
-        crush(consumer, "sand1", new ItemStack(Items.GRAVEL, 2), new ItemStack(Items.SAND), noGildedHammer);
-        crush(consumer, "sand2", new ItemStack(Items.GRAVEL), new ItemStack(Items.SAND), withGildedHammer);
+        crush(consumer, "sand1", new ItemStack(Items.GRAVEL, 2), new ItemStack(Items.SAND), noGildedHammer, gravelLoot);
+        crush(consumer, "sand2", new ItemStack(Items.GRAVEL), new ItemStack(Items.SAND), withGildedHammer, gravelLoot);
 
         crush(consumer, "clay1", new ItemStack(Items.SAND, 2), new ItemStack(Items.CLAY), noGildedHammer);
         crush(consumer, "clay2", new ItemStack(Items.SAND), new ItemStack(Items.CLAY), withGildedHammer);
