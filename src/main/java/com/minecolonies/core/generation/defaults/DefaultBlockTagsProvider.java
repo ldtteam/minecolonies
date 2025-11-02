@@ -1,5 +1,6 @@
 package com.minecolonies.core.generation.defaults;
 
+import com.minecolonies.api.blocks.AbstractColonyBlock;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.items.ModTags;
 import net.minecraft.core.HolderLookup;
@@ -17,7 +18,7 @@ import java.util.concurrent.CompletableFuture;
 
 import static com.minecolonies.api.util.constant.Constants.MOD_ID;
 
-@SuppressWarnings({"ConstantConditions", "unchecked"})
+@SuppressWarnings("unchecked")
 public class DefaultBlockTagsProvider extends BlockTagsProvider
 {
 
@@ -182,7 +183,7 @@ public class DefaultBlockTagsProvider extends BlockTagsProvider
                 .add(ModBlocks.blockPostBox)
                 .add(ModBlocks.blockStash)
                 .add(ModBlocks.blockPlantationField)
-                .add(ModBlocks.getHuts());
+                .add(ModBlocks.HUTS.toArray(new AbstractColonyBlock[0]));
 
         tag(BlockTags.MINEABLE_WITH_SHOVEL)
                 .add(ModBlocks.blockCompostedDirt)

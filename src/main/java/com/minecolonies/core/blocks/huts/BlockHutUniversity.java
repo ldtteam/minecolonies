@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Hut for the university. No different from {@link AbstractBlockHut}
  */
-public class BlockHutUniversity extends AbstractBlockHut<BlockHutUniversity>
+public class BlockHutUniversity extends AbstractBlockHut
 {
     public BlockHutUniversity()
     {

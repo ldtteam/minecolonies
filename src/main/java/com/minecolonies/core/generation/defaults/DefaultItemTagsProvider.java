@@ -3,6 +3,7 @@ package com.minecolonies.core.generation.defaults;
 import com.google.gson.JsonObject;
 import com.ldtteam.domumornamentum.block.types.ExtraBlockType;
 import com.minecolonies.api.blocks.ModBlocks;
+import com.minecolonies.api.items.ModFoodItems;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.constant.Constants;
@@ -189,8 +190,8 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
           .add(Items.TROPICAL_FISH)
           .add(Items.PUFFERFISH)
           .add(Items.SUSPICIOUS_STEW)
-          .add(ModItems.chorusBread)
-          .add(ModItems.goldenBread);
+          .add(ModFoodItems.chorusBread)
+          .add(ModFoodItems.goldenBread);
 
         tag(ModTags.breakable_ore, "Breakable Ore")
           .addTag(ItemTags.COAL_ORES)
@@ -220,10 +221,10 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
           .addTag(Tags.Items.CROPS_WHEAT);
         tag(ModTags.crafterIngredientExclusions.get(TagConstants.CRAFTING_BAKER), "Baker Crafting Excluded Ingredients");
         tag(ModTags.crafterProduct.get(TagConstants.CRAFTING_BAKER), "Baker Crafting Products")
-          .add(ModItems.cornmeal)
-          .add(ModItems.cheese_pizza)
-          .add(ModItems.plain_cheesecake)
-          .add(ModItems.apple_pie);
+          .add(ModFoodItems.cornmeal)
+          .add(ModFoodItems.cheese_pizza)
+          .add(ModFoodItems.plain_cheesecake)
+          .add(ModFoodItems.apple_pie);
         tag(ModTags.crafterProductExclusions.get(TagConstants.CRAFTING_BAKER), "Baker Crafting Excluded Products")
           .add(Items.BREAD, Items.CAKE, Items.COOKIE, Items.PUMPKIN_PIE)
           .add(Items.PACKED_MUD)
@@ -261,59 +262,59 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
           .add(Items.DRIED_KELP)
           .add(Items.DRIED_KELP_BLOCK)
           .add(Items.EGG)
-          .add(ModItems.large_milk_bottle)
-          .add(ModItems.large_soy_milk_bottle)
-          .add(ModItems.large_water_bottle)
+          .add(ModItems.largeMilkBottle)
+          .add(ModItems.largeSoyMilkBottle)
+          .add(ModItems.largeWaterBottle)
           .add(Items.MILK_BUCKET);
 
         tag(ModTags.crafterIngredientExclusions.get(TagConstants.CRAFTING_COOK), "Chef Crafting Excluded Ingredients")
           .addTag(Tags.Items.CROPS_WHEAT);
         tag(ModTags.crafterProduct.get(TagConstants.CRAFTING_COOK), "Chef Crafting Products")
-          .add(ModItems.baked_salmon)
-          .add(ModItems.butter)
-          .add(ModItems.cabochis)
-          .add(ModItems.cheddar_cheese)
-          .add(ModItems.congee)
-          .add(ModItems.cooked_rice)
-          .add(ModItems.eggplant_dolma)
-          .add(ModItems.feta_cheese)
-          .add(ModItems.lamb_stew)
-          .add(ModItems.pasta_plain)
-          .add(ModItems.pasta_tomato)
-          .add(ModItems.pepper_hummus)
-          .add(ModItems.pottage)
-          .add(ModItems.raw_noodle)
-          .add(ModItems.rice_ball)
-          .add(ModItems.tofu)
-          .add(ModItems.creamcheese)
-          .add(ModItems.soysauce)
-          .add(ModItems.cheese_ravioli)
-          .add(ModItems.chicken_broth)
-          .add(ModItems.corn_chowder)
-          .add(ModItems.spicy_grilled_chicken)
-          .add(ModItems.kebab)
-          .add(ModItems.meat_ravioli)
-          .add(ModItems.mint_jelly)
-          .add(ModItems.mint_tea)
-          .add(ModItems.pea_soup)
-          .add(ModItems.polenta)
-          .add(ModItems.potato_soup)
-          .add(ModItems.squash_soup)
-          .add(ModItems.veggie_ravioli)
-          .add(ModItems.yogurt)
-          .add(ModItems.baked_salmon)
-          .add(ModItems.eggdrop_soup)
-          .add(ModItems.fish_n_chips)
-          .add(ModItems.kimchi)
-          .add(ModItems.pierogi)
-          .add(ModItems.veggie_quiche)
-          .add(ModItems.veggie_soup)
-          .add(ModItems.yogurt_with_berries)
-          .add(ModItems.mutton_dinner)
-          .add(ModItems.tortillas)
-          .add(ModItems.spicy_eggplant);
+          .add(ModFoodItems.baked_salmon)
+          .add(ModFoodItems.butter)
+          .add(ModFoodItems.cabochis)
+          .add(ModFoodItems.cheddar_cheese)
+          .add(ModFoodItems.congee)
+          .add(ModFoodItems.cooked_rice)
+          .add(ModFoodItems.eggplant_dolma)
+          .add(ModFoodItems.feta_cheese)
+          .add(ModFoodItems.lamb_stew)
+          .add(ModFoodItems.pasta_plain)
+          .add(ModFoodItems.pasta_tomato)
+          .add(ModFoodItems.pepper_hummus)
+          .add(ModFoodItems.pottage)
+          .add(ModFoodItems.raw_noodle)
+          .add(ModFoodItems.rice_ball)
+          .add(ModFoodItems.tofu)
+          .add(ModFoodItems.creamcheese)
+          .add(ModFoodItems.soysauce)
+          .add(ModFoodItems.cheese_ravioli)
+          .add(ModFoodItems.chicken_broth)
+          .add(ModFoodItems.corn_chowder)
+          .add(ModFoodItems.spicy_grilled_chicken)
+          .add(ModFoodItems.kebab)
+          .add(ModFoodItems.meat_ravioli)
+          .add(ModFoodItems.mint_jelly)
+          .add(ModFoodItems.mint_tea)
+          .add(ModFoodItems.pea_soup)
+          .add(ModFoodItems.polenta)
+          .add(ModFoodItems.potato_soup)
+          .add(ModFoodItems.squash_soup)
+          .add(ModFoodItems.veggie_ravioli)
+          .add(ModFoodItems.yogurt)
+          .add(ModFoodItems.baked_salmon)
+          .add(ModFoodItems.eggdrop_soup)
+          .add(ModFoodItems.fish_n_chips)
+          .add(ModFoodItems.kimchi)
+          .add(ModFoodItems.pierogi)
+          .add(ModFoodItems.veggie_quiche)
+          .add(ModFoodItems.veggie_soup)
+          .add(ModFoodItems.yogurt_with_berries)
+          .add(ModFoodItems.mutton_dinner)
+          .add(ModFoodItems.tortillas)
+          .add(ModFoodItems.spicy_eggplant);
         tag(ModTags.crafterProductExclusions.get(TagConstants.CRAFTING_COOK), "Chef Crafting Excluded Products")
-          .add(Items.BREAD, Items.CAKE, Items.COOKIE, Items.PUMPKIN_PIE, ModItems.cheese_pizza, ModItems.plain_cheesecake, ModItems.apple_pie, ModItems.cornmeal);
+          .add(Items.BREAD, Items.CAKE, Items.COOKIE, Items.PUMPKIN_PIE, ModFoodItems.cheese_pizza, ModFoodItems.plain_cheesecake, ModFoodItems.apple_pie, ModFoodItems.cornmeal);
 
         tag(ModTags.crafterIngredient.get(TagConstants.CRAFTING_DYER), "Dyer Crafting Ingredients")
           .addTag(Tags.Items.DYES);
@@ -589,10 +590,10 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
 
         tag(ModTags.crafterProductExclusions.get(TagConstants.CRAFTING_REDUCEABLE), "Not Reduceable Ingredients")
           .add(Items.GLOWSTONE)
-          .add(ModItems.breadDough)
-          .add(ModItems.cookieDough)
-          .add(ModItems.rawPumpkinPie)
-          .add(ModItems.cakeBatter)
+          .add(ModFoodItems.bread_dough)
+          .add(ModFoodItems.cookie_dough)
+          .add(ModFoodItems.raw_pumpkin_pie)
+          .add(ModFoodItems.cake_batter)
           .addTags(Tags.Items.STONES, Tags.Items.COBBLESTONES)
           .addTags(Tags.Items.GRAVELS, Tags.Items.SANDS)
           .addTags(Tags.Items.INGOTS, storageBlocks);
@@ -600,42 +601,42 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
         tag(ModTags.ignoreNBT, "Ignore NBT")
           .addTag(ItemTags.BANNERS);
 
-        super.tag(Tags.Items.FOODS).add(ModItems.getAllFoods());
+        super.tag(Tags.Items.FOODS).add(ModFoodItems.FOODS.toArray(new Item[0]));
 
         super.tag(Tags.Items.FOODS_BREAD)
-          .add(ModItems.milkyBread,
-            ModItems.sugaryBread,
-            ModItems.goldenBread,
-            ModItems.chorusBread,
-            ModItems.flatbread,
-            ModItems.hand_pie,
-            ModItems.lembas_scone,
-            ModItems.manchet_bread,
-            ModItems.muffin,
-            ModItems.stew_trencher,
-            ModItems.stuffed_pita);
+          .add(ModFoodItems.milkyBread,
+            ModFoodItems.sugaryBread,
+            ModFoodItems.goldenBread,
+            ModFoodItems.chorusBread,
+            ModFoodItems.flatbread,
+            ModFoodItems.hand_pie,
+            ModFoodItems.lembas_scone,
+            ModFoodItems.manchet_bread,
+            ModFoodItems.muffin,
+            ModFoodItems.stew_trencher,
+            ModFoodItems.stuffed_pita);
 
         super.tag(Tags.Items.FOODS_CANDY)
-          .add(ModItems.hand_pie)
-          .add(ModItems.muffin);
+          .add(ModFoodItems.hand_pie)
+          .add(ModFoodItems.muffin);
 
         super.tag(Tags.Items.FOODS_COOKED_MEAT)
-          .add(ModItems.lamb_stew);
+          .add(ModFoodItems.lamb_stew);
 
         super.tag(Tags.Items.FOODS_GOLDEN)
-          .add(ModItems.goldenBread);
+          .add(ModFoodItems.goldenBread);
 
         super.tag(Tags.Items.FOODS_SOUP)
-          .add(ModItems.cabochis)
-          .add(ModItems.lamb_stew)
-          .add(ModItems.pottage);
+          .add(ModFoodItems.cabochis)
+          .add(ModFoodItems.lamb_stew)
+          .add(ModFoodItems.pottage);
 
         super.tag(Tags.Items.FOODS_VEGETABLE)
-          .add(ModItems.cabochis)
-          .add(ModItems.eggplant_dolma)
-          .add(ModItems.pottage)
-          .add(ModItems.stuffed_pepper)
-          .add(ModItems.stuffed_pita);
+          .add(ModFoodItems.cabochis)
+          .add(ModFoodItems.eggplant_dolma)
+          .add(ModFoodItems.pottage)
+          .add(ModFoodItems.stuffed_pepper)
+          .add(ModFoodItems.stuffed_pita);
 
         tag(ItemTags.BOOKSHELF_BOOKS)
             .add(ModItems.ancientTome)

@@ -2,7 +2,7 @@ package com.minecolonies.core.generation.defaults;
 
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.loot.GenerateSupplyLoot;
-import com.minecolonies.core.blocks.MinecoloniesCropBlock;
+import com.minecolonies.core.blocks.BlockMinecoloniesCrop;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.PackOutput;
@@ -53,7 +53,7 @@ public class DefaultLootModifiersProvider extends GlobalLootModifierProvider
     private void addCrops()
     {
         final Set<ResourceKey<LootTable>> cropSources = new HashSet<>();
-        for (final MinecoloniesCropBlock crop : ModBlocks.getCrops())
+        for (final BlockMinecoloniesCrop crop : ModBlocks.CROPS)
         {
             for (final Block source : crop.getDroppedFrom())
             {

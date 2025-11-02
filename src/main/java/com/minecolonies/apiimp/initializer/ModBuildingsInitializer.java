@@ -225,7 +225,7 @@ public final class ModBuildingsInitializer
           .createBuildingEntry());
 
         ModBuildings.home = DEFERRED_REGISTER.register(ModBuildings.HOME_ID, () -> new BuildingEntry.Builder()
-          .setBuildingBlock(ModBlocks.blockHutHome)
+          .setBuildingBlock(ModBlocks.blockHutCitizen)
           .setBuildingProducer((colony, blockPos) -> new DefaultBuildingInstance(colony, blockPos, "residence", 5))
           .setBuildingViewProducer(() -> HomeBuildingModule.View::new)
           .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.HOME_ID))
@@ -606,14 +606,14 @@ public final class ModBuildingsInitializer
           .createBuildingEntry());
 
         ModBuildings.simpleQuarry = DEFERRED_REGISTER.register(ModBuildings.SIMPLE_QUARRY_ID, () -> new BuildingEntry.Builder()
-          .setBuildingBlock(ModBlocks.blockSimpleQuarry)
+          .setBuildingBlock(ModBlocks.blockHutSimpleQuarry)
           .setBuildingProducer((colony, blockPos) -> new DefaultBuildingInstance(colony, blockPos, ModBuildings.SIMPLE_QUARRY_ID, 1)).setBuildingViewProducer(() -> EmptyView::new)
           .addBuildingModuleProducer(SIMPLE_QUARRY)
           .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.SIMPLE_QUARRY_ID))
           .createBuildingEntry());
 
         ModBuildings.mediumQuarry = DEFERRED_REGISTER.register(ModBuildings.MEDIUM_QUARRY_ID, () -> new BuildingEntry.Builder()
-          .setBuildingBlock(ModBlocks.blockMediumQuarry)
+          .setBuildingBlock(ModBlocks.blockHutMediumQuarry)
           .setBuildingProducer((colony, blockPos) -> new DefaultBuildingInstance(colony, blockPos, ModBuildings.MEDIUM_QUARRY_ID, 1)).setBuildingViewProducer(() -> EmptyView::new)
           .addBuildingModuleProducer(MEDIUM_QUARRY)
           .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.MEDIUM_QUARRY_ID))

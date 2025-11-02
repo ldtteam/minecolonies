@@ -34,7 +34,7 @@ public class HutPlacementHandler implements IPlacementHandler
     @Override
     public boolean canHandle(@NotNull final Level world, @NotNull final BlockPos pos, @NotNull final BlockState blockState)
     {
-        return blockState.getBlock() instanceof AbstractBlockHut<?>;
+        return blockState.getBlock() instanceof AbstractBlockHut;
     }
 
     @Override

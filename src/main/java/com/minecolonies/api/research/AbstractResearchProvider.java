@@ -650,7 +650,7 @@ public abstract class AbstractResearchProvider implements DataProvider
          *                    Manually generated effects can limited to individual tiers based on strength.
          * @return this
          */
-        public Research addEffect(final AbstractColonyBlock<?> buildingBlock, int level)
+        public Research addEffect(final AbstractColonyBlock buildingBlock, int level)
         {
             final JsonArray effects;
             if (this.json.has("effects") && this.json.get("effects").isJsonArray())
@@ -755,7 +755,7 @@ public abstract class AbstractResearchProvider implements DataProvider
          * See ModBuildings for a list of supported buildings.
          * @param buildingBlock    A Building hut block.  This will auto-generate an unlock effect ID of effects/blockhutname.json.
          */
-        public ResearchEffect(final AbstractColonyBlock<?> buildingBlock)
+        public ResearchEffect(final AbstractColonyBlock buildingBlock)
         {
             final ResourceLocation registryName = BuiltInRegistries.BLOCK.getKey(buildingBlock);
             this.id = new ResourceLocation(registryName.getNamespace(), "effects/" + registryName.getPath());

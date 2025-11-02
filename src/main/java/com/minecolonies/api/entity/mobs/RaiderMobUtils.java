@@ -26,6 +26,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
+
 import java.util.List;
 import java.util.Random;
 
@@ -159,7 +160,7 @@ public final class RaiderMobUtils
         }
         else if (mob instanceof IPharaoEntity)
         {
-            mob.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(ModItems.pharaoscepter));
+            mob.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(ModItems.pharaoScepter));
         }
         else if (mob instanceof IArcherMobEntity)
         {

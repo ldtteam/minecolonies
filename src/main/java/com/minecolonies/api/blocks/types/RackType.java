@@ -1,11 +1,10 @@
 package com.minecolonies.api.blocks.types;
 
-import com.minecolonies.api.blocks.AbstractBlockMinecoloniesRack;
 import net.minecraft.util.StringRepresentable;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Defines the types of Racks that the {@link AbstractBlockMinecoloniesRack} supports.
+ * Defines the types of Racks that the {@link com.minecolonies.core.blocks.BlockMinecoloniesRack} supports.
  */
 public enum RackType implements StringRepresentable
 {

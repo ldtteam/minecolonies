@@ -152,7 +152,7 @@ public class DefaultAdvancementsProvider extends AdvancementProvider
 
         final AdvancementHolder buildCitizen = Advancement.Builder.advancement()
                 .parent(buildTavern)
-                .display(make(AdvancementType.TASK, ModBlocks.blockHutHome, "build.citizen"))
+                .display(make(AdvancementType.TASK, ModBlocks.blockHutCitizen, "build.citizen"))
                 .addCriterion("citizens_hut", completeBuildRequest(ModBuildings.home.get(), 1))
                 .save(consumer, new ResourceLocation(MOD_ID, GROUP + "build_citizen"), fileHelper);
 

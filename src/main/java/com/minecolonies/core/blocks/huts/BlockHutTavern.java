@@ -19,7 +19,7 @@ import static com.minecolonies.api.util.constant.TranslationConstants.WARNING_DU
 /**
  * HutBlock for the Tavern
  */
-public class BlockHutTavern extends AbstractBlockHut<com.minecolonies.core.blocks.huts.BlockHutTavern>
+public class BlockHutTavern extends AbstractBlockHut
 {
     /**
      * Block name

@@ -9,6 +9,7 @@ import com.minecolonies.api.items.component.ColonyId;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.api.util.constant.TranslationConstants;
+import com.minecolonies.core.blocks.BlockColonySign;
 import com.minecolonies.core.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.core.tileentities.TileEntityColonySign;
 import net.minecraft.ChatFormatting;
@@ -39,18 +40,17 @@ public class ItemColonySign extends BlockItem
     /**
      * Sets the name, creative tab, and registers the Clipboard item.
      *
+     * @param block      the block tied to this item.
      * @param properties the properties.
      */
-    public ItemColonySign(final Properties properties)
+    public ItemColonySign(final BlockColonySign block, final Properties properties)
     {
-        super(ModBlocks.blockColonySign, properties.stacksTo(STACKSIZE));
+        super(block, properties.stacksTo(STACKSIZE));
     }
 
     @Override
     public InteractionResult useOn(final UseOnContext ctx)
     {
-        final ItemStack sign = ctx.getPlayer().getItemInHand(ctx.getHand());
-
         final BlockEntity entity = ctx.getLevel().getBlockEntity(ctx.getClickedPos());
         final BlockState state = ctx.getLevel().getBlockState(ctx.getClickedPos());
         if (ctx.getPlayer().isShiftKeyDown())

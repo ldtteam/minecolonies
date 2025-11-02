@@ -2,11 +2,10 @@ package com.minecolonies.core.items;
 
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.items.component.ColonyId;
-import com.minecolonies.core.client.gui.WindowClipBoard;
-import com.minecolonies.core.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.constant.TranslationConstants;
-
+import com.minecolonies.core.client.gui.WindowClipBoard;
+import com.minecolonies.core.tileentities.TileEntityColonyBuilding;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -27,13 +26,8 @@ import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECO
 /**
  * Class describing the clipboard item.
  */
-public class ItemClipboard extends AbstractItemMinecolonies
+public class ItemClipboard extends Item
 {
-    /**
-     * Tag of the colony.
-     */
-    public static final String TAG_COLONY = "colony";
-
     /**
      * Tag of the "hide unimportant" UI toggle.
      */
@@ -46,7 +40,7 @@ public class ItemClipboard extends AbstractItemMinecolonies
      */
     public ItemClipboard(final Item.Properties properties)
     {
-        super("clipboard", properties.stacksTo(1));
+        super(properties.stacksTo(1));
     }
 
     @Override

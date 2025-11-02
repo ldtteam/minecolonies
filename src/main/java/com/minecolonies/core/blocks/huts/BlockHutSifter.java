@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Hut for the sifter. No different from {@link AbstractBlockHut}
  */
-public class BlockHutSifter extends AbstractBlockHut<BlockHutSifter>
+public class BlockHutSifter extends AbstractBlockHut
 {
     @NotNull
     @Override

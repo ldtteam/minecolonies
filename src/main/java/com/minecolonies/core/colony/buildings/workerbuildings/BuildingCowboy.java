@@ -117,9 +117,9 @@ public class BuildingCowboy extends AbstractBuilding
      */
     public ItemStack getMilkInputItem()
     {
-        if (getSetting(MILK_ITEM).getValue().equals(ModItems.large_milk_bottle.getDescriptionId()))
+        if (getSetting(MILK_ITEM).getValue().equals(ModItems.largeMilkBottle.getDescriptionId()))
         {
-            return ModItems.large_empty_bottle.getDefaultInstance();
+            return ModItems.largeEmptyBottle.getDefaultInstance();
         }
         return Items.BUCKET.getDefaultInstance();
     }
@@ -130,9 +130,9 @@ public class BuildingCowboy extends AbstractBuilding
      */
     public ItemStack getMilkOutputItem()
     {
-        if (getSetting(MILK_ITEM).getValue().equals(ModItems.large_milk_bottle.getDescriptionId()))
+        if (getSetting(MILK_ITEM).getValue().equals(ModItems.largeMilkBottle.getDescriptionId()))
         {
-            return ModItems.large_milk_bottle.getDefaultInstance();
+            return ModItems.largeMilkBottle.getDefaultInstance();
         }
         return Items.MILK_BUCKET.getDefaultInstance();
     }
@@ -162,7 +162,7 @@ public class BuildingCowboy extends AbstractBuilding
             if (bucketsToKeep > 0)
             {
                 requiredItems.put(s -> s.is(Items.BUCKET), new Tuple<>(bucketsToKeep, false));
-                requiredItems.put(s -> s.is(ModItems.large_empty_bottle), new Tuple<>(bucketsToKeep, true));
+                requiredItems.put(s -> s.is(ModItems.largeEmptyBottle), new Tuple<>(bucketsToKeep, true));
             }
 
             if (bowlsToKeep > 0)
@@ -202,8 +202,8 @@ public class BuildingCowboy extends AbstractBuilding
                         .withRequiredEntity(animal.getType())
                         .build());
                 recipes.add(GenericRecipe.builder()
-                        .withOutput(ModItems.large_milk_bottle)
-                        .withInputs(List.of(List.of(ModItems.large_empty_bottle.getDefaultInstance())))
+                        .withOutput(ModItems.largeMilkBottle)
+                        .withInputs(List.of(List.of(ModItems.largeEmptyBottle.getDefaultInstance())))
                         .withRequiredEntity(animal.getType())
                         .build());
             }
@@ -215,8 +215,8 @@ public class BuildingCowboy extends AbstractBuilding
                     .withRequiredEntity(animal.getType())
                     .build());
                 recipes.add(GenericRecipe.builder()
-                    .withOutput(ModItems.large_milk_bottle)
-                    .withInputs(List.of(List.of(ModItems.large_empty_bottle.getDefaultInstance())))
+                    .withOutput(ModItems.largeMilkBottle)
+                    .withInputs(List.of(List.of(ModItems.largeEmptyBottle.getDefaultInstance())))
                     .withRequiredEntity(animal.getType())
                     .build());
             }

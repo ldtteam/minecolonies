@@ -1,8 +1,8 @@
 package com.minecolonies.core.blocks;
 
 import com.ldtteam.structurize.blocks.interfaces.IAnchorBlock;
-import com.minecolonies.api.blocks.AbstractBlockMinecoloniesHorizontal;
 import com.minecolonies.api.blocks.interfaces.IBuildingBrowsableBlock;
+import com.minecolonies.api.blocks.interfaces.IMinecoloniesBlock;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildingextensions.registry.BuildingExtensionRegistries.BuildingExtensionEntry;
@@ -20,6 +20,8 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
@@ -44,7 +46,7 @@ import java.util.Map;
 /**
  * Block class for the plantation field block.
  */
-public class BlockPlantationField extends AbstractBlockMinecoloniesHorizontal<BlockPlantationField> implements IBuilderUndestroyable, IAnchorBlock, IBuildingBrowsableBlock, EntityBlock
+public class BlockPlantationField extends HorizontalDirectionalBlock implements IBuilderUndestroyable, IAnchorBlock, IBuildingBrowsableBlock, EntityBlock, IMinecoloniesBlock<BlockItem>
 {
     public static final MapCodec<BlockPlantationField> CODEC = simpleCodec(BlockPlantationField::new);
 
@@ -88,6 +90,7 @@ public class BlockPlantationField extends AbstractBlockMinecoloniesHorizontal<Bl
     }
 
     @Override
+    @NotNull
     protected MapCodec<BlockPlantationField> codec()
     {
         return CODEC;
@@ -97,6 +100,12 @@ public class BlockPlantationField extends AbstractBlockMinecoloniesHorizontal<Bl
     public ResourceLocation getRegistryName()
     {
         return new ResourceLocation(Constants.MOD_ID, BLOCK_NAME);
+    }
+
+    @Override
+    public BlockItem createBlockItem()
+    {
+        return new BlockItem(this, new Item.Properties());
     }
 
     @Override

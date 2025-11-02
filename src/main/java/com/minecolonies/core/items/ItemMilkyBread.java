@@ -1,15 +1,15 @@
 package com.minecolonies.core.items;
 
 import com.minecolonies.api.util.constant.TranslationConstants;
+import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Style;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.Style;
-import net.minecraft.ChatFormatting;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.common.EffectCures;
 import org.jetbrains.annotations.NotNull;
@@ -22,23 +22,12 @@ import java.util.List;
  */
 public class ItemMilkyBread extends ItemFood
 {
-
-    /**
-     * Setup the food definition
-     */
-    private static FoodProperties milkBread = (new FoodProperties.Builder())
-                                        .nutrition(5)
-                                        .saturationModifier(0.6F)
-                                        .build(); 
-
     /**
      * Sets the name, creative tab, and registers the Milk Bread item.
-     *
-     * @param properties the properties.
      */
-    public ItemMilkyBread(final Properties properties)
+    public ItemMilkyBread()
     {
-        super((new Item.Properties()).food(milkBread), 1);
+        super(new Item.Properties().food(new FoodProperties.Builder().nutrition(5).saturationModifier(0.6F).build()), 1);
     }
 
    /**

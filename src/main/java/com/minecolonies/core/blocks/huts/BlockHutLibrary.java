@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Hut for the library. No different from {@link AbstractBlockHut}
  */
-public class BlockHutLibrary extends AbstractBlockHut<BlockHutLibrary>
+public class BlockHutLibrary extends AbstractBlockHut
 {
     @NotNull
     @Override

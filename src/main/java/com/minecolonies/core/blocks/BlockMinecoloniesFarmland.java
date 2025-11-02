@@ -1,6 +1,6 @@
 package com.minecolonies.core.blocks;
 
-import com.minecolonies.api.blocks.AbstractBlockMinecolonies;
+import com.minecolonies.api.blocks.interfaces.IMinecoloniesBlock;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.network.messages.client.VanillaParticleMessage;
 import net.minecraft.core.BlockPos;
@@ -11,7 +11,8 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.ParticleUtils;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.item.BoneMealItem;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -43,7 +44,7 @@ import javax.annotation.Nullable;
 
 import static com.minecolonies.api.util.constant.CitizenConstants.BLOCK_BREAK_SOUND_RANGE;
 
-public class MinecoloniesFarmland extends AbstractBlockMinecolonies<MinecoloniesFarmland> implements SimpleWaterloggedBlock
+public class BlockMinecoloniesFarmland extends Block implements SimpleWaterloggedBlock, IMinecoloniesBlock<BlockItem>
 {
     public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
 
@@ -60,7 +61,7 @@ public class MinecoloniesFarmland extends AbstractBlockMinecolonies<Minecolonies
      */
     private final boolean waterLogged;
 
-    public MinecoloniesFarmland(@NotNull final String blockName, final boolean waterLogged, final double height)
+    public BlockMinecoloniesFarmland(@NotNull final String blockName, final boolean waterLogged, final double height)
     {
         super(BlockBehaviour.Properties.of().mapColor(MapColor.DIRT).randomTicks().strength(0.6F).sound(SoundType.GRAVEL).isViewBlocking((s,g,p) -> true).isSuffocating((s,g,p) -> true));
         this.registerDefaultState(this.stateDefinition.any().setValue(MOISTURE, 0));
@@ -150,7 +151,7 @@ public class MinecoloniesFarmland extends AbstractBlockMinecolonies<Minecolonies
         {
             growthChance = 6;
         }
-        if (aboveState.getBlock() instanceof MinecoloniesCropBlock cropBlock && rng.nextInt(100) <= growthChance)
+        if (aboveState.getBlock() instanceof BlockMinecoloniesCrop cropBlock && rng.nextInt(100) <= growthChance)
         {
             cropBlock.attemptGrow(aboveState, level, pos.above());
             new VanillaParticleMessage(pos.getX() + 0.5F, pos.getY() - 0.5F, pos.getZ() + 0.5F, ParticleTypes.HAPPY_VILLAGER).sendToTargetPoint(level, null, pos.getX(), pos.getY(), pos.getZ(), BLOCK_BREAK_SOUND_RANGE);
@@ -225,6 +226,12 @@ public class MinecoloniesFarmland extends AbstractBlockMinecolonies<Minecolonies
     public ResourceLocation getRegistryName()
     {
         return blockId;
+    }
+
+    @Override
+    public BlockItem createBlockItem()
+    {
+        return new BlockItem(this, new Item.Properties());
     }
 
     @Override

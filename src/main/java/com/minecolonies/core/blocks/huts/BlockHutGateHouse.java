@@ -11,7 +11,6 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.client.gui.modules.ConnectionModuleWindow;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -24,7 +23,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Block of the gate house hut.
  */
-public class BlockHutGateHouse extends AbstractBlockHut<BlockHutGateHouse>
+public class BlockHutGateHouse extends AbstractBlockHut
 {
     /**
      * Default constructor.

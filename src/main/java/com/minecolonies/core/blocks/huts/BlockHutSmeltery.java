@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Hut for the Smeltery. No different from {@link AbstractBlockHut}
  */
-public class BlockHutSmeltery extends AbstractBlockHut<BlockHutSmeltery>
+public class BlockHutSmeltery extends AbstractBlockHut
 {
     public BlockHutSmeltery()
     {

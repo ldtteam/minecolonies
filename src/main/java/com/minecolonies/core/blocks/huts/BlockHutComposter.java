@@ -6,7 +6,7 @@ import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 
 import org.jetbrains.annotations.NotNull;
 
-public class BlockHutComposter extends AbstractBlockHut<BlockHutComposter>
+public class BlockHutComposter extends AbstractBlockHut
 {
 
     @NotNull

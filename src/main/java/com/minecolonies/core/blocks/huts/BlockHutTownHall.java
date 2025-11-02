@@ -23,7 +23,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.material.MapColor;
@@ -45,7 +44,7 @@ import java.util.List;
 /**
  * Hut for the town hall. Sets the working range for the town hall in the constructor
  */
-public class BlockHutTownHall extends AbstractBlockHut<BlockHutTownHall>
+public class BlockHutTownHall extends AbstractBlockHut
 {
     public BlockHutTownHall()
     {

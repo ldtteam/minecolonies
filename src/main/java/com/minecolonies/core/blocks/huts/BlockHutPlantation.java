@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
  * Hut for the plantation. No different from {@link AbstractBlockHut}
  */
 
-public class BlockHutPlantation extends AbstractBlockHut<BlockHutPlantation>
+public class BlockHutPlantation extends AbstractBlockHut
 {
     @NotNull
     @Override

@@ -35,14 +35,14 @@ public class DefaultItemModelProvider extends ItemModelProvider
                     .model(getExistingFile(disabledGoggles))
                 .end();
 
-        for (final Item foodItem : ModItems.getAllIngredients())
+        for (final Item foodItem : ModItems.INGREDIENTS)
         {
             getBuilder(foodItem.toString())
               .parent(new ModelFile.UncheckedModelFile("item/generated"))
               .texture("layer0", new ResourceLocation(MOD_ID, "item/food/" + BuiltInRegistries.ITEM.wrapAsHolder(foodItem).getKey().location().getPath()));
         }
 
-        for (final Item foodItem : ModItems.getAllFoods())
+        for (final Item foodItem : ModItems.FOODS)
         {
             getBuilder(foodItem.toString())
               .parent(new ModelFile.UncheckedModelFile("item/generated"))

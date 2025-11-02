@@ -9,7 +9,7 @@ import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.eventbus.events.CustomRecipesReloadedEvent;
 import com.minecolonies.api.loot.ModLootTables;
 import com.minecolonies.api.util.Log;
-import com.minecolonies.core.blocks.MinecoloniesCropBlock;
+import com.minecolonies.core.blocks.BlockMinecoloniesCrop;
 import com.minecolonies.core.colony.buildings.modules.AnimalHerdingModule;
 import io.netty.buffer.Unpooled;
 import net.minecraft.core.HolderLookup;
@@ -323,7 +323,7 @@ public class CustomRecipeManager
             }
         }
 
-        for (final MinecoloniesCropBlock crop : ModBlocks.getCrops())
+        for (final BlockMinecoloniesCrop crop : ModBlocks.CROPS)
         {
             for (final Block source : crop.getDroppedFrom())
             {

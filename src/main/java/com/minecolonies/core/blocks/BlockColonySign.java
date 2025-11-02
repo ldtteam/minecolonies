@@ -1,7 +1,7 @@
 package com.minecolonies.core.blocks;
 
-import com.minecolonies.api.blocks.AbstractBlockMinecolonies;
-import com.minecolonies.api.blocks.interfaces.ITickableBlockMinecolonies;
+import com.minecolonies.api.blocks.interfaces.IMinecoloniesBlock;
+import com.minecolonies.api.blocks.interfaces.IMinecoloniesTickableBlock;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.items.component.BuildingId;
@@ -9,8 +9,8 @@ import com.minecolonies.api.items.component.ColonyId;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.items.ItemColonySign;
 import com.minecolonies.core.tileentities.TileEntityColonySign;
+import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Item;
@@ -18,7 +18,10 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
-import net.minecraft.world.level.block.*;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.HorizontalDirectionalBlock;
+import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
@@ -31,13 +34,13 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_POS;
-
 /**
  * Creates a colony sign block.
  */
-public class BlockColonySign extends AbstractBlockMinecolonies<BlockColonySign> implements ITickableBlockMinecolonies
+public class BlockColonySign extends HorizontalDirectionalBlock implements IMinecoloniesTickableBlock, IMinecoloniesBlock<ItemColonySign>
 {
+    public static final MapCodec<BlockColonySign> CODEC = simpleCodec(BlockColonySign::new);
+
     /**
      * Property if it's a sign of two connected colonies or not.
      */
@@ -68,7 +71,12 @@ public class BlockColonySign extends AbstractBlockMinecolonies<BlockColonySign> 
      */
     public BlockColonySign()
     {
-        super(Properties.of().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(BLOCK_HARDNESS, RESISTANCE).noCollission());
+        this(Properties.of().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(BLOCK_HARDNESS, RESISTANCE).noCollission());
+    }
+
+    public BlockColonySign(final Properties properties)
+    {
+        super(properties);
         this.registerDefaultState(this.defaultBlockState().setValue(CONNECTED, false));
     }
 
@@ -76,6 +84,12 @@ public class BlockColonySign extends AbstractBlockMinecolonies<BlockColonySign> 
     public ResourceLocation getRegistryName()
     {
         return new ResourceLocation(Constants.MOD_ID, BLOCK_NAME);
+    }
+
+    @Override
+    public ItemColonySign createBlockItem()
+    {
+        return new ItemColonySign(this, new Item.Properties());
     }
 
     @NotNull
@@ -149,8 +163,9 @@ public class BlockColonySign extends AbstractBlockMinecolonies<BlockColonySign> 
     }
 
     @Override
-    public void registerBlockItem(final Registry<Item> registry, final Item.Properties properties)
+    @NotNull
+    protected MapCodec<? extends HorizontalDirectionalBlock> codec()
     {
-        Registry.register(registry, getRegistryName(), new ItemColonySign(properties));
+        return CODEC;
     }
 }

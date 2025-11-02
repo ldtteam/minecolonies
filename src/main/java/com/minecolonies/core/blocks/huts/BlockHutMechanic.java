@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Hut for the mechanic. No different from {@link AbstractBlockHut}
  */
-public class BlockHutMechanic extends AbstractBlockHut<BlockHutMechanic>
+public class BlockHutMechanic extends AbstractBlockHut
 {
     @NotNull
     @Override

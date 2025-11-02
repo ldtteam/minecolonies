@@ -1,6 +1,5 @@
 package com.minecolonies.core.colony.buildings.modules;
 
-import com.minecolonies.api.blocks.AbstractBlockMinecoloniesNamedGrave;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.GraveData;
 import com.minecolonies.api.colony.IColony;
@@ -9,10 +8,11 @@ import com.minecolonies.api.colony.buildings.modules.IBuildingEventsModule;
 import com.minecolonies.api.colony.buildings.modules.IBuildingModule;
 import com.minecolonies.api.colony.buildings.modules.IPersistentModule;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-import com.minecolonies.core.tileentities.TileEntityGrave;
-import com.minecolonies.core.tileentities.TileEntityNamedGrave;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.WorldUtil;
+import com.minecolonies.core.blocks.BlockMinecoloniesNamedGrave;
+import com.minecolonies.core.tileentities.TileEntityGrave;
+import com.minecolonies.core.tileentities.TileEntityNamedGrave;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
@@ -181,7 +181,7 @@ public class GraveyardManagementModule extends AbstractBuildingModule implements
 
             colony.getWorld().destroyBlock(positionAndDirection.getA(), true, worker);
             colony.getWorld().setBlockAndUpdate(positionAndDirection.getA(),
-                    ModBlocks.blockNamedGrave.defaultBlockState().setValue(AbstractBlockMinecoloniesNamedGrave.FACING, facing));
+                    ModBlocks.blockNamedGrave.defaultBlockState().setValue(BlockMinecoloniesNamedGrave.FACING, facing));
 
             BlockEntity tileEntity = colony.getWorld().getBlockEntity(positionAndDirection.getA());
             if (tileEntity instanceof TileEntityNamedGrave)

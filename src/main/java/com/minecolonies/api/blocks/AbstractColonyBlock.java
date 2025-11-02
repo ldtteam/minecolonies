@@ -1,7 +1,8 @@
 package com.minecolonies.api.blocks;
 
 import com.minecolonies.api.MinecoloniesAPIProxy;
-import com.minecolonies.api.blocks.interfaces.ITickableBlockMinecolonies;
+import com.minecolonies.api.blocks.interfaces.IMinecoloniesBlock;
+import com.minecolonies.api.blocks.interfaces.IMinecoloniesTickableBlock;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuilding;
@@ -10,17 +11,18 @@ import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.entity.ai.workers.util.IBuilderUndestroyable;
 import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
-import com.minecolonies.api.util.*;
+import com.minecolonies.api.util.ColonyUtils;
+import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.tileentities.TileEntityColonyBuilding;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
@@ -48,10 +50,9 @@ import static com.minecolonies.api.util.constant.BuildingConstants.DEACTIVATED;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 
 /**
- * Base class for all blocks that have a functionality within a colony. This applies to both buildings as well as functional blocks like postbox/stash.
+ * Base class for all blocks that have a functionality within a colony. This applies to both buildings and functional blocks like postbox/stash.
  */
-@SuppressWarnings("PMD.ExcessiveImports")
-public abstract class AbstractColonyBlock<B extends AbstractColonyBlock<B>> extends AbstractBlockMinecolonies<B> implements IBuilderUndestroyable, ITickableBlockMinecolonies
+public abstract class AbstractColonyBlock<T extends BlockItem> extends Block implements IBuilderUndestroyable, IMinecoloniesTickableBlock, IMinecoloniesBlock<T>
 {
     /**
      * Hardness factor of the pvp mode.
@@ -79,11 +80,6 @@ public abstract class AbstractColonyBlock<B extends AbstractColonyBlock<B>> exte
     private static final VoxelShape SHAPE = Shapes.box(0.1, 0.1, 0.1, 0.9, 0.9, 0.9);
 
     /**
-     * The hut's lower-case building-registry-compatible name.
-     */
-    private final String name;
-
-    /**
      * The timepoint of the last chat warning message
      */
     private long lastBreakTickWarn = 0;
@@ -97,20 +93,6 @@ public abstract class AbstractColonyBlock<B extends AbstractColonyBlock<B>> exte
     {
         super(Properties.of().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(HARDNESS, RESISTANCE).noOcclusion());
         this.registerDefaultState(this.defaultBlockState().setValue(FACING, Direction.NORTH));
-        this.name = getHutName();
-    }
-
-    @Override
-    public float getDestroyProgress(final BlockState state, @NotNull final Player player, @NotNull final BlockGetter world, @NotNull final BlockPos pos)
-    {
-        final IBuilding building = IColonyManager.getInstance().getBuilding(player.level(), pos);
-        if (building != null && !building.getChildren().isEmpty() && (player.level().getGameTime() - lastBreakTickWarn) < 100)
-        {
-            lastBreakTickWarn = player.level().getGameTime();
-            MessageUtils.format(HUT_BREAK_WARNING_CHILD_BUILDINGS).sendTo(player);
-        }
-
-        return (MinecoloniesAPIProxy.getInstance().getConfig().getServer().pvp_mode.get() ? 1 / (HARDNESS * HARDNESS_PVP_FACTOR) : 1 / HARDNESS) / 30;
     }
 
     /**
@@ -124,7 +106,19 @@ public abstract class AbstractColonyBlock<B extends AbstractColonyBlock<B>> exte
     {
         super(properties.noOcclusion());
         this.registerDefaultState(this.defaultBlockState().setValue(FACING, Direction.NORTH));
-        this.name = getHutName();
+    }
+
+    @Override
+    public float getDestroyProgress(final BlockState state, @NotNull final Player player, @NotNull final BlockGetter world, @NotNull final BlockPos pos)
+    {
+        final IBuilding building = IColonyManager.getInstance().getBuilding(player.level(), pos);
+        if (building != null && !building.getChildren().isEmpty() && (player.level().getGameTime() - lastBreakTickWarn) < 100)
+        {
+            lastBreakTickWarn = player.level().getGameTime();
+            MessageUtils.format(HUT_BREAK_WARNING_CHILD_BUILDINGS).sendTo(player);
+        }
+
+        return (MinecoloniesAPIProxy.getInstance().getConfig().getServer().pvp_mode.get() ? 1 / (HARDNESS * HARDNESS_PVP_FACTOR) : 1 / HARDNESS) / 30;
     }
 
     /**
@@ -277,12 +271,5 @@ public abstract class AbstractColonyBlock<B extends AbstractColonyBlock<B>> exte
     public ResourceLocation getRegistryName()
     {
         return new ResourceLocation(Constants.MOD_ID, getHutName());
-    }
-
-    @Override
-    public B registerBlock(final Registry<Block> registry)
-    {
-        Registry.register(registry, getRegistryName(), this);
-        return (B) this;
     }
 }

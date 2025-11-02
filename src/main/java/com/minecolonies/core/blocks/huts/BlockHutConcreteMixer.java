@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Hut for the concrete mason. No different from {@link AbstractBlockHut}
  */
-public class BlockHutConcreteMixer extends AbstractBlockHut<BlockHutConcreteMixer>
+public class BlockHutConcreteMixer extends AbstractBlockHut
 {
     @NotNull
     @Override

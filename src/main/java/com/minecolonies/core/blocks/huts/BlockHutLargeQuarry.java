@@ -7,9 +7,9 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Hut for the Large quarry. No different from {@link AbstractBlockHut}
  */
-public class LargeQuarry extends AbstractBlockHut<LargeQuarry>
+public class BlockHutLargeQuarry extends AbstractBlockHut
 {
-    public LargeQuarry()
+    public BlockHutLargeQuarry()
     {
         //No different from Abstract parent
         super();

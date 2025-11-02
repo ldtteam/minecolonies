@@ -30,7 +30,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Hut for the Stash. No different from {@link AbstractBlockHut}
  */
-public class BlockStash extends AbstractColonyBlock<BlockStash> implements IRSComponentBlock
+public class BlockStash extends AbstractColonyBlock implements IRSComponentBlock
 {
     private static final VoxelShape SHAPE_NORTH = Block.box(0.0D, 0.0D, 0.0D, 16.0D, 16.0D, 8.0D);
     private static final VoxelShape SHAPE_EAST  = Block.box(8.0D, 0.0D, 0.0D, 16.0D, 16.0D, 16.0D);

@@ -14,8 +14,7 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.CraftingUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.OptionalPredicate;
-import com.minecolonies.api.util.constant.NbtTagConstants;
-import com.minecolonies.core.blocks.MinecoloniesCropBlock;
+import com.minecolonies.core.blocks.BlockMinecoloniesCrop;
 import com.minecolonies.core.client.gui.modules.FarmFieldsModuleWindow;
 import com.minecolonies.core.colony.buildingextensions.FarmField;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
@@ -387,7 +386,7 @@ public class BuildingFarmer extends AbstractBuilding
             List<IGenericRecipe> recipes = new ArrayList<>(super.getAdditionalRecipesForDisplayPurposesOnly(world));
             for (final ItemStack stack : IColonyManager.getInstance().getCompatibilityManager().getListOfAllItems())
             {
-                if (stack.getItem() instanceof ItemCrop cropItem && cropItem.getBlock() instanceof MinecoloniesCropBlock crop)
+                if (stack.getItem() instanceof ItemCrop cropItem && cropItem.getBlock() instanceof BlockMinecoloniesCrop crop)
                 {
                     // MineColonies crop
                     final TagKey<Biome> preferredBiome = crop.getPreferredBiome();
@@ -464,7 +463,7 @@ public class BuildingFarmer extends AbstractBuilding
             final List<ResourceKey<LootTable>> tables = new ArrayList<>(super.getAdditionalLootTables());
             for (final ItemStack stack : IColonyManager.getInstance().getCompatibilityManager().getListOfAllItems())
             {
-                if (stack.getItem() instanceof ItemCrop cropItem && cropItem.getBlock() instanceof MinecoloniesCropBlock crop)
+                if (stack.getItem() instanceof ItemCrop cropItem && cropItem.getBlock() instanceof BlockMinecoloniesCrop crop)
                 {
                     tables.add(crop.getLootTable());
                 }

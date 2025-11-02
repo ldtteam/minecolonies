@@ -1,7 +1,7 @@
 package com.minecolonies.core.blocks;
 
-import com.minecolonies.api.blocks.huts.AbstractBlockMinecoloniesDefault;
 import com.minecolonies.api.blocks.interfaces.IBuildingBrowsableBlock;
+import com.minecolonies.api.blocks.interfaces.IMinecoloniesBlock;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildingextensions.registry.BuildingExtensionRegistries;
@@ -9,6 +9,7 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.client.gui.containers.WindowField;
 import com.minecolonies.core.colony.buildingextensions.FarmField;
 import com.minecolonies.core.tileentities.TileEntityScarecrow;
+import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
@@ -16,6 +17,8 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
@@ -40,17 +43,58 @@ import org.jetbrains.annotations.Nullable;
 /**
  * The net.minecraft.core.Directions, placement and activation.
  */
-@SuppressWarnings("PMD.ExcessiveImports")
-public class BlockScarecrow extends AbstractBlockMinecoloniesDefault<BlockScarecrow> implements EntityBlock, IBuildingBrowsableBlock
+public class BlockScarecrow extends HorizontalDirectionalBlock implements EntityBlock, IBuildingBrowsableBlock, IMinecoloniesBlock<BlockItem>
 {
+    public static final MapCodec<BlockPlantationField> CODEC = simpleCodec(BlockPlantationField::new);
+
     public static final EnumProperty<DoubleBlockHalf> HALF = BlockStateProperties.DOUBLE_BLOCK_HALF;
+
+    /**
+     * Hardness of the block.
+     */
+    private static final float HARDNESS = 10F;
+
+    /**
+     * Resistance of the block.
+     */
+    private static final float RESISTANCE = 10F;
+
+    /**
+     * Start of the collision box at y.
+     */
+    private static final double BOTTOM_COLLISION = 0.0;
+
+    /**
+     * Start of the collision box at x and z.
+     */
+    private static final double START_COLLISION = 0.1;
+
+    /**
+     * End of the collision box.
+     */
+    private static final double END_COLLISION = 0.9;
+
+    /**
+     * Height of the collision box.
+     */
+    private static final double HEIGHT_COLLISION = 2.2;
+
+    /**
+     * Registry name for this block.
+     */
+    private static final String REGISTRY_NAME = "blockhutfield";
 
     /**
      * Constructor called on block placement.
      */
     public BlockScarecrow()
     {
-        super(Properties.of().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(HARDNESS, RESISTANCE));
+        this(Properties.of().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(HARDNESS, RESISTANCE));
+    }
+
+    public BlockScarecrow(final Properties properties)
+    {
+        super(properties);
         this.registerDefaultState(this.defaultBlockState().setValue(FACING, Direction.NORTH).setValue(HALF, DoubleBlockHalf.LOWER));
     }
 
@@ -58,6 +102,12 @@ public class BlockScarecrow extends AbstractBlockMinecoloniesDefault<BlockScarec
     public ResourceLocation getRegistryName()
     {
         return new ResourceLocation(Constants.MOD_ID, REGISTRY_NAME);
+    }
+
+    @Override
+    public BlockItem createBlockItem()
+    {
+        return new BlockItem(this, new Item.Properties());
     }
 
     @Nullable
@@ -73,13 +123,13 @@ public class BlockScarecrow extends AbstractBlockMinecoloniesDefault<BlockScarec
 
     @Override
     public ItemInteractionResult useItemOn(
-      final ItemStack stack,
-      final BlockState state,
-      final Level worldIn,
-      final BlockPos pos,
-      final Player player,
-      final InteractionHand hand,
-      final BlockHitResult ray)
+        final ItemStack stack,
+        final BlockState state,
+        final Level worldIn,
+        final BlockPos pos,
+        final Player player,
+        final InteractionHand hand,
+        final BlockHitResult ray)
     {
         // If the world is client, open the inventory of the field.
         if (worldIn.isClientSide)
@@ -183,7 +233,7 @@ public class BlockScarecrow extends AbstractBlockMinecoloniesDefault<BlockScarec
     }
 
     @Override
-    public BlockState playerWillDestroy(final Level worldIn, @NotNull final BlockPos pos, final BlockState state, @NotNull final Player player)
+    public BlockState playerWillDestroy(final @NotNull Level worldIn, @NotNull final BlockPos pos, final @NotNull BlockState state, @NotNull final Player player)
     {
         DoubleBlockHalf half = state.getValue(HALF);
         BlockPos otherpos = half == DoubleBlockHalf.LOWER ? pos.above() : pos.below();
@@ -222,5 +272,12 @@ public class BlockScarecrow extends AbstractBlockMinecoloniesDefault<BlockScarec
                 colony.getBuildingManager().removeBuildingExtension(field -> field.getBuildingExtensionType().equals(BuildingExtensionRegistries.farmField.get()) && field.getPosition().equals(pos));
             }
         }
+    }
+
+    @Override
+    @NotNull
+    protected MapCodec<? extends HorizontalDirectionalBlock> codec()
+    {
+        return CODEC;
     }
 }

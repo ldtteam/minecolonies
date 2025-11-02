@@ -28,7 +28,7 @@ import java.util.function.Supplier;
 @SuppressWarnings("PMD.MissingStaticMethodInNonInstantiatableClass") //Use the builder to create one.
 public class BuildingEntry
 {
-    private final AbstractColonyBlock<?> buildingBlock;
+    private final AbstractColonyBlock buildingBlock;
 
     private final BiFunction<IColony, BlockPos, IBuilding> buildingProducer;
     private final ResourceLocation registryName;
@@ -40,8 +40,8 @@ public class BuildingEntry
      */
     public static final class Builder
     {
-        private AbstractColonyBlock<?>                                     buildingBlock;
-        private BiFunction<IColony, BlockPos, IBuilding>                   buildingProducer;
+        private AbstractColonyBlock                      buildingBlock;
+        private BiFunction<IColony, BlockPos, IBuilding> buildingProducer;
         private Supplier<BiFunction<IColonyView, BlockPos, IBuildingView>> buildingViewProducer;
         private List<ModuleProducer>                                       buildingModuleProducers = new ArrayList<>();
         private ResourceLocation                                           registryName;
@@ -52,7 +52,7 @@ public class BuildingEntry
          * @param buildingBlock The block.
          * @return The builder.
          */
-        public Builder setBuildingBlock(final AbstractColonyBlock<?> buildingBlock)
+        public Builder setBuildingBlock(final AbstractColonyBlock buildingBlock)
         {
             this.buildingBlock = buildingBlock;
             return this;
@@ -128,7 +128,7 @@ public class BuildingEntry
 
     private final Supplier<BiFunction<IColonyView, BlockPos, IBuildingView>> buildingViewProducer;
 
-    public AbstractColonyBlock<?> getBuildingBlock()
+    public AbstractColonyBlock getBuildingBlock()
     {
         return buildingBlock;
     }
@@ -166,7 +166,7 @@ public class BuildingEntry
 
     private BuildingEntry(
       final ResourceLocation registryName,
-      final AbstractColonyBlock<?> buildingBlock,
+      final AbstractColonyBlock buildingBlock,
       final BiFunction<IColony, BlockPos, IBuilding> buildingProducer,
       final Supplier<BiFunction<IColonyView, BlockPos, IBuildingView>> buildingViewProducer,
       List<ModuleProducer> buildingModuleProducers)

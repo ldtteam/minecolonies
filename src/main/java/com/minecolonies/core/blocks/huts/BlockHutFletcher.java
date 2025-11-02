@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Hut for the fletcher. No different from {@link AbstractBlockHut}
  */
-public class BlockHutFletcher extends AbstractBlockHut<BlockHutFletcher>
+public class BlockHutFletcher extends AbstractBlockHut
 {
     @NotNull
     @Override

@@ -2,18 +2,18 @@ package com.minecolonies.core.items;
 
 import com.minecolonies.api.colony.buildings.IGuardBuilding;
 import com.minecolonies.api.items.component.BuildingId;
-import com.minecolonies.api.items.component.PatrolTarget;
 import com.minecolonies.api.items.component.ModDataComponents;
+import com.minecolonies.api.items.component.PatrolTarget;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.core.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.core.colony.buildings.modules.settings.GuardTaskSetting;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
@@ -22,7 +22,7 @@ import static com.minecolonies.api.util.constant.translation.ToolTranslationCons
 /**
  * Guard Scepter Item class. Used to give tasks to guards.
  */
-public class ItemScepterGuard extends AbstractItemMinecolonies
+public class ItemScepterGuard extends Item
 {
     /**
      * GuardScepter constructor. Sets max stack to 1, like other tools.
@@ -31,7 +31,7 @@ public class ItemScepterGuard extends AbstractItemMinecolonies
      */
     public ItemScepterGuard(final Item.Properties properties)
     {
-        super("scepterguard", properties.stacksTo(1).durability(2).component(ModDataComponents.PATROL_TARGET, PatrolTarget.EMPTY));
+        super(properties.stacksTo(1).durability(2).component(ModDataComponents.PATROL_TARGET, PatrolTarget.EMPTY));
     }
 
     @NotNull

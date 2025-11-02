@@ -1,41 +1,56 @@
 package com.minecolonies.core.blocks.decorative;
 
-import com.minecolonies.api.blocks.decorative.AbstractBlockMinecoloniesConstructionTape;
+import com.minecolonies.api.blocks.interfaces.IMinecoloniesBlock;
 import com.minecolonies.api.util.constant.Constants;
 import com.mojang.serialization.MapCodec;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.SoundType;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.entity.item.FallingBlockEntity;
-import net.minecraft.world.level.material.Fluid;
-import net.minecraft.world.level.material.Fluids;
-import net.minecraft.world.item.context.BlockPlaceContext;
-import net.minecraft.world.level.block.state.StateDefinition;
-import net.minecraft.core.Direction;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.material.MapColor;
-import net.minecraft.world.level.material.PushReaction;
-import net.minecraft.world.phys.shapes.CollisionContext;
-import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraft.core.Direction;
+import net.minecraft.core.Direction.Axis;
+import net.minecraft.core.Direction.Plane;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.item.FallingBlockEntity;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.block.*;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
+import net.minecraft.world.level.material.*;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import net.minecraft.core.Direction.Axis;
-import net.minecraft.core.Direction.Plane;
-
 /**
  * This block is used as a border to show the size of the building. It also shows that the building is in the progress of being built.
  */
-public class BlockConstructionTape extends AbstractBlockMinecoloniesConstructionTape<BlockConstructionTape>
+public class BlockConstructionTape extends FallingBlock implements SimpleWaterloggedBlock, IMinecoloniesBlock<BlockItem>
 {
     public static final MapCodec<BlockConstructionTape> CODEC = simpleCodec(BlockConstructionTape::new);
+
+    public static final BooleanProperty         NORTH       = PipeBlock.NORTH;
+    public static final BooleanProperty         EAST        = PipeBlock.EAST;
+    public static final BooleanProperty         SOUTH       = PipeBlock.SOUTH;
+    public static final BooleanProperty         WEST        = PipeBlock.WEST;
+    public static final BooleanProperty         WATERLOGGED = BlockStateProperties.WATERLOGGED;
+    public static final EnumProperty<Direction> FACING      = HorizontalDirectionalBlock.FACING;
+
+    protected VoxelShape[] shapes = new VoxelShape[] {};
+
+    /**
+     * Implies that the tape should revert to a corner if there are no connections. Must be set explicitly. For use by the builder handler.
+     */
+    public static final BooleanProperty CORNER = BooleanProperty.create("corner");
 
     /**
      * This blocks name.
@@ -86,11 +101,17 @@ public class BlockConstructionTape extends AbstractBlockMinecoloniesConstruction
         return new ResourceLocation(Constants.MOD_ID, BLOCK_NAME);
     }
 
+    @Override
+    public BlockItem createBlockItem()
+    {
+        return new BlockItem(this, new Item.Properties());
+    }
+
     @NotNull
     @Override
-    public VoxelShape getShape(final BlockState state, final BlockGetter worldIn, final BlockPos pos, final CollisionContext context)
+    public VoxelShape getShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext context)
     {
-        return super.getShape(state, worldIn, pos, context);
+        return this.shapes[this.getIndex(state)];
     }
 
     @Nullable
@@ -263,5 +284,81 @@ public class BlockConstructionTape extends AbstractBlockMinecoloniesConstruction
     protected void createBlockStateDefinition(final StateDefinition.Builder<Block, BlockState> builder)
     {
         builder.add(NORTH, EAST, SOUTH, WEST, FACING, CORNER, WATERLOGGED);
+    }
+
+    protected int getIndex(BlockState state)
+    {
+        int i = 0;
+        if (state.getValue(NORTH))
+        {
+            i |= getMask(Direction.NORTH);
+        }
+
+        if (state.getValue(EAST))
+        {
+            i |= getMask(Direction.EAST);
+        }
+
+        if (state.getValue(SOUTH))
+        {
+            i |= getMask(Direction.SOUTH);
+        }
+
+        if (state.getValue(WEST))
+        {
+            i |= getMask(Direction.WEST);
+        }
+
+        return i;
+    }
+
+    private static int getMask(Direction facing)
+    {
+        return 1 << facing.get2DDataValue();
+    }
+
+    @Override
+    public FluidState getFluidState(final BlockState state)
+    {
+        return state.getValue(WATERLOGGED) ? Fluids.WATER.getSource(false) : super.getFluidState(state);
+    }
+
+    protected VoxelShape[] makeShapes(float nodeWidth, float limbWidth, float nodeHeight, float limbBase, float limbTop)
+    {
+        float nodeStart = 8.0F - nodeWidth;
+        float nodeEnd = 8.0F + nodeWidth;
+        float limbStart = 8.0F - limbWidth;
+        float limbEnd = 8.0F + limbWidth;
+
+        VoxelShape node = Block.box(nodeStart, 0.0F, nodeStart, nodeEnd, nodeHeight, nodeEnd);
+        VoxelShape north = Block.box(limbStart, limbBase, 0.0F, limbEnd, limbTop, limbEnd);
+        VoxelShape south = Block.box(limbStart, limbBase, limbStart, limbEnd, limbTop, 16.0D);
+        VoxelShape west = Block.box(0.0F, limbBase, limbStart, limbEnd, limbTop, limbEnd);
+        VoxelShape east = Block.box(limbStart, limbBase, limbStart, 16.0D, limbTop, limbEnd);
+        VoxelShape cornernw = Shapes.or(north, east);
+        VoxelShape cornerse = Shapes.or(south, west);
+
+        // All 16 possible block combinations, in a specific index to be retrieved by getIndex
+        VoxelShape[] avoxelshape = new VoxelShape[]
+            {
+                Shapes.empty(), south, west, cornerse, north,
+                Shapes.or(south, north),
+                Shapes.or(west, north),
+                Shapes.or(cornerse, north), east,
+                Shapes.or(south, east),
+                Shapes.or(west, east),
+                Shapes.or(cornerse, east), cornernw,
+                Shapes.or(south, cornernw),
+                Shapes.or(west, cornernw),
+                Shapes.or(cornerse, cornernw)
+            };
+
+        // Combine the arm voxel shapes with the main node for all combinations
+        for (int i = 0; i < 16; ++i)
+        {
+            avoxelshape[i] = Shapes.or(node, avoxelshape[i]);
+        }
+
+        return avoxelshape;
     }
 }

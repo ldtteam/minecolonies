@@ -1,10 +1,10 @@
 package com.minecolonies.core.compatibility.jei;
 
-import com.minecolonies.api.blocks.AbstractBlockBarrel;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.blocks.types.BarrelType;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.crafting.CompostRecipe;
+import com.minecolonies.core.blocks.BlockBarrel;
 import mezz.jei.api.gui.ITickTimer;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
@@ -69,8 +69,8 @@ public class CompostRecipeCategory extends AbstractRecipeCategory<CompostRecipe>
     {
         final BarrelType type = BarrelType.byMetadata(this.timer.getValue());
         final BlockState barrel = ModBlocks.blockBarrel.defaultBlockState()
-                .setValue(AbstractBlockBarrel.FACING, Direction.SOUTH)
-                .setValue(AbstractBlockBarrel.VARIANT, type);
+                .setValue(BlockBarrel.FACING, Direction.SOUTH)
+                .setValue(BlockBarrel.VARIANT, type);
         RenderHelper.renderBlock(stack, barrel, 40, 20, 100, -30F, 20F, 25F);
     }
 }

@@ -6,11 +6,11 @@ import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Hut for the simple quarry. No different from {@link AbstractBlockHut}
+ * Hut for the Medium quarry. No different from {@link AbstractBlockHut}
  */
-public class SimpleQuarry extends AbstractBlockHut<SimpleQuarry>
+public class BlockHutMediumQuarry extends AbstractBlockHut
 {
-    public SimpleQuarry()
+    public BlockHutMediumQuarry()
     {
         //No different from Abstract parent
         super();
@@ -20,12 +20,12 @@ public class SimpleQuarry extends AbstractBlockHut<SimpleQuarry>
     @Override
     public String getHutName()
     {
-        return ModBuildings.SIMPLE_QUARRY_ID;
+        return ModBuildings.MEDIUM_QUARRY_ID;
     }
 
     @Override
     public BuildingEntry getBuildingEntry()
     {
-        return ModBuildings.simpleQuarry.get();
+        return ModBuildings.mediumQuarry.get();
     }
 }

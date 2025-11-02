@@ -27,8 +27,6 @@ import net.minecraft.world.level.storage.loot.predicates.ExplosionCondition;
 import net.minecraft.world.level.storage.loot.predicates.LootItemBlockStatePropertyCondition;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
@@ -44,7 +42,7 @@ public class DefaultBlockLootTableProvider extends BlockLootSubProvider
     public void generate()
     {
         HolderLookup.RegistryLookup<Enchantment> enchantments = this.registries.lookupOrThrow(Registries.ENCHANTMENT);
-        saveBlocks(Arrays.asList(ModBlocks.getHuts()));
+        saveBlocks(ModBlocks.HUTS);
 
         saveBlock(ModBlocks.blockHutWareHouse);
         saveBlock(ModBlocks.blockStash);
@@ -65,11 +63,11 @@ public class DefaultBlockLootTableProvider extends BlockLootSubProvider
                                      .otherwise(LootItem.lootTableItem(Blocks.DIRT)
                                                   .when(ExplosionCondition.survivesExplosion()))));
 
-        saveBlock(ModBlocks.farmland, lootPool -> lootPool.add(AlternativesEntry.alternatives().otherwise(LootItem.lootTableItem(Blocks.DIRT))));
-        saveBlock(ModBlocks.floodedFarmland, lootPool -> lootPool.add(AlternativesEntry.alternatives().otherwise(LootItem.lootTableItem(Blocks.DIRT))));
+        saveBlock(ModBlocks.blockFarmland, lootPool -> lootPool.add(AlternativesEntry.alternatives().otherwise(LootItem.lootTableItem(Blocks.DIRT))));
+        saveBlock(ModBlocks.blockFloodedFarmland, lootPool -> lootPool.add(AlternativesEntry.alternatives().otherwise(LootItem.lootTableItem(Blocks.DIRT))));
         saveBlock(ModBlocks.blockColonySign);
 
-        for (Block block : ModBlocks.getCrops())
+        for (Block block : ModBlocks.CROPS)
         {
             final LootItemBlockStatePropertyCondition.Builder cropCondition = LootItemBlockStatePropertyCondition.hasBlockStateProperties(block).setProperties(StatePropertiesPredicate.Builder.properties().hasProperty(CropBlock.AGE, 6));
             saveBlock(block, lootPool -> lootPool.add(LootItem.lootTableItem(block.asItem()).when(cropCondition).apply(ApplyBonusCount.addBonusBinomialDistributionCount(enchantments.getOrThrow(Enchantments.FORTUNE), 0.5714286F, 3)).otherwise(LootItem.lootTableItem(block.asItem()))));
@@ -79,7 +77,7 @@ public class DefaultBlockLootTableProvider extends BlockLootSubProvider
         //saveBlock(ModBlocks.blockDecorationPlaceholder);
     }
 
-    private <T extends Block> void saveBlocks(@NotNull final List<T> blocks)
+    private <T extends Block> void saveBlocks(@NotNull final Iterable<T> blocks)
     {
         for (final Block block : blocks)
         {
@@ -117,10 +115,10 @@ public class DefaultBlockLootTableProvider extends BlockLootSubProvider
     }
 
     @Override
+    @NotNull
     protected Iterable<Block> getKnownBlocks()
     {
-        return Stream.concat(Arrays.stream(ModBlocks.getCrops()), Stream.concat(Arrays.stream(ModBlocks.getHuts()), Stream.of(
-            ModBlocks.blockHutWareHouse,
+        return Stream.concat(ModBlocks.CROPS.stream(), Stream.concat(ModBlocks.HUTS.stream(), Stream.of(
             ModBlocks.blockStash,
             //ModBlocks.blockConstructionTape, // no loot table
             ModBlocks.blockRack,
@@ -134,8 +132,8 @@ public class DefaultBlockLootTableProvider extends BlockLootSubProvider
             ModBlocks.blockWoodenGate,
             ModBlocks.blockCompostedDirt,
             //ModBlocks.blockDecorationPlaceholder, // creative only
-            ModBlocks.floodedFarmland,
-            ModBlocks.farmland,
+            ModBlocks.blockFloodedFarmland,
+            ModBlocks.blockFarmland,
             ModBlocks.blockColonySign
         )).map(Block.class::cast)).toList();
     }

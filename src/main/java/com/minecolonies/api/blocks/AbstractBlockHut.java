@@ -22,7 +22,6 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -55,15 +54,13 @@ import static com.minecolonies.api.util.constant.TranslationConstants.*;
  * Base class for all Minecolonies Hut Blocks. Hut Blocks are the base blocks for Minecolonies buildings.
  * Extending this class enables all the blueprint functionalities.
  */
-@SuppressWarnings("PMD.ExcessiveImports")
-public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends AbstractColonyBlock<B> implements IAnchorBlock,
-                                                                                                                        INamedBlueprintAnchorBlock,
-                                                                                                                        ILeveledBlueprintAnchorBlock,
-                                                                                                                        IRequirementsBlueprintAnchorBlock,
-                                                                                                                        IInvisibleBlueprintAnchorBlock,
-                                                                                                                        ISpecialCreativeHandlerAnchorBlock,
-                                                                                                                        IBuildingBrowsableBlock
-
+public abstract class AbstractBlockHut extends AbstractColonyBlock<ItemBlockHut> implements IAnchorBlock,
+    INamedBlueprintAnchorBlock,
+    ILeveledBlueprintAnchorBlock,
+    IRequirementsBlueprintAnchorBlock,
+    IInvisibleBlueprintAnchorBlock,
+    ISpecialCreativeHandlerAnchorBlock,
+    IBuildingBrowsableBlock
 {
     /**
      * Constructor for a hut block.
@@ -224,7 +221,7 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
       final String path)
     {
         final BlockState anchor = blueprint.getBlockState(blueprint.getPrimaryBlockOffset());
-        if (!(anchor.getBlock() instanceof AbstractBlockHut<?>) || (!fancyPlacement && player.isCreative()))
+        if (!(anchor.getBlock() instanceof AbstractBlockHut) || (!fancyPlacement && player.isCreative()))
         {
             return true;
         }
@@ -235,7 +232,7 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
         }
         world.destroyBlock(pos, true);
         world.setBlockAndUpdate(pos, anchor);
-        ((AbstractBlockHut<?>) anchor.getBlock()).onBlockPlacedByBuildTool(world,
+        ((AbstractBlockHut) anchor.getBlock()).onBlockPlacedByBuildTool(world,
           pos,
           anchor,
           player,
@@ -357,12 +354,6 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
         stack.addToTooltip(ModDataComponents.COLONY_ID_COMPONENT, context, tooltip::add, flags);
     }
 
-    @Override
-    public void registerBlockItem(final Registry<Item> registry, final Item.Properties properties)
-    {
-        Registry.register(registry, getRegistryName(), new ItemBlockHut(this, properties));
-    }
-
     /**
      * Can this block be right-clicked without the appropriate permissions?
      * @return true if so. Default false.
@@ -382,5 +373,11 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
     public boolean canPlaceAt(final BlockPos pos, final Player player)
     {
         return true;
+    }
+
+    @Override
+    public ItemBlockHut createBlockItem()
+    {
+        return new ItemBlockHut(this, new Item.Properties());
     }
 }

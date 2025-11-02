@@ -27,9 +27,8 @@ public class ItemSpear extends TridentItem
     @Override
     public void releaseUsing(@NotNull ItemStack stack, @NotNull Level worldIn, @NotNull LivingEntity entityLiving, int timeLeft)
     {
-        if (entityLiving instanceof Player)
+        if (entityLiving instanceof final Player playerEntity)
         {
-            Player playerEntity = (Player) entityLiving;
             int usedForDuration = this.getUseDuration(stack, entityLiving) - timeLeft;
             if (usedForDuration >= 10)
             {
@@ -59,7 +58,8 @@ public class ItemSpear extends TridentItem
     }
 
     @Override
-    public @NotNull InteractionResultHolder<ItemStack> use(@NotNull final Level world, final Player playerEntity, @NotNull final InteractionHand hand)
+    @NotNull
+    public InteractionResultHolder<ItemStack> use(@NotNull final Level world, final Player playerEntity, @NotNull final InteractionHand hand)
     {
         ItemStack itemstack = playerEntity.getItemInHand(hand);
         if (itemstack.getDamageValue() >= itemstack.getMaxDamage() - 1)

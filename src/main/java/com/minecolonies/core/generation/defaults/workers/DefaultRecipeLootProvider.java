@@ -1,9 +1,9 @@
 package com.minecolonies.core.generation.defaults.workers;
 
+import com.minecolonies.api.items.ModItems;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.loot.LootTableSubProvider;
-import com.minecolonies.api.items.ModItems;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Items;
@@ -11,7 +11,6 @@ import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.entries.EmptyLootItem;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
-import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.BiConsumer;
@@ -44,7 +43,7 @@ public class DefaultRecipeLootProvider implements LootTableSubProvider
         generator.accept(ResourceKey.create(Registries.LOOT_TABLE, LOOT_TABLE_LARGE_BOTTLE), LootTable.lootTable()
                 .withPool(LootPool.lootPool()
                         .add(EmptyLootItem.emptyItem().setWeight(100).setQuality(-1))
-                        .add(LootItem.lootTableItem(ModItems.large_empty_bottle).setWeight(0).setQuality(1))));
+                        .add(LootItem.lootTableItem(ModItems.largeEmptyBottle).setWeight(0).setQuality(1))));
 
         generator.accept(ResourceKey.create(Registries.LOOT_TABLE, LOOT_TABLE_GRAVEL), LootTable.lootTable()
                 .withPool(LootPool.lootPool()

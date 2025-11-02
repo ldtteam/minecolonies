@@ -1,7 +1,6 @@
 package com.minecolonies.core.items;
 
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.items.component.Desc;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.core.network.messages.client.VanillaParticleMessage;
@@ -38,7 +37,7 @@ public class ItemScrollColonyAreaTP extends AbstractItemScroll
      */
     public ItemScrollColonyAreaTP(final Properties properties)
     {
-        super("scroll_area_tp", properties);
+        super(properties);
     }
 
     @Override

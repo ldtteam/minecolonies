@@ -6,7 +6,6 @@ import com.ldtteam.domumornamentum.client.model.properties.ModProperties;
 import com.ldtteam.domumornamentum.entity.block.IMateriallyTexturedBlockEntity;
 import com.ldtteam.structurize.blueprints.v1.DataFixerUtils;
 import com.ldtteam.structurize.blueprints.v1.DataVersion;
-import com.minecolonies.api.blocks.AbstractBlockMinecoloniesRack;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.blocks.types.RackType;
 import com.minecolonies.api.colony.IColonyManager;
@@ -19,6 +18,7 @@ import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.WorldUtil;
+import com.minecolonies.core.blocks.BlockMinecoloniesRack;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.core.BlockPos;
@@ -315,16 +315,16 @@ public class TileEntityRack extends AbstractTileEntityRack implements IMateriall
                 if ((beforeEmpty && !afterEmpty) || (!beforeEmpty && afterEmpty))
                 {
                     level.setBlockAndUpdate(getBlockPos(),
-                      getBlockState().setValue(AbstractBlockMinecoloniesRack.VARIANT,
-                        getBlockState().getValue(AbstractBlockMinecoloniesRack.VARIANT).getInvBasedVariant(afterEmpty)));
+                      getBlockState().setValue(BlockMinecoloniesRack.VARIANT,
+                        getBlockState().getValue(BlockMinecoloniesRack.VARIANT).getInvBasedVariant(afterEmpty)));
 
 
                     if (potentialNeighbor != null)
                     {
                         level.setBlockAndUpdate(potentialNeighbor.getBlockPos(),
                           potentialNeighbor.getBlockState()
-                            .setValue(AbstractBlockMinecoloniesRack.VARIANT,
-                              potentialNeighbor.getBlockState().getValue(AbstractBlockMinecoloniesRack.VARIANT).getInvBasedVariant(afterEmpty)));
+                            .setValue(BlockMinecoloniesRack.VARIANT,
+                              potentialNeighbor.getBlockState().getValue(BlockMinecoloniesRack.VARIANT).getInvBasedVariant(afterEmpty)));
                     }
                 }
             }
@@ -367,13 +367,13 @@ public class TileEntityRack extends AbstractTileEntityRack implements IMateriall
             return null;
         }
 
-        final RackType type = getBlockState().getValue(AbstractBlockMinecoloniesRack.VARIANT);
+        final RackType type = getBlockState().getValue(BlockMinecoloniesRack.VARIANT);
         if (!type.isDoubleVariant())
         {
             return null;
         }
 
-        final BlockEntity tileEntity = level.getBlockEntity(worldPosition.relative(getBlockState().getValue(AbstractBlockMinecoloniesRack.FACING)));
+        final BlockEntity tileEntity = level.getBlockEntity(worldPosition.relative(getBlockState().getValue(BlockMinecoloniesRack.FACING)));
         if (tileEntity instanceof TileEntityRack && !(tileEntity instanceof AbstractTileEntityColonyBuilding))
         {
             return (AbstractTileEntityRack) tileEntity;
@@ -505,7 +505,7 @@ public class TileEntityRack extends AbstractTileEntityRack implements IMateriall
             return lastItemHandlerCap;
         }
 
-        final RackType type = getBlockState().getValue(AbstractBlockMinecoloniesRack.VARIANT);
+        final RackType type = getBlockState().getValue(BlockMinecoloniesRack.VARIANT);
         if (!type.isDoubleVariant())
         {
             lastItemHandlerCap = new CombinedItemHandler(RACK, getInventory());

@@ -1,15 +1,18 @@
 package com.minecolonies.core.blocks.schematic;
 
-import com.minecolonies.api.blocks.AbstractBlockMinecolonies;
+import com.minecolonies.api.blocks.interfaces.IMinecoloniesBlock;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.material.MapColor;
 
 /**
  * This block is a waypoint, which makes citizens path to it.
  */
-public class BlockWaypoint extends AbstractBlockMinecolonies<BlockWaypoint>
+public class BlockWaypoint extends Block implements IMinecoloniesBlock<BlockItem>
 {
     /**
      * The hardness this block has.
@@ -38,5 +41,11 @@ public class BlockWaypoint extends AbstractBlockMinecolonies<BlockWaypoint>
     public ResourceLocation getRegistryName()
     {
         return new ResourceLocation(Constants.MOD_ID, BLOCK_NAME);
+    }
+
+    @Override
+    public BlockItem createBlockItem()
+    {
+        return new BlockItem(this, new Item.Properties());
     }
 }

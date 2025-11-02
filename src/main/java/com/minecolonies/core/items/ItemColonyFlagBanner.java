@@ -3,16 +3,15 @@ package com.minecolonies.core.items;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.core.tileentities.TileEntityColonyFlag;
 import net.minecraft.core.component.DataComponents;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.entity.BannerPatternLayers;
-import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.BannerItem;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.block.entity.BannerBlockEntity;
+import net.minecraft.world.level.block.entity.BannerPatternLayers;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -24,14 +23,9 @@ import java.util.List;
  */
 public class ItemColonyFlagBanner extends BannerItem
 {
-    public ItemColonyFlagBanner(String name, Properties properties)
+    public ItemColonyFlagBanner(Properties properties)
     {
-        this(ModBlocks.blockColonyBanner, ModBlocks.blockColonyWallBanner, properties.stacksTo(1));
-    }
-
-    public ItemColonyFlagBanner(Block standingBanner, Block wallBanner, Properties builder)
-    {
-        super(standingBanner, wallBanner, builder);
+        super(ModBlocks.blockColonyBanner, ModBlocks.blockColonyWallBanner, properties.stacksTo(1));
     }
 
     @NotNull

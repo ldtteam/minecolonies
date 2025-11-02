@@ -5,7 +5,7 @@ import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import org.jetbrains.annotations.NotNull;
 
-public class BlockHutFlorist extends AbstractBlockHut<BlockHutFlorist>
+public class BlockHutFlorist extends AbstractBlockHut
 {
     @NotNull
     @Override

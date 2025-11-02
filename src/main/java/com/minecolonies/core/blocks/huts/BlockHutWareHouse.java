@@ -15,7 +15,7 @@ import org.jetbrains.annotations.Nullable;
  * Hut for the warehouse. No different from {@link AbstractBlockHut}
  */
 
-public class BlockHutWareHouse extends AbstractBlockHut<BlockHutWareHouse>
+public class BlockHutWareHouse extends AbstractBlockHut
 {
     public BlockHutWareHouse()
     {

@@ -58,19 +58,19 @@ public class DefaultBlacksmithCraftingProvider extends CustomRecipeProvider
         netherite(consumer, Items.DIAMOND_BOOTS, Items.NETHERITE_BOOTS);
 
         recipe(BLACKSMITH, MODULE_CRAFTING,
-            BuiltInRegistries.ITEM.getKey(ModItems.assistantHammer_Iron).getPath())
+            BuiltInRegistries.ITEM.getKey(ModItems.assistantHammerIron).getPath())
             .inputs(List.of(new ItemStorage(new ItemStack(Items.IRON_INGOT, 5)),
                 new ItemStorage(new ItemStack(Items.STICK))))
-            .result(new ItemStack(ModItems.assistantHammer_Iron))
+            .result(new ItemStack(ModItems.assistantHammerIron))
             .minResearchId(ResearchConstants.BUILDERS_ASSISTANT_HAMMER)
             .showTooltip(true)
             .build(consumer);
 
         recipe(BLACKSMITH, MODULE_CRAFTING,
-            BuiltInRegistries.ITEM.getKey(ModItems.assistantHammer_Diamond).getPath())
+            BuiltInRegistries.ITEM.getKey(ModItems.assistantHammerDiamond).getPath())
             .inputs(List.of(new ItemStorage(new ItemStack(Items.DIAMOND, 5)),
                 new ItemStorage(new ItemStack(Items.STICK))))
-            .result(new ItemStack(ModItems.assistantHammer_Diamond))
+            .result(new ItemStack(ModItems.assistantHammerDiamond))
             .minResearchId(ResearchConstants.BUILDERS_ASSISTANT_HAMMER)
             .showTooltip(true)
             .build(consumer);

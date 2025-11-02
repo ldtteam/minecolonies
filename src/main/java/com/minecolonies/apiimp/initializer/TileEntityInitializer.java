@@ -1,7 +1,8 @@
 package com.minecolonies.apiimp.initializer;
 
+import com.minecolonies.api.blocks.AbstractColonyBlock;
 import com.minecolonies.api.blocks.ModBlocks;
-import com.minecolonies.api.tileentities.*;
+import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.tileentities.*;
 import net.minecraft.core.registries.Registries;
@@ -20,7 +21,8 @@ public class TileEntityInitializer
 
         MinecoloniesTileEntities.BARREL = BLOCK_ENTITIES.register("barrel", () -> BlockEntityType.Builder.of(TileEntityBarrel::new, ModBlocks.blockBarrel).build(null));
 
-        MinecoloniesTileEntities.BUILDING = BLOCK_ENTITIES.register("colonybuilding", () -> BlockEntityType.Builder.of(TileEntityColonyBuilding::new, ModBlocks.getHuts()).build(null));
+        MinecoloniesTileEntities.BUILDING = BLOCK_ENTITIES.register("colonybuilding",
+            () -> BlockEntityType.Builder.of(TileEntityColonyBuilding::new, ModBlocks.HUTS.toArray(new AbstractColonyBlock[0])).build(null));
 
         MinecoloniesTileEntities.DECO_CONTROLLER = BLOCK_ENTITIES.register("decorationcontroller", () -> BlockEntityType.Builder
                                                      .of(TileEntityDecorationController::new, ModBlocks.blockDecorationPlaceholder)

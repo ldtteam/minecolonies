@@ -10,7 +10,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Block of the BarracksTower.
  */
-public class BlockHutBarracksTower extends AbstractBlockHut<BlockHutBarracksTower>
+public class BlockHutBarracksTower extends AbstractBlockHut
 {
     /**
      * Default constructor.

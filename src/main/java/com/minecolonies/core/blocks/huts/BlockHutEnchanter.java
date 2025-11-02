@@ -10,7 +10,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class BlockHutEnchanter extends AbstractBlockHut<BlockHutEnchanter>
+public class BlockHutEnchanter extends AbstractBlockHut
 {
     @NotNull
     @Override

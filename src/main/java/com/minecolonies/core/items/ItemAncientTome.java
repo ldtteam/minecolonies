@@ -4,6 +4,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
@@ -12,7 +13,7 @@ import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 /**
  * Class describing the Ancient Tome item.
  */
-public class ItemAncientTome extends AbstractItemMinecolonies
+public class ItemAncientTome extends Item
 {
     /**
      * Sets the name, creative tab, and registers the Ancient Tome item.
@@ -21,7 +22,7 @@ public class ItemAncientTome extends AbstractItemMinecolonies
      */
     public ItemAncientTome(final Properties properties)
     {
-        super("ancienttome", properties.stacksTo(STACKSIZE).component(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, false));
+        super(properties.stacksTo(STACKSIZE).component(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, false));
     }
 
     @Override

@@ -5,7 +5,7 @@ import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.equipment.ModEquipmentTypes;
 import com.minecolonies.api.equipment.registry.EquipmentTypeEntry;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.core.blocks.MinecoloniesCropBlock;
+import com.minecolonies.core.blocks.BlockMinecoloniesCrop;
 import com.minecolonies.core.colony.crafting.CustomRecipeManager;
 import com.minecolonies.core.colony.crafting.LootTableAnalyzer;
 import mezz.jei.api.constants.VanillaTypes;
@@ -59,7 +59,7 @@ public class CropRecipeCategory implements IRecipeCategory<CropRecipeCategory.Cr
     public static List<CropRecipe> findRecipes()
     {
         final Set<Block> sourceBlocks = new HashSet<>();
-        for (final MinecoloniesCropBlock crop : ModBlocks.getCrops())
+        for (final BlockMinecoloniesCrop crop : ModBlocks.CROPS)
         {
             sourceBlocks.addAll(crop.getDroppedFrom());
         }

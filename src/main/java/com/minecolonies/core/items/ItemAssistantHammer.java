@@ -33,6 +33,7 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
@@ -49,16 +50,16 @@ import java.util.List;
 /**
  * Assistant Hammer item used to allow the player to assist the builder in building
  */
-public class ItemAssistantHammer extends AbstractItemMinecolonies
+public class ItemAssistantHammer extends Item
 {
     /**
      * The distance at which blocks can get placed from the clicked position
      */
     private int reach = 1;
 
-    public ItemAssistantHammer(final String id, final Properties properties, final int reach)
+    public ItemAssistantHammer(final Properties properties, final int reach)
     {
-        super(id, properties);
+        super(properties);
         this.reach = reach;
     }
 

@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Block of the Archers trainings camp.
  */
-public class BlockHutArchery extends AbstractBlockHut<BlockHutArchery>
+public class BlockHutArchery extends AbstractBlockHut
 {
     @NotNull
     @Override

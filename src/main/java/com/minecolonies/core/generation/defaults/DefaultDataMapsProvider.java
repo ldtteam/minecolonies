@@ -1,6 +1,7 @@
 package com.minecolonies.core.generation.defaults;
 
 import com.minecolonies.api.blocks.ModBlocks;
+import com.minecolonies.api.items.ModFoodItems;
 import com.minecolonies.api.items.ModItems;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
@@ -37,23 +38,23 @@ public class DefaultDataMapsProvider extends DataMapProvider
         final Builder<Compostable, Item> builder = builder(NeoForgeDataMaps.COMPOSTABLES);
 
         // these items aren't registered in "getAllFoods"
-        registerCompostItemFromNutrition(builder, ModItems.milkyBread.asItem(), 6f);
-        registerCompostItemFromNutrition(builder, ModItems.sugaryBread.asItem(), 6f);
-        registerCompostItemFromNutrition(builder, ModItems.goldenBread.asItem(), 6f);
-        registerCompostItemFromNutrition(builder, ModItems.chorusBread.asItem(), 6f);
+        registerCompostItemFromNutrition(builder, ModFoodItems.milkyBread.asItem(), 6f);
+        registerCompostItemFromNutrition(builder, ModFoodItems.sugaryBread.asItem(), 6f);
+        registerCompostItemFromNutrition(builder, ModFoodItems.goldenBread.asItem(), 6f);
+        registerCompostItemFromNutrition(builder, ModFoodItems.chorusBread.asItem(), 6f);
 
-        for (final Item item : ModItems.getAllIngredients())
+        for (final Item item : ModFoodItems.INGREDIENTS)
         {
             registerCompostItemFromNutrition(builder, item, 10f);
         }
-        for (final Item item : ModItems.getAllFoods())
+        for (final Item item : ModFoodItems.FOODS)
         {
             registerCompostItemFromNutrition(builder, item, 6f);
         }
 
         builder.add(ModItems.mistletoe.builtInRegistryHolder(), new Compostable(0.5f), false);
 
-        for (final Block block : ModBlocks.getCrops())
+        for (final Block block : ModBlocks.CROPS)
         {
             builder.add(block.asItem().builtInRegistryHolder(), new Compostable(0.5f), false);
         }

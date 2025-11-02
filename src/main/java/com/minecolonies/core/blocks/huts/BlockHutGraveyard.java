@@ -15,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
  * Hut for the graveyard. No different from {@link AbstractBlockHut}
  */
 
-public class BlockHutGraveyard extends AbstractBlockHut<BlockHutGraveyard>
+public class BlockHutGraveyard extends AbstractBlockHut
 {
     /**
      * tall shape.

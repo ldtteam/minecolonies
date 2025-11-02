@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Alchemist hut block.
  */
-public class BlockHutAlchemist extends AbstractBlockHut<BlockHutAlchemist>
+public class BlockHutAlchemist extends AbstractBlockHut
 {
     @NotNull
     @Override

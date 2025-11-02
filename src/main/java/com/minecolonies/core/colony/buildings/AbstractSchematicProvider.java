@@ -219,7 +219,7 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
             path = compound.getString(TAG_PATH);
         }
 
-        if ((path == null || path.isEmpty()) && getBuildingType().getBuildingBlock() instanceof AbstractBlockHut<?> abstractBlockHut)
+        if ((path == null || path.isEmpty()) && getBuildingType().getBuildingBlock() instanceof AbstractBlockHut abstractBlockHut)
         {
             path = BlueprintMapping.getPathMapping("", abstractBlockHut.getBlueprintName()) + "1.blueprint";
         }

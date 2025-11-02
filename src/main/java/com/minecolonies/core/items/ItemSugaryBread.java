@@ -1,17 +1,17 @@
 package com.minecolonies.core.items;
 
 import com.minecolonies.api.util.constant.TranslationConstants;
+import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Style;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
-import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.Style;
-import net.minecraft.ChatFormatting;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -23,24 +23,16 @@ import java.util.List;
  */
 public class ItemSugaryBread extends ItemFood
 {
-
-    /**
-     * Setup the food definition
-     */
-    private static FoodProperties sweetBread = (new FoodProperties.Builder())
-                                        .nutrition(6)
-                                        .saturationModifier(0.7F)
-                                        .effect(() -> new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 600), 1.0F)
-                                        .build(); 
-
     /**
      * Sets the name, creative tab, and registers the Sweet Bread item.
      *
-     * @param properties the properties.
      */
-    public ItemSugaryBread(final Properties properties)
+    public ItemSugaryBread()
     {
-        super((new Item.Properties()).food(sweetBread), 1);
+        super(new Item.Properties().food(new FoodProperties.Builder().nutrition(6)
+            .saturationModifier(0.7F)
+            .effect(() -> new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 600), 1.0F)
+            .build()), 1);
     }
 
    /**
