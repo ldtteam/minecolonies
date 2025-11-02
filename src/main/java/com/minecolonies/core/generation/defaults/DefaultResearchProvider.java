@@ -2,6 +2,7 @@ package com.minecolonies.core.generation.defaults;
 
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.buildings.ModBuildings;
+import com.minecolonies.api.items.ModFoodItems;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.research.AbstractResearchProvider;
@@ -1483,7 +1484,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
         new Research(new ResourceLocation(Constants.MOD_ID, "technology/knowtheend"), TECH).setParentResearch(theFlintstones)
           .setTranslatedName("Know the End")
           .setTranslatedSubtitle("Unlock the secrets of the most mysterious dimension.")
-          .setIcon(ModItems.chorusBread)
+          .setIcon(ModFoodItems.chorusBread)
           .addBuildingRequirement(new ResourceLocation(Constants.MOD_ID, "baker"), 3)
           .addItemCost(Items.CHORUS_FRUIT, 64, provider)
           .addEffect(new ResourceLocation(Constants.MOD_ID, "effects/knowledgeoftheendunlock"), 1)
@@ -1865,8 +1866,8 @@ public class DefaultResearchProvider extends AbstractResearchProvider
                                       .addToList(r);
         final Research enhanced_gates1 = new Research(new ResourceLocation(Constants.MOD_ID, "technology/enhanced_gates1"), TECH).setParentResearch(whatYaNeed)
                                            .setTranslatedName("Enhanced Gates I")
-                                           .setIcon(ModItems.woodGate)
-                                           .addItemCost(ModItems.woodGate, 64, provider)
+                                           .setIcon(ModItems.blockItemWoodenGate)
+                                           .addItemCost(ModItems.blockItemWoodenGate, 64, provider)
                                            .addItemCost(ModItems.ancientTome, 2, provider)
                                            .addItemCost(Items.IRON_BLOCK, 5, provider)
                                            .addEffect(MECHANIC_ENHANCED_GATES, 1)

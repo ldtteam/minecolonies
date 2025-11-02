@@ -34,7 +34,7 @@ public final class ModBlocks
     /**
      * The list of hut blocks.
      */
-    public static final List<AbstractColonyBlock<?>> HUTS = new ArrayList<>();
+    public static final List<AbstractColonyBlock> HUTS = new ArrayList<>();
 
     /**
      * The list of crops.
@@ -100,8 +100,8 @@ public final class ModBlocks
     /**
      * Postbox & Stash.
      */
-    public static final AbstractColonyBlock<?> blockPostBox = registerBlockHut(new BlockPostBox());
-    public static final AbstractColonyBlock<?> blockStash   = registerBlockHut(new BlockStash());
+    public static final AbstractColonyBlock blockPostBox = registerBlockHut(new BlockPostBox());
+    public static final AbstractColonyBlock blockStash   = registerBlockHut(new BlockStash());
 
     /**
      * Utility blocks.
@@ -166,7 +166,7 @@ public final class ModBlocks
     {
     }
 
-    private static <T extends AbstractColonyBlock<?>> T registerBlockHut(final T block)
+    private static <T extends AbstractColonyBlock> T registerBlockHut(final T block)
     {
         final T blockHut = registerBlock(block);
         HUTS.add(blockHut);

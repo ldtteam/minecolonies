@@ -1,5 +1,6 @@
 package com.minecolonies.core.generation.defaults;
 
+import com.minecolonies.api.items.ModFoodItems;
 import com.minecolonies.api.items.ModItems;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
@@ -35,14 +36,14 @@ public class DefaultItemModelProvider extends ItemModelProvider
                     .model(getExistingFile(disabledGoggles))
                 .end();
 
-        for (final Item foodItem : ModItems.INGREDIENTS)
+        for (final Item foodItem : ModFoodItems.INGREDIENTS)
         {
             getBuilder(foodItem.toString())
               .parent(new ModelFile.UncheckedModelFile("item/generated"))
               .texture("layer0", new ResourceLocation(MOD_ID, "item/food/" + BuiltInRegistries.ITEM.wrapAsHolder(foodItem).getKey().location().getPath()));
         }
 
-        for (final Item foodItem : ModItems.FOODS)
+        for (final Item foodItem : ModFoodItems.FOODS)
         {
             getBuilder(foodItem.toString())
               .parent(new ModelFile.UncheckedModelFile("item/generated"))

@@ -23,6 +23,7 @@ import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
@@ -52,7 +53,7 @@ import static com.minecolonies.api.util.constant.TranslationConstants.*;
 /**
  * Base class for all blocks that have a functionality within a colony. This applies to both buildings and functional blocks like postbox/stash.
  */
-public abstract class AbstractColonyBlock<T extends BlockItem> extends Block implements IBuilderUndestroyable, IMinecoloniesTickableBlock, IMinecoloniesBlock<T>
+public abstract class AbstractColonyBlock extends Block implements IBuilderUndestroyable, IMinecoloniesTickableBlock, IMinecoloniesBlock<BlockItem>
 {
     /**
      * Hardness factor of the pvp mode.
@@ -271,5 +272,11 @@ public abstract class AbstractColonyBlock<T extends BlockItem> extends Block imp
     public ResourceLocation getRegistryName()
     {
         return new ResourceLocation(Constants.MOD_ID, getHutName());
+    }
+
+    @Override
+    public BlockItem createBlockItem()
+    {
+        return new BlockItem(this, new Item.Properties());
     }
 }

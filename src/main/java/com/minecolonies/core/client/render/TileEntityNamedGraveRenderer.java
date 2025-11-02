@@ -1,19 +1,19 @@
 package com.minecolonies.core.client.render;
 
 import com.minecolonies.api.blocks.ModBlocks;
-import com.minecolonies.api.blocks.huts.AbstractBlockMinecoloniesDefault;
+import com.minecolonies.core.blocks.BlockMinecoloniesNamedGrave;
 import com.minecolonies.core.tileentities.TileEntityNamedGrave;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
+import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.core.Direction;
-import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.network.chat.Style;
+import net.minecraft.util.FormattedCharSequence;
+import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
@@ -52,12 +52,12 @@ public class TileEntityNamedGraveRenderer implements BlockEntityRenderer<TileEnt
     {
         matrixStack.pushPose();
 
-        if(tileEntity != null)
+        if (tileEntity != null)
         {
             final BlockState state = tileEntity.getLevel().getBlockState(tileEntity.getBlockPos());
             if (state.getBlock() == ModBlocks.blockNamedGrave)
             {
-                final Direction facing = state.getValue(AbstractBlockMinecoloniesDefault.FACING);
+                final Direction facing = state.getValue(BlockMinecoloniesNamedGrave.FACING);
                 switch (facing)
                 {
                     case NORTH:

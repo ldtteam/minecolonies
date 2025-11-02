@@ -12,7 +12,6 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.permissions.Action;
-import com.minecolonies.api.items.ItemBlockHut;
 import com.minecolonies.api.items.component.ModDataComponents;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.util.*;
@@ -54,7 +53,7 @@ import static com.minecolonies.api.util.constant.TranslationConstants.*;
  * Base class for all Minecolonies Hut Blocks. Hut Blocks are the base blocks for Minecolonies buildings.
  * Extending this class enables all the blueprint functionalities.
  */
-public abstract class AbstractBlockHut extends AbstractColonyBlock<ItemBlockHut> implements IAnchorBlock,
+public abstract class AbstractBlockHut extends AbstractColonyBlock implements IAnchorBlock,
     INamedBlueprintAnchorBlock,
     ILeveledBlueprintAnchorBlock,
     IRequirementsBlueprintAnchorBlock,
@@ -373,11 +372,5 @@ public abstract class AbstractBlockHut extends AbstractColonyBlock<ItemBlockHut>
     public boolean canPlaceAt(final BlockPos pos, final Player player)
     {
         return true;
-    }
-
-    @Override
-    public ItemBlockHut createBlockItem()
-    {
-        return new ItemBlockHut(this, new Item.Properties());
     }
 }
