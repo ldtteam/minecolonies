@@ -4,7 +4,10 @@ import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
-import com.minecolonies.api.colony.buildings.modules.*;
+import com.minecolonies.api.colony.buildings.modules.AbstractBuildingModule;
+import com.minecolonies.api.colony.buildings.modules.IAltersRequiredItems;
+import com.minecolonies.api.colony.buildings.modules.IPersistentModule;
+import com.minecolonies.api.colony.buildings.modules.ITickingModule;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.requestable.MinimumStack;
@@ -21,7 +24,10 @@ import net.minecraft.world.item.ItemStack;
 import org.apache.logging.log4j.util.TriConsumer;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -82,6 +88,12 @@ public class RestaurantMenuModule extends AbstractBuildingModule implements IPer
      */
     public void addMenuItem(final ItemStack itemStack)
     {
+        if (!FoodUtils.EDIBLE.test(itemStack))
+        {
+            Log.getLogger().warn("Tried to add nonedible food stack: " + itemStack);
+            return;
+        }
+
         if (menu.size() >= building.getBuildingLevel() * STOCK_PER_LEVEL)
         {
             return;
