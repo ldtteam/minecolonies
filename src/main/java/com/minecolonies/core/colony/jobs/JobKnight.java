@@ -103,11 +103,14 @@ public class JobKnight extends AbstractJobGuard<JobKnight> implements IJobWithCo
     @Override
     public void onColonyFlagChanged()
     {
-        final AbstractEntityCitizen worker = this.getCitizen().getEntity().get();
-        CitizenItemUtils.setHeldItem(worker, InteractionHand.OFF_HAND, InventoryUtils.findFirstSlotInItemHandlerWith(this.getCitizen().getInventory(), Items.SHIELD));
-        worker.startUsingItem(InteractionHand.OFF_HAND);
-        ItemStack shieldStack = worker.getInventoryCitizen().getHeldItem(InteractionHand.OFF_HAND);
-        CompoundTag nbt = shieldStack.getOrCreateTagElement("BlockEntityTag");
-        nbt.put(TAG_BANNER_PATTERNS, worker.getCitizenColonyHandler().getColonyOrRegister().getColonyFlag());
+        if (this.getCitizen().getEntity().isPresent())
+        {
+            final AbstractEntityCitizen worker = this.getCitizen().getEntity().get();
+            CitizenItemUtils.setHeldItem(worker, InteractionHand.OFF_HAND, InventoryUtils.findFirstSlotInItemHandlerWith(this.getCitizen().getInventory(), Items.SHIELD));
+            worker.startUsingItem(InteractionHand.OFF_HAND);
+            ItemStack shieldStack = worker.getInventoryCitizen().getHeldItem(InteractionHand.OFF_HAND);
+            CompoundTag nbt = shieldStack.getOrCreateTagElement("BlockEntityTag");
+            nbt.put(TAG_BANNER_PATTERNS, worker.getCitizenColonyHandler().getColonyOrRegister().getColonyFlag());
+        }
     }
 }
