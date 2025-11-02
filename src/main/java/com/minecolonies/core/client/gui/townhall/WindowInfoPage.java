@@ -75,7 +75,7 @@ public class WindowInfoPage extends AbstractWindowTownHall
             @Override
             public int getElementCount()
             {
-                return building.getColonyEvents().size();
+                return buildingView.getColonyEvents().size();
             }
 
             @Override
@@ -84,7 +84,7 @@ public class WindowInfoPage extends AbstractWindowTownHall
                 final Text nameLabel = rowPane.findPaneOfTypeByID(NAME_LABEL, Text.class);
                 final Text actionLabel = rowPane.findPaneOfTypeByID(ACTION_LABEL, Text.class);
 
-                final IColonyEventDescription event = building.getColonyEvents().get(index);
+                final IColonyEventDescription event = buildingView.getColonyEvents().get(index);
                 if (event instanceof CitizenDiedEvent)
                 {
                     actionLabel.setText(Component.literal(((CitizenDiedEvent) event).getDeathCause()));
@@ -117,7 +117,7 @@ public class WindowInfoPage extends AbstractWindowTownHall
     private void updateWorkOrders()
     {
         workOrders.clear();
-        workOrders.addAll(building.getColony().getWorkOrders().stream().filter(wo -> wo.shouldShowIn(building)).collect(Collectors.toList()));
+        workOrders.addAll(buildingView.getColony().getWorkOrders().stream().filter(wo -> wo.shouldShowIn(buildingView)).collect(Collectors.toList()));
         sortWorkOrders();
     }
 
@@ -147,12 +147,12 @@ public class WindowInfoPage extends AbstractWindowTownHall
                 if (buttonLabel.equals(BUTTON_UP) && i > 0)
                 {
                     workOrder.setPriority(workOrders.get(i - 1).getPriority() + 1);
-                    new WorkOrderChangeMessage(this.building, id, false, workOrder.getPriority()).sendToServer();
+                    new WorkOrderChangeMessage(this.buildingView, id, false, workOrder.getPriority()).sendToServer();
                 }
                 else if (buttonLabel.equals(BUTTON_DOWN) && i <= workOrders.size())
                 {
                     workOrder.setPriority(workOrders.get(i + 1).getPriority() - 1);
-                    new WorkOrderChangeMessage(this.building, id, false, workOrder.getPriority()).sendToServer();
+                    new WorkOrderChangeMessage(this.buildingView, id, false, workOrder.getPriority()).sendToServer();
                 }
 
                 sortWorkOrders();
@@ -178,7 +178,7 @@ public class WindowInfoPage extends AbstractWindowTownHall
                 break;
             }
         }
-        new WorkOrderChangeMessage(this.building, id, true, 0).sendToServer();
+        new WorkOrderChangeMessage(this.buildingView, id, true, 0).sendToServer();
         window.findPaneOfTypeByID(LIST_WORKORDER, ScrollingList.class).refreshElementPanes();
     }
 
@@ -224,7 +224,7 @@ public class WindowInfoPage extends AbstractWindowTownHall
                 }
 
                 //Searches citizen of id x
-                for (@NotNull final IBuildingView buildingView : building.getColony().getBuildings())
+                for (@NotNull final IBuildingView buildingView : buildingView.getColony().getBuildings())
                 {
                     if (buildingView.getPosition().equals(workOrder.getClaimedBy()) && buildingView instanceof AbstractBuildingBuilderView)
                     {

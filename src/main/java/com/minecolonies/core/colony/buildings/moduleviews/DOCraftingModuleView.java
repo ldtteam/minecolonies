@@ -22,7 +22,7 @@ public class DOCraftingModuleView extends CraftingModuleView
     @Override
     public void openCraftingGUI()
     {
-        new DOCraftingWindow(buildingView, this).open();
+        new DOCraftingWindow(this).open();
     }
 
     /**

@@ -7,6 +7,7 @@ import com.minecolonies.api.colony.buildings.modules.settings.ISetting;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.colony.buildings.modules.settings.SettingKey;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.Tag;

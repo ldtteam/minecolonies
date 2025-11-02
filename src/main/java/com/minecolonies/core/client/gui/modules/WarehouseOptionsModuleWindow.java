@@ -5,7 +5,6 @@ import com.ldtteam.blockui.controls.Button;
 import com.ldtteam.blockui.controls.ButtonImage;
 import com.ldtteam.blockui.controls.ItemIcon;
 import com.ldtteam.blockui.controls.Text;
-import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.constant.Constants;
@@ -16,6 +15,7 @@ import com.minecolonies.core.colony.buildings.workerbuildings.BuildingWareHouse;
 import com.minecolonies.core.network.messages.server.colony.building.MarkBuildingDirtyMessage;
 import com.minecolonies.core.network.messages.server.colony.building.warehouse.SortWarehouseMessage;
 import com.minecolonies.core.network.messages.server.colony.building.warehouse.UpgradeWarehouseMessage;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.player.Inventory;
@@ -33,7 +33,7 @@ import static com.minecolonies.core.client.gui.modules.WindowBuilderResModule.*;
 /**
  * BOWindow for the warehouse options.
  */
-public class WarehouseOptionsModuleWindow extends AbstractModuleWindow
+public class WarehouseOptionsModuleWindow extends AbstractModuleWindow<WarehouseOptionsModuleView>
 {
     /**
      * Required building level for sorting.
@@ -41,9 +41,9 @@ public class WarehouseOptionsModuleWindow extends AbstractModuleWindow
     private static final int BUILDING_LEVEL_FOR_SORTING = 3;
 
     /**
-     * The respective module.
+     * Warehouse constants
      */
-    private final WarehouseOptionsModuleView module;
+    private static final String SORT_WAREHOUSE_BUTTON = "sort";
 
     /**
      * If further upgrades should be locked.
@@ -53,14 +53,12 @@ public class WarehouseOptionsModuleWindow extends AbstractModuleWindow
     /**
      * Constructor for window warehouse hut.
      * @param module the module belonging to it.
-     * @param building {@link BuildingWareHouse.View}.
      */
-    public WarehouseOptionsModuleWindow(final IBuildingView building, final WarehouseOptionsModuleView module)
+    public WarehouseOptionsModuleWindow(final WarehouseOptionsModuleView module)
     {
-        super(building, Constants.MOD_ID + HUT_WAREHOUSE_RESOURCE_SUFFIX);
+        super(module, new ResourceLocation(Constants.MOD_ID, "gui/layouthuts/layoutwarehouseoptions.xml"));
         registerButton(RESOURCE_ADD, this::transferItems);
         registerButton(SORT_WAREHOUSE_BUTTON, this::sortWarehouse);
-        this.module = module;
     }
 
     @Override
@@ -111,14 +109,14 @@ public class WarehouseOptionsModuleWindow extends AbstractModuleWindow
 
         BuildingBuilderResource.RessourceAvailability availability = resource.getAvailabilityStatus();
 
-        if (module.getStorageUpgradeLevel() >= BuildingWareHouse.MAX_STORAGE_UPGRADE || buildingView.getBuildingLevel() < buildingView.getBuildingMaxLevel() || lockUpgrade)
+        if (moduleView.getStorageUpgradeLevel() >= BuildingWareHouse.MAX_STORAGE_UPGRADE || buildingView.getBuildingLevel() < buildingView.getBuildingMaxLevel() || lockUpgrade)
         {
             availability = BuildingBuilderResource.RessourceAvailability.NOT_NEEDED;
         }
 
         findPaneOfTypeByID(UPGRADE_PROGRESS_LABEL, Text.class).setText(Component.translatableEscape(LABEL_X_OF_Z,
-          module.getStorageUpgradeLevel(),
-          BuildingWareHouse.MAX_STORAGE_UPGRADE));
+            moduleView.getStorageUpgradeLevel(),
+            BuildingWareHouse.MAX_STORAGE_UPGRADE));
 
         switch (availability)
         {
@@ -189,7 +187,7 @@ public class WarehouseOptionsModuleWindow extends AbstractModuleWindow
     private void transferItems()
     {
         new UpgradeWarehouseMessage(this.buildingView).sendToServer();
-        module.incrementStorageUpgrade();
+        moduleView.incrementStorageUpgrade();
         lockUpgrade = true;
         this.updateResourcePane();
     }

@@ -6,6 +6,7 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.client.gui.modules.WindowHutRequestTaskModule;
 import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
@@ -28,7 +29,7 @@ public abstract class RequestTaskModuleView extends AbstractBuildingModuleView
     @Override
     public BOWindow getWindow()
     {
-        return new WindowHutRequestTaskModule(buildingView,Constants.MOD_ID + ":gui/layouthuts/layouttasklist.xml");
+        return new WindowHutRequestTaskModule(this);
     }
 
     @Override
@@ -38,9 +39,9 @@ public abstract class RequestTaskModuleView extends AbstractBuildingModuleView
     }
 
     @Override
-    public String getDesc()
+    public Component getDesc()
     {
-        return "com.minecolonies.coremod.gui.workerhuts.crafter.tasks";
+        return Component.translatable("com.minecolonies.coremod.gui.workerhuts.crafter.tasks");
     }
 
     /**

@@ -316,7 +316,7 @@ public class BuildingFarmer extends AbstractBuilding
         @OnlyIn(Dist.CLIENT)
         public BOWindow getWindow()
         {
-            return new FarmFieldsModuleWindow(buildingView, this);
+            return new FarmFieldsModuleWindow(this);
         }
 
         @Override

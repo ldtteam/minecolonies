@@ -23,11 +23,6 @@ import static com.minecolonies.api.util.constant.TranslationConstants.DESCRIPTIO
 public class WindowsBarracksSpies extends BOWindow implements ButtonHandler
 {
     /**
-     * The xml file for this gui
-     */
-    private static final String SPIES_GUI_XML = ":gui/windowbarracksspies.xml";
-
-    /**
      * The cancel button id
      */
     private static final String BUTTON_CANCEL = "cancel";
@@ -61,7 +56,7 @@ public class WindowsBarracksSpies extends BOWindow implements ButtonHandler
 
     public WindowsBarracksSpies(final IBuildingView buildingView, final BlockPos buildingPos)
     {
-        super(ResourceLocation.parse(Constants.MOD_ID + SPIES_GUI_XML));
+        super(new ResourceLocation(Constants.MOD_ID, "gui/windowbarracksspies.xml"));
         this.buildingView = buildingView;
 
         findPaneOfTypeByID(SPIES_BUTTON_ICON, ItemIcon.class).setItem(Items.GOLD_INGOT.getDefaultInstance());

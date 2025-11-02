@@ -7,7 +7,6 @@ import com.ldtteam.blockui.controls.Image;
 import com.ldtteam.blockui.controls.ItemIcon;
 import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.blockui.views.ScrollingList;
-import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.resolver.player.IPlayerRequestResolver;
@@ -15,9 +14,11 @@ import com.minecolonies.api.colony.requestsystem.resolver.retrying.IRetryingRequ
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.client.gui.AbstractModuleWindow;
+import com.minecolonies.core.colony.buildings.moduleviews.CraftingModuleView;
 import com.minecolonies.core.colony.requestsystem.requests.StandardRequests;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -35,10 +36,8 @@ import static com.minecolonies.core.colony.requestsystem.requests.AbstractReques
 /**
  * Window that shows existing unmatched requests compatible with the given predicate
  */
-public class WindowSelectRequest extends AbstractModuleWindow
+public class WindowSelectRequest extends AbstractModuleWindow<CraftingModuleView>
 {
-    private static final String RESOURCE_STRING = ":gui/layouthuts/layoutselectrequest.xml";
-
     private final Predicate<IRequest<?>> predicate;
     private final Consumer<IRequest<?>> reopenWithRequest;
 
@@ -47,16 +46,14 @@ public class WindowSelectRequest extends AbstractModuleWindow
 
     /**
      * Construct window.
-     * @param building the building to check for requests
-     * @param predicate predicate returning true if this is a selectable request
+     *
+     * @param predicate         predicate returning true if this is a selectable request
      * @param reopenWithRequest called after clicking select or cancel, with the request or null respectively.
      *                          not called if the player hits ESC or clicks a different tab
      */
-    public WindowSelectRequest(final IBuildingView building,
-                               final Predicate<IRequest<?>> predicate,
-                               final Consumer<@Nullable IRequest<?>> reopenWithRequest)
+    public WindowSelectRequest(final CraftingModuleView moduleView, final Predicate<IRequest<?>> predicate, final Consumer<@Nullable IRequest<?>> reopenWithRequest)
     {
-        super(building, Constants.MOD_ID + RESOURCE_STRING);
+        super(moduleView, new ResourceLocation(Constants.MOD_ID, "gui/layouthuts/layoutselectrequest.xml"));
         this.predicate = predicate;
         this.reopenWithRequest = reopenWithRequest;
 

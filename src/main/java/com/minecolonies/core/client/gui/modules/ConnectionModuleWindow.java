@@ -12,12 +12,14 @@ import com.minecolonies.api.colony.connections.DiplomacyStatus;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.MessageUtils;
-import com.minecolonies.core.client.gui.AbstractModuleWindow;
+import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.core.client.gui.AbstractBuildingWindow;
 import com.minecolonies.core.commands.ClickEventWithExecutable;
 import com.minecolonies.core.network.messages.server.colony.TeleportToColonyMessage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.neoforged.neoforge.items.wrapper.InvWrapper;
@@ -26,7 +28,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ConnectionModuleWindow extends AbstractModuleWindow
+public class ConnectionModuleWindow extends AbstractBuildingWindow<IBuildingView>
 {
     /**
      * Special buttons
@@ -55,12 +57,11 @@ public class ConnectionModuleWindow extends AbstractModuleWindow
     /**
      * Constructor for the minimum stock window view.
      *
-     *
-     * @param building class extending
+     * @param buildingView the building view.
      */
-    public ConnectionModuleWindow(final String res, final IBuildingView building, final boolean externalPlayer)
+    public ConnectionModuleWindow(final IBuildingView buildingView, final boolean externalPlayer)
     {
-        super(building, res);
+        super(buildingView, new ResourceLocation(Constants.MOD_ID, "gui/layouthuts/layoutcolonyconnection.xml"));
 
         if (externalPlayer)
         {
@@ -78,8 +79,8 @@ public class ConnectionModuleWindow extends AbstractModuleWindow
         directConnections = findPaneOfTypeByID(LIST_DIRECT, ScrollingList.class);
         indirectConnections = findPaneOfTypeByID(LIST_INDIRECT, ScrollingList.class);
 
-        directConnectionData = new ArrayList<>(building.getColony().getConnectionManager().getDirectlyConnectedColonies().values());
-        indirectConnectionData = new ArrayList<>(building.getColony().getConnectionManager().getIndirectlyConnectedColonies().values());
+        directConnectionData = new ArrayList<>(this.buildingView.getColony().getConnectionManager().getDirectlyConnectedColonies().values());
+        indirectConnectionData = new ArrayList<>(this.buildingView.getColony().getConnectionManager().getIndirectlyConnectedColonies().values());
 
         registerButton(TRAVEL, this::teleportToColony);
 

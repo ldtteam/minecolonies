@@ -403,7 +403,9 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
 
             if (!isToolOrContainer)
             {
-                availableOpsCount = Math.min(Math.min(availableCount, currentRequest.getRequest().getCount()), availableOpsCount);
+                // Convert available ingredient count to possible recipe iterations
+                final int possibleIterations = availableCount / inputStorage.getAmount();
+                availableOpsCount = Math.min(possibleIterations, availableOpsCount);
             }
         }
 

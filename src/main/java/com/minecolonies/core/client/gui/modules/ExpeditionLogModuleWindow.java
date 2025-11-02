@@ -2,7 +2,6 @@ package com.minecolonies.core.client.gui.modules;
 
 import com.ldtteam.blockui.controls.*;
 import com.ldtteam.blockui.views.View;
-import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.constant.Constants;
@@ -13,6 +12,7 @@ import com.minecolonies.core.colony.buildings.modules.expedition.ExpeditionLog;
 import com.minecolonies.core.colony.buildings.moduleviews.ExpeditionLogModuleView;
 import com.minecolonies.core.network.messages.server.colony.building.MarkBuildingDirtyMessage;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -26,24 +26,16 @@ import static com.minecolonies.api.util.constant.WindowConstants.*;
 /**
  * Window to show expedition log
  */
-public class ExpeditionLogModuleWindow extends AbstractModuleWindow
+public class ExpeditionLogModuleWindow extends AbstractModuleWindow<ExpeditionLogModuleView>
 {
-    /**
-     * The resource string.
-     */
-    private static final String RESOURCE_STRING = ":gui/layouthuts/layoutexpeditionlog.xml";
-
-    private final ExpeditionLogModuleView module;
-
     /**
      * Tick function for updating every second.
      */
     private int tick = 1;
 
-    public ExpeditionLogModuleWindow(@NotNull final IBuildingView building, @NotNull final ExpeditionLogModuleView module)
+    public ExpeditionLogModuleWindow(@NotNull final ExpeditionLogModuleView module)
     {
-        super(building, Constants.MOD_ID + RESOURCE_STRING);
-        this.module = module;
+        super(module, new ResourceLocation(Constants.MOD_ID, "gui/layouthuts/layoutexpeditionlog.xml"));
     }
 
     @Override
@@ -55,7 +47,7 @@ public class ExpeditionLogModuleWindow extends AbstractModuleWindow
             new MarkBuildingDirtyMessage(buildingView).sendToServer();
         }
 
-        if (module.checkAndResetUpdated())
+        if (moduleView.checkAndResetUpdated())
         {
             tick = 20;
             refreshLog();
@@ -66,7 +58,7 @@ public class ExpeditionLogModuleWindow extends AbstractModuleWindow
 
     private void refreshLog()
     {
-        final ExpeditionLog expeditionLog = module.getLog();
+        final ExpeditionLog expeditionLog = moduleView.getLog();
 
         findPaneOfTypeByID(WINDOW_ID_NAME, Text.class).setText(Component.literal(Objects.requireNonNullElse(expeditionLog.getName(), "")));
         findPaneOfTypeByID("status", Text.class).setText(Component.translatable(TranslationConstants.PARTIAL_EXPEDITION_STATUS + expeditionLog.getStatus().name().toLowerCase(Locale.US)));
