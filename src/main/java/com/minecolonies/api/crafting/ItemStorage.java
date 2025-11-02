@@ -47,7 +47,7 @@ public class ItemStorage
      */
     public ItemStorage(@NotNull final ItemStack stack, final int amount, final boolean ignoreDamageValue)
     {
-        this.stack = stack.copyWithCount(1);
+        this.stack = stack;
         this.shouldIgnoreDamageValue = ignoreDamageValue;
         this.shouldIgnoreNBTValue = ignoreDamageValue;
         this.amount = amount;
@@ -63,7 +63,7 @@ public class ItemStorage
      */
     public ItemStorage(@NotNull final ItemStack stack, final int amount, final boolean ignoreDamageValue, final boolean ignoreNBTValue)
     {
-        this.stack = stack.copyWithCount(1);
+        this.stack = stack;
         this.shouldIgnoreDamageValue = ignoreDamageValue;
         this.shouldIgnoreNBTValue = ignoreNBTValue;
         this.amount = amount;
@@ -89,7 +89,7 @@ public class ItemStorage
      */
     public ItemStorage(@NotNull final ItemStack stack, final boolean ignoreDamageValue, final boolean shouldIgnoreNBTValue)
     {
-        this.stack = stack.copyWithCount(1);
+        this.stack = stack;
         this.shouldIgnoreDamageValue = ignoreDamageValue;
         this.shouldIgnoreNBTValue = shouldIgnoreNBTValue;
         this.amount = ItemStackUtils.getSize(stack);
@@ -103,7 +103,7 @@ public class ItemStorage
      */
     public ItemStorage(@NotNull final ItemStack stack, final boolean ignoreDamageValue)
     {
-        this.stack = stack.copyWithCount(1);
+        this.stack = stack;
         this.shouldIgnoreDamageValue = ignoreDamageValue;
         this.shouldIgnoreNBTValue = false;
         this.amount = ItemStackUtils.getSize(stack);
@@ -116,7 +116,7 @@ public class ItemStorage
      */
     public ItemStorage(@NotNull final ItemStack stack)
     {
-        this.stack = stack.copyWithCount(1);
+        this.stack = stack;
         this.shouldIgnoreDamageValue = false;
         this.shouldIgnoreNBTValue = false;
         this.amount = ItemStackUtils.getSize(stack);
@@ -325,10 +325,8 @@ public class ItemStorage
      */
     public ItemStorage copy()
     {
-        ItemStorage newInstance = new ItemStorage(stack.copy(), shouldIgnoreDamageValue, shouldIgnoreNBTValue);
-        newInstance.setAmount(amount);
-        return newInstance;
-    }    
+        return new ItemStorage(stack.copy(), amount, shouldIgnoreDamageValue, shouldIgnoreNBTValue);
+    }
 
     /**
      * Get an immutable version of this item storage
