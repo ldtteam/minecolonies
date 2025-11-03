@@ -9,11 +9,9 @@ import com.minecolonies.api.util.Utils;
 import com.minecolonies.api.util.constant.SerializationIdentifierConstants;
 import com.minecolonies.api.util.constant.TypeConstants;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.component.DataComponents;
-import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -59,10 +57,7 @@ public class ItemStorageFactory implements IItemStorageFactory
     @Override
     public ItemStorage getNewInstance(@NotNull final ItemStack stack, final int size, final boolean ignoreDamage, final boolean ignoreNBT)
     {
-        ItemStorage newItem = new ItemStorage(stack, ignoreDamage, ignoreNBT);
-        newItem.setAmount(size);
-        return newItem;
-
+        return new ItemStorage(stack, size, ignoreDamage, ignoreNBT);
     }
 
     @NotNull
@@ -82,6 +77,7 @@ public class ItemStorageFactory implements IItemStorageFactory
     public ItemStorage deserialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final CompoundTag nbt)
     {
         final ItemStack stack = ItemStack.parseOptional(provider, nbt.getCompound(TAG_STACK));
+        stack.setCount(1);  // fix old data
         final int size = nbt.getInt(TAG_SIZE);
         final boolean ignoreNBT = nbt.getBoolean(TAG_SHOULDIGNORENBT);
         final boolean ignoreDamage = nbt.getBoolean(TAG_SHOULDIGNOREDAMAGE);
