@@ -20,6 +20,7 @@ import com.minecolonies.core.network.messages.server.colony.building.GiveToolMes
 import net.minecraft.ChatFormatting;
 import net.minecraft.ResourceLocationException;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.PlayerInfo;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -95,6 +96,11 @@ public class WindowPermissionsPage extends AbstractWindowTownHall
     private ScrollingList eventList;
 
     /**
+     * List of all players not added to the colony yet
+     */
+    private List<PlayerInfo> nonAddedPlayerList;
+
+    /**
      * Constructor for the town hall window.
      *
      * @param building {@link BuildingTownHall.View}.
@@ -129,7 +135,63 @@ public class WindowPermissionsPage extends AbstractWindowTownHall
         registerButton(TOWNHALL_BUTTON_SUBSCRIBER, this::setSubscriber);
         registerButton(BUTTON_ADD_PLAYER_OR_FAKEPLAYER, this::addPlayerToColonyClicked);
 
+        registerButton(BUTTON_OPEN_ONLINE_PLAYER_LIST, this::onPickPlayer);
+
         fillEventsList();
+        fillnonAddedPlayerList();
+    }
+
+    /**
+     * Fill the list of players not added to the colony yet
+     */
+    private void fillnonAddedPlayerList()
+    {
+        nonAddedPlayerList = new ArrayList<>();
+        for (final PlayerInfo info : Minecraft.getInstance().player.connection.getOnlinePlayers())
+        {
+            if (!buildingView.getColony().getPlayers().containsKey(info.getProfile().getId()))
+            {
+                nonAddedPlayerList.add(info);
+            }
+        }
+    }
+
+    /**
+     * Picks a player from the non added players
+     *
+     * @param button
+     */
+    private void onPickPlayer(final Button button)
+    {
+        if (nonAddedPlayerList.isEmpty())
+        {
+            return;
+        }
+
+        final ScrollingList list = findPaneOfTypeByID(LIST_SELECT_PLAYER, ScrollingList.class);
+        list.setVisible(true);
+        list.setDataProvider(new ScrollingList.DataProvider()
+        {
+            @Override
+            public int getElementCount()
+            {
+                return nonAddedPlayerList.size();
+            }
+
+            @Override
+            public void updateElement(final int index, final Pane pane)
+            {
+                String playerName = nonAddedPlayerList.get(index).getProfile().getName();
+                final Button button = pane.findPaneOfTypeByID(BUTTON_SELECT_PLAYER_LIST, Button.class);
+                button.setText(Component.literal(playerName));
+                button.setEnabled(true);
+                button.setHandler(button1 -> {
+                    final TextField input = findPaneOfTypeByID(INPUT_ADDPLAYER_NAME, TextField.class);
+                    input.setText(button1.getTextAsString());
+                    list.setVisible(false);
+                });
+            }
+        });
     }
 
     /**
@@ -158,8 +220,8 @@ public class WindowPermissionsPage extends AbstractWindowTownHall
         Network.getNetwork().sendToServer(new PermissionsMessage.SetSubscriber(buildingView.getColony(), actionsRank, !actionsRank.isSubscriber()));
         actionsRank.setSubscriber(!actionsRank.isSubscriber());
         button.setText(Component.translatable(actionsRank.isSubscriber()
-                                                   ? COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_ON
-                                                   : COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_OFF));
+            ? COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_ON
+            : COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_OFF));
     }
 
     /**
@@ -294,8 +356,8 @@ public class WindowPermissionsPage extends AbstractWindowTownHall
 
         findPaneOfTypeByID(TOWNHALL_RANK_TYPE_PICKER, DropDownList.class).setSelectedIndex(actionsRank.isColonyManager() ? 0 : (actionsRank.isHostile() ? 1 : 2));
         findPaneOfTypeByID(TOWNHALL_BUTTON_SUBSCRIBER, Button.class).setText(Component.translatable(actionsRank.isSubscriber()
-                                                                                                      ? COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_ON
-                                                                                                      : COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_OFF));
+            ? COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_ON
+            : COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_OFF));
     }
 
     /**
@@ -374,8 +436,8 @@ public class WindowPermissionsPage extends AbstractWindowTownHall
 
             findPaneOfTypeByID(TOWNHALL_RANK_TYPE_PICKER, DropDownList.class).setSelectedIndex(actionsRank.isColonyManager() ? 0 : (actionsRank.isHostile() ? 1 : 2));
             findPaneOfTypeByID(TOWNHALL_BUTTON_SUBSCRIBER, Button.class).setText(Component.translatable(actionsRank.isSubscriber()
-                                                                                                          ? COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_ON
-                                                                                                          : COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_OFF));
+                ? COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_ON
+                : COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_OFF));
         }
     }
 
@@ -396,16 +458,17 @@ public class WindowPermissionsPage extends AbstractWindowTownHall
                 final Text nameLabel = rowPane.findPaneOfTypeByID(NAME_LABEL, Text.class);
                 final Text actionLabel = rowPane.findPaneOfTypeByID(ACTION_LABEL, Text.class);
 
-                    final List<PermissionEvent> permissionEvents = buildingView.getPermissionEvents();
-                    Collections.reverse(permissionEvents);
-                    final PermissionEvent event = permissionEvents.get(index);
+                final List<PermissionEvent> permissionEvents = buildingView.getPermissionEvents();
+                Collections.reverse(permissionEvents);
+                final PermissionEvent event = permissionEvents.get(index);
 
-                    nameLabel.setText(Component.literal(event.getName() + (event.getId() == null ? " <fake>" : "")));
-                    rowPane.findPaneOfTypeByID(POS_LABEL, Text.class).setText(Component.literal(event.getPosition().getX() + " " + event.getPosition().getY() + " " + event.getPosition().getZ()));
+                nameLabel.setText(Component.literal(event.getName() + (event.getId() == null ? " <fake>" : "")));
+                rowPane.findPaneOfTypeByID(POS_LABEL, Text.class)
+                    .setText(Component.literal(event.getPosition().getX() + " " + event.getPosition().getY() + " " + event.getPosition().getZ()));
 
-                    rowPane.findPaneOfTypeByID(BUTTON_ADD_PLAYER_OR_FAKEPLAYER, Button.class).setVisible(event.getId() != null);
+                rowPane.findPaneOfTypeByID(BUTTON_ADD_PLAYER_OR_FAKEPLAYER, Button.class).setVisible(event.getId() != null);
 
-                    actionLabel.setText(Component.translatable(KEY_TO_PERMISSIONS + event.getAction().toString().toLowerCase(Locale.US)));
+                actionLabel.setText(Component.translatable(KEY_TO_PERMISSIONS + event.getAction().toString().toLowerCase(Locale.US)));
             }
         });
     }
@@ -421,14 +484,14 @@ public class WindowPermissionsPage extends AbstractWindowTownHall
             if (row < freeBlocks.size())
             {
                 Network.getNetwork().sendToServer(
-                  new ChangeFreeToInteractBlockMessage(buildingView.getColony(), freeBlocks.get(row), ChangeFreeToInteractBlockMessage.MessageType.REMOVE_BLOCK));
+                    new ChangeFreeToInteractBlockMessage(buildingView.getColony(), freeBlocks.get(row), ChangeFreeToInteractBlockMessage.MessageType.REMOVE_BLOCK));
                 buildingView.getColony().removeFreeBlock(freeBlocks.get(row));
             }
             else if (row < freeBlocks.size() + freePositions.size())
             {
                 final BlockPos freePos = freePositions.get(row - freeBlocks.size());
                 Network.getNetwork().sendToServer(
-                  new ChangeFreeToInteractBlockMessage(buildingView.getColony(), freePos, ChangeFreeToInteractBlockMessage.MessageType.REMOVE_BLOCK));
+                    new ChangeFreeToInteractBlockMessage(buildingView.getColony(), freePos, ChangeFreeToInteractBlockMessage.MessageType.REMOVE_BLOCK));
                 buildingView.getColony().removeFreePosition(freePos);
             }
             fillFreeBlockList();
@@ -535,7 +598,7 @@ public class WindowPermissionsPage extends AbstractWindowTownHall
 
         final IPermissions permissions = buildingView.getColony().getPermissions();
         final Player playerEntity = Minecraft.getInstance().player;
-        
+
         String key = button.getText().getContents() instanceof TranslatableContents contents ? contents.getKey() : button.getTextAsString();
 
         final boolean enable = !COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_ON.equals(key);
@@ -573,16 +636,18 @@ public class WindowPermissionsPage extends AbstractWindowTownHall
             public void updateElement(final int index, @NotNull final Pane rowPane)
             {
                 final Action action = actions.get(index);
-                final Component name =Component.translatable(KEY_TO_PERMISSIONS + action.toString().toLowerCase(Locale.US));
+                final Component name = Component.translatable(KEY_TO_PERMISSIONS + action.toString().toLowerCase(Locale.US));
                 rowPane.findPaneOfTypeByID(NAME_LABEL, Text.class).setText(name);
 
                 final boolean isTriggered = buildingView.getColony().getPermissions().hasPermission(actionsRank, action);
                 final Button onOffButton = rowPane.findPaneOfTypeByID("trigger", Button.class);
                 onOffButton.setText(isTriggered ? Component.translatable(COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_ON)
-                                      : Component.translatable(COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_OFF));
+                    : Component.translatable(COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_OFF));
                 rowPane.findPaneOfTypeByID("index", Text.class).setText(Component.literal(Integer.toString(index)));
 
-                if (!buildingView.getColony().getPermissions().canAlterPermission(buildingView.getColony().getPermissions().getRank(Minecraft.getInstance().player), actionsRank, action))
+                if (!buildingView.getColony()
+                    .getPermissions()
+                    .canAlterPermission(buildingView.getColony().getPermissions().getRank(Minecraft.getInstance().player), actionsRank, action))
                 {
                     onOffButton.disable();
                 }
