@@ -14,6 +14,7 @@ import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.client.ModKeyMappings;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.workorders.IWorkOrderView;
 import com.minecolonies.api.colony.workorders.WorkOrderType;
@@ -535,6 +536,18 @@ public class ColonyBlueprintRenderer
             {
                 if (workOrder.getBoundingBox().inflate(8).contains(ctx.clientPlayer.position()))
                 {
+                    final BlockPos workerPos = workOrder.getClaimedBy();
+                    if (workerPos.equals(BlockPos.ZERO))
+                    {
+                        continue;
+                    }
+
+                    final IBuildingView building = ctx.nearestColony.getBuilding(workerPos);
+                    if (building == null || building.getBuildingType() != ModBuildings.builder.get())
+                    {
+                        continue;
+                    }
+
                     final BlueprintCacheKey key = new BlueprintCacheKey(workOrder.getStructurePack(), workOrder.getStructurePath(),
                         RotationMirror.of(BlockPosUtil.getRotationFromRotations(workOrder.getRotation()),
                             workOrder.isMirrored() ? Mirror.FRONT_BACK : Mirror.NONE));
@@ -553,10 +566,8 @@ public class ColonyBlueprintRenderer
                         blueprintPreviewData.setOverridePreviewTransparency(0.4f);
                         blueprintPreviewData.setRenderBlocksNice(true);
 
-                        final BlockPos workerPos = workOrder.getClaimedBy();
                         if (!workerPos.equals(BlockPos.ZERO))
                         {
-                            final IBuildingView building = ctx.nearestColony.getBuilding(workerPos);
                             if (building != null && building.getModuleView(BuildingModules.BUILDER_SETTINGS) != null)
                             {
                                 blueprintPreviewData.setSolidSubstitutionOverride(building.getModuleView(BuildingModules.BUILDER_SETTINGS).getSetting(

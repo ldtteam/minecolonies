@@ -10,6 +10,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.colony.workorders.IWorkOrder;
@@ -90,7 +91,10 @@ public class ItemAssistantHammer extends AbstractItemMinecolonies
         boolean unclaimed = true;
         for (final IWorkOrder workOrder : view.getWorkOrders())
         {
-            if (workOrder.isClaimed() && workOrder.getBoundingBox() != null && workOrder.getBoundingBox().inflate(2).contains(Vec3.atLowerCornerOf(interactPos)))
+            if (workOrder.isClaimed()
+                && view.getBuilding(workOrder.getClaimedBy()) != null
+                && view.getBuilding(workOrder.getClaimedBy()).getBuildingType() == ModBuildings.builder.get()
+                && workOrder.getBoundingBox() != null && workOrder.getBoundingBox().inflate(2).contains(Vec3.atLowerCornerOf(interactPos)))
             {
                 unclaimed = false;
                 if (workOrder.getBlueprint() == null)
