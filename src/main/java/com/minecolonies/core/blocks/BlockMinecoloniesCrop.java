@@ -1,17 +1,13 @@
 package com.minecolonies.core.blocks;
 
-import com.minecolonies.api.blocks.interfaces.IMinecoloniesBlock;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.util.WorldUtil;
-import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.colony.Colony;
-import com.minecolonies.core.items.ItemCrop;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.Holder;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.TagKey;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
@@ -39,26 +35,12 @@ import static com.minecolonies.api.util.constant.Constants.UPDATE_FLAG;
 /**
  * Abstract Minecolonies crop type. We have our own to avoid cheesing the crop.s
  */
-public class BlockMinecoloniesCrop extends Block implements IMinecoloniesBlock<ItemCrop>
+public class BlockMinecoloniesCrop extends Block
 {
-    public static String BELL_PEPPER = "bell_pepper";
-    public static String CABBAGE = "cabbage";
-    public static String CHICKPEA = "chickpea";
-    public static String DURUM = "durum";
-    public static String EGGPLANT = "eggplant";
-    public static String GARLIC = "garlic";
-    public static String ONION = "onion";
-    public static String SOYBEAN = "soybean";
-    public static String TOMATO = "tomato";
-    public static String RICE = "rice";
+    public static final Properties DEFAULT_CROP_PROPERTIES = BlockBehaviour.Properties.of().mapColor(MapColor.PLANT).noCollission().instabreak().sound(SoundType.CROP).pushReaction(PushReaction.DESTROY);
 
-    public static String BUTTERNUT_SQUASH = "butternut_squash";
-    public static String CORN = "corn";
-    public static String MINT = "mint";
-    public static String NETHER_PEPPER = "nether_pepper";
-    public static String PEAS = "peas";
+    public static final IntegerProperty AGE = IntegerProperty.create("age", 0, 6);
 
-    public static final  IntegerProperty AGE = IntegerProperty.create("age", 0, 6);
     private static final VoxelShape[] SHAPE_BY_AGE = new VoxelShape[] {
       Block.box(0.0, 0.0, 0.0, 16.0, 2.0, 16.0),
       Block.box(0.0, 0.0, 0.0, 16.0, 4.0, 16.0),
@@ -68,21 +50,17 @@ public class BlockMinecoloniesCrop extends Block implements IMinecoloniesBlock<I
       Block.box(0.0, 0.0, 0.0, 16.0, 12.0, 16.0),
       Block.box(0.0, 0.0, 0.0, 16.0, 14.0, 16.0)};
 
-    private final Block preferredFarmland;
-    private final List<Block> droppedFrom;
-
-    private final ResourceLocation blockId;
-    private final TagKey<Biome>    preferredBiome;
+    private final Holder<Block> preferredFarmland;
+    private final List<Block>   droppedFrom;
+    private final TagKey<Biome> preferredBiome;
 
     /**
      * Constructor to create a block of this type.
-     * @param blockName the block id.
      */
-    public BlockMinecoloniesCrop(final String blockName, final Block preferredFarmland, final List<Block> droppedFrom, @Nullable final TagKey<Biome> preferredBiome)
+    public BlockMinecoloniesCrop(final Properties properties, final Holder<Block> preferredFarmland, final List<Block> droppedFrom, @Nullable final TagKey<Biome> preferredBiome)
     {
-        super(BlockBehaviour.Properties.of().mapColor(MapColor.PLANT).noCollission().instabreak().sound(SoundType.CROP).pushReaction(PushReaction.DESTROY));
+        super(properties);
         this.registerDefaultState(this.stateDefinition.any().setValue(AGE, 0));
-        this.blockId = new ResourceLocation(Constants.MOD_ID, blockName);
         this.preferredFarmland = preferredFarmland;
         this.droppedFrom = droppedFrom;
         this.preferredBiome = preferredBiome;
@@ -178,25 +156,13 @@ public class BlockMinecoloniesCrop extends Block implements IMinecoloniesBlock<I
         return pathComputationType == PathComputationType.AIR && !this.hasCollision || super.isPathfindable(state, pathComputationType);
     }
 
-    @Override
-    public ResourceLocation getRegistryName()
-    {
-        return blockId;
-    }
-
-    @Override
-    public ItemCrop createBlockItem()
-    {
-        return new ItemCrop(this, new Item.Properties(), preferredBiome);
-    }
-
     /**
      * Get the preferred farmland for this crop.
      * @return the preferred farmland.
      */
     public Block getPreferredFarmland()
     {
-        return preferredFarmland;
+        return preferredFarmland.value();
     }
 
     /**

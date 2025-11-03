@@ -190,7 +190,7 @@ public class BuildingGraveyard extends AbstractBuilding
     public void registerBlockPosition(@NotNull final BlockState state, @NotNull final BlockPos pos, @NotNull final Level world)
     {
         super.registerBlockPosition(state, pos, world);
-        if (state.getBlock() == ModBlocks.blockNamedGrave)
+        if (state.is(ModBlocks.blockNamedGrave))
         {
             visualGravePositions.add(new Tuple<>(pos, state.getValue(BlockMinecoloniesNamedGrave.FACING)));
         }

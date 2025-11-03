@@ -1,18 +1,13 @@
 package com.minecolonies.core.blocks;
 
-import com.minecolonies.api.blocks.interfaces.IMinecoloniesBlock;
-import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.network.messages.client.VanillaParticleMessage;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.ParticleUtils;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -21,8 +16,6 @@ import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SimpleWaterloggedBlock;
-import net.minecraft.world.level.block.SoundType;
-import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -32,7 +25,6 @@ import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.gameevent.GameEvent.Context;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
-import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.neoforge.common.CommonHooks;
@@ -44,29 +36,22 @@ import javax.annotation.Nullable;
 
 import static com.minecolonies.api.util.constant.CitizenConstants.BLOCK_BREAK_SOUND_RANGE;
 
-public class BlockMinecoloniesFarmland extends Block implements SimpleWaterloggedBlock, IMinecoloniesBlock<BlockItem>
+public class BlockMinecoloniesFarmland extends Block implements SimpleWaterloggedBlock
 {
     public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
+    public static final IntegerProperty MOISTURE    = BlockStateProperties.MOISTURE;
 
-    public static final String FARMLAND         = "farmland";
-    public static final String FLOODED_FARMLAND = "floodedfarmland";
-
-    public static final    IntegerProperty MOISTURE     = BlockStateProperties.MOISTURE;
     protected final VoxelShape shape;
 
-    private final ResourceLocation    blockId;
-
     /**
-     * If should behave waterlogged.
+     * If the block should behave waterlogged.
      */
     private final boolean waterLogged;
 
-    public BlockMinecoloniesFarmland(@NotNull final String blockName, final boolean waterLogged, final double height)
+    public BlockMinecoloniesFarmland(final Properties properties, final boolean waterLogged, final double height)
     {
-        super(BlockBehaviour.Properties.of().mapColor(MapColor.DIRT).randomTicks().strength(0.6F).sound(SoundType.GRAVEL).isViewBlocking((s,g,p) -> true).isSuffocating((s,g,p) -> true));
-        this.registerDefaultState(this.stateDefinition.any().setValue(MOISTURE, 0));
-        this.blockId = new ResourceLocation(Constants.MOD_ID, blockName);
-        this.registerDefaultState(this.stateDefinition.any().setValue(WATERLOGGED, Boolean.valueOf(waterLogged)));
+        super(properties);
+        this.registerDefaultState(this.stateDefinition.any().setValue(MOISTURE, 0).setValue(WATERLOGGED, waterLogged));
 
         this.shape = Block.box(0.0, 0.0, 0.0, 16.0, height, 16.0);
         this.waterLogged = waterLogged;
@@ -220,18 +205,6 @@ public class BlockMinecoloniesFarmland extends Block implements SimpleWaterlogge
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> blockStateBuilder)
     {
         blockStateBuilder.add(MOISTURE, WATERLOGGED);
-    }
-
-    @Override
-    public ResourceLocation getRegistryName()
-    {
-        return blockId;
-    }
-
-    @Override
-    public BlockItem createBlockItem()
-    {
-        return new BlockItem(this, new Item.Properties());
     }
 
     @Override

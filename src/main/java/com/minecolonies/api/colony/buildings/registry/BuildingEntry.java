@@ -11,13 +11,11 @@ import com.minecolonies.api.colony.buildings.modules.IBuildingModuleView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.block.Block;
+import net.neoforged.neoforge.registries.DeferredHolder;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Supplier;
 
@@ -25,26 +23,30 @@ import java.util.function.Supplier;
  * Entry for the {@link IBuilding} registry. Makes it possible to create a single registry for a {@link IBuilding}. Used to lookup how to create {@link IBuilding} and {@link
  * IBuildingView}. Also links a given {@link IBuilding} to a given {@link AbstractBlockHut}.
  */
-@SuppressWarnings("PMD.MissingStaticMethodInNonInstantiatableClass") //Use the builder to create one.
 public class BuildingEntry
 {
-    private final AbstractColonyBlock buildingBlock;
+    private final DeferredHolder<Block, ? extends AbstractColonyBlock> buildingBlock;
 
     private final BiFunction<IColony, BlockPos, IBuilding> buildingProducer;
+
     private final ResourceLocation registryName;
 
-    private List<ModuleProducer> buildingModuleProducers;
+    private final List<ModuleProducer> buildingModuleProducers;
 
     /**
      * A builder class for {@link BuildingEntry}.
      */
     public static final class Builder
     {
-        private AbstractColonyBlock                      buildingBlock;
+        private final List<ModuleProducer> buildingModuleProducers = new ArrayList<>();
+
+        private DeferredHolder<Block, ? extends AbstractColonyBlock> buildingBlock;
+
         private BiFunction<IColony, BlockPos, IBuilding> buildingProducer;
+
         private Supplier<BiFunction<IColonyView, BlockPos, IBuildingView>> buildingViewProducer;
-        private List<ModuleProducer>                                       buildingModuleProducers = new ArrayList<>();
-        private ResourceLocation                                           registryName;
+
+        private ResourceLocation registryName;
 
         /**
          * Sets the block that represents this building.
@@ -52,7 +54,7 @@ public class BuildingEntry
          * @param buildingBlock The block.
          * @return The builder.
          */
-        public Builder setBuildingBlock(final AbstractColonyBlock buildingBlock)
+        public Builder setBuildingBlock(final DeferredHolder<Block, ? extends AbstractColonyBlock> buildingBlock)
         {
             this.buildingBlock = buildingBlock;
             return this;
@@ -130,7 +132,7 @@ public class BuildingEntry
 
     public AbstractColonyBlock getBuildingBlock()
     {
-        return buildingBlock;
+        return buildingBlock.value();
     }
 
     public IBuilding produceBuilding(final BlockPos position, final IColony colony)
@@ -151,7 +153,7 @@ public class BuildingEntry
     {
         final IBuildingView buildingView = buildingViewProducer.get().apply(colony, position);
         buildingView.setBuildingType(this);
-        for (final ModuleProducer<IBuildingModule,IBuildingModuleView> moduleSet : buildingModuleProducers)
+        for (final ModuleProducer<IBuildingModule, IBuildingModuleView> moduleSet : buildingModuleProducers)
         {
             if (moduleSet.viewProducer != null)
             {
@@ -162,14 +164,17 @@ public class BuildingEntry
         return buildingView;
     }
 
-    public List<ModuleProducer> getModuleProducers() { return buildingModuleProducers;}
+    public List<ModuleProducer> getModuleProducers()
+    {
+        return buildingModuleProducers;
+    }
 
     private BuildingEntry(
       final ResourceLocation registryName,
-      final AbstractColonyBlock buildingBlock,
+      final DeferredHolder<Block, ? extends AbstractColonyBlock> buildingBlock,
       final BiFunction<IColony, BlockPos, IBuilding> buildingProducer,
       final Supplier<BiFunction<IColonyView, BlockPos, IBuildingView>> buildingViewProducer,
-      List<ModuleProducer> buildingModuleProducers)
+      final List<ModuleProducer> buildingModuleProducers)
     {
         super();
         this.registryName = registryName;
@@ -222,7 +227,7 @@ public class BuildingEntry
         /**
          * Internal temporary ID, used for sync, not guaranteed to persist between updates
          */
-        private final int                                     id;
+        private final int id;
 
         /**
          * Saving and loading ID, should never change

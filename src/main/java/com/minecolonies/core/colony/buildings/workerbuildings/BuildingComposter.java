@@ -15,14 +15,11 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.NbtUtils;
 import net.minecraft.nbt.Tag;
-import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -51,11 +48,6 @@ public class BuildingComposter extends AbstractBuilding
      * Maximum building level
      */
     private static final int MAX_BUILDING_LEVEL = 5;
-
-    /**
-     * Tag to store the barrel position.
-     */
-    private static final String TAG_POS = "pos";
 
     /**
      * Tag to store the barrel list.
@@ -106,7 +98,7 @@ public class BuildingComposter extends AbstractBuilding
     public void registerBlockPosition(@NotNull final Block block, @NotNull final BlockPos pos, @NotNull final Level world)
     {
         super.registerBlockPosition(block, pos, world);
-        if (block == ModBlocks.blockBarrel && !barrels.contains(pos))
+        if (block.equals(ModBlocks.blockBarrel.get()) && !barrels.contains(pos))
         {
             barrels.add(pos);
         }

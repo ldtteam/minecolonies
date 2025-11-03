@@ -1,20 +1,13 @@
 package com.minecolonies.core.blocks.decorative;
 
-import com.minecolonies.api.blocks.interfaces.IMinecoloniesBlock;
 import com.minecolonies.api.util.WorldUtil;
-import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.core.items.ItemGate;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.Registry;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
@@ -28,7 +21,6 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.DoorHingeSide;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
-import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
@@ -39,14 +31,8 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Block as one big door
  */
-public class BlockGate extends DoorBlock implements LiquidBlockContainer, IMinecoloniesBlock<ItemGate>
+public class BlockGate extends DoorBlock implements LiquidBlockContainer
 {
-    /**
-     * Variant reg names
-     */
-    public static final String IRON_GATE   = "gate_iron";
-    public static final String WOODEN_GATE = "gate_wood";
-
     /**
      * Max X gate size
      */
@@ -65,16 +51,10 @@ public class BlockGate extends DoorBlock implements LiquidBlockContainer, IMinec
     protected static final VoxelShape E_W_SHAPE = Shapes.box(0.3D, 0.0D, 0.0D, 0.7D, 1.0D, 1.0D);
     protected static final VoxelShape N_S_SHAPE = Shapes.box(0.0D, 0.0D, 0.3D, 1.0D, 1.0D, 0.7D);
 
-    /**
-     * Registry name of the block.
-     */
-    private final String name;
-
-    public BlockGate(final String name, final float hardness, final int maxWidth, final int maxHeight)
+    public BlockGate(final Properties properties, final float hardness, final int maxWidth, final int maxHeight)
     {
-        super(BlockSetType.SPRUCE, Properties.of().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(hardness, hardness * 5).noOcclusion());
-        registerDefaultState(defaultBlockState());
-        this.name = name;
+        super(BlockSetType.SPRUCE, properties.strength(hardness, hardness * 5));
+        this.registerDefaultState(defaultBlockState());
         this.maxWidth = maxWidth;
         this.maxHeight = maxHeight;
         this.hardness = hardness;
@@ -88,18 +68,6 @@ public class BlockGate extends DoorBlock implements LiquidBlockContainer, IMinec
     public int getMaxHeight()
     {
         return maxHeight;
-    }
-
-    @Override
-    public ResourceLocation getRegistryName()
-    {
-        return new ResourceLocation(Constants.MOD_ID, name);
-    }
-
-    @Override
-    public ItemGate createBlockItem()
-    {
-        return new ItemGate(this, new Item.Properties());
     }
 
     @Override
@@ -493,30 +461,6 @@ public class BlockGate extends DoorBlock implements LiquidBlockContainer, IMinec
         {
             return null;
         }
-    }
-
-
-    /**
-     * Registery block at gameregistry.
-     *
-     * @param registry the registry to use.
-     * @return the block itself.
-     */
-    public BlockGate registerBlock(final Registry<Block> registry)
-    {
-        Registry.register(registry, new ResourceLocation(Constants.MOD_ID, this.name), this);
-        return this;
-    }
-
-    /**
-     * Registery block at gameregistry.
-     *
-     * @param registry   the registry to use.
-     * @param properties the item properties.
-     */
-    public void registerBlockItem(final Registry<Item> registry, final Item.Properties properties)
-    {
-        Registry.register(registry, new ResourceLocation(Constants.MOD_ID, this.name), new BlockItem(this, properties));
     }
 
     @Override

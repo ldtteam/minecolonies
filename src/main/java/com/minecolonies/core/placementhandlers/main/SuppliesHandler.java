@@ -24,9 +24,10 @@ import net.minecraft.world.level.Level;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.items.wrapper.InvWrapper;
+
 import java.util.function.Predicate;
 
-import static com.minecolonies.api.util.constant.Constants.*;
+import static com.minecolonies.api.util.constant.Constants.MOD_ID;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.api.util.constant.translation.ProgressTranslationConstants.PROGRESS_SUPPLY_CHEST_PLACED;
 
@@ -76,7 +77,7 @@ public class SuppliesHandler implements ISurvivalBlueprintHandler
 
         blueprint.setRotationMirror(rotMir, world);
 
-        if (player.getStats().getValue(Stats.ITEM_USED.get(ModItems.supplyChest)) > 0 && !MineColonies.getConfig().getServer().allowInfiniteSupplyChests.get()
+        if (player.getStats().getValue(Stats.ITEM_USED.get(ModItems.supplyChest.get())) > 0 && !MineColonies.getConfig().getServer().allowInfiniteSupplyChests.get()
                 && !isFreeInstantPlacementMH(player) && !player.isCreative())
         {
             MessageUtils.format(WARNING_SUPPLY_CHEST_ALREADY_PLACED).sendTo(player);
@@ -87,11 +88,11 @@ public class SuppliesHandler implements ISurvivalBlueprintHandler
         Predicate<ItemStack> searchPredicate = stack -> !stack.isEmpty();
         if (blueprintPath.contains("supplyship"))
         {
-            searchPredicate = searchPredicate.and(stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, new ItemStack(ModItems.supplyChest), true, false));
+            searchPredicate = searchPredicate.and(stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, ModItems.supplyChest.toStack(), true, false));
         }
         if (blueprintPath.contains("supplycamp"))
         {
-            searchPredicate = searchPredicate.and(stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, new ItemStack(ModItems.supplyCamp), true, false));
+            searchPredicate = searchPredicate.and(stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, ModItems.supplyCamp.toStack(), true, false));
         }
 
         if (isFreeInstantPlacementMH(player))
@@ -103,10 +104,10 @@ public class SuppliesHandler implements ISurvivalBlueprintHandler
 
         if (slot != -1 && !ItemStackUtils.isEmpty(player.getInventory().removeItemNoUpdate(slot)))
         {
-            if (player.getStats().getValue(Stats.ITEM_USED.get(ModItems.supplyChest)) < 1)
+            if (player.getStats().getValue(Stats.ITEM_USED.get(ModItems.supplyChest.get())) < 1)
             {
                 MessageUtils.format(PROGRESS_SUPPLY_CHEST_PLACED).sendTo(player);
-                player.awardStat(Stats.ITEM_USED.get(ModItems.supplyChest), 1);
+                player.awardStat(Stats.ITEM_USED.get(ModItems.supplyChest.get()), 1);
                 AdvancementTriggers.PLACE_SUPPLY.get().trigger(player);
             }
 

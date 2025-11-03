@@ -122,7 +122,7 @@ public class ItemScanAnalyzer extends AbstractItemWithPosSelector
     @Override
     public AbstractItemWithPosSelector getRegisteredItemInstance()
     {
-        return (AbstractItemWithPosSelector) ModItems.scanAnalyzer;
+        return ModItems.scanAnalyzer.get();
     }
 
     /**

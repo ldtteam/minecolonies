@@ -8,7 +8,6 @@ import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.SpawnEggItem;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -21,13 +20,13 @@ public final class ModCreativeTabs
     public static final DeferredRegister<CreativeModeTab> TAB_REG = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, Constants.MOD_ID);
 
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> HUTS = TAB_REG.register("mchuts",
-        () -> new CreativeModeTab.Builder(CreativeModeTab.Row.TOP, 1).icon(() -> new ItemStack(ModBlocks.blockHutTownHall))
+        () -> new CreativeModeTab.Builder(CreativeModeTab.Row.TOP, 1).icon(ModBlocks.blockHutTownHall::toStack)
             .title(Component.translatable("com.minecolonies.creativetab.huts"))
             .displayItems((config, output) -> ModBlocks.HUTS.forEach(output::accept))
             .build());
 
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> GENERAL = TAB_REG.register("mcgeneral",
-        () -> new CreativeModeTab.Builder(CreativeModeTab.Row.TOP, 1).icon(() -> new ItemStack(ModBlocks.blockRack))
+        () -> new CreativeModeTab.Builder(CreativeModeTab.Row.TOP, 1).icon(ModBlocks.blockRack::toStack)
             .title(Component.translatable("com.minecolonies.creativetab.general"))
             .displayItems((config, output) -> {
                 output.accept(ModBlocks.blockScarecrow);
@@ -144,7 +143,7 @@ public final class ModCreativeTabs
             .build());
 
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> FOOD = TAB_REG.register("mcfood",
-        () -> new CreativeModeTab.Builder(CreativeModeTab.Row.TOP, 1).icon(() -> new ItemStack(ModBlocks.blockTomato))
+        () -> new CreativeModeTab.Builder(CreativeModeTab.Row.TOP, 1).icon(ModBlocks.blockTomato::toStack)
             .title(Component.translatable("com.minecolonies.creativetab.food"))
             .displayItems((config, output) -> {
                 output.accept(ModBlocks.blockFarmland);

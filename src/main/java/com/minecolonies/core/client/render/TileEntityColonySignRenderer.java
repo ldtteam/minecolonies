@@ -5,18 +5,18 @@ import com.minecolonies.core.tileentities.TileEntityColonySign;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
+import net.minecraft.network.chat.Style;
+import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.client.gui.Font;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
-import net.minecraft.util.FormattedCharSequence;
-import net.minecraft.network.chat.Style;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.client.RenderTypeHelper;
@@ -44,8 +44,8 @@ public class TileEntityColonySignRenderer implements BlockEntityRenderer<TileEnt
     public TileEntityColonySignRenderer(final BlockEntityRendererProvider.Context context)
     {
         super();
-        model = context.getBlockRenderDispatcher().getBlockModel(ModBlocks.blockColonySign.defaultBlockState());
-        model2 = context.getBlockRenderDispatcher().getBlockModel(ModBlocks.blockColonySign.defaultBlockState().setValue(CONNECTED, true));
+        model = context.getBlockRenderDispatcher().getBlockModel(ModBlocks.blockColonySign.get().defaultBlockState());
+        model2 = context.getBlockRenderDispatcher().getBlockModel(ModBlocks.blockColonySign.get().defaultBlockState().setValue(CONNECTED, true));
         renderDispatcher = context.getBlockRenderDispatcher();
     }
 
@@ -62,7 +62,7 @@ public class TileEntityColonySignRenderer implements BlockEntityRenderer<TileEnt
         {
             final float relativeRotationToColony = tileEntity.getRelativeRotation();
             final BlockState state = tileEntity.getLevel().getBlockState(tileEntity.getBlockPos());
-            if (state.getBlock() == ModBlocks.blockColonySign)
+            if (state.is(ModBlocks.blockColonySign))
             {
                 matrixStack.pushPose();
                 matrixStack.translate(0.5, 0.5, 0.5);

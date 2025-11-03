@@ -1,15 +1,11 @@
 package com.minecolonies.core.blocks;
 
 import com.minecolonies.api.blocks.ModBlocks;
-import com.minecolonies.api.blocks.interfaces.IMinecoloniesBlock;
-import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.tileentities.TileEntityNamedGrave;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
@@ -19,7 +15,6 @@ import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
-import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -27,46 +22,14 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 
-public class BlockMinecoloniesNamedGrave extends HorizontalDirectionalBlock implements EntityBlock, IMinecoloniesBlock<BlockItem>
+public class BlockMinecoloniesNamedGrave extends HorizontalDirectionalBlock implements EntityBlock
 {
     public static final MapCodec<BlockMinecoloniesNamedGrave> CODEC = simpleCodec(BlockMinecoloniesNamedGrave::new);
-
-    /**
-     * The hardness this block has.
-     */
-    private static final float BLOCK_HARDNESS = 5F;
-
-    /**
-     * This blocks name.
-     */
-    private static final String BLOCK_NAME = "blockminecoloniesnamedgrave";
-
-    /**
-     * The resistance this block has.
-     */
-    private static final float RESISTANCE = 1F;
-
-    public BlockMinecoloniesNamedGrave()
-    {
-        this(Properties.of().mapColor(MapColor.STONE).sound(SoundType.STONE).strength(BLOCK_HARDNESS, RESISTANCE).noLootTable());
-    }
 
     public BlockMinecoloniesNamedGrave(final Properties properties)
     {
         super(properties);
         this.registerDefaultState(this.defaultBlockState().setValue(FACING, Direction.NORTH));
-    }
-
-    @Override
-    public ResourceLocation getRegistryName()
-    {
-        return new ResourceLocation(Constants.MOD_ID, BLOCK_NAME);
-    }
-
-    @Override
-    public BlockItem createBlockItem()
-    {
-        return null;
     }
 
     @Override
@@ -165,7 +128,6 @@ public class BlockMinecoloniesNamedGrave extends HorizontalDirectionalBlock impl
     @Override
     public boolean canSurvive(final BlockState state, final LevelReader worldIn, final BlockPos pos)
     {
-        return !worldIn.isEmptyBlock(pos.below())
-                 && worldIn.getBlockState(pos.below()).getBlock() != ModBlocks.blockNamedGrave;
+        return !worldIn.isEmptyBlock(pos.below()) && !worldIn.getBlockState(pos.below()).is(ModBlocks.blockNamedGrave);
     }
 }

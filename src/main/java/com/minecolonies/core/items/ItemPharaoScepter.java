@@ -104,7 +104,7 @@ public class ItemPharaoScepter extends BowItem
             return arrow;
         }
 
-        AbstractArrow entity = ModItems.fireArrow.createArrow(arrow.level(), new ItemStack(ModItems.fireArrow, 1), (LivingEntity) arrow.getOwner(), weaponStack);
+        AbstractArrow entity = ModItems.fireArrow.get().createArrow(arrow.level(), ModItems.fireArrow.toStack(), (LivingEntity) arrow.getOwner(), weaponStack);
         entity.pickup = AbstractArrow.Pickup.DISALLOWED;
         entity.setRemainingFireTicks(3 * TICKS_PER_SECOND);
 

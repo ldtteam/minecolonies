@@ -16,7 +16,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.NbtUtils;
 import net.minecraft.nbt.Tag;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.util.Tuple;
@@ -24,7 +23,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -37,7 +35,6 @@ import static com.minecolonies.api.util.constant.BuildingConstants.BUILDING_FLOW
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 import static com.minecolonies.api.util.constant.EquipmentLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_PLANTGROUND;
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_POS;
 
 /**
  * The florist building.
@@ -68,7 +65,7 @@ public class BuildingFlorist extends AbstractBuilding
     public BuildingFlorist(@NotNull final IColony c, final BlockPos l)
     {
         super(c, l);
-        keepX.put((stack) -> stack.getItem() == ModItems.compost, new Tuple<>(STACKSIZE, true));
+        keepX.put((stack) -> stack.is(ModItems.compost), new Tuple<>(STACKSIZE, true));
         keepX.put(itemStack -> ItemStackUtils.hasEquipmentLevel(itemStack, ModEquipmentTypes.shears.get(), TOOL_LEVEL_WOOD_OR_GOLD, getMaxEquipmentLevel()), new Tuple<>(1, true));
     }
 
@@ -99,7 +96,7 @@ public class BuildingFlorist extends AbstractBuilding
     public void registerBlockPosition(@NotNull final Block block, @NotNull final BlockPos pos, @NotNull final Level world)
     {
         super.registerBlockPosition(block, pos, world);
-        if (block == ModBlocks.blockCompostedDirt && !plantGround.contains(pos))
+        if (block.equals(ModBlocks.blockCompostedDirt.get()) && !plantGround.contains(pos))
         {
             plantGround.add(pos);
         }

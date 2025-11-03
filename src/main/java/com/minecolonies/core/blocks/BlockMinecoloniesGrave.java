@@ -1,26 +1,21 @@
 package com.minecolonies.core.blocks;
 
-import com.minecolonies.api.blocks.interfaces.IMinecoloniesBlock;
 import com.minecolonies.api.blocks.types.GraveType;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.tileentities.AbstractTileEntityGrave;
 import com.minecolonies.api.util.InventoryUtils;
-import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.tileentities.TileEntityGrave;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
@@ -30,7 +25,6 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
-import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
@@ -43,36 +37,16 @@ import javax.annotation.Nullable;
 /**
  * Block for the graves
  */
-public class BlockMinecoloniesGrave extends HorizontalDirectionalBlock implements EntityBlock, IMinecoloniesBlock<BlockItem>
+public class BlockMinecoloniesGrave extends HorizontalDirectionalBlock implements EntityBlock
 {
     public static final MapCodec<BlockMinecoloniesGrave> CODEC = simpleCodec(BlockMinecoloniesGrave::new);
 
     public static final EnumProperty<GraveType> VARIANT = EnumProperty.create("variant", GraveType.class);
 
     /**
-     * The hardness this block has.
-     */
-    private static final float BLOCK_HARDNESS = 1.5F;
-
-    /**
-     * This blocks name.
-     */
-    private static final String BLOCK_NAME = "blockminecoloniesgrave";
-
-    /**
-     * The resistance this block has.
-     */
-    private static final float RESISTANCE = 5F;
-
-    /**
      * Smaller shape.
      */
     private static final VoxelShape SHAPE = Shapes.box(0.1, 0.1, 0.1, 0.9, 0.9, 0.9);
-
-    public BlockMinecoloniesGrave()
-    {
-        this(Properties.of().mapColor(MapColor.STONE).sound(SoundType.STONE).strength(BLOCK_HARDNESS, RESISTANCE));
-    }
 
     public BlockMinecoloniesGrave(final Properties properties)
     {
@@ -85,18 +59,6 @@ public class BlockMinecoloniesGrave extends HorizontalDirectionalBlock implement
     protected MapCodec<? extends HorizontalDirectionalBlock> codec()
     {
         return CODEC;
-    }
-
-    @Override
-    public ResourceLocation getRegistryName()
-    {
-        return new ResourceLocation(Constants.MOD_ID, BLOCK_NAME);
-    }
-
-    @Override
-    public BlockItem createBlockItem()
-    {
-        return new BlockItem(this, new Item.Properties());
     }
 
     @Override

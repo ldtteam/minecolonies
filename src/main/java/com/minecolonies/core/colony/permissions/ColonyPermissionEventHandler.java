@@ -50,7 +50,10 @@ import net.neoforged.neoforge.common.util.TriState;
 import net.neoforged.neoforge.event.VanillaGameEvent;
 import net.neoforged.neoforge.event.entity.item.ItemTossEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
-import net.neoforged.neoforge.event.entity.player.*;
+import net.neoforged.neoforge.event.entity.player.ArrowLooseEvent;
+import net.neoforged.neoforge.event.entity.player.AttackEntityEvent;
+import net.neoforged.neoforge.event.entity.player.ItemEntityPickupEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.level.BlockEvent;
 import net.neoforged.neoforge.event.level.ExplosionEvent;
 import org.jetbrains.annotations.NotNull;
@@ -255,7 +258,7 @@ public class ColonyPermissionEventHandler
                 return;
             }
 
-            if (event.getState().getBlock() == ModBlocks.blockHutTownHall && !((BlockHutTownHall)event.getState().getBlock()).getValidBreak() && !event.getPlayer().isCreative())
+            if (event.getState().is(ModBlocks.blockHutTownHall) && !((BlockHutTownHall)event.getState().getBlock()).getValidBreak() && !event.getPlayer().isCreative())
             {
                 cancelEvent(event, event.getPlayer(), colony, Action.BREAK_HUTS, event.getPos());
                 return;
@@ -271,7 +274,7 @@ public class ColonyPermissionEventHandler
 
             building.destroy();
 
-            if (MineColonies.getConfig().getServer().pvp_mode.get() && event.getState().getBlock() == ModBlocks.blockHutTownHall)
+            if (MineColonies.getConfig().getServer().pvp_mode.get() && event.getState().is(ModBlocks.blockHutTownHall))
             {
                 IColonyManager.getInstance().deleteColonyByWorld(building.getColony().getID(), false, world);
             }

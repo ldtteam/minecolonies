@@ -227,7 +227,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
             if (building.requestFertilizer() && !building.hasWorkerOpenRequestsOfType(worker.getCitizenData().getId(), TypeToken.of(StackList.class)))
             {
                 final List<ItemStack> compostAbleItems = new ArrayList<>();
-                compostAbleItems.add(new ItemStack(ModItems.compost, 1));
+                compostAbleItems.add(ModItems.compost.toStack());
                 compostAbleItems.add(new ItemStack(Items.BONE_MEAL, 1));
                 worker.getCitizenData().createRequestAsync(new StackList(compostAbleItems, RequestSystemTranslationConstants.REQUEST_TYPE_FERTILIZER, STACKSIZE, 1));
             }
@@ -294,7 +294,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
      */
     private boolean isCompost(final ItemStack itemStack)
     {
-        if (itemStack.getItem() == ModItems.compost)
+        if (itemStack.is(ModItems.compost))
         {
             return true;
         }

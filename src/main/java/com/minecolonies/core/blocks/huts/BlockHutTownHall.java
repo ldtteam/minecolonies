@@ -10,47 +10,39 @@ import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.MessageUtils;
-import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.MineColonies;
 import com.minecolonies.core.network.messages.server.GetColonyInfoMessage;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
-import net.minecraft.world.ItemInteractionResult;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.SoundType;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.material.MapColor;
-import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.network.chat.Component;
+import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
 import net.neoforged.neoforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static com.minecolonies.api.util.constant.TranslationConstants.TOWNHALL_BREAKING_DONE_MESSAGE;
-import static com.minecolonies.api.util.constant.TranslationConstants.WARNING_DUPLICATE_TOWN_HALL;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.minecolonies.api.util.constant.TranslationConstants.TOWNHALL_BREAKING_DONE_MESSAGE;
+import static com.minecolonies.api.util.constant.TranslationConstants.WARNING_DUPLICATE_TOWN_HALL;
 
 /**
  * Hut for the town hall. Sets the working range for the town hall in the constructor
  */
 public class BlockHutTownHall extends AbstractBlockHut
 {
-    public BlockHutTownHall()
-    {
-        super(Properties.of().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(HARDNESS, RESISTANCE));
-    }
-
     /**
      * Progress in % of breaking the townHall.
      */
@@ -70,6 +62,11 @@ public class BlockHutTownHall extends AbstractBlockHut
      * Interaction timeout.
      */
     public static long timeout = 0;
+
+    public BlockHutTownHall(final Properties properties)
+    {
+        super(properties);
+    }
 
     @Override
     public float getDestroyProgress(final BlockState state, @NotNull final Player player, @NotNull final BlockGetter blockReader, @NotNull final BlockPos pos)
@@ -136,7 +133,7 @@ public class BlockHutTownHall extends AbstractBlockHut
         final List<MutableComponent> requirements = new ArrayList<>();
         if (InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(player.getInventory()), this) == -1)
         {
-            requirements.add(Component.translatableEscape("com.minecolonies.coremod.hut.cost", Component.translatableEscape("block." + Constants.MOD_ID + "." + getHutName())).setStyle((Style.EMPTY).withColor(
+            requirements.add(Component.translatableEscape("com.minecolonies.coremod.hut.cost", getName()).setStyle((Style.EMPTY).withColor(
               ChatFormatting.RED)));
         }
 
@@ -150,13 +147,6 @@ public class BlockHutTownHall extends AbstractBlockHut
     public boolean getValidBreak()
     {
         return validTownHallBreak;
-    }
-
-    @NotNull
-    @Override
-    public String getHutName()
-    {
-        return "blockhuttownhall";
     }
 
     @Override

@@ -1,6 +1,6 @@
 package com.minecolonies.api.blocks;
 
-import com.minecolonies.api.blocks.interfaces.IMinecoloniesBlock;
+import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.blocks.*;
@@ -12,21 +12,25 @@ import com.minecolonies.core.blocks.huts.*;
 import com.minecolonies.core.blocks.schematic.BlockWaypoint;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.material.MapColor;
+import net.minecraft.world.level.material.PushReaction;
+import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredRegister;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
+import java.util.function.Function;
 
-import static com.minecolonies.core.blocks.BlockMinecoloniesCrop.*;
+import static com.minecolonies.api.blocks.AbstractBlockHut.DEFAULT_HUT_BLOCK_PROPERTIES;
+import static com.minecolonies.core.blocks.BlockMinecoloniesCrop.DEFAULT_CROP_PROPERTIES;
 
 /**
  * Class to create the modBlocks. References to the blocks can be made here
  * <p>
  * We disabled the following finals since we are neither able to mark the items as final, nor do we want to provide public accessors.
  */
-@SuppressWarnings("unused")
 public final class ModBlocks
 {
     public static final DeferredRegister.Blocks DEFERRED_REGISTER = DeferredRegister.createBlocks(Constants.MOD_ID);
@@ -34,130 +38,201 @@ public final class ModBlocks
     /**
      * The list of hut blocks.
      */
-    public static final List<AbstractColonyBlock> HUTS = new ArrayList<>();
+    public static final List<DeferredBlock<AbstractBlockHut>> HUTS = new ArrayList<>();
 
     /**
      * The list of crops.
      */
-    public static final List<BlockMinecoloniesCrop> CROPS = new ArrayList<>();
+    public static final List<DeferredBlock<BlockMinecoloniesCrop>> CROPS = new ArrayList<>();
 
     /**
      * Building blocks.
      */
-    public static final AbstractBlockHut blockHutTownHall      = registerBlockHut(new BlockHutTownHall());
-    public static final AbstractBlockHut blockHutCitizen       = registerBlockHut(new BlockHutCitizen());
-    public static final AbstractBlockHut blockHutMiner         = registerBlockHut(new BlockHutMiner());
-    public static final AbstractBlockHut blockHutLumberjack    = registerBlockHut(new BlockHutLumberjack());
-    public static final AbstractBlockHut blockHutBaker         = registerBlockHut(new BlockHutBaker());
-    public static final AbstractBlockHut blockHutBuilder       = registerBlockHut(new BlockHutBuilder());
-    public static final AbstractBlockHut blockHutDeliveryman   = registerBlockHut(new BlockHutDeliveryman());
-    public static final AbstractBlockHut blockHutBlacksmith    = registerBlockHut(new BlockHutBlacksmith());
-    public static final AbstractBlockHut blockHutStonemason    = registerBlockHut(new BlockHutStonemason());
-    public static final AbstractBlockHut blockHutFarmer        = registerBlockHut(new BlockHutFarmer());
-    public static final AbstractBlockHut blockHutFisherman     = registerBlockHut(new BlockHutFisherman());
-    public static final AbstractBlockHut blockHutGuardTower    = registerBlockHut(new BlockHutGuardTower());
-    public static final AbstractBlockHut blockHutWareHouse     = registerBlockHut(new BlockHutWareHouse());
-    public static final AbstractBlockHut blockHutShepherd      = registerBlockHut(new BlockHutShepherd());
-    public static final AbstractBlockHut blockHutCowboy        = registerBlockHut(new BlockHutCowboy());
-    public static final AbstractBlockHut blockHutSwineHerder   = registerBlockHut(new BlockHutSwineHerder());
-    public static final AbstractBlockHut blockHutChickenHerder = registerBlockHut(new BlockHutChickenHerder());
-    public static final AbstractBlockHut blockHutBarracks      = registerBlockHut(new BlockHutBarracks());
-    public static final AbstractBlockHut blockHutBarracksTower = registerBlockHut(new BlockHutBarracksTower());
-    public static final AbstractBlockHut blockHutCook          = registerBlockHut(new BlockHutCook());
-    public static final AbstractBlockHut blockHutSmeltery      = registerBlockHut(new BlockHutSmeltery());
-    public static final AbstractBlockHut blockHutComposter     = registerBlockHut(new BlockHutComposter());
-    public static final AbstractBlockHut blockHutLibrary       = registerBlockHut(new BlockHutLibrary());
-    public static final AbstractBlockHut blockHutArchery       = registerBlockHut(new BlockHutArchery());
-    public static final AbstractBlockHut blockHutCombatAcademy = registerBlockHut(new BlockHutCombatAcademy());
-    public static final AbstractBlockHut blockHutSawmill       = registerBlockHut(new BlockHutSawmill());
-    public static final AbstractBlockHut blockHutStoneSmeltery = registerBlockHut(new BlockHutStoneSmeltery());
-    public static final AbstractBlockHut blockHutCrusher       = registerBlockHut(new BlockHutCrusher());
-    public static final AbstractBlockHut blockHutSifter        = registerBlockHut(new BlockHutSifter());
-    public static final AbstractBlockHut blockHutFlorist       = registerBlockHut(new BlockHutFlorist());
-    public static final AbstractBlockHut blockHutEnchanter     = registerBlockHut(new BlockHutEnchanter());
-    public static final AbstractBlockHut blockHutUniversity    = registerBlockHut(new BlockHutUniversity());
-    public static final AbstractBlockHut blockHutHospital      = registerBlockHut(new BlockHutHospital());
-    public static final AbstractBlockHut blockHutSchool        = registerBlockHut(new BlockHutSchool());
-    public static final AbstractBlockHut blockHutGlassblower   = registerBlockHut(new BlockHutGlassblower());
-    public static final AbstractBlockHut blockHutDyer          = registerBlockHut(new BlockHutDyer());
-    public static final AbstractBlockHut blockHutFletcher      = registerBlockHut(new BlockHutFletcher());
-    public static final AbstractBlockHut blockHutMechanic      = registerBlockHut(new BlockHutMechanic());
-    public static final AbstractBlockHut blockHutPlantation    = registerBlockHut(new BlockHutPlantation());
-    public static final AbstractBlockHut blockHutTavern        = registerBlockHut(new BlockHutTavern());
-    public static final AbstractBlockHut blockHutRabbitHutch   = registerBlockHut(new BlockHutRabbitHutch());
-    public static final AbstractBlockHut blockHutConcreteMixer = registerBlockHut(new BlockHutConcreteMixer());
-    public static final AbstractBlockHut blockHutBeekeeper     = registerBlockHut(new BlockHutBeekeeper());
-    public static final AbstractBlockHut blockHutMysticalSite  = registerBlockHut(new BlockHutMysticalSite());
-    public static final AbstractBlockHut blockHutGraveyard     = registerBlockHut(new BlockHutGraveyard());
-    public static final AbstractBlockHut blockHutNetherWorker = registerBlockHut(new BlockHutNetherWorker());
-    public static final AbstractBlockHut blockHutSimpleQuarry = registerBlockHut(new BlockHutSimpleQuarry());
-    public static final AbstractBlockHut blockHutMediumQuarry = registerBlockHut(new BlockHutMediumQuarry());
-    //public static final AbstractBlockHut blockHutLargeQuarry      = registerBlockHut(new BlockHutLargeQuarry());
-    public static final AbstractBlockHut blockHutAlchemist    = registerBlockHut(new BlockHutAlchemist());
-    public static final AbstractBlockHut blockHutKitchen       = registerBlockHut(new BlockHutKitchen());
-    public static final AbstractBlockHut blockHutGateHouse     = registerBlockHut(new BlockHutGateHouse());
+    public static final DeferredBlock<AbstractBlockHut> blockHutTownHall      = registerBlockHut("blockhuttownhall", BlockHutTownHall::new, DEFAULT_HUT_BLOCK_PROPERTIES);
+    public static final DeferredBlock<AbstractBlockHut> blockHutCitizen       = registerBlockHut("blockhutcitizen", BlockHutCitizen::new, DEFAULT_HUT_BLOCK_PROPERTIES);
+    public static final DeferredBlock<AbstractBlockHut> blockHutMiner         = registerBlockHut("blockhutminer", BlockHutMiner::new, DEFAULT_HUT_BLOCK_PROPERTIES);
+    public static final DeferredBlock<AbstractBlockHut> blockHutLumberjack    = registerBlockHut("blockhutlumberjack", BlockHutLumberjack::new, DEFAULT_HUT_BLOCK_PROPERTIES);
+    public static final DeferredBlock<AbstractBlockHut> blockHutBaker         = registerBlockHut("blockhutbaker", BlockHutBaker::new, DEFAULT_HUT_BLOCK_PROPERTIES);
+    public static final DeferredBlock<AbstractBlockHut> blockHutBuilder       = registerBlockHut("blockhutbuilder", BlockHutBuilder::new, DEFAULT_HUT_BLOCK_PROPERTIES);
+    public static final DeferredBlock<AbstractBlockHut> blockHutDeliveryman   = registerBlockHut("blockhutdeliveryman", BlockHutDeliveryman::new, DEFAULT_HUT_BLOCK_PROPERTIES);
+    public static final DeferredBlock<AbstractBlockHut> blockHutBlacksmith    = registerBlockHut("blockhutblacksmith", BlockHutBlacksmith::new, DEFAULT_HUT_BLOCK_PROPERTIES);
+    public static final DeferredBlock<AbstractBlockHut> blockHutStonemason    = registerBlockHut("blockhutstonemason", BlockHutStonemason::new, DEFAULT_HUT_BLOCK_PROPERTIES);
+    public static final DeferredBlock<AbstractBlockHut> blockHutFarmer        = registerBlockHut("blockhutfarmer", BlockHutFarmer::new, DEFAULT_HUT_BLOCK_PROPERTIES);
+    public static final DeferredBlock<AbstractBlockHut> blockHutFisherman     = registerBlockHut("blockhutfisherman", BlockHutFisherman::new, DEFAULT_HUT_BLOCK_PROPERTIES);
+    public static final DeferredBlock<AbstractBlockHut> blockHutGuardTower    = registerBlockHut("blockhutguardtower", BlockHutGuardTower::new, DEFAULT_HUT_BLOCK_PROPERTIES);
+    public static final DeferredBlock<AbstractBlockHut> blockHutWareHouse     = registerBlockHut("blockhutwarehouse", BlockHutWareHouse::new, DEFAULT_HUT_BLOCK_PROPERTIES);
+    public static final DeferredBlock<AbstractBlockHut> blockHutShepherd      = registerBlockHut("blockhutshepherd", BlockHutShepherd::new, DEFAULT_HUT_BLOCK_PROPERTIES);
+    public static final DeferredBlock<AbstractBlockHut> blockHutCowboy        = registerBlockHut("blockhutcowboy", BlockHutCowboy::new, DEFAULT_HUT_BLOCK_PROPERTIES);
+    public static final DeferredBlock<AbstractBlockHut> blockHutSwineHerder   = registerBlockHut("blockhutswineherder", BlockHutSwineHerder::new, DEFAULT_HUT_BLOCK_PROPERTIES);
+    public static final DeferredBlock<AbstractBlockHut> blockHutChickenHerder = registerBlockHut("blockhutchickenherder", BlockHutChickenHerder::new, DEFAULT_HUT_BLOCK_PROPERTIES);
+    public static final DeferredBlock<AbstractBlockHut> blockHutBarracks      = registerBlockHut("blockhutbarracks", BlockHutBarracks::new, DEFAULT_HUT_BLOCK_PROPERTIES);
+    public static final DeferredBlock<AbstractBlockHut> blockHutBarracksTower = registerBlockHut("blockhutbarrackstower", BlockHutBarracksTower::new, DEFAULT_HUT_BLOCK_PROPERTIES);
+    public static final DeferredBlock<AbstractBlockHut> blockHutCook          = registerBlockHut("blockhutcook", BlockHutCook::new, DEFAULT_HUT_BLOCK_PROPERTIES);
+    public static final DeferredBlock<AbstractBlockHut> blockHutSmeltery      = registerBlockHut("blockhutsmeltery", BlockHutSmeltery::new, DEFAULT_HUT_BLOCK_PROPERTIES);
+    public static final DeferredBlock<AbstractBlockHut> blockHutComposter     = registerBlockHut("blockhutcomposter", BlockHutComposter::new, DEFAULT_HUT_BLOCK_PROPERTIES);
+    public static final DeferredBlock<AbstractBlockHut> blockHutLibrary       = registerBlockHut("blockhutlibrary", BlockHutLibrary::new, DEFAULT_HUT_BLOCK_PROPERTIES);
+    public static final DeferredBlock<AbstractBlockHut> blockHutArchery       = registerBlockHut("blockhutarchery", BlockHutArchery::new, DEFAULT_HUT_BLOCK_PROPERTIES);
+    public static final DeferredBlock<AbstractBlockHut> blockHutCombatAcademy = registerBlockHut("blockhutcombatacademy", BlockHutCombatAcademy::new, DEFAULT_HUT_BLOCK_PROPERTIES);
+    public static final DeferredBlock<AbstractBlockHut> blockHutSawmill       = registerBlockHut("blockhutsawmill", BlockHutSawmill::new, DEFAULT_HUT_BLOCK_PROPERTIES);
+    public static final DeferredBlock<AbstractBlockHut> blockHutStoneSmeltery = registerBlockHut("blockhutstonesmeltery", BlockHutStoneSmeltery::new, DEFAULT_HUT_BLOCK_PROPERTIES);
+    public static final DeferredBlock<AbstractBlockHut> blockHutCrusher       = registerBlockHut("blockhutcrusher", BlockHutCrusher::new, DEFAULT_HUT_BLOCK_PROPERTIES);
+    public static final DeferredBlock<AbstractBlockHut> blockHutSifter        = registerBlockHut("blockhutsifter", BlockHutSifter::new, DEFAULT_HUT_BLOCK_PROPERTIES);
+    public static final DeferredBlock<AbstractBlockHut> blockHutFlorist       = registerBlockHut("blockhutflorist", BlockHutFlorist::new, DEFAULT_HUT_BLOCK_PROPERTIES);
+    public static final DeferredBlock<AbstractBlockHut> blockHutEnchanter     = registerBlockHut("blockhutenchanter", BlockHutEnchanter::new, DEFAULT_HUT_BLOCK_PROPERTIES);
+    public static final DeferredBlock<AbstractBlockHut> blockHutUniversity    = registerBlockHut("blockhutuniversity", BlockHutUniversity::new, DEFAULT_HUT_BLOCK_PROPERTIES);
+    public static final DeferredBlock<AbstractBlockHut> blockHutHospital      = registerBlockHut("blockhuthospital", BlockHutHospital::new, DEFAULT_HUT_BLOCK_PROPERTIES);
+    public static final DeferredBlock<AbstractBlockHut> blockHutSchool        = registerBlockHut("blockhutschool", BlockHutSchool::new, DEFAULT_HUT_BLOCK_PROPERTIES);
+    public static final DeferredBlock<AbstractBlockHut> blockHutGlassblower   = registerBlockHut("blockhutglassblower", BlockHutGlassblower::new, DEFAULT_HUT_BLOCK_PROPERTIES);
+    public static final DeferredBlock<AbstractBlockHut> blockHutDyer          = registerBlockHut("blockhutdyer", BlockHutDyer::new, DEFAULT_HUT_BLOCK_PROPERTIES);
+    public static final DeferredBlock<AbstractBlockHut> blockHutFletcher      = registerBlockHut("blockhutfletcher", BlockHutFletcher::new, DEFAULT_HUT_BLOCK_PROPERTIES);
+    public static final DeferredBlock<AbstractBlockHut> blockHutMechanic      = registerBlockHut("blockhutmechanic", BlockHutMechanic::new, DEFAULT_HUT_BLOCK_PROPERTIES);
+    public static final DeferredBlock<AbstractBlockHut> blockHutPlantation    = registerBlockHut("blockhutplantation", BlockHutPlantation::new, DEFAULT_HUT_BLOCK_PROPERTIES);
+    public static final DeferredBlock<AbstractBlockHut> blockHutTavern        = registerBlockHut("blockhuttavern", BlockHutTavern::new, DEFAULT_HUT_BLOCK_PROPERTIES);
+    public static final DeferredBlock<AbstractBlockHut> blockHutRabbitHutch   = registerBlockHut("blockhutrabbithutch", BlockHutRabbitHutch::new, DEFAULT_HUT_BLOCK_PROPERTIES);
+    public static final DeferredBlock<AbstractBlockHut> blockHutConcreteMixer = registerBlockHut("blockhutconcretemixer", BlockHutConcreteMixer::new, DEFAULT_HUT_BLOCK_PROPERTIES);
+    public static final DeferredBlock<AbstractBlockHut> blockHutBeekeeper     = registerBlockHut("blockhutbeekeeper", BlockHutBeekeeper::new, DEFAULT_HUT_BLOCK_PROPERTIES);
+    public static final DeferredBlock<AbstractBlockHut> blockHutMysticalSite  = registerBlockHut("blockhutmysticalsite", BlockHutMysticalSite::new, DEFAULT_HUT_BLOCK_PROPERTIES);
+    public static final DeferredBlock<AbstractBlockHut> blockHutGraveyard     = registerBlockHut("blockhutgraveyard", BlockHutGraveyard::new, DEFAULT_HUT_BLOCK_PROPERTIES);
+    public static final DeferredBlock<AbstractBlockHut> blockHutNetherWorker  = registerBlockHut("blockhutnetherworker", BlockHutNetherWorker::new, DEFAULT_HUT_BLOCK_PROPERTIES);
+    public static final DeferredBlock<AbstractBlockHut> blockHutSimpleQuarry  = registerBlockHut(ModBuildings.SIMPLE_QUARRY_ID, BlockHutSimpleQuarry::new, DEFAULT_HUT_BLOCK_PROPERTIES);
+    public static final DeferredBlock<AbstractBlockHut> blockHutMediumQuarry  = registerBlockHut(ModBuildings.MEDIUM_QUARRY_ID, BlockHutMediumQuarry::new, DEFAULT_HUT_BLOCK_PROPERTIES);
+    //public static final DeferredBlock<AbstractBlockHut> blockHutLargeQuarry      = registerBlockHut(ModBuildings.LARGE_QUARRY_ID, BlockHutLargeQuarry::new, DEFAULT_HUT_BLOCK_PROPERTIES);
+    public static final DeferredBlock<AbstractBlockHut> blockHutAlchemist     = registerBlockHut("blockhutalchemist", BlockHutAlchemist::new, DEFAULT_HUT_BLOCK_PROPERTIES);
+    public static final DeferredBlock<AbstractBlockHut> blockHutKitchen       = registerBlockHut("blockhutkitchen", BlockHutKitchen::new, DEFAULT_HUT_BLOCK_PROPERTIES);
+    public static final DeferredBlock<AbstractBlockHut> blockHutGateHouse     = registerBlockHut("blockhutgatehouse", BlockHutGateHouse::new, DEFAULT_HUT_BLOCK_PROPERTIES);
 
     /**
      * Postbox & Stash.
      */
-    public static final AbstractColonyBlock blockPostBox = registerBlockHut(new BlockPostBox());
-    public static final AbstractColonyBlock blockStash   = registerBlockHut(new BlockStash());
+    public static final DeferredBlock<AbstractColonyBlock> blockPostBox = registerColonyBlock("blockpostbox", BlockPostBox::new, DEFAULT_HUT_BLOCK_PROPERTIES);
+    public static final DeferredBlock<AbstractColonyBlock> blockStash   = registerColonyBlock("blockstash", BlockStash::new, DEFAULT_HUT_BLOCK_PROPERTIES);
 
     /**
      * Utility blocks.
      */
-    public static final BlockConstructionTape       blockConstructionTape      = registerBlock(new BlockConstructionTape());
-    public static final BlockMinecoloniesRack       blockRack                  = registerBlock(new BlockMinecoloniesRack());
-    public static final BlockMinecoloniesGrave      blockGrave                 = registerBlock(new BlockMinecoloniesGrave());
-    public static final BlockMinecoloniesNamedGrave blockNamedGrave            = registerBlock(new BlockMinecoloniesNamedGrave());
-    public static final BlockWaypoint               blockWayPoint              = registerBlock(new BlockWaypoint());
-    public static final BlockBarrel                 blockBarrel                = registerBlock(new BlockBarrel());
-    public static final BlockDecorationController   blockDecorationPlaceholder = registerBlock(new BlockDecorationController());
-    public static final BlockScarecrow              blockScarecrow             = registerBlock(new BlockScarecrow());
-    public static final BlockPlantationField        blockPlantationField       = registerBlock(new BlockPlantationField());
-    public static final BlockCompostedDirt          blockCompostedDirt         = registerBlock(new BlockCompostedDirt());
-    public static final BlockColonyFlagBanner       blockColonyBanner          = registerBlock("colony_banner", new BlockColonyFlagBanner());
-    public static final BlockColonyFlagWallBanner   blockColonyWallBanner      = registerBlock("colony_wall_banner", new BlockColonyFlagWallBanner());
-    public static final BlockGate                   blockIronGate              = registerBlock(new BlockGate(BlockGate.IRON_GATE, 10f, 6, 8));
-    public static final BlockGate                   blockWoodenGate            = registerBlock(new BlockGate(BlockGate.WOODEN_GATE, 7f, 6, 5));
-    public static final BlockMinecoloniesFarmland   blockFarmland              = registerBlock(new BlockMinecoloniesFarmland(BlockMinecoloniesFarmland.FARMLAND, false, 15.0));
-    public static final BlockMinecoloniesFarmland   blockFloodedFarmland       =
-        registerBlock(new BlockMinecoloniesFarmland(BlockMinecoloniesFarmland.FLOODED_FARMLAND, true, 13.0));
-    public static final BlockColonySign             blockColonySign            = registerBlock(new BlockColonySign());
+    public static final DeferredBlock<BlockConstructionTape> blockConstructionTape = registerBlock("blockconstructiontape",
+        BlockConstructionTape::new,
+        BlockBehaviour.Properties.of()
+            .mapColor(MapColor.PLANT)
+            .sound(SoundType.WOOD)
+            .replaceable()
+            .pushReaction(PushReaction.DESTROY)
+            .isRedstoneConductor((state, getter, pos) -> false)
+            .forceSolidOff()
+            .strength(0.0f)
+            .noCollission()
+            .noLootTable());
+
+    public static final DeferredBlock<BlockMinecoloniesRack> blockRack = registerBlock("blockminecoloniesrack",
+        BlockMinecoloniesRack::new,
+        BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(10, Float.POSITIVE_INFINITY));
+
+    public static final DeferredBlock<BlockMinecoloniesGrave> blockGrave =
+        registerBlock("blockminecoloniesgrave", BlockMinecoloniesGrave::new, BlockBehaviour.Properties.of().mapColor(MapColor.STONE).sound(SoundType.STONE).strength(1.5f, 5));
+
+    public static final DeferredBlock<BlockMinecoloniesNamedGrave> blockNamedGrave = registerBlock("blockminecoloniesnamedgrave",
+        BlockMinecoloniesNamedGrave::new,
+        BlockBehaviour.Properties.of().mapColor(MapColor.STONE).sound(SoundType.STONE).strength(5, 1));
+
+    public static final DeferredBlock<BlockWaypoint> blockWayPoint =
+        registerBlock("blockwaypoint", BlockWaypoint::new, BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(0, 1).noCollission());
+
+    public static final DeferredBlock<BlockBarrel> blockBarrel =
+        registerBlock("barrel_block", BlockBarrel::new, BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(5, 1));
+
+    public static final DeferredBlock<BlockDecorationController> blockDecorationPlaceholder = registerBlock("decorationcontroller",
+        BlockDecorationController::new,
+        BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(5, 1).noCollission());
+
+    public static final DeferredBlock<BlockScarecrow> blockScarecrow =
+        registerBlock("blockhutfield", BlockScarecrow::new, BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(5, 1));
+
+    public static final DeferredBlock<BlockPlantationField> blockPlantationField =
+        registerBlock("blockhutplantationfield", BlockPlantationField::new, BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(5, 1));
+
+    public static final DeferredBlock<BlockCompostedDirt> blockCompostedDirt = registerBlock("composted_dirt",
+        BlockCompostedDirt::new,
+        BlockBehaviour.Properties.of().mapColor(MapColor.DIRT).sound(SoundType.ROOTED_DIRT).strength(5, 1).sound(SoundType.GRAVEL));
+
+    public static final DeferredBlock<BlockColonyFlagBanner> blockColonyBanner = registerBlock("colony_banner",
+        BlockColonyFlagBanner::new,
+        BlockBehaviour.Properties.of().mapColor(MapColor.WOOL).sound(SoundType.WOOL).noCollission().strength(1F).sound(SoundType.WOOL));
+
+    public static final DeferredBlock<BlockColonyFlagWallBanner> blockColonyWallBanner = registerBlock("colony_wall_banner",
+        BlockColonyFlagWallBanner::new,
+        BlockBehaviour.Properties.of().mapColor(MapColor.WOOL).sound(SoundType.WOOL).noCollission().strength(1F).sound(SoundType.WOOL));
+
+    public static final DeferredBlock<BlockGate> blockIronGate =
+        registerBlock("gate_iron", p -> new BlockGate(p, 10f, 6, 8), BlockBehaviour.Properties.of().mapColor(MapColor.METAL).sound(SoundType.METAL).noOcclusion());
+
+    public static final DeferredBlock<BlockGate> blockWoodGate =
+        registerBlock("gate_wood", p -> new BlockGate(p, 7f, 6, 5), BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).sound(SoundType.WOOD).noOcclusion());
+
+    public static final DeferredBlock<BlockMinecoloniesFarmland> blockFarmland = registerBlock("farmland",
+        p -> new BlockMinecoloniesFarmland(p, false, 15.0),
+        BlockBehaviour.Properties.of()
+            .mapColor(MapColor.DIRT)
+            .randomTicks()
+            .strength(0.6F)
+            .sound(SoundType.GRAVEL)
+            .isViewBlocking((s, g, p) -> true)
+            .isSuffocating((s, g, p) -> true));
+
+    public static final DeferredBlock<BlockMinecoloniesFarmland> blockFloodedFarmland = registerBlock("floodedfarmland",
+        p -> new BlockMinecoloniesFarmland(p, true, 13.0),
+        BlockBehaviour.Properties.of()
+            .mapColor(MapColor.DIRT)
+            .randomTicks()
+            .strength(0.6F)
+            .sound(SoundType.GRAVEL)
+            .isViewBlocking((s, g, p) -> true)
+            .isSuffocating((s, g, p) -> true));
+
+    public static final DeferredBlock<BlockColonySign> blockColonySign =
+        registerBlock("colonysign", BlockColonySign::new, BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(5, 1).noCollission());
 
     /**
      * Crop blocks.
      */
-    public static final BlockMinecoloniesCrop blockBellPepper      =
-        registerCrop(new BlockMinecoloniesCrop(BELL_PEPPER, ModBlocks.blockFarmland, List.of(Blocks.SHORT_GRASS, Blocks.TALL_GRASS), ModTags.temperateBiomes));
-    public static final BlockMinecoloniesCrop blockCabbage         =
-        registerCrop(new BlockMinecoloniesCrop(CABBAGE, ModBlocks.blockFarmland, List.of(Blocks.FERN), ModTags.coldBiomes));
-    public static final BlockMinecoloniesCrop blockChickpea        =
-        registerCrop(new BlockMinecoloniesCrop(CHICKPEA, ModBlocks.blockFarmland, List.of(Blocks.SHORT_GRASS, Blocks.TALL_GRASS, Blocks.DEAD_BUSH), ModTags.dryBiomes));
-    public static final BlockMinecoloniesCrop blockDurum           =
-        registerCrop(new BlockMinecoloniesCrop(DURUM, ModBlocks.blockFarmland, List.of(Blocks.SHORT_GRASS, Blocks.TALL_GRASS), null));
-    public static final BlockMinecoloniesCrop blockEggplant        =
-        registerCrop(new BlockMinecoloniesCrop(EGGPLANT, ModBlocks.blockFarmland, List.of(Blocks.SHORT_GRASS, Blocks.TALL_GRASS), null));
-    public static final BlockMinecoloniesCrop blockGarlic          =
-        registerCrop(new BlockMinecoloniesCrop(GARLIC, ModBlocks.blockFarmland, List.of(Blocks.SHORT_GRASS, Blocks.TALL_GRASS), null));
-    public static final BlockMinecoloniesCrop blockOnion           =
-        registerCrop(new BlockMinecoloniesCrop(ONION, ModBlocks.blockFarmland, List.of(Blocks.SHORT_GRASS, Blocks.TALL_GRASS), null));
-    public static final BlockMinecoloniesCrop blockSoyBean         =
-        registerCrop(new BlockMinecoloniesCrop(SOYBEAN, ModBlocks.blockFarmland, List.of(Blocks.SHORT_GRASS, Blocks.TALL_GRASS, Blocks.FERN), ModTags.humidBiomes));
-    public static final BlockMinecoloniesCrop blockTomato          =
-        registerCrop(new BlockMinecoloniesCrop(TOMATO, ModBlocks.blockFarmland, List.of(Blocks.SHORT_GRASS, Blocks.TALL_GRASS), ModTags.temperateBiomes));
-    public static final BlockMinecoloniesCrop blockButternutSquash =
-        registerCrop(new BlockMinecoloniesCrop(BUTTERNUT_SQUASH, ModBlocks.blockFarmland, List.of(Blocks.SHORT_GRASS, Blocks.TALL_GRASS), ModTags.coldBiomes));
-    public static final BlockMinecoloniesCrop blockCorn            =
-        registerCrop(new BlockMinecoloniesCrop(CORN, ModBlocks.blockFarmland, List.of(Blocks.SHORT_GRASS, Blocks.TALL_GRASS), ModTags.temperateBiomes));
-    public static final BlockMinecoloniesCrop blockMint            =
-        registerCrop(new BlockMinecoloniesCrop(MINT, ModBlocks.blockFarmland, List.of(Blocks.SHORT_GRASS, Blocks.TALL_GRASS), null));
-    public static final BlockMinecoloniesCrop blockNetherPepper    =
-        registerCrop(new BlockMinecoloniesCrop(NETHER_PEPPER, ModBlocks.blockFarmland, List.of(Blocks.SHORT_GRASS, Blocks.TALL_GRASS), ModTags.dryBiomes));
-    public static final BlockMinecoloniesCrop blockPeas            =
-        registerCrop(new BlockMinecoloniesCrop(PEAS, ModBlocks.blockFarmland, List.of(Blocks.SHORT_GRASS, Blocks.TALL_GRASS), ModTags.humidBiomes));
-    public static final BlockMinecoloniesCrop blockRice            =
-        registerCrop(new BlockMinecoloniesCrop(RICE, ModBlocks.blockFloodedFarmland, List.of(Blocks.SEAGRASS, Blocks.SMALL_DRIPLEAF), ModTags.humidBiomes));
+    public static final DeferredBlock<BlockMinecoloniesCrop> blockBellPepper = registerCrop("bell_pepper",
+        (p) -> new BlockMinecoloniesCrop(p, ModBlocks.blockFarmland, List.of(Blocks.SHORT_GRASS, Blocks.TALL_GRASS), ModTags.temperateBiomes),
+        DEFAULT_CROP_PROPERTIES);
+    public static final DeferredBlock<BlockMinecoloniesCrop> blockCabbage    =
+        registerCrop("cabbage", (p) -> new BlockMinecoloniesCrop(p, ModBlocks.blockFarmland, List.of(Blocks.FERN), ModTags.coldBiomes), DEFAULT_CROP_PROPERTIES);
+    public static final DeferredBlock<BlockMinecoloniesCrop> blockChickpea = registerCrop("chickpea",
+        (p) -> new BlockMinecoloniesCrop(p, ModBlocks.blockFarmland, List.of(Blocks.SHORT_GRASS, Blocks.TALL_GRASS, Blocks.DEAD_BUSH), ModTags.dryBiomes),
+        DEFAULT_CROP_PROPERTIES);
+    public static final DeferredBlock<BlockMinecoloniesCrop> blockDurum    =
+        registerCrop("durum", (p) -> new BlockMinecoloniesCrop(p, ModBlocks.blockFarmland, List.of(Blocks.SHORT_GRASS, Blocks.TALL_GRASS), null), DEFAULT_CROP_PROPERTIES);
+    public static final DeferredBlock<BlockMinecoloniesCrop> blockEggplant =
+        registerCrop("eggplant", (p) -> new BlockMinecoloniesCrop(p, ModBlocks.blockFarmland, List.of(Blocks.SHORT_GRASS, Blocks.TALL_GRASS), null), DEFAULT_CROP_PROPERTIES);
+    public static final DeferredBlock<BlockMinecoloniesCrop> blockGarlic =
+        registerCrop("garlic", (p) -> new BlockMinecoloniesCrop(p, ModBlocks.blockFarmland, List.of(Blocks.SHORT_GRASS, Blocks.TALL_GRASS), null), DEFAULT_CROP_PROPERTIES);
+    public static final DeferredBlock<BlockMinecoloniesCrop> blockOnion =
+        registerCrop("onion", (p) -> new BlockMinecoloniesCrop(p, ModBlocks.blockFarmland, List.of(Blocks.SHORT_GRASS, Blocks.TALL_GRASS), null), DEFAULT_CROP_PROPERTIES);
+    public static final DeferredBlock<BlockMinecoloniesCrop> blockSoyBean         = registerCrop("soybean",
+        (p) -> new BlockMinecoloniesCrop(p, ModBlocks.blockFarmland, List.of(Blocks.SHORT_GRASS, Blocks.TALL_GRASS, Blocks.FERN), ModTags.humidBiomes),
+        DEFAULT_CROP_PROPERTIES);
+    public static final DeferredBlock<BlockMinecoloniesCrop> blockTomato          = registerCrop("tomato",
+        (p) -> new BlockMinecoloniesCrop(p, ModBlocks.blockFarmland, List.of(Blocks.SHORT_GRASS, Blocks.TALL_GRASS), ModTags.temperateBiomes),
+        DEFAULT_CROP_PROPERTIES);
+    public static final DeferredBlock<BlockMinecoloniesCrop> blockButternutSquash = registerCrop("butternut_squash",
+        (p) -> new BlockMinecoloniesCrop(p, ModBlocks.blockFarmland, List.of(Blocks.SHORT_GRASS, Blocks.TALL_GRASS), ModTags.coldBiomes),
+        DEFAULT_CROP_PROPERTIES);
+    public static final DeferredBlock<BlockMinecoloniesCrop> blockCorn            = registerCrop("corn",
+        (p) -> new BlockMinecoloniesCrop(p, ModBlocks.blockFarmland, List.of(Blocks.SHORT_GRASS, Blocks.TALL_GRASS), ModTags.temperateBiomes),
+        DEFAULT_CROP_PROPERTIES);
+    public static final DeferredBlock<BlockMinecoloniesCrop> blockMint            =
+        registerCrop("mint", (p) -> new BlockMinecoloniesCrop(p, ModBlocks.blockFarmland, List.of(Blocks.SHORT_GRASS, Blocks.TALL_GRASS), null), DEFAULT_CROP_PROPERTIES);
+    public static final DeferredBlock<BlockMinecoloniesCrop> blockNetherPepper = registerCrop("nether_pepper",
+        (p) -> new BlockMinecoloniesCrop(p, ModBlocks.blockFarmland, List.of(Blocks.SHORT_GRASS, Blocks.TALL_GRASS), ModTags.dryBiomes),
+        DEFAULT_CROP_PROPERTIES);
+    public static final DeferredBlock<BlockMinecoloniesCrop> blockPeas         = registerCrop("peas",
+        (p) -> new BlockMinecoloniesCrop(p, ModBlocks.blockFarmland, List.of(Blocks.SHORT_GRASS, Blocks.TALL_GRASS), ModTags.humidBiomes),
+        DEFAULT_CROP_PROPERTIES);
+    public static final DeferredBlock<BlockMinecoloniesCrop> blockRice         = registerCrop("rice",
+        (p) -> new BlockMinecoloniesCrop(p, ModBlocks.blockFloodedFarmland, List.of(Blocks.SEAGRASS, Blocks.SMALL_DRIPLEAF), ModTags.humidBiomes),
+        DEFAULT_CROP_PROPERTIES);
 
     /**
      * Private constructor to hide the implicit public one.
@@ -166,34 +241,27 @@ public final class ModBlocks
     {
     }
 
-    private static <T extends AbstractColonyBlock> T registerBlockHut(final T block)
+    private static DeferredBlock<AbstractBlockHut> registerBlockHut(final String id, final Function<BlockBehaviour.Properties, AbstractBlockHut> blockBuilder, final BlockBehaviour.Properties properties)
     {
-        final T blockHut = registerBlock(block);
-        HUTS.add(blockHut);
+        final DeferredBlock<AbstractBlockHut> block = registerColonyBlock(id, blockBuilder, properties);
+        HUTS.add(block);
         return block;
     }
 
-    private static <T extends BlockMinecoloniesCrop> T registerCrop(final T block)
+    private static <T extends AbstractColonyBlock> DeferredBlock<T> registerColonyBlock(final String id, final Function<BlockBehaviour.Properties, T> blockBuilder, final BlockBehaviour.Properties properties)
     {
-        final T cropBlock = registerBlock(block);
-        CROPS.add(cropBlock);
+        return registerBlock(id, blockBuilder, properties);
+    }
+
+    private static DeferredBlock<BlockMinecoloniesCrop> registerCrop(final String id, final Function<BlockBehaviour.Properties, BlockMinecoloniesCrop> blockBuilder, final BlockBehaviour.Properties properties)
+    {
+        final DeferredBlock<BlockMinecoloniesCrop> block = registerBlock(id, blockBuilder, properties);
+        CROPS.add(block);
         return block;
     }
 
-    private static <T extends Block & IMinecoloniesBlock<?>> T registerBlock(final T block)
+    private static <T extends Block> DeferredBlock<T> registerBlock(final String id, final Function<BlockBehaviour.Properties, T> blockBuilder, final BlockBehaviour.Properties properties)
     {
-        return registerBlock(block.getRegistryName().getPath(), block);
-    }
-
-    private static <T extends Block> T registerBlock(final String id, final T block)
-    {
-        DEFERRED_REGISTER.register(id, () -> block);
-        return block;
-    }
-
-    @NotNull
-    public static Collection<BlockMinecoloniesCrop> getCrops()
-    {
-        return CROPS;
+        return DEFERRED_REGISTER.registerBlock(id, blockBuilder, properties);
     }
 }

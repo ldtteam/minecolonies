@@ -24,6 +24,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
+import net.neoforged.neoforge.registries.DeferredBlock;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Comparator;
@@ -59,9 +60,9 @@ public class CropRecipeCategory implements IRecipeCategory<CropRecipeCategory.Cr
     public static List<CropRecipe> findRecipes()
     {
         final Set<Block> sourceBlocks = new HashSet<>();
-        for (final BlockMinecoloniesCrop crop : ModBlocks.CROPS)
+        for (final DeferredBlock<BlockMinecoloniesCrop> crop : ModBlocks.CROPS)
         {
-            sourceBlocks.addAll(crop.getDroppedFrom());
+            sourceBlocks.addAll(crop.get().getDroppedFrom());
         }
 
         return sourceBlocks.stream().map(CropRecipe::new).toList();

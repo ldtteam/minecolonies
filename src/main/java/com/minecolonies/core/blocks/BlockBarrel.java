@@ -1,21 +1,16 @@
 package com.minecolonies.core.blocks;
 
 import com.minecolonies.api.blocks.ModBlocks;
-import com.minecolonies.api.blocks.interfaces.IMinecoloniesBlock;
 import com.minecolonies.api.blocks.interfaces.IMinecoloniesTickableBlock;
 import com.minecolonies.api.blocks.types.BarrelType;
 import com.minecolonies.api.tileentities.AbstractTileEntityBarrel;
-import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.tileentities.TileEntityBarrel;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
@@ -26,7 +21,6 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
-import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
@@ -35,31 +29,11 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 
-public class BlockBarrel extends HorizontalDirectionalBlock implements EntityBlock, IMinecoloniesTickableBlock, IMinecoloniesBlock<BlockItem>
+public class BlockBarrel extends HorizontalDirectionalBlock implements EntityBlock, IMinecoloniesTickableBlock
 {
     public static final EnumProperty<BarrelType> VARIANT = EnumProperty.create("variant", BarrelType.class);
 
     public static final MapCodec<BlockBarrel> CODEC = simpleCodec(BlockBarrel::new);
-
-    /**
-     * The hardness this block has.
-     */
-    private static final float  BLOCK_HARDNESS = 5F;
-
-    /**
-     * This blocks name.
-     */
-    private static final String BLOCK_NAME = "barrel_block";
-
-    /**
-     * The resistance this block has.
-     */
-    private static final float  RESISTANCE     = 1F;
-
-    public BlockBarrel()
-    {
-        this(Properties.of().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(BLOCK_HARDNESS, RESISTANCE));
-    }
 
     public BlockBarrel(final Properties properties)
     {
@@ -72,18 +46,6 @@ public class BlockBarrel extends HorizontalDirectionalBlock implements EntityBlo
     protected MapCodec<BlockBarrel> codec()
     {
         return CODEC;
-    }
-
-    @Override
-    public ResourceLocation getRegistryName()
-    {
-        return new ResourceLocation(Constants.MOD_ID, BLOCK_NAME);
-    }
-
-    @Override
-    public BlockItem createBlockItem()
-    {
-        return new BlockItem(this, new Item.Properties());
     }
 
     @Override
@@ -162,8 +124,7 @@ public class BlockBarrel extends HorizontalDirectionalBlock implements EntityBlo
     @Override
     public boolean canSurvive(final BlockState state, final LevelReader worldIn, final BlockPos pos)
     {
-        return !worldIn.isEmptyBlock(pos.below())
-                 && worldIn.getBlockState(pos.below()).getBlock() != ModBlocks.blockBarrel;
+        return !worldIn.isEmptyBlock(pos.below()) && !worldIn.getBlockState(pos.below()).is(ModBlocks.blockBarrel);
     }
 
     public static BlockState changeStateOverFullness(@NotNull final AbstractTileEntityBarrel te, @NotNull final BlockState blockState)

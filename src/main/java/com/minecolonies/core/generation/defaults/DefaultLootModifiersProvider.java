@@ -16,6 +16,7 @@ import net.neoforged.neoforge.common.conditions.ModLoadedCondition;
 import net.neoforged.neoforge.common.data.GlobalLootModifierProvider;
 import net.neoforged.neoforge.common.loot.AddTableLootModifier;
 import net.neoforged.neoforge.common.loot.LootTableIdCondition;
+import net.neoforged.neoforge.registries.DeferredBlock;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
@@ -53,9 +54,9 @@ public class DefaultLootModifiersProvider extends GlobalLootModifierProvider
     private void addCrops()
     {
         final Set<ResourceKey<LootTable>> cropSources = new HashSet<>();
-        for (final BlockMinecoloniesCrop crop : ModBlocks.CROPS)
+        for (final DeferredBlock<BlockMinecoloniesCrop> crop : ModBlocks.CROPS)
         {
-            for (final Block source : crop.getDroppedFrom())
+            for (final Block source : crop.get().getDroppedFrom())
             {
                 cropSources.add(source.getLootTable());
             }

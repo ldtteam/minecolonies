@@ -3,18 +3,15 @@ package com.minecolonies.core.blocks.huts;
 import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
-import org.jetbrains.annotations.NotNull;
 
 /**
- * Hut for the stone mason. No different from {@link AbstractBlockHut}
+ * Hut for the stonemason. No different from {@link AbstractBlockHut}
  */
 public class BlockHutStonemason extends AbstractBlockHut
 {
-    @NotNull
-    @Override
-    public String getHutName()
+    public BlockHutStonemason(final Properties properties)
     {
-        return "blockhutstonemason";
+        super(properties);
     }
 
     @Override

@@ -9,8 +9,6 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.food.FoodProperties;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
@@ -27,9 +25,9 @@ public class ItemChorusBread extends ItemFood
     /**
      * Sets the name, creative tab, and registers the Chorus Bread item.
      */
-    public ItemChorusBread()
+    public ItemChorusBread(final Properties properties)
     {
-        super(new Item.Properties().food(new FoodProperties.Builder().nutrition(5).saturationModifier(2.0F).alwaysEdible().build()), 2);
+        super(properties, 2);
     }
 
     /**

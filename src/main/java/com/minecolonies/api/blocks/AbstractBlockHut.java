@@ -15,7 +15,6 @@ import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.items.component.ModDataComponents;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.util.*;
-import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -34,8 +33,11 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.MapColor;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.items.wrapper.InvWrapper;
@@ -61,15 +63,7 @@ public abstract class AbstractBlockHut extends AbstractColonyBlock implements IA
     ISpecialCreativeHandlerAnchorBlock,
     IBuildingBrowsableBlock
 {
-    /**
-     * Constructor for a hut block.
-     * <p>
-     * Registers the block, sets the creative tab, as well as the resistance and the hardness.
-     */
-    public AbstractBlockHut()
-    {
-        super();
-    }
+    public static final BlockBehaviour.Properties DEFAULT_HUT_BLOCK_PROPERTIES = BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(10, Float.POSITIVE_INFINITY).noOcclusion();
 
     /**
      * Constructor for a hut block.
@@ -138,7 +132,7 @@ public abstract class AbstractBlockHut extends AbstractColonyBlock implements IA
 
         if (InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(player.getInventory()), this) == -1)
         {
-            requirements.add(Component.translatableEscape("com.minecolonies.coremod.hut.cost", Component.translatableEscape("block." + Constants.MOD_ID + "." + getHutName())).setStyle((Style.EMPTY).withColor(ChatFormatting.RED)));
+            requirements.add(Component.translatableEscape("com.minecolonies.coremod.hut.cost", getName()).setStyle((Style.EMPTY).withColor(ChatFormatting.RED)));
             return requirements;
         }
 
@@ -197,7 +191,7 @@ public abstract class AbstractBlockHut extends AbstractColonyBlock implements IA
         }
         catch (final NumberFormatException exception)
         {
-            Log.getLogger().error("Couldn't get level from hut: " + getHutName() + ". Potential corrubt blockEntity data.");
+            Log.getLogger().error("Couldn't get level from hut: {}. Potential corrupt blockEntity data.", getName().toString());
             return 0;
         }
     }
@@ -248,7 +242,7 @@ public abstract class AbstractBlockHut extends AbstractColonyBlock implements IA
         @Nullable final IBuilding building = IColonyManager.getInstance().getBuilding(world, pos);
         if (building == null)
         {
-            if (anchor.getBlock() != ModBlocks.blockHutTownHall)
+            if (!anchor.is(ModBlocks.blockHutTownHall))
             {
                 SoundUtils.playErrorSound(player, player.blockPosition());
                 Log.getLogger().error("BuildTool: building is null!", new Exception());
@@ -305,7 +299,7 @@ public abstract class AbstractBlockHut extends AbstractColonyBlock implements IA
 
         if (colony == null)
         {
-            if(anchor == ModBlocks.blockHutTownHall)
+            if (anchor.equals(ModBlocks.blockHutTownHall.get()))
             {
                 return true;
             }

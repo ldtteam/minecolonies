@@ -25,6 +25,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.storage.loot.LootTable;
+import net.neoforged.neoforge.registries.DeferredBlock;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -323,9 +324,9 @@ public class CustomRecipeManager
             }
         }
 
-        for (final BlockMinecoloniesCrop crop : ModBlocks.CROPS)
+        for (final DeferredBlock<BlockMinecoloniesCrop> crop : ModBlocks.CROPS)
         {
-            for (final Block source : crop.getDroppedFrom())
+            for (final Block source : crop.get().getDroppedFrom())
             {
                 lootIds.add(source.getLootTable());
             }

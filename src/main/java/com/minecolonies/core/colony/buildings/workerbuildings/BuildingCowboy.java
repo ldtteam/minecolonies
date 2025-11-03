@@ -117,9 +117,9 @@ public class BuildingCowboy extends AbstractBuilding
      */
     public ItemStack getMilkInputItem()
     {
-        if (getSetting(MILK_ITEM).getValue().equals(ModItems.largeMilkBottle.getDescriptionId()))
+        if (getSetting(MILK_ITEM).getValue().equals(ModItems.largeMilkBottle.get().getDescriptionId()))
         {
-            return ModItems.largeEmptyBottle.getDefaultInstance();
+            return ModItems.largeEmptyBottle.toStack();
         }
         return Items.BUCKET.getDefaultInstance();
     }
@@ -130,9 +130,9 @@ public class BuildingCowboy extends AbstractBuilding
      */
     public ItemStack getMilkOutputItem()
     {
-        if (getSetting(MILK_ITEM).getValue().equals(ModItems.largeMilkBottle.getDescriptionId()))
+        if (getSetting(MILK_ITEM).getValue().equals(ModItems.largeMilkBottle.get().getDescriptionId()))
         {
-            return ModItems.largeMilkBottle.getDefaultInstance();
+            return ModItems.largeMilkBottle.toStack();
         }
         return Items.MILK_BUCKET.getDefaultInstance();
     }
@@ -203,7 +203,7 @@ public class BuildingCowboy extends AbstractBuilding
                         .build());
                 recipes.add(GenericRecipe.builder()
                         .withOutput(ModItems.largeMilkBottle)
-                        .withInputs(List.of(List.of(ModItems.largeEmptyBottle.getDefaultInstance())))
+                        .withInputs(List.of(List.of(ModItems.largeEmptyBottle.toStack())))
                         .withRequiredEntity(animal.getType())
                         .build());
             }
@@ -216,7 +216,7 @@ public class BuildingCowboy extends AbstractBuilding
                     .build());
                 recipes.add(GenericRecipe.builder()
                     .withOutput(ModItems.largeMilkBottle)
-                    .withInputs(List.of(List.of(ModItems.largeEmptyBottle.getDefaultInstance())))
+                    .withInputs(List.of(List.of(ModItems.largeEmptyBottle.toStack())))
                     .withRequiredEntity(animal.getType())
                     .build());
             }

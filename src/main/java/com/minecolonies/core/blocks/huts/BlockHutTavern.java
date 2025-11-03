@@ -8,11 +8,8 @@ import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.core.colony.buildings.modules.BuildingModules;
-
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Player;
-
-import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.WARNING_DUPLICATE_TAVERN;
 
@@ -21,16 +18,9 @@ import static com.minecolonies.api.util.constant.TranslationConstants.WARNING_DU
  */
 public class BlockHutTavern extends AbstractBlockHut
 {
-    /**
-     * Block name
-     */
-    public static final String BLOCKHUT_TAVERN = "blockhuttavern";
-
-    @NotNull
-    @Override
-    public String getHutName()
+    public BlockHutTavern(final Properties properties)
     {
-        return BLOCKHUT_TAVERN;
+        super(properties);
     }
 
     @Override
@@ -39,18 +29,11 @@ public class BlockHutTavern extends AbstractBlockHut
         return ModBuildings.tavern.get();
     }
 
-    /**
-     * Check if the block can be placed at the given position by the player.
-     *
-     * @param pos the position to check.
-     * @param player the player trying to place the block.
-     * @return true if the block can be placed.
-     */
     @Override
     public boolean canPlaceAt(final BlockPos pos, final Player player)
     {
-        IColony colony = IColonyManager.getInstance().getIColony(player.level(), pos);
-        
+        final IColony colony = IColonyManager.getInstance().getIColony(player.level(), pos);
+
         for (final IBuilding building : colony.getBuildingManager().getBuildings().values())
         {
             if (colony.getWorld() != null && !colony.getWorld().isClientSide && building.hasModule(BuildingModules.TAVERN_VISITOR))

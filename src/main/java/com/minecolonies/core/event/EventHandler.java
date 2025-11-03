@@ -79,6 +79,7 @@ import net.neoforged.neoforge.event.level.ChunkEvent;
 import net.neoforged.neoforge.event.level.LevelEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
+import net.neoforged.neoforge.registries.DeferredBlock;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDateTime;
@@ -149,7 +150,7 @@ public class EventHandler
         if (event.getName().equals(BuiltInLootTables.SIMPLE_DUNGEON.location()))
         {
             final LootPool.Builder pool = LootPool.lootPool();
-            for (final BlockMinecoloniesCrop crop : ModBlocks.CROPS)
+            for (final DeferredBlock<BlockMinecoloniesCrop> crop : ModBlocks.CROPS)
             {
                 pool.add(LootItem.lootTableItem(crop)
                         .when(LootItemRandomChanceCondition.randomChance(0.005f)));

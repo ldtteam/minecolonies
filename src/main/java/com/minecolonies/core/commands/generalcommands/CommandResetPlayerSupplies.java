@@ -9,8 +9,8 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.stats.Stats;
+import net.minecraft.world.entity.player.Player;
 
 import static com.minecolonies.api.util.constant.translation.CommandTranslationConstants.COMMAND_PLAYER_NOT_FOUND;
 import static com.minecolonies.api.util.constant.translation.CommandTranslationConstants.COMMAND_RESET_SUPPLY_SUCCESS;
@@ -42,7 +42,7 @@ public class CommandResetPlayerSupplies implements IMCOPCommand
             return 0;
         }
 
-        player.awardStat(Stats.ITEM_USED.get(ModItems.supplyChest), -1);
+        player.awardStat(Stats.ITEM_USED.get(ModItems.supplyChest.get()), -1);
         context.getSource().sendSuccess(() -> Component.translatableEscape(COMMAND_RESET_SUPPLY_SUCCESS), true);
         MessageUtils.format(COMMAND_RESET_SUPPLY_SUCCESS).sendTo(player);
         return 1;

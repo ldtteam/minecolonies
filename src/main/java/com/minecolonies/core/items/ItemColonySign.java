@@ -29,7 +29,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 
 /**
@@ -45,7 +44,7 @@ public class ItemColonySign extends BlockItem
      */
     public ItemColonySign(final BlockColonySign block, final Properties properties)
     {
-        super(block, properties.stacksTo(STACKSIZE));
+        super(block, properties);
     }
 
     @Override
@@ -55,7 +54,7 @@ public class ItemColonySign extends BlockItem
         final BlockState state = ctx.getLevel().getBlockState(ctx.getClickedPos());
         if (ctx.getPlayer().isShiftKeyDown())
         {
-            if (state.getBlock() == ModBlocks.blockHutGateHouse && entity instanceof TileEntityColonyBuilding buildingEntity)
+            if (state.is(ModBlocks.blockHutGateHouse) && entity instanceof TileEntityColonyBuilding buildingEntity)
             {
                 if (!ctx.getLevel().isClientSide)
                 {

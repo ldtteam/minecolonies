@@ -13,7 +13,6 @@ import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.category.AbstractRecipeCategory;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.core.Direction;
-import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 
@@ -29,13 +28,7 @@ public class CompostRecipeCategory extends AbstractRecipeCategory<CompostRecipe>
 
     public CompostRecipeCategory(@NotNull final IGuiHelper guiHelper)
     {
-        super(
-            ModRecipeTypes.COMPOSTING,
-            Component.translatableEscape(ModBlocks.blockBarrel.getDescriptionId()),
-            guiHelper.createDrawableItemLike(ModBlocks.blockBarrel),
-            80,
-            50
-        );
+        super(ModRecipeTypes.COMPOSTING, ModBlocks.blockBarrel.get().getName(), guiHelper.createDrawableItemLike(ModBlocks.blockBarrel), 80, 50);
         this.timer = guiHelper.createTickTimer(60, BarrelType.values().length - 2, false);
     }
 
@@ -68,7 +61,7 @@ public class CompostRecipeCategory extends AbstractRecipeCategory<CompostRecipe>
                      final double mouseX, final double mouseY)
     {
         final BarrelType type = BarrelType.byMetadata(this.timer.getValue());
-        final BlockState barrel = ModBlocks.blockBarrel.defaultBlockState()
+        final BlockState barrel = ModBlocks.blockBarrel.get().defaultBlockState()
                 .setValue(BlockBarrel.FACING, Direction.SOUTH)
                 .setValue(BlockBarrel.VARIANT, type);
         RenderHelper.renderBlock(stack, barrel, 40, 20, 100, -30F, 20F, 25F);

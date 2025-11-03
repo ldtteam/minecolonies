@@ -181,7 +181,7 @@ public class GraveyardManagementModule extends AbstractBuildingModule implements
 
             colony.getWorld().destroyBlock(positionAndDirection.getA(), true, worker);
             colony.getWorld().setBlockAndUpdate(positionAndDirection.getA(),
-                    ModBlocks.blockNamedGrave.defaultBlockState().setValue(BlockMinecoloniesNamedGrave.FACING, facing));
+                    ModBlocks.blockNamedGrave.get().defaultBlockState().setValue(BlockMinecoloniesNamedGrave.FACING, facing));
 
             BlockEntity tileEntity = colony.getWorld().getBlockEntity(positionAndDirection.getA());
             if (tileEntity instanceof TileEntityNamedGrave)

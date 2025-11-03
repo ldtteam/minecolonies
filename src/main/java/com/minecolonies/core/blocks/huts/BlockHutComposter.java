@@ -4,16 +4,11 @@ import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 
-import org.jetbrains.annotations.NotNull;
-
 public class BlockHutComposter extends AbstractBlockHut
 {
-
-    @NotNull
-    @Override
-    public String getHutName()
+    public BlockHutComposter(final Properties properties)
     {
-        return "blockhutcomposter";
+        super(properties);
     }
 
     @Override

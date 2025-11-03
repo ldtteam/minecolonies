@@ -16,7 +16,6 @@ import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
-import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
@@ -39,19 +38,14 @@ public class BlockColonyFlagWallBanner extends AbstractColonyFlagBanner
             Direction.WEST,  Block.box(14.0D, 0.0D, 0.0D, 16.0D, 12.5D, 16.0D),
             Direction.EAST,  Block.box(0.0D, 0.0D, 0.0D, 2.0D, 12.5D, 16.0D)));
 
-    public BlockColonyFlagWallBanner()
+    public BlockColonyFlagWallBanner(final Properties properties)
     {
-        this(DyeColor.WHITE,
-            Properties.of().mapColor(MapColor.WOOD)
-              .sound(SoundType.WOOD)
-                .noCollission()
-                .strength(1F)
-                .sound(SoundType.WOOD));
+        this(DyeColor.WHITE, properties);
     }
 
     public BlockColonyFlagWallBanner(final DyeColor dyeColor, final Properties properties)
     {
-        super(dyeColor, properties);
+        super(DyeColor.WHITE, properties);
         this.registerDefaultState(this.stateDefinition.any().setValue(HORIZONTAL_FACING, Direction.NORTH));
     }
 

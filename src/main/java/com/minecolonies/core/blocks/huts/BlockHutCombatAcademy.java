@@ -3,18 +3,15 @@ package com.minecolonies.core.blocks.huts;
 import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * Block of the combat academy camp.
  */
 public class BlockHutCombatAcademy extends AbstractBlockHut
 {
-    @NotNull
-    @Override
-    public String getHutName()
+    public BlockHutCombatAcademy(final Properties properties)
     {
-        return "blockhutcombatacademy";
+        super(properties);
     }
 
     @Override

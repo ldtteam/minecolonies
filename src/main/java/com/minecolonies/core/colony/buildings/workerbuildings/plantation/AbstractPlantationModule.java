@@ -11,6 +11,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BoneMealItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
@@ -118,7 +119,7 @@ public abstract class AbstractPlantationModule extends AbstractBuildingExtension
     }
 
     @Override
-    public List<Item> getValidBonemeal()
+    public List<ItemLike> getValidBonemeal()
     {
         return List.of();
     }

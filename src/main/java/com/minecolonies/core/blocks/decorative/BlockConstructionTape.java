@@ -1,16 +1,11 @@
 package com.minecolonies.core.blocks.decorative;
 
-import com.minecolonies.api.blocks.interfaces.IMinecoloniesBlock;
-import com.minecolonies.api.util.constant.Constants;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Axis;
 import net.minecraft.core.Direction.Plane;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.item.FallingBlockEntity;
-import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -21,7 +16,9 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
-import net.minecraft.world.level.material.*;
+import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -34,7 +31,7 @@ import java.util.List;
 /**
  * This block is used as a border to show the size of the building. It also shows that the building is in the progress of being built.
  */
-public class BlockConstructionTape extends FallingBlock implements SimpleWaterloggedBlock, IMinecoloniesBlock<BlockItem>
+public class BlockConstructionTape extends FallingBlock implements SimpleWaterloggedBlock
 {
     public static final MapCodec<BlockConstructionTape> CODEC = simpleCodec(BlockConstructionTape::new);
 
@@ -52,32 +49,10 @@ public class BlockConstructionTape extends FallingBlock implements SimpleWaterlo
      */
     public static final BooleanProperty CORNER = BooleanProperty.create("corner");
 
-    /**
-     * This blocks name.
-     */
-    private static final String BLOCK_NAME = "blockconstructiontape";
-
-    /**
-     * Constructor for the Construction Tape decoration.
-     */
-    public BlockConstructionTape()
-    {
-        this(Properties.of()
-                .mapColor(MapColor.PLANT)
-                .sound(SoundType.WOOD)
-                .replaceable()
-                .pushReaction(PushReaction.DESTROY)
-                .isRedstoneConductor((state, getter, pos) -> false)
-                .forceSolidOff()
-                .strength(0.0f).noCollission().noLootTable());
-    }
-
     public BlockConstructionTape(final Properties properties)
     {
         super(properties);
-
         this.shapes = makeShapes(2, 2, 16, 0, 16);
-
         this.registerDefaultState(this.defaultBlockState()
                 .setValue(NORTH, false)
                 .setValue(EAST, false)
@@ -93,18 +68,6 @@ public class BlockConstructionTape extends FallingBlock implements SimpleWaterlo
     protected MapCodec<BlockConstructionTape> codec()
     {
         return CODEC;
-    }
-
-    @Override
-    public ResourceLocation getRegistryName()
-    {
-        return new ResourceLocation(Constants.MOD_ID, BLOCK_NAME);
-    }
-
-    @Override
-    public BlockItem createBlockItem()
-    {
-        return new BlockItem(this, new Item.Properties());
     }
 
     @NotNull

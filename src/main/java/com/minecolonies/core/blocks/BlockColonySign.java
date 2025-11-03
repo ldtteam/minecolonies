@@ -1,19 +1,14 @@
 package com.minecolonies.core.blocks;
 
-import com.minecolonies.api.blocks.interfaces.IMinecoloniesBlock;
 import com.minecolonies.api.blocks.interfaces.IMinecoloniesTickableBlock;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.items.component.BuildingId;
 import com.minecolonies.api.items.component.ColonyId;
-import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.core.items.ItemColonySign;
 import com.minecolonies.core.tileentities.TileEntityColonySign;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -21,12 +16,10 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.RenderShape;
-import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -37,7 +30,7 @@ import javax.annotation.Nullable;
 /**
  * Creates a colony sign block.
  */
-public class BlockColonySign extends HorizontalDirectionalBlock implements IMinecoloniesTickableBlock, IMinecoloniesBlock<ItemColonySign>
+public class BlockColonySign extends HorizontalDirectionalBlock implements IMinecoloniesTickableBlock
 {
     public static final MapCodec<BlockColonySign> CODEC = simpleCodec(BlockColonySign::new);
 
@@ -47,49 +40,14 @@ public class BlockColonySign extends HorizontalDirectionalBlock implements IMine
     public static final BooleanProperty CONNECTED = BooleanProperty.create("connected");
 
     /**
-     * The hardness this block has.
-     */
-    private static final float BLOCK_HARDNESS = 5F;
-
-    /**
-     * This blocks name.
-     */
-    private static final String BLOCK_NAME = "colonysign";
-
-    /**
-     * The resistance this block has.
-     */
-    private static final float RESISTANCE = 1F;
-
-    /**
      * Smaller shape.
      */
     private static final VoxelShape SHAPE = Shapes.box(0.1, 0.1, 0.1, 0.9, 0.9, 0.9);
-
-    /**
-     * Constructor for the colony sign.
-     */
-    public BlockColonySign()
-    {
-        this(Properties.of().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(BLOCK_HARDNESS, RESISTANCE).noCollission());
-    }
 
     public BlockColonySign(final Properties properties)
     {
         super(properties);
         this.registerDefaultState(this.defaultBlockState().setValue(CONNECTED, false));
-    }
-
-    @Override
-    public ResourceLocation getRegistryName()
-    {
-        return new ResourceLocation(Constants.MOD_ID, BLOCK_NAME);
-    }
-
-    @Override
-    public ItemColonySign createBlockItem()
-    {
-        return new ItemColonySign(this, new Item.Properties());
     }
 
     @NotNull

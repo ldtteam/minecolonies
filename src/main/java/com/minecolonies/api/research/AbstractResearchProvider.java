@@ -16,6 +16,7 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.ItemLike;
 import net.neoforged.neoforge.common.crafting.SizedIngredient;
 import org.jetbrains.annotations.NotNull;
 
@@ -348,7 +349,7 @@ public abstract class AbstractResearchProvider implements DataProvider
             {
                 json.remove("icon");
             }
-            this.json.addProperty("icon", BuiltInRegistries.ITEM.getKey(item.getItem()).toString() + ":" + item.getCount());
+            this.json.addProperty("icon", BuiltInRegistries.ITEM.getKey(item.getItem()) + ":" + item.getCount());
             return this;
         }
 
@@ -357,13 +358,13 @@ public abstract class AbstractResearchProvider implements DataProvider
          * @param item  The item to use as an icon.
          * @return this
          */
-        public Research setIcon(final Item item)
+        public Research setIcon(final ItemLike item)
         {
             if(json.has("icon"))
             {
                 json.remove("icon");
             }
-            this.json.addProperty("icon", BuiltInRegistries.ITEM.getKey(item).toString());
+            this.json.addProperty("icon", BuiltInRegistries.ITEM.getKey(item.asItem()).toString());
             return this;
         }
 
@@ -373,13 +374,13 @@ public abstract class AbstractResearchProvider implements DataProvider
          * @param count The number to mark the icon.
          * @return this
          */
-        public Research setIcon(final Item item, final int count)
+        public Research setIcon(final ItemLike item, final int count)
         {
             if(json.has("icon"))
             {
                 json.remove("icon");
             }
-            this.json.addProperty("icon", BuiltInRegistries.ITEM.getKey(item).toString() + ":" + count);
+            this.json.addProperty("icon", BuiltInRegistries.ITEM.getKey(item.asItem()) + ":" + count);
             return this;
         }
 
@@ -517,7 +518,7 @@ public abstract class AbstractResearchProvider implements DataProvider
          * @param provider The registry provider.
          * @return this.
          */
-        public Research addItemCost(final Item item, final int count, final HolderLookup.Provider provider)
+        public Research addItemCost(final ItemLike item, final int count, final HolderLookup.Provider provider)
         {
             return addItemCost(SizedIngredient.of(item, count), provider);
         }

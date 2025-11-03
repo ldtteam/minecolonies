@@ -7,11 +7,11 @@ import com.ldtteam.structurize.util.BlockUtils;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.WorldUtil;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -28,7 +28,7 @@ public class BarracksTowerHandler implements IPlacementHandler
     @Override
     public boolean canHandle(@NotNull final Level world, @NotNull final BlockPos pos, @NotNull final BlockState blockState)
     {
-         return blockState.getBlock() == ModBlocks.blockHutBarracksTower;
+         return blockState.is(ModBlocks.blockHutBarracksTower);
     }
 
     @Override

@@ -1,6 +1,5 @@
 package com.minecolonies.core.items;
 
-import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.core.tileentities.TileEntityColonyFlag;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
@@ -9,6 +8,7 @@ import net.minecraft.world.item.BannerItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BannerBlockEntity;
 import net.minecraft.world.level.block.entity.BannerPatternLayers;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -23,9 +23,9 @@ import java.util.List;
  */
 public class ItemColonyFlagBanner extends BannerItem
 {
-    public ItemColonyFlagBanner(Properties properties)
+    public ItemColonyFlagBanner(final Block standingBlock, final Block wallBlock, final Properties properties)
     {
-        super(ModBlocks.blockColonyBanner, ModBlocks.blockColonyWallBanner, properties.stacksTo(1));
+        super(standingBlock, wallBlock, properties);
     }
 
     @NotNull

@@ -23,11 +23,7 @@ import com.minecolonies.api.util.constant.WindowConstants;
 import com.minecolonies.core.client.gui.WindowHutGuide;
 import com.minecolonies.core.client.gui.WindowRequestDetail;
 import com.minecolonies.core.client.gui.citizen.RequestWindowCitizen;
-import net.minecraft.advancements.Advancement;
-import net.minecraft.advancements.AdvancementHolder;
-import net.minecraft.advancements.AdvancementType;
-import net.minecraft.advancements.Criterion;
-import net.minecraft.advancements.DisplayInfo;
+import net.minecraft.advancements.*;
 import net.minecraft.advancements.AdvancementRequirements.Strategy;
 import net.minecraft.advancements.critereon.ItemPredicate;
 import net.minecraft.advancements.critereon.ItemUsedOnLocationTrigger;
@@ -292,8 +288,8 @@ public class DefaultAdvancementsProvider extends AdvancementProvider
         final AdvancementHolder postAndStash = Advancement.Builder.advancement()
                 .parent(buildDeliveryPerson)
                 .display(make(AdvancementType.TASK, ModBlocks.blockPostBox, "post_and_stash"))
-                .addCriterion("postbox", ItemUsedOnLocationTrigger.TriggerInstance.placedBlock(ModBlocks.blockPostBox))
-                .addCriterion("stash", ItemUsedOnLocationTrigger.TriggerInstance.placedBlock(ModBlocks.blockStash))
+                .addCriterion("postbox", ItemUsedOnLocationTrigger.TriggerInstance.placedBlock(ModBlocks.blockPostBox.get()))
+                .addCriterion("stash", ItemUsedOnLocationTrigger.TriggerInstance.placedBlock(ModBlocks.blockStash.get()))
                 .save(consumer, new ResourceLocation(MOD_ID, GROUP + "post_and_stash"), fileHelper);
 
         // --- education ---

@@ -1,24 +1,19 @@
 package com.minecolonies.core.blocks;
 
 import com.minecolonies.api.blocks.interfaces.IBuildingBrowsableBlock;
-import com.minecolonies.api.blocks.interfaces.IMinecoloniesBlock;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildingextensions.registry.BuildingExtensionRegistries;
-import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.client.gui.containers.WindowField;
 import com.minecolonies.core.colony.buildingextensions.FarmField;
 import com.minecolonies.core.tileentities.TileEntityScarecrow;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
@@ -32,7 +27,6 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
-import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
@@ -43,21 +37,11 @@ import org.jetbrains.annotations.Nullable;
 /**
  * The net.minecraft.core.Directions, placement and activation.
  */
-public class BlockScarecrow extends HorizontalDirectionalBlock implements EntityBlock, IBuildingBrowsableBlock, IMinecoloniesBlock<BlockItem>
+public class BlockScarecrow extends HorizontalDirectionalBlock implements EntityBlock, IBuildingBrowsableBlock
 {
     public static final MapCodec<BlockPlantationField> CODEC = simpleCodec(BlockPlantationField::new);
 
     public static final EnumProperty<DoubleBlockHalf> HALF = BlockStateProperties.DOUBLE_BLOCK_HALF;
-
-    /**
-     * Hardness of the block.
-     */
-    private static final float HARDNESS = 10F;
-
-    /**
-     * Resistance of the block.
-     */
-    private static final float RESISTANCE = 10F;
 
     /**
      * Start of the collision box at y.
@@ -79,35 +63,10 @@ public class BlockScarecrow extends HorizontalDirectionalBlock implements Entity
      */
     private static final double HEIGHT_COLLISION = 2.2;
 
-    /**
-     * Registry name for this block.
-     */
-    private static final String REGISTRY_NAME = "blockhutfield";
-
-    /**
-     * Constructor called on block placement.
-     */
-    public BlockScarecrow()
-    {
-        this(Properties.of().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(HARDNESS, RESISTANCE));
-    }
-
     public BlockScarecrow(final Properties properties)
     {
         super(properties);
         this.registerDefaultState(this.defaultBlockState().setValue(FACING, Direction.NORTH).setValue(HALF, DoubleBlockHalf.LOWER));
-    }
-
-    @Override
-    public ResourceLocation getRegistryName()
-    {
-        return new ResourceLocation(Constants.MOD_ID, REGISTRY_NAME);
-    }
-
-    @Override
-    public BlockItem createBlockItem()
-    {
-        return new BlockItem(this, new Item.Properties());
     }
 
     @Nullable
@@ -176,19 +135,16 @@ public class BlockScarecrow extends HorizontalDirectionalBlock implements Entity
     }
 
     @Override
-    public VoxelShape getShape(
-      final BlockState state, final BlockGetter worldIn, final BlockPos pos, final CollisionContext context)
+    public VoxelShape getShape(final BlockState state, final BlockGetter worldIn, final BlockPos pos, final CollisionContext context)
     {
         // Force the different halves to share the same collision space;
         // the user will think it is one big block
-        return Shapes.box(
-          (float) START_COLLISION,
-          (float) (BOTTOM_COLLISION - (state.getValue(HALF) == DoubleBlockHalf.UPPER ? 1 : 0)),
-          (float) START_COLLISION,
-          (float) END_COLLISION,
-          (float) (HEIGHT_COLLISION - (state.getValue(HALF) == DoubleBlockHalf.UPPER ? 1 : 0)),
-          (float) END_COLLISION
-        );
+        return Shapes.box((float) START_COLLISION,
+            (float) (BOTTOM_COLLISION - (state.getValue(HALF) == DoubleBlockHalf.UPPER ? 1 : 0)),
+            (float) START_COLLISION,
+            (float) END_COLLISION,
+            (float) (HEIGHT_COLLISION - (state.getValue(HALF) == DoubleBlockHalf.UPPER ? 1 : 0)),
+            (float) END_COLLISION);
     }
 
     @Override

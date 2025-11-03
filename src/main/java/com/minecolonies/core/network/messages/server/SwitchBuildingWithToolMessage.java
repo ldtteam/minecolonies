@@ -67,7 +67,7 @@ public class SwitchBuildingWithToolMessage extends AbstractServerPlayMessage
             {
                 stackSlot = i;
             }
-            else if (player.getInventory().getItem(i).getItem() == ModItems.buildTool.get())
+            else if (player.getInventory().getItem(i).is(ModItems.buildTool))
             {
                 buildToolSlot = i;
             }
@@ -75,7 +75,7 @@ public class SwitchBuildingWithToolMessage extends AbstractServerPlayMessage
 
         for (int i = 9; i < player.getInventory().getContainerSize(); i++)
         {
-            if (player.getInventory().getItem(i).getItem() == ModItems.buildTool.get())
+            if (player.getInventory().getItem(i).is(ModItems.buildTool))
             {
                 buildToolSlot = i;
             }

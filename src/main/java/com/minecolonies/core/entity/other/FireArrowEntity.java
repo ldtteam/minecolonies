@@ -31,6 +31,6 @@ public class FireArrowEntity extends CustomArrowEntity
     @Override
     protected ItemStack getPickupItem()
     {
-        return new ItemStack(ModItems.fireArrow, 1);
+        return ModItems.fireArrow.toStack();
     }
 }

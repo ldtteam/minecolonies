@@ -233,9 +233,9 @@ public class ItemAssistantHammer extends Item
                             workOrder.getBlueprint().getBlockInfoAsMap().get(workPos.subtract(workOrder.getLocation()).offset(workOrder.getBlueprint().getPrimaryBlockOffset()));
 
                         if (blockInfo == null || blockInfo.getState() == null || blockInfo.getState().getBlock() == levelState.getBlock() || !(levelState.isAir()
-                            || !levelState.getFluidState().isEmpty()) || blockInfo.getState().getBlock() == ModBlocks.blockSubstitution.get()
-                            || blockInfo.getState().getBlock() == ModBlocks.blockFluidSubstitution.get()
-                            || blockInfo.getState().getBlock() == ModBlocks.blockTagSubstitution.get())
+                            || !levelState.getFluidState().isEmpty()) || blockInfo.getState().is(ModBlocks.blockSubstitution)
+                            || blockInfo.getState().is(ModBlocks.blockFluidSubstitution)
+                            || blockInfo.getState().is(ModBlocks.blockTagSubstitution))
                         {
                             continue;
                         }

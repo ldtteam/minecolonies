@@ -1225,7 +1225,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     public boolean hurt(@NotNull final DamageSource damageSource, final float damage)
     {
         // TODO: temporary debug data
-        if (damageSource.getEntity() instanceof Player player && player.isCreative() && player.getMainHandItem().getItem() == ModItems.scanAnalyzer)
+        if (damageSource.getEntity() instanceof Player player && player.isCreative() && player.getMainHandItem().is(ModItems.scanAnalyzer))
         {
             CompoundTag tag = new CompoundTag();
             try

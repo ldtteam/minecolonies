@@ -11,12 +11,14 @@ import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
-import net.minecraft.world.level.block.*;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.Mirror;
+import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
-import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
@@ -33,20 +35,15 @@ public class BlockColonyFlagBanner extends AbstractColonyFlagBanner
     public static final IntegerProperty ROTATION = BlockStateProperties.ROTATION_16;
     private static final VoxelShape SHAPE = Block.box(4.0D, 0.0D, 4.0D, 12.0D, 16.0D, 12.0D);
 
-    public BlockColonyFlagBanner()
+    public BlockColonyFlagBanner(final Properties properties)
     {
-        super(DyeColor.WHITE,
-            Properties.of().mapColor(MapColor.WOOD)
-              .sound(SoundType.WOOD)
-                .noCollission()
-                .strength(1F)
-                .sound(SoundType.WOOD));
+        this(DyeColor.WHITE, properties);
     }
 
     public BlockColonyFlagBanner(final DyeColor dyeColor, final Properties properties)
     {
         super(dyeColor, properties);
-        this.registerDefaultState(this.stateDefinition.any().setValue(ROTATION, Integer.valueOf(0)));
+        this.registerDefaultState(this.stateDefinition.any().setValue(ROTATION, 0));
     }
 
     @Override

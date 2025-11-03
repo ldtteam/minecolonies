@@ -3,18 +3,15 @@ package com.minecolonies.core.blocks.huts;
 import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * Hut for the mechanic. No different from {@link AbstractBlockHut}
  */
 public class BlockHutMechanic extends AbstractBlockHut
 {
-    @NotNull
-    @Override
-    public String getHutName()
+    public BlockHutMechanic(final Properties properties)
     {
-        return "blockhutmechanic";
+        super(properties);
     }
 
     @Override

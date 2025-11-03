@@ -6,11 +6,7 @@ import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.equipment.ModEquipmentTypes;
 import com.minecolonies.api.items.ModItems;
-import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.api.util.InventoryUtils;
-import com.minecolonies.api.util.StatsUtil;
-import com.minecolonies.api.util.Tuple;
-import com.minecolonies.api.util.WorldUtil;
+import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingFlorist;
 import com.minecolonies.core.colony.interactionhandling.StandardInteraction;
@@ -29,20 +25,19 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.ItemStackUtils.IS_COMPOST;
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
+import static com.minecolonies.api.util.constant.StatisticsConstants.FLOWERS_PICKED;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.core.util.WorkerUtil.isThereCompostedLand;
-import static com.minecolonies.api.util.constant.StatisticsConstants.FLOWERS_PICKED;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Florist AI class.
@@ -185,7 +180,7 @@ public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist, Bu
             }
             else
             {
-                checkIfRequestForItemExistOrCreateAsync(new ItemStack(ModItems.compost, COMPOST_REQUEST_QTY));
+                checkIfRequestForItemExistOrCreateAsync(ModItems.compost.toStack(COMPOST_REQUEST_QTY));
             }
         }
 

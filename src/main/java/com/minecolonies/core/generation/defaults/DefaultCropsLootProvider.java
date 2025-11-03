@@ -17,6 +17,7 @@ import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.entries.AlternativesEntry;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.predicates.LootItemRandomChanceCondition;
+import net.neoforged.neoforge.registries.DeferredBlock;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -48,11 +49,11 @@ public class DefaultCropsLootProvider implements LootTableSubProvider
         final HolderLookup.RegistryLookup<Enchantment> enchantments = provider.lookupOrThrow(Registries.ENCHANTMENT);
 
         final Map<ResourceLocation, List<BlockMinecoloniesCrop>> cropDrops = new HashMap<>();
-        for (final BlockMinecoloniesCrop crop : ModBlocks.CROPS)
+        for (final DeferredBlock<BlockMinecoloniesCrop> crop : ModBlocks.CROPS)
         {
-            for (final Block source : crop.getDroppedFrom())
+            for (final Block source : crop.get().getDroppedFrom())
             {
-                cropDrops.computeIfAbsent(source.getLootTable().location(), t -> new ArrayList<>()).add(crop);
+                cropDrops.computeIfAbsent(source.getLootTable().location(), t -> new ArrayList<>()).add(crop.get());
             }
         }
 
@@ -100,7 +101,7 @@ public class DefaultCropsLootProvider implements LootTableSubProvider
         }
 
         final LootPool.Builder dungeonPool = LootPool.lootPool();
-        for (final BlockMinecoloniesCrop crop : ModBlocks.getCrops())
+        for (final DeferredBlock<BlockMinecoloniesCrop> crop : ModBlocks.CROPS)
         {
             dungeonPool.add(LootItem.lootTableItem(crop)
                     .when(LootItemRandomChanceCondition.randomChance(0.005f)));

@@ -7,11 +7,11 @@ import com.ldtteam.structurize.placement.handlers.placement.PlacementHandlers;
 import com.ldtteam.structurize.util.BlockUtils;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.core.blocks.BlockMinecoloniesRack;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -40,7 +40,7 @@ public class RackPlacementHandler implements IPlacementHandler
       final BlockPos centerPos,
       final RotationMirror settings)
     {
-        if (world.getBlockState(pos).getBlock() == ModBlocks.blockRack)
+        if (world.getBlockState(pos).is(ModBlocks.blockRack))
         {
             return ActionProcessingResult.SUCCESS;
         }
@@ -62,7 +62,7 @@ public class RackPlacementHandler implements IPlacementHandler
       final boolean complete)
     {
         final List<ItemStack> itemList = new ArrayList<>();
-        if (world.getBlockState(pos).getBlock() == ModBlocks.blockRack && !complete)
+        if (world.getBlockState(pos).is(ModBlocks.blockRack) && !complete)
         {
             return itemList;
         }

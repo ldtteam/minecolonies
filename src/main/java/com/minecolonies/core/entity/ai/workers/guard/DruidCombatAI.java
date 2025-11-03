@@ -137,7 +137,7 @@ public class DruidCombatAI extends AttackMoveAI<EntityCitizen>
         boolean gotMaterial = false;
         BiPredicate<LivingEntity, MobEffect> predicate;
         if (user.getCitizenColonyHandler().getColonyOrRegister().getResearchManager().getResearchEffects().getEffectStrength(DRUID_USE_POTIONS) > 0
-              && InventoryUtils.hasItemInItemHandler(user.getInventoryCitizen(), item -> item.getItem() == ModItems.magicPotion))
+              && InventoryUtils.hasItemInItemHandler(user.getInventoryCitizen(), item -> item.is(ModItems.magicPotion)))
         {
             gotMaterial = true;
         }
@@ -157,7 +157,7 @@ public class DruidCombatAI extends AttackMoveAI<EntityCitizen>
 
         if (gotMaterial)
         {
-            InventoryUtils.removeStackFromItemHandler(user.getCitizenData().getInventory(), new ItemStack(ModItems.magicPotion, 1), 1);
+            InventoryUtils.removeStackFromItemHandler(user.getCitizenData().getInventory(), ModItems.magicPotion.toStack(), 1);
         }
 
         this.instantEffect = effect.value().isInstantenous();

@@ -4,10 +4,11 @@ import com.ldtteam.blockui.views.BOWindow;
 import com.minecolonies.api.colony.buildings.modules.AbstractBuildingModuleView;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.client.gui.modules.ToolModuleWindow;
-import net.minecraft.network.chat.Component;
-import net.minecraft.world.item.Item;
+import net.minecraft.core.Holder;
 import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
@@ -20,13 +21,13 @@ public class ToolModuleView extends AbstractBuildingModuleView
     /**
      * The worker specific tool.
      */
-    private final Item tool;
+    private final Holder<Item> tool;
 
     /**
      * The tool of the worker.
      * @param tool the item.
      */
-    public ToolModuleView(final Item tool)
+    public ToolModuleView(final Holder<Item> tool)
     {
         super();
         this.tool = tool;
@@ -63,6 +64,6 @@ public class ToolModuleView extends AbstractBuildingModuleView
      */
     public Item getTool()
     {
-        return tool;
+        return tool.value();
     }
 }

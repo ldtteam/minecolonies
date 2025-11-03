@@ -8,6 +8,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
@@ -94,7 +95,7 @@ public interface IPlantationModule extends IBuildingExtensionModule
      * Returns which items are considered valid bonemeal items.
      * Defaults to an empty list. (Most modules should not need any bonemeal).
      */
-    List<Item> getValidBonemeal();
+    List<ItemLike> getValidBonemeal();
 
     /**
      * Determines where the planter should walk to, in order to most effectively work on the given working position.

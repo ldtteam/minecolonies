@@ -6,14 +6,14 @@ import com.ldtteam.structurize.placement.handlers.placement.IPlacementHandler;
 import com.ldtteam.structurize.placement.handlers.placement.PlacementHandlers;
 import com.ldtteam.structurize.util.BlockUtils;
 import com.minecolonies.api.blocks.ModBlocks;
-import com.minecolonies.core.tileentities.TileEntityGrave;
 import com.minecolonies.core.blocks.BlockMinecoloniesGrave;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.level.block.entity.BlockEntity;
+import com.minecolonies.core.tileentities.TileEntityGrave;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -41,7 +41,7 @@ public class GravePlacementHandler implements IPlacementHandler
       final BlockPos centerPos,
       final RotationMirror settings)
     {
-        if (world.getBlockState(pos).getBlock() == ModBlocks.blockGrave)
+        if (world.getBlockState(pos).is(ModBlocks.blockGrave))
         {
             return ActionProcessingResult.SUCCESS;
         }

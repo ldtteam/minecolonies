@@ -47,7 +47,7 @@ public class ItemLargeBottle extends Item
         @NotNull final LivingEntity entity,
         @NotNull final InteractionHand hand)
     {
-        if (this != ModItems.largeEmptyBottle)
+        if (this != ModItems.largeEmptyBottle.get())
         {
             return super.interactLivingEntity(stack, player, entity, hand);
         }
@@ -55,9 +55,9 @@ public class ItemLargeBottle extends Item
         if (entity instanceof Cow && !entity.isBaby())
         {
             player.playSound(SoundEvents.COW_MILK, 1.0F, 1.0F);
-            if (!InventoryUtils.addItemStackToItemHandler(new PlayerMainInvWrapper(player.getInventory()), ModItems.largeMilkBottle.getDefaultInstance()))
+            if (!InventoryUtils.addItemStackToItemHandler(new PlayerMainInvWrapper(player.getInventory()), ModItems.largeMilkBottle.toStack()))
             {
-                player.drop(ModItems.largeMilkBottle.getDefaultInstance(), false);
+                player.drop(ModItems.largeMilkBottle.toStack(), false);
             }
             stack.shrink(1);
             player.getCooldowns().addCooldown(this, TICKS_SECOND * 10);
@@ -66,9 +66,9 @@ public class ItemLargeBottle extends Item
         else if (entity instanceof final Goat goat && !entity.isBaby())
         {
             player.playSound((goat.isScreamingGoat() ? SoundEvents.GOAT_SCREAMING_MILK : SoundEvents.GOAT_MILK), 1.0F, 1.0F);
-            if (!InventoryUtils.addItemStackToItemHandler(new PlayerMainInvWrapper(player.getInventory()), ModItems.largeMilkBottle.getDefaultInstance()))
+            if (!InventoryUtils.addItemStackToItemHandler(new PlayerMainInvWrapper(player.getInventory()), ModItems.largeMilkBottle.toStack()))
             {
-                player.drop(ModItems.largeMilkBottle.getDefaultInstance(), false);
+                player.drop(ModItems.largeMilkBottle.toStack(), false);
             }
             stack.shrink(1);
             player.getCooldowns().addCooldown(this, TICKS_SECOND * 10);
@@ -78,12 +78,29 @@ public class ItemLargeBottle extends Item
         return super.interactLivingEntity(stack, player, entity, hand);
     }
 
+    @Override
+    public boolean hasCraftingRemainingItem(final @NotNull ItemStack itemStack)
+    {
+        return !itemStack.is(ModItems.largeEmptyBottle);
+    }
+
+    @Override
+    @NotNull
+    public ItemStack getCraftingRemainingItem(final @NotNull ItemStack itemStack)
+    {
+        if (itemStack.is(ModItems.largeEmptyBottle))
+        {
+            return ItemStack.EMPTY;
+        }
+        return ModItems.largeEmptyBottle.toStack();
+    }
+
     @NotNull
     @Override
     public InteractionResultHolder<ItemStack> use(@NotNull final Level level, final Player player, @NotNull final InteractionHand hand)
     {
         final ItemStack itemstack = player.getItemInHand(hand);
-        if (this != ModItems.largeEmptyBottle)
+        if (this != ModItems.largeEmptyBottle.get())
         {
             return InteractionResultHolder.pass(itemstack);
         }
@@ -102,9 +119,9 @@ public class ItemLargeBottle extends Item
                 if (level.getFluidState(blockpos).is(FluidTags.WATER))
                 {
                     level.playSound(player, player.getX(), player.getY(), player.getZ(), SoundEvents.BOTTLE_FILL, SoundSource.NEUTRAL, 1.0F, 1.0F);
-                    if (!InventoryUtils.addItemStackToItemHandler(new PlayerMainInvWrapper(player.getInventory()), ModItems.largeWaterBottle.getDefaultInstance()))
+                    if (!InventoryUtils.addItemStackToItemHandler(new PlayerMainInvWrapper(player.getInventory()), ModItems.largeWaterBottle.toStack()))
                     {
-                        player.drop(ModItems.largeWaterBottle.getDefaultInstance(), false);
+                        player.drop(ModItems.largeWaterBottle.toStack(), false);
                     }
                     itemstack.shrink(1);
                     player.getCooldowns().addCooldown(this, TICKS_SECOND);

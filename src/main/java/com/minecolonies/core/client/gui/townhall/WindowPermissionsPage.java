@@ -437,7 +437,7 @@ public class WindowPermissionsPage extends AbstractWindowTownHall
      */
     private void giveBlockTool(final Button button)
     {
-        new GiveToolMessage(buildingView, ModItems.permTool).sendToServer();
+        new GiveToolMessage(buildingView, ModItems.permTool.get()).sendToServer();
     }
 
     /**

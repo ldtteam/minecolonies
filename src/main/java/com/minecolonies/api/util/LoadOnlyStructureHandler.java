@@ -3,7 +3,7 @@ package com.minecolonies.api.util;
 import com.ldtteam.structurize.api.RotationMirror;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.placement.structure.CreativeStructureHandler;
-import com.minecolonies.api.blocks.ModBlocks;
+import com.minecolonies.api.items.ModItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.ItemStack;
@@ -84,9 +84,6 @@ public class LoadOnlyStructureHandler extends CreativeStructureHandler
     @Override
     public boolean isStackFree(@Nullable final ItemStack itemStack)
     {
-        return itemStack == null
-                 || itemStack.isEmpty()
-                 || itemStack.is(ItemTags.LEAVES)
-                 || itemStack.getItem() == new ItemStack(ModBlocks.blockDecorationPlaceholder, 1).getItem();
+        return itemStack == null || itemStack.isEmpty() || itemStack.is(ItemTags.LEAVES) || itemStack.is(ModItems.blockItemDecorationPlaceholder);
     }
 }

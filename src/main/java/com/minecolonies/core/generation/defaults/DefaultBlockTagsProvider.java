@@ -1,6 +1,6 @@
 package com.minecolonies.core.generation.defaults;
 
-import com.minecolonies.api.blocks.AbstractColonyBlock;
+import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.items.ModTags;
 import net.minecraft.core.HolderLookup;
@@ -12,6 +12,8 @@ import net.minecraft.world.level.block.Blocks;
 import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.common.data.BlockTagsProvider;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
+import net.neoforged.neoforge.registries.DeferredHolder;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.concurrent.CompletableFuture;
@@ -31,7 +33,7 @@ public class DefaultBlockTagsProvider extends BlockTagsProvider
     }
 
     @Override
-    protected void addTags(final HolderLookup.Provider holder)
+    protected void addTags(final @NotNull HolderLookup.Provider holder)
     {
         tag(ModTags.decorationItems)
                 .add(Blocks.DEAD_BRAIN_CORAL_BLOCK)
@@ -46,8 +48,8 @@ public class DefaultBlockTagsProvider extends BlockTagsProvider
                 .add(Blocks.TUBE_CORAL_BLOCK)
                 .add(Blocks.BELL)
                 .add(Blocks.LANTERN)
-                .add(ModBlocks.blockWoodenGate)
-                .add(ModBlocks.blockIronGate)
+                .add(ModBlocks.blockWoodGate.get())
+                .add(ModBlocks.blockIronGate.get())
                 .addTag(BlockTags.BANNERS)
                 .addTag(BlockTags.SIGNS)
                 .addTag(BlockTags.CAMPFIRES);
@@ -170,25 +172,25 @@ public class DefaultBlockTagsProvider extends BlockTagsProvider
                 .addTags(BlockTags.BASE_STONE_OVERWORLD, BlockTags.BASE_STONE_NETHER);
 
         tag(BlockTags.MINEABLE_WITH_PICKAXE)
-                .add(ModBlocks.blockIronGate);
+                .add(ModBlocks.blockIronGate.get());
 
         tag(BlockTags.MINEABLE_WITH_AXE)
-                .add(ModBlocks.blockBarrel)
-                .add(ModBlocks.blockRack)
-                .add(ModBlocks.blockWoodenGate)
-                .add(ModBlocks.blockScarecrow)
-                .add(ModBlocks.blockDecorationPlaceholder)
-                .add(ModBlocks.blockColonyBanner)
-                .add(ModBlocks.blockColonyWallBanner)
-                .add(ModBlocks.blockPostBox)
-                .add(ModBlocks.blockStash)
-                .add(ModBlocks.blockPlantationField)
-                .add(ModBlocks.HUTS.toArray(new AbstractColonyBlock[0]));
+                .add(ModBlocks.blockBarrel.get())
+                .add(ModBlocks.blockRack.get())
+                .add(ModBlocks.blockWoodGate.get())
+                .add(ModBlocks.blockScarecrow.get())
+                .add(ModBlocks.blockDecorationPlaceholder.get())
+                .add(ModBlocks.blockColonyBanner.get())
+                .add(ModBlocks.blockColonyWallBanner.get())
+                .add(ModBlocks.blockPostBox.get())
+                .add(ModBlocks.blockStash.get())
+                .add(ModBlocks.blockPlantationField.get())
+                .add(ModBlocks.HUTS.stream().map(DeferredHolder::get).toArray(AbstractBlockHut[]::new));
 
         tag(BlockTags.MINEABLE_WITH_SHOVEL)
-                .add(ModBlocks.blockCompostedDirt)
-                .add(ModBlocks.blockGrave)
-                .add(ModBlocks.blockNamedGrave);
+                .add(ModBlocks.blockCompostedDirt.get())
+                .add(ModBlocks.blockGrave.get())
+                .add(ModBlocks.blockNamedGrave.get());
         tag(ModTags.validSpawn)
           .add(Blocks.AIR, Blocks.CAVE_AIR, Blocks.SNOW, Blocks.TALL_GRASS, Blocks.SHORT_GRASS, Blocks.FERN, Blocks.TORCH)
           .addTags(BlockTags.BUTTONS)

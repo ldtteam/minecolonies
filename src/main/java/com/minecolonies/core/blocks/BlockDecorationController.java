@@ -2,24 +2,19 @@ package com.minecolonies.core.blocks;
 
 import com.ldtteam.structurize.blocks.interfaces.IAnchorBlock;
 import com.ldtteam.structurize.blocks.interfaces.ILeveledBlueprintAnchorBlock;
-import com.minecolonies.api.blocks.interfaces.IMinecoloniesBlock;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.entity.ai.workers.util.IBuilderUndestroyable;
-import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.client.gui.WindowDecorationController;
 import com.minecolonies.core.tileentities.TileEntityDecorationController;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
@@ -34,7 +29,6 @@ import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
-import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
@@ -52,26 +46,11 @@ import static com.minecolonies.api.util.constant.BuildingConstants.LEISURE;
  * Creates a decoration controller block.
  */
 public class BlockDecorationController extends DirectionalBlock
-    implements IBuilderUndestroyable, IAnchorBlock, EntityBlock, ILeveledBlueprintAnchorBlock, SimpleWaterloggedBlock, IMinecoloniesBlock<BlockItem>
+    implements IBuilderUndestroyable, IAnchorBlock, EntityBlock, ILeveledBlueprintAnchorBlock, SimpleWaterloggedBlock
 {
     public static final MapCodec<BlockDecorationController> CODEC = simpleCodec(BlockDecorationController::new);
 
     public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
-
-    /**
-     * The hardness this block has.
-     */
-    private static final float BLOCK_HARDNESS = 5F;
-
-    /**
-     * This blocks name.
-     */
-    private static final String BLOCK_NAME = "decorationcontroller";
-
-    /**
-     * The resistance this block has.
-     */
-    private static final float RESISTANCE = 1F;
 
     /**
      * If the block is mirrored.
@@ -93,14 +72,6 @@ public class BlockDecorationController extends DirectionalBlock
     protected static final VoxelShape AABB_UP = Shapes.box(0.25D, 0.7D, 0.14D, 0.75D, 1.0D, 0.686D);
     protected static final VoxelShape AABB_DOWN = Shapes.box(0.25D, 0.0D, 0.314D, 0.75D, 0.3D, 0.86D);
 
-    /**
-     * Constructor for the deco controller.
-     */
-    public BlockDecorationController()
-    {
-        this(Properties.of().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(BLOCK_HARDNESS, RESISTANCE).noCollission());
-    }
-
     public BlockDecorationController(final Properties properties)
     {
         super(properties);
@@ -108,21 +79,10 @@ public class BlockDecorationController extends DirectionalBlock
     }
 
     @Override
+    @NotNull
     protected MapCodec<BlockDecorationController> codec()
     {
         return CODEC;
-    }
-
-    @Override
-    public ResourceLocation getRegistryName()
-    {
-        return new ResourceLocation(Constants.MOD_ID, BLOCK_NAME);
-    }
-
-    @Override
-    public BlockItem createBlockItem()
-    {
-        return new BlockItem(this, new Item.Properties());
     }
 
     @Override

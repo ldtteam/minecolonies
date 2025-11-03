@@ -303,7 +303,7 @@ public class TileEntityRack extends AbstractTileEntityRack implements IMateriall
         {
             final boolean beforeEmpty = content.isEmpty();
             updateContent();
-            if (getBlockState().getBlock() == ModBlocks.blockRack)
+            if (getBlockState().is(ModBlocks.blockRack))
             {
                 boolean afterEmpty = content.isEmpty();
                 @Nullable final BlockEntity potentialNeighbor = getOtherChest();
@@ -362,7 +362,7 @@ public class TileEntityRack extends AbstractTileEntityRack implements IMateriall
     @Override
     public AbstractTileEntityRack getOtherChest()
     {
-        if (getBlockState().getBlock() != ModBlocks.blockRack)
+        if (!getBlockState().is(ModBlocks.blockRack))
         {
             return null;
         }
@@ -499,7 +499,7 @@ public class TileEntityRack extends AbstractTileEntityRack implements IMateriall
             return lastItemHandlerCap;
         }
 
-        if (getBlockState().getBlock() != ModBlocks.blockRack)
+        if (!getBlockState().is(ModBlocks.blockRack))
         {
             lastItemHandlerCap = new CombinedItemHandler(RACK, getInventory());
             return lastItemHandlerCap;

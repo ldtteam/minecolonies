@@ -5,11 +5,8 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
-import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.food.FoodProperties;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
@@ -25,14 +22,10 @@ public class ItemSugaryBread extends ItemFood
 {
     /**
      * Sets the name, creative tab, and registers the Sweet Bread item.
-     *
      */
-    public ItemSugaryBread()
+    public ItemSugaryBread(final Properties properties)
     {
-        super(new Item.Properties().food(new FoodProperties.Builder().nutrition(6)
-            .saturationModifier(0.7F)
-            .effect(() -> new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 600), 1.0F)
-            .build()), 1);
+        super(properties, 1);
     }
 
    /**
@@ -45,10 +38,10 @@ public class ItemSugaryBread extends ItemFood
         {
             entityLiving.removeEffect(MobEffects.POISON);
         }
-  
+
         return super.finishUsingItem(stack, worldIn, entityLiving);
-    }    
-    
+    }
+
     @Override
     public void appendHoverText(
     @NotNull final ItemStack stack, @Nullable final TooltipContext ctx, @NotNull final List<Component> tooltip, @NotNull final TooltipFlag flagIn)

@@ -2,14 +2,12 @@ package com.minecolonies.core.blocks;
 
 import com.ldtteam.domumornamentum.block.IMateriallyTexturedBlock;
 import com.ldtteam.domumornamentum.block.IMateriallyTexturedBlockComponent;
-import com.minecolonies.api.blocks.interfaces.IMinecoloniesBlock;
 import com.minecolonies.api.blocks.types.RackType;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.tileentities.AbstractTileEntityRack;
 import com.minecolonies.api.util.InventoryUtils;
-import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.tileentities.TileEntityRack;
 import com.mojang.serialization.MapCodec;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
@@ -17,14 +15,11 @@ import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.data.recipes.RecipeOutput;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
@@ -36,7 +31,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
-import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
@@ -52,7 +46,7 @@ import java.util.stream.Collectors;
 /**
  * Block for the shelves of the warehouse.
  */
-public class BlockMinecoloniesRack extends HorizontalDirectionalBlock implements EntityBlock, IMateriallyTexturedBlock, IMinecoloniesBlock<BlockItem>
+public class BlockMinecoloniesRack extends HorizontalDirectionalBlock implements EntityBlock, IMateriallyTexturedBlock
 {
     public static final MapCodec<BlockMinecoloniesRack> CODEC = simpleCodec(BlockMinecoloniesRack::new);
 
@@ -66,55 +60,20 @@ public class BlockMinecoloniesRack extends HorizontalDirectionalBlock implements
     /**
      * Normal translation we use.
      */
-    private static final Long2ObjectMap<Direction> BY_NORMAL = Arrays.stream(Direction.values()).collect(Collectors.toMap((p_235679_) -> {
-        return (new BlockPos(p_235679_.getNormal())).asLong();
-    }, (p_235675_) -> {
-        return p_235675_;
-    }, (p_235670_, p_235671_) -> {
-        throw new IllegalArgumentException("Duplicate keys");
-    }, Long2ObjectOpenHashMap::new));
-
-    /**
-     * The hardness this block has.
-     */
-    private static final float BLOCK_HARDNESS = 10.0F;
-
-    /**
-     * This blocks name.
-     */
-    private static final String BLOCK_NAME = "blockminecoloniesrack";
-
-    /**
-     * The resistance this block has.
-     */
-    private static final float RESISTANCE = Float.POSITIVE_INFINITY;
+    private static final Long2ObjectMap<Direction> BY_NORMAL = Arrays.stream(Direction.values())
+        .collect(Collectors.toMap(direction -> (new BlockPos(direction.getNormal())).asLong(), d -> d, (p_235670_, p_235671_) -> {
+            throw new IllegalArgumentException("Duplicate keys");
+        }, Long2ObjectOpenHashMap::new));
 
     /**
      * Smaller shape.
      */
     private static final VoxelShape SHAPE = Shapes.box(0.1, 0.1, 0.1, 0.9, 0.9, 0.9);
 
-    public BlockMinecoloniesRack()
-    {
-        this(Properties.of().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(BLOCK_HARDNESS, RESISTANCE));
-    }
-
     public BlockMinecoloniesRack(final Properties properties)
     {
         super(properties);
         this.registerDefaultState(this.defaultBlockState().setValue(FACING, Direction.NORTH).setValue(VARIANT, RackType.EMPTY));
-    }
-
-    @Override
-    public ResourceLocation getRegistryName()
-    {
-        return new ResourceLocation(Constants.MOD_ID, BLOCK_NAME);
-    }
-
-    @Override
-    public BlockItem createBlockItem()
-    {
-        return new BlockItem(this, new Item.Properties());
     }
 
     @Override
