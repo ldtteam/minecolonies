@@ -137,7 +137,7 @@ public class ServerConfiguration extends AbstractConfiguration
         allowInfiniteSupplyChests = defineBoolean("allowinfinitesupplychests", false);
         allowInfiniteColonies = defineBoolean("allowinfinitecolonies", false);
         allowOtherDimColonies = defineBoolean("allowotherdimcolonies", true);
-        maxCitizenPerColony = defineInteger("maxcitizenpercolony", 250, 100, CitizenConstants.CITIZEN_LIMIT_MAX);
+        maxCitizenPerColony = defineInteger("maxcitizenpercolony", 250, 25, CitizenConstants.CITIZEN_LIMIT_MAX);
         enableInDevelopmentFeatures = defineBoolean("enableindevelopmentfeatures", false);
         alwaysRenderNameTag = defineBoolean("alwaysrendernametag", true);
         workersAlwaysWorkInRain = defineBoolean("workersalwaysworkinrain", false);

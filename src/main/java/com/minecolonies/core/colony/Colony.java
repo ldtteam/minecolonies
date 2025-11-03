@@ -74,6 +74,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import static com.minecolonies.api.colony.ColonyState.*;
 import static com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickRateConstants.MAX_TICKRATE;
+import static com.minecolonies.api.research.util.ResearchConstants.SHIELD_USAGE;
 import static com.minecolonies.api.util.constant.ColonyConstants.*;
 import static com.minecolonies.api.util.constant.Constants.DEFAULT_STYLE;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
@@ -689,6 +690,10 @@ public class Colony implements IColony
     public void setColonyFlag(BannerPatternLayers colonyFlag)
     {
         this.colonyFlag = colonyFlag;
+        if (researchManager.getResearchEffects().getEffectStrength(SHIELD_USAGE) > 0)
+        {
+            citizenManager.onFlagChange();
+        }
         markDirty();
     }
 

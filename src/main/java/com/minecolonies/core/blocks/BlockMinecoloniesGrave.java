@@ -28,11 +28,18 @@ import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.neoforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
+
+import net.minecraft.core.Direction;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.level.block.Mirror;
+import net.minecraft.world.level.block.Rotation;
 
 /**
  * Block for the graves
@@ -128,18 +135,6 @@ public class BlockMinecoloniesGrave extends HorizontalDirectionalBlock implement
     }
 
     @Override
-    public void spawnAfterBreak(final BlockState state, final ServerLevel worldIn, final BlockPos pos, final ItemStack stack, final boolean p_222953_)
-    {
-        final BlockEntity tileentity = worldIn.getBlockEntity(pos);
-        if (tileentity instanceof TileEntityGrave)
-        {
-            final IItemHandler handler = ((AbstractTileEntityGrave) tileentity).getInventory();
-            InventoryUtils.dropItemHandler(handler, worldIn, pos.getX(), pos.getY(), pos.getZ());
-        }
-        super.spawnAfterBreak(state, worldIn, pos, stack, p_222953_);
-    }
-
-    @Override
     public ItemInteractionResult useItemOn(
       final ItemStack stack,
       final BlockState state,
@@ -203,14 +198,13 @@ public class BlockMinecoloniesGrave extends HorizontalDirectionalBlock implement
         if (state.getBlock() != newState.getBlock())
         {
             BlockEntity tileEntity = worldIn.getBlockEntity(pos);
-            if (tileEntity instanceof TileEntityGrave)
+            if (tileEntity instanceof TileEntityGrave tileEntityGrave)
             {
-                TileEntityGrave tileEntityGrave = (TileEntityGrave) tileEntity;
                 InventoryUtils.dropItemHandler(tileEntityGrave.getInventory(),
-                  worldIn,
-                  tileEntityGrave.getBlockPos().getX(),
-                  tileEntityGrave.getBlockPos().getY(),
-                  tileEntityGrave.getBlockPos().getZ());
+                    worldIn,
+                    tileEntityGrave.getBlockPos().getX(),
+                    tileEntityGrave.getBlockPos().getY(),
+                    tileEntityGrave.getBlockPos().getZ());
                 worldIn.updateNeighbourForOutputSignal(pos, this);
             }
 

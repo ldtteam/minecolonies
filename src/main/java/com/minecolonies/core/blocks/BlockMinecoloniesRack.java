@@ -6,7 +6,6 @@ import com.minecolonies.api.blocks.types.RackType;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.permissions.Action;
-import com.minecolonies.api.tileentities.AbstractTileEntityRack;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.core.tileentities.TileEntityRack;
 import com.mojang.serialization.MapCodec;
@@ -14,6 +13,7 @@ import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -36,12 +36,14 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.neoforged.neoforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import net.minecraft.data.recipes.RecipeOutput;
+import net.minecraft.world.InteractionHand;
 
 /**
  * Block for the shelves of the warehouse.
@@ -209,18 +211,6 @@ public class BlockMinecoloniesRack extends HorizontalDirectionalBlock implements
     }
 
     @Override
-    public void spawnAfterBreak(final BlockState state, final ServerLevel worldIn, final BlockPos pos, final ItemStack stack, final boolean p_222953_)
-    {
-        final BlockEntity tileentity = worldIn.getBlockEntity(pos);
-        if (tileentity instanceof TileEntityRack)
-        {
-            final IItemHandler handler = ((AbstractTileEntityRack) tileentity).getInventory();
-            InventoryUtils.dropItemHandler(handler, worldIn, pos.getX(), pos.getY(), pos.getZ());
-        }
-        super.spawnAfterBreak(state, worldIn, pos, stack, p_222953_);
-    }
-
-    @Override
     public ItemInteractionResult useItemOn(
       final ItemStack p_316304_,
       final BlockState state,
@@ -298,6 +288,6 @@ public class BlockMinecoloniesRack extends HorizontalDirectionalBlock implements
     @Override
     public void buildRecipes(final RecipeOutput recipeOutput)
     {
-        // noop, for DO blocks only        
+        // noop, for DO blocks only
     }
 }
