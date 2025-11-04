@@ -77,20 +77,10 @@ public abstract class AbstractBuildingWindow<B extends IBuildingView> extends Ab
         this.buildingView = buildingView;
         this.iconRandom = new Random(buildingView.getID().hashCode());
 
-        boolean anyVisible = false;
-        for (final IBuildingModuleView view : buildingView.getAllModuleViews())
+        int nextTabIndex = 0;
+        if (!buildingView.getAllModuleViews().isEmpty())
         {
-            if (view.isPageVisible())
-            {
-                anyVisible = true;
-                break;
-            }
-        }
-
-        //TODO: We have to move this to 0 as soon as we're finished with modularization and remove the switch views in favor of a sidenav xml.
-        if (!buildingView.getAllModuleViews().isEmpty() && anyVisible)
-        {
-            renderTabButton(0,
+            renderTabButton(nextTabIndex++,
                 TabImageSide.LEFT,
                 new ResourceLocation(Constants.MOD_ID, "textures/gui/modules/main.png"),
                 Component.translatable(LABEL_MAIN_TAB_NAME),
@@ -98,15 +88,14 @@ public abstract class AbstractBuildingWindow<B extends IBuildingView> extends Ab
         }
 
         final List<IBuildingModuleView> allModuleViews = buildingView.getAllModuleViews();
-        for (int i = 0; i < allModuleViews.size(); i++)
+        for (final IBuildingModuleView view : allModuleViews)
         {
-            final IBuildingModuleView view = allModuleViews.get(i);
             if (!view.isPageVisible())
             {
                 continue;
             }
 
-            renderTabButton(i, TabImageSide.LEFT, view.getIconResourceLocation(), Optional.ofNullable(view.getDesc()).map(Component::copy).orElse(null), button -> {
+            renderTabButton(nextTabIndex++, TabImageSide.LEFT, view.getIconResourceLocation(), Optional.ofNullable(view.getDesc()).map(Component::copy).orElse(null), button -> {
                 mc.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.BOOK_PAGE_TURN, 1.0F));
                 view.getWindow().open();
             });
