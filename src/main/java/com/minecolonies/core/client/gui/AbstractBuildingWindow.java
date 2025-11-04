@@ -78,14 +78,12 @@ public abstract class AbstractBuildingWindow<B extends IBuildingView> extends Ab
         this.iconRandom = new Random(buildingView.getID().hashCode());
 
         int nextTabIndex = 0;
-        if (!buildingView.getAllModuleViews().isEmpty())
-        {
-            renderTabButton(nextTabIndex++,
-                TabImageSide.LEFT,
-                new ResourceLocation(Constants.MOD_ID, "textures/gui/modules/main.png"),
-                Component.translatable(LABEL_MAIN_TAB_NAME),
-                button -> buildingView.getWindow().open());
-        }
+
+        renderTabButton(nextTabIndex++,
+            TabImageSide.LEFT,
+            new ResourceLocation(Constants.MOD_ID, "textures/gui/modules/main.png"),
+            Component.translatable(LABEL_MAIN_TAB_NAME),
+            button -> buildingView.getWindow().open());
 
         final List<IBuildingModuleView> allModuleViews = buildingView.getAllModuleViews();
         for (final IBuildingModuleView view : allModuleViews)
