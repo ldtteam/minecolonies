@@ -1,12 +1,12 @@
 package com.minecolonies.core.entity.mobs.aitasks;
 
-import com.minecolonies.api.blocks.decorative.AbstractBlockGate;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesRaider;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.core.MineColonies;
+import com.minecolonies.core.blocks.decorative.BlockGate;
 import com.minecolonies.core.colony.jobs.AbstractJobGuard;
 import com.minecolonies.core.entity.ai.workers.guard.AbstractEntityAIGuard;
 import net.minecraft.core.BlockPos;
@@ -101,7 +101,7 @@ public class EntityAIBreakDoor extends BreakDoorGoal
         {
             double fasterBreakPerXNearby = 5;
 
-            if (mob instanceof AbstractEntityMinecoloniesRaider && !mob.level().isClientSide() && mob.level().getBlockState(doorPos).getBlock() instanceof AbstractBlockGate)
+            if (mob instanceof AbstractEntityMinecoloniesRaider && !mob.level().isClientSide() && mob.level().getBlockState(doorPos).getBlock() instanceof BlockGate)
             {
                 final IColony colony = ((AbstractEntityMinecoloniesRaider) mob).getColony();
 
@@ -114,7 +114,7 @@ public class EntityAIBreakDoor extends BreakDoorGoal
 
             // Alert nearby guards
             if (this.mob.getRandom().nextInt(breakChance) == 0 && mob instanceof AbstractEntityMinecoloniesRaider raider && mob.level().getBlockState(doorPos)
-                .getBlock() instanceof AbstractBlockGate)
+                .getBlock() instanceof BlockGate)
             {
                 // Alerts guards of raiders reaching a building
                 final List<AbstractEntityCitizen> possibleGuards = new ArrayList<>();
@@ -147,9 +147,9 @@ public class EntityAIBreakDoor extends BreakDoorGoal
         if (this.breakTime == this.getDoorBreakTime() - 1)
         {
             final BlockState toBreak = mob.level().getBlockState(doorPos);
-            if (toBreak.getBlock() instanceof AbstractBlockGate)
+            if (toBreak.getBlock() instanceof BlockGate)
             {
-                ((AbstractBlockGate) toBreak.getBlock()).removeGate(mob.level(), doorPos, toBreak.getValue(BlockStateProperties.HORIZONTAL_FACING).getClockWise());
+                ((BlockGate) toBreak.getBlock()).removeGate(mob.level(), doorPos, toBreak.getValue(BlockStateProperties.HORIZONTAL_FACING).getClockWise());
             }
         }
 

@@ -25,12 +25,12 @@ public class ItemFood extends Item implements IMinecoloniesFoodItem
     /**
      * Creates a new food item.
      *
-     * @param builder the item properties to use.
-     * @param tier    the nutrition tier.
+     * @param properties the item properties to use.
+     * @param tier       the nutrition tier.
      */
-    public ItemFood(@NotNull final Properties builder, final int tier)
+    public ItemFood(@NotNull final Properties properties, final int tier)
     {
-        super(builder);
+        super(properties);
         this.tier = tier;
     }
 

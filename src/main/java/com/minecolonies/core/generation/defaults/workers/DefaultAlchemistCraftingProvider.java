@@ -44,13 +44,11 @@ public class DefaultAlchemistCraftingProvider extends CustomRecipeProvider
     @Override
     protected void registerRecipes(@NotNull Consumer<CustomRecipeBuilder> consumer)
     {
-        recipe(ALCHEMIST, MODULE_CRAFTING, "magicpotion")
-                .inputs(List.of(new ItemStorage(new ItemStack(ModItems.mistletoe)),
-                        new ItemStorage(ModItems.large_water_bottle.getDefaultInstance())))
-                .result(new ItemStack(ModItems.magicpotion))
-                .minResearchId(ResearchConstants.DRUID_USE_POTIONS)
-                .showTooltip(true)
-                .build(consumer);
+        recipe(ALCHEMIST, MODULE_CRAFTING, "magicpotion").inputs(List.of(new ItemStorage(ModItems.mistletoe.toStack()), new ItemStorage(ModItems.largeWaterBottle.toStack())))
+            .result(ModItems.magicPotion.toStack())
+            .minResearchId(ResearchConstants.DRUID_USE_POTIONS)
+            .showTooltip(true)
+            .build(consumer);
 
         // this isn't a real recipe, it's just here to conveniently generate something for the quest
         final ItemStack suspiciousPotion = PotionContents.createItemStack(Items.POTION, Potions.POISON);

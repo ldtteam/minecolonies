@@ -38,6 +38,7 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
@@ -332,7 +333,7 @@ public class ClientEventHandler
      */
     private static Component getFullBuildingName(@NotNull final BuildingEntry building)
     {
-        final String namespace = building.getBuildingBlock().getRegistryName().getNamespace();
+        final String namespace = BuiltInRegistries.BLOCK.getKey(building.getBuildingBlock()).getNamespace();
         final String modName = ModList.get().getModContainerById(namespace)
             .map(m -> m.getModInfo().getDisplayName())
             .orElse(namespace);

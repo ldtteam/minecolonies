@@ -1,7 +1,7 @@
 package com.minecolonies.core.generation.defaults;
 
 import com.google.gson.JsonObject;
-import com.minecolonies.api.items.ModItems;
+import com.minecolonies.api.items.ModFoodItems;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.datalistener.RecruitmentItemsListener;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -64,28 +64,28 @@ public class DefaultRecruitmentItemsProvider implements DataProvider
             makeRecruitmentItem(cachedOutput, Items.HONEYCOMB, 5),
             makeRecruitmentItem(cachedOutput, Items.HONEY_BOTTLE, 5),
             makeRecruitmentItem(cachedOutput, Items.NETHER_WART, 5),
-            makeRecruitmentItem(cachedOutput, ModItems.muffin, 5),
-            makeRecruitmentItem(cachedOutput, ModItems.veggie_quiche, 5),
-            makeRecruitmentItem(cachedOutput, ModItems.pasta_plain, 5),
-            makeRecruitmentItem(cachedOutput, ModItems.pottage, 5),
+            makeRecruitmentItem(cachedOutput, ModFoodItems.muffin.get(), 5),
+            makeRecruitmentItem(cachedOutput, ModFoodItems.veggie_quiche.get(), 5),
+            makeRecruitmentItem(cachedOutput, ModFoodItems.pasta_plain.get(), 5),
+            makeRecruitmentItem(cachedOutput, ModFoodItems.pottage.get(), 5),
 
             makeRecruitmentItem(cachedOutput, Items.INK_SAC, 6),
             makeRecruitmentItem(cachedOutput, Items.BLAZE_POWDER, 6),
             makeRecruitmentItem(cachedOutput, Items.SPIDER_EYE, 6),
             makeRecruitmentItem(cachedOutput, Items.SLIME_BALL, 6),
 
-            makeRecruitmentItem(cachedOutput, ModItems.steak_dinner, 7),
-            makeRecruitmentItem(cachedOutput, ModItems.hand_pie, 7),
-            makeRecruitmentItem(cachedOutput, ModItems.schnitzel, 7),
+            makeRecruitmentItem(cachedOutput, ModFoodItems.steak_dinner.get(), 7),
+            makeRecruitmentItem(cachedOutput, ModFoodItems.hand_pie.get(), 7),
+            makeRecruitmentItem(cachedOutput, ModFoodItems.schnitzel.get(), 7),
 
             makeRecruitmentItem(cachedOutput, Items.DIAMOND, 8),
             makeRecruitmentItem(cachedOutput, Items.EMERALD, 8),
             makeRecruitmentItem(cachedOutput, Items.ENDER_PEARL, 8),
             makeRecruitmentItem(cachedOutput, Items.CAKE, 8),
-            makeRecruitmentItem(cachedOutput, ModItems.lamb_stew, 8),
-            makeRecruitmentItem(cachedOutput, ModItems.sushi_roll, 8),
-            makeRecruitmentItem(cachedOutput, ModItems.eggplant_dolma, 8),
-            makeRecruitmentItem(cachedOutput, ModItems.pita_hummus, 8),
+            makeRecruitmentItem(cachedOutput, ModFoodItems.lamb_stew.get(), 8),
+            makeRecruitmentItem(cachedOutput, ModFoodItems.sushi_roll.get(), 8),
+            makeRecruitmentItem(cachedOutput, ModFoodItems.eggplant_dolma.get(), 8),
+            makeRecruitmentItem(cachedOutput, ModFoodItems.pita_hummus.get(), 8),
 
             makeRecruitmentItem(cachedOutput, Items.GHAST_TEAR, 9),
             makeRecruitmentItem(cachedOutput, Items.EXPERIENCE_BOTTLE, 9),

@@ -35,7 +35,6 @@ import net.minecraft.network.chat.FormattedText;
 import net.minecraft.network.chat.Style;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.StringUtil;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -412,7 +411,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
             }
         }
 
-        if ((path == null || path.isEmpty() || path.contains("null")) && getBlockState().getBlock() instanceof AbstractBlockHut<?> abstractBlockHut)
+        if ((path == null || path.isEmpty() || path.contains("null")) && getBlockState().getBlock() instanceof AbstractBlockHut abstractBlockHut)
         {
             path = BlueprintMapping.getPathMapping("", abstractBlockHut.getBlueprintName()) + "1.blueprint";
         }
@@ -604,7 +603,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
         {
             return new ResourceLocation(registryName.getNamespace(), registryName.getPath().replace("home", "residence"));
         }
-        return getBlockState().getBlock() instanceof AbstractBlockHut<?> ? ((AbstractBlockHut<?>) getBlockState().getBlock()).getBuildingEntry().getRegistryName() : null;
+        return getBlockState().getBlock() instanceof AbstractBlockHut ? ((AbstractBlockHut) getBlockState().getBlock()).getBuildingEntry().getRegistryName() : null;
     }
 
     @Override

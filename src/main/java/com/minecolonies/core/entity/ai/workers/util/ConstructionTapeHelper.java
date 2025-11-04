@@ -78,7 +78,7 @@ public final class ConstructionTapeHelper
         final Level world = colony.getWorld();
 
         final Tuple<BlockPos, BlockPos> corners = new Tuple<>(orgCorners.getA().offset(-1, 0, -1), orgCorners.getB().offset(1, 0, 1));
-        final BlockState constructionTape = ModBlocks.blockConstructionTape.defaultBlockState();
+        final BlockState constructionTape = ModBlocks.blockConstructionTape.get().defaultBlockState();
 
         final int x = Math.min(corners.getA().getX(), corners.getB().getX());
         final int y = Math.max(corners.getA().getY(), corners.getB().getY());
@@ -201,8 +201,8 @@ public final class ConstructionTapeHelper
             {
                 final BlockPos block1 = new BlockPos(i, 0, z1);
                 final BlockPos block2 = new BlockPos(i, 0, z3);
-                removeTapeIfNecessary(world, block1, ModBlocks.blockConstructionTape, minHeight, maxHeight);
-                removeTapeIfNecessary(world, block2, ModBlocks.blockConstructionTape, minHeight, maxHeight);
+                removeTapeIfNecessary(world, block1, ModBlocks.blockConstructionTape.get(), minHeight, maxHeight);
+                removeTapeIfNecessary(world, block2, ModBlocks.blockConstructionTape.get(), minHeight, maxHeight);
             }
         }
         else
@@ -211,8 +211,8 @@ public final class ConstructionTapeHelper
             {
                 final BlockPos block1 = new BlockPos(i, 0, z1);
                 final BlockPos block2 = new BlockPos(i, 0, z3);
-                removeTapeIfNecessary(world, block1, ModBlocks.blockConstructionTape, minHeight, maxHeight);
-                removeTapeIfNecessary(world, block2, ModBlocks.blockConstructionTape, minHeight, maxHeight);
+                removeTapeIfNecessary(world, block1, ModBlocks.blockConstructionTape.get(), minHeight, maxHeight);
+                removeTapeIfNecessary(world, block2, ModBlocks.blockConstructionTape.get(), minHeight, maxHeight);
             }
         }
         if (z1 < z3)
@@ -221,8 +221,8 @@ public final class ConstructionTapeHelper
             {
                 final BlockPos block1 = new BlockPos(x1, 0, i);
                 final BlockPos block2 = new BlockPos(x3, 0, i);
-                removeTapeIfNecessary(world, block1, ModBlocks.blockConstructionTape, minHeight, maxHeight);
-                removeTapeIfNecessary(world, block2, ModBlocks.blockConstructionTape, minHeight, maxHeight);
+                removeTapeIfNecessary(world, block1, ModBlocks.blockConstructionTape.get(), minHeight, maxHeight);
+                removeTapeIfNecessary(world, block2, ModBlocks.blockConstructionTape.get(), minHeight, maxHeight);
             }
         }
         else
@@ -231,8 +231,8 @@ public final class ConstructionTapeHelper
             {
                 final BlockPos block1 = new BlockPos(x1, 0, i);
                 final BlockPos block2 = new BlockPos(x3, 0, i);
-                removeTapeIfNecessary(world, block1, ModBlocks.blockConstructionTape, minHeight, maxHeight);
-                removeTapeIfNecessary(world, block2, ModBlocks.blockConstructionTape, minHeight, maxHeight);
+                removeTapeIfNecessary(world, block1, ModBlocks.blockConstructionTape.get(), minHeight, maxHeight);
+                removeTapeIfNecessary(world, block2, ModBlocks.blockConstructionTape.get(), minHeight, maxHeight);
             }
         }
 
@@ -240,10 +240,10 @@ public final class ConstructionTapeHelper
         final BlockPos corner2 = new BlockPos(x1, 0, z3);
         final BlockPos corner3 = new BlockPos(x3, 0, z1);
         final BlockPos corner4 = new BlockPos(x3, 0, z3);
-        removeTapeIfNecessary(world, corner1, ModBlocks.blockConstructionTape, minHeight, maxHeight);
-        removeTapeIfNecessary(world, corner2, ModBlocks.blockConstructionTape, minHeight, maxHeight);
-        removeTapeIfNecessary(world, corner3, ModBlocks.blockConstructionTape, minHeight, maxHeight);
-        removeTapeIfNecessary(world, corner4, ModBlocks.blockConstructionTape, minHeight, maxHeight);
+        removeTapeIfNecessary(world, corner1, ModBlocks.blockConstructionTape.get(), minHeight, maxHeight);
+        removeTapeIfNecessary(world, corner2, ModBlocks.blockConstructionTape.get(), minHeight, maxHeight);
+        removeTapeIfNecessary(world, corner3, ModBlocks.blockConstructionTape.get(), minHeight, maxHeight);
+        removeTapeIfNecessary(world, corner4, ModBlocks.blockConstructionTape.get(), minHeight, maxHeight);
     }
 
     /**

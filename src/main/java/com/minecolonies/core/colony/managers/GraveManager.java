@@ -292,7 +292,7 @@ public class GraveManager implements IGraveManager
         if (firstValidPosition != null)
         {
             world.setBlockAndUpdate(firstValidPosition,
-              BlockMinecoloniesGrave.getPlacementState(ModBlocks.blockGrave.defaultBlockState(), firstValidPosition));
+              BlockMinecoloniesGrave.getPlacementState(ModBlocks.blockGrave.get().defaultBlockState(), firstValidPosition));
             final TileEntityGrave graveEntity = (TileEntityGrave) world.getBlockEntity(firstValidPosition);
             if (!InventoryUtils.transferAllItemHandler(citizenData.getInventory(), graveEntity.getInventory()))
             {

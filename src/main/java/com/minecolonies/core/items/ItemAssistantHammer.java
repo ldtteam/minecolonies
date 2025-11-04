@@ -34,6 +34,7 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
@@ -50,16 +51,16 @@ import java.util.List;
 /**
  * Assistant Hammer item used to allow the player to assist the builder in building
  */
-public class ItemAssistantHammer extends AbstractItemMinecolonies
+public class ItemAssistantHammer extends Item
 {
     /**
      * The distance at which blocks can get placed from the clicked position
      */
     private int reach = 1;
 
-    public ItemAssistantHammer(final String id, final Properties properties, final int reach)
+    public ItemAssistantHammer(final Properties properties, final int reach)
     {
-        super(id, properties);
+        super(properties);
         this.reach = reach;
     }
 
@@ -236,9 +237,9 @@ public class ItemAssistantHammer extends AbstractItemMinecolonies
                             workOrder.getBlueprint().getBlockInfoAsMap().get(workPos.subtract(workOrder.getLocation()).offset(workOrder.getBlueprint().getPrimaryBlockOffset()));
 
                         if (blockInfo == null || blockInfo.getState() == null || blockInfo.getState().getBlock() == levelState.getBlock() || !(levelState.isAir()
-                            || !levelState.getFluidState().isEmpty()) || blockInfo.getState().getBlock() == ModBlocks.blockSubstitution.get()
-                            || blockInfo.getState().getBlock() == ModBlocks.blockFluidSubstitution.get()
-                            || blockInfo.getState().getBlock() == ModBlocks.blockTagSubstitution.get())
+                            || !levelState.getFluidState().isEmpty()) || blockInfo.getState().is(ModBlocks.blockSubstitution)
+                            || blockInfo.getState().is(ModBlocks.blockFluidSubstitution)
+                            || blockInfo.getState().is(ModBlocks.blockTagSubstitution))
                         {
                             continue;
                         }

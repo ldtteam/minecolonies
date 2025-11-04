@@ -425,9 +425,9 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
 
         final ItemStack usedStack = player.getItemInHand(hand);
         if (MineColonies.getConfig().getServer().enableInDevelopmentFeatures.get() &&
-              usedStack.getItem() instanceof BlockItem && ((BlockItem) usedStack.getItem()).getBlock() instanceof AbstractBlockHut<?>)
+              usedStack.getItem() instanceof BlockItem && ((BlockItem) usedStack.getItem()).getBlock() instanceof AbstractBlockHut)
         {
-            final BuildingEntry entry = ((AbstractBlockHut<?>) ((BlockItem) usedStack.getItem()).getBlock()).getBuildingEntry();
+            final BuildingEntry entry = ((AbstractBlockHut) ((BlockItem) usedStack.getItem()).getBlock()).getBuildingEntry();
             for (final BuildingEntry.ModuleProducer moduleProducer : entry.getModuleProducers())
             {
                 if (BuildingEntry.produceModuleWithoutBuilding(moduleProducer.key) instanceof WorkerBuildingModule module)
@@ -1225,7 +1225,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     public boolean hurt(@NotNull final DamageSource damageSource, final float damage)
     {
         // TODO: temporary debug data
-        if (damageSource.getEntity() instanceof Player player && player.isCreative() && player.getMainHandItem().getItem() == ModItems.scanAnalyzer)
+        if (damageSource.getEntity() instanceof Player player && player.isCreative() && player.getMainHandItem().is(ModItems.scanAnalyzer))
         {
             CompoundTag tag = new CompoundTag();
             try

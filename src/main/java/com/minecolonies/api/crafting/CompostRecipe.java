@@ -47,7 +47,7 @@ public class CompostRecipe implements Recipe<SingleRecipeInput>
     {
         this.input = ingredient;
         this.strength = strength;
-        this.output = new ItemStack(ModItems.compost, COMPOST_RESULT);
+        this.output = ModItems.compost.toStack(COMPOST_RESULT);
     }
 
     @NotNull

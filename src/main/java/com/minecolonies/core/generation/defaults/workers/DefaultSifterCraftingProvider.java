@@ -49,7 +49,7 @@ public class DefaultSifterCraftingProvider extends CustomRecipeAndLootTableProvi
         super(packOutput, provider);
 
         inputs.put(Items.DIRT, Arrays.asList(
-                new SifterMeshDetails(ModItems.sifterMeshString, 1, LootTable.lootTable()
+                new SifterMeshDetails(ModItems.sifterMeshString.get(), 1, LootTable.lootTable()
                         .withPool(LootPool.lootPool()
                                 .add(EmptyLootItem.emptyItem().setWeight(71))
                                 .add(LootItem.lootTableItem(Items.WHEAT_SEEDS).setWeight(25))
@@ -59,7 +59,7 @@ public class DefaultSifterCraftingProvider extends CustomRecipeAndLootTableProvi
                                 .add(LootItem.lootTableItem(Items.JUNGLE_SAPLING).setWeight(1))
                         )),
 
-                new SifterMeshDetails(ModItems.sifterMeshFlint, 3, LootTable.lootTable()
+                new SifterMeshDetails(ModItems.sifterMeshFlint.get(), 3, LootTable.lootTable()
                         .withPool(LootPool.lootPool()
                                 .add(EmptyLootItem.emptyItem().setWeight(28))
                                 .add(LootItem.lootTableItem(Items.WHEAT_SEEDS).setWeight(50))
@@ -71,7 +71,7 @@ public class DefaultSifterCraftingProvider extends CustomRecipeAndLootTableProvi
                                 .add(LootItem.lootTableItem(Items.POTATO).setWeight(1))
                         )),
 
-                new SifterMeshDetails(ModItems.sifterMeshIron, 4, LootTable.lootTable()
+                new SifterMeshDetails(ModItems.sifterMeshIron.get(), 4, LootTable.lootTable()
                         .withPool(LootPool.lootPool()
                                 .setBonusRolls(ConstantValue.exactly(.025f))
                                 .add(EmptyLootItem.emptyItem().setWeight(3))
@@ -89,7 +89,7 @@ public class DefaultSifterCraftingProvider extends CustomRecipeAndLootTableProvi
                                 .add(LootItem.lootTableItem(Items.ACACIA_SAPLING).setWeight(1))
                         )),
 
-                new SifterMeshDetails(ModItems.sifterMeshDiamond, 5, LootTable.lootTable()
+                new SifterMeshDetails(ModItems.sifterMeshDiamond.get(), 5, LootTable.lootTable()
                         .withPool(LootPool.lootPool()
                                 .setBonusRolls(ConstantValue.exactly((0.035f)))
                                 .add(EmptyLootItem.emptyItem().setWeight(5))
@@ -110,7 +110,7 @@ public class DefaultSifterCraftingProvider extends CustomRecipeAndLootTableProvi
                 ));
 
         inputs.put(Items.GRAVEL, Arrays.asList(
-                new SifterMeshDetails(ModItems.sifterMeshString, 1, LootTable.lootTable()
+                new SifterMeshDetails(ModItems.sifterMeshString.get(), 1, LootTable.lootTable()
                         .withPool(LootPool.lootPool()
                                 .add(EmptyLootItem.emptyItem().setWeight(85))
                                 .add(LootItem.lootTableItem(Items.IRON_NUGGET).setWeight(5))
@@ -118,7 +118,7 @@ public class DefaultSifterCraftingProvider extends CustomRecipeAndLootTableProvi
                                 .add(LootItem.lootTableItem(Items.COAL).setWeight(5))
                         )),
 
-                new SifterMeshDetails(ModItems.sifterMeshFlint, 3, LootTable.lootTable()
+                new SifterMeshDetails(ModItems.sifterMeshFlint.get(), 3, LootTable.lootTable()
                         .withPool(LootPool.lootPool()
                                 .add(EmptyLootItem.emptyItem().setWeight(60))
                                 .add(LootItem.lootTableItem(Items.IRON_NUGGET).setWeight(10))
@@ -127,7 +127,7 @@ public class DefaultSifterCraftingProvider extends CustomRecipeAndLootTableProvi
                                 .add(LootItem.lootTableItem(Items.REDSTONE).setWeight(10))
                         )),
 
-                new SifterMeshDetails(ModItems.sifterMeshIron, 4, LootTable.lootTable()
+                new SifterMeshDetails(ModItems.sifterMeshIron.get(), 4, LootTable.lootTable()
                         .withPool(LootPool.lootPool()
                                 .setBonusRolls(ConstantValue.exactly((0.025f)))
                                 .add(EmptyLootItem.emptyItem().setWeight(46))
@@ -141,7 +141,7 @@ public class DefaultSifterCraftingProvider extends CustomRecipeAndLootTableProvi
                                 .add(LootItem.lootTableItem(Items.DIAMOND).setWeight(1))
                         )),
 
-                new SifterMeshDetails(ModItems.sifterMeshDiamond, 5, LootTable.lootTable()
+                new SifterMeshDetails(ModItems.sifterMeshDiamond.get(), 5, LootTable.lootTable()
                         .withPool(LootPool.lootPool()
                                 .setBonusRolls(ConstantValue.exactly((0.035f)))
                                 .add(EmptyLootItem.emptyItem().setWeight(40))
@@ -158,14 +158,14 @@ public class DefaultSifterCraftingProvider extends CustomRecipeAndLootTableProvi
                 ));
 
         inputs.put(Items.SAND, Arrays.asList(
-                new SifterMeshDetails(ModItems.sifterMeshString, 1, LootTable.lootTable()
+                new SifterMeshDetails(ModItems.sifterMeshString.get(), 1, LootTable.lootTable()
                         .withPool(LootPool.lootPool()
                                 .add(EmptyLootItem.emptyItem().setWeight(95))
                                 .add(LootItem.lootTableItem(Items.CACTUS).setWeight(2))
                                 .add(LootItem.lootTableItem(Items.SUGAR_CANE).setWeight(2))
                         )),
 
-                new SifterMeshDetails(ModItems.sifterMeshFlint, 3, LootTable.lootTable()
+                new SifterMeshDetails(ModItems.sifterMeshFlint.get(), 3, LootTable.lootTable()
                         .withPool(LootPool.lootPool()
                                 .add(EmptyLootItem.emptyItem().setWeight(85))
                                 .add(LootItem.lootTableItem(Items.CACTUS).setWeight(5))
@@ -173,7 +173,7 @@ public class DefaultSifterCraftingProvider extends CustomRecipeAndLootTableProvi
                                 .add(LootItem.lootTableItem(Items.GOLD_NUGGET).setWeight(5))
                         )),
 
-                new SifterMeshDetails(ModItems.sifterMeshIron, 4, LootTable.lootTable()
+                new SifterMeshDetails(ModItems.sifterMeshIron.get(), 4, LootTable.lootTable()
                         .withPool(LootPool.lootPool()
                                 .setBonusRolls(ConstantValue.exactly((0.025f)))
                                 .add(EmptyLootItem.emptyItem().setWeight(60))
@@ -183,7 +183,7 @@ public class DefaultSifterCraftingProvider extends CustomRecipeAndLootTableProvi
                                 .add(LootItem.lootTableItem(Items.COCOA_BEANS).setWeight(10))
                         )),
 
-                new SifterMeshDetails(ModItems.sifterMeshDiamond, 5, LootTable.lootTable()
+                new SifterMeshDetails(ModItems.sifterMeshDiamond.get(), 5, LootTable.lootTable()
                         .withPool(LootPool.lootPool()
                                 .setBonusRolls(ConstantValue.exactly((0.035f)))
                                 .add(EmptyLootItem.emptyItem().setWeight(40))
@@ -196,14 +196,14 @@ public class DefaultSifterCraftingProvider extends CustomRecipeAndLootTableProvi
                 ));
 
         inputs.put(Items.SOUL_SAND, Arrays.asList(
-                new SifterMeshDetails(ModItems.sifterMeshString, 1, LootTable.lootTable()
+                new SifterMeshDetails(ModItems.sifterMeshString.get(), 1, LootTable.lootTable()
                         .withPool(LootPool.lootPool()
                                 .add(EmptyLootItem.emptyItem().setWeight(90))
                                 .add(LootItem.lootTableItem(Items.NETHER_WART).setWeight(5))
                                 .add(LootItem.lootTableItem(Items.QUARTZ).setWeight(5))
                         )),
 
-                new SifterMeshDetails(ModItems.sifterMeshFlint, 3, LootTable.lootTable()
+                new SifterMeshDetails(ModItems.sifterMeshFlint.get(), 3, LootTable.lootTable()
                         .withPool(LootPool.lootPool()
                                 .add(EmptyLootItem.emptyItem().setWeight(70))
                                 .add(LootItem.lootTableItem(Items.NETHER_WART).setWeight(10))
@@ -211,7 +211,7 @@ public class DefaultSifterCraftingProvider extends CustomRecipeAndLootTableProvi
                                 .add(LootItem.lootTableItem(Items.GLOWSTONE_DUST).setWeight(10))
                         )),
 
-                new SifterMeshDetails(ModItems.sifterMeshIron, 4, LootTable.lootTable()
+                new SifterMeshDetails(ModItems.sifterMeshIron.get(), 4, LootTable.lootTable()
                         .withPool(LootPool.lootPool()
                                 .setBonusRolls(ConstantValue.exactly((0.025f)))
                                 .add(EmptyLootItem.emptyItem().setWeight(50))
@@ -222,7 +222,7 @@ public class DefaultSifterCraftingProvider extends CustomRecipeAndLootTableProvi
                                 .add(LootItem.lootTableItem(Items.MAGMA_CREAM).setWeight(1))
                         )),
 
-                new SifterMeshDetails(ModItems.sifterMeshDiamond, 5, LootTable.lootTable()
+                new SifterMeshDetails(ModItems.sifterMeshDiamond.get(), 5, LootTable.lootTable()
                         .withPool(LootPool.lootPool()
                                 .setBonusRolls(ConstantValue.exactly((0.035f)))
                                 .add(EmptyLootItem.emptyItem().setWeight(40))

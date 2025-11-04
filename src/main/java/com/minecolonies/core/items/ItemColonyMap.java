@@ -2,10 +2,10 @@ package com.minecolonies.core.items;
 
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.items.component.ColonyId;
-import com.minecolonies.core.client.gui.map.WindowColonyMap;
-import com.minecolonies.core.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.constant.TranslationConstants;
+import com.minecolonies.core.client.gui.map.WindowColonyMap;
+import com.minecolonies.core.tileentities.TileEntityColonyBuilding;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -23,7 +23,7 @@ import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECO
 /**
  * Class describing the colonymap item.
  */
-public class ItemColonyMap extends AbstractItemMinecolonies
+public class ItemColonyMap extends Item
 {
     /**
      * Sets the name, creative tab, and registers the colonymap item.
@@ -32,7 +32,7 @@ public class ItemColonyMap extends AbstractItemMinecolonies
      */
     public ItemColonyMap(final Item.Properties properties)
     {
-        super("colonymap", properties.stacksTo(1));
+        super(properties.stacksTo(1));
     }
 
     @Override

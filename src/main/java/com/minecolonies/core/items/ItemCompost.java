@@ -1,7 +1,7 @@
 package com.minecolonies.core.items;
 
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.core.blocks.MinecoloniesCropBlock;
+import com.minecolonies.core.blocks.BlockMinecoloniesCrop;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionResult;
@@ -19,7 +19,7 @@ import static net.minecraft.world.item.BoneMealItem.applyBonemeal;
 /**
  * Class used to handle the compost item.
  */
-public class ItemCompost extends AbstractItemMinecolonies
+public class ItemCompost extends Item
 {
 
     /***
@@ -28,12 +28,12 @@ public class ItemCompost extends AbstractItemMinecolonies
      */
     public ItemCompost(final Item.Properties properties)
     {
-        super("compost", properties.stacksTo(Constants.STACKSIZE));
+        super(properties.stacksTo(Constants.STACKSIZE));
     }
 
     /**
      * Wrapper around {@link net.minecraft.world.item.BoneMealItem#applyBonemeal(ItemStack, Level, BlockPos, Player)}
-     * to handle {@link MinecoloniesCropBlock} as well.
+     * to handle {@link BlockMinecoloniesCrop} as well.
      *
      * @param stack  the input item stack.
      * @param level  the input level.
@@ -44,7 +44,7 @@ public class ItemCompost extends AbstractItemMinecolonies
     private static boolean applyCompost(@NotNull ItemStack stack, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player)
     {
         BlockState state = level.getBlockState(pos);
-        if (state.getBlock() instanceof MinecoloniesCropBlock cropBlock)
+        if (state.getBlock() instanceof BlockMinecoloniesCrop cropBlock)
         {
             if (!cropBlock.isMaxAge(state))
             {

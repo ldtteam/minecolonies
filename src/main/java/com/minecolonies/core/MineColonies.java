@@ -6,6 +6,7 @@ import com.ldtteam.structurize.api.TagManager;
 import com.ldtteam.structurize.storage.SurvivalBlueprintHandlers;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.advancements.AdvancementTriggers;
+import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.configuration.ClientConfiguration;
 import com.minecolonies.api.configuration.CommonConfiguration;
 import com.minecolonies.api.configuration.ServerConfiguration;
@@ -15,6 +16,8 @@ import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesRaider;
 import com.minecolonies.api.entity.mobs.RaiderMobUtils;
 import com.minecolonies.api.equipment.ModEquipmentTypes;
+import com.minecolonies.api.items.ModArmorMaterials;
+import com.minecolonies.api.items.ModFoodItems;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.items.component.ModDataComponents;
@@ -110,6 +113,10 @@ public class MineColonies
         LanguageHandler.loadLangPath("assets/minecolonies/lang/%s.json");
         config = new Configurations<>(modContainer, modBus, ClientConfiguration::new, ServerConfiguration::new, CommonConfiguration::new);
 
+        ModBlocks.DEFERRED_REGISTER.register(modBus);
+        ModItems.DEFERRED_REGISTER.register(modBus);
+        ModFoodItems.DEFERRED_REGISTER.register(modBus);
+        ModArmorMaterials.DEFERRED_REGISTER.register(modBus);
         ModArgumentTypes.ARGUMENT_TYPES.register(modBus);
         TileEntityInitializer.BLOCK_ENTITIES.register(modBus);
         AdvancementTriggers.DEFERRED_REGISTER.register(modBus);
@@ -131,7 +138,6 @@ public class MineColonies
         ModInteractionsInitializer.DEFERRED_REGISTER.register(modBus);
         ModResearchEffectInitializer.DEFERRED_REGISTER.register(modBus);
         ModLootConditions.DEFERRED_REGISTER.register(modBus);
-        ModItemsInitializer.DEFERRED_REGISTER.register(modBus);
         ModEquipmentTypes.DEFERRED_REGISTER.register(modBus);
 
         ModQuestInitializer.DEFERRED_REGISTER_OBJECTIVE.register(modBus);

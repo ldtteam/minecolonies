@@ -34,10 +34,8 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.item.alchemy.PotionContents;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.function.BiPredicate;
 
@@ -139,7 +137,7 @@ public class DruidCombatAI extends AttackMoveAI<EntityCitizen>
         boolean gotMaterial = false;
         BiPredicate<LivingEntity, MobEffect> predicate;
         if (user.getCitizenColonyHandler().getColonyOrRegister().getResearchManager().getResearchEffects().getEffectStrength(DRUID_USE_POTIONS) > 0
-              && InventoryUtils.hasItemInItemHandler(user.getInventoryCitizen(), item -> item.getItem() == ModItems.magicpotion))
+              && InventoryUtils.hasItemInItemHandler(user.getInventoryCitizen(), item -> item.is(ModItems.magicPotion)))
         {
             gotMaterial = true;
         }
@@ -159,7 +157,7 @@ public class DruidCombatAI extends AttackMoveAI<EntityCitizen>
 
         if (gotMaterial)
         {
-            InventoryUtils.removeStackFromItemHandler(user.getCitizenData().getInventory(), new ItemStack(ModItems.magicpotion, 1), 1);
+            InventoryUtils.removeStackFromItemHandler(user.getCitizenData().getInventory(), ModItems.magicPotion.toStack(), 1);
         }
 
         this.instantEffect = effect.value().isInstantenous();

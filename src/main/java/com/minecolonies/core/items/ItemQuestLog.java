@@ -1,12 +1,11 @@
 package com.minecolonies.core.items;
 
-import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.items.component.ColonyId;
-import com.minecolonies.core.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.core.client.gui.questlog.WindowQuestLog;
+import com.minecolonies.core.tileentities.TileEntityColonyBuilding;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -25,13 +24,8 @@ import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECO
 /**
  * Class describing the quest log item.
  */
-public class ItemQuestLog extends AbstractItemMinecolonies
+public class ItemQuestLog extends Item
 {
-    /**
-     * Tag of the colony.
-     */
-    public static final String TAG_COLONY = "colony";
-
     /**
      * Sets the name, creative tab, and registers the quest log item.
      *
@@ -39,7 +33,7 @@ public class ItemQuestLog extends AbstractItemMinecolonies
      */
     public ItemQuestLog(final Item.Properties properties)
     {
-        super("questlog", properties.stacksTo(STACKSIZE));
+        super(properties.stacksTo(STACKSIZE));
     }
 
     @Override

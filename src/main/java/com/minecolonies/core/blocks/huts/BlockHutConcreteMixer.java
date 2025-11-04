@@ -4,18 +4,14 @@ import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 
-import org.jetbrains.annotations.NotNull;
-
 /**
  * Hut for the concrete mason. No different from {@link AbstractBlockHut}
  */
-public class BlockHutConcreteMixer extends AbstractBlockHut<BlockHutConcreteMixer>
+public class BlockHutConcreteMixer extends AbstractBlockHut
 {
-    @NotNull
-    @Override
-    public String getHutName()
+    public BlockHutConcreteMixer(final Properties properties)
     {
-        return "blockhutconcretemixer";
+        super(properties);
     }
 
     @Override

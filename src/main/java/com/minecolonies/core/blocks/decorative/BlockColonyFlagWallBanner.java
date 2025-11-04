@@ -3,38 +3,29 @@ package com.minecolonies.core.blocks.decorative;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.minecolonies.api.blocks.decorative.AbstractColonyFlagBanner;
-import com.minecolonies.api.util.constant.Constants;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.context.BlockPlaceContext;
-import net.minecraft.world.level.block.state.properties.DirectionProperty;
-import net.minecraft.world.level.material.MapColor;
-import net.minecraft.world.level.block.state.StateDefinition;
-import net.minecraft.core.Direction;
-import net.minecraft.world.level.block.Mirror;
-import net.minecraft.world.level.block.Rotation;
-import net.minecraft.world.level.block.SoundType;
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.phys.shapes.CollisionContext;
-import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.block.*;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.VoxelShape;
 
 import java.util.Map;
-
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.HorizontalDirectionalBlock;
-import net.minecraft.world.level.block.state.BlockState;
 
 /**
  * A custom banner block to construct the associated tile entity that will render the colony flag.
  * This is the wall version. For the floor version: {@link BlockColonyFlagBanner}
  */
-public class BlockColonyFlagWallBanner extends AbstractColonyFlagBanner<BlockColonyFlagWallBanner>
+public class BlockColonyFlagWallBanner extends AbstractColonyFlagBanner
 {
     public static final MapCodec<BlockColonyFlagWallBanner> CODEC = RecordCodecBuilder.mapCodec(builder -> builder
         .group(DyeColor.CODEC.fieldOf("color").forGetter(BlockColonyFlagWallBanner::getColor),
@@ -47,19 +38,14 @@ public class BlockColonyFlagWallBanner extends AbstractColonyFlagBanner<BlockCol
             Direction.WEST,  Block.box(14.0D, 0.0D, 0.0D, 16.0D, 12.5D, 16.0D),
             Direction.EAST,  Block.box(0.0D, 0.0D, 0.0D, 2.0D, 12.5D, 16.0D)));
 
-    public BlockColonyFlagWallBanner()
+    public BlockColonyFlagWallBanner(final Properties properties)
     {
-        this(DyeColor.WHITE,
-            Properties.of().mapColor(MapColor.WOOD)
-              .sound(SoundType.WOOD)
-                .noCollission()
-                .strength(1F)
-                .sound(SoundType.WOOD));
+        this(DyeColor.WHITE, properties);
     }
 
     public BlockColonyFlagWallBanner(final DyeColor dyeColor, final Properties properties)
     {
-        super(dyeColor, properties);
+        super(DyeColor.WHITE, properties);
         this.registerDefaultState(this.stateDefinition.any().setValue(HORIZONTAL_FACING, Direction.NORTH));
     }
 
@@ -126,10 +112,4 @@ public class BlockColonyFlagWallBanner extends AbstractColonyFlagBanner<BlockCol
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) { builder.add(HORIZONTAL_FACING); }
-
-    @Override
-    public ResourceLocation getRegistryName()
-    {
-        return new ResourceLocation(Constants.MOD_ID, REGISTRY_NAME_WALL);
-    }
 }

@@ -45,9 +45,9 @@ import java.util.function.Predicate;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
-import static com.minecolonies.api.util.constant.TranslationConstants.NO_WORKERS_TO_DRAIN_SET;
-import static com.minecolonies.api.util.constant.StatisticsConstants.ITEMS_ENCHANTED;
 import static com.minecolonies.api.util.constant.StatisticsConstants.CITIZENS_VISITED;
+import static com.minecolonies.api.util.constant.StatisticsConstants.ITEMS_ENCHANTED;
+import static com.minecolonies.api.util.constant.TranslationConstants.NO_WORKERS_TO_DRAIN_SET;
 
 /**
  * Enchanter AI class.
@@ -57,7 +57,7 @@ public class EntityAIWorkEnchanter extends AbstractEntityAICrafting<JobEnchanter
     /**
      * Predicate to define an ancient tome which can be enchanted.
      */
-    private static final Predicate<ItemStack> IS_ANCIENT_TOME = item -> !item.isEmpty() && item.getItem() == ModItems.ancientTome;
+    private static final Predicate<ItemStack> IS_ANCIENT_TOME = item -> !item.isEmpty() && item.is(ModItems.ancientTome);
 
     /**
      * Predicate to define an ancient tome which can be enchanted.
@@ -181,7 +181,7 @@ public class EntityAIWorkEnchanter extends AbstractEntityAICrafting<JobEnchanter
         for (final IToken<?> token : craftingModule.getRecipes())
         {
             final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
-            if (storage != null && !storage.getInput().isEmpty() && storage.getInput().get(0).getItem() == ModItems.ancientTome && craftingModule.isDisabled(token))
+            if (storage != null && !storage.getInput().isEmpty() && storage.getInput().getFirst().getItemStack().is(ModItems.ancientTome) && craftingModule.isDisabled(token))
             {
                 ancientTomeCraftingDisabled = true;
             }
@@ -198,7 +198,7 @@ public class EntityAIWorkEnchanter extends AbstractEntityAICrafting<JobEnchanter
                     needsCurrently = new Tuple<>(IS_ANCIENT_TOME, 1);
                     return GATHERING_REQUIRED_MATERIALS;
                 }
-                checkIfRequestForItemExistOrCreateAsync(new ItemStack(ModItems.ancientTome, 1), 1, 1, false);
+                checkIfRequestForItemExistOrCreateAsync(ModItems.ancientTome.toStack(), 1, 1, false);
                 return IDLE;
             }
         }

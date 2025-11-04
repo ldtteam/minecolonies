@@ -1,16 +1,15 @@
 package com.minecolonies.core.items;
 
-import com.minecolonies.api.blocks.decorative.AbstractBlockGate;
 import com.minecolonies.api.util.constant.TranslationConstants;
+import com.minecolonies.core.blocks.decorative.BlockGate;
+import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
-import net.minecraft.ChatFormatting;
-import net.minecraft.world.level.Level;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.level.block.Block;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -21,10 +20,7 @@ import java.util.List;
  */
 public class ItemGate extends BlockItem
 {
-    public ItemGate(
-      @NotNull final String name,
-      final Block block,
-      final Properties properties)
+    public ItemGate(final Block block, final Properties properties)
     {
         super(block, properties);
     }
@@ -32,10 +28,10 @@ public class ItemGate extends BlockItem
     @Override
     public void appendHoverText(@NotNull final ItemStack stack, @Nullable final TooltipContext ctx, @NotNull final List<Component> tooltip, @NotNull final TooltipFlag flagIn)
     {
-        if (getBlock() instanceof final AbstractBlockGate gate)
+        if (getBlock() instanceof final BlockGate gate)
         {
-            final MutableComponent guiHint2 = Component.translatable(TranslationConstants.GATE_PLACEMENT_TOOLTIP,
-                    gate.getMaxWidth(), gate.getMaxHeight(), gate.getMaxWidth() * gate.getMaxHeight());
+            final MutableComponent guiHint2 =
+                Component.translatable(TranslationConstants.GATE_PLACEMENT_TOOLTIP, gate.getMaxWidth(), gate.getMaxHeight(), gate.getMaxWidth() * gate.getMaxHeight());
             guiHint2.setStyle(Style.EMPTY.withColor(ChatFormatting.DARK_AQUA));
             tooltip.add(guiHint2);
         }

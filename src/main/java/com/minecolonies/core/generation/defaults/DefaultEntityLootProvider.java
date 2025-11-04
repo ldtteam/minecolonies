@@ -123,11 +123,11 @@ public class DefaultEntityLootProvider extends EntityLootSubProvider
 
         registerLoot(ModEntities.PHARAO, builder -> builder
                 .add(EmptyLootItem.emptyItem().setWeight(50))
-                .add(LootItem.lootTableItem(ModItems.pharaoscepter).setWeight(3).setQuality(1))
+                .add(LootItem.lootTableItem(ModItems.pharaoScepter).setWeight(3).setQuality(1))
                 .add(LootItem.lootTableItem(Items.ARROW).setWeight(20)
                         .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 16)))
                         .apply(EnchantedCountIncreaseFunction.lootingMultiplier(registries, UniformGenerator.between(1, 32))))
-                .add(LootItem.lootTableItem(ModItems.firearrow).setWeight(10)
+                .add(LootItem.lootTableItem(ModItems.fireArrow).setWeight(10)
                         .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 16)))
                         .apply(EnchantedCountIncreaseFunction.lootingMultiplier(registries, UniformGenerator.between(1, 32))))
                 .add(LootItem.lootTableItem(ModItems.ancientTome).setWeight(30)));

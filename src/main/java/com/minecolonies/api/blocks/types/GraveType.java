@@ -1,10 +1,9 @@
 package com.minecolonies.api.blocks.types;
 
-import com.minecolonies.api.blocks.AbstractBlockMinecoloniesGrave;
 import net.minecraft.util.StringRepresentable;
 
 /**
- * Defines the types of Grave that the {@link AbstractBlockMinecoloniesGrave} supports.
+ * Defines the types of Grave that the {@link com.minecolonies.core.blocks.BlockMinecoloniesGrave} supports.
  */
 public enum GraveType implements StringRepresentable
 {

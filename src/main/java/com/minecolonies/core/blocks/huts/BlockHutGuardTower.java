@@ -3,27 +3,15 @@ package com.minecolonies.core.blocks.huts;
 import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * Block of the GuardTower hut.
  */
-public class BlockHutGuardTower extends AbstractBlockHut<BlockHutGuardTower>
+public class BlockHutGuardTower extends AbstractBlockHut
 {
-    /**
-     * Default constructor.
-     */
-    public BlockHutGuardTower()
+    public BlockHutGuardTower(final Properties properties)
     {
-        //No different from Abstract parent
-        super();
-    }
-
-    @NotNull
-    @Override
-    public String getHutName()
-    {
-        return "blockhutguardtower";
+        super(properties);
     }
 
     @Override

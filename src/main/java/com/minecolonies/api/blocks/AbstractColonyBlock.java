@@ -1,7 +1,7 @@
 package com.minecolonies.api.blocks;
 
 import com.minecolonies.api.MinecoloniesAPIProxy;
-import com.minecolonies.api.blocks.interfaces.ITickableBlockMinecolonies;
+import com.minecolonies.api.blocks.interfaces.IMinecoloniesTickableBlock;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuilding;
@@ -11,13 +11,12 @@ import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.entity.ai.workers.util.IBuilderUndestroyable;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
-import com.minecolonies.api.util.*;
-import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.api.util.ColonyUtils;
+import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.core.tileentities.TileEntityColonyBuilding;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.Registry;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.LivingEntity;
@@ -29,13 +28,11 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.Rotation;
-import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.chunk.LevelChunk;
-import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
@@ -49,10 +46,9 @@ import static com.minecolonies.api.util.constant.BuildingConstants.DEACTIVATED;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 
 /**
- * Base class for all blocks that have a functionality within a colony. This applies to both buildings as well as functional blocks like postbox/stash.
+ * Base class for all blocks that have a functionality within a colony. This applies to both buildings and functional blocks like postbox/stash.
  */
-@SuppressWarnings("PMD.ExcessiveImports")
-public abstract class AbstractColonyBlock<B extends AbstractColonyBlock<B>> extends AbstractBlockMinecolonies<B> implements IBuilderUndestroyable, ITickableBlockMinecolonies
+public abstract class AbstractColonyBlock extends Block implements IBuilderUndestroyable, IMinecoloniesTickableBlock
 {
     /**
      * Hardness factor of the pvp mode.
@@ -70,19 +66,9 @@ public abstract class AbstractColonyBlock<B extends AbstractColonyBlock<B>> exte
     public static final float HARDNESS = 10F;
 
     /**
-     * The default resistance (against explosions).
-     */
-    public static final float RESISTANCE = Float.POSITIVE_INFINITY;
-
-    /**
      * Smaller shape.
      */
     private static final VoxelShape SHAPE = Shapes.box(0.1, 0.1, 0.1, 0.9, 0.9, 0.9);
-
-    /**
-     * The hut's lower-case building-registry-compatible name.
-     */
-    private final String name;
 
     /**
      * The timepoint of the last chat warning message
@@ -93,12 +79,13 @@ public abstract class AbstractColonyBlock<B extends AbstractColonyBlock<B>> exte
      * Constructor for a hut block.
      * <p>
      * Registers the block, sets the creative tab, as well as the resistance and the hardness.
+     *
+     * @param properties custom properties.
      */
-    public AbstractColonyBlock()
+    public AbstractColonyBlock(final Properties properties)
     {
-        super(Properties.of().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(HARDNESS, RESISTANCE).noOcclusion());
+        super(properties);
         this.registerDefaultState(this.defaultBlockState().setValue(FACING, Direction.NORTH));
-        this.name = getHutName();
     }
 
     @Override
@@ -114,32 +101,11 @@ public abstract class AbstractColonyBlock<B extends AbstractColonyBlock<B>> exte
         return (MinecoloniesAPIProxy.getInstance().getConfig().getServer().pvp_mode.get() ? 1 / (HARDNESS * HARDNESS_PVP_FACTOR) : 1 / HARDNESS) / 30;
     }
 
-    /**
-     * Constructor for a hut block.
-     * <p>
-     * Registers the block, sets the creative tab, as well as the resistance and the hardness.
-     *
-     * @param properties custom properties.
-     */
-    public AbstractColonyBlock(final Properties properties)
-    {
-        super(properties.noOcclusion());
-        this.registerDefaultState(this.defaultBlockState().setValue(FACING, Direction.NORTH));
-        this.name = getHutName();
-    }
-
-    /**
-     * Method to return the name of the block.
-     *
-     * @return Name of the block.
-     */
-    public abstract String getHutName();
-
     @Nullable
     @Override
     public BlockEntity newBlockEntity(@NotNull final BlockPos blockPos, @NotNull final BlockState blockState)
     {
-        final TileEntityColonyBuilding building = (TileEntityColonyBuilding) MinecoloniesTileEntities.BUILDING.get().create(blockPos, blockState);
+        final TileEntityColonyBuilding building = MinecoloniesTileEntities.BUILDING.get().create(blockPos, blockState);
         building.registryName = this.getBuildingEntry().getRegistryName();
         return building;
     }
@@ -260,14 +226,13 @@ public abstract class AbstractColonyBlock<B extends AbstractColonyBlock<B>> exte
         }
 
         final BlockEntity tileEntity = worldIn.getBlockEntity(pos);
-        if (tileEntity instanceof TileEntityColonyBuilding)
+        if (tileEntity instanceof final TileEntityColonyBuilding hut)
         {
-            @NotNull final TileEntityColonyBuilding hut = (TileEntityColonyBuilding) tileEntity;
             if (hut.getBuildingName() != getBuildingEntry().getRegistryName())
             {
                 hut.registryName = getBuildingEntry().getRegistryName();
             }
-            @Nullable final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld(worldIn, hut.getPosition());
+            final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld(worldIn, hut.getPosition());
 
             if (colony != null)
             {
@@ -280,21 +245,5 @@ public abstract class AbstractColonyBlock<B extends AbstractColonyBlock<B>> exte
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder)
     {
         builder.add(FACING);
-    }
-
-    /**
-     * Get the registry name frm the blck hut.
-     * @return the key.
-     */
-    public ResourceLocation getRegistryName()
-    {
-        return new ResourceLocation(Constants.MOD_ID, getHutName());
-    }
-
-    @Override
-    public B registerBlock(final Registry<Block> registry)
-    {
-        Registry.register(registry, getRegistryName(), this);
-        return (B) this;
     }
 }

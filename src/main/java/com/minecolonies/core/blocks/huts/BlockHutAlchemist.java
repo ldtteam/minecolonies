@@ -3,18 +3,15 @@ package com.minecolonies.core.blocks.huts;
 import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * Alchemist hut block.
  */
-public class BlockHutAlchemist extends AbstractBlockHut<BlockHutAlchemist>
+public class BlockHutAlchemist extends AbstractBlockHut
 {
-    @NotNull
-    @Override
-    public String getHutName()
+    public BlockHutAlchemist(final Properties properties)
     {
-        return "blockhutalchemist";
+        super(properties);
     }
 
     @Override

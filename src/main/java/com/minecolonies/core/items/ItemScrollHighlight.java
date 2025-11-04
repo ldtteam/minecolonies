@@ -1,19 +1,22 @@
 package com.minecolonies.core.items;
 
 import com.minecolonies.api.colony.ICitizenData;
-import com.minecolonies.core.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.SoundUtils;
-import net.minecraft.world.item.TooltipFlag;
+import com.minecolonies.core.tileentities.TileEntityColonyBuilding;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Style;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.sounds.SoundEvents;
-
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -22,11 +25,6 @@ import java.util.Set;
 
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.api.util.constant.translation.ToolTranslationConstants.TOOL_GENERIC_SCROLL_HIGHLIGHT_DESCRIPTION;
-
-import net.minecraft.ChatFormatting;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.Style;
 
 /**
  * Magic scroll which highlights and speedbuffs workers of the building it is applied to
@@ -40,7 +38,7 @@ public class ItemScrollHighlight extends AbstractItemScroll
      */
     public ItemScrollHighlight(final Properties properties)
     {
-        super("scroll_highlight", properties);
+        super(properties);
     }
 
     @Override

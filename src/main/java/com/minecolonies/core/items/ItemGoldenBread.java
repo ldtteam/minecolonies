@@ -1,45 +1,31 @@
 package com.minecolonies.core.items;
 
 import com.minecolonies.api.util.constant.TranslationConstants;
+import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.food.FoodProperties;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
-import net.minecraft.ChatFormatting;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
-
 /**
  * Golden Bread, made by the Baker. Heals 2 hearts 
  */
 public class ItemGoldenBread extends ItemFood
 {
-
-    /**
-     * Setup the food definition
-     */
-    private static FoodProperties goldenBread = (new FoodProperties.Builder())
-                                        .nutrition(5)
-                                        .saturationModifier(0.6F)
-                                        .build(); 
-
     /**
      * Sets the name, creative tab, and registers the Golden Bread item.
      *
-     * @param properties the properties.
      */
     public ItemGoldenBread(final Properties properties)
     {
-        super((new Item.Properties()).food(goldenBread), 1);
+        super(properties, 1);
     }
 
    /**

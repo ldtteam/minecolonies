@@ -3,18 +3,15 @@ package com.minecolonies.core.blocks.huts;
 import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * Hut for the library. No different from {@link AbstractBlockHut}
  */
-public class BlockHutLibrary extends AbstractBlockHut<BlockHutLibrary>
+public class BlockHutLibrary extends AbstractBlockHut
 {
-    @NotNull
-    @Override
-    public String getHutName()
+    public BlockHutLibrary(final Properties properties)
     {
-        return "blockhutlibrary";
+        super(properties);
     }
 
     @Override

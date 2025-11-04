@@ -3,29 +3,27 @@ package com.minecolonies.core.blocks.huts;
 import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.phys.shapes.CollisionContext;
-import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * Hut for the graveyard. No different from {@link AbstractBlockHut}
  */
-
-public class BlockHutGraveyard extends AbstractBlockHut<BlockHutGraveyard>
+public class BlockHutGraveyard extends AbstractBlockHut
 {
     /**
-     * tall shape.
+     * Tall shape.
      */
     private static final VoxelShape SHAPE = Shapes.box(0.1, 0.1, 0.1, 0.9, 1.9, 0.9);
 
-    public BlockHutGraveyard()
+    public BlockHutGraveyard(final Properties properties)
     {
-        //No different from Abstract parent
-        super();
+        super(properties);
     }
 
     @NotNull
@@ -34,10 +32,6 @@ public class BlockHutGraveyard extends AbstractBlockHut<BlockHutGraveyard>
     {
         return SHAPE;
     }
-
-    @NotNull
-    @Override
-    public String getHutName() { return "blockhutgraveyard"; }
 
     @Override
     public BuildingEntry getBuildingEntry()

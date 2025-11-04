@@ -132,7 +132,7 @@ public class SurvivalHandler implements ISurvivalBlueprintHandler
         {
             new OpenPlantationFieldBuildWindowMessage(blockPos, packName, blueprintPath, rotMir).sendToPlayer((ServerPlayer) player);
         }
-        if (anchor.getBlock() instanceof AbstractBlockHut<?> anchorBlock)
+        if (anchor.getBlock() instanceof AbstractBlockHut anchorBlock)
         {
             if (clientPack || !StructurePacks.hasPack(packName) || blueprintPath.startsWith("scans/"))
             {

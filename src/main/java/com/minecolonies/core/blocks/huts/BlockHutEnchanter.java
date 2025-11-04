@@ -5,18 +5,16 @@ import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.core.tileentities.TileEntityEnchanter;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class BlockHutEnchanter extends AbstractBlockHut<BlockHutEnchanter>
+public class BlockHutEnchanter extends AbstractBlockHut
 {
-    @NotNull
-    @Override
-    public String getHutName()
+    public BlockHutEnchanter(final Properties properties)
     {
-        return "blockhutenchanter";
+        super(properties);
     }
 
     @Override

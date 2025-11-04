@@ -18,23 +18,25 @@ import com.minecolonies.core.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.core.colony.requestsystem.locations.EntityLocation;
 import com.minecolonies.core.colony.requestsystem.locations.StaticLocation;
 import com.mojang.datafixers.util.Pair;
-import net.minecraft.network.chat.Component;
-import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.context.UseOnContext;
-import net.minecraft.world.InteractionResultHolder;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.world.InteractionHand;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
-import net.minecraft.ChatFormatting;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.LinkedList;
+import java.util.List;
 
 import static com.minecolonies.api.research.util.ResearchConstants.STANDARD;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
@@ -43,7 +45,7 @@ import static com.minecolonies.api.util.constant.translation.ToolTranslationCons
 /**
  * Rally Guards Banner Item class. Used to give tasks to guards.
  */
-public class ItemBannerRallyGuards extends AbstractItemMinecolonies
+public class ItemBannerRallyGuards extends Item
 {
     /**
      * Rally Guards Banner constructor. Sets max stack to 1, like other tools.
@@ -52,7 +54,7 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
      */
     public ItemBannerRallyGuards(final Properties properties)
     {
-        super("banner_rally_guards", properties.stacksTo(1).durability(0));
+        super(properties.stacksTo(1).durability(0));
     }
 
     @NotNull

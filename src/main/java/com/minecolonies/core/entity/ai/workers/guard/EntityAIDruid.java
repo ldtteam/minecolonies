@@ -8,7 +8,6 @@ import com.minecolonies.core.colony.jobs.JobDruid;
 import com.minecolonies.core.entity.citizen.EntityCitizen;
 import com.minecolonies.core.entity.pathfinding.navigation.MinecoloniesAdvancedPathNavigate;
 import com.minecolonies.core.entity.pathfinding.pathjobs.PathJobWalkRandomEdge;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.NotNull;
 
@@ -52,13 +51,13 @@ public class EntityAIDruid extends AbstractEntityAIGuard<JobDruid, AbstractBuild
         {
             // Mistletoes and water bottles
             InventoryUtils.transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandler(building,
-              item -> item.getItem() == ModItems.magicpotion,
+              item -> item.is(ModItems.magicPotion),
               32,
               worker.getInventoryCitizen());
 
-            if (InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), item -> item.getItem() == ModItems.magicpotion) < 8)
+            if (InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), item -> item.is(ModItems.magicPotion)) < 8)
             {
-                checkIfRequestForItemExistOrCreateAsync(new ItemStack(ModItems.magicpotion), 16, 8);
+                checkIfRequestForItemExistOrCreateAsync(ModItems.magicPotion.toStack(), 16, 8);
             }
         }
     }

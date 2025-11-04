@@ -3,17 +3,15 @@ package com.minecolonies.core.entity.pathfinding;
 import com.ldtteam.domumornamentum.block.decorative.FloatingCarpetBlock;
 import com.ldtteam.domumornamentum.block.decorative.PanelBlock;
 import com.ldtteam.domumornamentum.block.vanilla.TrapdoorBlock;
-import com.ldtteam.structurize.util.BlockUtils;
-import com.minecolonies.api.blocks.decorative.AbstractBlockMinecoloniesConstructionTape;
-import com.minecolonies.api.blocks.huts.AbstractBlockMinecoloniesDefault;
 import com.minecolonies.api.util.ShapeUtil;
+import com.minecolonies.core.blocks.BlockScarecrow;
+import com.minecolonies.core.blocks.decorative.BlockConstructionTape;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FluidState;
-import net.minecraft.world.level.pathfinder.PathFinder;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -69,7 +67,7 @@ public enum SurfaceType
 
         if (block instanceof FenceBlock
               || block instanceof WallBlock
-              || block instanceof AbstractBlockMinecoloniesDefault
+              || block instanceof BlockScarecrow
               || block instanceof BambooStalkBlock
               || block instanceof BambooSaplingBlock)
         {
@@ -114,7 +112,7 @@ public enum SurfaceType
             return SurfaceType.NOT_PASSABLE;
         }
 
-        if (block instanceof AbstractBlockMinecoloniesConstructionTape || block instanceof SignBlock || block instanceof VineBlock)
+        if (block instanceof BlockConstructionTape || block instanceof SignBlock || block instanceof VineBlock)
         {
             return SurfaceType.DROPABLE;
         }

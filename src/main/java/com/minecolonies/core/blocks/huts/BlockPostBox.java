@@ -5,30 +5,35 @@ import com.minecolonies.api.blocks.AbstractColonyBlock;
 import com.minecolonies.api.blocks.interfaces.IRSComponentBlock;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraft.world.level.BlockGetter;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * Hut for the PostBox. No different from {@link AbstractBlockHut}
  */
-public class BlockPostBox extends AbstractColonyBlock<BlockPostBox> implements IRSComponentBlock
+public class BlockPostBox extends AbstractColonyBlock implements IRSComponentBlock
 {
     private static final VoxelShape SHAPE_NORTH = Block.box(0.0D, 0.0D, 0.0D, 16.0D, 16.0D, 8.0D);
     private static final VoxelShape SHAPE_EAST  = Block.box(8.0D, 0.0D, 0.0D, 16.0D, 16.0D, 16.0D);
     private static final VoxelShape SHAPE_SOUTH = Block.box(0.0D, 0.0D, 8.0D, 16.0D, 16.0D, 16.0D);
     private static final VoxelShape SHAPE_WEST  = Block.box(0.0D, 0.0D, 0.0D, 8.0D, 16.0D, 16.0D);
 
-    @NotNull
-    @Override
-    public String getHutName()
+    /**
+     * Constructor for a hut block.
+     * <p>
+     * Registers the block, sets the creative tab, as well as the resistance and the hardness.
+     *
+     * @param properties custom properties.
+     */
+    public BlockPostBox(final Properties properties)
     {
-        return "blockpostbox";
+        super(properties);
     }
 
     @Override

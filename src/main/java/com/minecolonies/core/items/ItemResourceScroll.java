@@ -40,7 +40,7 @@ import static com.minecolonies.api.util.constant.TranslationConstants.*;
 /**
  * Class describing the resource scroll item.
  */
-public class ItemResourceScroll extends AbstractItemMinecolonies
+public class ItemResourceScroll extends Item
 {
     /**
      * Sets the name, creative tab, and registers the resource scroll item.
@@ -49,7 +49,7 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
      */
     public ItemResourceScroll(final Item.Properties properties)
     {
-        super("resourcescroll", properties.stacksTo(1));
+        super(properties.stacksTo(1));
     }
 
     /**

@@ -17,27 +17,15 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * Block of the gate house hut.
  */
-public class BlockHutGateHouse extends AbstractBlockHut<BlockHutGateHouse>
+public class BlockHutGateHouse extends AbstractBlockHut
 {
-    /**
-     * Default constructor.
-     */
-    public BlockHutGateHouse()
+    public BlockHutGateHouse(final Properties properties)
     {
-        //No different from Abstract parent
-        super();
-    }
-
-    @NotNull
-    @Override
-    public String getHutName()
-    {
-        return "blockhutgatehouse";
+        super(properties);
     }
 
     @Override
@@ -73,7 +61,7 @@ public class BlockHutGateHouse extends AbstractBlockHut<BlockHutGateHouse>
                 return ItemInteractionResult.FAIL;
             }
 
-            @Nullable final IBuildingView building = IColonyManager.getInstance().getBuildingView(worldIn.dimension(), pos);
+            final IBuildingView building = IColonyManager.getInstance().getBuildingView(worldIn.dimension(), pos);
             if (building != null && !building.getColony().getPermissions().hasPermission(player, Action.ACCESS_HUTS))
             {
                 new ConnectionModuleWindow(building, true).open();

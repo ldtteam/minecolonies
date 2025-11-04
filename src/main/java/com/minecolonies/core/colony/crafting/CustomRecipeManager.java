@@ -9,7 +9,7 @@ import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.eventbus.events.CustomRecipesReloadedEvent;
 import com.minecolonies.api.loot.ModLootTables;
 import com.minecolonies.api.util.Log;
-import com.minecolonies.core.blocks.MinecoloniesCropBlock;
+import com.minecolonies.core.blocks.BlockMinecoloniesCrop;
 import com.minecolonies.core.colony.buildings.modules.AnimalHerdingModule;
 import io.netty.buffer.Unpooled;
 import net.minecraft.core.HolderLookup;
@@ -25,6 +25,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.storage.loot.LootTable;
+import net.neoforged.neoforge.registries.DeferredBlock;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -323,9 +324,9 @@ public class CustomRecipeManager
             }
         }
 
-        for (final MinecoloniesCropBlock crop : ModBlocks.getCrops())
+        for (final DeferredBlock<BlockMinecoloniesCrop> crop : ModBlocks.CROPS)
         {
-            for (final Block source : crop.getDroppedFrom())
+            for (final Block source : crop.get().getDroppedFrom())
             {
                 lootIds.add(source.getLootTable());
             }

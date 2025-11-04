@@ -1,6 +1,5 @@
 package com.minecolonies.core.tileentities;
 
-import com.minecolonies.api.blocks.AbstractBlockMinecoloniesGrave;
 import com.minecolonies.api.blocks.types.GraveType;
 import com.minecolonies.api.colony.GraveData;
 import com.minecolonies.api.crafting.ItemStorage;
@@ -11,6 +10,7 @@ import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.WorldUtil;
+import com.minecolonies.core.blocks.BlockMinecoloniesGrave;
 import io.netty.buffer.Unpooled;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
@@ -116,9 +116,9 @@ public class TileEntityGrave extends AbstractTileEntityGrave
     @Override
     public void updateBlockState()
     {
-        if (level != null && level.getBlockState(worldPosition).getBlock() instanceof AbstractBlockMinecoloniesGrave)
+        if (level != null && level.getBlockState(worldPosition).getBlock() instanceof BlockMinecoloniesGrave)
         {
-            final BlockState state = level.getBlockState(worldPosition).setValue(AbstractBlockMinecoloniesGrave.VARIANT, decayed ? GraveType.DECAYED : GraveType.DEFAULT);
+            final BlockState state = level.getBlockState(worldPosition).setValue(BlockMinecoloniesGrave.VARIANT, decayed ? GraveType.DECAYED : GraveType.DEFAULT);
             if (!level.getBlockState(worldPosition).equals(state))
             {
                 level.setBlockAndUpdate(worldPosition, state);

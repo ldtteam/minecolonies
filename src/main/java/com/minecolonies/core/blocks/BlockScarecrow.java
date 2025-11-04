@@ -1,17 +1,15 @@
 package com.minecolonies.core.blocks;
 
-import com.minecolonies.api.blocks.huts.AbstractBlockMinecoloniesDefault;
 import com.minecolonies.api.blocks.interfaces.IBuildingBrowsableBlock;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildingextensions.registry.BuildingExtensionRegistries;
-import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.client.gui.containers.WindowField;
 import com.minecolonies.core.colony.buildingextensions.FarmField;
 import com.minecolonies.core.tileentities.TileEntityScarecrow;
+import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.LivingEntity;
@@ -29,7 +27,6 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
-import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
@@ -40,24 +37,36 @@ import org.jetbrains.annotations.Nullable;
 /**
  * The net.minecraft.core.Directions, placement and activation.
  */
-@SuppressWarnings("PMD.ExcessiveImports")
-public class BlockScarecrow extends AbstractBlockMinecoloniesDefault<BlockScarecrow> implements EntityBlock, IBuildingBrowsableBlock
+public class BlockScarecrow extends HorizontalDirectionalBlock implements EntityBlock, IBuildingBrowsableBlock
 {
+    public static final MapCodec<BlockPlantationField> CODEC = simpleCodec(BlockPlantationField::new);
+
     public static final EnumProperty<DoubleBlockHalf> HALF = BlockStateProperties.DOUBLE_BLOCK_HALF;
 
     /**
-     * Constructor called on block placement.
+     * Start of the collision box at y.
      */
-    public BlockScarecrow()
-    {
-        super(Properties.of().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(HARDNESS, RESISTANCE));
-        this.registerDefaultState(this.defaultBlockState().setValue(FACING, Direction.NORTH).setValue(HALF, DoubleBlockHalf.LOWER));
-    }
+    private static final double BOTTOM_COLLISION = 0.0;
 
-    @Override
-    public ResourceLocation getRegistryName()
+    /**
+     * Start of the collision box at x and z.
+     */
+    private static final double START_COLLISION = 0.1;
+
+    /**
+     * End of the collision box.
+     */
+    private static final double END_COLLISION = 0.9;
+
+    /**
+     * Height of the collision box.
+     */
+    private static final double HEIGHT_COLLISION = 2.2;
+
+    public BlockScarecrow(final Properties properties)
     {
-        return new ResourceLocation(Constants.MOD_ID, REGISTRY_NAME);
+        super(properties);
+        this.registerDefaultState(this.defaultBlockState().setValue(FACING, Direction.NORTH).setValue(HALF, DoubleBlockHalf.LOWER));
     }
 
     @Nullable
@@ -73,13 +82,13 @@ public class BlockScarecrow extends AbstractBlockMinecoloniesDefault<BlockScarec
 
     @Override
     public ItemInteractionResult useItemOn(
-      final ItemStack stack,
-      final BlockState state,
-      final Level worldIn,
-      final BlockPos pos,
-      final Player player,
-      final InteractionHand hand,
-      final BlockHitResult ray)
+        final ItemStack stack,
+        final BlockState state,
+        final Level worldIn,
+        final BlockPos pos,
+        final Player player,
+        final InteractionHand hand,
+        final BlockHitResult ray)
     {
         // If the world is client, open the inventory of the field.
         if (worldIn.isClientSide)
@@ -126,19 +135,16 @@ public class BlockScarecrow extends AbstractBlockMinecoloniesDefault<BlockScarec
     }
 
     @Override
-    public VoxelShape getShape(
-      final BlockState state, final BlockGetter worldIn, final BlockPos pos, final CollisionContext context)
+    public VoxelShape getShape(final BlockState state, final BlockGetter worldIn, final BlockPos pos, final CollisionContext context)
     {
         // Force the different halves to share the same collision space;
         // the user will think it is one big block
-        return Shapes.box(
-          (float) START_COLLISION,
-          (float) (BOTTOM_COLLISION - (state.getValue(HALF) == DoubleBlockHalf.UPPER ? 1 : 0)),
-          (float) START_COLLISION,
-          (float) END_COLLISION,
-          (float) (HEIGHT_COLLISION - (state.getValue(HALF) == DoubleBlockHalf.UPPER ? 1 : 0)),
-          (float) END_COLLISION
-        );
+        return Shapes.box((float) START_COLLISION,
+            (float) (BOTTOM_COLLISION - (state.getValue(HALF) == DoubleBlockHalf.UPPER ? 1 : 0)),
+            (float) START_COLLISION,
+            (float) END_COLLISION,
+            (float) (HEIGHT_COLLISION - (state.getValue(HALF) == DoubleBlockHalf.UPPER ? 1 : 0)),
+            (float) END_COLLISION);
     }
 
     @Override
@@ -183,7 +189,7 @@ public class BlockScarecrow extends AbstractBlockMinecoloniesDefault<BlockScarec
     }
 
     @Override
-    public BlockState playerWillDestroy(final Level worldIn, @NotNull final BlockPos pos, final BlockState state, @NotNull final Player player)
+    public BlockState playerWillDestroy(final @NotNull Level worldIn, @NotNull final BlockPos pos, final @NotNull BlockState state, @NotNull final Player player)
     {
         DoubleBlockHalf half = state.getValue(HALF);
         BlockPos otherpos = half == DoubleBlockHalf.LOWER ? pos.above() : pos.below();
@@ -222,5 +228,12 @@ public class BlockScarecrow extends AbstractBlockMinecoloniesDefault<BlockScarec
                 colony.getBuildingManager().removeBuildingExtension(field -> field.getBuildingExtensionType().equals(BuildingExtensionRegistries.farmField.get()) && field.getPosition().equals(pos));
             }
         }
+    }
+
+    @Override
+    @NotNull
+    protected MapCodec<? extends HorizontalDirectionalBlock> codec()
+    {
+        return CODEC;
     }
 }

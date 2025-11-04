@@ -12,17 +12,14 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.permissions.Action;
-import com.minecolonies.api.items.ItemBlockHut;
 import com.minecolonies.api.items.component.ModDataComponents;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.util.*;
-import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -36,8 +33,11 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.MapColor;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.items.wrapper.InvWrapper;
@@ -55,25 +55,15 @@ import static com.minecolonies.api.util.constant.TranslationConstants.*;
  * Base class for all Minecolonies Hut Blocks. Hut Blocks are the base blocks for Minecolonies buildings.
  * Extending this class enables all the blueprint functionalities.
  */
-@SuppressWarnings("PMD.ExcessiveImports")
-public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends AbstractColonyBlock<B> implements IAnchorBlock,
-                                                                                                                        INamedBlueprintAnchorBlock,
-                                                                                                                        ILeveledBlueprintAnchorBlock,
-                                                                                                                        IRequirementsBlueprintAnchorBlock,
-                                                                                                                        IInvisibleBlueprintAnchorBlock,
-                                                                                                                        ISpecialCreativeHandlerAnchorBlock,
-                                                                                                                        IBuildingBrowsableBlock
-
+public abstract class AbstractBlockHut extends AbstractColonyBlock implements IAnchorBlock,
+    INamedBlueprintAnchorBlock,
+    ILeveledBlueprintAnchorBlock,
+    IRequirementsBlueprintAnchorBlock,
+    IInvisibleBlueprintAnchorBlock,
+    ISpecialCreativeHandlerAnchorBlock,
+    IBuildingBrowsableBlock
 {
-    /**
-     * Constructor for a hut block.
-     * <p>
-     * Registers the block, sets the creative tab, as well as the resistance and the hardness.
-     */
-    public AbstractBlockHut()
-    {
-        super();
-    }
+    public static final BlockBehaviour.Properties DEFAULT_HUT_BLOCK_PROPERTIES = BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(10, Float.POSITIVE_INFINITY).noOcclusion();
 
     /**
      * Constructor for a hut block.
@@ -142,7 +132,7 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
 
         if (InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(player.getInventory()), this) == -1)
         {
-            requirements.add(Component.translatableEscape("com.minecolonies.coremod.hut.cost", Component.translatableEscape("block." + Constants.MOD_ID + "." + getHutName())).setStyle((Style.EMPTY).withColor(ChatFormatting.RED)));
+            requirements.add(Component.translatableEscape("com.minecolonies.coremod.hut.cost", getName()).setStyle((Style.EMPTY).withColor(ChatFormatting.RED)));
             return requirements;
         }
 
@@ -201,7 +191,7 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
         }
         catch (final NumberFormatException exception)
         {
-            Log.getLogger().error("Couldn't get level from hut: " + getHutName() + ". Potential corrubt blockEntity data.");
+            Log.getLogger().error("Couldn't get level from hut: {}. Potential corrupt blockEntity data.", getName().toString());
             return 0;
         }
     }
@@ -224,7 +214,7 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
       final String path)
     {
         final BlockState anchor = blueprint.getBlockState(blueprint.getPrimaryBlockOffset());
-        if (!(anchor.getBlock() instanceof AbstractBlockHut<?>) || (!fancyPlacement && player.isCreative()))
+        if (!(anchor.getBlock() instanceof AbstractBlockHut) || (!fancyPlacement && player.isCreative()))
         {
             return true;
         }
@@ -235,7 +225,7 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
         }
         world.destroyBlock(pos, true);
         world.setBlockAndUpdate(pos, anchor);
-        ((AbstractBlockHut<?>) anchor.getBlock()).onBlockPlacedByBuildTool(world,
+        ((AbstractBlockHut) anchor.getBlock()).onBlockPlacedByBuildTool(world,
           pos,
           anchor,
           player,
@@ -252,7 +242,7 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
         @Nullable final IBuilding building = IColonyManager.getInstance().getBuilding(world, pos);
         if (building == null)
         {
-            if (anchor.getBlock() != ModBlocks.blockHutTownHall)
+            if (!anchor.is(ModBlocks.blockHutTownHall))
             {
                 SoundUtils.playErrorSound(player, player.blockPosition());
                 Log.getLogger().error("BuildTool: building is null!", new Exception());
@@ -309,7 +299,7 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
 
         if (colony == null)
         {
-            if(anchor == ModBlocks.blockHutTownHall)
+            if (anchor.equals(ModBlocks.blockHutTownHall.get()))
             {
                 return true;
             }
@@ -355,12 +345,6 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
 
         stack.addToTooltip(ModDataComponents.HUT_COMPONENT, context, tooltip::add, flags);
         stack.addToTooltip(ModDataComponents.COLONY_ID_COMPONENT, context, tooltip::add, flags);
-    }
-
-    @Override
-    public void registerBlockItem(final Registry<Item> registry, final Item.Properties properties)
-    {
-        Registry.register(registry, getRegistryName(), new ItemBlockHut(this, properties));
     }
 
     /**

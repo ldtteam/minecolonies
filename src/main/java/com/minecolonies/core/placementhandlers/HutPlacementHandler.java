@@ -10,10 +10,10 @@ import com.ldtteam.structurize.storage.StructurePacks;
 import com.ldtteam.structurize.util.BlockUtils;
 import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.blocks.ModBlocks;
-import com.minecolonies.core.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.Utils;
 import com.minecolonies.api.util.WorldUtil;
+import com.minecolonies.core.tileentities.TileEntityColonyBuilding;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
@@ -34,7 +34,7 @@ public class HutPlacementHandler implements IPlacementHandler
     @Override
     public boolean canHandle(@NotNull final Level world, @NotNull final BlockPos pos, @NotNull final BlockState blockState)
     {
-        return blockState.getBlock() instanceof AbstractBlockHut<?>;
+        return blockState.getBlock() instanceof AbstractBlockHut;
     }
 
     @Override
@@ -120,7 +120,7 @@ public class HutPlacementHandler implements IPlacementHandler
       final boolean complete)
     {
         final List<ItemStack> itemList = new ArrayList<>();
-        if (blockState.getBlock() != ModBlocks.blockHutBarracksTower)
+        if (!blockState.is(ModBlocks.blockHutBarracksTower))
         {
             itemList.add(BlockUtils.getItemStackFromBlockState(blockState));
         }

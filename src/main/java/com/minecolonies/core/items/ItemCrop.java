@@ -3,8 +3,8 @@ package com.minecolonies.core.items;
 import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.constant.TranslationConstants;
-import com.minecolonies.core.blocks.MinecoloniesCropBlock;
-import com.minecolonies.core.blocks.MinecoloniesFarmland;
+import com.minecolonies.core.blocks.BlockMinecoloniesCrop;
+import com.minecolonies.core.blocks.BlockMinecoloniesFarmland;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
@@ -17,7 +17,6 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.BlockPlaceContext;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.FarmBlock;
 import net.minecraft.world.level.block.state.BlockState;
@@ -44,7 +43,7 @@ public class ItemCrop extends BlockItem
      * @param cropBlock   the {@link AbstractBlockHut} this item represents.
      * @param builder the item properties to use.
      */
-    public ItemCrop(@NotNull final MinecoloniesCropBlock cropBlock, @NotNull final Properties builder, @Nullable final TagKey<Biome> preferredBiome)
+    public ItemCrop(@NotNull final BlockMinecoloniesCrop cropBlock, @NotNull final Properties builder, @Nullable final TagKey<Biome> preferredBiome)
     {
         super(cropBlock, builder.food(new FoodProperties.Builder().nutrition(1).saturationModifier(0.3F).build()));
         this.preferredBiome = preferredBiome;
@@ -58,7 +57,7 @@ public class ItemCrop extends BlockItem
         {
             final BlockPos clickedPos = ctx.getClickedPos().below();
             final BlockState worldState = ctx.getLevel().getBlockState(clickedPos);
-            if (ctx.getLevel().isClientSide && (worldState.getBlock() instanceof MinecoloniesFarmland || worldState.getBlock() instanceof FarmBlock))
+            if (ctx.getLevel().isClientSide && (worldState.getBlock() instanceof BlockMinecoloniesFarmland || worldState.getBlock() instanceof FarmBlock))
             {
                 MessageUtils.format(Component.translatable("com.minecolonies.core.crop.cantplant")).sendTo(player);
             }

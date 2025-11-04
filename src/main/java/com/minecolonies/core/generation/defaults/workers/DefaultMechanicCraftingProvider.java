@@ -43,13 +43,13 @@ public class DefaultMechanicCraftingProvider extends CustomRecipeProvider
     {
         recipe(MECHANIC, MODULE_CRAFTING, "gate_wood")
                 .inputs(List.of(new ItemStorage(new ItemStack(Items.OAK_LOG, 5))))
-                .result(new ItemStack(ModItems.woodgate))
+                .result(ModItems.blockItemWoodenGate.toStack())
                 .showTooltip(true)
                 .build(consumer);
 
         recipe(MECHANIC, MODULE_CRAFTING, "gate_iron")
                 .inputs(List.of(new ItemStorage(new ItemStack(Items.IRON_NUGGET, 5))))
-                .result(new ItemStack(ModItems.irongate))
+                .result(ModItems.blockItemIronGate.toStack())
                 .showTooltip(true)
                 .build(consumer);
 

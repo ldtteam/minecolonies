@@ -10,7 +10,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public interface ITickableBlockMinecolonies extends EntityBlock
+public interface IMinecoloniesTickableBlock extends EntityBlock
 {
     @Nullable
     @Override

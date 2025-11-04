@@ -1,14 +1,14 @@
 package com.minecolonies.core.client.gui.containers;
 
-import com.minecolonies.api.blocks.AbstractBlockMinecoloniesRack;
 import com.minecolonies.api.blocks.types.RackType;
 import com.minecolonies.api.inventory.container.ContainerRack;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.core.blocks.BlockMinecoloniesRack;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Inventory;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.items.IItemHandler;
@@ -70,7 +70,7 @@ public class WindowRack extends AbstractContainerScreen<ContainerRack>
         super(container, playerInventory, iTextComponent);
         if (container.neighborRack != null)
         {
-            if (container.rack.getBlockState().getValue(AbstractBlockMinecoloniesRack.VARIANT) != RackType.NO_RENDER)
+            if (container.rack.getBlockState().getValue(BlockMinecoloniesRack.VARIANT) != RackType.NO_RENDER)
             {
                 this.jointChestInventory = new CombinedInvWrapper(container.rack.getInventory(), container.neighborRack.getInventory());
             }

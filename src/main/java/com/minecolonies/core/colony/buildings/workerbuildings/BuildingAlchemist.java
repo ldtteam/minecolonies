@@ -15,7 +15,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.NbtUtils;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.item.Items;
@@ -242,7 +241,7 @@ public class BuildingAlchemist extends AbstractBuilding
             if (!super.isRecipeCompatible(recipe))
                 return false;
 
-            return recipe.getPrimaryOutput().getItem() == ModItems.magicpotion;
+            return recipe.getPrimaryOutput().is(ModItems.magicPotion);
         }
 
         @Override

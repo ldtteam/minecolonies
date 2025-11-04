@@ -1,14 +1,18 @@
 package com.minecolonies.core.generation.defaults;
 
 import com.minecolonies.api.blocks.ModBlocks;
+import com.minecolonies.api.items.ModFoodItems;
 import com.minecolonies.api.items.ModItems;
+import com.minecolonies.core.blocks.BlockMinecoloniesCrop;
+import com.minecolonies.core.items.ItemFood;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.common.data.DataMapProvider;
+import net.neoforged.neoforge.registries.DeferredBlock;
+import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.datamaps.builtin.Compostable;
 import net.neoforged.neoforge.registries.datamaps.builtin.NeoForgeDataMaps;
 import org.jetbrains.annotations.NotNull;
@@ -37,27 +41,27 @@ public class DefaultDataMapsProvider extends DataMapProvider
         final Builder<Compostable, Item> builder = builder(NeoForgeDataMaps.COMPOSTABLES);
 
         // these items aren't registered in "getAllFoods"
-        registerCompostItemFromNutrition(builder, ModItems.milkyBread.asItem(), 6f);
-        registerCompostItemFromNutrition(builder, ModItems.sugaryBread.asItem(), 6f);
-        registerCompostItemFromNutrition(builder, ModItems.goldenBread.asItem(), 6f);
-        registerCompostItemFromNutrition(builder, ModItems.chorusBread.asItem(), 6f);
+        registerCompostItemFromNutrition(builder, ModFoodItems.milkyBread.asItem(), 6f);
+        registerCompostItemFromNutrition(builder, ModFoodItems.sugaryBread.asItem(), 6f);
+        registerCompostItemFromNutrition(builder, ModFoodItems.goldenBread.asItem(), 6f);
+        registerCompostItemFromNutrition(builder, ModFoodItems.chorusBread.asItem(), 6f);
 
-        for (final Item item : ModItems.getAllIngredients())
+        for (final DeferredItem<Item> item : ModFoodItems.INGREDIENTS)
         {
-            registerCompostItemFromNutrition(builder, item, 10f);
+            registerCompostItemFromNutrition(builder, item.get(), 10f);
         }
-        for (final Item item : ModItems.getAllFoods())
+        for (final DeferredItem<ItemFood> item : ModFoodItems.FOODS)
         {
-            registerCompostItemFromNutrition(builder, item, 6f);
+            registerCompostItemFromNutrition(builder, item.get(), 6f);
         }
 
-        builder.add(ModItems.mistletoe.builtInRegistryHolder(), new Compostable(0.5f), false);
+        builder.add(ModItems.mistletoe, new Compostable(0.5f), false);
 
-        for (final Block block : ModBlocks.getCrops())
+        for (final DeferredBlock<BlockMinecoloniesCrop> block : ModBlocks.CROPS)
         {
-            builder.add(block.asItem().builtInRegistryHolder(), new Compostable(0.5f), false);
+            builder.add(block.getId(), new Compostable(0.5f), false);
         }
-        builder.add(ModBlocks.blockCompostedDirt.asItem().builtInRegistryHolder(), new Compostable(1.0f), false);
+        builder.add(ModBlocks.blockCompostedDirt.getId(), new Compostable(1.0f), false);
     }
 
     private static void registerCompostItemFromNutrition(final Builder<Compostable, Item> builder, final Item item, final float factor)

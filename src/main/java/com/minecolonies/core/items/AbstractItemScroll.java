@@ -3,41 +3,40 @@ package com.minecolonies.core.items;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.items.component.ColonyId;
-import com.minecolonies.core.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.MessageUtils;
+import com.minecolonies.core.tileentities.TileEntityColonyBuilding;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.item.UseAnim;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.world.InteractionResultHolder;
-
 /**
  * Scroll items base class, does colony registering/checks.
  */
-public abstract class AbstractItemScroll extends AbstractItemMinecolonies
+public abstract class AbstractItemScroll extends Item
 {
-    public static final int    FAIL_RESPONSES_TOTAL = 10;
+    public static final int FAIL_RESPONSES_TOTAL = 10;
 
     /**
      * Sets the name, creative tab, and registers the item.
      *
-     * @param name       The name of this item
      * @param properties the properties.
      */
-    public AbstractItemScroll(final String name, final Properties properties)
+    public AbstractItemScroll(final Properties properties)
     {
-        super(name, properties);
+        super(properties);
     }
 
     @Override

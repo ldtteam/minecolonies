@@ -1,8 +1,8 @@
 package com.minecolonies.core.items;
 
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.Tiers;
 import net.minecraft.world.item.SwordItem;
+import net.minecraft.world.item.Tiers;
 
 /**
  * Class handling the Scimitar item.

@@ -367,7 +367,7 @@ public class RecipeStorage implements IRecipeStorage
         for (final ItemStorage input : input)
         {
             ItemStorage inputItem = input;
-            if (inputItem.isEmpty() || inputItem.getItem() == ModItems.buildTool.get())
+            if (inputItem.isEmpty() || inputItem.getItemStack().is(ModItems.buildTool))
             {
                 continue;
             }

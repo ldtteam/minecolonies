@@ -3,18 +3,15 @@ package com.minecolonies.core.blocks.huts;
 import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * Hut for the glassblower. No different from {@link AbstractBlockHut}
  */
-public class BlockHutGlassblower extends AbstractBlockHut<BlockHutGlassblower>
+public class BlockHutGlassblower extends AbstractBlockHut
 {
-    @NotNull
-    @Override
-    public String getHutName()
+    public BlockHutGlassblower(final Properties properties)
     {
-        return "blockhutglassblower";
+        super(properties);
     }
 
     @Override

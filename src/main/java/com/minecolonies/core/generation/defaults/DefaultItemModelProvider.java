@@ -1,13 +1,15 @@
 package com.minecolonies.core.generation.defaults;
 
+import com.minecolonies.api.items.ModFoodItems;
 import com.minecolonies.api.items.ModItems;
-import net.minecraft.core.registries.BuiltInRegistries;
+import com.minecolonies.core.items.ItemFood;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.neoforged.neoforge.client.model.generators.ItemModelProvider;
 import net.neoforged.neoforge.client.model.generators.ModelFile;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
+import net.neoforged.neoforge.registries.DeferredItem;
 
 import static com.minecolonies.api.util.constant.Constants.MOD_ID;
 
@@ -29,24 +31,24 @@ public class DefaultItemModelProvider extends ItemModelProvider
     {
         final ResourceLocation disabledGoggles = modLoc("build_goggles_disabled");
         basicItem(disabledGoggles);
-        basicItem(ModItems.buildGoggles)
+        basicItem(ModItems.buildGoggles.getId())
                 .override()
                     .predicate(ResourceLocation.withDefaultNamespace("disabled"), 1.0F)
                     .model(getExistingFile(disabledGoggles))
                 .end();
 
-        for (final Item foodItem : ModItems.getAllIngredients())
+        for (final DeferredItem<Item> foodItem : ModFoodItems.INGREDIENTS)
         {
             getBuilder(foodItem.toString())
               .parent(new ModelFile.UncheckedModelFile("item/generated"))
-              .texture("layer0", new ResourceLocation(MOD_ID, "item/food/" + BuiltInRegistries.ITEM.wrapAsHolder(foodItem).getKey().location().getPath()));
+              .texture("layer0", new ResourceLocation(MOD_ID, "item/food/" + foodItem.getId().getPath()));
         }
 
-        for (final Item foodItem : ModItems.getAllFoods())
+        for (final DeferredItem<ItemFood> foodItem : ModFoodItems.FOODS)
         {
             getBuilder(foodItem.toString())
               .parent(new ModelFile.UncheckedModelFile("item/generated"))
-              .texture("layer0", new ResourceLocation(MOD_ID, "item/food/" + BuiltInRegistries.ITEM.wrapAsHolder(foodItem).getKey().location().getPath()));
+              .texture("layer0", new ResourceLocation(MOD_ID, "item/food/" + foodItem.getId().getPath()));
         }
     }
 }

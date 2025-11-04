@@ -9,6 +9,7 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.workorders.IBuilderWorkOrder;
 import com.minecolonies.api.colony.workorders.IWorkOrder;
 import com.minecolonies.api.equipment.ModEquipmentTypes;
+import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.StatsUtil;
@@ -217,7 +218,7 @@ public class BuildingStructureHandler<J extends AbstractJobStructure<?, J>, B ex
             structureAI.getWorker().queueSound(state.getSoundType().getPlaceSound(), worldPos, 10, 0);
         }
 
-        if (state.getBlock() == ModBlocks.blockWayPoint)
+        if (state.is(ModBlocks.blockWayPoint))
         {
             structureAI.getWorker().getCitizenColonyHandler().getColonyOrRegister().addWayPoint(worldPos, state);
         }
@@ -293,10 +294,7 @@ public class BuildingStructureHandler<J extends AbstractJobStructure<?, J>, B ex
     @Override
     public boolean isStackFree(@Nullable final ItemStack itemStack)
     {
-        return itemStack == null
-                 || itemStack.isEmpty()
-                 || itemStack.is(ItemTags.LEAVES)
-                 || itemStack.getItem() == new ItemStack(ModBlocks.blockDecorationPlaceholder, 1).getItem();
+        return itemStack == null || itemStack.isEmpty() || itemStack.is(ItemTags.LEAVES) || itemStack.is(ModItems.blockItemDecorationPlaceholder);
     }
 
     @Override
@@ -342,6 +340,6 @@ public class BuildingStructureHandler<J extends AbstractJobStructure<?, J>, B ex
 
         return (block1 == Blocks.GRASS_BLOCK && block2 == Blocks.DIRT)
                  || (block2 == Blocks.GRASS_BLOCK && block1 == Blocks.DIRT)
-                 || (block1 == ModBlocks.blockRack && block2 == ModBlocks.blockRack);
+                 || (block1.equals(ModBlocks.blockRack.get()) && block2.equals(ModBlocks.blockRack.get()));
     }
 }

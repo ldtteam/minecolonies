@@ -1,6 +1,5 @@
 package com.minecolonies.core.tileentities;
 
-import com.minecolonies.api.blocks.AbstractBlockBarrel;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.crafting.CompostRecipe;
@@ -11,22 +10,23 @@ import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.WorldUtil;
+import com.minecolonies.core.blocks.BlockBarrel;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
-import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.Level;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -122,7 +122,7 @@ public class TileEntityBarrel extends AbstractTileEntityBarrel implements ITicka
     {
         if (done)
         {
-            ItemStack compostStack = new ItemStack(ModItems.compost, 6);
+            ItemStack compostStack = ModItems.compost.toStack(6);
             if (hitFace != null) // Spawn all as ItemEntity
             {
                 playerIn.level().addFreshEntity(new ItemEntity(playerIn.level(), worldPosition.getX() + 0.5, worldPosition.getY() + 1.75, worldPosition.getZ() + 0.5, compostStack, hitFace.getStepX() / 5f, hitFace.getStepY() / 5f + 0.2f, hitFace.getStepZ() / 5f));
@@ -194,9 +194,9 @@ public class TileEntityBarrel extends AbstractTileEntityBarrel implements ITicka
     public void updateBlock(final Level worldIn)
     {
         final BlockState barrel = level.getBlockState(worldPosition);
-        if (barrel.getBlock() == ModBlocks.blockBarrel)
+        if (barrel.is(ModBlocks.blockBarrel))
         {
-            worldIn.setBlockAndUpdate(worldPosition, AbstractBlockBarrel.changeStateOverFullness(this, barrel));
+            worldIn.setBlockAndUpdate(worldPosition, BlockBarrel.changeStateOverFullness(this, barrel));
             setChanged();
         }
     }
@@ -321,7 +321,7 @@ public class TileEntityBarrel extends AbstractTileEntityBarrel implements ITicka
         {
             this.done = false;
             this.updateBlock(this.level);
-            return new ItemStack(ModItems.compost, (int) (6 * multiplier));
+            return ModItems.compost.toStack((int) Math.floor(6 * multiplier));
         }
         return ItemStack.EMPTY;
     }

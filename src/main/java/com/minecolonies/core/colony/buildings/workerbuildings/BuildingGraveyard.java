@@ -1,15 +1,15 @@
 package com.minecolonies.core.colony.buildings.workerbuildings;
 
-import com.minecolonies.api.blocks.AbstractBlockMinecoloniesNamedGrave;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.equipment.ModEquipmentTypes;
-import com.minecolonies.core.tileentities.TileEntityGrave;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.WorldUtil;
+import com.minecolonies.core.blocks.BlockMinecoloniesNamedGrave;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
+import com.minecolonies.core.tileentities.TileEntityGrave;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
@@ -190,9 +190,9 @@ public class BuildingGraveyard extends AbstractBuilding
     public void registerBlockPosition(@NotNull final BlockState state, @NotNull final BlockPos pos, @NotNull final Level world)
     {
         super.registerBlockPosition(state, pos, world);
-        if (state.getBlock() == ModBlocks.blockNamedGrave)
+        if (state.is(ModBlocks.blockNamedGrave))
         {
-            visualGravePositions.add(new Tuple<>(pos, state.getValue(AbstractBlockMinecoloniesNamedGrave.FACING)));
+            visualGravePositions.add(new Tuple<>(pos, state.getValue(BlockMinecoloniesNamedGrave.FACING)));
         }
     }
 

@@ -3,24 +3,15 @@ package com.minecolonies.core.blocks.huts;
 import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * Hut for the kitchen. No different from {@link AbstractBlockHut}
  */
-public class BlockHutKitchen extends AbstractBlockHut<BlockHutKitchen>
+public class BlockHutKitchen extends AbstractBlockHut
 {
-    public BlockHutKitchen()
+    public BlockHutKitchen(final Properties properties)
     {
-        //No different from Abstract parent
-        super();
-    }
-
-    @NotNull
-    @Override
-    public String getHutName()
-    {
-        return "blockhutkitchen";
+        super(properties);
     }
 
     @Override

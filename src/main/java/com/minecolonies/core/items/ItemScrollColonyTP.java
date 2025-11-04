@@ -2,7 +2,6 @@ package com.minecolonies.core.items;
 
 import com.ldtteam.structurize.util.BlockUtils;
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.items.component.Desc;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.core.network.messages.client.VanillaParticleMessage;
@@ -10,12 +9,6 @@ import com.minecolonies.core.util.TeleportHelper;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.network.chat.*;
-import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -25,6 +18,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
@@ -49,7 +43,7 @@ public class ItemScrollColonyTP extends AbstractItemScroll
      */
     public ItemScrollColonyTP(final Properties properties)
     {
-        super("scroll_tp", properties);
+        super(properties);
     }
 
     @Override

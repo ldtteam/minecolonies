@@ -10,7 +10,6 @@ import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
-import net.minecraft.world.item.ArrowItem;
 import net.minecraft.world.item.BowItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -55,17 +54,16 @@ public class ItemPharaoScepter extends BowItem
     @Override
     public void releaseUsing(@NotNull final ItemStack stack, @NotNull final Level worldIn, LivingEntity entityLiving, int timeLeft)
     {
-        if (entityLiving instanceof Player)
+        if (entityLiving instanceof final Player playerEntity)
         {
-            Player playerentity = (Player) entityLiving;
             int useDuration = this.getUseDuration(stack, entityLiving) - timeLeft;
-            useDuration = net.neoforged.neoforge.event.EventHooks.onArrowLoose(stack, worldIn, playerentity, useDuration, true);
+            useDuration = net.neoforged.neoforge.event.EventHooks.onArrowLoose(stack, worldIn, playerEntity, useDuration, true);
             if (useDuration < 0)
             {
                 return;
             }
 
-            ItemStack itemstack = playerentity.getProjectile(stack);
+            ItemStack itemstack = playerEntity.getProjectile(stack);
             if (!itemstack.isEmpty())
             {
                 float speed = getPowerForTime(useDuration);
@@ -78,14 +76,14 @@ public class ItemPharaoScepter extends BowItem
                     }
 
                     worldIn.playSound(null,
-                      playerentity.getX(),
-                      playerentity.getY(),
-                      playerentity.getZ(),
+                      playerEntity.getX(),
+                      playerEntity.getY(),
+                      playerEntity.getZ(),
                       SoundEvents.ARROW_SHOOT,
                       SoundSource.PLAYERS,
                       1.0F,
                       1.0F / (entityLiving.getRandom().nextFloat() * 0.4F + 1.2F) + speed * 0.5F);
-                    playerentity.awardStat(Stats.ITEM_USED.get(this));
+                    playerEntity.awardStat(Stats.ITEM_USED.get(this));
                 }
             }
         }
@@ -106,7 +104,7 @@ public class ItemPharaoScepter extends BowItem
             return arrow;
         }
 
-        AbstractArrow entity = ((ArrowItem) ModItems.firearrow).createArrow(arrow.level(), new ItemStack(ModItems.firearrow, 1), (LivingEntity) arrow.getOwner(), weaponStack);
+        AbstractArrow entity = ModItems.fireArrow.get().createArrow(arrow.level(), ModItems.fireArrow.toStack(), (LivingEntity) arrow.getOwner(), weaponStack);
         entity.pickup = AbstractArrow.Pickup.DISALLOWED;
         entity.setRemainingFireTicks(3 * TICKS_PER_SECOND);
 

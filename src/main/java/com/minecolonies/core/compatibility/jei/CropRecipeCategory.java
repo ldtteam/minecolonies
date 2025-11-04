@@ -5,7 +5,7 @@ import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.equipment.ModEquipmentTypes;
 import com.minecolonies.api.equipment.registry.EquipmentTypeEntry;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.core.blocks.MinecoloniesCropBlock;
+import com.minecolonies.core.blocks.BlockMinecoloniesCrop;
 import com.minecolonies.core.colony.crafting.CustomRecipeManager;
 import com.minecolonies.core.colony.crafting.LootTableAnalyzer;
 import mezz.jei.api.constants.VanillaTypes;
@@ -24,6 +24,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
+import net.neoforged.neoforge.registries.DeferredBlock;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Comparator;
@@ -59,9 +60,9 @@ public class CropRecipeCategory implements IRecipeCategory<CropRecipeCategory.Cr
     public static List<CropRecipe> findRecipes()
     {
         final Set<Block> sourceBlocks = new HashSet<>();
-        for (final MinecoloniesCropBlock crop : ModBlocks.getCrops())
+        for (final DeferredBlock<BlockMinecoloniesCrop> crop : ModBlocks.CROPS)
         {
-            sourceBlocks.addAll(crop.getDroppedFrom());
+            sourceBlocks.addAll(crop.get().getDroppedFrom());
         }
 
         return sourceBlocks.stream().map(CropRecipe::new).toList();

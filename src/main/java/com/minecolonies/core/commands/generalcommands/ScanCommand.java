@@ -194,7 +194,7 @@ public class ScanCommand extends AbstractCommand
 
         final BlockState primary = world.getBlockState(zero.offset(bp.getPrimaryBlockOffset()));
         final boolean isHut;
-        if (primary.getBlock() instanceof AbstractBlockHut<?>)
+        if (primary.getBlock() instanceof AbstractBlockHut)
         {
             isHut = true;
             final AbstractTileEntityColonyBuilding building = (AbstractTileEntityColonyBuilding) world.getBlockEntity(zero.offset(bp.getPrimaryBlockOffset()));

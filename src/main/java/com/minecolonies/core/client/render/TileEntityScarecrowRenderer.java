@@ -1,6 +1,5 @@
 package com.minecolonies.core.client.render;
 
-import com.minecolonies.api.blocks.huts.AbstractBlockMinecoloniesDefault;
 import com.minecolonies.api.tileentities.AbstractTileEntityScarecrow;
 import com.minecolonies.api.tileentities.ScareCrowType;
 import com.minecolonies.api.util.constant.Constants;
@@ -12,9 +11,9 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.resources.model.Material;
-import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.InventoryMenu;
@@ -110,7 +109,7 @@ public class TileEntityScarecrowRenderer implements BlockEntityRenderer<Abstract
         //In the case of worldLags tileEntities may sometimes disappear.
         if (te.getLevel().getBlockState(te.getBlockPos()).getBlock() instanceof BlockScarecrow)
         {
-            final Direction facing = te.getLevel().getBlockState(te.getBlockPos()).getValue(AbstractBlockMinecoloniesDefault.FACING);
+            final Direction facing = te.getLevel().getBlockState(te.getBlockPos()).getValue(BlockScarecrow.FACING);
             switch (facing)
             {
                 case EAST:

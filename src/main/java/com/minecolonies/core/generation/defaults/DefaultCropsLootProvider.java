@@ -3,7 +3,7 @@ package com.minecolonies.core.generation.defaults;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.loot.EntityInBiomeTag;
 import com.minecolonies.api.loot.ModLootConditions;
-import com.minecolonies.core.blocks.MinecoloniesCropBlock;
+import com.minecolonies.core.blocks.BlockMinecoloniesCrop;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.loot.LootTableSubProvider;
@@ -17,6 +17,7 @@ import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.entries.AlternativesEntry;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.predicates.LootItemRandomChanceCondition;
+import net.neoforged.neoforge.registries.DeferredBlock;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -47,22 +48,22 @@ public class DefaultCropsLootProvider implements LootTableSubProvider
     {
         final HolderLookup.RegistryLookup<Enchantment> enchantments = provider.lookupOrThrow(Registries.ENCHANTMENT);
 
-        final Map<ResourceLocation, List<MinecoloniesCropBlock>> cropDrops = new HashMap<>();
-        for (final MinecoloniesCropBlock crop : ModBlocks.getCrops())
+        final Map<ResourceLocation, List<BlockMinecoloniesCrop>> cropDrops = new HashMap<>();
+        for (final DeferredBlock<BlockMinecoloniesCrop> crop : ModBlocks.CROPS)
         {
-            for (final Block source : crop.getDroppedFrom())
+            for (final Block source : crop.get().getDroppedFrom())
             {
-                cropDrops.computeIfAbsent(source.getLootTable().location(), t -> new ArrayList<>()).add(crop);
+                cropDrops.computeIfAbsent(source.getLootTable().location(), t -> new ArrayList<>()).add(crop.get());
             }
         }
 
-        for (final Map.Entry<ResourceLocation, List<MinecoloniesCropBlock>> entry : cropDrops.entrySet())
+        for (final Map.Entry<ResourceLocation, List<BlockMinecoloniesCrop>> entry : cropDrops.entrySet())
         {
             // grass blocks have a lot of crops (both MineColonies and vanilla) so the base drop chance is reduced
             final float chance = entry.getKey().equals(Blocks.SHORT_GRASS.getLootTable().location()) ? 0.001f : 0.01f;
 
             final LootTable.Builder table = LootTable.lootTable();
-            for (final MinecoloniesCropBlock crop : entry.getValue())
+            for (final BlockMinecoloniesCrop crop : entry.getValue())
             {
                 final LootPool.Builder pool = LootPool.lootPool();
                 if (crop.getPreferredBiome() != null)
@@ -100,7 +101,7 @@ public class DefaultCropsLootProvider implements LootTableSubProvider
         }
 
         final LootPool.Builder dungeonPool = LootPool.lootPool();
-        for (final MinecoloniesCropBlock crop : ModBlocks.getCrops())
+        for (final DeferredBlock<BlockMinecoloniesCrop> crop : ModBlocks.CROPS)
         {
             dungeonPool.add(LootItem.lootTableItem(crop)
                     .when(LootItemRandomChanceCondition.randomChance(0.005f)));

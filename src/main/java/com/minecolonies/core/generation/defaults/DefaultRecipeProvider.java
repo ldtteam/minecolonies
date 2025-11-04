@@ -2,6 +2,7 @@ package com.minecolonies.core.generation.defaults;
 
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.crafting.ZeroWasteRecipe;
+import com.minecolonies.api.items.ModFoodItems;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.constant.TagConstants;
@@ -75,7 +76,7 @@ public class DefaultRecipeProvider extends RecipeProvider
         registerHutRecipe3(consumer, ModBlocks.blockHutBlacksmith, Items.IRON_INGOT);
         registerHutRecipe1(consumer, ModBlocks.blockHutBuilder, ItemTags.WOODEN_DOORS);
         registerHutRecipe1(consumer, ModBlocks.blockHutChickenHerder, Items.EGG);
-        registerHutRecipe1(consumer, ModBlocks.blockHutHome, Items.TORCH);
+        registerHutRecipe1(consumer, ModBlocks.blockHutCitizen, Items.TORCH);
         registerHutRecipe3(consumer, ModBlocks.blockHutCombatAcademy, Items.IRON_SWORD);
         registerHutRecipe1(consumer, ModBlocks.blockHutComposter, ModBlocks.blockBarrel);
         registerHutRecipe1(consumer, ModBlocks.blockHutConcreteMixer, Items.WHITE_CONCRETE_POWDER);
@@ -188,7 +189,7 @@ public class DefaultRecipeProvider extends RecipeProvider
           .unlockedBy("has_items", hasAllOf(buildTool.get(), ModBlocks.blockHutPlantation))
           .save(consumer);
 
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.blockSimpleQuarry)
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.blockHutSimpleQuarry)
                 .pattern("XTX")
                 .pattern("XDX")
                 .pattern("XBX")
@@ -199,7 +200,7 @@ public class DefaultRecipeProvider extends RecipeProvider
                 .unlockedBy("has_items", hasAllOf(buildTool.get(), ModBlocks.blockHutMiner))
                 .save(consumer);
 
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.blockMediumQuarry)
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.blockHutMediumQuarry)
                 .pattern("XTX")
                 .pattern("XDX")
                 .pattern("XBX")
@@ -241,7 +242,7 @@ public class DefaultRecipeProvider extends RecipeProvider
 //                .unlockedBy("has_items", hasAllOf(buildTool.get(), ModBlocks.blockHutMiner))
 //                .save(consumer);
 
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.assistantHammer_Gold)
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.assistantHammerGold)
             .pattern("GGG")
             .pattern("GBG")
             .pattern(" S ")
@@ -453,100 +454,100 @@ public class DefaultRecipeProvider extends RecipeProvider
 
     private void buildFood(@NotNull final RecipeOutput consumer)
     {
-        SimpleCookingRecipeBuilder.smelting(Ingredient.of(ModItems.breadDough), RecipeCategory.FOOD,
+        SimpleCookingRecipeBuilder.smelting(Ingredient.of(ModFoodItems.bread_dough), RecipeCategory.FOOD,
             Items.BREAD, 0.35f, 300)
-                .unlockedBy("has_dough", has(ModItems.breadDough))
+                .unlockedBy("has_dough", has(ModFoodItems.bread_dough))
                 .save(consumer, append(new ResourceLocation(MOD_ID, "baked_bread"), "_", ""));
 
-        SimpleCookingRecipeBuilder.smelting(Ingredient.of(ModItems.cakeBatter), RecipeCategory.FOOD,
+        SimpleCookingRecipeBuilder.smelting(Ingredient.of(ModFoodItems.cake_batter), RecipeCategory.FOOD,
                 Items.CAKE, 0.35f, 300)
-                .unlockedBy("has_dough", has(ModItems.cakeBatter))
+                .unlockedBy("has_dough", has(ModFoodItems.cake_batter))
                 .save(consumer, append(new ResourceLocation(MOD_ID, "baked_cake"), "_", ""));
 
-        SimpleCookingRecipeBuilder.smelting(Ingredient.of(ModItems.cookieDough),  RecipeCategory.FOOD,
+        SimpleCookingRecipeBuilder.smelting(Ingredient.of(ModFoodItems.cookie_dough),  RecipeCategory.FOOD,
                 Items.COOKIE, 0.0475f, 300 / 8)
-                .unlockedBy("has_dough", has(ModItems.cookieDough))
+                .unlockedBy("has_dough", has(ModFoodItems.cookie_dough))
                 .save(consumer, append(new ResourceLocation(MOD_ID, "baked_cookies"), "_", ""));
 
-        SimpleCookingRecipeBuilder.smelting(Ingredient.of(ModItems.rawPumpkinPie),  RecipeCategory.FOOD,
+        SimpleCookingRecipeBuilder.smelting(Ingredient.of(ModFoodItems.raw_pumpkin_pie),  RecipeCategory.FOOD,
                 Items.PUMPKIN_PIE, 0.35f, 300)
-                .unlockedBy("has_dough", has(ModItems.rawPumpkinPie))
+                .unlockedBy("has_dough", has(ModFoodItems.raw_pumpkin_pie))
                 .save(consumer, append(new ResourceLocation(MOD_ID, "baked_pumpkin_pie"), "_", ""));
 
-        SimpleCookingRecipeBuilder.smelting(Ingredient.of(ModItems.manchet_dough),  RecipeCategory.FOOD,
-            ModItems.manchet_bread, 0.35f, 300)
-          .unlockedBy("has_dough", has(ModItems.manchet_dough))
+        SimpleCookingRecipeBuilder.smelting(Ingredient.of(ModFoodItems.manchet_dough),  RecipeCategory.FOOD,
+            ModFoodItems.manchet_bread, 0.35f, 300)
+          .unlockedBy("has_dough", has(ModFoodItems.manchet_dough))
           .save(consumer, append(new ResourceLocation(MOD_ID, "baked_manchet_bread"), "_", ""));
 
-        SimpleCookingRecipeBuilder.smelting(Ingredient.of(ModItems.muffin_dough),  RecipeCategory.FOOD,
-            ModItems.muffin, 0.35f, 300)
-          .unlockedBy("has_dough", has(ModItems.muffin_dough))
+        SimpleCookingRecipeBuilder.smelting(Ingredient.of(ModFoodItems.muffin_dough),  RecipeCategory.FOOD,
+            ModFoodItems.muffin, 0.35f, 300)
+          .unlockedBy("has_dough", has(ModFoodItems.muffin_dough))
           .save(consumer, append(new ResourceLocation(MOD_ID, "baked_muffin"), "_", ""));
 
-        SimpleCookingRecipeBuilder.smoking(Ingredient.of(ModItems.breadDough), RecipeCategory.FOOD,
+        SimpleCookingRecipeBuilder.smoking(Ingredient.of(ModFoodItems.bread_dough), RecipeCategory.FOOD,
             Items.BREAD, 0.35f, 100)
-          .unlockedBy("has_dough", has(ModItems.breadDough))
+          .unlockedBy("has_dough", has(ModFoodItems.bread_dough))
           .save(consumer, append(new ResourceLocation(MOD_ID, "baked_bread"), "_", "smoking"));
 
-        SimpleCookingRecipeBuilder.smoking(Ingredient.of(ModItems.cakeBatter), RecipeCategory.FOOD,
+        SimpleCookingRecipeBuilder.smoking(Ingredient.of(ModFoodItems.cake_batter), RecipeCategory.FOOD,
             Items.CAKE, 0.35f, 100)
-          .unlockedBy("has_dough", has(ModItems.cakeBatter))
+          .unlockedBy("has_dough", has(ModFoodItems.cake_batter))
           .save(consumer, append(new ResourceLocation(MOD_ID, "baked_cake"), "_", "smoking"));
 
-        SimpleCookingRecipeBuilder.smoking(Ingredient.of(ModItems.cookieDough),  RecipeCategory.FOOD,
+        SimpleCookingRecipeBuilder.smoking(Ingredient.of(ModFoodItems.cookie_dough),  RecipeCategory.FOOD,
             Items.COOKIE, 0.0475f, 100 / 8)
-          .unlockedBy("has_dough", has(ModItems.cookieDough))
+          .unlockedBy("has_dough", has(ModFoodItems.cookie_dough))
           .save(consumer, append(new ResourceLocation(MOD_ID, "baked_cookies"), "_", "smoking"));
 
-        SimpleCookingRecipeBuilder.smoking(Ingredient.of(ModItems.rawPumpkinPie),  RecipeCategory.FOOD,
+        SimpleCookingRecipeBuilder.smoking(Ingredient.of(ModFoodItems.raw_pumpkin_pie),  RecipeCategory.FOOD,
             Items.PUMPKIN_PIE, 0.35f, 100)
-          .unlockedBy("has_dough", has(ModItems.rawPumpkinPie))
+          .unlockedBy("has_dough", has(ModFoodItems.raw_pumpkin_pie))
           .save(consumer, append(new ResourceLocation(MOD_ID, "baked_pumpkin_pie"), "_", "smoking"));
 
-        SimpleCookingRecipeBuilder.smoking(Ingredient.of(ModItems.manchet_dough),  RecipeCategory.FOOD,
-            ModItems.manchet_bread, 0.35f, 100)
-          .unlockedBy("has_dough", has(ModItems.manchet_dough))
+        SimpleCookingRecipeBuilder.smoking(Ingredient.of(ModFoodItems.manchet_dough),  RecipeCategory.FOOD,
+            ModFoodItems.manchet_bread, 0.35f, 100)
+          .unlockedBy("has_dough", has(ModFoodItems.manchet_dough))
           .save(consumer, append(new ResourceLocation(MOD_ID, "baked_manchet_bread"), "_", "smoking"));
 
-        SimpleCookingRecipeBuilder.smoking(Ingredient.of(ModItems.muffin_dough),  RecipeCategory.FOOD,
-            ModItems.muffin, 0.35f, 100)
-          .unlockedBy("has_dough", has(ModItems.muffin_dough))
+        SimpleCookingRecipeBuilder.smoking(Ingredient.of(ModFoodItems.muffin_dough),  RecipeCategory.FOOD,
+            ModFoodItems.muffin, 0.35f, 100)
+          .unlockedBy("has_dough", has(ModFoodItems.muffin_dough))
           .save(consumer, append(new ResourceLocation(MOD_ID, "baked_muffin"), "_", "smoking"));
 
-        SimpleCookingRecipeBuilder.campfireCooking(Ingredient.of(ModItems.breadDough), RecipeCategory.FOOD,
+        SimpleCookingRecipeBuilder.campfireCooking(Ingredient.of(ModFoodItems.bread_dough), RecipeCategory.FOOD,
             Items.BREAD, 0.35f, 600)
-          .unlockedBy("has_dough", has(ModItems.breadDough))
+          .unlockedBy("has_dough", has(ModFoodItems.bread_dough))
           .save(consumer, append(new ResourceLocation(MOD_ID, "baked_bread"), "_", "campfire_cooking"));
 
-        SimpleCookingRecipeBuilder.campfireCooking(Ingredient.of(ModItems.cakeBatter), RecipeCategory.FOOD,
+        SimpleCookingRecipeBuilder.campfireCooking(Ingredient.of(ModFoodItems.cake_batter), RecipeCategory.FOOD,
             Items.CAKE, 0.35f, 600)
-          .unlockedBy("has_dough", has(ModItems.cakeBatter))
+          .unlockedBy("has_dough", has(ModFoodItems.cake_batter))
           .save(consumer, append(new ResourceLocation(MOD_ID, "baked_cake"), "_", "campfire_cooking"));
 
-        SimpleCookingRecipeBuilder.campfireCooking(Ingredient.of(ModItems.cookieDough),  RecipeCategory.FOOD,
+        SimpleCookingRecipeBuilder.campfireCooking(Ingredient.of(ModFoodItems.cookie_dough),  RecipeCategory.FOOD,
             Items.COOKIE, 0.0475f, 600 / 8)
-          .unlockedBy("has_dough", has(ModItems.cookieDough))
+          .unlockedBy("has_dough", has(ModFoodItems.cookie_dough))
           .save(consumer, append(new ResourceLocation(MOD_ID, "baked_cookies"), "_", "campfire_cooking"));
 
-        SimpleCookingRecipeBuilder.campfireCooking(Ingredient.of(ModItems.rawPumpkinPie),  RecipeCategory.FOOD,
+        SimpleCookingRecipeBuilder.campfireCooking(Ingredient.of(ModFoodItems.raw_pumpkin_pie),  RecipeCategory.FOOD,
             Items.PUMPKIN_PIE, 0.35f, 600)
-          .unlockedBy("has_dough", has(ModItems.rawPumpkinPie))
+          .unlockedBy("has_dough", has(ModFoodItems.raw_pumpkin_pie))
           .save(consumer, append(new ResourceLocation(MOD_ID, "baked_pumpkin_pie"), "_", "campfire_cooking"));
 
-        SimpleCookingRecipeBuilder.campfireCooking(Ingredient.of(ModItems.manchet_dough),  RecipeCategory.FOOD,
-            ModItems.manchet_bread, 0.35f, 600)
-          .unlockedBy("has_dough", has(ModItems.manchet_dough))
+        SimpleCookingRecipeBuilder.campfireCooking(Ingredient.of(ModFoodItems.manchet_dough),  RecipeCategory.FOOD,
+            ModFoodItems.manchet_bread, 0.35f, 600)
+          .unlockedBy("has_dough", has(ModFoodItems.manchet_dough))
           .save(consumer, append(new ResourceLocation(MOD_ID, "baked_manchet_bread"), "_", "campfire_cooking"));
 
-        SimpleCookingRecipeBuilder.campfireCooking(Ingredient.of(ModItems.muffin_dough),  RecipeCategory.FOOD,
-            ModItems.muffin, 0.35f, 600)
-          .unlockedBy("has_dough", has(ModItems.muffin_dough))
+        SimpleCookingRecipeBuilder.campfireCooking(Ingredient.of(ModFoodItems.muffin_dough),  RecipeCategory.FOOD,
+            ModFoodItems.muffin, 0.35f, 600)
+          .unlockedBy("has_dough", has(ModFoodItems.muffin_dough))
           .save(consumer, append(new ResourceLocation(MOD_ID, "baked_muffin"), "_", "campfire_cooking"));
     }
 
     private void buildOtherItems(@NotNull final RecipeOutput consumer)
     {
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC,ModItems.flagBanner)
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC,ModItems.blockItemFlagBanner)
                 .pattern(" W ")
                 .pattern(" W ")
                 .pattern(" B ")
@@ -670,7 +671,7 @@ public class DefaultRecipeProvider extends RecipeProvider
                 .unlockedBy("has_boat", has(ItemTags.BOATS))
                 .save(consumer);
 
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.large_empty_bottle, 4)
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.largeEmptyBottle, 4)
           .pattern("PSP")
           .pattern("P P")
           .pattern("PGP")
@@ -696,105 +697,105 @@ public class DefaultRecipeProvider extends RecipeProvider
                 .unlockedBy("has_build_tool", has(buildTool.get()))
                 .save(consumer);
 
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.large_water_bottle)
-          .requires(ModItems.large_empty_bottle)
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.largeWaterBottle)
+          .requires(ModItems.largeEmptyBottle)
           .requires(Tags.Items.BUCKETS_WATER)
-          .unlockedBy("has_bottle", has(ModItems.large_empty_bottle))
+          .unlockedBy("has_bottle", has(ModItems.largeEmptyBottle))
           .save(consumer, new ResourceLocation(MOD_ID, "large_water_bottle"));
 
-        ShapedRecipeBuilder.shaped(RecipeCategory.FOOD, ModItems.butter, 3)
+        ShapedRecipeBuilder.shaped(RecipeCategory.FOOD, ModFoodItems.butter, 3)
           .pattern("MMM")
           .pattern("MMM")
-          .define('M', ModItems.large_milk_bottle)
-          .unlockedBy("has_milk", has(ModItems.large_milk_bottle))
+          .define('M', ModItems.largeMilkBottle)
+          .unlockedBy("has_milk", has(ModItems.largeMilkBottle))
           .save(consumer, new ResourceLocation(MOD_ID, "butter"));
 
-        ShapedRecipeBuilder.shaped(RecipeCategory.FOOD, ModItems.butter, 3)
+        ShapedRecipeBuilder.shaped(RecipeCategory.FOOD, ModFoodItems.butter, 3)
           .pattern("MMM")
           .pattern("MMM")
-          .define('M', ModItems.large_soy_milk_bottle)
-          .unlockedBy("has_soy_milk", has(ModItems.large_soy_milk_bottle))
+          .define('M', ModItems.largeSoyMilkBottle)
+          .unlockedBy("has_soy_milk", has(ModItems.largeSoyMilkBottle))
           .save(consumer, new ResourceLocation(MOD_ID, "soy_butter"));
 
-        ShapedRecipeBuilder.shaped(RecipeCategory.FOOD, ModItems.cheddar_cheese, 2)
+        ShapedRecipeBuilder.shaped(RecipeCategory.FOOD, ModFoodItems.cheddar_cheese, 2)
           .pattern("MM")
           .pattern("MM")
-          .define('M', ModItems.large_milk_bottle)
-          .unlockedBy("has_milk", has(ModItems.large_milk_bottle))
+          .define('M', ModItems.largeMilkBottle)
+          .unlockedBy("has_milk", has(ModItems.largeMilkBottle))
           .save(consumer, new ResourceLocation(MOD_ID, "cheddar_cheese"));
 
-        ShapedRecipeBuilder.shaped(RecipeCategory.FOOD, ModItems.feta_cheese)
+        ShapedRecipeBuilder.shaped(RecipeCategory.FOOD, ModFoodItems.feta_cheese)
           .pattern("MM")
-          .define('M', ModItems.large_milk_bottle)
-          .unlockedBy("has_milk", has(ModItems.large_milk_bottle))
+          .define('M', ModItems.largeMilkBottle)
+          .unlockedBy("has_milk", has(ModItems.largeMilkBottle))
           .save(consumer, new ResourceLocation(MOD_ID, "feta_cheese"));
 
-        ShapedRecipeBuilder.shaped(RecipeCategory.FOOD, ModItems.creamcheese, 2)
+        ShapedRecipeBuilder.shaped(RecipeCategory.FOOD, ModFoodItems.creamcheese, 2)
           .pattern(" M ")
           .pattern("MMM")
-          .define('M', ModItems.large_milk_bottle)
-          .unlockedBy("has_milk", has(ModItems.large_milk_bottle))
+          .define('M', ModItems.largeMilkBottle)
+          .unlockedBy("has_milk", has(ModItems.largeMilkBottle))
           .save(consumer, new ResourceLocation(MOD_ID, "cream_cheese"));
 
-        ShapedRecipeBuilder.shaped(RecipeCategory.FOOD, ModItems.creamcheese, 2)
+        ShapedRecipeBuilder.shaped(RecipeCategory.FOOD, ModFoodItems.creamcheese, 2)
           .pattern(" M ")
           .pattern("MMM")
-          .define('M', ModItems.large_soy_milk_bottle)
-          .unlockedBy("has_soy_milk", has(ModItems.large_soy_milk_bottle))
+          .define('M', ModItems.largeSoyMilkBottle)
+          .unlockedBy("has_soy_milk", has(ModItems.largeSoyMilkBottle))
           .save(consumer, new ResourceLocation(MOD_ID, "soy_cream_cheese"));
 
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.tofu)
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModFoodItems.tofu)
           .requires(ModBlocks.blockSoyBean)
           .unlockedBy("has_soy", has(ModBlocks.blockSoyBean))
           .save(consumer, new ResourceLocation(MOD_ID, "tofu"));
 
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.soysauce)
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModFoodItems.soysauce)
           .requires(ModBlocks.blockSoyBean)
           .unlockedBy("has_soy", has(ModBlocks.blockSoyBean))
           .save(consumer, new ResourceLocation(MOD_ID, "soysauce"));
 
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.cornmeal, 3)
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModFoodItems.cornmeal, 3)
           .requires(ModBlocks.blockCorn, 4)
           .unlockedBy("has_corn", has(ModBlocks.blockCorn))
           .save(consumer, new ResourceLocation(MOD_ID, "cornmeal"));
 
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.cabochis)
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModFoodItems.cabochis)
           .requires(ModBlocks.blockOnion)
           .requires(ModBlocks.blockCabbage)
           .requires(Items.BOWL)
-          .requires(ModItems.manchet_bread)
+          .requires(ModFoodItems.manchet_bread)
           .unlockedBy("has_cabbage", has(ModBlocks.blockCabbage))
           .save(consumer, new ResourceLocation(MOD_ID, "cabochis"));
 
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.congee)
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModFoodItems.congee)
           .requires(ModBlocks.blockCabbage)
           .requires(ModBlocks.blockGarlic)
           .requires(Items.BOWL)
-          .requires(ModItems.cooked_rice)
+          .requires(ModFoodItems.cooked_rice)
           .unlockedBy("has_cabbage", has(ModBlocks.blockCabbage))
           .save(consumer, new ResourceLocation(MOD_ID, "congee"));
 
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.cooked_rice)
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModFoodItems.cooked_rice)
           .requires(ModBlocks.blockRice)
           .requires(Items.BOWL)
           .unlockedBy("has_rice", has(ModBlocks.blockRice))
           .save(consumer, new ResourceLocation(MOD_ID, "cooked_rice"));
 
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.raw_noodle)
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModFoodItems.raw_noodle)
           .requires(ModBlocks.blockDurum)
           .unlockedBy("has_durum", has(ModBlocks.blockDurum))
           .save(consumer, new ResourceLocation(MOD_ID, "raw_noodle"));
 
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.pasta_plain)
-          .requires(ModItems.raw_noodle)
-          .requires(ModItems.butter)
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModFoodItems.pasta_plain)
+          .requires(ModFoodItems.raw_noodle)
+          .requires(ModFoodItems.butter)
           .requires(Items.BOWL)
           .requires(ModBlocks.blockGarlic)
           .unlockedBy("has_durum", has(ModBlocks.blockDurum))
           .save(consumer, new ResourceLocation(MOD_ID, "pasta_plain"));
 
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.pasta_tomato)
-          .requires(ModItems.raw_noodle)
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModFoodItems.pasta_tomato)
+          .requires(ModFoodItems.raw_noodle)
           .requires(ModBlocks.blockTomato)
           .requires(ModBlocks.blockTomato)
           .requires(ModBlocks.blockOnion)
@@ -803,7 +804,7 @@ public class DefaultRecipeProvider extends RecipeProvider
           .unlockedBy("has_durum", has(ModBlocks.blockDurum))
           .save(consumer, new ResourceLocation(MOD_ID, "pasta_tomato"));
 
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.pottage)
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModFoodItems.pottage)
           .requires(ModBlocks.blockDurum)
           .requires(ModBlocks.blockOnion)
           .requires(ModBlocks.blockGarlic)
@@ -813,14 +814,14 @@ public class DefaultRecipeProvider extends RecipeProvider
           .unlockedBy("has_durum", has(ModBlocks.blockDurum))
           .save(consumer, new ResourceLocation(MOD_ID, "pottage"));
 
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.rice_ball, 2)
-          .requires(ModItems.tofu)
-          .requires(ModItems.cooked_rice)
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModFoodItems.rice_ball, 2)
+          .requires(ModFoodItems.tofu)
+          .requires(ModFoodItems.cooked_rice)
           .requires(Items.DRIED_KELP)
           .unlockedBy("has_rice", has(ModBlocks.blockRice))
           .save(consumer, new ResourceLocation(MOD_ID, "rice_ball"));
 
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.pepper_hummus, 2)
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModFoodItems.pepper_hummus, 2)
           .requires(ModBlocks.blockBellPepper)
           .requires(ModBlocks.blockBellPepper)
           .requires(ModBlocks.blockGarlic)
@@ -829,59 +830,59 @@ public class DefaultRecipeProvider extends RecipeProvider
           .unlockedBy("has_chickpea", has(ModBlocks.blockChickpea))
           .save(consumer, new ResourceLocation(MOD_ID, "pepper_hummus"));
 
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.mint_jelly, 2)
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModFoodItems.mint_jelly, 2)
           .requires(ModBlocks.blockMint)
           .requires(ModBlocks.blockMint)
           .requires(ModBlocks.blockMint)
-          .requires(ModItems.large_water_bottle)
+          .requires(ModItems.largeWaterBottle)
           .requires(Items.SUGAR)
           .unlockedBy("has_mint", has(ModBlocks.blockMint))
           .save(consumer, new ResourceLocation(MOD_ID, "mint_jelly"));
 
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.mint_tea, 2)
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModFoodItems.mint_tea, 2)
           .requires(ModBlocks.blockMint)
           .requires(ModBlocks.blockMint)
           .requires(ModBlocks.blockMint)
-          .requires(ModItems.large_water_bottle)
+          .requires(ModItems.largeWaterBottle)
           .requires(Items.HONEY_BOTTLE)
           .unlockedBy("has_mint", has(ModBlocks.blockMint))
           .save(consumer, new ResourceLocation(MOD_ID, "mint_tea"));
 
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.cheese_ravioli, 2)
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModFoodItems.cheese_ravioli, 2)
           .requires(ModBlocks.blockDurum)
           .requires(ModBlocks.blockDurum)
-          .requires(ModItems.cheddar_cheese)
+          .requires(ModFoodItems.cheddar_cheese)
           .unlockedBy("has_durum", has(ModBlocks.blockDurum))
           .save(consumer, new ResourceLocation(MOD_ID, "cheese_ravioli"));
 
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.chicken_broth, 2)
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModFoodItems.chicken_broth, 2)
           .requires(ModBlocks.blockGarlic)
           .requires(ModBlocks.blockOnion)
           .requires(Items.CHICKEN)
           .requires(Items.BOWL)
-          .requires(ModItems.large_water_bottle)
+          .requires(ModItems.largeWaterBottle)
           .unlockedBy("has_durum", has(ModBlocks.blockDurum))
           .save(consumer, new ResourceLocation(MOD_ID, "chicken_broth"));
 
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.corn_chowder, 2)
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModFoodItems.corn_chowder, 2)
           .requires(ModBlocks.blockGarlic)
           .requires(ModBlocks.blockOnion)
           .requires(ModBlocks.blockCorn)
           .requires(Items.BOWL)
-          .requires(ModItems.large_milk_bottle)
+          .requires(ModItems.largeMilkBottle)
           .unlockedBy("has_corn", has(ModBlocks.blockCorn))
           .save(consumer, new ResourceLocation(MOD_ID, "corn_chowder"));
 
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.corn_chowder, 2)
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModFoodItems.corn_chowder, 2)
           .requires(ModBlocks.blockGarlic)
           .requires(ModBlocks.blockOnion)
           .requires(ModBlocks.blockCorn)
           .requires(Items.BOWL)
-          .requires(ModItems.large_soy_milk_bottle)
+          .requires(ModItems.largeSoyMilkBottle)
           .unlockedBy("has_corn", has(ModBlocks.blockCorn))
           .save(consumer, new ResourceLocation(MOD_ID, "soy_corn_chowder"));
 
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.spicy_grilled_chicken, 2)
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModFoodItems.spicy_grilled_chicken, 2)
           .requires(ModBlocks.blockGarlic)
           .requires(Items.CHICKEN)
           .requires(Items.CHICKEN)
@@ -889,14 +890,14 @@ public class DefaultRecipeProvider extends RecipeProvider
           .unlockedBy("has_nether_pepper", has(ModBlocks.blockNetherPepper))
           .save(consumer, new ResourceLocation(MOD_ID, "spicy_grilled_chicken"));
 
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.meat_ravioli, 1)
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModFoodItems.meat_ravioli, 1)
           .requires(ModBlocks.blockDurum)
           .requires(ModBlocks.blockDurum)
           .requires(Items.BEEF)
           .unlockedBy("has_durum", has(ModBlocks.blockDurum))
           .save(consumer, new ResourceLocation(MOD_ID, "meat_ravioli"));
 
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.kebab, 2)
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModFoodItems.kebab, 2)
           .requires(ModBlocks.blockOnion)
           .requires(ModBlocks.blockGarlic)
           .requires(ModBlocks.blockNetherPepper)
@@ -906,33 +907,33 @@ public class DefaultRecipeProvider extends RecipeProvider
           .unlockedBy("has_nether_pepper", has(ModBlocks.blockNetherPepper))
           .save(consumer, new ResourceLocation(MOD_ID, "mutton_kebab"));
 
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.pea_soup, 2)
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModFoodItems.pea_soup, 2)
           .requires(ModBlocks.blockGarlic)
           .requires(ModBlocks.blockOnion)
           .requires(ModBlocks.blockPeas)
-          .requires(ModItems.large_milk_bottle)
+          .requires(ModItems.largeMilkBottle)
           .requires(Items.BOWL)
           .unlockedBy("has_peas", has(ModBlocks.blockPeas))
           .save(consumer, new ResourceLocation(MOD_ID, "pea_soup"));
 
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.pea_soup, 2)
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModFoodItems.pea_soup, 2)
           .requires(ModBlocks.blockGarlic)
           .requires(ModBlocks.blockOnion)
           .requires(ModBlocks.blockPeas)
-          .requires(ModItems.large_soy_milk_bottle)
+          .requires(ModItems.largeSoyMilkBottle)
           .requires(Items.BOWL)
           .unlockedBy("has_peas", has(ModBlocks.blockPeas))
           .save(consumer, new ResourceLocation(MOD_ID, "soy_pea_soup"));
 
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.polenta, 2)
-          .requires(ModItems.cornmeal)
-          .requires(ModItems.cornmeal)
-          .requires(ModItems.large_water_bottle)
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModFoodItems.polenta, 2)
+          .requires(ModFoodItems.cornmeal)
+          .requires(ModFoodItems.cornmeal)
+          .requires(ModItems.largeWaterBottle)
           .requires(Items.BOWL)
           .unlockedBy("has_corn", has(ModBlocks.blockCorn))
           .save(consumer, new ResourceLocation(MOD_ID, "polenta"));
 
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.potato_soup, 2)
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModFoodItems.potato_soup, 2)
           .requires(ModBlocks.blockGarlic)
           .requires(ModBlocks.blockOnion)
           .requires(Items.POTATO)
@@ -940,7 +941,7 @@ public class DefaultRecipeProvider extends RecipeProvider
           .unlockedBy("has_potato", has(Items.POTATO))
           .save(consumer, new ResourceLocation(MOD_ID, "potato_soup"));
 
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.squash_soup, 2)
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModFoodItems.squash_soup, 2)
           .requires(ModBlocks.blockGarlic)
           .requires(ModBlocks.blockOnion)
           .requires(ModBlocks.blockButternutSquash)
@@ -948,36 +949,36 @@ public class DefaultRecipeProvider extends RecipeProvider
           .unlockedBy("has_squash", has(ModBlocks.blockButternutSquash))
           .save(consumer, new ResourceLocation(MOD_ID, "squash_soup"));
 
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.tortillas, 2)
-          .requires(ModItems.cornmeal)
-          .requires(ModItems.cornmeal)
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModFoodItems.tortillas, 2)
+          .requires(ModFoodItems.cornmeal)
+          .requires(ModFoodItems.cornmeal)
           .unlockedBy("has_corn", has(ModBlocks.blockCorn))
           .save(consumer, new ResourceLocation(MOD_ID, "tortillas"));
 
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.veggie_ravioli, 1)
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModFoodItems.veggie_ravioli, 1)
           .requires(ModBlocks.blockDurum)
           .requires(ModBlocks.blockDurum)
           .requires(Items.BEETROOT)
           .unlockedBy("has_durum", has(ModBlocks.blockDurum))
           .save(consumer, new ResourceLocation(MOD_ID, "veggie_ravioli"));
 
-        ZeroWasteRecipe.build(RecipeCategory.FOOD, ModItems.large_soy_milk_bottle, 1)
-          .requires(ModItems.large_water_bottle)
+        ZeroWasteRecipe.build(RecipeCategory.FOOD, ModItems.largeSoyMilkBottle, 1)
+          .requires(ModItems.largeWaterBottle)
           .requires(ModBlocks.blockSoyBean)
           .unlockedBy("has_soy", has(ModBlocks.blockSoyBean))
           .save(consumer, new ResourceLocation(MOD_ID, "soy_milk"));
 
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.yogurt, 1)
-          .requires(ModItems.large_milk_bottle)
-          .unlockedBy("has_milk", has(ModItems.large_milk_bottle))
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModFoodItems.yogurt, 1)
+          .requires(ModItems.largeMilkBottle)
+          .unlockedBy("has_milk", has(ModItems.largeMilkBottle))
           .save(consumer, new ResourceLocation(MOD_ID, "yogurt"));
 
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.yogurt, 1)
-          .requires(ModItems.large_soy_milk_bottle)
-          .unlockedBy("has_soy_milk", has(ModItems.large_soy_milk_bottle))
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModFoodItems.yogurt, 1)
+          .requires(ModItems.largeSoyMilkBottle)
+          .unlockedBy("has_soy_milk", has(ModItems.largeSoyMilkBottle))
           .save(consumer, new ResourceLocation(MOD_ID, "soy_yogurt"));
 
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.baked_salmon, 2)
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModFoodItems.baked_salmon, 2)
           .requires(ModBlocks.blockGarlic)
           .requires(ModBlocks.blockGarlic)
           .requires(ModBlocks.blockGarlic)
@@ -986,7 +987,7 @@ public class DefaultRecipeProvider extends RecipeProvider
           .unlockedBy("has_garlic", has(ModBlocks.blockGarlic))
           .save(consumer, new ResourceLocation(MOD_ID, "baked_salmon"));
 
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.eggdrop_soup, 2)
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModFoodItems.eggdrop_soup, 2)
           .requires(ModBlocks.blockOnion)
           .requires(ModBlocks.blockOnion)
           .requires(Items.EGG)
@@ -995,7 +996,7 @@ public class DefaultRecipeProvider extends RecipeProvider
           .unlockedBy("has_onion", has(ModBlocks.blockOnion))
           .save(consumer, new ResourceLocation(MOD_ID, "eggdrop_soup"));
 
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.fish_n_chips, 1)
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModFoodItems.fish_n_chips, 1)
           .requires(ModBlocks.blockGarlic)
           .requires(ModBlocks.blockOnion)
           .requires(ModBlocks.blockDurum)
@@ -1004,7 +1005,7 @@ public class DefaultRecipeProvider extends RecipeProvider
           .unlockedBy("has_durum", has(ModBlocks.blockDurum))
           .save(consumer, new ResourceLocation(MOD_ID, "fish_n_chips"));
 
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.kimchi, 1)
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModFoodItems.kimchi, 1)
           .requires(ModBlocks.blockCabbage)
           .requires(ModBlocks.blockCabbage)
           .requires(ModBlocks.blockNetherPepper)
@@ -1014,26 +1015,26 @@ public class DefaultRecipeProvider extends RecipeProvider
           .unlockedBy("has_nether_pepper", has(ModBlocks.blockNetherPepper))
           .save(consumer, new ResourceLocation(MOD_ID, "kimchi"));
 
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.pierogi, 1)
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModFoodItems.pierogi, 1)
           .requires(ModBlocks.blockGarlic)
           .requires(ModBlocks.blockOnion)
           .requires(ModBlocks.blockDurum)
-          .requires(ModItems.cheddar_cheese)
+          .requires(ModFoodItems.cheddar_cheese)
           .requires(Items.POTATO)
-          .unlockedBy("has_cheddar", has(ModItems.cheddar_cheese))
+          .unlockedBy("has_cheddar", has(ModFoodItems.cheddar_cheese))
           .save(consumer, new ResourceLocation(MOD_ID, "pierogi"));
 
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.veggie_quiche, 2)
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModFoodItems.veggie_quiche, 2)
           .requires(ModBlocks.blockGarlic)
           .requires(ModBlocks.blockDurum)
           .requires(ModBlocks.blockOnion)
           .requires(ModBlocks.blockButternutSquash)
           .requires(ModBlocks.blockButternutSquash)
-          .requires(ModItems.large_water_bottle)
+          .requires(ModItems.largeWaterBottle)
           .unlockedBy("has_squash", has(ModBlocks.blockButternutSquash))
           .save(consumer, new ResourceLocation(MOD_ID, "veggie_quiche"));
 
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.veggie_soup, 1)
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModFoodItems.veggie_soup, 1)
           .requires(ModBlocks.blockGarlic)
           .requires(ModBlocks.blockGarlic)
           .requires(ModBlocks.blockOnion)
@@ -1043,17 +1044,17 @@ public class DefaultRecipeProvider extends RecipeProvider
           .unlockedBy("has_eggplant", has(ModBlocks.blockEggplant))
           .save(consumer, new ResourceLocation(MOD_ID, "veggie_soup"));
 
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.yogurt_with_berries, 2)
-          .requires(ModItems.yogurt)
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModFoodItems.yogurt_with_berries, 2)
+          .requires(ModFoodItems.yogurt)
           .requires(Items.SWEET_BERRIES)
           .requires(Items.SWEET_BERRIES)
           .requires(Items.SWEET_BERRIES)
           .requires(Items.SWEET_BERRIES)
           .requires(Items.BOWL)
-          .unlockedBy("has_yogurt", has(ModItems.yogurt))
+          .unlockedBy("has_yogurt", has(ModFoodItems.yogurt))
           .save(consumer, new ResourceLocation(MOD_ID, "yogurt_with_berries"));
 
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.mutton_dinner, 1)
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModFoodItems.mutton_dinner, 1)
           .requires(ModBlocks.blockPeas)
           .requires(ModBlocks.blockGarlic)
           .requires(Items.MUTTON)
@@ -1061,7 +1062,7 @@ public class DefaultRecipeProvider extends RecipeProvider
           .unlockedBy("has_mutton", has(Items.MUTTON))
           .save(consumer, new ResourceLocation(MOD_ID, "mutton_dinner"));
 
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.apple_pie, 1)
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModFoodItems.apple_pie, 1)
           .requires(ModBlocks.blockDurum)
           .requires(ModBlocks.blockDurum)
           .requires(ModBlocks.blockDurum)
@@ -1071,32 +1072,32 @@ public class DefaultRecipeProvider extends RecipeProvider
           .unlockedBy("has_apple", has(Items.APPLE))
           .save(consumer, new ResourceLocation(MOD_ID, "apple_pie"));
 
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.cheese_pizza, 2)
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModFoodItems.cheese_pizza, 2)
           .requires(ModBlocks.blockDurum)
           .requires(ModBlocks.blockDurum)
           .requires(ModBlocks.blockDurum)
           .requires(ModBlocks.blockTomato)
           .requires(ModBlocks.blockTomato)
           .requires(ModBlocks.blockGarlic)
-          .requires(ModItems.cheddar_cheese)
-          .unlockedBy("has_cheddar", has(ModItems.cheddar_cheese))
+          .requires(ModFoodItems.cheddar_cheese)
+          .unlockedBy("has_cheddar", has(ModFoodItems.cheddar_cheese))
           .save(consumer, new ResourceLocation(MOD_ID, "cheese_pizza"));
 
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.plain_cheesecake, 1)
-          .requires(ModItems.creamcheese)
-          .requires(ModItems.creamcheese)
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModFoodItems.plain_cheesecake, 1)
+          .requires(ModFoodItems.creamcheese)
+          .requires(ModFoodItems.creamcheese)
           .requires(ModBlocks.blockDurum)
-          .requires(ModItems.butter)
+          .requires(ModFoodItems.butter)
           .requires(Items.SUGAR)
           .requires(Items.EGG)
           .requires(Items.EGG)
-          .unlockedBy("has_butter", has(ModItems.butter))
+          .unlockedBy("has_butter", has(ModFoodItems.butter))
           .save(consumer, new ResourceLocation(MOD_ID, "plain_cheesecake"));
 
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.fried_rice, 1)
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModFoodItems.fried_rice, 1)
           .requires(ModBlocks.blockOnion)
           .requires(Items.CARROT)
-          .requires(ModItems.cooked_rice)
+          .requires(ModFoodItems.cooked_rice)
           .requires(Items.EGG)
           .requires(ModTags.rawMeat)
           .unlockedBy("has_onion", has(ModBlocks.blockOnion))

@@ -6,7 +6,6 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.entity.ai.statemachine.AIOneTimeEventTarget;
 import com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState;
 import com.minecolonies.api.items.component.BuildingId;
-import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.core.colony.buildings.AbstractBuildingGuards;
@@ -17,7 +16,6 @@ import com.minecolonies.core.entity.ai.workers.guard.AbstractEntityAIGuard;
 import com.minecolonies.core.network.messages.client.VanillaParticleMessage;
 import com.minecolonies.core.tileentities.TileEntityColonyBuilding;
 import net.minecraft.ChatFormatting;
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -55,7 +53,7 @@ public class ItemScrollGuardHelp extends AbstractItemScroll
      */
     public ItemScrollGuardHelp(final Properties properties)
     {
-        super("scroll_guard_help", properties);
+        super(properties);
     }
 
     @Override

@@ -3,24 +3,15 @@ package com.minecolonies.core.blocks.huts;
 import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * Hut for the bakery. No different from {@link AbstractBlockHut}
  */
-public class BlockHutBaker extends AbstractBlockHut<BlockHutBaker>
+public class BlockHutBaker extends AbstractBlockHut
 {
-    public BlockHutBaker()
+    public BlockHutBaker(final Properties properties)
     {
-        //No different from Abstract parent
-        super();
-    }
-
-    @NotNull
-    @Override
-    public String getHutName()
-    {
-        return "blockhutbaker";
+        super(properties);
     }
 
     @Override

@@ -16,14 +16,17 @@ import com.minecolonies.core.MineColonies;
 import com.minecolonies.core.client.gui.WindowSupplies;
 import com.minecolonies.core.client.gui.WindowSupplyStory;
 import com.minecolonies.core.entity.pathfinding.PathfindingUtils;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
-import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.Fluids;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -32,14 +35,10 @@ import java.util.List;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.CANT_PLACE_COLONY_IN_OTHER_DIM;
 
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.world.InteractionResultHolder;
-
 /**
  * Class to handle the placement of the supplychest and with it the supplyship.
  */
-public class ItemSupplyChestDeployer extends AbstractItemMinecolonies implements ISupplyItem
+public class ItemSupplyChestDeployer extends Item implements ISupplyItem
 {
     /**
      * StructureIterator name and location.
@@ -68,7 +67,7 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies implements
      */
     public ItemSupplyChestDeployer(final Item.Properties properties)
     {
-        super("supplychestdeployer", properties.stacksTo(1));
+        super(properties.stacksTo(1));
     }
 
     @NotNull

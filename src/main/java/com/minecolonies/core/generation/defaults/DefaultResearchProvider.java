@@ -2,6 +2,7 @@ package com.minecolonies.core.generation.defaults;
 
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.buildings.ModBuildings;
+import com.minecolonies.api.items.ModFoodItems;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.research.AbstractResearchProvider;
@@ -304,28 +305,28 @@ public class DefaultResearchProvider extends AbstractResearchProvider
                                 .addToList(r);
         final Research outpost = new Research(new ResourceLocation(Constants.MOD_ID, "civilian/outpost"), CIVIL).setParentResearch(keen)
                                    .setTranslatedName("Outpost")
-                                   .setIcon(ModBlocks.blockHutHome.asItem(), 50)
+                                   .setIcon(ModBlocks.blockHutCitizen.asItem(), 50)
                                    .addBuildingRequirement(new ResourceLocation(Constants.MOD_ID, ModBuildings.HOME_ID), 4)
                                    .addItemCost(Items.COOKED_BEEF, 64, provider)
                                    .addEffect(CITIZEN_CAP, 2)
                                    .addToList(r);
         final Research hamlet = new Research(new ResourceLocation(Constants.MOD_ID, "civilian/hamlet"), CIVIL).setParentResearch(outpost)
                                   .setTranslatedName("Hamlet")
-                                  .setIcon(ModBlocks.blockHutHome.asItem(), 75)
+                                  .setIcon(ModBlocks.blockHutCitizen.asItem(), 75)
                                   .addBuildingRequirement(new ResourceLocation(Constants.MOD_ID, ModBuildings.HOME_ID), 5)
                                   .addItemCost(Items.COOKED_BEEF, 128, provider)
                                   .addEffect(CITIZEN_CAP, 3)
                                   .addToList(r);
         final Research village = new Research(new ResourceLocation(Constants.MOD_ID, "civilian/village"), CIVIL).setParentResearch(hamlet)
                                    .setTranslatedName("Village")
-                                   .setIcon(ModBlocks.blockHutHome.asItem(), 100)
+                                   .setIcon(ModBlocks.blockHutCitizen.asItem(), 100)
                                    .addSingleBuildingRequirement(new ResourceLocation(Constants.MOD_ID, ModBuildings.TOWNHALL_ID), 4)
                                    .addItemCost(Items.COOKED_BEEF, 256, provider)
                                    .addEffect(CITIZEN_CAP, 4)
                                    .addToList(r);
         new Research(new ResourceLocation(Constants.MOD_ID, "civilian/city"), CIVIL).setParentResearch(village)
           .setTranslatedName("City")
-          .setIcon(ModBlocks.blockHutHome.asItem(), 200)
+          .setIcon(ModBlocks.blockHutCitizen.asItem(), 200)
           .addSingleBuildingRequirement(new ResourceLocation(Constants.MOD_ID, ModBuildings.TOWNHALL_ID), 5)
           .addItemCost(Items.COOKED_BEEF, 512, provider)
           .addEffect(CITIZEN_CAP, 5)
@@ -843,7 +844,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
                                         .addToList(r);
         final Research woundingShot = new Research(new ResourceLocation(Constants.MOD_ID, "combat/woundingshot"), COMBAT).setParentResearch(piercingShot)
                                         .setTranslatedName("Wounding Shot")
-                                        .setIcon(ModItems.firearrow)
+                                        .setIcon(ModItems.fireArrow)
                                         .addBuildingRequirement(new ResourceLocation(Constants.MOD_ID, ModBuildings.BARRACKS_ID), 5)
                                         .addItemCost(Items.FLINT, 128, provider)
                                         .addEffect(ARCHER_DAMAGE, 4)
@@ -928,7 +929,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
         final Research rapidShot = new Research(new ResourceLocation(Constants.MOD_ID, "combat/rapidshot"), COMBAT).setParentResearch(multiShot)
                                      .setTranslatedName("Rapid Shot")
                                      .setTranslatedSubtitle("Please leave the bow with more than you brought in.")
-                                     .setIcon(ModItems.firearrow)
+                                     .setIcon(ModItems.fireArrow)
                                      .addBuildingRequirement(new ResourceLocation(Constants.MOD_ID, ModBuildings.ARCHERY_ID), 5)
                                      .addItemCost(Items.BOW, 18, provider)
                                      .addEffect(DOUBLE_ARROWS, 3)
@@ -1483,7 +1484,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
         new Research(new ResourceLocation(Constants.MOD_ID, "technology/knowtheend"), TECH).setParentResearch(theFlintstones)
           .setTranslatedName("Know the End")
           .setTranslatedSubtitle("Unlock the secrets of the most mysterious dimension.")
-          .setIcon(ModItems.chorusBread)
+          .setIcon(ModFoodItems.chorusBread)
           .addBuildingRequirement(new ResourceLocation(Constants.MOD_ID, "baker"), 3)
           .addItemCost(Items.CHORUS_FRUIT, 64, provider)
           .addEffect(new ResourceLocation(Constants.MOD_ID, "effects/knowledgeoftheendunlock"), 1)
@@ -1742,7 +1743,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
                                        .addToList(r);
         new Research(new ResourceLocation(Constants.MOD_ID, "technology/assistanthammers"), TECH).setParentResearch(hittingIron)
             .setTranslatedName("Professional Assistant")
-            .setIcon(ModItems.assistantHammer_Diamond)
+            .setIcon(ModItems.assistantHammerDiamond)
             .addBuildingRequirement(new ResourceLocation(Constants.MOD_ID, ModBuildings.BLACKSMITH_ID), 1)
             .addItemCost(Items.IRON_BLOCK, 2, provider)
             .addEffect(ResearchConstants.BUILDERS_ASSISTANT_HAMMER, 1)
@@ -1865,16 +1866,16 @@ public class DefaultResearchProvider extends AbstractResearchProvider
                                       .addToList(r);
         final Research enhanced_gates1 = new Research(new ResourceLocation(Constants.MOD_ID, "technology/enhanced_gates1"), TECH).setParentResearch(whatYaNeed)
                                            .setTranslatedName("Enhanced Gates I")
-                                           .setIcon(ModItems.woodgate)
-                                           .addItemCost(ModItems.woodgate, 64, provider)
+                                           .setIcon(ModItems.blockItemWoodenGate)
+                                           .addItemCost(ModItems.blockItemWoodenGate, 64, provider)
                                            .addItemCost(ModItems.ancientTome, 2, provider)
                                            .addItemCost(Items.IRON_BLOCK, 5, provider)
                                            .addEffect(MECHANIC_ENHANCED_GATES, 1)
                                            .addToList(r);
         new Research(new ResourceLocation(Constants.MOD_ID, "technology/enhanced_gates2"), TECH).setParentResearch(enhanced_gates1)
           .setTranslatedName("Enhanced Gates II")
-          .setIcon(ModItems.irongate)
-          .addItemCost(ModItems.irongate, 64, provider)
+          .setIcon(ModItems.blockItemIronGate)
+          .addItemCost(ModItems.blockItemIronGate, 64, provider)
           .addItemCost(ModItems.ancientTome, 2, provider)
           .addItemCost(Items.OBSIDIAN, 32, provider)
           .addEffect(MECHANIC_ENHANCED_GATES, 2)

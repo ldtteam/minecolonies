@@ -87,7 +87,7 @@ public class WindowBuildingBrowser extends AbstractWindowSkeleton
     {
         super.onOpened();
 
-        if (block instanceof AbstractBlockHut<?> hutBlock)
+        if (block instanceof AbstractBlockHut hutBlock)
         {
             findPaneOfTypeByID(LABEL_CONSTRUCTION_NAME, Text.class).setText(hutBlock.getBlueprintDisplayName());
         }
