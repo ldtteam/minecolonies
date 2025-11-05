@@ -1,7 +1,7 @@
 <window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" size="440 244"
         xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/ldtteam/BlockUI/version/1.20.1/src/main/resources/assets/blockui/gui/block_ui.xsd"
         >
-    <layout source="minecolonies:gui/windowpostboxnav.xml"/>
+    <image source="minecolonies:textures/gui/citizen/colonist_paper.png" size="430 244" pos="10 0"/>
 
     <text id="desc" size="140 11" pos="60 14" color="black" textalign="MIDDLE" label="$(com.minecolonies.coremod.gui.citizen.stacks)"/>
     <input id="name" size="160 18" pos="50 30" maxlength="25"/>
@@ -19,11 +19,6 @@
 
     <text size="158 11" pos="246 28" textalign="MIDDLE" color="black"
            label="$(com.minecolonies.coremod.gui.citizen.requests)"/>
-    <list id="requests" size="158 184" pos="261 44">
-        <box id="requestx" size="100% 40" linewidth="1">
-            <layout source="minecolonies:gui/layouthuts/layoutrequeststree.xml"/>
-        </box>
-    </list>
 
     <button id="deliverAvailable" pos="52 195" size="40 15"/>
     <text id="test" pos="100 195" size="158 11" color="black" label="Deliver what's available"/>

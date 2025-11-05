@@ -12,16 +12,14 @@ import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.requestable.Stack;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
-import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.core.client.gui.modules.MinimumStockModuleWindow;
 import com.minecolonies.core.client.gui.WindowPostBoxMain;
+import com.minecolonies.core.client.gui.WindowPostBoxMinStock;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
 import com.minecolonies.core.colony.buildings.moduleviews.MinimumStockModuleView;
 import com.minecolonies.core.colony.buildings.views.AbstractBuildingView;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.util.Tuple;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -144,13 +142,7 @@ public class PostBox extends AbstractBuilding implements IRSComponent
         @OnlyIn(Dist.CLIENT)
         public BOWindow getWindow()
         {
-            return new MinimumStockModuleWindow(this, new ResourceLocation(Constants.MOD_ID, "gui/windowpostboxminstock.xml"));
-        }
-
-        public boolean isPageVisible()
-        {
-            /* We disable the module nav elements rendering using this, as there is no other module at this time */
-            return false;
+            return new WindowPostBoxMinStock(this);
         }
     }
 }

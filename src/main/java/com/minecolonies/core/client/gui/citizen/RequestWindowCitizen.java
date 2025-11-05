@@ -1,6 +1,5 @@
 package com.minecolonies.core.client.gui.citizen;
 
-import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
@@ -9,9 +8,10 @@ import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.MessageUtils;
-import com.minecolonies.api.util.MessageUtils.MessagePriority;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.Network;
+import com.minecolonies.core.client.gui.AbstractWindowSkeleton;
+import com.minecolonies.core.client.gui.capabilities.RequestTreeWindowCapability;
 import com.minecolonies.core.network.messages.server.colony.UpdateRequestStateMessage;
 import com.minecolonies.core.network.messages.server.colony.citizen.TransferItemsToCitizenRequestMessage;
 import net.minecraft.client.Minecraft;
@@ -20,8 +20,10 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Predicate;
@@ -36,14 +38,15 @@ public class RequestWindowCitizen extends AbstractWindowCitizen
     public static final ResourceLocation WINDOW_ID = new ResourceLocation(Constants.MOD_ID, "gui/citizen/requests.xml");
 
     /**
-     * Inventory of the player.
+     * The request that should be opened.
      */
-    private final Inventory inventory = this.mc.player.getInventory();
+    @Nullable
+    private final IRequest<?> autoOpenRequest;
 
     /**
-     * Is the player in creative or not.
+     * The window capability instance for handling requests.
      */
-    private final boolean isCreative = this.mc.player.isCreative();
+    private final RequestTreeWindowCapability requestTreeCapability;
 
     /**
      * Constructor to initiate the citizen windows.
@@ -52,119 +55,158 @@ public class RequestWindowCitizen extends AbstractWindowCitizen
      */
     public RequestWindowCitizen(final ICitizenDataView citizen)
     {
+        this(citizen, null);
+    }
+
+    /**
+     * Constructor to initialize the citizen request window. Automatically opens the detail page for the given request.
+     *
+     * @param citizen         citizen to bind the window to.
+     * @param autoOpenRequest the request to open.
+     */
+    public RequestWindowCitizen(final ICitizenDataView citizen, @Nullable final IRequest<?> autoOpenRequest)
+    {
         super(citizen, WINDOW_ID);
-    }
-
-    public ICitizenDataView getCitizen()
-    {
-        return citizen;
-    }
-
-    @Override
-    public boolean canFulFill()
-    {
-        return true;
+        this.autoOpenRequest = autoOpenRequest;
+        this.requestTreeCapability = registerLayoutCapability(window -> new CitizenRequestTreeWindowCapability(window,
+            citizen.getColony().getBuilding(citizen.getWorkBuilding()),
+            citizen,
+            mc.player.isCreative(),
+            mc.player.getInventory()), 33, 29);
     }
 
     @Override
-    public ImmutableList<IRequest<?>> getOpenRequestsFromBuilding(final IBuildingView building)
+    public void onOpened()
     {
-        if (building == null)
+        super.onOpened();
+        if (autoOpenRequest != null)
         {
-            return ImmutableList.of();
+            requestTreeCapability.openDetails(autoOpenRequest);
         }
-
-        final List<IRequest<?>> requests = new ArrayList<>();
-        for (final IToken<?> req : building.getOpenRequestsByCitizen().getOrDefault(citizen.getId(), Collections.emptyList()))
-        {
-            if (req != null)
-            {
-                final IRequest<?> request = colony.getRequestManager().getRequestForToken(req);
-                if (request != null)
-                {
-                    requests.add(request);
-                }
-            }
-        }
-
-        for (final IToken<?> req : building.getOpenRequestsByCitizen().getOrDefault(-1, Collections.emptyList()))
-        {
-            if (req != null)
-            {
-                final IRequest<?> request = colony.getRequestManager().getRequestForToken(req);
-                if (request != null)
-                {
-                    requests.add(request);
-                }
-            }
-        }
-
-        return ImmutableList.copyOf(requests);
     }
 
-    @Override
-    public void fulfill(@NotNull final IRequest<?> tRequest)
+    private static class CitizenRequestTreeWindowCapability extends RequestTreeWindowCapability implements RequestTreeWindowCapability.IRequestTreeSupportsFulfill
     {
-        if (!(tRequest.getRequest() instanceof IDeliverable))
+        private final IBuildingView buildingView;
+
+        private final ICitizenDataView citizenDataView;
+
+        private final boolean isCreative;
+
+        private final Inventory inventory;
+
+        /**
+         * Constructor to initiate the window request tree windows.
+         *
+         * @param parent the parenting window
+         */
+        private CitizenRequestTreeWindowCapability(
+            final AbstractWindowSkeleton parent,
+            final IBuildingView buildingView,
+            final ICitizenDataView citizenDataView,
+            final boolean isCreative,
+            final Inventory inventory)
         {
-            return;
+            super(parent, citizenDataView.getColony());
+            this.buildingView = buildingView;
+            this.citizenDataView = citizenDataView;
+            this.isCreative = isCreative;
+            this.inventory = inventory;
         }
 
-        @NotNull final IRequest<? extends IDeliverable> request = (IRequest<? extends IDeliverable>) tRequest;
-
-        final Predicate<ItemStack> requestPredicate = stack -> request.getRequest().matches(stack);
-        final int amount = request.getRequest().getCount();
-
-        final int count = InventoryUtils.getItemCountInItemHandler(new InvWrapper(inventory), requestPredicate);
-
-        if (!isCreative && count <= 0)
+        @Override
+        protected Collection<IRequest<?>> getOpenRequests()
         {
-            return;
-        }
-
-        // The itemStack size should not be greater than itemStack.getMaxStackSize, We send 1 instead
-        // and use quantity for the size
-        @NotNull final ItemStack itemStack;
-        if (isCreative)
-        {
-            itemStack = request.getDisplayStacks().stream().findFirst().orElse(ItemStack.EMPTY);
-        }
-        else
-        {
-            final List<Integer> slots = InventoryUtils.findAllSlotsInItemHandlerWith(new InvWrapper(inventory), requestPredicate);
-            final int invSize = inventory.getContainerSize() - 5; // 4 armour slots + 1 shield slot
-            int slot = -1;
-            for (final Integer possibleSlot : slots)
+            final List<IRequest<?>> requests = new ArrayList<>();
+            for (final IToken<?> token : buildingView.getOpenRequestsByCitizen().getOrDefault(citizenDataView.getId(), Collections.emptyList()))
             {
-                if (possibleSlot < invSize)
+                if (token != null)
                 {
-                    slot = possibleSlot;
-                    break;
+                    final IRequest<?> request = colony.getRequestManager().getRequestForToken(token);
+                    if (request != null)
+                    {
+                        requests.add(request);
+                    }
                 }
             }
 
-            if (slot == -1)
+            for (final IToken<?> token : buildingView.getOpenRequestsByCitizen().getOrDefault(-1, Collections.emptyList()))
             {
-                MessageUtils.format("<%s> ")
-                  .append(COM_MINECOLONIES_CANT_TAKE_EQUIPPED, citizen.getName())
-                  .withPriority(MessagePriority.IMPORTANT)
-                  .sendTo(Minecraft.getInstance().player);
-
-                return; // We don't have one that isn't in our armour slot
+                if (token != null)
+                {
+                    final IRequest<?> request = colony.getRequestManager().getRequestForToken(token);
+                    if (request != null)
+                    {
+                        requests.add(request);
+                    }
+                }
             }
-            itemStack = inventory.getItem(slot);
+            return requests;
         }
 
-
-        if (citizen.getWorkBuilding() != null)
+        @Override
+        public void onFulfill(final @NotNull IRequest<?> request)
         {
-            colony.getBuilding(citizen.getWorkBuilding()).onRequestedRequestComplete(colony.getRequestManager(), tRequest);
-        }
-        Network.getNetwork().sendToServer(
-          new TransferItemsToCitizenRequestMessage(colony, citizen, itemStack, isCreative ? amount : Math.min(amount, count)));
+            if (!(request.getRequest() instanceof IDeliverable deliverable))
+            {
+                return;
+            }
 
-        final ItemStack copy = itemStack.copy();
-        copy.setCount(isCreative ? amount : Math.min(amount, count));
-        Network.getNetwork().sendToServer(new UpdateRequestStateMessage(colony, request.getId(), RequestState.OVERRULED, copy));
+            final Predicate<ItemStack> requestPredicate = deliverable::matches;
+            final int amount = deliverable.getCount();
+
+            final int count = InventoryUtils.getItemCountInItemHandler(new InvWrapper(inventory), deliverable::matches);
+
+            if (!isCreative && count <= 0)
+            {
+                return;
+            }
+
+            // The itemStack size should not be greater than itemStack.getMaxStackSize, We send 1 instead
+            // and use quantity for the size
+            final ItemStack itemStack;
+            if (isCreative)
+            {
+                itemStack = request.getDisplayStacks().stream().findFirst().orElse(ItemStack.EMPTY);
+            }
+            else
+            {
+                final List<Integer> slots = InventoryUtils.findAllSlotsInItemHandlerWith(new InvWrapper(inventory), requestPredicate);
+                final int invSize = inventory.getContainerSize() - 5; // 4 armour slots + 1 shield slot
+                int slot = -1;
+                for (final Integer possibleSlot : slots)
+                {
+                    if (possibleSlot < invSize)
+                    {
+                        slot = possibleSlot;
+                        break;
+                    }
+                }
+
+                if (slot == -1)
+                {
+                    MessageUtils.format("<%s> ")
+                        .append(COM_MINECOLONIES_CANT_TAKE_EQUIPPED, citizenDataView.getName())
+                        .withPriority(MessageUtils.MessagePriority.IMPORTANT)
+                        .sendTo(Minecraft.getInstance().player);
+
+                    return;
+                }
+                itemStack = inventory.getItem(slot);
+            }
+
+
+            if (citizenDataView.getWorkBuilding() != null)
+            {
+                colony.getBuilding(citizenDataView.getWorkBuilding()).onRequestedRequestComplete(colony.getRequestManager(), request);
+            }
+
+            final int quantity = isCreative ? amount : Math.min(amount, count);
+            Network.getNetwork().sendToServer(new TransferItemsToCitizenRequestMessage(colony, citizenDataView, itemStack, quantity));
+
+            final ItemStack copy = itemStack.copy();
+            copy.setCount(quantity);
+            Network.getNetwork().sendToServer(new UpdateRequestStateMessage(colony, request.getId(), RequestState.OVERRULED, copy));
+        }
     }
 }

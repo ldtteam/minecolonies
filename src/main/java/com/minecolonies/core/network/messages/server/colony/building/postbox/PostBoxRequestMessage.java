@@ -1,12 +1,12 @@
 package com.minecolonies.core.network.messages.server.colony.building.postbox;
 
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.requestsystem.requestable.Stack;
-import com.minecolonies.core.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.core.colony.buildings.workerbuildings.PostBox;
 import com.minecolonies.core.network.messages.server.AbstractBuildingServerMessage;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
 
@@ -42,7 +42,7 @@ public class PostBoxRequestMessage extends AbstractBuildingServerMessage<PostBox
      * @param itemStack to be take from the player for the building
      * @param quantity  of item needed to be transfered
      */
-    public PostBoxRequestMessage(@NotNull final AbstractBuildingView building, final ItemStack itemStack, final int quantity, final boolean deliverAvailable)
+    public PostBoxRequestMessage(@NotNull final IBuildingView building, final ItemStack itemStack, final int quantity, final boolean deliverAvailable)
     {
         super(building);
         this.itemStack = itemStack;

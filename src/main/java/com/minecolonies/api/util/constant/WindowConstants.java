@@ -601,7 +601,7 @@ public final class WindowConstants
     /**
      * Id of the resource add button.
      */
-    public static final String REQUEST_FULLFIL = "fulfill";
+    public static final String REQUEST_FULFILL = "fulfill";
 
     /**
      * Id of the resource add button.
@@ -855,11 +855,6 @@ public final class WindowConstants
      * Requests list id.
      */
     public static final String WINDOW_ID_LIST_REQUESTS = "requests";
-
-    /**
-     * Requests box id.
-     */
-    public static final String WINDOW_ID_REQUEST_BOX = "requestx";
 
     /**
      * Requestst stack id.

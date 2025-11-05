@@ -44,7 +44,7 @@ public class FamilyWindowCitizen extends AbstractWindowCitizen
         findPaneOfTypeByID("parentB", Text.class).setText(secondParent.isEmpty() ? Component.translatable("com.minecolonies.coremod.gui.citizen.family.unknown") : Component.literal(secondParent));
 
         final int partner = citizen.getPartner();
-        final ICitizenDataView partnerView = colony.getCitizen(partner);
+        final ICitizenDataView partnerView = citizen.getColony().getCitizen(partner);
         final Text partnerText = findPaneOfTypeByID("partner", Text.class);
 
         if (partnerView == null)
@@ -76,7 +76,7 @@ public class FamilyWindowCitizen extends AbstractWindowCitizen
             @Override
             public void updateElement(final int index, @NotNull final Pane rowPane)
             {
-                rowPane.findPaneOfTypeByID("name", Text.class).setText(Component.literal(colony.getCitizen(citizen.getChildren().get(index)).getName()));
+                rowPane.findPaneOfTypeByID("name", Text.class).setText(Component.literal(citizen.getColony().getCitizen(citizen.getChildren().get(index)).getName()));
             }
         });
 
@@ -100,7 +100,7 @@ public class FamilyWindowCitizen extends AbstractWindowCitizen
             @Override
             public void updateElement(final int index, @NotNull final Pane rowPane)
             {
-                rowPane.findPaneOfTypeByID("name", Text.class).setText(Component.literal(colony.getCitizen(citizen.getSiblings().get(index)).getName()));
+                rowPane.findPaneOfTypeByID("name", Text.class).setText(Component.literal(citizen.getColony().getCitizen(citizen.getSiblings().get(index)).getName()));
             }
         });
     }

@@ -1,5 +1,7 @@
 package com.minecolonies.core.client.gui;
 
+import com.ldtteam.blockui.Loader;
+import com.ldtteam.blockui.Pane;
 import com.ldtteam.blockui.PaneBuilders;
 import com.ldtteam.blockui.controls.Button;
 import com.ldtteam.blockui.controls.ButtonHandler;
@@ -7,6 +9,8 @@ import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.blockui.views.BOWindow;
 import com.ldtteam.blockui.views.SwitchView;
 import com.minecolonies.core.Network;
+import com.minecolonies.core.client.gui.capabilities.IWindowCapability;
+import com.minecolonies.core.client.gui.capabilities.IWindowCapabilityWithLayout;
 import com.minecolonies.core.network.messages.server.ClickGuiButtonTriggerMessage;
 import com.minecolonies.core.network.messages.server.OpenGuiWindowTriggerMessage;
 import net.minecraft.network.chat.Component;
@@ -14,8 +18,12 @@ import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 
@@ -26,6 +34,8 @@ public abstract class AbstractWindowSkeleton extends BOWindow implements ButtonH
 {
     @NotNull
     private final HashMap<String, Consumer<Button>> buttons;
+
+    private final Collection<IWindowCapability> capabilities = new ArrayList<>();
 
     /**
      * Panes used by the generic page handler
@@ -109,6 +119,81 @@ public abstract class AbstractWindowSkeleton extends BOWindow implements ButtonH
     }
 
     /**
+     * Add a reusable capability to this window. Extending the original logic of the window.
+     *
+     * @param capabilityBuilder the new capability.
+     */
+    public final <T extends IWindowCapability> T registerCapability(final Function<AbstractWindowSkeleton, T> capabilityBuilder)
+    {
+        final T capability = capabilityBuilder.apply(this);
+        this.capabilities.add(capability);
+        return capability;
+    }
+
+    /**
+     * Add a reusable capability to this window. Extending the original logic of the window.
+     *
+     * @param capabilityBuilder the new capability.
+     */
+    public final <T extends IWindowCapability, A> T registerCapability(final BiFunction<AbstractWindowSkeleton, A, T> capabilityBuilder, final A argument)
+    {
+        final T capability = capabilityBuilder.apply(this, argument);
+        this.capabilities.add(capability);
+        return capability;
+    }
+
+    /**
+     * Add a reusable capability to this window. Extending the original logic of the window.
+     *
+     * @param capabilityBuilder the new capability.
+     */
+    public final <T extends IWindowCapabilityWithLayout<?>> T registerLayoutCapability(final Function<AbstractWindowSkeleton, T> capabilityBuilder, int xPos, int yPos)
+    {
+        final T capability = capabilityBuilder.apply(this);
+        final Pane rootPane = Loader.createFromXMLFile2(capability.getLayout(), this);
+        rootPane.setPosition(xPos, yPos);
+        capability.onLayoutMounted(rootPane);
+        this.capabilities.add(capability);
+        return capability;
+    }
+
+    /**
+     * Add a reusable capability to this window. Extending the original logic of the window.
+     *
+     * @param capabilityBuilder the new capability.
+     */
+    public final <T extends IWindowCapabilityWithLayout<?>, A> T registerLayoutCapability(final BiFunction<AbstractWindowSkeleton, A, T> capabilityBuilder, A argument, int xPos, int yPos)
+    {
+        final T capability = capabilityBuilder.apply(this, argument);
+        final Pane rootPane = Loader.createFromXMLFile2(capability.getLayout(), this);
+        rootPane.setPosition(xPos, yPos);
+        capability.onLayoutMounted(rootPane);
+        this.capabilities.add(capability);
+        return capability;
+    }
+
+    @Override
+    public void onOpened()
+    {
+        super.onOpened();
+        this.capabilities.forEach(IWindowCapability::onOpened);
+    }
+
+    @Override
+    public void onUpdate()
+    {
+        super.onUpdate();
+        this.capabilities.forEach(IWindowCapability::onUpdate);
+    }
+
+    @Override
+    public void onClosed()
+    {
+        super.onClosed();
+        this.capabilities.forEach(IWindowCapability::onClosed);
+    }
+
+    /**
      * Handle a button clicked event. Find the registered event and execute that.
      * <p>
      * todo: make final once migration is complete
@@ -123,6 +208,8 @@ public abstract class AbstractWindowSkeleton extends BOWindow implements ButtonH
             buttons.get(button.getID()).accept(button);
             Network.getNetwork().sendToServer(new ClickGuiButtonTriggerMessage(button.getID(), this.xmlResourceLocation));
         }
+
+        capabilities.forEach(capability -> capability.onButtonClicked(button));
     }
 
     /**
@@ -149,7 +236,7 @@ public abstract class AbstractWindowSkeleton extends BOWindow implements ButtonH
         }
 
         final int switchPagesSize = switchView.getChildrenSize();
-    
+
         if (switchPagesSize <= 1)
         {
             buttonPrevPage.off();

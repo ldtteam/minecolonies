@@ -20,12 +20,10 @@ import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.util.constant.WindowConstants;
-import net.minecraft.advancements.*;
 import com.minecolonies.core.client.gui.WindowHutGuide;
 import com.minecolonies.core.client.gui.WindowRequestDetail;
 import com.minecolonies.core.client.gui.citizen.RequestWindowCitizen;
-import net.minecraft.advancements.Advancement;
-import net.minecraft.advancements.DisplayInfo;
+import net.minecraft.advancements.*;
 import net.minecraft.advancements.critereon.ItemPredicate;
 import net.minecraft.advancements.critereon.ItemUsedOnLocationTrigger;
 import net.minecraft.core.HolderLookup;
@@ -106,9 +104,9 @@ public class DefaultAdvancementsProvider extends ForgeAdvancementProvider
                 .parent(startBuilder)
                 .display(make(FrameType.TASK, ModItems.resourceScroll,"click_gui_button_fulfill"))
                 .addCriterion("click_gui_button_fulfill",
-                        new ClickGuiButtonCriterionInstance(WindowConstants.REQUEST_FULLFIL, RequestWindowCitizen.WINDOW_ID))
+                        new ClickGuiButtonCriterionInstance(WindowConstants.REQUEST_FULFILL, RequestWindowCitizen.WINDOW_ID))
                 .addCriterion("click_request_button_fulfill",
-                        new ClickGuiButtonCriterionInstance(WindowConstants.REQUEST_FULLFIL, WindowRequestDetail.WINDOW_ID))
+                        new ClickGuiButtonCriterionInstance(WindowConstants.REQUEST_FULFILL, WindowRequestDetail.WINDOW_ID))
                 .requirements(RequirementsStrategy.OR)
                 .save(consumer, new ResourceLocation(MOD_ID, GROUP + "fulfill_request"), fileHelper);
 
