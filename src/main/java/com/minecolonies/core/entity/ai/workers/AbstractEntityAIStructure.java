@@ -629,6 +629,11 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
             return BUILDING_STEP;
         }
 
+        if (structurePlacer == null)
+        {
+            return IDLE;
+        }
+
         final BlockState worldState = world.getBlockState(blockToMine);
         if (worldState.getBlock() instanceof AirBlock || worldState.getBlock() == Blocks.WATER)
         {
