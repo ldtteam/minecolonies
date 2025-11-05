@@ -10,8 +10,8 @@ import com.minecolonies.api.colony.buildings.registry.IBuildingRegistry;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.research.*;
-import com.minecolonies.api.research.IResearchCost;
-import com.minecolonies.api.research.IResearchEffect;
+import com.minecolonies.api.research.requirements.BuildingAlternatesResearchRequirement;
+import com.minecolonies.api.research.requirements.BuildingResearchRequirement;
 import com.minecolonies.api.research.util.ResearchState;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
@@ -21,9 +21,6 @@ import com.minecolonies.core.Network;
 import com.minecolonies.core.client.gui.blockui.RotatingItemIcon;
 import com.minecolonies.core.client.gui.modules.UniversityModuleWindow;
 import com.minecolonies.core.network.messages.server.colony.building.university.TryResearchMessage;
-import com.minecolonies.api.research.requirements.BuildingAlternatesResearchRequirement;
-import com.minecolonies.api.research.requirements.BuildingResearchRequirement;
-import com.minecolonies.core.research.GlobalResearchEffect;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -610,26 +607,11 @@ public class WindowResearchTree extends AbstractWindowSkeleton
         for (int txt = 0; txt < research.getEffects().size(); txt++)
         {
             final IResearchEffect researchEffect = research.getEffects().get(txt);
-            // CITIZEN_CAP's meaningful effect range is controlled by configuration file settings. Very low values will necessarily make their researches a little weird, but we should at least handle 'sane' ranges.
-            // Only change the effect description, rather than removing the effect, as someone may plausibly use the research as a parent research.
-            // I'd rather make these modifications during ResearchListener.apply, but that's called before config files can be loaded, and the other workarounds are even uglier.
-            if (researchEffect instanceof GlobalResearchEffect globalResearchEffect && researchEffect.getId().equals(CITIZEN_CAP)
-                  && globalResearchEffect.getEffect() > IMinecoloniesAPI.getInstance().getConfig().getServer().maxCitizenPerColony.get())
-            {
-                final MutableComponent mainText =
-                  Component.translatable(researchEffect.getName().getKey(), 0, IMinecoloniesAPI.getInstance().getConfig().getServer().maxCitizenPerColony.get());
-                // This call to `Math.round` doesn't serve any purpose, it's only meant to convert the double into a long, so that it will display correctly without any trailing zeroes.
-                final MutableComponent finishText = Component.translatable(researchEffect.getName().getKey() + ".over", Math.round(globalResearchEffect.getEffect()));
-                hoverPaneBuilder.paragraphBreak().append(mainText).append(Component.literal(" ")).append(finishText);
-            }
-            else
-            {
-                hoverPaneBuilder.paragraphBreak().append(MutableComponent.create(researchEffect.getName()));
-            }
+            hoverPaneBuilder.paragraphBreak().append(researchEffect.getName());
 
-            if (!researchEffect.getSubtitle().getKey().isEmpty())
+            if (!researchEffect.getSubtitle().getString().isEmpty())
             {
-                hoverPaneBuilder.paragraphBreak().append(Component.literal("-")).append(MutableComponent.create(researchEffect.getSubtitle())).italic().colorName("GRAY");
+                hoverPaneBuilder.paragraphBreak().append(Component.literal("-")).append(researchEffect.getSubtitle()).italic().colorName("GRAY");
             }
         }
         if (state != ResearchButtonState.FINISHED && state != ResearchButtonState.IN_PROGRESS)

@@ -1,6 +1,4 @@
 {
-  "effect": true,
-  "levels": [
-    5.0
-  ]
+  "building": "minecolonies:dyer",
+  "effect": "minecolonies:building"
 }

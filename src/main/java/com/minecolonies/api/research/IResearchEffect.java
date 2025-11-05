@@ -1,7 +1,7 @@
 package com.minecolonies.api.research;
 
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.chat.contents.TranslatableContents;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
@@ -29,14 +29,16 @@ public interface IResearchEffect
      *
      * @return the desc.
      */
-    TranslatableContents getName();
+    @NotNull
+    Component getName();
 
     /**
      * Human-readable effect subtitle description, or a translation key.
      *
      * @return the Subtitle desc.
      */
-    TranslatableContents getSubtitle();
+    @NotNull
+    Component getSubtitle();
 
     /**
      * Get the absolute effect of the research.

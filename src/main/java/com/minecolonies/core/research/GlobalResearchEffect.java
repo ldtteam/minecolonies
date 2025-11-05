@@ -1,19 +1,41 @@
 package com.minecolonies.core.research;
 
-import com.minecolonies.api.research.ModResearchEffects;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.minecolonies.api.research.IResearchEffect;
+import com.minecolonies.api.research.ModResearchEffects;
+import com.minecolonies.core.util.GsonHelper;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
+import java.util.function.Supplier;
+
+import static com.minecolonies.core.datalistener.ResearchListener.*;
 
 /**
  * An instance of a Research Effect at a specific strength, to be applied to a specific colony.
  */
 public class GlobalResearchEffect implements IResearchEffect
 {
+    /**
+     * Generator functions for default parsed values.
+     */
+    public static final Function<ResourceLocation, String> DEFAULT_RESEARCH_EFFECT_NAME   =
+        (effectId) -> String.format("com.%s.research.%s.description", effectId.getNamespace(), effectId.getPath().replaceAll("[ /]", "."));
+    public static final Supplier<JsonArray>                DEFAULT_RESEARCH_EFFECT_LEVELS = () -> {
+        final JsonArray defaultArray = new JsonArray();
+        defaultArray.add(1);
+        return defaultArray;
+    };
+
     /**
      * The NBT tag for an individual effect's identifier, as a ResourceLocation.
      */
@@ -65,24 +87,6 @@ public class GlobalResearchEffect implements IResearchEffect
     private final double displayEffect;
 
     /**
-     * The constructor to create a new global research effect, with a statically assigned description.
-     *
-     * @param id            the id to unlock.
-     * @param name          the effect's description, for display.
-     * @param subtitle      the effect's subtitle description.
-     * @param effect        the effect's absolute strength.
-     * @param displayEffect the effect's relative strength, for display purposes.
-     */
-    public GlobalResearchEffect(final ResourceLocation id, final String name, final String subtitle, final double effect, final double displayEffect)
-    {
-        this.id = id;
-        this.name = new TranslatableContents(name, null, List.of(displayEffect, effect, Math.round(displayEffect * 100), Math.round(effect * 100)).toArray());
-        this.subtitle = new TranslatableContents(subtitle, null, TranslatableContents.NO_ARGS);
-        this.effect = effect;
-        this.displayEffect = displayEffect;
-    }
-
-    /**
      * The constructor to build a new global research effect from an NBT.
      *
      * @param nbt the nbt containing the traits for the global research.
@@ -94,6 +98,39 @@ public class GlobalResearchEffect implements IResearchEffect
         this.displayEffect = nbt.getDouble(TAG_DISPLAY_EFFECT);
         this.name = new TranslatableContents(nbt.getString(TAG_DESC), null, List.of(displayEffect, effect, Math.round(displayEffect * 100), Math.round(effect * 100)).toArray());
         this.subtitle = new TranslatableContents(nbt.getString(TAG_SUBTITLE), null, TranslatableContents.NO_ARGS);
+    }
+
+    /**
+     * The constructor to build a new global research effect from json.
+     *
+     * @param id          the id to unlock.
+     * @param effectLevel the level of the effect.
+     * @param json        the json data.
+     */
+    public GlobalResearchEffect(final ResourceLocation id, final int effectLevel, final JsonObject json)
+    {
+        final String effectName = GsonHelper.getAsString(json, RESEARCH_NAME_PROP, DEFAULT_RESEARCH_EFFECT_NAME, id);
+        final String effectSubtitle = GsonHelper.getAsString(json, RESEARCH_SUBTITLE_PROP, "");
+
+        final List<Double> levelsAbsolute = new ArrayList<>(List.of(0d));
+        final List<Double> levelsRelative = new ArrayList<>(List.of(0d));
+        for (final JsonElement levelElement : GsonHelper.getAsJsonArray(json, EFFECT_LEVELS_PROP, DEFAULT_RESEARCH_EFFECT_LEVELS))
+        {
+            if (GsonHelper.isNumberValue(levelElement))
+            {
+                final double level = levelElement.getAsNumber().doubleValue();
+                levelsRelative.add(level - levelsAbsolute.get(levelsAbsolute.size() - 1));
+                levelsAbsolute.add(level);
+            }
+        }
+
+        final int targetLevel = Math.max(1, Math.min(levelsAbsolute.size() - 1, effectLevel));
+
+        this.id = id;
+        this.effect = levelsAbsolute.get(targetLevel);
+        this.displayEffect = levelsRelative.get(targetLevel);
+        this.name = new TranslatableContents(effectName, null, List.of(displayEffect, effect, Math.round(displayEffect * 100), Math.round(effect * 100)).toArray());
+        this.subtitle = new TranslatableContents(effectSubtitle, null, TranslatableContents.NO_ARGS);
     }
 
     @Override
@@ -109,15 +146,17 @@ public class GlobalResearchEffect implements IResearchEffect
     }
 
     @Override
-    public TranslatableContents getName()
+    @NotNull
+    public Component getName()
     {
-        return this.name;
+        return MutableComponent.create(this.name);
     }
 
     @Override
-    public TranslatableContents getSubtitle()
+    @NotNull
+    public Component getSubtitle()
     {
-        return this.subtitle;
+        return MutableComponent.create(this.subtitle);
     }
 
     @Override
@@ -129,7 +168,7 @@ public class GlobalResearchEffect implements IResearchEffect
     @Override
     public boolean overrides(@NotNull final IResearchEffect other)
     {
-        return Math.abs(effect) > Math.abs(((GlobalResearchEffect) other).effect);
+        return other instanceof GlobalResearchEffect globalResearchEffect && Math.abs(effect) > Math.abs(globalResearchEffect.effect);
     }
 
     @Override

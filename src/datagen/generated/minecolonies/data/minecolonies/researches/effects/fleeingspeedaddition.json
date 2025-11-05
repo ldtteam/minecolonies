@@ -1,5 +1,5 @@
 {
-  "effect": true,
+  "effect": "minecolonies:global",
   "levels": [
     1.0,
     2.0,

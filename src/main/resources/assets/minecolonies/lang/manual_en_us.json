@@ -1463,6 +1463,7 @@
   "com.minecolonies.coremod.research.research.notenoughresources": "Missing Resources",
   "com.minecolonies.coremod.research.research.missingrequirements": "Missing Requirements",
   "com.minecolonies.coremod.research.research.buildingleveltoolow": "Too low University level",
+  "com.minecolonies.coremod.research.requirement.building.unlock": "Unlocks %s",
   "com.minecolonies.coremod.research.requirement.building.level": "Requires %s(s) totaling at least %d levels!",
   "com.minecolonies.coremod.research.requirement.building.single.level": "Requires any one %s(s) at least %d levels!",
   "com.minecolonies.coremod.research.requirement.building.or": " or ",
