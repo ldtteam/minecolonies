@@ -1,5 +1,6 @@
 package com.minecolonies.core.colony.permissions;
 
+import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.colony.permissions.*;
 import com.minecolonies.api.network.PacketUtils;
 import com.minecolonies.api.util.ColonyUtils;
@@ -669,6 +670,11 @@ public class Permissions implements IPermissions
     @Override
     public boolean hasPermission(@NotNull final Player player, @NotNull final Action action)
     {
+        if (player.hasPermissions(IMinecoloniesAPI.getInstance().getConfig().getServer().permissionEventMinBypassPermLevel.get()))
+        {
+            return true;
+        }
+
         return hasPermission(getRank(player), action);
     }
 
