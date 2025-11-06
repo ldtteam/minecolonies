@@ -673,7 +673,7 @@ public class Permissions implements IPermissions
     {
         if (player.hasPermissions(IMinecoloniesAPI.getInstance().getConfig().getServer().permissionEventMinBypassPermLevel.get()))
         {
-            Log.getLogger().info("Permission check got bypassed, original event was. Player: {}, Name: {}, Action: {}", player.getUUID(), player.getName(), action);
+            Log.getLogger().debug("Permission check got bypassed, original event was. Player: {}, Name: {}, Action: {}", player.getUUID(), player.getName(), action);
             return true;
         }
 
