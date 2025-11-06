@@ -90,9 +90,9 @@ public class ServerConfiguration extends AbstractConfiguration
      *  ------------------- ######## Permission Settings ######## ------------------- *
      *  ----------------------------------------------------------------------------- */
 
-    public final ForgeConfigSpec.BooleanValue          enableColonyProtection;
-    public final ForgeConfigSpec.EnumValue<Explosions> turnOffExplosionsInColonies;
-    public final ForgeConfigSpec.IntValue              permissionEventMinBypassPermLevel;
+    public final BooleanValue          enableColonyProtection;
+    public final EnumValue<Explosions> turnOffExplosionsInColonies;
+    public final IntValue              permissionEventMinBypassPermLevel;
 
     /*  -------------------------------------------------------------------------------- *
      *  ------------------- ######## Compatibility Settings ######## ------------------- *
@@ -195,9 +195,9 @@ public class ServerConfiguration extends AbstractConfiguration
 
         swapToCategory("permissions");
 
-        enableColonyProtection = defineBoolean(builder, "enablecolonyprotection", true);
-        turnOffExplosionsInColonies = defineEnum(builder, "turnoffexplosionsincolonies", Explosions.DAMAGE_ENTITIES);
-        permissionEventMinBypassPermLevel = defineInteger(builder, "permissioneventbypassminpermlevel", 2, 0, 4);
+        enableColonyProtection = defineBoolean("enablecolonyprotection", true);
+        turnOffExplosionsInColonies = defineEnum("turnoffexplosionsincolonies", Explosions.DAMAGE_ENTITIES);
+        permissionEventMinBypassPermLevel = defineInteger("permissioneventbypassminpermlevel", 2, 0, 4);
 
         swapToCategory("compatibility");
 
