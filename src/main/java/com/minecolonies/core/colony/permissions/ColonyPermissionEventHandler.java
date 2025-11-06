@@ -2,7 +2,6 @@ package com.minecolonies.core.colony.permissions;
 
 import com.ldtteam.structurize.items.ItemScanTool;
 import com.ldtteam.structurize.placement.handlers.placement.PlacementHandlers.ContainerPlacementHandler;
-import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.IColonyManager;
@@ -176,13 +175,7 @@ public class ColonyPermissionEventHandler
      * @param action the action which was denied
      * @param pos    the location of the action which was denied
      */
-    private <T extends Event> void cancelEvent(
-        final T event,
-        @Nullable final Entity entity,
-        final Colony colony,
-        final Action action,
-        final BlockPos pos,
-        final Consumer<T> eventCancellation)
+    private <T extends Event> void cancelEvent(final T event, @Nullable final Entity entity, final Colony colony, final Action action, final BlockPos pos, final Consumer<T> eventCancellation)
     {
         if (event instanceof ICancellableEvent cancellableEvent)
         {
@@ -201,36 +194,38 @@ public class ColonyPermissionEventHandler
             }
             return;
         }
+
         if (colony.hasTownHall())
         {
             colony.getBuildingManager().getTownHall().addPermissionEvent(new PermissionEvent(entity.getUUID(), entity.getName().getString(), action, pos));
         }
-
 
         if (entity instanceof FakePlayer)
         {
             return;
         }
 
-        final long worldTime = entity.level().getGameTime();
-        if (!lastPlayerNotificationTick.containsKey(entity.getUUID()) || lastPlayerNotificationTick.get(entity.getUUID()) + (TICKS_SECOND * 10) < worldTime)
-        {
-            MessageUtils.format(PERMISSION_DENIED).sendTo((Player) entity);
-            lastPlayerNotificationTick.put(entity.getUUID(), worldTime);
-            playerAttempts.put(entity.getUUID(), 0);
-        }
-        else
-        {
-            if (playerAttempts.compute(entity.getUUID(), (uuid, count) -> count == null ? 1 : count + 1) > 10)
+            final long worldTime = entity.level().getGameTime();
+            if (!lastPlayerNotificationTick.containsKey(entity.getUUID())
+                  || lastPlayerNotificationTick.get(entity.getUUID()) + (TICKS_SECOND * 10)
+                       < worldTime)
             {
-                if (entity instanceof LivingEntity living)
+                MessageUtils.format(PERMISSION_DENIED).sendTo((Player) entity);
+                lastPlayerNotificationTick.put(entity.getUUID(), worldTime);
+                playerAttempts.put(entity.getUUID(), 0);
+            }
+            else
+            {
+                if (playerAttempts.compute(entity.getUUID(), (uuid, count) -> count == null ? 1 : count + 1) > 10)
                 {
-                    playerAttempts.put(entity.getUUID(), 0);
-                    living.addEffect(new MobEffectInstance(MobEffects.LEVITATION, TICKS_SECOND * 10));
+                    if (entity instanceof LivingEntity living)
+                    {
+                        playerAttempts.put(entity.getUUID(), 0);
+                        living.addEffect(new MobEffectInstance(MobEffects.LEVITATION, TICKS_SECOND * 10));
+                    }
                 }
             }
         }
-    }
 
 
     /**
