@@ -1,7 +1,6 @@
 package com.minecolonies.core.colony.permissions;
 
 import com.ldtteam.structurize.items.ItemScanTool;
-import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.IColonyManager;
@@ -10,11 +9,9 @@ import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.colony.permissions.Explosions;
 import com.minecolonies.api.colony.permissions.PermissionEvent;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-import com.minecolonies.api.eventbus.events.colony.permissions.LogPermissionEventModEvent;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.EntityUtils;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.core.MineColonies;
 import com.minecolonies.core.blocks.BlockDecorationController;
@@ -166,28 +163,19 @@ public class ColonyPermissionEventHandler
         if (event.isCancelable())
         {
             event.setCanceled(true);
+            if (entity == null)
+            {
+                if (colony.hasTownHall())
+                {
+                    colony.getBuildingManager().getTownHall().addPermissionEvent(new PermissionEvent(null, "-", action, pos));
+                }
+                return;
+            }
             if (colony.hasTownHall())
             {
-                final PermissionEvent permissionEvent =
-                    new PermissionEvent(entity == null ? null : entity.getUUID(), entity == null ? "-" : entity.getName().getString(), action, pos);
-
-                final LogPermissionEventModEvent logPermissionEventModEvent = new LogPermissionEventModEvent(colony, entity, permissionEvent);
-                IMinecoloniesAPI.getInstance().getEventBus().post(logPermissionEventModEvent);
-
-                if (logPermissionEventModEvent.shouldLogPermissionEvent())
-                {
-                    colony.getBuildingManager().getTownHall().addPermissionEvent(permissionEvent);
-                }
-                else
-                {
-                    Log.getLogger()
-                        .info("Permission event logging got bypassed, original event was. Entity: {}, Name: {}, Action: {}, Position: {}",
-                            permissionEvent.getId(),
-                            permissionEvent.getName(),
-                            permissionEvent.getAction(),
-                            permissionEvent.getPosition());
-                }
+                colony.getBuildingManager().getTownHall().addPermissionEvent(new PermissionEvent(entity.getUUID(), entity.getName().getString(), action, pos));
             }
+
 
             if (entity instanceof FakePlayer)
             {
