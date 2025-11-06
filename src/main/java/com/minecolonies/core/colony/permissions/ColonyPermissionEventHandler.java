@@ -11,11 +11,9 @@ import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.colony.permissions.Explosions;
 import com.minecolonies.api.colony.permissions.PermissionEvent;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-import com.minecolonies.api.eventbus.events.colony.permissions.LogPermissionEventModEvent;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.EntityUtils;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.core.MineColonies;
 import com.minecolonies.core.blocks.BlockDecorationController;
@@ -203,11 +201,11 @@ public class ColonyPermissionEventHandler
             }
             return;
         }
-
         if (colony.hasTownHall())
         {
             colony.getBuildingManager().getTownHall().addPermissionEvent(new PermissionEvent(entity.getUUID(), entity.getName().getString(), action, pos));
         }
+
 
         if (entity instanceof FakePlayer)
         {
