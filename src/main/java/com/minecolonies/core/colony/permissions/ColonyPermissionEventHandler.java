@@ -2,6 +2,7 @@ package com.minecolonies.core.colony.permissions;
 
 import com.ldtteam.structurize.items.ItemScanTool;
 import com.ldtteam.structurize.placement.handlers.placement.PlacementHandlers.ContainerPlacementHandler;
+import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.IColonyManager;
@@ -10,9 +11,11 @@ import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.colony.permissions.Explosions;
 import com.minecolonies.api.colony.permissions.PermissionEvent;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.eventbus.events.colony.permissions.LogPermissionEventModEvent;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.EntityUtils;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.core.MineColonies;
 import com.minecolonies.core.blocks.BlockDecorationController;
@@ -175,7 +178,13 @@ public class ColonyPermissionEventHandler
      * @param action the action which was denied
      * @param pos    the location of the action which was denied
      */
-    private <T extends Event> void cancelEvent(final T event, @Nullable final Entity entity, final Colony colony, final Action action, final BlockPos pos, final Consumer<T> eventCancellation)
+    private <T extends Event> void cancelEvent(
+        final T event,
+        @Nullable final Entity entity,
+        final Colony colony,
+        final Action action,
+        final BlockPos pos,
+        final Consumer<T> eventCancellation)
     {
         if (event instanceof ICancellableEvent cancellableEvent)
         {
@@ -205,27 +214,25 @@ public class ColonyPermissionEventHandler
             return;
         }
 
-            final long worldTime = entity.level().getGameTime();
-            if (!lastPlayerNotificationTick.containsKey(entity.getUUID())
-                  || lastPlayerNotificationTick.get(entity.getUUID()) + (TICKS_SECOND * 10)
-                       < worldTime)
+        final long worldTime = entity.level().getGameTime();
+        if (!lastPlayerNotificationTick.containsKey(entity.getUUID()) || lastPlayerNotificationTick.get(entity.getUUID()) + (TICKS_SECOND * 10) < worldTime)
+        {
+            MessageUtils.format(PERMISSION_DENIED).sendTo((Player) entity);
+            lastPlayerNotificationTick.put(entity.getUUID(), worldTime);
+            playerAttempts.put(entity.getUUID(), 0);
+        }
+        else
+        {
+            if (playerAttempts.compute(entity.getUUID(), (uuid, count) -> count == null ? 1 : count + 1) > 10)
             {
-                MessageUtils.format(PERMISSION_DENIED).sendTo((Player) entity);
-                lastPlayerNotificationTick.put(entity.getUUID(), worldTime);
-                playerAttempts.put(entity.getUUID(), 0);
-            }
-            else
-            {
-                if (playerAttempts.compute(entity.getUUID(), (uuid, count) -> count == null ? 1 : count + 1) > 10)
+                if (entity instanceof LivingEntity living)
                 {
-                    if (entity instanceof LivingEntity living)
-                    {
-                        playerAttempts.put(entity.getUUID(), 0);
-                        living.addEffect(new MobEffectInstance(MobEffects.LEVITATION, TICKS_SECOND * 10));
-                    }
+                    playerAttempts.put(entity.getUUID(), 0);
+                    living.addEffect(new MobEffectInstance(MobEffects.LEVITATION, TICKS_SECOND * 10));
                 }
             }
         }
+    }
 
 
     /**
