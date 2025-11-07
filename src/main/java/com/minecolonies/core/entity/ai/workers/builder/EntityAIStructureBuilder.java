@@ -218,7 +218,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
                     4,
                     worker);
                 gotoPath = ((MinecoloniesAdvancedPathNavigate) worker.getNavigation()).setPathJob(pathJob, currentBlock, 1.0, false);
-                pathJob.getPathingOptions().dropCost = 200;
+                pathJob.getPathingOptions().canDrop = false;
                 pathJob.extraNodes = 0;
             }
             else if (gotoPath.isDone())

@@ -731,6 +731,12 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
         //  Can we traverse into this node?  Fix the y up, skip on already explored nodes
         if (node.isVisited())
         {
+            if (node.isCornerNode() && node.parent != null && node.parent.y == node.y)
+            {
+                // Corner nodes can only connect sideways when going up
+                return;
+            }
+
             final Block target = cachedBlockLookup.getBlockState(nextX, nextY, nextZ).getBlock();
             if (target instanceof PanelBlock || target instanceof TrapDoorBlock)
             {
@@ -883,7 +889,7 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
 
         if (nextNode == null)
         {
-            nextNode = createNode(node, nextX, nextY, nextZ, nodeKey, heuristic, cost);
+            nextNode = createNode(node, nextX, nextY, nextZ, heuristic, cost);
             nextNode.setOnRails(onRails);
             nextNode.setCornerNode(corner);
             if (isSwimming)
@@ -906,11 +912,11 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
 
     @NotNull
     private MNode createNode(
-      final MNode parent, final int x, final int y, final int z, final int nodeKey, final double heuristic, final double cost)
+        final MNode parent, final int x, final int y, final int z, final double heuristic, final double cost)
     {
         final MNode node;
         node = new MNode(parent, x, y, z, cost, heuristic);
-        nodes.put(nodeKey, node);
+        nodes.put(MNode.computeNodeKey(x, y, z), node);
         if (debugDrawEnabled)
         {
             debugNodesNotVisited.add(node);
@@ -1871,9 +1877,10 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
     @Override
     public String toString()
     {
-        return getClass().getSimpleName() + " start:" + start + " entity:" + entity + " maxNodes:" + maxNodes + " totalNodesVisited:" + totalNodesVisited + " bestNodeCost:"
+        return getClass().getSimpleName() + " start:" + start.toShortString() + " entity:" + entity + " maxNodes:" + maxNodes + " totalNodesVisited:" + totalNodesVisited
+            + " bestNodeCost:"
             + bestNode.getCost() + " heuristicCostEstimate:" + startNode.getHeuristic() + " h-rebalances:" + (
             visitedLevel - 1) + " reaches:"
-            + reachesDestination;
+            + reachesDestination + (this instanceof IDestinationPathJob ? " dest:" + ((IDestinationPathJob) this).getDestination().toShortString() : "");
     }
 }
