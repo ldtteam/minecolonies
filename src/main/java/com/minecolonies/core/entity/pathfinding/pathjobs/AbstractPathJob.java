@@ -35,6 +35,7 @@ import net.minecraft.world.level.block.state.properties.Half;
 import net.minecraft.world.level.pathfinder.BlockPathTypes;
 import net.minecraft.world.level.pathfinder.Node;
 import net.minecraft.world.level.pathfinder.Path;
+import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -1279,7 +1280,12 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
         if (!isPassable(x, y + 1, z, true, parent))
         {
             // TODO: Checking +1 and -1 seems odd? probably one intended to be current instead
-            final VoxelShape bb1 = cachedBlockLookup.getBlockState(x, y - 1, z).getCollisionShape(world, tempWorldPos.set(x, y - 1, z));
+            VoxelShape bb1 = cachedBlockLookup.getBlockState(x, y - 1, z).getCollisionShape(world, tempWorldPos.set(x, y - 1, z));
+            if (PathfindingUtils.isLiquid(cachedBlockLookup.getBlockState(x, y - 1, z)))
+            {
+                bb1 = Shapes.block();
+            }
+
             final VoxelShape bb2 = cachedBlockLookup.getBlockState(x, y + 1, z).getCollisionShape(world, tempWorldPos.set(x, y + 1, z));
             if ((y + 1 + ShapeUtil.getStartY(bb2, 1)) - (y - 1 + ShapeUtil.getEndY(bb1, 0)) < 2)
             {
