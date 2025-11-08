@@ -136,6 +136,6 @@ public class BuildingResourcesModuleView extends AbstractBuildingModuleView
     @Override
     public Component getDesc()
     {
-        return Component.literal("com.minecolonies.coremod.gui.workerhuts.resourcelist");
+        return Component.translatable("com.minecolonies.coremod.gui.workerhuts.resourcelist");
     }
 }
