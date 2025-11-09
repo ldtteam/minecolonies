@@ -69,10 +69,6 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
     public EntityAIStructureBuilder(@NotNull final JobBuilder job)
     {
         super(job);
-        super.registerTargets(
-            new AITarget(IDLE, START_WORKING, 10),
-            new AITarget(START_WORKING, this::checkForWorkOrder, this::startWorkingAtOwnBuilding, TICKS_SECOND)
-        );
         worker.setCanPickUpLoot(true);
     }
 
@@ -146,13 +142,24 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
         return !checkForWorkOrder();
     }
 
-    private IAIState startWorkingAtOwnBuilding()
+    @Override
+    protected IAIState startWorkingAtOwnBuilding()
     {
         if (!walkToBuilding())
         {
             return getState();
         }
-        return LOAD_STRUCTURE;
+
+        if (checkForWorkOrder())
+        {
+            final IAIState state = super.startWorkingAtOwnBuilding();
+            if (state == IDLE)
+            {
+                return LOAD_STRUCTURE;
+            }
+            return state;
+        }
+        return IDLE;
     }
 
     /**

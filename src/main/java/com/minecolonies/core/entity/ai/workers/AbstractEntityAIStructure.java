@@ -173,7 +173,11 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
           /*
            * Check if we have to build something.
            */
-          new AITarget(IDLE, this::isThereAStructureToBuild, () -> START_BUILDING, 10),
+          new AITarget(IDLE, START_WORKING, 10),
+          /*
+           * Start working at the building.
+           */
+          new AITarget(START_WORKING, this::startWorkingAtOwnBuilding, TICKS_SECOND),
           /*
            * Build the structure and foundation of the building.
            */
@@ -184,6 +188,19 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
           new AITarget(COMPLETE_BUILD, this::completeBuild, STANDARD_DELAY),
           new AITarget(PICK_UP, this::pickUpMaterial, 5)
         );
+    }
+
+    /**
+     * Start working at own building. Override for worker specific implementations.
+     * @return next state.
+     */
+    protected IAIState startWorkingAtOwnBuilding()
+    {
+        if (isThereAStructureToBuild())
+        {
+            return START_BUILDING;
+        }
+        return IDLE;
     }
 
     /**
