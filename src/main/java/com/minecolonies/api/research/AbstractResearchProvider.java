@@ -625,7 +625,8 @@ public abstract class AbstractResearchProvider implements DataProvider
          * @param buildingBlock the building block to lock behind this research.
          * @return this
          */
-        public Research addEffect(final AbstractColonyBlock<?> buildingBlock) {
+        public Research addEffect(final AbstractColonyBlock<?> buildingBlock)
+        {
             return this.addEffect(buildingBlock, buildingBlock.getBuildingEntry().produceBuilding(null, null).getMaxBuildingLevel());
         }
 
