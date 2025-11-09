@@ -20,6 +20,7 @@ import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.api.util.constant.translation.RequestSystemTranslationConstants;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
+import com.minecolonies.core.colony.buildings.modules.BuildingModules;
 import com.minecolonies.core.colony.buildings.modules.FurnaceUserModule;
 import com.minecolonies.core.colony.buildings.modules.ItemListModule;
 import com.minecolonies.core.colony.interactionhandling.StandardInteraction;
@@ -44,7 +45,6 @@ import java.util.function.Predicate;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.ItemStackUtils.*;
-import static com.minecolonies.api.util.constant.BuildingConstants.FUEL_LIST;
 import static com.minecolonies.api.util.constant.CitizenConstants.TICKS_20;
 import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.BAKER_HAS_NO_FURNACES_MESSAGE;
@@ -178,7 +178,7 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
 
         final IAIState newState = super.getRecipe();
 
-        final ItemListModule module = building.getModuleMatching(ItemListModule.class, m -> m.getId().equals(FUEL_LIST));
+        final ItemListModule module = building.getModule(BuildingModules.ITEMLIST_FUEL);
 
         // This should only happen in the stonesmelter, but it could potentially happen with multiple fuels.
         if (newState == QUERY_ITEMS && currentRecipeStorage != null && module.isItemInList(new ItemStorage(currentRecipeStorage.getPrimaryOutput())))
@@ -285,15 +285,26 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
                     continue;
                 }
                 final FurnaceBlockEntity furnace = (FurnaceBlockEntity) entity;
-                if (!furnace.isLit() && (hasSmeltableInFurnaceAndNoFuel(furnace) || hasNeitherFuelNorSmeltAble(furnace)) && currentRecipeStorage != null
-                      && currentRecipeStorage.getIntermediate() == Blocks.FURNACE)
+                if (!furnace.isLit() && (hasSmeltableInFurnaceAndNoFuel(furnace) || hasNeitherFuelNorSmeltAble(furnace)))
                 {
                     //We only want to return true if we're not already gathering materials.
                     return getState() != GATHERING_REQUIRED_MATERIALS;
                 }
             }
         }
-        return false;
+
+        final ImmutableList<ItemStorage> fuelList = building.getModule(BuildingModules.ITEMLIST_FUEL).getList();
+        boolean hasFuel = false;
+        for (final ItemStorage fuel : fuelList)
+        {
+            if (InventoryUtils.getCountFromBuilding(building, fuel) > 0)
+            {
+                hasFuel = true;
+                break;
+            }
+        }
+
+        return hasFuel;
     }
 
     /**
@@ -314,8 +325,7 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
 
         final FurnaceUserModule module = building.getFirstModuleOccurance(FurnaceUserModule.class);
         if (!InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(), isCorrectFuel(possibleFuels)) && !InventoryUtils.hasItemInProvider(building,
-          isCorrectFuel(possibleFuels)) && !building.hasWorkerOpenRequestsOfType(worker.getCitizenData().getId(), TypeToken.of(StackList.class)) && currentRecipeStorage != null
-              && currentRecipeStorage.getIntermediate() == Blocks.FURNACE)
+          isCorrectFuel(possibleFuels)) && !building.hasWorkerOpenRequestsOfType(worker.getCitizenData().getId(), TypeToken.of(StackList.class)))
         {
             worker.getCitizenData()
               .createRequestAsync(new StackList(possibleFuels, RequestSystemTranslationConstants.REQUESTS_TYPE_BURNABLE, STACKSIZE * module.getFurnaces().size(), 1));
@@ -787,7 +797,7 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
     private List<ItemStack> getAllowedFuel()
     {
         final List<ItemStack> list = new ArrayList<>();
-        for (final ItemStorage storage : building.getModuleMatching(ItemListModule.class, m -> m.getId().equals(FUEL_LIST)).getList())
+        for (final ItemStorage storage : building.getModule(BuildingModules.ITEMLIST_FUEL).getList())
         {
             final ItemStack stack = storage.getItemStack().copy();
             stack.setCount(stack.getMaxStackSize());
