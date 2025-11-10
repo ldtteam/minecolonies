@@ -857,7 +857,7 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
         final boolean onRoad = WorkerUtil.isPathBlock(belowState.getBlock());
         final boolean onRails = pathingOptions.canUseRails() && (corner ? belowState : state).getBlock() instanceof BaseRailBlock;
         final boolean railsExit = !onRails && node != null && node.isOnRails();
-        final boolean ladder = PathfindingUtils.isLadder(state, pathingOptions);
+        final boolean ladder = PathfindingUtils.isLadder(state, pathingOptions, nextX, nextY, nextZ, cachedBlockLookup);
         final boolean isDiving = isSwimming && PathfindingUtils.isWater(world, null, aboveState, null);
 
         double nextCost = 0;
@@ -1532,7 +1532,7 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
             return handleInLiquid(x, y, z, below, isSwimming);
         }
 
-        if (PathfindingUtils.isLadder(below, pathingOptions))
+        if (PathfindingUtils.isLadder(below, pathingOptions, x, y - 1, z, cachedBlockLookup))
         {
             return y;
         }
