@@ -1,11 +1,13 @@
 package com.minecolonies.core.entity.ai.workers.crafting;
 
 import com.google.common.collect.ImmutableList;
+import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.modules.ICraftingBuildingModule;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.requestable.Stack;
 import com.minecolonies.api.colony.requestsystem.requestable.crafting.PublicCrafting;
+import com.minecolonies.api.colony.requestsystem.requestable.deliveryman.Delivery;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.crafting.RecipeStorage;
@@ -16,6 +18,7 @@ import com.minecolonies.api.equipment.ModEquipmentTypes;
 import com.minecolonies.api.util.*;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
 import com.minecolonies.core.colony.buildings.modules.CraftingWorkerBuildingModule;
+import com.minecolonies.core.colony.buildings.workerbuildings.BuildingWareHouse;
 import com.minecolonies.core.colony.jobs.AbstractJobCrafter;
 import com.minecolonies.core.entity.ai.workers.AbstractEntityAIInteract;
 import com.minecolonies.core.entity.citizen.EntityCitizen;
@@ -38,8 +41,10 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Predicate;
 
+import static com.minecolonies.api.colony.requestsystem.requestable.deliveryman.AbstractDeliverymanRequestable.MAX_BUILDING_PRIORITY;
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.constant.CitizenConstants.*;
 import static com.minecolonies.api.util.constant.Constants.DEFAULT_SPEED;
@@ -556,7 +561,8 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
             final IAIState check = checkForItems(currentRecipeStorage);
             if (check == CRAFT)
             {
-                if (!currentRecipeStorage.fullfillRecipe(getLootContext(), ImmutableList.of(worker.getItemHandlerCitizen())))
+                final List<ItemStack> addedStacks = currentRecipeStorage.fullfillRecipeAndCopy(getLootContext(), ImmutableList.of(worker.getItemHandlerCitizen()), true);
+                if (addedStacks == null)
                 {
                     currentRequest = null;
                     incrementActionsDone(getActionRewardForCraftingSuccess());
@@ -565,7 +571,21 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
                     return START_WORKING;
                 }
                 recordCraftingBuildingStats(currentRequest, currentRecipeStorage);
+
                 currentRequest.addDelivery(currentRecipeStorage.getPrimaryOutput());
+
+                for (final ItemStack addedStack : addedStacks)
+                {
+                    if (ItemStackUtils.compareItemStacksIgnoreStackSize(currentRecipeStorage.getPrimaryOutput(), addedStack))
+                    {
+                        currentRequest.addDelivery(addedStack);
+                    }
+                    else
+                    {
+                        job.getSecondaryOutputs().addTo(new ItemStorage(addedStack), addedStack.getCount());
+                    }
+                }
+
                 job.setCraftCounter(job.getCraftCounter() + 1);
                 if (toolSlot != -1)
                 {
@@ -656,11 +676,28 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
             if (currentRequest.getState() == RequestState.IN_PROGRESS)
             {
                 worker.getCitizenColonyHandler()
-                  .getColonyOrRegister()
-                  .getStatisticsManager()
-                  .incrementBy(ITEMS_CRAFTED, currentRequest.getRequest().getCount(), worker.getCitizenColonyHandler().getColonyOrRegister().getDay());
+                    .getColonyOrRegister()
+                    .getStatisticsManager()
+                    .incrementBy(ITEMS_CRAFTED, currentRequest.getRequest().getCount(), worker.getCitizenColonyHandler().getColonyOrRegister().getDay());
                 job.finishRequest(true);
                 worker.getCitizenExperienceHandler().addExperience(currentRequest.getRequest().getCount() / 2.0);
+
+                if (!job.getSecondaryOutputs().isEmpty())
+                {
+                    final BlockPos closestWarehouse = job.getColony().getBuildingManager().getBestBuilding(worker, BuildingWareHouse.class);
+                    if (closestWarehouse != null)
+                    {
+                        final IBuilding warehouse = job.getColony().getBuildingManager().getBuilding(closestWarehouse);
+                        for (final Map.Entry<ItemStorage, Integer> output : job.getSecondaryOutputs().entrySet())
+                        {
+                            warehouse.createRequest(new Delivery(building.getLocation(),
+                                warehouse.getLocation(),
+                                output.getKey().getItemStack().copyWithCount(output.getValue()),
+                                MAX_BUILDING_PRIORITY), true);
+                        }
+                    }
+                    job.getSecondaryOutputs().clear();
+                }
             }
             currentRequest = null;
             resetValues();

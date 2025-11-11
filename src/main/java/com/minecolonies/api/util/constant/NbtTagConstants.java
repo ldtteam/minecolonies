@@ -582,9 +582,10 @@ public final class NbtTagConstants
     /**
      * Crafter job tags.
      */
-    public static final String TAG_PROGRESS      = "progress";
-    public static final String TAG_MAX_COUNTER   = "maxCounter";
-    public static final String TAG_CRAFT_COUNTER = "craftCounter";
+    public static final String TAG_PROGRESS          = "progress";
+    public static final String TAG_MAX_COUNTER       = "maxCounter";
+    public static final String TAG_CRAFT_COUNTER     = "craftCounter";
+    public static final String TAG_SECONDARY_OUTPUTS = "secondaryOutputs";
 
     /**
      * Enchanter tags
