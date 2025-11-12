@@ -6,11 +6,13 @@ import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.StatsUtil;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingCowboy;
 import com.minecolonies.core.colony.jobs.JobCowboy;
 import com.minecolonies.core.util.citizenutils.CitizenItemUtils;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
@@ -184,6 +186,7 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, Buildi
             }
 
             incrementActionsDoneAndDecSaturation();
+            Log.getLogger().info("[PRODUCTION DEBUG {}] Milked 1 {}", Component.translatable(building.getBuildingDisplayName()).getString(), animal.getType().getDescription().getString());
             StatsUtil.trackStat(building, MILKING_ATTEMPTS, 1);
             worker.getCitizenExperienceHandler().addExperience(1.0);
             return INVENTORY_FULL;

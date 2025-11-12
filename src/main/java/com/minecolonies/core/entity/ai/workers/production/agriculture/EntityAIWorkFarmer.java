@@ -662,10 +662,12 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
         position = findHarvestableSurface(position);
         if (position != null)
         {
+            final BlockState state = world.getBlockState(position.above());
             if (mineBlock(position.above()))
             {
                 worker.getCitizenColonyHandler().getColonyOrRegister().getStatisticsManager().increment(CROPS_HARVESTED, worker.getCitizenColonyHandler().getColonyOrRegister().getDay());
                 worker.getCitizenExperienceHandler().addExperience(XP_PER_HARVEST);
+                Log.getLogger().info("[PRODUCTION DEBUG {}] Harvested 1 {}", Component.translatable(building.getBuildingDisplayName()).getString(), state.getBlock().getName().getString());
             }
             else
             {

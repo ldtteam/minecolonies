@@ -1,6 +1,5 @@
 package com.minecolonies.core.entity.ai.workers;
 
-import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.entity.ai.IStateAI;
@@ -21,7 +20,10 @@ import com.minecolonies.core.colony.buildings.modules.WorkerBuildingModule;
 import com.minecolonies.core.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.core.colony.jobs.AbstractJobGuard;
 import com.minecolonies.core.colony.jobs.JobPupil;
-import com.minecolonies.core.entity.ai.minimal.*;
+import com.minecolonies.core.entity.ai.minimal.EntityAICitizenAvoidEntity;
+import com.minecolonies.core.entity.ai.minimal.EntityAICitizenWander;
+import com.minecolonies.core.entity.ai.minimal.EntityAIMournCitizen;
+import com.minecolonies.core.entity.ai.minimal.EntityAISleep;
 import com.minecolonies.core.entity.citizen.EntityCitizen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -67,9 +69,9 @@ public class CitizenAI implements IStateAI
         registerWorkAI();
 
         minimalAI.add(new EntityAICitizenAvoidEntity(citizen, Monster.class, (float) DISTANCE_OF_ENTITY_AVOID, LATER_RUN_SPEED_AVOID, INITIAL_RUN_SPEED_AVOID));
-        minimalAI.add(new EntityAIEatTask(citizen));
+        //minimalAI.add(new EntityAIEatTask(citizen));
         minimalAI.add(new EntityAICitizenWander(citizen, DEFAULT_SPEED));
-        minimalAI.add(new EntityAISickTask(citizen));
+        //minimalAI.add(new EntityAISickTask(citizen));
         minimalAI.add(new EntityAISleep(citizen));
         minimalAI.add(new EntityAIMournCitizen(citizen, DEFAULT_SPEED));
     }

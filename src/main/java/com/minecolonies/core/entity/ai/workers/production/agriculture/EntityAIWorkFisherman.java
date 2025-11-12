@@ -16,7 +16,6 @@ import com.minecolonies.core.colony.interactionhandling.PosBasedInteraction;
 import com.minecolonies.core.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.core.colony.jobs.JobFisherman;
 import com.minecolonies.core.entity.ai.workers.AbstractEntityAISkill;
-import com.minecolonies.core.entity.citizen.EntityCitizen;
 import com.minecolonies.core.entity.other.NewBobberEntity;
 import com.minecolonies.core.entity.pathfinding.Pathfinding;
 import com.minecolonies.core.entity.pathfinding.PathfindingUtils;
@@ -48,10 +47,8 @@ import java.util.List;
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.api.util.constant.EquipmentLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
-import static com.minecolonies.api.util.constant.StatisticsConstants.FISH_CAUGHT;
 import static com.minecolonies.api.util.constant.TranslationConstants.SUBOPTIMAL_POND;
 import static com.minecolonies.api.util.constant.TranslationConstants.WATER_TOO_FAR;
-import static com.minecolonies.core.colony.buildings.modules.BuildingModules.STATS_MODULE;
 import static com.minecolonies.core.entity.other.NewBobberEntity.XP_PER_CATCH;
 
 /**
@@ -680,7 +677,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman, B
         if (entityFishHook != null)
         {
             worker.swing(worker.getUsedItemHand());
-            final int i = entityFishHook.retrieve(worker.getMainHandItem());
+            final int i = entityFishHook.retrieve(worker.getMainHandItem(), building);
             generateBonusLoot();
             CitizenItemUtils.damageItemInHand(worker, InteractionHand.MAIN_HAND, i);
             entityFishHook = null;
@@ -717,6 +714,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman, B
               worker.getY() + 0.5D,
               worker.getZ() + 0.5D,
               XP_PER_CATCH));
+            Log.getLogger().info("[PRODUCTION DEBUG {}] Fished up {} {} (bonus loot)", Component.translatable(building.getBuildingDisplayName()).getString(), itemstack.getCount(), itemstack.getItem().getDescription().getString());
         }
     }
 

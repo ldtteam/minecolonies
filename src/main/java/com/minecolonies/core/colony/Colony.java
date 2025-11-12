@@ -627,6 +627,7 @@ public class Colony implements IColony
             }
 
             citizenManager.updateCitizenSleep(false);
+            Log.getLogger().info("[PRODUCTION DEBUG] END OF DAY");
         }
         else if (!isDay && WorldUtil.isDayTime(world))
         {

@@ -14,7 +14,6 @@ import com.minecolonies.core.entity.citizen.EntityCitizen;
 import com.minecolonies.core.entity.other.SittingEntity;
 import com.minecolonies.core.entity.pathfinding.navigation.EntityNavigationUtils;
 import com.minecolonies.core.tileentities.TileEntityColonyBuilding;
-import com.minecolonies.core.tileentities.TileEntityDecorationController;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
@@ -36,7 +35,7 @@ public class EntityAICitizenWander implements IStateAI
     /**
      * Chance to enter the leisure state.
      */
-    private static final int LEISURE_CHANCE = 5;
+    private static final int LEISURE_CHANCE = -1;
 
     /**
      * The different types of AIStates related to wandering.

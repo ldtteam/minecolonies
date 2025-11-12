@@ -1,11 +1,14 @@
 package com.minecolonies.core.entity.other;
 
+import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.loot.ModLootTables;
+import com.minecolonies.api.util.Log;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -493,7 +496,7 @@ public class NewBobberEntity extends Projectile implements IEntityWithComplexSpa
 
     }
 
-    public int retrieve(ItemStack p_37157_)
+    public int retrieve(ItemStack p_37157_, final IBuilding building)
     {
         AbstractEntityCitizen citizen = (AbstractEntityCitizen) this.getOwner();
         if (!this.level().isClientSide && citizen != null && !this.shouldStopFishing(citizen))
@@ -526,6 +529,8 @@ public class NewBobberEntity extends Projectile implements IEntityWithComplexSpa
                     itementity.setDeltaMovement(d0 * 0.1, d1 * 0.1 + Math.sqrt(Math.sqrt(d0 * d0 + d1 * d1 + d2 * d2)) * 0.08, d2 * 0.1);
                     this.level().addFreshEntity(itementity);
                     citizen.level().addFreshEntity(new ExperienceOrb(citizen.level(), citizen.getX(), citizen.getY() + 0.5, citizen.getZ() + 0.5, this.random.nextInt(6) + 1));
+
+                    Log.getLogger().info("[PRODUCTION DEBUG {}] Fished up {} {}", Component.translatable(building.getBuildingDisplayName()).getString(), itemstack.getCount(), itemstack.getItem().getDescription().getString());
                 }
 
                 i = 1;

@@ -6,11 +6,7 @@ import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.equipment.ModEquipmentTypes;
 import com.minecolonies.api.equipment.registry.EquipmentTypeEntry;
-import com.minecolonies.api.util.InventoryUtils;
-import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.StatsUtil;
-import com.minecolonies.api.util.Utils;
-import com.minecolonies.api.util.WorldUtil;
+import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.ColonyConstants;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
 import com.minecolonies.core.colony.buildings.modules.AnimalHerdingModule;
@@ -20,6 +16,7 @@ import com.minecolonies.core.entity.pathfinding.navigation.EntityNavigationUtils
 import com.minecolonies.core.util.citizenutils.CitizenItemUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
+import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
@@ -32,7 +29,6 @@ import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.common.util.FakePlayer;
-
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -383,6 +379,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
             StatsUtil.trackStat(building, ANIMALS_BUTCHERED, 1);
             worker.getCitizenExperienceHandler().addExperience(XP_PER_ACTION);
             incrementActionsDoneAndDecSaturation();
+            Log.getLogger().info("[PRODUCTION DEBUG {}] Killed 1 {}", Component.translatable(building.getBuildingDisplayName()).getString(), toKill.getType().getDescription().getString());
             fedRecently.remove(toKill.getUUID());
             return DECIDE;
         }
@@ -554,6 +551,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
             // Values taken from vanilla.
             worker.swing(InteractionHand.MAIN_HAND);
             StatsUtil.trackStatByName(building, ITEM_USED, worker.getMainHandItem().getItem().getDescriptionId(), 1);
+            Log.getLogger().info("[PRODUCTION DEBUG {}] Used 1 {} for feeding", Component.translatable(building.getBuildingDisplayName()).getString(), worker.getMainHandItem().getItem().getDescription().getString());
             worker.getMainHandItem().shrink(1);
             worker.getCitizenExperienceHandler().addExperience(XP_PER_ACTION);
             worker.level().broadcastEntityEvent(toFeed, (byte) 18);
@@ -583,6 +581,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
         }
 
         incrementActionsDoneAndDecSaturation();
+        items.forEach(item -> Log.getLogger().info("[PRODUCTION DEBUG {}] Picked up {} {} ", Component.translatable(building.getBuildingDisplayName()).getString(), item.getItem().getCount(), item.getItem().getItem().getDescription().getString()));
 
         return DECIDE;
     }
@@ -654,6 +653,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
                 animal.setInLove(null);
                 worker.swing(InteractionHand.MAIN_HAND);
                 StatsUtil.trackStatByName(building, ITEM_USED, worker.getMainHandItem().getItem().getDescriptionId(), 1);
+                Log.getLogger().info("[PRODUCTION DEBUG {}] Used 1 {} for breeding", Component.translatable(building.getBuildingDisplayName()).getString(), worker.getMainHandItem().getItem().getDescription().getString());
                 StatsUtil.trackStat(building, BREEDING_ATTEMPTS, 1);
                 worker.getMainHandItem().shrink(1);
                 worker.getCitizenExperienceHandler().addExperience(XP_PER_ACTION);
