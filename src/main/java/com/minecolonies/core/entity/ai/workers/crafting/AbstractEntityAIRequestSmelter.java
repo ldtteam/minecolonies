@@ -305,7 +305,7 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
             }
         }
 
-        return hasFuel;
+        return !hasFuel;
     }
 
     /**
