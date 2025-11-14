@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
  * Extensible logic for windows, without having to use new base classes.
  * Additionally, this class requires you to implement a layout, which will be automatically constructed and injected into the window.
  */
-public interface IWindowCapabilityWithLayout<T> extends IWindowCapability
+public interface IWindowWithLayoutModule extends IWindowModule
 {
     /**
      * Called after the layout is mounted to the parenting window.

@@ -68,7 +68,7 @@ public class RequestWindowCitizen extends AbstractWindowCitizen
     {
         super(citizen, WINDOW_ID);
         this.autoOpenRequest = autoOpenRequest;
-        this.requestTreeCapability = registerLayoutCapability(window -> new CitizenRequestTreeWindowCapability(window,
+        this.requestTreeCapability = registerLayoutModule(window -> new CitizenRequestTreeWindowCapability(window,
             citizen.getColony().getBuilding(citizen.getWorkBuilding()),
             citizen,
             mc.player.isCreative(),

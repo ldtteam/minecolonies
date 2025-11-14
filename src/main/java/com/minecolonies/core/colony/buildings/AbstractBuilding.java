@@ -17,7 +17,6 @@ import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
-import com.minecolonies.api.colony.modules.ModuleContainerUtils;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.data.IRequestSystemBuildingDataStore;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
@@ -179,34 +178,23 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     }
 
     @Override
-    public boolean hasModule(final Class<? extends IBuildingModule> clazz)
+    @NotNull
+    public List<IBuildingModule> getModules()
     {
-        return ModuleContainerUtils.hasModule(modules, clazz);
+        return modules;
+    }
+
+    @Override
+    @NotNull
+    public Class<IBuildingModule> getClassType()
+    {
+        return IBuildingModule.class;
     }
 
     @Override
     public boolean hasModule(final BuildingEntry.ModuleProducer<?, ?> producer)
     {
         return modulesMap.containsKey(producer.getRuntimeID());
-    }
-
-    @NotNull
-    @Override
-    public <T extends IBuildingModule> T getFirstModuleOccurance(final Class<T> clazz)
-    {
-        return ModuleContainerUtils.getFirstModuleOccurance(modules,
-          clazz,
-          "The module of class: " + clazz.toString() + "should never be null! Building: " + getBuildingType().getTranslationKey() + " pos:" + getID().toShortString());
-    }
-
-    @NotNull
-    @Override
-    public <T extends IBuildingModule> T getModuleMatching(final Class<T> clazz, final Predicate<? super T> modulePredicate)
-    {
-        return ModuleContainerUtils.getModuleMatching(modules,
-          clazz,
-          modulePredicate,
-          "no matching module for Building: " + getBuildingType().getTranslationKey() + " pos:" + getID().toShortString());
     }
 
     @Override
@@ -219,13 +207,6 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     public IBuildingModule getModule(final int id)
     {
         return modulesMap.get(id);
-    }
-
-    @NotNull
-    @Override
-    public <T extends IBuildingModule> List<T> getModulesByType(final Class<T> clazz)
-    {
-        return ModuleContainerUtils.getModules(modules, clazz);
     }
 
     @Override

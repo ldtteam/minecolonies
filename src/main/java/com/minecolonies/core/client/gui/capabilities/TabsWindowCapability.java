@@ -14,7 +14,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Random;
 import java.util.function.BiFunction;
 
-public class TabsWindowCapability implements IWindowCapability
+public class TabsWindowCapability implements IWindowModule
 {
     /**
      * Render sizes
@@ -102,7 +102,7 @@ public class TabsWindowCapability implements IWindowCapability
     {
         final View view = new View();
         view.setID(icon.getPath() + "_view");
-        view.setPosition(side.getXPosition.apply(parent, tabXOffset), tabYOffset + ((TAB_HEIGHT + TAB_Y_SPACING) * index));
+        view.setPosition(side.getXPosition.apply(parent, tabXOffset), tabYOffset + ((TAB_HEIGHT + tabYSpacing) * index));
         view.setSize(TAB_WIDTH, TAB_HEIGHT);
 
         final ButtonImage image = new ButtonImage();

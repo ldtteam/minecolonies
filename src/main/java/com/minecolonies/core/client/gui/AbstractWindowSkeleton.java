@@ -8,9 +8,10 @@ import com.ldtteam.blockui.controls.ButtonHandler;
 import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.blockui.views.BOWindow;
 import com.ldtteam.blockui.views.SwitchView;
+import com.minecolonies.api.colony.modules.IModuleContainer;
 import com.minecolonies.core.Network;
-import com.minecolonies.core.client.gui.capabilities.IWindowCapability;
-import com.minecolonies.core.client.gui.capabilities.IWindowCapabilityWithLayout;
+import com.minecolonies.core.client.gui.capabilities.IWindowModule;
+import com.minecolonies.core.client.gui.capabilities.IWindowWithLayoutModule;
 import com.minecolonies.core.network.messages.server.ClickGuiButtonTriggerMessage;
 import com.minecolonies.core.network.messages.server.OpenGuiWindowTriggerMessage;
 import net.minecraft.network.chat.Component;
@@ -19,8 +20,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -30,12 +31,12 @@ import static com.minecolonies.api.util.constant.WindowConstants.*;
 /**
  * Manage windows and their events.
  */
-public abstract class AbstractWindowSkeleton extends BOWindow implements ButtonHandler
+public abstract class AbstractWindowSkeleton extends BOWindow implements ButtonHandler, IModuleContainer<IWindowModule>
 {
     @NotNull
     private final HashMap<String, Consumer<Button>> buttons;
 
-    private final Collection<IWindowCapability> capabilities = new ArrayList<>();
+    private final List<IWindowModule> capabilities = new ArrayList<>();
 
     /**
      * Panes used by the generic page handler
@@ -119,11 +120,11 @@ public abstract class AbstractWindowSkeleton extends BOWindow implements ButtonH
     }
 
     /**
-     * Add a reusable capability to this window. Extending the original logic of the window.
+     * Add a module to this window. Extending the original logic of the window.
      *
      * @param capabilityBuilder the new capability.
      */
-    public final <T extends IWindowCapability> T registerCapability(final Function<AbstractWindowSkeleton, T> capabilityBuilder)
+    public final <T extends IWindowModule> T registerModule(final Function<AbstractWindowSkeleton, T> capabilityBuilder)
     {
         final T capability = capabilityBuilder.apply(this);
         this.capabilities.add(capability);
@@ -131,11 +132,11 @@ public abstract class AbstractWindowSkeleton extends BOWindow implements ButtonH
     }
 
     /**
-     * Add a reusable capability to this window. Extending the original logic of the window.
+     * Add a module to this window. Extending the original logic of the window.
      *
      * @param capabilityBuilder the new capability.
      */
-    public final <T extends IWindowCapability, A> T registerCapability(final BiFunction<AbstractWindowSkeleton, A, T> capabilityBuilder, final A argument)
+    public final <T extends IWindowModule, A> T registerModule(final BiFunction<AbstractWindowSkeleton, A, T> capabilityBuilder, final A argument)
     {
         final T capability = capabilityBuilder.apply(this, argument);
         this.capabilities.add(capability);
@@ -143,11 +144,11 @@ public abstract class AbstractWindowSkeleton extends BOWindow implements ButtonH
     }
 
     /**
-     * Add a reusable capability to this window. Extending the original logic of the window.
+     * Add a module to this window. Extending the original logic of the window.
      *
      * @param capabilityBuilder the new capability.
      */
-    public final <T extends IWindowCapabilityWithLayout<?>> T registerLayoutCapability(final Function<AbstractWindowSkeleton, T> capabilityBuilder, int xPos, int yPos)
+    public final <T extends IWindowWithLayoutModule> T registerLayoutModule(final Function<AbstractWindowSkeleton, T> capabilityBuilder, int xPos, int yPos)
     {
         final T capability = capabilityBuilder.apply(this);
         final Pane rootPane = Loader.createFromXMLFile2(capability.getLayout(), this);
@@ -158,11 +159,11 @@ public abstract class AbstractWindowSkeleton extends BOWindow implements ButtonH
     }
 
     /**
-     * Add a reusable capability to this window. Extending the original logic of the window.
+     * Add a module to this window. Extending the original logic of the window.
      *
      * @param capabilityBuilder the new capability.
      */
-    public final <T extends IWindowCapabilityWithLayout<?>, A> T registerLayoutCapability(final BiFunction<AbstractWindowSkeleton, A, T> capabilityBuilder, A argument, int xPos, int yPos)
+    public final <T extends IWindowWithLayoutModule, A> T registerLayoutModule(final BiFunction<AbstractWindowSkeleton, A, T> capabilityBuilder, A argument, int xPos, int yPos)
     {
         final T capability = capabilityBuilder.apply(this, argument);
         final Pane rootPane = Loader.createFromXMLFile2(capability.getLayout(), this);
@@ -176,21 +177,21 @@ public abstract class AbstractWindowSkeleton extends BOWindow implements ButtonH
     public void onOpened()
     {
         super.onOpened();
-        this.capabilities.forEach(IWindowCapability::onOpened);
+        this.capabilities.forEach(IWindowModule::onOpened);
     }
 
     @Override
     public void onUpdate()
     {
         super.onUpdate();
-        this.capabilities.forEach(IWindowCapability::onUpdate);
+        this.capabilities.forEach(IWindowModule::onUpdate);
     }
 
     @Override
     public void onClosed()
     {
         super.onClosed();
-        this.capabilities.forEach(IWindowCapability::onClosed);
+        this.capabilities.forEach(IWindowModule::onClosed);
     }
 
     /**

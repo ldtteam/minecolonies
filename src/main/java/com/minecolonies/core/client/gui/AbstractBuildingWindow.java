@@ -52,7 +52,7 @@ public abstract class AbstractBuildingWindow<B extends IBuildingView> extends Ab
         super(parent, resource);
         this.buildingView = buildingView;
 
-        final TabsWindowCapability tabsWindowCapability = registerCapability(TabsWindowCapability::new, new Random(buildingView.getID().hashCode()));
+        final TabsWindowCapability tabsWindowCapability = registerModule(TabsWindowCapability::new, new Random(buildingView.getID().hashCode()));
 
         if (shouldRenderDefaultSidebar())
         {

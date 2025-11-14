@@ -36,7 +36,7 @@ import static com.minecolonies.api.util.constant.TranslationConstants.DETAILS;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 import static com.minecolonies.core.colony.requestsystem.requests.AbstractRequest.MISSING;
 
-public abstract class RequestTreeWindowCapability implements IWindowCapabilityWithLayout<AbstractWindowSkeleton>
+public abstract class RequestTreeWindowCapability implements IWindowWithLayoutModule
 {
     private static final int AUTO_REFRESH_TICKS = 100;
 

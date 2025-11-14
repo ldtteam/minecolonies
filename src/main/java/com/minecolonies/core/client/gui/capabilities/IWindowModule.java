@@ -5,7 +5,7 @@ import com.ldtteam.blockui.controls.Button;
 /**
  * Extensible logic for windows, without having to use new base classes.
  */
-public interface IWindowCapability
+public interface IWindowModule
 {
     /**
      * Called when the Window is displayed.

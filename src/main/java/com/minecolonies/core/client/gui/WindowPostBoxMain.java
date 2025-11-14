@@ -98,7 +98,7 @@ public class WindowPostBoxMain extends AbstractWindowSkeleton
     {
         super(new ResourceLocation(Constants.MOD_ID, "gui/windowpostboxrequest.xml"));
         this.postBoxView = postBoxView;
-        this.requestTreeWindowCapability = registerLayoutCapability(window -> new PostBoxRequestTreeWindowCapability(window, postBoxView), 261, 44);
+        this.requestTreeWindowCapability = registerLayoutModule(window -> new PostBoxRequestTreeWindowCapability(window, postBoxView), 261, 44);
         registerPostboxTabs(this, postBoxView);
 
         registerButton(BUTTON_INVENTORY, this::inventoryClicked);
@@ -195,7 +195,7 @@ public class WindowPostBoxMain extends AbstractWindowSkeleton
      */
     public static void registerPostboxTabs(final AbstractWindowSkeleton window, final IBuildingView buildingView)
     {
-        final TabsWindowCapability tabsWindowCapability = window.registerCapability(TabsWindowCapability::new, new Random(buildingView.getID().hashCode()));
+        final TabsWindowCapability tabsWindowCapability = window.registerModule(TabsWindowCapability::new, new Random(buildingView.getID().hashCode()));
         tabsWindowCapability.setTabXOffset(TABS_X_OFFSET);
 
         int nextTabIndex = 0;
