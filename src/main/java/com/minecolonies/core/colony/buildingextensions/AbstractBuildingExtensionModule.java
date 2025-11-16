@@ -77,7 +77,14 @@ public abstract class AbstractBuildingExtensionModule implements IBuildingExtens
     }
 
     @Override
-    public final @NotNull BuildingExtensionRegistries.BuildingExtensionEntry getBuildingExtensionType()
+    public void registerModule(final @NotNull IBuildingExtensionModule module)
+    {
+        this.modules.add(module);
+    }
+
+    @Override
+    @NotNull
+    public final BuildingExtensionRegistries.BuildingExtensionEntry getBuildingExtensionType()
     {
         return buildingExtensionEntry;
     }
