@@ -14,7 +14,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_OWNER;
 
@@ -65,7 +64,7 @@ public abstract class AbstractBuildingExtensionModule implements IBuildingExtens
 
     @Override
     @NotNull
-    public List<IBuildingExtensionModule> getModules(final Predicate<IBuildingExtensionModule> predicate)
+    public List<IBuildingExtensionModule> getModules()
     {
         return modules;
     }
