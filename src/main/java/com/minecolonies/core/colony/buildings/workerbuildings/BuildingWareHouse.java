@@ -9,6 +9,7 @@ import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.workerbuildings.IWareHouse;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.tileentities.*;
+import com.minecolonies.api.util.constant.BuildingConstants;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.core.blocks.BlockMinecoloniesRack;
 import com.minecolonies.core.client.gui.WindowHutMinPlaceholder;
@@ -184,6 +185,17 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
         return false;
     }
 
+    /**
+     * Checks if the building can sort its inventory.
+     *
+     * @return true if the building can sort, false otherwise.
+     */
+    @Override
+    public boolean canSort()
+    {
+        return getBuildingLevel() >= BuildingConstants.DEFAULT_REQUIRED_SORT_LEVEL;
+    }
+    
     /**
      * BuildWarehouse View.
      */

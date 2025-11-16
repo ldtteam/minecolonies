@@ -26,7 +26,7 @@ import com.minecolonies.core.network.messages.server.colony.building.miner.Miner
 import com.minecolonies.core.network.messages.server.colony.building.miner.MinerSetLevelMessage;
 import com.minecolonies.core.network.messages.server.colony.building.postbox.PostBoxRequestMessage;
 import com.minecolonies.core.network.messages.server.colony.building.university.TryResearchMessage;
-import com.minecolonies.core.network.messages.server.colony.building.warehouse.SortWarehouseMessage;
+import com.minecolonies.core.network.messages.server.colony.building.warehouse.SortBuildingMessage;
 import com.minecolonies.core.network.messages.server.colony.building.warehouse.UpgradeWarehouseMessage;
 import com.minecolonies.core.network.messages.server.colony.building.worker.*;
 import com.minecolonies.core.network.messages.server.colony.citizen.*;
@@ -173,7 +173,7 @@ public class NetworkChannel
         registerMessage(++idx, ColonyStructureStyleMessage.class, ColonyStructureStyleMessage::new);
         registerMessage(++idx, PauseCitizenMessage.class, PauseCitizenMessage::new);
         registerMessage(++idx, RestartCitizenMessage.class, RestartCitizenMessage::new);
-        registerMessage(++idx, SortWarehouseMessage.class, SortWarehouseMessage::new);
+        registerMessage(++idx, SortBuildingMessage.class, SortBuildingMessage::new);
         registerMessage(++idx, PostBoxRequestMessage.class, PostBoxRequestMessage::new);
         registerMessage(++idx, HireMercenaryMessage.class, HireMercenaryMessage::new);
         registerMessage(++idx, HutRenameMessage.class, HutRenameMessage::new);

@@ -152,8 +152,6 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
           /*
            * If IDLE - switch to start working.
            */
-          new AITarget(IDLE, START_WORKING, 1),
-          new AITarget(START_WORKING, this::startWorkingAtOwnBuilding, TICKS_SECOND),
           new AITarget(PREPARING, MINER_CHECK_MINESHAFT, 1),
           new AITarget(MINER_WALKING_TO_LADDER, this::goToLadder, TICKS_SECOND),
           new AITarget(MINER_REPAIRING_LADDER, this::repairLadder, STANDARD_DELAY),
@@ -173,7 +171,8 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
 
     //Miner wants to work but is not at building
     @NotNull
-    private IAIState startWorkingAtOwnBuilding()
+    @Override
+    protected IAIState startWorkingAtOwnBuilding()
     {
         worker.getCitizenData().setVisibleStatus(VisibleCitizenStatus.WORKING);
         if ((building.getLadderLocation() == null || worker.getY() >= building.getPosition().getY()) && !walkToBuilding())
@@ -195,6 +194,12 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
                 building.setWorkOrder(list.get(0));
                 return LOAD_STRUCTURE;
             }
+        }
+
+        final IAIState nextState = super.startWorkingAtOwnBuilding();
+        if (nextState != IDLE)
+        {
+            return nextState;
         }
 
         //Miner is at building
@@ -681,7 +686,6 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
         }
 
         final MinerLevelManagementModule module = building.getFirstModuleOccurance(MinerLevelManagementModule.class);
-        ;
         if (workingNode == null || workingNode.getStatus() == MineNode.NodeStatus.COMPLETED)
         {
             workingNode = module.getActiveNode();

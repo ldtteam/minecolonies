@@ -856,7 +856,7 @@ public class DefaultRecipeProvider extends RecipeProvider
           .requires(ModBlocks.blockGarlic)
           .requires(ModBlocks.blockOnion)
           .requires(Items.CHICKEN)
-          .requires(Items.BOWL)
+          .requires(Items.BOWL, 2)
           .requires(ModItems.large_water_bottle)
           .unlockedBy("has_durum", has(ModBlocks.blockDurum))
           .save(consumer, new ResourceLocation(MOD_ID, "chicken_broth"));
@@ -865,7 +865,7 @@ public class DefaultRecipeProvider extends RecipeProvider
           .requires(ModBlocks.blockGarlic)
           .requires(ModBlocks.blockOnion)
           .requires(ModBlocks.blockCorn)
-          .requires(Items.BOWL)
+          .requires(Items.BOWL, 2)
           .requires(ModItems.large_milk_bottle)
           .unlockedBy("has_corn", has(ModBlocks.blockCorn))
           .save(consumer, new ResourceLocation(MOD_ID, "corn_chowder"));
@@ -874,7 +874,7 @@ public class DefaultRecipeProvider extends RecipeProvider
           .requires(ModBlocks.blockGarlic)
           .requires(ModBlocks.blockOnion)
           .requires(ModBlocks.blockCorn)
-          .requires(Items.BOWL)
+          .requires(Items.BOWL, 2)
           .requires(ModItems.large_soy_milk_bottle)
           .unlockedBy("has_corn", has(ModBlocks.blockCorn))
           .save(consumer, new ResourceLocation(MOD_ID, "soy_corn_chowder"));
@@ -909,7 +909,7 @@ public class DefaultRecipeProvider extends RecipeProvider
           .requires(ModBlocks.blockOnion)
           .requires(ModBlocks.blockPeas)
           .requires(ModItems.large_milk_bottle)
-          .requires(Items.BOWL)
+          .requires(Items.BOWL, 2)
           .unlockedBy("has_peas", has(ModBlocks.blockPeas))
           .save(consumer, new ResourceLocation(MOD_ID, "pea_soup"));
 
@@ -918,7 +918,7 @@ public class DefaultRecipeProvider extends RecipeProvider
           .requires(ModBlocks.blockOnion)
           .requires(ModBlocks.blockPeas)
           .requires(ModItems.large_soy_milk_bottle)
-          .requires(Items.BOWL)
+          .requires(Items.BOWL, 2)
           .unlockedBy("has_peas", has(ModBlocks.blockPeas))
           .save(consumer, new ResourceLocation(MOD_ID, "soy_pea_soup"));
 
@@ -926,7 +926,7 @@ public class DefaultRecipeProvider extends RecipeProvider
           .requires(ModItems.cornmeal)
           .requires(ModItems.cornmeal)
           .requires(ModItems.large_water_bottle)
-          .requires(Items.BOWL)
+          .requires(Items.BOWL, 2)
           .unlockedBy("has_corn", has(ModBlocks.blockCorn))
           .save(consumer, new ResourceLocation(MOD_ID, "polenta"));
 
@@ -934,7 +934,7 @@ public class DefaultRecipeProvider extends RecipeProvider
           .requires(ModBlocks.blockGarlic)
           .requires(ModBlocks.blockOnion)
           .requires(Items.POTATO)
-          .requires(Items.BOWL)
+          .requires(Items.BOWL, 2)
           .unlockedBy("has_potato", has(Items.POTATO))
           .save(consumer, new ResourceLocation(MOD_ID, "potato_soup"));
 
@@ -942,7 +942,7 @@ public class DefaultRecipeProvider extends RecipeProvider
           .requires(ModBlocks.blockGarlic)
           .requires(ModBlocks.blockOnion)
           .requires(ModBlocks.blockButternutSquash)
-          .requires(Items.BOWL)
+          .requires(Items.BOWL, 2)
           .unlockedBy("has_squash", has(ModBlocks.blockButternutSquash))
           .save(consumer, new ResourceLocation(MOD_ID, "squash_soup"));
 
@@ -1046,7 +1046,7 @@ public class DefaultRecipeProvider extends RecipeProvider
           .requires(Items.SWEET_BERRIES)
           .requires(Items.SWEET_BERRIES)
           .requires(Items.SWEET_BERRIES)
-          .requires(Items.BOWL)
+          .requires(Items.BOWL, 2)
           .unlockedBy("has_yogurt", has(ModItems.yogurt))
           .save(consumer, new ResourceLocation(MOD_ID, "yogurt_with_berries"));
 

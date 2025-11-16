@@ -1,6 +1,7 @@
 package com.minecolonies.core.network.messages.server.colony.building.warehouse;
 
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.inventory.api.CombinedItemHandler;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingWareHouse;
@@ -11,24 +12,19 @@ import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.network.NetworkEvent;
 
 /**
- * Sort the warehouse if level bigger than 3.
+ * Sort the specified building inventory if the building allows it.
  */
-public class SortWarehouseMessage extends AbstractBuildingServerMessage<BuildingWareHouse>
+public class SortBuildingMessage extends AbstractBuildingServerMessage<IBuilding>
 {
     /**
-     * The required level to sort a warehouse.
+     * Empty constructor used when registering the message
      */
-    private static final int REQUIRED_LEVEL_TO_SORT_WAREHOUSE = 3;
-
-    /**
-     * Empty constructor used when registering the
-     */
-    public SortWarehouseMessage()
+    public SortBuildingMessage()
     {
         super();
     }
 
-    public SortWarehouseMessage(final IBuildingView building)
+    public SortBuildingMessage(final IBuildingView building)
     {
         super(building);
     }
@@ -45,13 +41,21 @@ public class SortWarehouseMessage extends AbstractBuildingServerMessage<Building
 
     }
 
+    /**
+     * Sort the building's inventory if it can be sorted.
+     * 
+     * @param ctxIn the context of the network event
+     * @param isLogicalServer whether or not this is the logical server
+     * @param colony the colony which the building is in
+     * @param building the building to sort
+     */
     @Override
     protected void onExecute(
-      final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony, final BuildingWareHouse building)
+      final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony, final IBuilding building)
     {
-        if (building.getBuildingLevel() >= REQUIRED_LEVEL_TO_SORT_WAREHOUSE)
+        if (building.canSort())
         {
-            building.getCapability(ForgeCapabilities.ITEM_HANDLER, null).ifPresent(inv -> SortingUtils.sort((CombinedItemHandler) inv));
+            building.getCapability(ForgeCapabilities.ITEM_HANDLER, null).ifPresent(inv -> building.sort((CombinedItemHandler) inv));
         }
     }
 }

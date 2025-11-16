@@ -108,6 +108,11 @@ public final class BuildingConstants
     public static final String MODULE_CUSTOM = "custom";
 
     /**
+     * Default level to allow building sorting.
+     */
+    public static final int DEFAULT_REQUIRED_SORT_LEVEL = 3;
+
+    /**
      * Private constructor to hide implicit public one.
      */
     private BuildingConstants()
