@@ -670,13 +670,16 @@ public class Permissions implements IPermissions
     @Override
     public boolean hasPermission(@NotNull final Player player, @NotNull final Action action)
     {
-        if (player.hasPermissions(IMinecoloniesAPI.getInstance().getConfig().getServer().permissionEventMinBypassPermLevel.get()))
+        if (hasPermission(getRank(player), action))
+        {
+            return true;
+        }
+        else if (player.hasPermissions(IMinecoloniesAPI.getInstance().getConfig().getServer().permissionEventMinBypassPermLevel.get()))
         {
             Log.getLogger().debug("Permission check got bypassed, original event was. Player: {}, Name: {}, Action: {}", player.getUUID(), player.getName().getString(), action);
             return true;
         }
-
-        return hasPermission(getRank(player), action);
+        return false;
     }
 
     @Override
