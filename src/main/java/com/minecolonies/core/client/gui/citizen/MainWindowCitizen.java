@@ -1,9 +1,7 @@
 package com.minecolonies.core.client.gui.citizen;
 
 import com.ldtteam.blockui.PaneBuilders;
-import com.ldtteam.blockui.controls.Button;
-import com.ldtteam.blockui.controls.Image;
-import com.ldtteam.blockui.controls.Text;
+import com.ldtteam.blockui.controls.*;
 import com.ldtteam.blockui.views.View;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.entity.citizen.Skill;
@@ -70,7 +68,7 @@ public class MainWindowCitizen extends AbstractWindowCitizen
     }
 
     /**
-     * Called when the gui is opened by a player.
+     * Called when the gui is opened by an player.
      */
     @Override
     public void onOpened()
@@ -82,6 +80,8 @@ public class MainWindowCitizen extends AbstractWindowCitizen
         CitizenWindowUtils.createSaturationBar(citizen, this);
         CitizenWindowUtils.createHappinessBar(citizen, this);
         CitizenWindowUtils.createSkillContent(citizen, this);
+
+        //Tool of class:§rwith minimal level:§rWood or Gold§r and§rwith maximal level:§rWood or Gold§r
 
         if (citizen.isFemale())
         {
