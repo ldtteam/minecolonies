@@ -2,6 +2,7 @@ package com.minecolonies.core.client.gui.citizen;
 
 import com.ldtteam.blockui.PaneBuilders;
 import com.minecolonies.api.colony.ICitizenDataView;
+import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.core.Network;
@@ -18,6 +19,8 @@ import net.minecraft.resources.ResourceLocation;
  */
 public abstract class AbstractWindowCitizen extends AbstractWindowSkeleton
 {
+    protected final IColonyView colony;
+
     /**
      * The citizenData.View object.
      */
@@ -32,6 +35,7 @@ public abstract class AbstractWindowCitizen extends AbstractWindowSkeleton
     public AbstractWindowCitizen(final ICitizenDataView citizen, final ResourceLocation ui)
     {
         super(ui);
+        this.colony = citizen.getColony();
         this.citizen = citizen;
 
         registerButton("mainTab", () -> new MainWindowCitizen(citizen).open());

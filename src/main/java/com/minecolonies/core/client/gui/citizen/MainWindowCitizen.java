@@ -103,14 +103,14 @@ public class MainWindowCitizen extends AbstractWindowCitizen
             final String label = button.getID().replace(PLUS_PREFIX, "");
             final Skill skill = Skill.valueOf(StringUtils.capitalize(label));
 
-            Network.getNetwork().sendToServer(new AdjustSkillCitizenMessage(citizen.getColony(), citizen, 1, skill));
+            Network.getNetwork().sendToServer(new AdjustSkillCitizenMessage(colony, citizen, 1, skill));
         }
         else if (button.getID().contains(MINUS_PREFIX))
         {
             final String label = button.getID().replace(MINUS_PREFIX, "");
             final Skill skill = Skill.valueOf(StringUtils.capitalize(label));
 
-            Network.getNetwork().sendToServer(new AdjustSkillCitizenMessage(citizen.getColony(), citizen, -1, skill));
+            Network.getNetwork().sendToServer(new AdjustSkillCitizenMessage(colony, citizen, -1, skill));
         }
     }
 }
