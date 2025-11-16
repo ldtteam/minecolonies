@@ -12,8 +12,8 @@ import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.Network;
-import com.minecolonies.core.client.gui.capabilities.RequestTreeWindowCapability;
-import com.minecolonies.core.client.gui.capabilities.TabsWindowCapability;
+import com.minecolonies.core.client.gui.capabilities.RequestTreeWindowModule;
+import com.minecolonies.core.client.gui.capabilities.TabsWindowModule;
 import com.minecolonies.core.colony.buildings.workerbuildings.PostBox;
 import com.minecolonies.core.network.messages.server.colony.OpenInventoryMessage;
 import com.minecolonies.core.network.messages.server.colony.building.postbox.PostBoxRequestMessage;
@@ -98,7 +98,7 @@ public class WindowPostBoxMain extends AbstractWindowSkeleton
     {
         super(new ResourceLocation(Constants.MOD_ID, "gui/windowpostboxrequest.xml"));
         this.postBoxView = postBoxView;
-        this.requestTreeWindowCapability = registerLayoutModule(window -> new PostBoxRequestTreeWindowCapability(window, postBoxView), 261, 44);
+        this.requestTreeWindowCapability = registerLayoutModule(PostBoxRequestTreeWindowCapability::new, postBoxView, 261, 44);
         registerPostboxTabs(this, postBoxView);
 
         registerButton(BUTTON_INVENTORY, this::inventoryClicked);
@@ -195,13 +195,13 @@ public class WindowPostBoxMain extends AbstractWindowSkeleton
      */
     public static void registerPostboxTabs(final AbstractWindowSkeleton window, final IBuildingView buildingView)
     {
-        final TabsWindowCapability tabsWindowCapability = window.registerModule(TabsWindowCapability::new, new Random(buildingView.getID().hashCode()));
+        final TabsWindowModule tabsWindowCapability = window.registerModule(TabsWindowModule::new, new Random(buildingView.getID().hashCode()));
         tabsWindowCapability.setTabXOffset(TABS_X_OFFSET);
 
         int nextTabIndex = 0;
 
         tabsWindowCapability.renderTabButton(nextTabIndex++,
-            TabsWindowCapability.TabImageSide.LEFT,
+            TabsWindowModule.TabImageSide.LEFT,
             new ResourceLocation(Constants.MOD_ID, "textures/gui/modules/main.png"),
             Component.translatable(LABEL_MAIN_TAB_NAME),
             button -> buildingView.getWindow().open());
@@ -215,7 +215,7 @@ public class WindowPostBoxMain extends AbstractWindowSkeleton
             }
 
             tabsWindowCapability.renderTabButton(nextTabIndex++,
-                TabsWindowCapability.TabImageSide.LEFT,
+                TabsWindowModule.TabImageSide.LEFT,
                 view.getIconResourceLocation(),
                 Optional.ofNullable(view.getDesc()).map(Component::copy).orElse(null),
                 button -> {
@@ -265,7 +265,7 @@ public class WindowPostBoxMain extends AbstractWindowSkeleton
         }
     }
 
-    private static class PostBoxRequestTreeWindowCapability extends RequestTreeWindowCapability
+    private static class PostBoxRequestTreeWindowCapability extends RequestTreeWindowModule
     {
         @NotNull
         private final PostBox.View buildingView;

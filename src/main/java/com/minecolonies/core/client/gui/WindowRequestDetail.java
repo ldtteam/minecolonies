@@ -11,7 +11,7 @@ import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.core.client.gui.capabilities.RequestTreeWindowCapability;
+import com.minecolonies.core.client.gui.capabilities.RequestTreeWindowModule;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
@@ -76,7 +76,7 @@ public class WindowRequestDetail extends AbstractWindowSkeleton implements Butto
     /**
      * The request tree window capability.
      */
-    private final RequestTreeWindowCapability requestTreeWindowCapability;
+    private final RequestTreeWindowModule requestTreeWindowCapability;
 
     /**
      * Life count.
@@ -91,7 +91,7 @@ public class WindowRequestDetail extends AbstractWindowSkeleton implements Butto
      * @param colonyId                    the colony id.
      * @param requestTreeWindowCapability the request tree capability.
      */
-    public WindowRequestDetail(@Nullable final BOWindow parent, final IRequest<?> request, final int colonyId, final RequestTreeWindowCapability requestTreeWindowCapability)
+    public WindowRequestDetail(@Nullable final BOWindow parent, final IRequest<?> request, final int colonyId, final RequestTreeWindowModule requestTreeWindowCapability)
     {
         super(parent, WINDOW_ID);
         this.request = request;
@@ -193,7 +193,7 @@ public class WindowRequestDetail extends AbstractWindowSkeleton implements Butto
     {
         if (button.getID().equals(REQUEST_FULFILL))
         {
-            if (requestTreeWindowCapability instanceof final RequestTreeWindowCapability.IRequestTreeSupportsFulfill requestTreeSupportsFulfill)
+            if (requestTreeWindowCapability instanceof final RequestTreeWindowModule.IRequestTreeSupportsFulfill requestTreeSupportsFulfill)
             {
                 requestTreeSupportsFulfill.onFulfill(request);
             }

@@ -14,7 +14,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Random;
 import java.util.function.BiFunction;
 
-public class TabsWindowCapability implements IWindowModule
+public class TabsWindowModule implements IWindowModule
 {
     /**
      * Render sizes
@@ -60,7 +60,7 @@ public class TabsWindowCapability implements IWindowModule
      * @param parent     the parenting window.
      * @param iconRandom the random generator for creating the icons, should use a consistent seed upon reload so it generates the same icons each time it's opened.
      */
-    public TabsWindowCapability(final AbstractWindowSkeleton parent, final Random iconRandom)
+    public TabsWindowModule(final AbstractWindowSkeleton parent, final Random iconRandom)
     {
         this.parent = parent;
         this.iconRandom = iconRandom;

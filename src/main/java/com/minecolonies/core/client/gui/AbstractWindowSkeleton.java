@@ -24,7 +24,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
-import java.util.function.Function;
 
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 
@@ -36,7 +35,7 @@ public abstract class AbstractWindowSkeleton extends BOWindow implements ButtonH
     @NotNull
     private final HashMap<String, Consumer<Button>> buttons;
 
-    private final List<IWindowModule> capabilities = new ArrayList<>();
+    private final List<IWindowModule> modules = new ArrayList<>();
 
     /**
      * Panes used by the generic page handler
@@ -97,6 +96,20 @@ public abstract class AbstractWindowSkeleton extends BOWindow implements ButtonH
         Network.getNetwork().sendToServer(new OpenGuiWindowTriggerMessage(this.xmlResourceLocation));
     }
 
+    @Override
+    @NotNull
+    public List<IWindowModule> getModules()
+    {
+        return modules;
+    }
+
+    @Override
+    @NotNull
+    public Class<IWindowModule> getClassType()
+    {
+        return IWindowModule.class;
+    }
+
     /**
      * Register a button on the window.
      *
@@ -122,76 +135,49 @@ public abstract class AbstractWindowSkeleton extends BOWindow implements ButtonH
     /**
      * Add a module to this window. Extending the original logic of the window.
      *
-     * @param capabilityBuilder the new capability.
+     * @param moduleBuilder the new module.
      */
-    public final <T extends IWindowModule> T registerModule(final Function<AbstractWindowSkeleton, T> capabilityBuilder)
+    public final <T extends IWindowModule, A> T registerModule(final BiFunction<AbstractWindowSkeleton, A, T> moduleBuilder, final A argument)
     {
-        final T capability = capabilityBuilder.apply(this);
-        this.capabilities.add(capability);
-        return capability;
+        final T module = moduleBuilder.apply(this, argument);
+        this.modules.add(module);
+        return module;
     }
 
     /**
      * Add a module to this window. Extending the original logic of the window.
      *
-     * @param capabilityBuilder the new capability.
+     * @param moduleBuilder the new module.
      */
-    public final <T extends IWindowModule, A> T registerModule(final BiFunction<AbstractWindowSkeleton, A, T> capabilityBuilder, final A argument)
+    public final <T extends IWindowWithLayoutModule, A> T registerLayoutModule(final BiFunction<AbstractWindowSkeleton, A, T> moduleBuilder, A argument, int xPos, int yPos)
     {
-        final T capability = capabilityBuilder.apply(this, argument);
-        this.capabilities.add(capability);
-        return capability;
-    }
-
-    /**
-     * Add a module to this window. Extending the original logic of the window.
-     *
-     * @param capabilityBuilder the new capability.
-     */
-    public final <T extends IWindowWithLayoutModule> T registerLayoutModule(final Function<AbstractWindowSkeleton, T> capabilityBuilder, int xPos, int yPos)
-    {
-        final T capability = capabilityBuilder.apply(this);
-        final Pane rootPane = Loader.createFromXMLFile2(capability.getLayout(), this);
+        final T module = moduleBuilder.apply(this, argument);
+        final Pane rootPane = Loader.createFromXMLFile2(module.getLayout(), this);
         rootPane.setPosition(xPos, yPos);
-        capability.onLayoutMounted(rootPane);
-        this.capabilities.add(capability);
-        return capability;
-    }
-
-    /**
-     * Add a module to this window. Extending the original logic of the window.
-     *
-     * @param capabilityBuilder the new capability.
-     */
-    public final <T extends IWindowWithLayoutModule, A> T registerLayoutModule(final BiFunction<AbstractWindowSkeleton, A, T> capabilityBuilder, A argument, int xPos, int yPos)
-    {
-        final T capability = capabilityBuilder.apply(this, argument);
-        final Pane rootPane = Loader.createFromXMLFile2(capability.getLayout(), this);
-        rootPane.setPosition(xPos, yPos);
-        capability.onLayoutMounted(rootPane);
-        this.capabilities.add(capability);
-        return capability;
+        module.onLayoutMounted(rootPane);
+        this.modules.add(module);
+        return module;
     }
 
     @Override
     public void onOpened()
     {
         super.onOpened();
-        this.capabilities.forEach(IWindowModule::onOpened);
+        this.modules.forEach(IWindowModule::onOpened);
     }
 
     @Override
     public void onUpdate()
     {
         super.onUpdate();
-        this.capabilities.forEach(IWindowModule::onUpdate);
+        this.modules.forEach(IWindowModule::onUpdate);
     }
 
     @Override
     public void onClosed()
     {
         super.onClosed();
-        this.capabilities.forEach(IWindowModule::onClosed);
+        this.modules.forEach(IWindowModule::onClosed);
     }
 
     /**
@@ -210,7 +196,7 @@ public abstract class AbstractWindowSkeleton extends BOWindow implements ButtonH
             Network.getNetwork().sendToServer(new ClickGuiButtonTriggerMessage(button.getID(), this.xmlResourceLocation));
         }
 
-        capabilities.forEach(capability -> capability.onButtonClicked(button));
+        modules.forEach(capability -> capability.onButtonClicked(button));
     }
 
     /**

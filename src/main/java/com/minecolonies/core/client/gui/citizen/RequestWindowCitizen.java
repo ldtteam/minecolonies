@@ -11,7 +11,7 @@ import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.Network;
 import com.minecolonies.core.client.gui.AbstractWindowSkeleton;
-import com.minecolonies.core.client.gui.capabilities.RequestTreeWindowCapability;
+import com.minecolonies.core.client.gui.capabilities.RequestTreeWindowModule;
 import com.minecolonies.core.network.messages.server.colony.UpdateRequestStateMessage;
 import com.minecolonies.core.network.messages.server.colony.citizen.TransferItemsToCitizenRequestMessage;
 import net.minecraft.client.Minecraft;
@@ -46,7 +46,7 @@ public class RequestWindowCitizen extends AbstractWindowCitizen
     /**
      * The window capability instance for handling requests.
      */
-    private final RequestTreeWindowCapability requestTreeCapability;
+    private final RequestTreeWindowModule requestTreeCapability;
 
     /**
      * Constructor to initiate the citizen windows.
@@ -68,11 +68,7 @@ public class RequestWindowCitizen extends AbstractWindowCitizen
     {
         super(citizen, WINDOW_ID);
         this.autoOpenRequest = autoOpenRequest;
-        this.requestTreeCapability = registerLayoutModule(window -> new CitizenRequestTreeWindowCapability(window,
-            citizen.getColony().getBuilding(citizen.getWorkBuilding()),
-            citizen,
-            mc.player.isCreative(),
-            mc.player.getInventory()), 33, 29);
+        this.requestTreeCapability = registerLayoutModule(CitizenRequestTreeWindowModule::new, citizen, 33, 29);
     }
 
     @Override
@@ -85,11 +81,11 @@ public class RequestWindowCitizen extends AbstractWindowCitizen
         }
     }
 
-    private static class CitizenRequestTreeWindowCapability extends RequestTreeWindowCapability implements RequestTreeWindowCapability.IRequestTreeSupportsFulfill
+    private static class CitizenRequestTreeWindowModule extends RequestTreeWindowModule implements RequestTreeWindowModule.IRequestTreeSupportsFulfill
     {
-        private final IBuildingView buildingView;
-
         private final ICitizenDataView citizenDataView;
+
+        private final IBuildingView buildingView;
 
         private final boolean isCreative;
 
@@ -100,18 +96,15 @@ public class RequestWindowCitizen extends AbstractWindowCitizen
          *
          * @param parent the parenting window
          */
-        private CitizenRequestTreeWindowCapability(
+        private CitizenRequestTreeWindowModule(
             final AbstractWindowSkeleton parent,
-            final IBuildingView buildingView,
-            final ICitizenDataView citizenDataView,
-            final boolean isCreative,
-            final Inventory inventory)
+            final ICitizenDataView citizenDataView)
         {
             super(parent, citizenDataView.getColony());
-            this.buildingView = buildingView;
             this.citizenDataView = citizenDataView;
-            this.isCreative = isCreative;
-            this.inventory = inventory;
+            this.buildingView = citizenDataView.getColony().getBuilding(citizenDataView.getWorkBuilding());
+            this.isCreative = Minecraft.getInstance().player.isCreative();
+            this.inventory = Minecraft.getInstance().player.getInventory();
         }
 
         @Override

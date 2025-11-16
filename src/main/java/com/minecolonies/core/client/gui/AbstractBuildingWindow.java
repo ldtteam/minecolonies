@@ -4,7 +4,7 @@ import com.ldtteam.blockui.views.BOWindow;
 import com.minecolonies.api.colony.buildings.modules.IBuildingModuleView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.core.client.gui.capabilities.TabsWindowCapability;
+import com.minecolonies.core.client.gui.capabilities.TabsWindowModule;
 import com.minecolonies.core.colony.buildings.views.AbstractBuildingView;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.Component;
@@ -52,14 +52,14 @@ public abstract class AbstractBuildingWindow<B extends IBuildingView> extends Ab
         super(parent, resource);
         this.buildingView = buildingView;
 
-        final TabsWindowCapability tabsWindowCapability = registerModule(TabsWindowCapability::new, new Random(buildingView.getID().hashCode()));
+        final TabsWindowModule tabsWindowCapability = registerModule(TabsWindowModule::new, new Random(buildingView.getID().hashCode()));
 
         if (shouldRenderDefaultSidebar())
         {
             int nextTabIndex = 0;
 
             tabsWindowCapability.renderTabButton(nextTabIndex++,
-                TabsWindowCapability.TabImageSide.LEFT,
+                TabsWindowModule.TabImageSide.LEFT,
                 new ResourceLocation(Constants.MOD_ID, "textures/gui/modules/main.png"),
                 Component.translatable(LABEL_MAIN_TAB_NAME),
                 button -> buildingView.getWindow().open());
@@ -73,7 +73,7 @@ public abstract class AbstractBuildingWindow<B extends IBuildingView> extends Ab
                 }
 
                 tabsWindowCapability.renderTabButton(nextTabIndex++,
-                    TabsWindowCapability.TabImageSide.LEFT,
+                    TabsWindowModule.TabImageSide.LEFT,
                     view.getIconResourceLocation(),
                     Optional.ofNullable(view.getDesc()).map(Component::copy).orElse(null),
                     button -> {

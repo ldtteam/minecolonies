@@ -15,7 +15,7 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.Network;
-import com.minecolonies.core.client.gui.capabilities.RequestTreeWindowCapability;
+import com.minecolonies.core.client.gui.capabilities.RequestTreeWindowModule;
 import com.minecolonies.core.items.ItemClipboard;
 import com.minecolonies.core.network.messages.server.ItemSettingMessage;
 import net.minecraft.client.Minecraft;
@@ -36,7 +36,7 @@ public class WindowClipBoard extends AbstractWindowSkeleton
     /**
      * The request tree capability.
      */
-    private final ClipboardRequestTreeWindowCapability requestTreeWindowCapability;
+    private final ClipboardRequestTreeWindowModule requestTreeWindowCapability;
 
     /**
      * Hide or show not important requests.
@@ -52,7 +52,7 @@ public class WindowClipBoard extends AbstractWindowSkeleton
     {
         super(new ResourceLocation(Constants.MOD_ID, "gui/windowclipboard.xml"));
         this.showImportant = showImportant;
-        this.requestTreeWindowCapability = registerLayoutModule(window -> new ClipboardRequestTreeWindowCapability(window, colony, () -> this.showImportant), 16, 44);
+        this.requestTreeWindowCapability = registerLayoutModule(ClipboardRequestTreeWindowModule::new, new ClipboardRequestTreeWindowModule.Options(colony, () -> this.showImportant), 16, 44);
 
         registerButton(CLIPBOARD_TOGGLE, this::toggleImportant);
         paintButtonState();
@@ -97,7 +97,7 @@ public class WindowClipBoard extends AbstractWindowSkeleton
         }
     }
 
-    private static class ClipboardRequestTreeWindowCapability extends RequestTreeWindowCapability
+    private static class ClipboardRequestTreeWindowModule extends RequestTreeWindowModule
     {
         private final Supplier<Boolean> showImportant;
 
@@ -105,12 +105,12 @@ public class WindowClipBoard extends AbstractWindowSkeleton
          * Constructor to initiate the window request tree windows.
          *
          * @param parent the parenting window.
-         * @param colony the colony we're located in.
+         * @param options the extra options for the module.
          */
-        public ClipboardRequestTreeWindowCapability(final AbstractWindowSkeleton parent, final IColonyView colony, final Supplier<Boolean> showImportant)
+        public ClipboardRequestTreeWindowModule(final AbstractWindowSkeleton parent, final Options options)
         {
-            super(parent, colony);
-            this.showImportant = showImportant;
+            super(parent, options.colony);
+            this.showImportant = options.showImportant;
         }
 
         @Override
@@ -181,5 +181,9 @@ public class WindowClipBoard extends AbstractWindowSkeleton
             }
             return ImmutableList.copyOf(requests);
         }
+
+        private record Options(
+            IColonyView colony,
+            Supplier<Boolean> showImportant) {}
     }
 }
