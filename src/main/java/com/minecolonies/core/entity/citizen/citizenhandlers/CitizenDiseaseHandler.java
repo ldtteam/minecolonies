@@ -9,9 +9,8 @@ import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenDiseaseHandle
 import com.minecolonies.core.MineColonies;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingCook;
 import com.minecolonies.core.colony.jobs.AbstractJobGuard;
-import com.minecolonies.core.colony.jobs.JobHealer;
-import com.minecolonies.core.datalistener.model.Disease;
 import com.minecolonies.core.datalistener.DiseasesListener;
+import com.minecolonies.core.datalistener.model.Disease;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
@@ -132,12 +131,13 @@ public class CitizenDiseaseHandler implements ICitizenDiseaseHandler
      */
     private boolean canBecomeSick()
     {
-        return !isSick()
-            && citizenData.getEntity().isPresent()
-            && citizenData.getColony().isActive()
-            && !(citizenData.getJob() instanceof JobHealer)
-                 && immunityTicks <= 0
-            && citizenData.getColony().getCitizenManager().getCurrentCitizenCount() > initialCitizenCount;
+        return false;
+        //return !isSick()
+        //    && citizenData.getEntity().isPresent()
+        //    && citizenData.getColony().isActive()
+        //    && !(citizenData.getJob() instanceof JobHealer)
+        //         && immunityTicks <= 0
+        //    && citizenData.getColony().getCitizenManager().getCurrentCitizenCount() > initialCitizenCount;
     }
 
     @Override
