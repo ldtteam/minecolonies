@@ -1065,7 +1065,14 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     {
         if (citizenData != null)
         {
-            citizenData.decreaseSaturation(citizenColonyHandler.getPerBuildingFoodCost() / 2.0);
+            final double loss = citizenColonyHandler.getPerBuildingFoodCost() / 2.0;
+
+            final String job = Optional.ofNullable(getCitizenJobHandler().getColonyJob())
+                .map(j -> Component.translatable(j.getJobRegistryEntry().getTranslationKey()).getString())
+                .orElse("unemployed");
+            Log.getLogger().info("[CONSUMPTION DEBUG] Citizen {} with job '{}' lost {} saturation", getCitizenData().getId(), job, loss);
+
+            citizenData.decreaseSaturation(loss);
             citizenData.markDirty(20 * 20);
         }
     }
@@ -1078,7 +1085,14 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     {
         if (citizenData != null)
         {
-            citizenData.decreaseSaturation(citizenColonyHandler.getPerBuildingFoodCost() / 150.0);
+            final double loss = citizenColonyHandler.getPerBuildingFoodCost() / 150.0;
+
+            final String job = Optional.ofNullable(getCitizenJobHandler().getColonyJob())
+                .map(j -> Component.translatable(j.getJobRegistryEntry().getTranslationKey()).getString())
+                .orElse("unemployed");
+            Log.getLogger().info("[CONSUMPTION DEBUG] Citizen {} with job '{}' lost {} saturation (continuous)", getCitizenData().getId(), job, loss);
+
+            citizenData.decreaseSaturation(loss);
             citizenData.markDirty(20 * 60 * 2);
         }
     }

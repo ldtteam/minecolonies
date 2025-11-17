@@ -886,6 +886,11 @@ public final class ItemStackUtils
         final double satIncrease = FoodUtils.getFoodValue(foodStack, citizen);
         citizenData.increaseSaturation(satIncrease);
 
+        final String job = Optional.ofNullable(citizen.getCitizenJobHandler().getColonyJob())
+            .map(j -> Component.translatable(j.getJobRegistryEntry().getTranslationKey()).getString())
+            .orElse("unemployed");
+        Log.getLogger().info("[CONSUMPTION DEBUG] Citizen {} with job '{}' gained {} saturation ({})", citizen.getCitizenData().getId(), job, satIncrease, foodStack.getDisplayName().getString());
+
         ItemStack itemUseReturn = FoodUtils.consumeFoodStack(foodStack, citizen);
         // Special handling for these as those are stackable + have a return per item.
         if (player != null && player.hasInfiniteMaterials())
