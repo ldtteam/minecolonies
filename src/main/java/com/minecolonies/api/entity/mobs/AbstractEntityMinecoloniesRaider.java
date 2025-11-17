@@ -1,6 +1,5 @@
 package com.minecolonies.api.entity.mobs;
 
-import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
@@ -21,7 +20,10 @@ import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
@@ -169,7 +171,6 @@ public abstract class AbstractEntityMinecoloniesRaider extends AbstractEntityMin
         this.goalSelector = new CustomGoalSelector(this.goalSelector);
         this.targetSelector = new CustomGoalSelector(this.targetSelector);
         this.xpReward = BARBARIAN_EXP_DROP;
-        IMinecoloniesAPI.getInstance().getMobAIRegistry().applyToMob(this);
         this.setInvulnerable(true);
         RaiderMobUtils.setEquipment(this);
     }

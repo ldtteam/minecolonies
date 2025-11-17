@@ -19,7 +19,11 @@ import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolverProvider;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.inventory.api.CombinedItemHandler;
+import com.minecolonies.core.util.SortingUtils;
+
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.entity.player.Player;
@@ -32,6 +36,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.function.Predicate;
+
+import javax.annotation.Nonnull;
 
 import static com.minecolonies.api.util.constant.EquipmentLevelConstants.BASIC_TOOL_LEVEL;
 import static com.minecolonies.api.util.constant.EquipmentLevelConstants.TOOL_LEVEL_MAXIMUM;
@@ -523,4 +529,23 @@ public interface IBuilding extends IBuildingContainer, IModuleContainer<IBuildin
      */
     @NotNull
     List<BlockPos> getLocationsFromTag(@NotNull final String tagName);
+
+    /**
+     * Checks if the building can be sorted.
+     * @return true if the building can be sorted, false otherwise.
+     */
+    default public boolean canSort()
+    {
+        return false;
+    }
+
+    /**
+     * Sort the inventory of this building using the given provider.
+     * The implementation of this method is usually a call to {@link SortingUtils#sort(CombinedItemHandler)}.
+     * @param inventoryHandler the inventory handler to sort.
+     */
+    default public void sort(final CombinedItemHandler inventoryHandler)
+    {
+        SortingUtils.sort(inventoryHandler);
+    }
 }

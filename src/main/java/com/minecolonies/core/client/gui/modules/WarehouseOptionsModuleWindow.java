@@ -14,7 +14,7 @@ import com.minecolonies.core.colony.buildings.moduleviews.WarehouseOptionsModule
 import com.minecolonies.core.colony.buildings.utils.BuildingBuilderResource;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingWareHouse;
 import com.minecolonies.core.network.messages.server.colony.building.MarkBuildingDirtyMessage;
-import com.minecolonies.core.network.messages.server.colony.building.warehouse.SortWarehouseMessage;
+import com.minecolonies.core.network.messages.server.colony.building.warehouse.SortBuildingMessage;
 import com.minecolonies.core.network.messages.server.colony.building.warehouse.UpgradeWarehouseMessage;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Blocks;
@@ -200,7 +200,7 @@ public class WarehouseOptionsModuleWindow extends AbstractModuleWindow<Warehouse
     {
         if (buildingView.getBuildingLevel() >= BUILDING_LEVEL_FOR_SORTING)
         {
-            Network.getNetwork().sendToServer(new SortWarehouseMessage(this.buildingView));
+            Network.getNetwork().sendToServer(new SortBuildingMessage(this.buildingView));
             MessageUtils.format(WAREHOUSE_SORTED).sendTo(Minecraft.getInstance().player);
         }
     }

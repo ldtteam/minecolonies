@@ -83,12 +83,12 @@ public class ClipBoardDecorator implements IItemDecorator
                             {
                                 final PoseStack ps = graphics.pose();
                                 ps.pushPose();
-                                ps.translate(0, 0, 500);
+                                ps.translate(0, 0, 200);
                                 graphics.drawCenteredString(font,
                                   Component.literal(count + ""),
                                   xOffset + 15,
                                   yOffset - 2,
-                                  0xFF4500 | (255 << 24));
+                                  0xFFFF4500);
                                 ps.popPose();
                                 return true;
                             }

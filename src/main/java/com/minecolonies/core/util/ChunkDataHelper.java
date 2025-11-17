@@ -231,6 +231,7 @@ public final class ChunkDataHelper
         }
 
         final BlockPos colonyCenterCompare = new BlockPos(colony.getCenter().getX(), 0, colony.getCenter().getZ());
+        final ChunkPos colonyCenterChunk = new ChunkPos(colonyCenterCompare);
 
         final int chunkX = center.getX() >> 4;
         final int chunkZ = center.getZ() >> 4;
@@ -241,8 +242,10 @@ public final class ChunkDataHelper
         {
             for (int j = chunkZ - range; j <= chunkZ + range; j++)
             {
-                final BlockPos pos = new BlockPos(i * BLOCKS_PER_CHUNK, 0, j * BLOCKS_PER_CHUNK);
-                if (!force && maxColonySize != 0 && pos.distSqr(colonyCenterCompare) > Math.pow(maxColonySize * BLOCKS_PER_CHUNK, 2))
+                final ChunkPos chunkPos = new ChunkPos(i, j);
+                final BlockPos pos = chunkPos.getWorldPosition();
+
+                if (!force && maxColonySize != 0 && BlockPosUtil.chunkDistanceSquared(colonyCenterChunk, chunkPos) > maxColonySize * maxColonySize)
                 {
                     Log.getLogger()
                       .debug(
