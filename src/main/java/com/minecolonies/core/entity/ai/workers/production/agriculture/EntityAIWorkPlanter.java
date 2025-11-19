@@ -227,7 +227,8 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
             if (activeModuleResult.getAction().increasesActionCount())
             {
                 currentFieldActionCount++;
-                incrementActionsDoneAndDecSaturation();
+                incrementActionsDone();
+                worker.decreaseSaturationForContinuousAction();
             }
 
             IAIState result = PLANTATION_WORK_FIELD;
