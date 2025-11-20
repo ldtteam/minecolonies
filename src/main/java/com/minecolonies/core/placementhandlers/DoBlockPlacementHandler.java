@@ -196,7 +196,7 @@ public class DoBlockPlacementHandler implements IPlacementHandler
         }
         else if (blockState.getBlock() instanceof PanelBlock)
         {
-            properties.with(TrapdoorBlock.TYPE, complete ? blockState.getValue(PanelBlock.TYPE) : TrapdoorType.FULL);
+            properties.with(PanelBlock.TYPE, complete ? blockState.getValue(PanelBlock.TYPE) : TrapdoorType.FULL);
         }
         else if (blockState.getBlock() instanceof AbstractPostBlock<?>)
         {

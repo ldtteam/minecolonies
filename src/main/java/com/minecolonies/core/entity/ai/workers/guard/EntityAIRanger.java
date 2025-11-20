@@ -8,6 +8,7 @@ import com.minecolonies.core.colony.jobs.JobRanger;
 import com.minecolonies.core.entity.citizen.EntityCitizen;
 import com.minecolonies.core.entity.pathfinding.navigation.MinecoloniesAdvancedPathNavigate;
 import com.minecolonies.core.entity.pathfinding.pathjobs.PathJobWalkRandomEdge;
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.ArrowItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -65,19 +66,23 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger, AbstractBui
     @Override
     public void guardMovement()
     {
-        if (worker.getRandom().nextInt(3) < 1)
+        if (worker.getRandom().nextInt(30) < 1)
         {
             walkToSafePos(buildingGuards.getGuardPos(worker));
             return;
         }
 
-        if ((BlockPosUtil.dist(buildingGuards.getGuardPos(worker), worker.blockPosition()) <= 10 || walkToSafePos(buildingGuards.getGuardPos(worker)))
-            || Math.abs(buildingGuards.getGuardPos(worker).getY() - worker.blockPosition().getY()) > 3)
+        if (!worker.getNavigation().isDone())
+        {
+            return;
+        }
+
+        final BlockPos guardPos = buildingGuards.getGuardPos(worker);
+        if ((BlockPosUtil.dist(guardPos, worker.blockPosition()) <= 10 || walkToSafePos(guardPos)))
         {
             // Moves the ranger randomly to close edges, for better vision to mobs
-            ((MinecoloniesAdvancedPathNavigate) worker.getNavigation()).setPathJob(new PathJobWalkRandomEdge(world, buildingGuards.getGuardPos(worker), 20, worker),
-              null,
-              1.0, true);
+             ((MinecoloniesAdvancedPathNavigate) worker.getNavigation()).setPathJob(
+                 new PathJobWalkRandomEdge(world, guardPos, 10, worker), null, 1.0, true);
         }
     }
 }

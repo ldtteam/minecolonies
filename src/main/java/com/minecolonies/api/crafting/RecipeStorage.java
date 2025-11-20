@@ -779,10 +779,10 @@ public class RecipeStorage implements IRecipeStorage
         final List<ItemStack> resultStacks = new ArrayList<>();
         final List<ItemStack> secondaryStacks = new ArrayList<>();
 
-        if(!ItemStackUtils.isEmpty(outputStack))
+        if (!ItemStackUtils.isEmpty(outputStack))
         {
             resultStacks.add(outputStack.copy());
-            if(doInsert)
+            if (doInsert)
             {
                 for (final IItemHandler handler : handlers)
                 {
@@ -806,7 +806,7 @@ public class RecipeStorage implements IRecipeStorage
         }
 
         resultStacks.addAll(secondaryStacks.stream().map(ItemStack::copy).collect(Collectors.toList()));
-        if(doInsert)
+        if (doInsert)
         {
             for (final ItemStack stack : secondaryStacks)
             {

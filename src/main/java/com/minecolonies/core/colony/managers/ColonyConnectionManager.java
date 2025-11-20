@@ -152,13 +152,13 @@ public class ColonyConnectionManager implements IColonyConnectionManager
             if (previousNode != null)
             {
                 previousNode.alterNextNode(BlockPos.ZERO);
-                MessageUtils.format(Component.translatable(COM_MINECOLONIES_SIGN_DISRUPTED, previousNode.getPosition())).sendTo(this.colony).forManagers();
+                MessageUtils.format(Component.translatable(COM_MINECOLONIES_SIGN_DISRUPTED, previousNode.getPosition().toShortString())).sendTo(this.colony).forManagers();
             }
             final ColonyConnectionNode nextNode = colonyConnections.get(colonyConnectionNode.getNextNode());
             if (nextNode != null)
             {
                 nextNode.alterPreviousNode(BlockPos.ZERO);
-                MessageUtils.format(Component.translatable(COM_MINECOLONIES_SIGN_DISRUPTED, nextNode.getPosition())).sendTo(this.colony).forManagers();
+                MessageUtils.format(Component.translatable(COM_MINECOLONIES_SIGN_DISRUPTED, nextNode.getPosition().toShortString())).sendTo(this.colony).forManagers();
             }
         }
         pendingColonyConnections.remove(connectionPoint);
@@ -216,7 +216,7 @@ public class ColonyConnectionManager implements IColonyConnectionManager
                         colonyConnections.put(pendingConnection.getKey(), pendingConnection.getValue());
                     }
 
-                    MessageUtils.format(COM_MINECOLONIES_SIGN_CONNECTED, pendingConnection.getValue().getPosition(), pendingConnection.getValue().getPreviousNode().toShortString())
+                    MessageUtils.format(COM_MINECOLONIES_SIGN_CONNECTED, pendingConnection.getValue().getPosition().toShortString(), pendingConnection.getValue().getPreviousNode().toShortString())
                         .withPriority(MessageUtils.MessagePriority.IMPORTANT)
                         .sendTo(colony)
                         .forManagers();
@@ -501,7 +501,7 @@ public class ColonyConnectionManager implements IColonyConnectionManager
             if (colonyConnectionNode.getPreviousNode().equals(gateHousePosition))
             {
                 colonyConnectionNode.alterPreviousNode(BlockPos.ZERO);
-                MessageUtils.format(COM_MINECOLONIES_SIGN_DISRUPTED, colonyConnectionNode.getPosition()).sendTo(this.colony).forManagers();
+                MessageUtils.format(COM_MINECOLONIES_SIGN_DISRUPTED, colonyConnectionNode.getPosition().toShortString()).sendTo(this.colony).forManagers();
             }
         }
 

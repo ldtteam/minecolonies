@@ -475,16 +475,23 @@ public class EventHandler
 
         // this was the simple way of doing it, minecraft calls onBlockActivated
         // and uses that return value, but I didn't want to call it twice
-        if (playerRightClickInteract(player, world, event.getPos()) && world.getBlockState(event.getPos()).getBlock() instanceof AbstractBlockHut)
+        if (playerRightClickInteract(player, world, event.getPos()))
         {
-            final IColony colony = IColonyManager.getInstance().getIColony(world, event.getPos());
-            if (colony != null
-                  && !colony.getPermissions().hasPermission(player, Action.ACCESS_HUTS))
+            final Block block = world.getBlockState(event.getPos()).getBlock();
+            if (block instanceof AbstractBlockHut<?> abstractBlockHut)
             {
-                event.setCanceled(true);
-            }
+                if (abstractBlockHut.canRightClickWithoutPermissions())
+                {
+                    return;
+                }
+                final IColony colony = IColonyManager.getInstance().getIColony(world, event.getPos());
+                if (colony != null && !colony.getPermissions().hasPermission(player, Action.ACCESS_HUTS))
+                {
+                    event.setCanceled(true);
+                }
 
-            return;
+                return;
+            }
         }
 
         if (world.getBlockState(event.getPos()).getBlock().isBed(world.getBlockState(event.getPos()), world, event.getPos(), player))

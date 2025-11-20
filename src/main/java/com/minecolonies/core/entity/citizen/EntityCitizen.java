@@ -1300,7 +1300,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
             }
 
             final IColony attackerColony = ((EntityCitizen) sourceEntity).citizenColonyHandler.getColonyOrRegister();
-            if (attackerColony != null && citizenColonyHandler.getColonyOrRegister() != null)
+            if (attackerColony != null && citizenColonyHandler.getColonyOrRegister() != null && MineColonies.getConfig().getServer().pvp_mode.get())
             {
                 final IPermissions permission = attackerColony.getPermissions();
                 citizenColonyHandler.getColonyOrRegister().getPermissions().addPlayer(permission.getOwner(), permission.getOwnerName(), permission.getRank(permission.HOSTILE_RANK_ID));
@@ -1592,7 +1592,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
                 MessageUtils.format(getCombatTracker().getDeathMessage())
                   .append(Component.literal("! "))
                     .append(Component.translatable(TranslationConstants.COLONIST_DEATH_LOCATION,
-                            BlockPosUtil.calcDirection(blockPosition(), getCitizenColonyHandler().getColonyOrRegister().getCenter()).getLongText())
+                            BlockPosUtil.calcDirection(getCitizenColonyHandler().getColonyOrRegister().getCenter(), blockPosition()).getLongText())
                         .withStyle(style -> style
                             .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
                                 Component.translatable("message.positiondist",

@@ -4,9 +4,7 @@ import com.ldtteam.structurize.api.IRotatableBlockEntity;
 import com.ldtteam.structurize.api.RotationMirror;
 import com.ldtteam.structurize.blockentities.interfaces.IBlueprintDataProviderBE;
 import com.ldtteam.structurize.storage.StructurePacks;
-import com.minecolonies.api.compatibility.newstruct.BlueprintMapping;
 import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
-import com.minecolonies.api.util.Utils;
 import com.minecolonies.api.util.WorldUtil;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.world.level.block.Mirror;
@@ -23,12 +21,10 @@ import org.codehaus.plexus.util.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
-import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.minecolonies.api.util.constant.Constants.DEFAULT_STYLE;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
 public class TileEntityDecorationController extends BlockEntity implements IBlueprintDataProviderBE, IRotatableBlockEntity
@@ -148,68 +144,9 @@ public class TileEntityDecorationController extends BlockEntity implements IBlue
     {
         IBlueprintDataProviderBE.super.readSchematicDataFromNBT(compound);
         final CompoundTag blueprintDataProvider = compound.getCompound(TAG_BLUEPRINTDATA);
-        if (compound.contains(TAG_PACK)) // New structure
-        {
-            // path is the folder containing the schematic
-            final String path = blueprintDataProvider.getString(TAG_NAME);
-            this.schematicPath = path + File.separator + this.schematicName + ".blueprint";
-        }
-        else
-        {
-            // This is only recovery handling for old structures, it shouldn't be called otherwise.
-            if (compound.contains(TAG_NAME))
-            {
-                this.schematicPath = compound.getString(TAG_NAME);
-                final String[] split = Utils.splitPath(this.schematicPath);
-                this.schematicName = split[split.length - 1].replace(".blueprint", "");
-            }
 
-            final String[] split = Utils.splitPath(this.schematicPath);
-            if (split.length >= 4)
-            {
-                this.packName = BlueprintMapping.getStyleMapping(split[2]);
-            }
-
-            if (this.packName == null || this.packName.isEmpty())
-            {
-                this.packName = DEFAULT_STYLE;
-            }
-
-            if (this.schematicName.contains("/") || this.schematicName.contains("\\"))
-            {
-                final String[] splitName = Utils.splitPath(this.schematicPath);
-                this.schematicName = splitName[splitName.length - 1].replace(".blueprint", "");
-            }
-
-            if (compound.contains(TAG_LEVEL))
-            {
-                this.schematicName += compound.getInt(TAG_LEVEL);
-            }
-
-            if (StructurePacks.hasPack(this.packName))
-            {
-                this.schematicPath = StructurePacks.getStructurePack(this.packName).getSubPath(StructurePacks.findBlueprint(this.packName, schematicName));
-            }
-            else
-            {
-                this.schematicPath = this.schematicName;
-            }
-
-            if (!this.schematicPath.endsWith(".blueprint"))
-            {
-                this.schematicPath = this.schematicPath + ".blueprint";
-            }
-        }
-
-        if (blueprintDataProvider.contains(TAG_PACK))
-        {
-            this.packName = blueprintDataProvider.getString(TAG_PACK);
-        }
-
-        if (this.packName == null)
-        {
-            this.packName = DEFAULT_STYLE;
-        }
+        this.packName = blueprintDataProvider.getString(TAG_PACK);
+        this.schematicPath = blueprintDataProvider.getString(TAG_PATH);
     }
 
     @Override

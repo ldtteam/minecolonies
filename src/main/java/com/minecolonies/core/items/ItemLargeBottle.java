@@ -52,6 +52,11 @@ public class ItemLargeBottle extends Item
             return super.interactLivingEntity(stack, player, entity, hand);
         }
 
+        if (player.getCooldowns().isOnCooldown(this))
+        {
+            return super.interactLivingEntity(stack, player, entity, hand);
+        }
+
         if (entity instanceof Cow && !entity.isBaby())
         {
             player.playSound(SoundEvents.COW_MILK, 1.0F, 1.0F);

@@ -149,7 +149,11 @@ public class CitizenArmorLayer<T extends AbstractEntityCitizen, M extends Humano
         {
             try
             {
-                if (armoritem.getEquipmentSlot() == equipmentSlot)
+                if (citizenDataView.getDisplayArmor(equipmentSlot).isEmpty())
+                {
+                    super.renderArmorPiece(poseStack, bufferSource, citizen, equipmentSlot, light, armor);
+                }
+                else if (armoritem.getEquipmentSlot() == equipmentSlot)
                 {
                     this.getParentModel().copyPropertiesTo(armor);
                     this.setPartVisibility(armor, equipmentSlot);

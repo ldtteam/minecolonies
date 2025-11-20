@@ -1,5 +1,6 @@
 package com.minecolonies.core.colony.jobs;
 
+import com.minecolonies.api.colony.jobs.IJobWithColonyFlag;
 import com.minecolonies.core.util.citizenutils.CitizenItemUtils;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.resources.ResourceLocation;
@@ -16,6 +17,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.level.block.entity.BannerPatternLayers;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.research.util.ResearchConstants.SHIELD_USAGE;
@@ -27,7 +29,7 @@ import static com.minecolonies.api.util.constant.GuardConstants.KNIGHT_HP_BONUS;
  *
  * @author Asherslab
  */
-public class JobKnight extends AbstractJobGuard<JobKnight>
+public class JobKnight extends AbstractJobGuard<JobKnight> implements IJobWithColonyFlag
 {
     /**
      * Desc of knight job.
@@ -76,8 +78,8 @@ public class JobKnight extends AbstractJobGuard<JobKnight>
     @Override
     public boolean ignoresDamage(@NotNull final DamageSource damageSource)
     {
-        if(damageSource.is(DamageTypeTags.IS_EXPLOSION) && this.getColony().getResearchManager().getResearchEffects().getEffectStrength(SHIELD_USAGE) > 0
-                && InventoryUtils.findFirstSlotInItemHandlerWith(this.getCitizen().getInventory(), Items.SHIELD) != -1)
+        if (damageSource.is(DamageTypeTags.IS_EXPLOSION) && this.getColony().getResearchManager().getResearchEffects().getEffectStrength(SHIELD_USAGE) > 0
+            && InventoryUtils.findFirstSlotInItemHandlerWith(this.getCitizen().getInventory(), Items.SHIELD) != -1)
         {
             if (!this.getCitizen().getEntity().isPresent())
             {
@@ -94,5 +96,22 @@ public class JobKnight extends AbstractJobGuard<JobKnight>
             return true;
         }
         return super.ignoresDamage(damageSource);
+    }
+
+    @Override
+    public void onColonyFlagChanged()
+    {
+        if (this.getCitizen().getEntity().isPresent())
+        {
+            final AbstractEntityCitizen worker = this.getCitizen().getEntity().get();
+            CitizenItemUtils.setHeldItem(worker, InteractionHand.OFF_HAND, InventoryUtils.findFirstSlotInItemHandlerWith(this.getCitizen().getInventory(), Items.SHIELD));
+            worker.startUsingItem(InteractionHand.OFF_HAND);
+            ItemStack shieldStack = worker.getInventoryCitizen().getHeldItem(InteractionHand.OFF_HAND);
+            if (!shieldStack.getOrDefault(DataComponents.BANNER_PATTERNS, BannerPatternLayers.EMPTY).equals(worker.getCitizenData().getColony().getColonyFlag()))
+            {
+                shieldStack.set(DataComponents.BANNER_PATTERNS, worker.getCitizenData().getColony().getColonyFlag());
+                worker.getInventoryCitizen().markDirty();
+            }
+        }
     }
 }

@@ -63,7 +63,7 @@ import com.minecolonies.core.network.messages.server.colony.building.template.Ig
 import com.minecolonies.core.network.messages.server.colony.building.template.RemoveTemplateMessage;
 import com.minecolonies.core.network.messages.server.colony.building.template.UpdateTemplateDataMessage;
 import com.minecolonies.core.network.messages.server.colony.building.university.TryResearchMessage;
-import com.minecolonies.core.network.messages.server.colony.building.warehouse.SortWarehouseMessage;
+import com.minecolonies.core.network.messages.server.colony.building.warehouse.SortBuildingMessage;
 import com.minecolonies.core.network.messages.server.colony.building.warehouse.UpgradeWarehouseMessage;
 import com.minecolonies.core.network.messages.server.colony.building.worker.*;
 import com.minecolonies.core.network.messages.server.colony.citizen.*;
@@ -375,7 +375,7 @@ public class MineColonies
         ColonyStructureStyleMessage.TYPE.register(registry);
         PauseCitizenMessage.TYPE.register(registry);
         RestartCitizenMessage.TYPE.register(registry);
-        SortWarehouseMessage.TYPE.register(registry);
+        SortBuildingMessage.TYPE.register(registry);
         PostBoxRequestMessage.TYPE.register(registry);
         HireMercenaryMessage.TYPE.register(registry);
         HutRenameMessage.TYPE.register(registry);

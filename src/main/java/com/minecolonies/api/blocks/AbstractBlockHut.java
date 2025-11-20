@@ -362,4 +362,25 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
     {
         Registry.register(registry, getRegistryName(), new ItemBlockHut(this, properties));
     }
+
+    /**
+     * Can this block be right-clicked without the appropriate permissions?
+     * @return true if so. Default false.
+     */
+    public boolean canRightClickWithoutPermissions()
+    {
+        return false;
+    }
+
+    /**
+     * Check if the block can be placed at the given position by the player.
+     *
+     * @param pos the position to check.
+     * @param player the player trying to place the block.
+     * @return true if the block can be placed.
+     */
+    public boolean canPlaceAt(final BlockPos pos, final Player player)
+    {
+        return true;
+    }
 }

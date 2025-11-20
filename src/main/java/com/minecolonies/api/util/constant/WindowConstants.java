@@ -358,6 +358,21 @@ public final class WindowConstants
     public static final String BUTTON_ADD_PLAYER_OR_FAKEPLAYER = "addfakeplayer";
 
     /**
+     * The button to select an online player
+     */
+    public static final String BUTTON_OPEN_ONLINE_PLAYER_LIST = "addOnlinePlayer";
+
+    /**
+     * The list to select online players from
+     */
+    public static final String LIST_SELECT_PLAYER = "playerPicker";
+
+    /**
+     * Button to select a player from the player list
+     */
+    public static final String BUTTON_SELECT_PLAYER_LIST = "playerSelectButton";
+
+    /**
      * The view of the permission management.
      */
     public static final String PERMISSION_VIEW = "managePermissions";

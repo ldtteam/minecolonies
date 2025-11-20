@@ -159,8 +159,9 @@ public final class ChunkDataHelper
       final BlockPos center,
       final boolean force)
     {
-        final ServerLevel world = (ServerLevel) colony.getWorld();
+        final ServerLevel world = colony.getWorld();
         final BlockPos colonyCenterCompare = new BlockPos(colony.getCenter().getX(), 0, colony.getCenter().getZ());
+        final ChunkPos colonyCenterChunk = new ChunkPos(colonyCenterCompare);
 
         final int chunkX = center.getX() >> 4;
         final int chunkZ = center.getZ() >> 4;
@@ -171,8 +172,10 @@ public final class ChunkDataHelper
         {
             for (int j = chunkZ - range; j <= chunkZ + range; j++)
             {
-                final BlockPos pos = new BlockPos(i * BLOCKS_PER_CHUNK, 0, j * BLOCKS_PER_CHUNK);
-                if (!force && maxColonySize != 0 && pos.distSqr(colonyCenterCompare) > Math.pow(maxColonySize * BLOCKS_PER_CHUNK, 2))
+                final ChunkPos chunkPos = new ChunkPos(i, j);
+                final BlockPos pos = chunkPos.getWorldPosition();
+
+                if (!force && maxColonySize != 0 && chunkPos.distanceSquared(colonyCenterChunk) > maxColonySize * maxColonySize)
                 {
                     Log.getLogger()
                       .debug(
@@ -181,7 +184,7 @@ public final class ChunkDataHelper
                     continue;
                 }
 
-                if (tryClaimBuilding(world, pos, add, colony, center))
+                if (tryClaimBuilding(world, chunkPos, add, colony, center))
                 {
                     continue;
                 }
@@ -225,7 +228,7 @@ public final class ChunkDataHelper
                 continue;
             }
 
-            tryClaimBuilding(world, pos, add, colony, anchor);
+            tryClaimBuilding(world, chunk, add, colony, anchor);
         }
     }
 
@@ -321,12 +324,12 @@ public final class ChunkDataHelper
      */
     public static boolean tryClaimBuilding(
       final ServerLevel world,
-      final BlockPos chunkBlockPos,
+      final ChunkPos chunkBlockPos,
       final boolean add,
       final Colony colony,
       final BlockPos buildingPos)
     {
-        final LevelChunk chunk = world.getChunkAt(chunkBlockPos);
+        final LevelChunk chunk = world.getChunk(chunkBlockPos.x, chunkBlockPos.z);
         IChunkClaimData chunkClaimData = IColonyManager.getInstance().getClaimData(world.dimension(), chunk.getPos());;
         if (chunkClaimData == null)
         {

@@ -130,8 +130,6 @@ public class CommandTranslationConstants
     @NonNls
     public static final String COMMAND_PRUNE_WORLD_WARNING                   = "com.minecolonies.command.prune.next";
     @NonNls
-    public static final String COMMAND_RAID_TONIGHT_WARNING                  = "com.minecolonies.command.raidtonight";
-    @NonNls
     public static final String COMMAND_RESET_SUPPLY_SUCCESS                  = "com.minecolonies.command.resetsupply";
     @NonNls
     public static final String COMMAND_RTP_SUCCESS                           = "com.minecolonies.command.rtp.success";

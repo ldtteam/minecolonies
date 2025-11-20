@@ -440,11 +440,6 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
 
         if (tileEntityNew != null)
         {
-            InventoryUtils.dropItemHandler(tileEntityNew.getInventory(),
-              world,
-              tileEntityNew.getPosition().getX(),
-              tileEntityNew.getPosition().getY(),
-              tileEntityNew.getPosition().getZ());
             world.updateNeighbourForOutputSignal(this.getPosition(), block);
         }
 
@@ -602,7 +597,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
      * @return true if the building is building, upgrading or repairing.
      */
     @Override
-    public boolean hasWorkOrder()
+    public boolean isPendingConstruction()
     {
         return getCurrentWorkOrderLevel() != NO_WORK_ORDER;
     }
@@ -1775,7 +1770,8 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
 
         for (final IToken<?> child : target.getChildren())
         {
-            if (isRequestStuck(colony.getRequestManager().getRequestForToken(child), playerResolverRequests, retryingRequests))
+            final IRequest<?> request = colony.getRequestManager().getRequestForToken(child);
+            if (request != null && isRequestStuck(request, playerResolverRequests, retryingRequests))
             {
                 return true;
             }

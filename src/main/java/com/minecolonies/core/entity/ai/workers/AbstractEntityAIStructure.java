@@ -174,7 +174,11 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
           /*
            * Check if we have to build something.
            */
-          new AITarget(IDLE, this::isThereAStructureToBuild, () -> START_BUILDING, 10),
+          new AITarget(IDLE, START_WORKING, 10),
+          /*
+           * Start working at the building.
+           */
+          new AITarget(START_WORKING, this::startWorkingAtOwnBuilding, TICKS_SECOND),
           /*
            * Build the structure and foundation of the building.
            */
@@ -185,6 +189,19 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
           new AITarget(COMPLETE_BUILD, this::completeBuild, STANDARD_DELAY),
           new AITarget(PICK_UP, this::pickUpMaterial, 5)
         );
+    }
+
+    /**
+     * Start working at own building. Override for worker specific implementations.
+     * @return next state.
+     */
+    protected IAIState startWorkingAtOwnBuilding()
+    {
+        if (isThereAStructureToBuild())
+        {
+            return START_BUILDING;
+        }
+        return IDLE;
     }
 
     /**
@@ -251,7 +268,6 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
         incrementActionsDoneAndDecSaturation();
         executeSpecificCompleteActions();
         worker.getCitizenExperienceHandler().addExperience(XP_EACH_BUILDING);
-        fillItemsList();
         resetCurrentStructure();
         return IDLE;
     }
@@ -308,9 +324,12 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
      */
     protected IAIState structureStep()
     {
+        if (!isThereAStructureToBuild())
+        {
+            return IDLE;
+        }
         if (structurePlacer.getB().getStage() == null)
         {
-            fillItemsList();
             resetCurrentStructure();
             return IDLE;
         }
@@ -461,7 +480,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
         {
             if (hasListOfResInInvOrRequest(this, result.getBlockResult().getRequiredItems(), result.getBlockResult().getRequiredItems().size() > 1) == RECALC)
             {
-                job.getWorkOrder().setRequested(false);
+                building.getWorkOrder().setRequested(false);
                 return LOAD_STRUCTURE;
             }
             return NEEDS_ITEM;
@@ -500,7 +519,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
         }
         else
         {
-            return job.getWorkOrder().getLocation();
+            return building.getWorkOrder().getLocation();
         }
     }
 
@@ -625,6 +644,11 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
         if (blockToMine == null)
         {
             return BUILDING_STEP;
+        }
+
+        if (structurePlacer == null)
+        {
+            return IDLE;
         }
 
         final BlockState worldState = world.getBlockState(blockToMine);
@@ -880,24 +904,6 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
     }
 
     /**
-     * Fill the list of the item positions to gather.
-     */
-    @Override
-    public void fillItemsList()
-    {
-        //TODO: Make the cleanup a proper building stage in the future.
-        // Search by sections instead of huge AABB all at once.
-        if (!structurePlacer.getB().hasBluePrint())
-        {
-            return;
-        }
-        final Blueprint blueprint = structurePlacer.getB().getBluePrint();
-
-        final BlockPos leftCorner = structurePlacer.getB().getWorldPos().subtract(blueprint.getPrimaryBlockOffset());
-        searchForItems(AABB.encapsulatingFullBlocks(leftCorner, leftCorner.offset(blueprint.getSizeX(), blueprint.getSizeY(), blueprint.getSizeZ())));
-    }
-
-    /**
      * Calculates the working position.
      * <p>
      * Takes a min distance from width and length.
@@ -981,7 +987,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
      */
     protected boolean isThereAStructureToBuild()
     {
-        if (structurePlacer == null || !structurePlacer.getB().hasBluePrint() || job.getWorkOrder() == null)
+        if (structurePlacer == null || !structurePlacer.getB().hasBluePrint() || building.getWorkOrder() == null)
         {
             return false;
         }

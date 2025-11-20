@@ -1,6 +1,7 @@
 package com.minecolonies.core.client.gui.modules;
 
 import com.ldtteam.blockui.Pane;
+import com.ldtteam.blockui.PaneBuilders;
 import com.ldtteam.blockui.controls.*;
 import com.ldtteam.blockui.views.ScrollingList;
 import com.minecolonies.api.crafting.IRecipeStorage;
@@ -176,12 +177,29 @@ public class WindowListRecipes extends AbstractModuleWindow<CraftingModuleView>
                 List<ItemStack> displayStacks = recipe.getRecipeType().getOutputDisplayStacks();
                 icon.setItem(displayStacks.get((lifeCount / LIFE_COUNT_DIVIDER) % (displayStacks.size())));
 
-                if (!moduleView.isRecipeAlterationAllowed())
+                final Button removeButton = rowPane.findPaneOfTypeByID(BUTTON_REMOVE, Button.class);
+                if (removeButton != null)
                 {
-                    final Button removeButton = rowPane.findPaneOfTypeByID(BUTTON_REMOVE, Button.class);
-                    if (removeButton != null)
+                    if (moduleView.isRecipeAlterationAllowed())
                     {
-                        removeButton.setVisible(false);
+                        removeButton.on();
+                        if (recipe.getRecipeSource() != null && !Screen.hasControlDown())
+                        {
+                            removeButton.disable();
+                            PaneBuilders.tooltipBuilder()
+                                .append(Component.translatable("com.minecolonies.coremod.gui.workerhuts.removebuiltin",
+                                    Component.translatable("key.keyboard.left.control")))
+                                .hoverPane(removeButton)
+                                .build();
+                        }
+                        else
+                        {
+                            removeButton.setHoverPane(null);
+                        }
+                    }
+                    else
+                    {
+                        removeButton.off();
                     }
                 }
 
@@ -202,11 +220,13 @@ public class WindowListRecipes extends AbstractModuleWindow<CraftingModuleView>
                 {
                     rowPane.findPaneOfTypeByID("gradient", Gradient.class).setVisible(true);
                     rowPane.findPaneOfTypeByID(BUTTON_TOGGLE, Button.class).setText(Component.translatableEscape("com.minecolonies.coremod.gui.recipe.enable"));
+                    rowPane.findPaneOfTypeByID(BUTTON_TOGGLE, Button.class).setVisible(moduleView.getActiveRecipes() < moduleView.getMaxRecipes());
                 }
                 else
                 {
                     rowPane.findPaneOfTypeByID("gradient", Gradient.class).setVisible(false);
                     rowPane.findPaneOfTypeByID(BUTTON_TOGGLE, Button.class).setText(Component.translatableEscape("com.minecolonies.coremod.gui.recipe.disable"));
+                    rowPane.findPaneOfTypeByID(BUTTON_TOGGLE, Button.class).setVisible(true);
                 }
 
                 // Some special recipes might not include all necessary air blocks.
@@ -267,7 +287,7 @@ public class WindowListRecipes extends AbstractModuleWindow<CraftingModuleView>
         {
             lifeCount++;
         }
-        recipeStatus.setText(Component.translatableEscape(TranslationConstants.RECIPE_STATUS, moduleView.getRecipes().size(), moduleView.getMaxRecipes()));
+        recipeStatus.setText(Component.translatableEscape(TranslationConstants.RECIPE_STATUS, moduleView.getActiveRecipes(), moduleView.getMaxRecipes()));
         window.findPaneOfTypeByID(RECIPE_LIST, ScrollingList.class).refreshElementPanes();
     }
 }

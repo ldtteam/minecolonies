@@ -40,6 +40,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.SwordItem;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.world.level.block.entity.BannerPatternLayers;
 
 import java.util.List;
 
@@ -116,8 +117,11 @@ public class KnightCombatAI extends AttackMoveAI<EntityCitizen>
 
             // Apply the colony Flag to the shield
             ItemStack shieldStack = user.getInventoryCitizen().getHeldItem(InteractionHand.OFF_HAND);
-            shieldStack.set(DataComponents.BANNER_PATTERNS, user.getCitizenData().getColony().getColonyFlag());
-
+            if (!shieldStack.getOrDefault(DataComponents.BANNER_PATTERNS, BannerPatternLayers.EMPTY).equals(user.getCitizenData().getColony().getColonyFlag()))
+            {
+                shieldStack.set(DataComponents.BANNER_PATTERNS, user.getCitizenData().getColony().getColonyFlag());
+                user.getInventoryCitizen().markDirty();
+            }
             user.lookAt(target, (float) TURN_AROUND, (float) TURN_AROUND);
             user.decreaseSaturationForContinuousAction();
         }

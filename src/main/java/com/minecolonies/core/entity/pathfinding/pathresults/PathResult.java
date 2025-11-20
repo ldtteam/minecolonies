@@ -292,7 +292,7 @@ public class PathResult<T extends AbstractPathJob>
                     .append(Component.literal(job.toString()))
                     .append(Component.literal(" reaches: " + path.canReach())
                         .withStyle(path.canReach() ? ChatFormatting.GREEN : ChatFormatting.RED)
-                        .append(Component.literal(" path target:" + path.getTarget()).withStyle(ChatFormatting.BLUE)));
+                        .append(Component.literal(" path target:" + path.getTarget().toShortString()).withStyle(ChatFormatting.BLUE)));
                 Log.getLogger().info(debugInfo.getString());
 
                 for (final ServerPlayer player : watchers)

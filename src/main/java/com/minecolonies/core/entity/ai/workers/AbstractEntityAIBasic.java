@@ -91,7 +91,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
     /**
      * The returned slot if a slot hasn't been found.
      */
-    private static final int NO_TOOL = -10;
+    protected static final int NO_TOOL = -10;
 
     /**
      * The standard delay after each terminated action.
@@ -1340,7 +1340,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
      * @param pos    the pos to mine
      * @return true if we have a tool for the job
      */
-    public final boolean holdEfficientTool(@NotNull final BlockState target, final BlockPos pos)
+    public boolean holdEfficientTool(@NotNull final BlockState target, final BlockPos pos)
     {
         final int bestSlot = getMostEfficientTool(target, pos);
         if (bestSlot >= 0)
@@ -1592,7 +1592,8 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
      */
     public boolean checkIfRequestForItemExistOrCreate(@NotNull final ItemStack stack)
     {
-        return checkIfRequestForItemExistOrCreate(stack, stack.getCount(), stack.getCount());
+        final int amount = stack.getCount();
+        return checkIfRequestForItemExistOrCreate(stack.copyWithCount(1), amount, amount);
     }
 
     /**
@@ -1605,22 +1606,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
      */
     public boolean checkIfRequestForItemExistOrCreate(@NotNull final ItemStack stack, final int count, final int minCount)
     {
-        if (InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(),
-          s -> ItemStackUtils.compareItemStacksIgnoreStackSize(s, stack)))
-        {
-            return true;
-        }
-
-        if (building.getOpenRequestsOfTypeFiltered(worker.getCitizenData(), TypeConstants.DELIVERABLE,
-          (IRequest<? extends IDeliverable> r) -> r.getRequest().matches(stack)).isEmpty()
-              && building.getCompletedRequestsOfTypeFiltered(worker.getCitizenData(), TypeConstants.DELIVERABLE,
-          (IRequest<? extends IDeliverable> r) -> r.getRequest().matches(stack)).isEmpty())
-        {
-            final Stack stackRequest = new Stack(stack, count, minCount);
-            worker.getCitizenData().createRequest(stackRequest);
-        }
-
-        return false;
+        return checkIfRequestForItemExistOrCreate(stack, count, minCount, true, false);
     }
 
     /**
@@ -1653,7 +1639,8 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
      */
     public boolean checkIfRequestForItemExistOrCreateAsync(@NotNull final ItemStack stack)
     {
-        return checkIfRequestForItemExistOrCreateAsync(stack, stack.getCount(), stack.getCount());
+        final int amount = stack.getCount();
+        return checkIfRequestForItemExistOrCreateAsync(stack.copyWithCount(1), amount, amount);
     }
 
     /**
@@ -1679,6 +1666,21 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
      * @return true if in the inventory, else false.
      */
     public boolean checkIfRequestForItemExistOrCreateAsync(@NotNull final ItemStack stack, final int count, final int minCount, final boolean matchNBT)
+    {
+        return checkIfRequestForItemExistOrCreate(stack, count, minCount, matchNBT, true);
+    }
+
+    /**
+     * Check if a stack has been requested already or is in the inventory. If not in the inventory and not requested already, create request
+     *
+     * @param stack    the requested stack.
+     * @param count    the total count.
+     * @param minCount the minimum count.
+     * @param matchNBT if nbt has to be matched.
+     * @param async    if should be an async request.
+     * @return true if in the inventory, else false.
+     */
+    public boolean checkIfRequestForItemExistOrCreate(@NotNull final ItemStack stack, final int count, final int minCount, final boolean matchNBT, final boolean async)
     {
         if (stack.isEmpty())
         {
@@ -1709,7 +1711,14 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
           (IRequest<? extends IDeliverable> r) -> r.getRequest().matches(stack)).isEmpty())
         {
             final Stack stackRequest = new Stack(stack, updatedCount, updatedMinCount, matchNBT);
-            worker.getCitizenData().createRequestAsync(stackRequest);
+            if (async)
+            {
+                worker.getCitizenData().createRequestAsync(stackRequest);
+            }
+            else
+            {
+                worker.getCitizenData().createRequest(stackRequest);
+            }
         }
 
         return false;
