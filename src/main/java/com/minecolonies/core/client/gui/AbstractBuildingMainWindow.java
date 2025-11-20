@@ -7,6 +7,7 @@ import com.minecolonies.core.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.core.network.messages.server.colony.OpenInventoryMessage;
 import com.minecolonies.core.network.messages.server.colony.building.BuildRequestMessage;
 import net.minecraft.client.resources.language.I18n;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -59,6 +60,37 @@ public abstract class AbstractBuildingMainWindow<B extends IBuildingView> extend
         }
     }
 
+    @Override
+    public void setPage(final boolean relative, final int page)
+    {
+        super.setPage(relative, page);
+        mc.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.BOOK_PAGE_TURN, 1.0F));
+    }
+
+    /**
+     * Edit custom name action.
+     */
+    private void editName()
+    {
+        new WindowHutNameEntry(buildingView).open();
+    }
+
+    /**
+     * Action when info button is clicked.
+     */
+    private void infoClicked()
+    {
+        new WindowInfo(buildingView).open();
+    }
+
+    /**
+     * Action when allInventory button is clicked.
+     */
+    private void allInventoryClicked()
+    {
+        new WindowHutAllInventory(buildingView, this).open();
+    }
+
     /**
      * Action when build button is clicked.
      */
@@ -87,35 +119,11 @@ public abstract class AbstractBuildingMainWindow<B extends IBuildingView> extend
     }
 
     /**
-     * Action when info button is clicked.
-     */
-    private void infoClicked()
-    {
-        new WindowInfo(buildingView).open();
-    }
-
-    /**
      * Action when a button opening an inventory is clicked.
      */
     private void inventoryClicked()
     {
         new OpenInventoryMessage(buildingView).sendToServer();
-    }
-
-    /**
-     * Edit custom name action.
-     */
-    private void editName()
-    {
-        new WindowHutNameEntry(buildingView).open();
-    }
-
-    /**
-     * Action when allInventory button is clicked.
-     */
-    private void allInventoryClicked()
-    {
-        new WindowHutAllInventory(buildingView, this).open();
     }
 
     @Override

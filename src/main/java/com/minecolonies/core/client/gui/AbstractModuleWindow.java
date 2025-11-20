@@ -56,8 +56,7 @@ public abstract class AbstractModuleWindow<T extends IBuildingModuleView> extend
         {
             renderTabButton(0,
                 TabImageSide.RIGHT,
-                // TODO: Different icon
-                new ResourceLocation(Constants.MOD_ID, "textures/gui/modules/field.png"),
+                new ResourceLocation(Constants.MOD_ID, "textures/gui/modules/template.png"),
                 Optional.ofNullable(templateModuleView.getTemplateText()).map(Component::copy).orElse(null),
                 button -> new TemplatesModuleWindow(this, templateModuleView).open());
         }
