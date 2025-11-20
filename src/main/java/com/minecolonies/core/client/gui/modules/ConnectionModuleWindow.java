@@ -6,14 +6,12 @@ import com.ldtteam.blockui.controls.Button;
 import com.ldtteam.blockui.controls.ItemIcon;
 import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.blockui.views.ScrollingList;
+import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.connections.ColonyConnection;
 import com.minecolonies.api.colony.connections.DiplomacyStatus;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.MessageUtils;
-import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.core.client.gui.AbstractModuleWindow;
-import com.minecolonies.core.colony.buildings.moduleviews.ColonyConnectionModuleView;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.client.gui.AbstractBuildingWindow;
 import com.minecolonies.core.commands.ClickEventWithExecutable;
@@ -25,13 +23,12 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.neoforged.neoforge.items.wrapper.InvWrapper;
-import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ConnectionModuleWindow extends AbstractModuleWindow<ColonyConnectionModuleView>
+public class ConnectionModuleWindow extends AbstractBuildingWindow<IBuildingView>
 {
     /**
      * Special buttons
@@ -60,11 +57,11 @@ public class ConnectionModuleWindow extends AbstractModuleWindow<ColonyConnectio
     /**
      * Constructor for the minimum stock window view.
      *
-     * @param moduleView the module view.
+     * @param buildingView the building view.
      */
-    public ConnectionModuleWindow(final ColonyConnectionModuleView moduleView)
+    public ConnectionModuleWindow(final IBuildingView buildingView, final boolean externalPlayer)
     {
-        super(moduleView, new ResourceLocation(Constants.MOD_ID, "gui/layouthuts/layoutcolonyconnection.xml"));
+        super(buildingView, new ResourceLocation(Constants.MOD_ID, "gui/layouthuts/layoutcolonyconnection.xml"));
 
         if (externalPlayer)
         {

@@ -88,7 +88,6 @@ public abstract class AbstractBuildingWindow<B extends IBuildingView> extends Ab
         final List<IBuildingModuleView> allModuleViews = buildingView.getAllModuleViews();
         for (final IBuildingModuleView view : allModuleViews)
         {
-            final IBuildingModuleView view = allModuleViews.get(i);
             if (!view.isPageVisible())
             {
                 continue;
