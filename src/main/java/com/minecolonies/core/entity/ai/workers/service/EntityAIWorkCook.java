@@ -230,7 +230,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
 
         if (citizenData.getHomeBuilding() != null && citizenData.getHomeBuilding().getBuildingLevelEquivalent() > building.getBuildingLevel() + 1)
         {
-            worker.getCitizenData().triggerInteraction(new StandardInteraction(Component.translatable(POOR_RESTAURANT_INTERACTION), ChatPriority.BLOCKING));
+            worker.getCitizenData().triggerInteraction(new StandardInteraction(Component.translatable(POOR_RESTAURANT_INTERACTION), ChatPriority.IMPORTANT));
         }
 
         String foodName = worker.getInventoryCitizen().getStackInSlot(foodSlot).getDescriptionId();
@@ -360,7 +360,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
 
             if (!hasMinecoloniesFoodInMenu)
             {
-                worker.getCitizenData().triggerInteraction(new StandardInteraction(Component.translatable(POOR_MENU_INTERACTION), ChatPriority.BLOCKING));
+                worker.getCitizenData().triggerInteraction(new StandardInteraction(Component.translatable(POOR_MENU_INTERACTION), ChatPriority.IMPORTANT));
             }
         }
 
