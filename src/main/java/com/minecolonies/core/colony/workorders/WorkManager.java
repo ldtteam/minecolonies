@@ -31,6 +31,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.OUT_OF_COLONY;
 import static com.minecolonies.core.colony.buildings.workerbuildings.BuildingBuilder.MANUAL_SETTING;
@@ -385,13 +386,12 @@ public class WorkManager implements IWorkManager
     @Override
     public void onColonyTick(@NotNull final IColony colony)
     {
-        @NotNull final Iterator<IServerWorkOrder> iter = workOrders.values().iterator();
-        while (iter.hasNext())
+        final List<IServerWorkOrder> sortedWorkOrders = workOrders.values().stream().sorted(Comparator.comparingInt(IWorkOrder::getPriority).reversed()).toList();
+        for (IServerWorkOrder order : sortedWorkOrders)
         {
-            final IServerWorkOrder order = iter.next();
             if (!order.isValid(this.colony))
             {
-                iter.remove();
+                workOrders.remove(order.getID());
                 dirty = true;
                 continue;
             }
@@ -409,9 +409,12 @@ public class WorkManager implements IWorkManager
             tryAssignWorkOrder(order, (b) -> order.getClaimedBy().equals(b.getPosition()));
         }
 
-        for (final IServerWorkOrder wo : colony.getWorkManager().getWorkOrders().values())
+        for (final IServerWorkOrder wo : sortedWorkOrders)
         {
-            tryAssignWorkOrder(wo, wo::canBuild);
+            if (workOrders.containsKey(wo.getID()))
+            {
+                tryAssignWorkOrder(wo, wo::canBuild);
+            }
         }
     }
 
