@@ -137,7 +137,6 @@ public class Permissions implements IPermissions
         OP_RANK.addPermission(Action.PLACE_HUTS);
         OP_RANK.addPermission(Action.BREAK_HUTS);
         OP_RANK.addPermission(Action.MANAGE_HUTS);
-        OP_RANK.addPermission(Action.RECEIVE_MESSAGES);
         OP_RANK.addPermission(Action.PLACE_BLOCKS);
         OP_RANK.addPermission(Action.BREAK_BLOCKS);
         OP_RANK.addPermission(Action.FILL_BUCKET);
