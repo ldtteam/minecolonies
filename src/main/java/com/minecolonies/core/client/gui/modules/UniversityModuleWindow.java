@@ -8,12 +8,12 @@ import com.ldtteam.blockui.controls.Button;
 import com.ldtteam.blockui.controls.ButtonImage;
 import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.blockui.views.ScrollingList;
-import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.research.IGlobalResearchTree;
 import com.minecolonies.api.research.IResearchRequirement;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.client.gui.AbstractModuleWindow;
 import com.minecolonies.core.client.gui.WindowResearchTree;
+import com.minecolonies.core.colony.buildings.moduleviews.UniversityResearchModuleView;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -28,21 +28,19 @@ import java.util.List;
 
 import static com.minecolonies.api.research.util.ResearchConstants.COLOR_TEXT_UNFULFILLED;
 import static com.minecolonies.api.util.constant.WindowConstants.GUI_LIST_ELEMENT_NAME;
-import static com.minecolonies.api.util.constant.WindowConstants.RESOURCE_STRING;
 
 /**
  * BOWindow for the university.
  */
-public class UniversityModuleWindow extends AbstractModuleWindow
+public class UniversityModuleWindow extends AbstractModuleWindow<UniversityResearchModuleView>
 {
     /**
      * Constructor for the window of the lumberjack.
      *
-     * @param building {@link com.minecolonies.core.colony.buildings.views.EmptyView}.
      */
-    public UniversityModuleWindow(final IBuildingView building)
+    public UniversityModuleWindow(final UniversityResearchModuleView moduleView)
     {
-        super(building, Constants.MOD_ID + RESOURCE_STRING);
+        super(moduleView, new ResourceLocation(Constants.MOD_ID, "gui/layouthuts/layoutuniversity.xml"));
 
         final List<ResourceLocation> inputBranches = IGlobalResearchTree.getInstance().getBranches();
         inputBranches.sort(Comparator.comparingInt(branchId -> IGlobalResearchTree.getInstance().getBranchData(branchId).getSortOrder()));

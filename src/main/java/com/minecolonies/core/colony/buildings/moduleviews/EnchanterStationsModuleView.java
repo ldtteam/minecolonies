@@ -6,6 +6,7 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.client.gui.modules.EnchanterStationModuleWindow;
 import com.minecolonies.core.network.messages.server.colony.building.enchanter.EnchanterWorkerSetMessage;
 import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.core.BlockPos;
 import net.neoforged.api.distmarker.Dist;
@@ -69,7 +70,7 @@ public class EnchanterStationsModuleView extends AbstractBuildingModuleView
     @Override
     public BOWindow getWindow()
     {
-        return new EnchanterStationModuleWindow(buildingView, this);
+        return new EnchanterStationModuleWindow(this);
     }
 
     @Override
@@ -79,8 +80,8 @@ public class EnchanterStationsModuleView extends AbstractBuildingModuleView
     }
     
     @Override
-    public String getDesc()
+    public Component getDesc()
     {
-        return "com.minecolonies.gui.workerhuts.enchanter.workers";
+        return Component.translatable("com.minecolonies.gui.workerhuts.enchanter.workers");
     }
 }

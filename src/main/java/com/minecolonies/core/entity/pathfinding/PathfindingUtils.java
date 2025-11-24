@@ -3,6 +3,7 @@ package com.minecolonies.core.entity.pathfinding;
 import com.ldtteam.domumornamentum.block.decorative.FloatingCarpetBlock;
 import com.ldtteam.domumornamentum.block.decorative.PanelBlock;
 import com.ldtteam.domumornamentum.block.vanilla.TrapdoorBlock;
+import com.ldtteam.structurize.util.BlockUtils;
 import com.minecolonies.api.blocks.huts.AbstractBlockMinecoloniesDefault;
 import com.minecolonies.api.entity.mobs.drownedpirate.AbstractDrownedEntityPirateRaider;
 import com.minecolonies.api.items.ModTags;
@@ -365,9 +366,72 @@ public class PathfindingUtils
         {
             return true;
         }
-        return blockState.is(BlockTags.CLIMBABLE) && ((options != null && options.canClimbAdvanced()) ||
-            blockState.getBlock() instanceof LadderBlock ||
-            blockState.is(ModTags.freeClimbBlocks));
+        return (blockState.is(BlockTags.CLIMBABLE) && ((options != null && options.canClimbAdvanced()))
+            || blockState.getBlock() instanceof LadderBlock
+            || blockState.is(ModTags.freeClimbBlocks));
+    }
+
+    public static boolean isLadder(
+        final BlockState state,
+        final PathingOptions options,
+        final int nextX,
+        final int nextY,
+        final int nextZ,
+        final CachingBlockLookup cachedBlockLookup)
+    {
+        if (options != null && options.canWalkUnderWater() && isLiquid(state))
+        {
+            return true;
+        }
+
+        if (state.getBlock() instanceof LadderBlock || state.is(ModTags.freeClimbBlocks))
+        {
+            return true;
+        }
+
+        if (state.is(BlockTags.CLIMBABLE) && ((options != null && options.canClimbAdvanced())))
+        {
+            if (state.getBlock() != Blocks.VINE)
+            {
+                return true;
+            }
+            BlockState offsetState = null;
+            Direction offsetDirection = null;
+            if (state.hasProperty(PipeBlock.EAST) && state.getValue(PipeBlock.EAST))
+            {
+                offsetState = cachedBlockLookup.getBlockState(nextX + 1, nextY, nextZ);
+                offsetDirection = Direction.EAST;
+            }
+            else if (state.hasProperty(PipeBlock.WEST) && state.getValue(PipeBlock.WEST))
+            {
+                offsetState = cachedBlockLookup.getBlockState(nextX - 1, nextY, nextZ);
+                offsetDirection = Direction.WEST;
+            }
+            else if (state.hasProperty(PipeBlock.NORTH) && state.getValue(PipeBlock.NORTH))
+            {
+                offsetState = cachedBlockLookup.getBlockState(nextX, nextY, nextZ - 1);
+                offsetDirection = Direction.NORTH;
+            }
+            else if (state.hasProperty(PipeBlock.SOUTH) && state.getValue(PipeBlock.SOUTH))
+            {
+                offsetState = cachedBlockLookup.getBlockState(nextX, nextY, nextZ + 1);
+                offsetDirection = Direction.SOUTH;
+            }
+
+            if (offsetState != null)
+            {
+                if ((offsetState.getBlock() instanceof PanelBlock || offsetState.getBlock() instanceof TrapDoorBlock))
+                {
+                    return offsetState.getValue(TrapDoorBlock.FACING) == offsetDirection;
+                }
+                return BlockUtils.isGoodFloorBlock(offsetState) || offsetState.getBlock() instanceof LeavesBlock;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        return false;
     }
 
     /**

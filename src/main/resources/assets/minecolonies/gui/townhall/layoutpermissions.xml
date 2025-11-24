@@ -7,6 +7,9 @@
             <input id="addPlayerName" size="100 18" pos="26 76" maxlength="32"/>
             <button id="addPlayer" size="14 15" pos="130 78" label="+" source="minecolonies:textures/gui/builderhut/builder_button_mini.png" textcolor="black"/>
 
+            <button id="addOnlinePlayer" size="14 15" pos="150 78" label="👥" source="minecolonies:textures/gui/builderhut/builder_button_mini.png" textcolor="blue"/>
+
+
             <list id="users" size="148 121" pos="26 100">
                 <box size="100% 35" linewidth="1">
                     <text id="name" size="100 11" pos="5 2" color="black"/>
@@ -40,6 +43,13 @@
                     <button id="addfakeplayer" size="35 14" label="$(com.minecolonies.coremod.gui.townhall.add)" pos="105 10"/>
                 </box>
             </list>
+
+            <list id="playerPicker" size="98 119" pos="165 76">
+                <box size="100% 17" linewidth="0">
+                    <button id="playerSelectButton" size="86 17" pos="2 2" source="minecolonies:textures/gui/builderhut/builder_button_medium.png" color="black"/>
+                </box>
+            </list>
+
         </view>
         <view id="managePermissions">
             <text size="148 11" pos="36 65" color="black" label="$(com.minecolonies.coremod.gui.townhall.addrank)"/>

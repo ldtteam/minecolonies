@@ -5,6 +5,8 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildingextensions.registry.BuildingExtensionRegistries;
 import com.minecolonies.api.colony.buildingextensions.registry.BuildingExtensionRegistries.BuildingExtensionEntry;
 import com.minecolonies.api.util.Utils;
+import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.core.tileentities.TileEntityScarecrow;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
@@ -18,6 +20,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.FenceBlock;
 import net.minecraft.world.level.block.FenceGateBlock;
 import net.minecraft.world.level.block.WallBlock;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 
@@ -33,10 +36,11 @@ public class FarmField extends AbstractBuildingExtension
     /**
      * The max width/length of a field.
      */
-    private static final int MAX_RANGE = 5;
+    public static final int MAX_RANGE = 20;
+    public static final int DEFAULT_RANGE = 5;
 
     private static final String TAG_SEED      = "seed";
-    private static final String TAG_RADIUS    = "radius";
+    public static final  String TAG_RADIUS    = "radius";
     private static final String TAG_MAX_RANGE = "maxRange";
     private static final String TAG_STAGE     = "stage";
 
@@ -50,12 +54,7 @@ public class FarmField extends AbstractBuildingExtension
      * in the same order as {@link Direction}:
      * S, W, N, E
      */
-    private int[] radii = {MAX_RANGE, MAX_RANGE, MAX_RANGE, MAX_RANGE};
-
-    /**
-     * The maximum radius for this field.
-     */
-    private int maxRadius;
+    private int[] radii = {DEFAULT_RANGE, DEFAULT_RANGE, DEFAULT_RANGE, DEFAULT_RANGE};
 
     /**
      * Has the field been planted
@@ -71,17 +70,26 @@ public class FarmField extends AbstractBuildingExtension
     public FarmField(final BuildingExtensionEntry fieldType, final BlockPos position)
     {
         super(fieldType, position);
-        this.maxRadius = MAX_RANGE;
     }
 
     /**
      * Constructor to create new instances
      *
      * @param position the position it is placed in.
+     * @param worldIn
      */
-    public static FarmField create(final BlockPos position)
+    public static FarmField create(final BlockPos position, final Level worldIn)
     {
-        return (FarmField) BuildingExtensionRegistries.farmField.get().produceExtension(position);
+        final FarmField farmField = (FarmField) BuildingExtensionRegistries.farmField.get().produceExtension(position);
+        if (farmField != null)
+        {
+            final BlockEntity fieldBlock = worldIn.getBlockEntity(position);
+            if (fieldBlock instanceof TileEntityScarecrow scarecrow)
+            {
+                farmField.radii = scarecrow.getFieldSize();
+            }
+        }
+        return farmField;
     }
 
     @Override
@@ -97,7 +105,6 @@ public class FarmField extends AbstractBuildingExtension
         CompoundTag compound = super.serializeNBT(provider);
         compound.put(TAG_SEED, seed.saveOptional(provider));
         compound.putIntArray(TAG_RADIUS, radii);
-        compound.putInt(TAG_MAX_RANGE, maxRadius);
         compound.putString(TAG_STAGE, fieldStage.name());
         return compound;
     }
@@ -108,7 +115,6 @@ public class FarmField extends AbstractBuildingExtension
         super.deserializeNBT(provider, compound);
         setSeed(ItemStack.parseOptional(provider, compound.getCompound(TAG_SEED)));
         radii = compound.getIntArray(TAG_RADIUS);
-        maxRadius = compound.getInt(TAG_MAX_RANGE);
         fieldStage = Stage.valueOf(compound.getString(TAG_STAGE));
     }
 
@@ -118,7 +124,6 @@ public class FarmField extends AbstractBuildingExtension
         super.serialize(buf);
         Utils.serializeCodecMess(buf, getSeed());
         buf.writeVarIntArray(radii);
-        buf.writeInt(maxRadius);
         buf.writeEnum(fieldStage);
     }
 
@@ -128,7 +133,6 @@ public class FarmField extends AbstractBuildingExtension
         super.deserialize(buf);
         setSeed(Utils.deserializeCodecMess(buf));
         radii = buf.readVarIntArray();
-        maxRadius = buf.readInt();
         fieldStage = buf.readEnum(Stage.class);
     }
 
@@ -189,16 +193,6 @@ public class FarmField extends AbstractBuildingExtension
     }
 
     /**
-     * Get the max range for this field.
-     *
-     * @return the maximum range.
-     */
-    public int getMaxRadius()
-    {
-        return maxRadius;
-    }
-
-    /**
      * @param direction the direction to get the range for
      * @return the radius
      */
@@ -213,7 +207,7 @@ public class FarmField extends AbstractBuildingExtension
      */
     public void setRadius(Direction direction, int radius)
     {
-        this.radii[direction.get2DDataValue()] = Math.min(radius, maxRadius);
+        this.radii[direction.get2DDataValue()] = Math.min(radius, MAX_RANGE);
     }
 
     /**
@@ -246,7 +240,7 @@ public class FarmField extends AbstractBuildingExtension
     {
         EMPTY(new ResourceLocation("minecraft", "textures/item/iron_hoe.png")), 
         HOED(new ResourceLocation("minecraft", "textures/item/wheat_seeds.png")), 
-        PLANTED(new ResourceLocation("minecolonies", "textures/item/crops/durum.png"));
+        PLANTED(new ResourceLocation(Constants.MOD_ID, "textures/item/crops/durum.png"));
 
         protected final ResourceLocation stageIcon;
 

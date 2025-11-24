@@ -6,10 +6,9 @@ import com.ldtteam.blockui.controls.Button;
 import com.ldtteam.blockui.controls.ButtonImage;
 import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.blockui.views.ScrollingList;
-import com.minecolonies.api.colony.buildings.views.IBuildingView;
-import com.minecolonies.api.colony.workorders.IBuilderWorkOrder;
 import com.minecolonies.api.colony.workorders.IWorkOrderView;
 import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.client.gui.AbstractModuleWindow;
 import com.minecolonies.core.colony.buildings.moduleviews.SettingsModuleView;
 import com.minecolonies.core.colony.buildings.moduleviews.WorkOrderListModuleView;
@@ -18,29 +17,29 @@ import com.minecolonies.core.network.messages.server.colony.WorkOrderChangeMessa
 import com.minecolonies.core.network.messages.server.colony.building.builder.BuilderSelectWorkOrderMessage;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Locale;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 
 /**
- * BOWindow for the builder hut workorder list.
+ * BOWindow for the builder hut work orders list.
  */
-public class WorkOrderModuleWindow extends AbstractModuleWindow
+public class WorkOrderModuleWindow extends AbstractModuleWindow<WorkOrderListModuleView>
 {
     /**
-     * List of workOrders.
+     * List of work orders.
      */
     private final List<IWorkOrderView> workOrders = new ArrayList<>();
 
     /**
-     * List of workorders.
+     * The scrolling list showing all the work orders.
      */
     private ScrollingList workOrdersList;
 
@@ -55,15 +54,11 @@ public class WorkOrderModuleWindow extends AbstractModuleWindow
     private int tick = 0;
 
     /**
-     * @param res
-     * @param building
-     * @param moduleView
+     * @param moduleView the module view
      */
-    public WorkOrderModuleWindow(final String res, final IBuildingView building, final WorkOrderListModuleView moduleView)
+    public WorkOrderModuleWindow(final WorkOrderListModuleView moduleView)
     {
-        super(building, res);
-
-        window.findPaneOfTypeByID(DESC_LABEL, Text.class).setText(Component.translatableEscape(moduleView.getDesc().toLowerCase(Locale.US)));
+        super(moduleView, new ResourceLocation(Constants.MOD_ID, "gui/layouthuts/layoutworkorders.xml"));
         registerButton(WORK_ORDER_SELECT, this::selectWorkOrder);
     }
 
@@ -168,7 +163,7 @@ public class WorkOrderModuleWindow extends AbstractModuleWindow
         if (!order.getClaimedBy().equals(BlockPos.ZERO))
         {
             disabledMessage = MESSAGE_WARNING_ALREADY_CLAIMED;
-            buttonEnabled = false; 
+            buttonEnabled = false;
         }
         if (!order.canBuildIgnoringDistance(buildingView.getPosition(), buildingView.getBuildingLevel()))
         {

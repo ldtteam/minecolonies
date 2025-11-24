@@ -1,7 +1,9 @@
 package com.minecolonies.core.colony.permissions;
 
+import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.colony.permissions.*;
 import com.minecolonies.api.util.ColonyUtils;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.Utils;
 import com.minecolonies.core.colony.Colony;
 import com.mojang.authlib.GameProfile;
@@ -668,7 +670,16 @@ public class Permissions implements IPermissions
     @Override
     public boolean hasPermission(@NotNull final Player player, @NotNull final Action action)
     {
-        return hasPermission(getRank(player), action);
+        if (hasPermission(getRank(player), action))
+        {
+            return true;
+        }
+        else if (player.hasPermissions(IMinecoloniesAPI.getInstance().getConfig().getServer().permissionEventMinBypassPermLevel.get()))
+        {
+            Log.getLogger().debug("Permission check got bypassed, original event was. Player: {}, Name: {}, Action: {}", player.getUUID(), player.getName().getString(), action);
+            return true;
+        }
+        return false;
     }
 
     @Override

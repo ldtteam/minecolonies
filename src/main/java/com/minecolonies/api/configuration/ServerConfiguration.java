@@ -90,8 +90,9 @@ public class ServerConfiguration extends AbstractConfiguration
      *  ------------------- ######## Permission Settings ######## ------------------- *
      *  ----------------------------------------------------------------------------- */
 
-    public final BooleanValue                        enableColonyProtection;
-    public final EnumValue<Explosions>               turnOffExplosionsInColonies;
+    public final BooleanValue          enableColonyProtection;
+    public final EnumValue<Explosions> turnOffExplosionsInColonies;
+    public final IntValue              permissionEventMinBypassPermLevel;
 
     /*  -------------------------------------------------------------------------------- *
      *  ------------------- ######## Compatibility Settings ######## ------------------- *
@@ -137,7 +138,7 @@ public class ServerConfiguration extends AbstractConfiguration
         allowInfiniteSupplyChests = defineBoolean("allowinfinitesupplychests", false);
         allowInfiniteColonies = defineBoolean("allowinfinitecolonies", false);
         allowOtherDimColonies = defineBoolean("allowotherdimcolonies", true);
-        maxCitizenPerColony = defineInteger("maxcitizenpercolony", 250, 100, CitizenConstants.CITIZEN_LIMIT_MAX);
+        maxCitizenPerColony = defineInteger("maxcitizenpercolony", 250, 25, CitizenConstants.CITIZEN_LIMIT_MAX);
         enableInDevelopmentFeatures = defineBoolean("enableindevelopmentfeatures", false);
         alwaysRenderNameTag = defineBoolean("alwaysrendernametag", true);
         workersAlwaysWorkInRain = defineBoolean("workersalwaysworkinrain", false);
@@ -196,6 +197,7 @@ public class ServerConfiguration extends AbstractConfiguration
 
         enableColonyProtection = defineBoolean("enablecolonyprotection", true);
         turnOffExplosionsInColonies = defineEnum("turnoffexplosionsincolonies", Explosions.DAMAGE_ENTITIES);
+        permissionEventMinBypassPermLevel = defineInteger("permissioneventbypassminpermlevel", 2, 0, 4);
 
         swapToCategory("compatibility");
 

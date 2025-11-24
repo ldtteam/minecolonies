@@ -6,6 +6,7 @@ import com.minecolonies.api.colony.buildings.modules.AbstractBuildingModuleView;
 import com.minecolonies.api.util.constant.Constants;
 
 import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
@@ -69,7 +70,7 @@ public class LivingBuildingModuleView extends AbstractBuildingModuleView
     }
 
     @Override
-    public String getDesc()
+    public Component getDesc()
     {
         return null;
     }

@@ -33,6 +33,7 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.Half;
 import net.minecraft.world.level.pathfinder.Node;
 import net.minecraft.world.level.pathfinder.Path;
+import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
@@ -730,6 +731,12 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
         //  Can we traverse into this node?  Fix the y up, skip on already explored nodes
         if (node.isVisited())
         {
+            if (node.isCornerNode() && node.parent != null && node.parent.y == node.y)
+            {
+                // Corner nodes can only connect sideways when going up
+                return;
+            }
+
             final Block target = cachedBlockLookup.getBlockState(nextX, nextY, nextZ).getBlock();
             if (target instanceof PanelBlock || target instanceof TrapDoorBlock)
             {
@@ -850,7 +857,7 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
         final boolean onRoad = WorkerUtil.isPathBlock(belowState.getBlock());
         final boolean onRails = pathingOptions.canUseRails() && (corner ? belowState : state).getBlock() instanceof BaseRailBlock;
         final boolean railsExit = !onRails && node != null && node.isOnRails();
-        final boolean ladder = PathfindingUtils.isLadder(state, pathingOptions);
+        final boolean ladder = PathfindingUtils.isLadder(state, pathingOptions, nextX, nextY, nextZ, cachedBlockLookup);
         final boolean isDiving = isSwimming && PathfindingUtils.isWater(world, null, aboveState, null);
 
         double nextCost = 0;
@@ -882,7 +889,7 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
 
         if (nextNode == null)
         {
-            nextNode = createNode(node, nextX, nextY, nextZ, nodeKey, heuristic, cost);
+            nextNode = createNode(node, nextX, nextY, nextZ, heuristic, cost);
             nextNode.setOnRails(onRails);
             nextNode.setCornerNode(corner);
             if (isSwimming)
@@ -905,11 +912,11 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
 
     @NotNull
     private MNode createNode(
-      final MNode parent, final int x, final int y, final int z, final int nodeKey, final double heuristic, final double cost)
+        final MNode parent, final int x, final int y, final int z, final double heuristic, final double cost)
     {
         final MNode node;
         node = new MNode(parent, x, y, z, cost, heuristic);
-        nodes.put(nodeKey, node);
+        nodes.put(MNode.computeNodeKey(x, y, z), node);
         if (debugDrawEnabled)
         {
             debugNodesNotVisited.add(node);
@@ -1271,7 +1278,12 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
         if (!isPassable(x, y + 1, z, true, parent))
         {
             // TODO: Checking +1 and -1 seems odd? probably one intended to be current instead
-            final VoxelShape bb1 = cachedBlockLookup.getBlockState(x, y - 1, z).getCollisionShape(world, tempWorldPos.set(x, y - 1, z));
+            VoxelShape bb1 = cachedBlockLookup.getBlockState(x, y - 1, z).getCollisionShape(world, tempWorldPos.set(x, y - 1, z));
+            if (PathfindingUtils.isLiquid(cachedBlockLookup.getBlockState(x, y - 1, z)))
+            {
+                bb1 = Shapes.block();
+            }
+
             final VoxelShape bb2 = cachedBlockLookup.getBlockState(x, y + 1, z).getCollisionShape(world, tempWorldPos.set(x, y + 1, z));
             if ((y + 1 + ShapeUtil.getStartY(bb2, 1)) - (y - 1 + ShapeUtil.getEndY(bb1, 0)) < 2)
             {
@@ -1520,7 +1532,7 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
             return handleInLiquid(x, y, z, below, isSwimming);
         }
 
-        if (PathfindingUtils.isLadder(below, pathingOptions))
+        if (PathfindingUtils.isLadder(below, pathingOptions, x, y - 1, z, cachedBlockLookup))
         {
             return y;
         }
@@ -1869,9 +1881,10 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
     @Override
     public String toString()
     {
-        return getClass().getSimpleName() + " start:" + start + " entity:" + entity + " maxNodes:" + maxNodes + " totalNodesVisited:" + totalNodesVisited + " bestNodeCost:"
+        return getClass().getSimpleName() + " start:" + start.toShortString() + " entity:" + entity + " maxNodes:" + maxNodes + " totalNodesVisited:" + totalNodesVisited
+            + " bestNodeCost:"
             + bestNode.getCost() + " heuristicCostEstimate:" + startNode.getHeuristic() + " h-rebalances:" + (
             visitedLevel - 1) + " reaches:"
-            + reachesDestination;
+            + reachesDestination + (this instanceof IDestinationPathJob ? " dest:" + ((IDestinationPathJob) this).getDestination().toShortString() : "");
     }
 }

@@ -636,6 +636,13 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
           .add(ModItems.pottage)
           .add(ModItems.stuffed_pepper)
           .add(ModItems.stuffed_pita);
+
+        tag(ItemTags.BOOKSHELF_BOOKS)
+            .add(ModItems.ancientTome)
+            .add(ModItems.colonyMap)
+            .add(ModItems.clipboard)
+            .add(ModItems.questLog)
+            .add(ModItems.resourceScroll);
     }
 
     @NotNull

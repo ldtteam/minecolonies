@@ -5,6 +5,7 @@ import com.minecolonies.api.colony.buildings.modules.AbstractBuildingModuleView;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.client.gui.modules.UniversityModuleWindow;
 import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
@@ -25,7 +26,7 @@ public class UniversityResearchModuleView extends AbstractBuildingModuleView
     @Override
     public BOWindow getWindow()
     {
-        return new UniversityModuleWindow(buildingView);
+        return new UniversityModuleWindow(this);
     }
 
     @Override
@@ -35,8 +36,8 @@ public class UniversityResearchModuleView extends AbstractBuildingModuleView
     }
 
     @Override
-    public String getDesc()
+    public Component getDesc()
     {
-        return "com.minecolonies.coremod.research.research";
+        return Component.translatable("com.minecolonies.coremod.research.research");
     }
 }

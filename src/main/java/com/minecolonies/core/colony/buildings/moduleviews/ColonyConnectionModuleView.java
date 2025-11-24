@@ -5,6 +5,7 @@ import com.minecolonies.api.colony.buildings.modules.AbstractBuildingModuleView;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.client.gui.modules.ConnectionModuleWindow;
 import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
@@ -24,9 +25,9 @@ public class ColonyConnectionModuleView extends AbstractBuildingModuleView
     }
 
     @Override
-    public String getDesc()
+    public Component getDesc()
     {
-        return "com.minecolonies.core.gui.connections";
+        return Component.translatable("com.minecolonies.core.gui.connections");
     }
 
     @Override
@@ -39,7 +40,7 @@ public class ColonyConnectionModuleView extends AbstractBuildingModuleView
     @Override
     public BOWindow getWindow()
     {
-        return new ConnectionModuleWindow(Constants.MOD_ID + ":gui/layouthuts/layoutcolonyconnection.xml", buildingView, false);
+        return new ConnectionModuleWindow(buildingView, false);
     }
 
     @Override

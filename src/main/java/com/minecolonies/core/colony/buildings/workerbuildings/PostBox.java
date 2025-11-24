@@ -13,6 +13,7 @@ import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.requestable.Stack;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.client.gui.modules.MinimumStockModuleWindow;
 import com.minecolonies.core.client.gui.WindowPostBoxMain;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
@@ -21,12 +22,11 @@ import com.minecolonies.core.colony.buildings.views.AbstractBuildingView;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Tuple;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
-
-import static com.minecolonies.api.util.constant.WindowConstants.WINDOW_POSTBOX_MINIMUM_STOCK;
 
 /**
  * Class used to manage the postbox building block.
@@ -136,19 +136,19 @@ public class PostBox extends AbstractBuilding implements IRSComponent
         }
     }
 
-    /*
+    /**
      * View class for the custom minimum stock PostBox functionality
      */
     public static class PostBoxMinimumStockModuleView extends MinimumStockModuleView
     {
         @Override
         @OnlyIn(Dist.CLIENT)
-        public BOWindow getWindow() 
+        public BOWindow getWindow()
         {
-            return new MinimumStockModuleWindow(buildingView, this, WINDOW_POSTBOX_MINIMUM_STOCK);
+            return new MinimumStockModuleWindow(this, new ResourceLocation(Constants.MOD_ID, "gui/windowpostboxminstock.xml"));
         }
 
-        public boolean isPageVisible() 
+        public boolean isPageVisible()
         {
             /* We disable the module nav elements rendering using this, as there is no other module at this time */
             return false;

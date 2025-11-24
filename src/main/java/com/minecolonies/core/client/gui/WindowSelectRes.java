@@ -10,7 +10,9 @@ import com.ldtteam.blockui.views.BOWindow;
 import com.ldtteam.blockui.views.ScrollingList;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.client.Minecraft;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import org.apache.commons.lang3.StringUtils;
@@ -74,7 +76,7 @@ public class WindowSelectRes extends AbstractWindowSkeleton
      */
     public WindowSelectRes(final BOWindow origin, final Predicate<ItemStack> test, final BiConsumer<ItemStack, Integer> consumer, final boolean displayQty)
     {
-        super("minecolonies:gui/windowselectres.xml", origin);
+        super(origin, new ResourceLocation(Constants.MOD_ID, "gui/windowselectres.xml"));
         this.resourceList = this.findPaneOfTypeByID("resources", ScrollingList.class);
         registerButton(BUTTON_DONE, this::doneClicked);
         registerButton(BUTTON_CANCEL, this::cancelClicked);

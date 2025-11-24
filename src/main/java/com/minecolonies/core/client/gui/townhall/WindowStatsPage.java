@@ -81,12 +81,12 @@ public class WindowStatsPage extends AbstractWindowTownHall
      */
     private void createAndSetStatistics()
     {
-        final int citizensSize = building.getColony().getCitizens().size();
+        final int citizensSize = buildingView.getColony().getCitizens().size();
         final int citizensCap;
 
         if (MinecoloniesAPIProxy.getInstance().getGlobalResearchTree().hasResearchEffect(CITIZEN_CAP))
         {
-            final int max = Math.max(CitizenConstants.CITIZEN_LIMIT_DEFAULT, (int) this.building.getColony().getResearchManager().getResearchEffects().getEffectStrength(CITIZEN_CAP));
+            final int max = Math.max(CitizenConstants.CITIZEN_LIMIT_DEFAULT, (int) this.buildingView.getColony().getResearchManager().getResearchEffects().getEffectStrength(CITIZEN_CAP));
             citizensCap = Math.min(max, MineColonies.getConfig().getServer().maxCitizenPerColony.get());
         }
         else
@@ -97,26 +97,26 @@ public class WindowStatsPage extends AbstractWindowTownHall
         final Text totalCitizenLabel = findPaneOfTypeByID(TOTAL_CITIZENS_LABEL, Text.class);
         totalCitizenLabel.setText(Component.translatableEscape(COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_POPULATION_TOTALCITIZENS_COUNT,
           citizensSize,
-          Math.max(citizensSize, building.getColony().getCitizenCountLimit())));
+          Math.max(citizensSize, buildingView.getColony().getCitizenCountLimit())));
         List<MutableComponent> hoverText = new ArrayList<>();
-        if(citizensSize < (citizensCap * 0.9) && citizensSize < (building.getColony().getCitizenCountLimit() * 0.9))
+        if(citizensSize < (citizensCap * 0.9) && citizensSize < (buildingView.getColony().getCitizenCountLimit() * 0.9))
         {
             totalCitizenLabel.setColors(DARKGREEN);
         }
         else if(citizensSize < citizensCap)
         {
-            hoverText.add(Component.translatableEscape(WARNING_POPULATION_NEEDS_HOUSING, this.building.getColony().getName()));
+            hoverText.add(Component.translatableEscape(WARNING_POPULATION_NEEDS_HOUSING, this.buildingView.getColony().getName()));
             totalCitizenLabel.setColors(ORANGE);
         }
         else
         {
             if(citizensCap < MineColonies.getConfig().getServer().maxCitizenPerColony.get())
             {
-                hoverText.add(Component.translatableEscape(WARNING_POPULATION_RESEARCH_LIMITED, this.building.getColony().getName()));
+                hoverText.add(Component.translatableEscape(WARNING_POPULATION_RESEARCH_LIMITED, this.buildingView.getColony().getName()));
             }
             else
             {
-                hoverText.add(Component.translatableEscape( WARNING_POPULATION_CONFIG_LIMITED, this.building.getColony().getName()));
+                hoverText.add(Component.translatableEscape( WARNING_POPULATION_CONFIG_LIMITED, this.buildingView.getColony().getName()));
             }
             totalCitizenLabel.setText(Component.translatableEscape(COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_POPULATION_TOTALCITIZENS_COUNT, citizensSize, citizensCap));
             totalCitizenLabel.setColors(RED);
@@ -125,7 +125,7 @@ public class WindowStatsPage extends AbstractWindowTownHall
 
         int children = 0;
         final Map<String, Tuple<Integer, Integer>> jobMaxCountMap = new HashMap<>();
-        for (@NotNull final IBuildingView building : building.getColony().getBuildings())
+        for (@NotNull final IBuildingView building : buildingView.getColony().getBuildings())
         {
             if (building instanceof AbstractBuildingView)
             {
@@ -158,7 +158,7 @@ public class WindowStatsPage extends AbstractWindowTownHall
 
         //calculate number of children
         int unemployed = 0;
-        for (ICitizenDataView iCitizenDataView : building.getColony().getCitizens().values())
+        for (ICitizenDataView iCitizenDataView : buildingView.getColony().getCitizens().values())
         {
             if (iCitizenDataView.isChild())
             {
@@ -226,7 +226,7 @@ public class WindowStatsPage extends AbstractWindowTownHall
      */
     private void updateStats()
     {
-        final @NotNull List<String> stats = new ArrayList<>(building.getColony().getStatisticsManager().getStatTypes());
+        final @NotNull List<String> stats = new ArrayList<>(buildingView.getColony().getStatisticsManager().getStatTypes());
 
         findPaneOfTypeByID("stats", ScrollingList.class).setDataProvider(new ScrollingList.DataProvider()
         {
@@ -248,11 +248,11 @@ public class WindowStatsPage extends AbstractWindowTownHall
             @Override
             public void updateElement(final int index, @NotNull final Pane rowPane)
             {
-                int stat = building.getColony().getStatisticsManager().getStatTotal(stats.get(index));
+                int stat = buildingView.getColony().getStatisticsManager().getStatTotal(stats.get(index));
                 int interval = INTERVAL.get(selectedInterval);
                 if (interval > 0)
                 {
-                    stat = building.getColony().getStatisticsManager().getStatsInPeriod(stats.get(index), building.getColony().getDay() - interval, building.getColony().getDay());
+                    stat = buildingView.getColony().getStatisticsManager().getStatsInPeriod(stats.get(index), buildingView.getColony().getDay() - interval, buildingView.getColony().getDay());
                 }
 
                 final Text resourceLabel = rowPane.findPaneOfTypeByID("desc", Text.class);

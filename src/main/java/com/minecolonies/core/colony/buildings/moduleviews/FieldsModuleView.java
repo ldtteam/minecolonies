@@ -49,9 +49,9 @@ public abstract class FieldsModuleView extends AbstractBuildingModuleView
     }
 
     @Override
-    public String getDesc()
+    public Component getDesc()
     {
-        return BUILDING_TAB_FIELDS;
+        return Component.translatable(BUILDING_TAB_FIELDS);
     }
 
     /**

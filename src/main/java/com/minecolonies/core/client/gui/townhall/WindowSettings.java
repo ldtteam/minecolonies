@@ -25,7 +25,7 @@ public class WindowSettings extends AbstractWindowTownHall
     {
         super(townHall, "layoutsettings.xml");
 
-        this.moduleView = building.getModuleView(BuildingModules.TOWNHALL_SETTINGS);
+        this.moduleView = buildingView.getModuleView(BuildingModules.TOWNHALL_SETTINGS);
 
         moduleView.getSetting(BuildingTownHall.AUTO_HIRING_MODE)
           .setupHandler(BuildingTownHall.AUTO_HIRING_MODE, window.findPaneByID("job"), moduleView, moduleView.getBuildingView(), WindowSettings.this);

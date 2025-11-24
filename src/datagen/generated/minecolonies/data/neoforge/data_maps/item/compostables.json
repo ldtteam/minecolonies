@@ -22,16 +22,16 @@
       "chance": 1.0
     },
     "minecolonies:cheddar_cheese": {
-      "chance": 0.6666667
+      "chance": 0.8333333
     },
     "minecolonies:cheese_pizza": {
       "chance": 1.0
     },
     "minecolonies:cheese_ravioli": {
-      "chance": 0.6666667
+      "chance": 0.8333333
     },
     "minecolonies:chicken_broth": {
-      "chance": 0.6666667
+      "chance": 0.8333333
     },
     "minecolonies:chickpea": {
       "chance": 0.5
@@ -46,13 +46,13 @@
       "chance": 1.0
     },
     "minecolonies:cooked_rice": {
-      "chance": 0.6666667
+      "chance": 0.8333333
     },
     "minecolonies:corn": {
       "chance": 0.5
     },
     "minecolonies:corn_chowder": {
-      "chance": 0.6666667
+      "chance": 0.8333333
     },
     "minecolonies:durum": {
       "chance": 0.5
@@ -67,7 +67,7 @@
       "chance": 1.0
     },
     "minecolonies:feta_cheese": {
-      "chance": 0.6666667
+      "chance": 0.8333333
     },
     "minecolonies:fish_dinner": {
       "chance": 1.0
@@ -76,7 +76,7 @@
       "chance": 1.0
     },
     "minecolonies:flatbread": {
-      "chance": 0.6666667
+      "chance": 0.8333333
     },
     "minecolonies:fried_rice": {
       "chance": 1.0
@@ -106,7 +106,7 @@
       "chance": 1.0
     },
     "minecolonies:meat_ravioli": {
-      "chance": 0.6666667
+      "chance": 0.8333333
     },
     "minecolonies:milky_bread": {
       "chance": 0.8333333
@@ -115,10 +115,10 @@
       "chance": 0.5
     },
     "minecolonies:mint_jelly": {
-      "chance": 0.6666667
+      "chance": 0.8333333
     },
     "minecolonies:mint_tea": {
-      "chance": 0.6666667
+      "chance": 0.8333333
     },
     "minecolonies:mintchoco_cheesecake": {
       "chance": 1.0
@@ -148,7 +148,7 @@
       "chance": 1.0
     },
     "minecolonies:pea_soup": {
-      "chance": 0.6666667
+      "chance": 0.8333333
     },
     "minecolonies:peas": {
       "chance": 0.5
@@ -166,13 +166,13 @@
       "chance": 1.0
     },
     "minecolonies:polenta": {
-      "chance": 0.6666667
+      "chance": 0.8333333
     },
     "minecolonies:potato_soup": {
-      "chance": 0.6666667
+      "chance": 0.8333333
     },
     "minecolonies:pottage": {
-      "chance": 1.0
+      "chance": 0.8333333
     },
     "minecolonies:ramen": {
       "chance": 1.0
@@ -193,10 +193,10 @@
       "chance": 1.0
     },
     "minecolonies:spicy_grilled_chicken": {
-      "chance": 0.6666667
+      "chance": 0.8333333
     },
     "minecolonies:squash_soup": {
-      "chance": 0.6666667
+      "chance": 0.8333333
     },
     "minecolonies:steak_dinner": {
       "chance": 1.0
@@ -220,25 +220,25 @@
       "chance": 1.0
     },
     "minecolonies:tofu": {
-      "chance": 0.6666667
+      "chance": 0.8333333
     },
     "minecolonies:tomato": {
       "chance": 0.5
     },
     "minecolonies:tortillas": {
-      "chance": 0.6666667
+      "chance": 0.8333333
     },
     "minecolonies:veggie_quiche": {
       "chance": 1.0
     },
     "minecolonies:veggie_ravioli": {
-      "chance": 0.6666667
+      "chance": 0.8333333
     },
     "minecolonies:veggie_soup": {
       "chance": 1.0
     },
     "minecolonies:yogurt": {
-      "chance": 0.6666667
+      "chance": 0.8333333
     },
     "minecolonies:yogurt_with_berries": {
       "chance": 1.0

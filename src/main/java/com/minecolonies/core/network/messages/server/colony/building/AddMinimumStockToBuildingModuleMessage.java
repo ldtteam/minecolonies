@@ -65,7 +65,7 @@ public class AddMinimumStockToBuildingModuleMessage extends AbstractBuildingServ
     @Override
     protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final IBuilding building)
     {
-        IBuildingModule minStockModule = building.getFirstModuleOccurance(MinimumStockModule.class);
+        IBuildingModule minStockModule = building.getModule(BuildingModules.MIN_STOCK);
         if (minStockModule != null)
         {
             ((MinimumStockModule) minStockModule).addMinimumStock(itemStack, quantity);

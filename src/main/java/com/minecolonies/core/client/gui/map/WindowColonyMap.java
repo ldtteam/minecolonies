@@ -137,11 +137,6 @@ public class WindowColonyMap extends AbstractWindowSkeleton
     private static final int MAP_SIZE = MinecraftMap.MAP_SIZE * MAP_ZOOM;
 
     /**
-     * Link to the xml file of the window.
-     */
-    private static final String WINDOW_RESOURCE = ":gui/map/windowcolonymap.xml";
-
-    /**
      * Scale at which colonies stop showing details
      */
     private static final double COLONY_DETAIL_SCALE = 0.3;
@@ -206,7 +201,7 @@ public class WindowColonyMap extends AbstractWindowSkeleton
      */
     public WindowColonyMap(final boolean atTownHall, final ITownHallView building)
     {
-        super(Constants.MOD_ID + WINDOW_RESOURCE);
+        super(new ResourceLocation(Constants.MOD_ID, "gui/map/windowcolonymap.xml"));
         this.atTownHall = atTownHall;
         this.building = building;
         playerPos = Minecraft.getInstance().player.blockPosition();

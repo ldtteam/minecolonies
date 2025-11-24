@@ -171,7 +171,7 @@ public class EntityAIStudy extends AbstractEntityAISkill<JobStudent, BuildingLib
             }
         }
 
-        worker.decreaseSaturationForAction();
+        worker.decreaseSaturationForContinuousAction();
         studyPos = null;
         worker.queueSound(SoundEvents.BOOK_PAGE_TURN, worker.blockPosition().above(), 80, 15, 0.25f, 1.5f);
 
