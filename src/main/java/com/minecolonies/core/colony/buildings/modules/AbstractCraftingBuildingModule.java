@@ -1076,12 +1076,6 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
         {
             return MODULE_SMELTING;
         }
-
-        @Override
-        public IRecipeStorage getFirstFulfillableRecipe(final Predicate<ItemStack> stackPredicate, final int count, final boolean considerReservation)
-        {
-            return super.getFirstFulfillableRecipe(stackPredicate, count, considerReservation);
-        }
     }
 
     /** this module is for brewing-only users */
