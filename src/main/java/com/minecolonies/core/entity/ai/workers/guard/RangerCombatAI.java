@@ -201,7 +201,6 @@ public class RangerCombatAI extends AttackMoveAI<EntityCitizen>
         target.setLastHurtByMob(user);
         CitizenItemUtils.damageItemInHand(user, InteractionHand.MAIN_HAND, 1);
         user.stopUsingItem();
-        user.decreaseSaturationForContinuousAction();
     }
 
     @Override
@@ -386,12 +385,13 @@ public class RangerCombatAI extends AttackMoveAI<EntityCitizen>
     @Override
     protected void onTargetDied(final LivingEntity entity)
     {
-        parentAI.incrementActionsDoneAndDecSaturation();
+        parentAI.incrementActionsDone();
         user.getCitizenExperienceHandler().addExperience(EXP_PER_MOB_DEATH);
         user.getCitizenColonyHandler().getColonyOrRegister().getStatisticsManager().increment(MOBS_KILLED, user.getCitizenColonyHandler().getColonyOrRegister().getDay());
         if (entity.getType().getDescription().getContents() instanceof TranslatableContents translatableContents)
         {
             parentAI.building.getModule(STATS_MODULE).increment(MOB_KILLED + ";" + translatableContents.getKey());
         }
+        user.decreaseSaturationForContinuousAction();
     }
 }

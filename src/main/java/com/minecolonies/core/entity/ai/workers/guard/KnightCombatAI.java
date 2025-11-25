@@ -126,7 +126,6 @@ public class KnightCombatAI extends AttackMoveAI<EntityCitizen>
                 user.getInventoryCitizen().markDirty();
             }
             user.lookAt(target, (float) TURN_AROUND, (float) TURN_AROUND);
-            user.decreaseSaturationForContinuousAction();
         }
 
         return null;
@@ -192,7 +191,6 @@ public class KnightCombatAI extends AttackMoveAI<EntityCitizen>
         }
 
         user.stopUsingItem();
-        user.decreaseSaturationForContinuousAction();
         user.getCitizenData().setVisibleStatus(getCombatStatus());
         CitizenItemUtils.damageItemInHand(user, InteractionHand.MAIN_HAND, 1);
     }
@@ -376,12 +374,13 @@ public class KnightCombatAI extends AttackMoveAI<EntityCitizen>
     @Override
     protected void onTargetDied(final LivingEntity entity)
     {
-        parentAI.incrementActionsDoneAndDecSaturation();
+        parentAI.incrementActionsDone();
         user.getCitizenExperienceHandler().addExperience(EXP_PER_MOB_DEATH);
         user.getCitizenColonyHandler().getColonyOrRegister().getStatisticsManager().increment(MOBS_KILLED, user.getCitizenColonyHandler().getColonyOrRegister().getDay());
         if (entity.getType().getDescription().getContents() instanceof TranslatableContents translatableContents)
         {
             parentAI.building.getModule(STATS_MODULE).increment(MOB_KILLED + ";" + translatableContents.getKey());
         }
+        user.decreaseSaturationForContinuousAction();
     }
 }
