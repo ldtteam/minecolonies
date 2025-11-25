@@ -117,35 +117,6 @@ public class Permissions implements IPermissions
     private static final int permissionsVersion = 5;
 
     /**
-     * Special OP rank.
-     */
-    private static final Rank OP_RANK = new Rank(-1, "OP", false, true);
-    static {
-        OP_RANK.addPermission(Action.ACCESS_HUTS);
-        OP_RANK.addPermission(Action.USE_SCAN_TOOL);
-        OP_RANK.addPermission(Action.TOSS_ITEM);
-        OP_RANK.addPermission(Action.PICKUP_ITEM);
-        OP_RANK.addPermission(Action.RIGHTCLICK_BLOCK);
-        OP_RANK.addPermission(Action.RIGHTCLICK_ENTITY);
-        OP_RANK.addPermission(Action.THROW_POTION);
-        OP_RANK.addPermission(Action.SHOOT_ARROW);
-        OP_RANK.addPermission(Action.ATTACK_CITIZEN);
-        OP_RANK.addPermission(Action.ATTACK_ENTITY);
-        OP_RANK.addPermission(Action.TELEPORT_TO_COLONY);
-        OP_RANK.addPermission(Action.ACCESS_FREE_BLOCKS);
-        OP_RANK.addPermission(Action.ACCESS_TOGGLEABLES);
-        OP_RANK.addPermission(Action.PLACE_HUTS);
-        OP_RANK.addPermission(Action.BREAK_HUTS);
-        OP_RANK.addPermission(Action.MANAGE_HUTS);
-        OP_RANK.addPermission(Action.PLACE_BLOCKS);
-        OP_RANK.addPermission(Action.BREAK_BLOCKS);
-        OP_RANK.addPermission(Action.FILL_BUCKET);
-        OP_RANK.addPermission(Action.OPEN_CONTAINER);
-        OP_RANK.addPermission(Action.RALLY_GUARDS);
-        OP_RANK.addPermission(Action.MAP_BORDER);
-    }
-
-    /**
      * Saves the permissionMap with allowed actions.
      *
      * @param colony the colony this permissionMap object belongs to.
@@ -703,10 +674,10 @@ public class Permissions implements IPermissions
         {
             return true;
         }
-        else if (player.hasPermissions(IMinecoloniesAPI.getInstance().getConfig().getServer().permissionEventMinBypassPermLevel.get()) && player.isCreative())
+        else if (action.allowsOperatorBypass() && player.hasPermissions(IMinecoloniesAPI.getInstance().getConfig().getServer().permissionEventMinBypassPermLevel.get()))
         {
-            Log.getLogger().debug("Permission check got bypassed, original event was. Player: {}, Name: {}, Action: {}", player.getUUID(), player.getName().getString(), action);
-            return hasPermission(OP_RANK, action);
+            Log.getLogger().debug("Permission check got bypassed, original event was. Player: {}, Name: {}, Action: {}", player.getUUID(), player.getName(), action);
+            return true;
         }
         return false;
     }

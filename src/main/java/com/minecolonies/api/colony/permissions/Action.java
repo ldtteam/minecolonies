@@ -8,7 +8,7 @@ public enum Action
     //counts for citizen and huts.
     ACCESS_HUTS(0),
     //If guards can attack, player can attack back
-    GUARDS_ATTACK(1),
+    GUARDS_ATTACK(1, false),
     PLACE_HUTS(2),
     BREAK_HUTS(3),
     //Including promote, demote and remove.
@@ -45,7 +45,8 @@ public enum Action
     // remember to update permissionsVersion and add some upgrade logic in upgradePermissions if you
     // add new actions that shouldn't just be off by default for everyone
 
-    private final long flag;
+    private final long    flag;
+    private final boolean allowsOperatorBypass;
 
     /**
      * Stores the action as byte. {@link #ACCESS_HUTS} has value 0000 0000 has value 0100 0000
@@ -54,11 +55,28 @@ public enum Action
      */
     Action(final int bit)
     {
+        this(bit, true);
+    }
+
+    /**
+     * Stores the action as byte. {@link #ACCESS_HUTS} has value 0000 0000 has value 0100 0000
+     *
+     * @param bit                  how many bits should be shifted and set
+     * @param allowsOperatorBypass whether this action may be bypassed by server operators.
+     */
+    Action(final int bit, final boolean allowsOperatorBypass)
+    {
         this.flag = 0x1L << bit;
+        this.allowsOperatorBypass = allowsOperatorBypass;
     }
 
     public long getFlag()
     {
         return flag;
+    }
+
+    public boolean allowsOperatorBypass()
+    {
+        return allowsOperatorBypass;
     }
 }
