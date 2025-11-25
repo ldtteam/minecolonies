@@ -35,4 +35,6 @@ public interface IStateMachineTransition<S extends IState>
      * @return name
      */
     Component getName();
+
+    IStateMachineTransition withName(String name);
 }

@@ -2,8 +2,10 @@ package com.minecolonies.core.entity.ai.workers.guard;
 
 import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.colony.guardtype.registry.ModGuardTypes;
+import com.minecolonies.api.entity.ai.combat.CombatAIStates;
 import com.minecolonies.api.entity.ai.combat.threat.IThreatTableEntity;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.ITickRateStateMachine;
+import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickingTransition;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.util.BlockPosUtil;
@@ -40,6 +42,7 @@ import java.util.function.BiPredicate;
 
 import static com.minecolonies.api.research.util.ResearchConstants.DRUID_USE_POTIONS;
 import static com.minecolonies.api.util.constant.GuardConstants.*;
+import static com.minecolonies.core.entity.ai.BehaviourStateGroup.GUARD_ABORT_AND_FIGHT;
 import static com.minecolonies.core.entity.ai.workers.guard.AbstractEntityAIFight.SPEED_LEVEL_BONUS;
 
 /**
@@ -98,6 +101,9 @@ public class DruidCombatAI extends AttackMoveAI<EntityCitizen>
       final AbstractEntityAIGuard parentAI)
     {
         super(owner, stateMachine);
+
+        stateMachine.addTransitionGroup(GUARD_ABORT_AND_FIGHT, new TickingTransition(this::checkForTarget, () -> CombatAIStates.ATTACKING, 5).withName("busy_checkTarget"));
+        stateMachine.addTransitionGroup(GUARD_ABORT_AND_FIGHT, new TickingTransition(this::searchNearbyTarget, () -> CombatAIStates.ATTACKING, 80).withName("busy_searchTarget"));
 
         this.parentAI = parentAI;
         combatPathingOptions = new PathingOptions();
