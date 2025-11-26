@@ -1908,12 +1908,12 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
      */
     private boolean decreaseIdleSaturation()
     {
-        if (citizenData != null)
+        if (citizenData != null && level() != null && !level().isNight())
         {
             final int buildingLevel = citizenData.getHomeBuilding() == null ? 1 :  citizenData.getHomeBuilding().getBuildingLevelEquivalent();
             if (buildingLevel <= 2)
             {
-                citizenData.decreaseSaturation(buildingLevel / 25.0);
+                citizenData.decreaseSaturation(buildingLevel / 15.0);
             }
             else
             {
