@@ -182,6 +182,7 @@ public class ColonyPackageManager implements IColonyPackageManager
             colony.getVisitorManager().sendPackets(closeSubscribers, newSubscribers);
             colony.getBuildingManager().sendPackets(closeSubscribers, newSubscribers);
             colony.getResearchManager().sendPackets(closeSubscribers, newSubscribers);
+            colony.getBuildingModuleTemplateManager().sendPackets(closeSubscribers, newSubscribers);
         }
 
         if (newSubscribers.isEmpty())
@@ -193,6 +194,7 @@ public class ColonyPackageManager implements IColonyPackageManager
         colony.getCitizenManager().clearDirty();
         colony.getVisitorManager().clearDirty();
         colony.getResearchManager().clearDirty();
+        colony.getBuildingModuleTemplateManager().clearDirty();
         newSubscribers = new HashSet<>();
     }
 

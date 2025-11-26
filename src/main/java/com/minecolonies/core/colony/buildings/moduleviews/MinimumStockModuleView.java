@@ -8,14 +8,20 @@ import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.Utils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.client.gui.modules.MinimumStockModuleWindow;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+
+import static com.minecolonies.core.colony.buildings.modules.MinimumStockModule.TAG_MINIMUM_STOCK;
 
 /**
  * Client side representation of the minimum stock module.
@@ -78,5 +84,19 @@ public class MinimumStockModuleView extends AbstractBuildingModuleView implement
     public Component getDesc()
     {
         return Component.translatable("com.minecolonies.coremod.gui.warehouse.stock");
+    }
+
+    @Override
+    @NotNull
+    public ResourceLocation getTemplateStorageId()
+    {
+        return new ResourceLocation(Constants.MOD_ID, "minimum_stock");
+    }
+
+    @Override
+    @Nullable
+    public MutableComponent getDescriptionText(final CompoundTag data)
+    {
+        return Component.translatable("com.minecolonies.coremod.gui.workerhuts.templates.minimum_stock.description", String.valueOf(data.getList(TAG_MINIMUM_STOCK, CompoundTag.TAG_COMPOUND).size()));
     }
 }

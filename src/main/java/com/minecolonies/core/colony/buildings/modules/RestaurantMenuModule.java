@@ -4,10 +4,7 @@ import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
-import com.minecolonies.api.colony.buildings.modules.AbstractBuildingModule;
-import com.minecolonies.api.colony.buildings.modules.IAltersRequiredItems;
-import com.minecolonies.api.colony.buildings.modules.IPersistentModule;
-import com.minecolonies.api.colony.buildings.modules.ITickingModule;
+import com.minecolonies.api.colony.buildings.modules.*;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.requestable.MinimumStack;
@@ -39,7 +36,7 @@ import static com.minecolonies.api.research.util.ResearchConstants.MIN_ORDER;
 /**
  * Minimum stock module.
  */
-public class RestaurantMenuModule extends AbstractBuildingModule implements IPersistentModule, ITickingModule, IAltersRequiredItems
+public class RestaurantMenuModule extends AbstractBuildingModule implements IPersistentModule, ITickingModule, IAltersRequiredItems, ITemplateModule
 {
     /**
      * Minimum stock it can hold per level.
@@ -104,6 +101,7 @@ public class RestaurantMenuModule extends AbstractBuildingModule implements IPer
 
         menu.add(new ItemStorage(itemStack));
         markDirty();
+        resetTemplateAssignment();
     }
 
     /**
@@ -121,6 +119,7 @@ public class RestaurantMenuModule extends AbstractBuildingModule implements IPer
             building.getColony().getRequestManager().updateRequestState(token, RequestState.CANCELLED);
         }
         markDirty();
+        resetTemplateAssignment();
     }
 
     @Override
@@ -250,5 +249,12 @@ public class RestaurantMenuModule extends AbstractBuildingModule implements IPer
         {
             Utils.serializeCodecMess(buf, menuItem.getItemStack());
         }
+    }
+
+    @Override
+    @NotNull
+    public ResourceLocation getTemplateStorageId()
+    {
+        return new ResourceLocation(Constants.MOD_ID, "restaurant_menu");
     }
 }

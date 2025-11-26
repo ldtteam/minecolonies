@@ -19,7 +19,7 @@ import java.util.Set;
 /**
  * Class for all buildings that need a list of mobs to toggle for various reasons.
  */
-public class EntityListModule extends AbstractBuildingModule implements IEntityListModule, IPersistentModule
+public class EntityListModule extends AbstractBuildingModule implements IEntityListModule, IPersistentModule, ITemplateModule
 {
     /**
      * Tag to store the mob list.
@@ -81,6 +81,7 @@ public class EntityListModule extends AbstractBuildingModule implements IEntityL
     {
         mobsAllowed.add(item);
         markDirty();
+        resetTemplateAssignment();
     }
 
     @Override
@@ -94,6 +95,7 @@ public class EntityListModule extends AbstractBuildingModule implements IEntityL
     {
         mobsAllowed.remove(item);
         markDirty();
+        resetTemplateAssignment();
     }
 
     @Override
@@ -122,5 +124,12 @@ public class EntityListModule extends AbstractBuildingModule implements IEntityL
     public String getId()
     {
         return this.id;
+    }
+
+    @Override
+    @NotNull
+    public ResourceLocation getTemplateStorageId()
+    {
+        return new ResourceLocation(Constants.MOD_ID, id + "_entity_list");
     }
 }

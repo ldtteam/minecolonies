@@ -28,10 +28,7 @@ import com.minecolonies.core.client.render.worldevent.ColonyBlueprintRenderer;
 import com.minecolonies.core.colony.buildings.modules.BuildingModules;
 import com.minecolonies.core.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingTownHall;
-import com.minecolonies.core.colony.managers.ColonyConnectionManager;
-import com.minecolonies.core.colony.managers.ResearchManager;
-import com.minecolonies.core.colony.managers.StatisticsManager;
-import com.minecolonies.core.colony.managers.TravellingManager;
+import com.minecolonies.core.colony.managers.*;
 import com.minecolonies.core.colony.permissions.PermissionsView;
 import com.minecolonies.core.colony.requestsystem.management.manager.StandardRequestManager;
 import com.minecolonies.core.colony.workorders.AbstractWorkOrder;
@@ -243,6 +240,11 @@ public final class ColonyView implements IColonyView
      * Client side connection manager.
      */
     private final IColonyConnectionManager connectionManager = new ColonyConnectionManager(this);
+
+    /**
+     * Client side building module template manager.
+     */
+    private final IBuildingModuleTemplateManager moduleTemplateManager = new BuildingModuleTemplateManager(this);
     
     /**
      * Day in the colony.
@@ -1028,6 +1030,12 @@ public final class ColonyView implements IColonyView
     }
 
     @Override
+    public void handleColonyViewModuleTemplateManagerUpdate(@NotNull final HolderLookup.Provider provider, final CompoundTag compoundTag)
+    {
+        this.moduleTemplateManager.overWriteData(provider, compoundTag);
+    }
+
+    @Override
     public @NotNull List<IBuildingExtension> getBuildingExtensions(final Predicate<IBuildingExtension> matcher)
     {
         return extensions.stream()
@@ -1537,5 +1545,11 @@ public final class ColonyView implements IColonyView
     public IQuestManager getQuestManager()
     {
         return this.questManager;
+    }
+
+    @Override
+    public IBuildingModuleTemplateManager getBuildingModuleTemplateManager()
+    {
+        return moduleTemplateManager;
     }
 }

@@ -5,7 +5,7 @@ import net.minecraft.resources.ResourceLocation;
 /**
  * Client side version of the abstract class for all buildings which require a filterable list of allowed items.
  */
-public interface IEntityListModuleView extends IBuildingModuleView
+public interface IEntityListModuleView extends IBuildingModuleView, ITemplateModuleView
 {
     /**
      * Add entity to the view and notify the server side.

@@ -1,12 +1,13 @@
 package com.minecolonies.api.colony.buildings.modules.settings;
 
 import com.minecolonies.api.colony.buildings.modules.IBuildingModuleView;
+import com.minecolonies.api.colony.buildings.modules.ITemplateModuleView;
 import org.jetbrains.annotations.Nullable;
 
 /**
  * Client side part of the settings module.
  */
-public interface ISettingsModuleView extends IBuildingModuleView
+public interface ISettingsModuleView extends IBuildingModuleView, ITemplateModuleView
 {
     /**
      * Trigger a setting of a specific key.

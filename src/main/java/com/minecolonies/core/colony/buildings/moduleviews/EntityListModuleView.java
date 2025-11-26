@@ -126,4 +126,11 @@ public class EntityListModuleView extends AbstractBuildingModuleView implements 
     {
         return new ResourceLocation(Constants.MOD_ID, "textures/gui/modules/workers.png");
     }
+
+    @Override
+    @NotNull
+    public ResourceLocation getTemplateStorageId()
+    {
+        return new ResourceLocation(Constants.MOD_ID, id + "_entity_list");
+    }
 }

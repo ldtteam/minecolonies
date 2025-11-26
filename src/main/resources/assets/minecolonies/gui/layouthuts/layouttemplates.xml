@@ -1,0 +1,32 @@
+<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/ldtteam/BlockUI/version/main/src/main/resources/assets/blockui/gui/block_ui.xsd"
+        size="190 244">
+    <image source="minecolonies:textures/gui/builderhut/builder_paper.png" size="190 244"/>
+    <text id="desc" size="130 11" pos="30 14" color="black" textalign="MIDDLE"/>
+
+    <input id="newtemplate" size="130 18" pos="20 30"/>
+    <button id="newtemplateconfirm" size="17 17" pos="153 30"
+            source="minecolonies:textures/gui/builderhut/builder_button_mini_check.png"
+            disabled="minecolonies:textures/gui/builderhut/builder_button_mini_disabled_check.png"/>
+
+    <list id="templates" size="150 175" pos="20 55" emptytext="$(com.minecolonies.coremod.gui.workerhuts.templates.empty)">
+        <box size="100% 64" linewidth="1">
+            <text id="name" size="136 13" pos="3 3" color="black" textalign="LEFT"/>
+            <text id="description" size="136 11" pos="3 16" color="black" textalign="LEFT"/>
+            <text id="applied" size="136 11" pos="3 30" color="black" textalign="LEFT"/>
+            <button id="apply"
+                    size="64 17"
+                    pos="3 44"
+                    color="black"
+                    source="minecolonies:textures/gui/builderhut/builder_button_small.png"
+                    disabled="minecolonies:textures/gui/builderhut/builder_button_small_disabled.png"/>
+            <button id="save"
+                    size="44 17"
+                    pos="74 44"
+                    color="black"
+                    label="$(com.minecolonies.coremod.gui.workerhuts.templates.save)"
+                    source="minecolonies:textures/gui/builderhut/builder_button_quite_small.png"/>
+            <button id="delete" size="14 17" pos="125 44" source="minecolonies:textures/gui/button_x.png"/>
+        </box>
+    </list>
+</window>

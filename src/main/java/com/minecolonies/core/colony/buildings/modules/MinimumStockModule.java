@@ -36,7 +36,7 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_QUANTITY;
 /**
  * Minimum stock module.
  */
-public class MinimumStockModule extends AbstractBuildingModule implements IMinimumStockModule, IPersistentModule, ITickingModule, IAltersRequiredItems
+public class MinimumStockModule extends AbstractBuildingModule implements IMinimumStockModule, IPersistentModule, ITickingModule, IAltersRequiredItems, ITemplateModule
 {
     /**
      * The minimum stock tag.
@@ -72,6 +72,7 @@ public class MinimumStockModule extends AbstractBuildingModule implements IMinim
         {
             minimumStock.put(new ItemStorage(itemStack), quantity);
             markDirty();
+            resetTemplateAssignment();
         }
     }
 
@@ -107,6 +108,7 @@ public class MinimumStockModule extends AbstractBuildingModule implements IMinim
         }
 
         markDirty();
+        resetTemplateAssignment();
     }
 
     @Override
@@ -201,5 +203,12 @@ public class MinimumStockModule extends AbstractBuildingModule implements IMinim
             buf.writeInt(entry.getValue());
         }
         buf.writeBoolean(minimumStock.size() >= minimumStockSize());
+    }
+
+    @Override
+    @NotNull
+    public ResourceLocation getTemplateStorageId()
+    {
+        return new ResourceLocation(Constants.MOD_ID, "minimum_stock");
     }
 }
