@@ -735,6 +735,7 @@ public class Permissions implements IPermissions
 
         if (player != null)
         {
+            Rank oldRank = player.getRank();
             player.setRank(rank);
 
             if (rank.isColonyManager())
@@ -747,7 +748,7 @@ public class Permissions implements IPermissions
             }
 
             markDirty();
-            IMinecoloniesAPI.getInstance().getEventBus().post(new ColonyPlayerRankChangedModEvent(colony, player));
+            IMinecoloniesAPI.getInstance().getEventBus().post(new ColonyPlayerRankChangedModEvent(colony, player, rank, oldRank));
         }
         else
         {
