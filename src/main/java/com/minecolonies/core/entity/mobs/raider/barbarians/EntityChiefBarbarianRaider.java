@@ -7,7 +7,7 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.level.Level;
 
 import static com.minecolonies.api.entity.mobs.RaiderMobUtils.MOB_ATTACK_DAMAGE;
-import static com.minecolonies.api.util.constant.RaiderConstants.CHIEF_BONUS_ARMOR;
+import static com.minecolonies.core.colony.events.raid.RaiderConstants.CHIEF_BONUS_ARMOR;
 
 /**
  * Class for the Chief Barbarian entity.

@@ -36,7 +36,7 @@ import javax.annotation.Nullable;
 
 import static com.minecolonies.api.util.constant.ColonyManagerConstants.NO_COLONY_ID;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
-import static com.minecolonies.api.util.constant.RaiderConstants.*;
+import static com.minecolonies.core.colony.events.raid.RaiderConstants.*;
 
 /**
  * Abstract for all raider entities.
@@ -86,7 +86,7 @@ public abstract class AbstractEntityMinecoloniesRaider extends AbstractEntityMin
     /**
      * Current count of ticks.
      */
-    private int currentCount = 0;
+    private int chiefSpeedCooldown = 0;
 
     /**
      * The world time when the barbarian spawns.
@@ -117,11 +117,6 @@ public abstract class AbstractEntityMinecoloniesRaider extends AbstractEntityMin
      * Environmental damage cooldown timer
      */
     private int envDmgCooldown = 0;
-
-    /**
-     * Environmental damage immunity
-     */
-    private boolean envDamageImmunity = false;
 
     /**
      * Temporary Environmental damage immunity shortly after spawning.
@@ -302,9 +297,8 @@ public abstract class AbstractEntityMinecoloniesRaider extends AbstractEntityMin
             return;
         }
 
-        if (currentTick % (random.nextInt(EVERY_X_TICKS) + 1) == 0)
+        if (++currentTick % (random.nextInt(EVERY_X_TICKS) + 1) == 0)
         {
-
             if (worldTimeAtSpawn == 0)
             {
                 worldTimeAtSpawn = level().getGameTime();
@@ -331,24 +325,23 @@ public abstract class AbstractEntityMinecoloniesRaider extends AbstractEntityMin
                 registerWithColony();
             }
 
-            if (currentCount <= 0)
+            if (--chiefSpeedCooldown <= 0)
             {
-                currentCount = COUNTDOWN_SECOND_MULTIPLIER * TIME_TO_COUNTDOWN;
+                chiefSpeedCooldown = TIME_TO_COUNTDOWN;
 
-                if (!this.getMainHandItem().isEmpty() && SPEED_EFFECT != null && this.getMainHandItem().getItem() instanceof IChiefSwordItem
-                      && MinecoloniesAPIProxy.getInstance().getConfig().getServer().raidDifficulty.get() >= BARBARIAN_HORDE_DIFFICULTY_FIVE)
+                if (!this.getMainHandItem().isEmpty() && this.getMainHandItem().getItem() instanceof IChiefSwordItem
+                    && difficulty > CHIEF_SWORD_SPEED_DIFFICULTY)
                 {
-                    RaiderMobUtils.getBarbariansCloseToEntity(this, SPEED_EFFECT_DISTANCE)
-                      .stream().filter(entity -> !entity.hasEffect(MobEffects.MOVEMENT_SPEED))
-                      .forEach(entity -> entity.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, SPEED_EFFECT_DURATION, SPEED_EFFECT_MULTIPLIER)));
+                    for (AbstractEntityMinecoloniesRaider entity : RaiderMobUtils.getBarbariansCloseToEntity(this, SPEED_EFFECT_DISTANCE))
+                    {
+                        if (!entity.hasEffect(MobEffects.MOVEMENT_SPEED))
+                        {
+                            entity.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, SPEED_EFFECT_DURATION, SPEED_EFFECT_MULTIPLIER));
+                        }
+                    }
                 }
             }
-            else
-            {
-                --currentCount;
-            }
         }
-        currentTick++;
 
         if (isRegistered)
         {
@@ -434,7 +427,7 @@ public abstract class AbstractEntityMinecoloniesRaider extends AbstractEntityMin
     {
         if (!(damageSource.getEntity() instanceof LivingEntity) || damageSource.getEntity() instanceof FakePlayer)
         {
-            if (envDamageImmunity || tempEnvDamageImmunity)
+            if (tempEnvDamageImmunity)
             {
                 return false;
             }

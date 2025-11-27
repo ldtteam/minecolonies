@@ -60,8 +60,8 @@ import static com.minecolonies.api.util.constant.CitizenConstants.BASE_PATHFINDI
 import static com.minecolonies.api.util.constant.Constants.TICKS_FOURTY_MIN;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_COLONY_ID;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_TIME;
-import static com.minecolonies.api.util.constant.RaiderConstants.FOLLOW_RANGE;
 import static com.minecolonies.api.util.constant.TranslationConstants.MESSAGE_INFO_COLONY_MERCENARY_STEAL_CITIZEN;
+import static com.minecolonies.core.colony.events.raid.RaiderConstants.FOLLOW_RANGE;
 import static com.minecolonies.core.entity.ai.minimal.EntityAIInteractToggleAble.*;
 
 

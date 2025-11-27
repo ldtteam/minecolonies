@@ -30,7 +30,7 @@ import net.minecraftforge.registries.RegistryObject;
 import java.util.List;
 import java.util.Random;
 
-import static com.minecolonies.api.util.constant.RaiderConstants.*;
+import static com.minecolonies.core.colony.events.raid.RaiderConstants.*;
 
 /**
  * Util class for raider mobs/spawning

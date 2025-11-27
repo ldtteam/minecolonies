@@ -38,7 +38,7 @@ import javax.annotation.Nullable;
 import static com.minecolonies.api.entity.citizen.AbstractEntityCitizen.ENTITY_AI_TICKRATE;
 import static com.minecolonies.api.entity.mobs.RaiderMobUtils.MOB_ATTACK_DAMAGE;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_SPAWN_POS;
-import static com.minecolonies.api.util.constant.RaiderConstants.*;
+import static com.minecolonies.core.colony.events.raid.RaiderConstants.*;
 
 /**
  * Abstract for all villain entities.

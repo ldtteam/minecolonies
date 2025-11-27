@@ -1,7 +1,6 @@
-package com.minecolonies.api.util.constant;
+package com.minecolonies.core.colony.events.raid;
 
-import net.minecraft.world.item.alchemy.Potion;
-import net.minecraft.world.item.alchemy.Potions;
+import com.minecolonies.api.util.constant.Constants;
 
 /**
  * Barbarian constants class.
@@ -23,11 +22,10 @@ public final class RaiderConstants
     public static final int ONE = 1;
 
     /**
-     * Values used for sword effect.
+     * Chief sword ability constants
      */
-    public static final Potion SPEED_EFFECT                = Potions.STRONG_SWIFTNESS;
-    public static final int    TIME_TO_COUNTDOWN           = 240;
-    public static final int    COUNTDOWN_SECOND_MULTIPLIER = 4;
+    public static final double CHIEF_SWORD_SPEED_DIFFICULTY = 2.0;
+    public static final int    TIME_TO_COUNTDOWN            = 120;
     public static final int    SPEED_EFFECT_DISTANCE       = 7;
     public static final int    SPEED_EFFECT_DURATION       = 60;
     public static final int    SPEED_EFFECT_MULTIPLIER     = 1;
@@ -85,6 +83,26 @@ public final class RaiderConstants
     public static final double CHIEF_BONUS_ARMOR           = 2D;
     public static final double BARBARIAN_BASE_HEALTH       = 10;
     public static final double BARBARIAN_HEALTH_MULTIPLIER = 0.025;
+
+    /**
+     * Extended melee reach based on difficulty
+     */
+    public static final double EXTENDED_REACH_DIFFICULTY = 1.9;
+    public static final double EXTENDED_REACH            = 0.4;
+    public static final double MIN_DISTANCE_FOR_ATTACK   = 2.5;
+
+    /**
+     * Attack delay
+     */
+    public static final int MELEE_ATTACK_DELAY = 30;
+
+    /**
+     * Additional melee movement speed difficulty
+     */
+    public static final double ADD_SPEED_DIFFICULTY = 2.3;
+    public static final double BONUS_SPEED          = 1.2;
+    public static final double BASE_COMBAT_SPEED    = 1.2;
+
 
     /**
      * Private constructor to hide implicit one.

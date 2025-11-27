@@ -8,7 +8,7 @@ import com.minecolonies.api.entity.mobs.ICustomAttackSound;
 import com.minecolonies.api.entity.mobs.IRangedMobEntity;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.EntityUtils;
-import com.minecolonies.api.util.constant.RaiderConstants;
+import com.minecolonies.core.colony.events.raid.RaiderConstants;
 import com.minecolonies.core.entity.ai.combat.AttackMoveAI;
 import com.minecolonies.core.entity.ai.combat.CombatUtils;
 import com.minecolonies.core.entity.citizen.EntityCitizen;
