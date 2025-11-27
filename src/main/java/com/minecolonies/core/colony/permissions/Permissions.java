@@ -2,6 +2,7 @@ package com.minecolonies.core.colony.permissions;
 
 import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.colony.permissions.*;
+import com.minecolonies.api.eventbus.events.colony.ColonyPlayerRankChangedModEvent;
 import com.minecolonies.api.network.PacketUtils;
 import com.minecolonies.api.util.ColonyUtils;
 import com.minecolonies.api.util.Log;
@@ -746,6 +747,7 @@ public class Permissions implements IPermissions
             }
 
             markDirty();
+            IMinecoloniesAPI.getInstance().getEventBus().post(new ColonyPlayerRankChangedModEvent(colony, player));
         }
         else
         {

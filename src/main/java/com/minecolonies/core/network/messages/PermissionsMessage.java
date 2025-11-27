@@ -1,13 +1,11 @@
 package com.minecolonies.core.network.messages;
 
-import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.colony.permissions.ColonyPlayer;
 import com.minecolonies.api.colony.permissions.Rank;
-import com.minecolonies.api.eventbus.events.colony.ColonyPlayerRankChangedModEvent;
 import com.minecolonies.api.network.IMessage;
 import com.minecolonies.api.network.PacketUtils;
 import com.minecolonies.api.util.Log;
@@ -487,7 +485,6 @@ public class PermissionsMessage
             if (colony.getPermissions().hasPermission(player, Action.EDIT_PERMISSIONS) && rank != colony.getPermissions().getRankOwner())
             {
                 colony.getPermissions().setPlayerRank(playerID, rank, colony.getWorld());
-                IMinecoloniesAPI.getInstance().getEventBus().post(new ColonyPlayerRankChangedModEvent(colony, playerID));
             }
         }
     }

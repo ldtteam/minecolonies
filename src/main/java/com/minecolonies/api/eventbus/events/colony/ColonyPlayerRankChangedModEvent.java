@@ -1,36 +1,40 @@
 package com.minecolonies.api.eventbus.events.colony;
 
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.permissions.ColonyPlayer;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.UUID;
 
 /**
  * Colony player rank change event.
  */
-
 public final class ColonyPlayerRankChangedModEvent extends AbstractColonyModEvent
 {
     /**
-     * The player whose rank got modified.
+     * The colony player whose rank got modified.
      */
     @NotNull
-    private final UUID playerID;
+    private final ColonyPlayer player;
 
     /**
      * Constructs a colony player rank change event.
      *
      * @param colony the colony related to the event.
-     * @param playerID the player id related to the event
+     * @param player the colony player related to the event
      */
-    public ColonyPlayerRankChangedModEvent(@NotNull final IColony colony, @NotNull final UUID playerID) {
+    public ColonyPlayerRankChangedModEvent(
+        @NotNull final IColony colony, @NotNull final ColonyPlayer player)
+    {
         super(colony);
-        this.playerID = playerID;
+        this.player = player;
     }
 
     /**
      * Gets the player id related to the event.
+     * Gets the colony player related to the event.
      */
     @NotNull
-    public UUID getPlayerID() { return playerID; }
+    public ColonyPlayer getPlayer()
+    {
+        return player;
+    }
 }
