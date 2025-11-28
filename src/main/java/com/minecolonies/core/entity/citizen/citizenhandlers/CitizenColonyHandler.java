@@ -185,7 +185,7 @@ public class CitizenColonyHandler implements ICitizenColonyHandler
     public double getPerBuildingFoodCost()
     {
         return getWorkBuilding() == null || getWorkBuilding().getBuildingLevelEquivalent() == 0 ? 1
-                 : (SATURATION_DECREASE_FACTOR * Math.pow(2, getWorkBuilding().getBuildingLevelEquivalent()));
+                 : (SATURATION_DECREASE_FACTOR * getWorkBuilding().getBuildingLevelEquivalent());
     }
 
     /**

@@ -600,7 +600,6 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
                 if (world != null && !(building instanceof IRSComponent))
                 {
                     building.onPlacement();
-                    ConstructionTapeHelper.placeConstructionTape(building);
                 }
 
                 colony.getRequestManager().onProviderAddedToColony(building);
@@ -699,21 +698,23 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
     public <T extends IBuilding> BlockPos getBestBuilding(final BlockPos pos, final Class<T> building, @NotNull final Predicate<T> filter)
     {
         double distance = Double.MAX_VALUE;
-        BlockPos goodCook = null;
+        BlockPos goodFit = null;
         for (final IBuilding currentBuilding : buildings.values())
         {
-            if (building.isInstance(currentBuilding) && currentBuilding.getBuildingLevel() > 0 && WorldUtil.isBlockLoaded(colony.getWorld(), currentBuilding.getPosition()) && filter.test(
-                (T) currentBuilding))
+            if (building.isInstance(currentBuilding)
+                && currentBuilding.getBuildingLevel() > 0
+                && WorldUtil.isBlockLoaded(colony.getWorld(), currentBuilding.getPosition())
+                && filter.test((T) currentBuilding))
             {
                 final double localDistance = currentBuilding.getPosition().distSqr(pos);
                 if (localDistance < distance)
                 {
                     distance = localDistance;
-                    goodCook = currentBuilding.getPosition();
+                    goodFit = currentBuilding.getPosition();
                 }
             }
         }
-        return goodCook;
+        return goodFit;
     }
 
     @Override

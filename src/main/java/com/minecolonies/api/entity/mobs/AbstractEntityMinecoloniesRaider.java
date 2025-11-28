@@ -19,10 +19,7 @@ import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.MobSpawnType;
-import net.minecraft.world.entity.SpawnGroupData;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.ChunkPos;
@@ -70,6 +67,11 @@ public abstract class AbstractEntityMinecoloniesRaider extends AbstractEntityMin
     private static final int COLONY_SET_RAIDED_CHANCE = 20;
 
     /**
+     * Environmental damage cooldown in ticks
+     */
+    private static final int ENV_DAMAGE_COOLDOWN = 30;
+
+    /**
      * The New PathNavigate navigator.
      */
     protected AbstractAdvancedPathNavigate newNavigator;
@@ -113,11 +115,6 @@ public abstract class AbstractEntityMinecoloniesRaider extends AbstractEntityMin
      * Environmental damage cooldown timer
      */
     private int envDmgCooldown = 0;
-
-    /**
-     * Environmental damage interval
-     */
-    private int envDamageInterval = 5;
 
     /**
      * Environmental damage immunity
@@ -290,6 +287,11 @@ public abstract class AbstractEntityMinecoloniesRaider extends AbstractEntityMin
             collisionCounter--;
         }
 
+        if (envDmgCooldown > 0)
+        {
+            envDmgCooldown--;
+        }
+
         if (level().isClientSide)
         {
             super.aiStep();
@@ -298,7 +300,7 @@ public abstract class AbstractEntityMinecoloniesRaider extends AbstractEntityMin
 
         if (currentTick % (random.nextInt(EVERY_X_TICKS) + 1) == 0)
         {
-            envDmgCooldown--;
+
             if (worldTimeAtSpawn == 0)
             {
                 worldTimeAtSpawn = level().getGameTime();
@@ -426,21 +428,28 @@ public abstract class AbstractEntityMinecoloniesRaider extends AbstractEntityMin
     @Override
     public boolean hurt(@NotNull final DamageSource damageSource, final float damage)
     {
-        if (damageSource.getDirectEntity() == null || damageSource.getDirectEntity() instanceof FakePlayer)
+        if (!(damageSource.getEntity() instanceof LivingEntity) || damageSource.getEntity() instanceof FakePlayer)
         {
             if (envDamageImmunity || tempEnvDamageImmunity)
             {
                 return false;
             }
 
-            if (--envDmgCooldown <= 0)
-            {
-                envDmgCooldown = envDamageInterval;
-            }
-            else
+            if (envDmgCooldown > 0)
             {
                 return false;
             }
+
+            float minimumHealthPct = getMinRemainingHealthForEnvironmentalDamage((float) difficulty);
+
+            // Ignores armor/reductions
+            float healthLeftPercent = (getHealth() - damage) / getMaxHealth();
+            if (minimumHealthPct > healthLeftPercent)
+            {
+                return false;
+            }
+
+            envDmgCooldown = ENV_DAMAGE_COOLDOWN;
         }
         else if (!level().isClientSide())
         {
@@ -473,6 +482,18 @@ public abstract class AbstractEntityMinecoloniesRaider extends AbstractEntityMin
     }
 
     /**
+     * Calculates the minimum remaining health percentage for taking environmental damage in relation to difficulty value
+     *
+     * @param difficulty
+     * @return
+     */
+    protected float getMinRemainingHealthForEnvironmentalDamage(final float difficulty)
+    {
+        // 20 - 60% health left, depending on difficulty
+        return Math.min(((difficulty) / 10) + 0.2f, 0.6f);
+    }
+
+    /**
      * Set the colony to raid.
      *
      * @param colony the colony to set.
@@ -494,27 +515,6 @@ public abstract class AbstractEntityMinecoloniesRaider extends AbstractEntityMin
     {
         this.eventID = eventID;
     }
-
-    /**
-     * Sets the environmental damage interval
-     *
-     * @param interval damage interval
-     */
-    public void setEnvDamageInterval(final int interval)
-    {
-        envDamageInterval = interval;
-    }
-
-    /**
-     * Sets the immunity to environmental damage
-     *
-     * @param immunity whether immune
-     */
-    public void setEnvDamageImmunity(final boolean immunity)
-    {
-        envDamageImmunity = immunity;
-    }
-
 
     /**
      * Sets the temporary immunity to environmental damage
@@ -539,12 +539,6 @@ public abstract class AbstractEntityMinecoloniesRaider extends AbstractEntityMin
         super.initStatsFor(baseHealth, difficulty, baseDamage);
 
         this.difficulty = difficulty;
-        this.setEnvDamageInterval((int) (BASE_ENV_DAMAGE_RESIST * difficulty));
-
-        if (difficulty >= 1.4d)
-        {
-            this.setEnvDamageImmunity(true);
-        }
     }
 
     @Override

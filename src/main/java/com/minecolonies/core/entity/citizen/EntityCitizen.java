@@ -1922,18 +1922,23 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
      */
     private boolean decreaseIdleSaturation()
     {
-        if (citizenData != null)
+        if (citizenData != null && level() != null && !level().isNight() && !citizenSleepHandler.isAsleep())
         {
-            final int buildingLevel = citizenData.getHomeBuilding() == null ? 1 :  citizenData.getHomeBuilding().getBuildingLevelEquivalent();
-            if (buildingLevel <= 2)
+            final int buildingLevel = citizenData.getHomeBuilding() == null ? 0 :  citizenData.getHomeBuilding().getBuildingLevelEquivalent();
+            double decrease = switch (buildingLevel)
             {
-                citizenData.decreaseSaturation(buildingLevel / 25.0);
-            }
-            else
+                case 1 -> 0.2;
+                case 2 -> 0.256;
+                case 3 -> 0.32;
+                case 4 -> 0.4;
+                case 5 -> 0.5;
+                default -> 0.1;
+            };
+            if (citizenData.isChild())
             {
-                citizenData.decreaseSaturation(buildingLevel / 10.0);
+                decrease = decrease / 2.0;
             }
-
+            citizenData.decreaseSaturation(decrease);
         }
         return false;
     }

@@ -433,7 +433,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
     @Override
     public IAIState getStateAfterPickUp()
     {
-        return GET_RECIPE;
+        return START_WORKING;
     }
 
     /**
@@ -467,7 +467,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
         for (final ItemStorage inputStorage : input)
         {
             final Predicate<ItemStack> predicate = stack -> !ItemStackUtils.isEmpty(stack) && new Stack(stack, false).matches(inputStorage.getItemStack());
-            final int invCount = InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), predicate);
+            final int invCount = InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), predicate) + getExtendedCount(inputStorage.getItemStack());
             final ItemStack container = inputStorage.getItemStack().getCraftingRemainingItem();
             final int remaining;
             if (!currentRecipeStorage.getCraftingToolsAndSecondaryOutputs().isEmpty()
@@ -561,66 +561,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
             final IAIState check = checkForItems(currentRecipeStorage);
             if (check == CRAFT)
             {
-                final List<ItemStack> addedStacks = currentRecipeStorage.fullfillRecipeAndCopy(getLootContext(), ImmutableList.of(worker.getItemHandlerCitizen()), true);
-                if (addedStacks == null)
-                {
-                    currentRequest = null;
-                    incrementActionsDone(getActionRewardForCraftingSuccess());
-                    job.finishRequest(false);
-                    resetValues();
-                    return START_WORKING;
-                }
-                recordCraftingBuildingStats(currentRequest, currentRecipeStorage);
-                for (final ItemStack addedStack : addedStacks)
-                {
-                    if (ItemStackUtils.compareItemStacksIgnoreStackSize(currentRecipeStorage.getPrimaryOutput(), addedStack))
-                    {
-                        currentRequest.addDelivery(addedStack);
-                    }
-                    else
-                    {
-                        job.getSecondaryOutputs().addTo(new ItemStorage(addedStack), addedStack.getCount());
-                    }
-                }
-
-                job.setCraftCounter(job.getCraftCounter() + 1);
-                if (toolSlot != -1)
-                {
-                    CitizenItemUtils.damageItemInHand(worker, InteractionHand.MAIN_HAND, 1);
-                }
-
-                if (job.getCraftCounter() >= job.getMaxCraftingCount())
-                {
-                    incrementActionsDone(getActionRewardForCraftingSuccess());
-                    final ICraftingBuildingModule module = building.getCraftingModuleForRecipe(currentRecipeStorage.getToken());
-                    if (module != null)
-                    {
-                        module.improveRecipe(currentRecipeStorage, job.getCraftCounter(), worker.getCitizenData());
-                    }
-
-                    currentRecipeStorage = null;
-                    resetValues();
-
-                    if (inventoryNeedsDump() && job.getMaxCraftingCount() == 0 && job.getProgress() == 0 && job.getCraftCounter() == 0 && currentRequest != null)
-                    {
-                        worker.getCitizenExperienceHandler().addExperience(currentRequest.getRequest().getCount() / 2.0);
-                    }
-                    return INVENTORY_FULL;
-                }
-                else if (toolSlot >= 0 && worker.getInventoryCitizen().getHeldItem(InteractionHand.MAIN_HAND).isEmpty())
-                {
-                    // tool broke, abort crafting
-                    currentRequest = null;
-                    job.finishRequest(false);
-                    incrementActionsDoneAndDecSaturation();
-                    resetValues();
-                    return START_WORKING;
-                }
-                else
-                {
-                    job.setProgress(0);
-                    return GET_RECIPE;
-                }
+                return executeCraftingAction(toolSlot);
             }
             else
             {
@@ -633,6 +574,80 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
         }
 
         return getState();
+    }
+
+    /**
+     * Execute the actual crafting action.
+     * @param toolSlot the tool slot to consider.
+     * @return the next state to go to.
+     */
+    public IAIState executeCraftingAction(final int toolSlot)
+    {
+        final List<ItemStack> addedStacks = currentRecipeStorage.fullfillRecipeAndCopy(getLootContext(), ImmutableList.of(worker.getItemHandlerCitizen()), true);
+        if (addedStacks == null)
+        {
+            currentRequest = null;
+            incrementActionsDone(getActionRewardForCraftingSuccess());
+            job.finishRequest(false);
+            resetValues();
+            return START_WORKING;
+        }
+        recordCraftingBuildingStats(currentRequest, currentRecipeStorage);
+        for (final ItemStack addedStack : addedStacks)
+        {
+            if (ItemStackUtils.compareItemStacksIgnoreStackSize(currentRecipeStorage.getPrimaryOutput(), addedStack))
+            {
+                currentRequest.addDelivery(addedStack);
+            }
+            else
+            {
+                job.getSecondaryOutputs().addTo(new ItemStorage(addedStack), addedStack.getCount());
+            }
+        }
+
+        job.setCraftCounter(job.getCraftCounter() + 1);
+        if (toolSlot != -1)
+        {
+            CitizenItemUtils.damageItemInHand(worker, InteractionHand.MAIN_HAND, 1);
+        }
+
+        if (job.getCraftCounter() >= job.getMaxCraftingCount())
+        {
+            incrementActionsDone(getActionRewardForCraftingSuccess());
+            final ICraftingBuildingModule module = building.getCraftingModuleForRecipe(currentRecipeStorage.getToken());
+            if (module != null)
+            {
+                module.improveRecipe(currentRecipeStorage, job.getCraftCounter(), worker.getCitizenData());
+            }
+
+            return finalizeCraftingTask();
+        }
+        else if (toolSlot >= 0 && worker.getInventoryCitizen().getHeldItem(InteractionHand.MAIN_HAND).isEmpty())
+        {
+            // tool broke, abort crafting
+            currentRequest = null;
+            job.finishRequest(false);
+            incrementActionsDoneAndDecSaturation();
+            resetValues();
+            return START_WORKING;
+        }
+        else
+        {
+            job.setProgress(0);
+            return GET_RECIPE;
+        }
+    }
+
+    public IAIState finalizeCraftingTask()
+    {
+        currentRecipeStorage = null;
+        resetValues();
+
+        if (inventoryNeedsDump() && job.getMaxCraftingCount() == 0 && job.getProgress() == 0 && job.getCraftCounter() == 0 && currentRequest != null)
+        {
+            worker.getCitizenExperienceHandler().addExperience(currentRequest.getRequest().getCount() / 2.0);
+        }
+        return INVENTORY_FULL;
     }
 
     public void hitBlockWithToolInHand(@Nullable final BlockPos blockPos)
@@ -678,26 +693,26 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
                     .incrementBy(ITEMS_CRAFTED, currentRequest.getRequest().getCount(), worker.getCitizenColonyHandler().getColonyOrRegister().getDay());
                 job.finishRequest(true);
                 worker.getCitizenExperienceHandler().addExperience(currentRequest.getRequest().getCount() / 2.0);
-
-                if (!job.getSecondaryOutputs().isEmpty())
-                {
-                    final BlockPos closestWarehouse = job.getColony().getBuildingManager().getBestBuilding(worker, BuildingWareHouse.class);
-                    if (closestWarehouse != null)
-                    {
-                        final IBuilding warehouse = job.getColony().getBuildingManager().getBuilding(closestWarehouse);
-                        for (final Map.Entry<ItemStorage, Integer> output : job.getSecondaryOutputs().entrySet())
-                        {
-                            warehouse.createRequest(new Delivery(building.getLocation(),
-                                warehouse.getLocation(),
-                                output.getKey().getItemStack().copyWithCount(output.getValue()),
-                                MAX_BUILDING_PRIORITY), true);
-                        }
-                    }
-                    job.getSecondaryOutputs().clear();
-                }
             }
             currentRequest = null;
             resetValues();
+        }
+
+        if (!job.getSecondaryOutputs().isEmpty())
+        {
+            final BlockPos closestWarehouse = job.getColony().getBuildingManager().getBestBuilding(worker, BuildingWareHouse.class);
+            if (closestWarehouse != null)
+            {
+                final IBuilding warehouse = job.getColony().getBuildingManager().getBuilding(closestWarehouse);
+                for (final Map.Entry<ItemStorage, Integer> output : job.getSecondaryOutputs().entrySet())
+                {
+                    warehouse.createRequest(new Delivery(building.getLocation(),
+                        warehouse.getLocation(),
+                        output.getKey().getItemStack().copyWithCount(output.getValue()),
+                        MAX_BUILDING_PRIORITY), true);
+                }
+            }
+            job.getSecondaryOutputs().clear();
         }
 
         return super.afterDump();

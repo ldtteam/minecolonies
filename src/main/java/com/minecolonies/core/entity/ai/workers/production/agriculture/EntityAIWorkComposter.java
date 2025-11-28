@@ -251,7 +251,6 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
      */
     private IAIState fillBarrels()
     {
-
         if (worker.getItemInHand(InteractionHand.MAIN_HAND) == ItemStack.EMPTY)
         {
             final int slot = InventoryUtils.findFirstSlotInItemHandlerWith(
@@ -275,7 +274,6 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
 
         if (world.getBlockEntity(currentTarget) instanceof TileEntityBarrel)
         {
-
             final TileEntityBarrel barrel = (TileEntityBarrel) world.getBlockEntity(currentTarget);
 
             CitizenItemUtils.hitBlockWithToolInHand(worker, currentTarget);
@@ -288,10 +286,8 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
             
             StatsUtil.trackStatByName(building, ITEMS_COMPOSTED, compostingItem, countBefore - worker.getItemInHand(InteractionHand.MAIN_HAND).getCount());
 
-            this.incrementActionsDoneAndDecSaturation();
+            worker.decreaseSaturationForContinuousAction();
             worker.setItemInHand(InteractionHand.MAIN_HAND, ItemStackUtils.EMPTY);
-
-            incrementActionsDone();
         }
         setDelay(AFTER_TASK_DELAY);
         return START_WORKING;
@@ -304,7 +300,6 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
      */
     private IAIState harvestBarrels()
     {
-
         if (!walkToWorkPos(currentTarget))
         {
             setDelay(2);

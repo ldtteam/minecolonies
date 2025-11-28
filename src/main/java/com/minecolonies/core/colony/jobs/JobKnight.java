@@ -92,7 +92,6 @@ public class JobKnight extends AbstractJobGuard<JobKnight> implements IJobWithCo
             ItemStack shieldStack = worker.getInventoryCitizen().getHeldItem(InteractionHand.OFF_HAND);
             shieldStack.set(DataComponents.BANNER_PATTERNS, getColony().getColonyFlag());
 
-            worker.decreaseSaturationForContinuousAction();
             return true;
         }
         return super.ignoresDamage(damageSource);

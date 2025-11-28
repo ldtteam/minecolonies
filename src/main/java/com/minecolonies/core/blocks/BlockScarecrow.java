@@ -178,7 +178,7 @@ public class BlockScarecrow extends AbstractBlockMinecoloniesDefault<BlockScarec
         final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld(worldIn, pos);
         if (colony != null)
         {
-            colony.getBuildingManager().addBuildingExtension(FarmField.create(pos));
+            colony.getBuildingManager().addBuildingExtension(FarmField.create(pos, worldIn));
         }
     }
 

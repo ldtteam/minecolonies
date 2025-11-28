@@ -90,8 +90,9 @@ public class ServerConfiguration extends AbstractConfiguration
      *  ------------------- ######## Permission Settings ######## ------------------- *
      *  ----------------------------------------------------------------------------- */
 
-    public final BooleanValue                        enableColonyProtection;
-    public final EnumValue<Explosions>               turnOffExplosionsInColonies;
+    public final BooleanValue          enableColonyProtection;
+    public final EnumValue<Explosions> turnOffExplosionsInColonies;
+    public final IntValue              permissionEventMinBypassPermLevel;
 
     /*  -------------------------------------------------------------------------------- *
      *  ------------------- ######## Compatibility Settings ######## ------------------- *
@@ -196,6 +197,7 @@ public class ServerConfiguration extends AbstractConfiguration
 
         enableColonyProtection = defineBoolean("enablecolonyprotection", true);
         turnOffExplosionsInColonies = defineEnum("turnoffexplosionsincolonies", Explosions.DAMAGE_ENTITIES);
+        permissionEventMinBypassPermLevel = defineInteger("permissioneventbypassminpermlevel", 2, 0, 4);
 
         swapToCategory("compatibility");
 
