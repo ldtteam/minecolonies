@@ -19,7 +19,6 @@ public final class ColonyPlayerRankChangedModEvent extends AbstractColonyModEven
     /**
      * The colony player's new rank.
      */
-    @NotNull
     private final Rank newRank;
 
     /**
@@ -36,7 +35,7 @@ public final class ColonyPlayerRankChangedModEvent extends AbstractColonyModEven
      * @param oldRank the colony player's old rank.
      */
     public ColonyPlayerRankChangedModEvent(
-        @NotNull final IColony colony, @NotNull final ColonyPlayer player, @NotNull final Rank newRank, final Rank oldRank)
+        @NotNull final IColony colony, @NotNull final ColonyPlayer player, final Rank newRank, final Rank oldRank)
     {
         super(colony);
         this.player = player;
@@ -56,7 +55,6 @@ public final class ColonyPlayerRankChangedModEvent extends AbstractColonyModEven
     /**
      * Gets the colony player's new rank.
      */
-    @NotNull
     public Rank getNewRank()
     {
         return newRank;
