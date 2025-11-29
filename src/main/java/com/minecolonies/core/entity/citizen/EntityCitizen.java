@@ -1068,7 +1068,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     @Override
     public void decreaseSaturationForAction()
     {
-        this.cachedActionSaturationDecrease += citizenColonyHandler.getPerBuildingFoodCost() / 2.0;
+        this.cachedActionSaturationDecrease += SATURATION_DECREASE_FACTOR;
     }
 
     /**
@@ -1077,7 +1077,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     @Override
     public void decreaseSaturationForContinuousAction()
     {
-        this.cachedActionSaturationDecrease += citizenColonyHandler.getPerBuildingFoodCost() / 150.0;
+        this.cachedActionSaturationDecrease += SATURATION_DECREASE_FACTOR / 10.0;
     }
 
     /**
@@ -1925,7 +1925,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
 
             if (cachedActionSaturationDecrease != 0)
             {
-                decrease += Math.min(decrease / 3, cachedActionSaturationDecrease);
+                decrease += Math.min(decrease / 2.0, cachedActionSaturationDecrease);
                 cachedActionSaturationDecrease = 0;
             }
 
@@ -1934,7 +1934,6 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
                 decrease = decrease / 2.0;
             }
             citizenData.decreaseSaturation(decrease);
-            Log.getLogger().warn("Decreased saturation by: " + decrease + " now: " + citizenData.getSaturation());
         }
         return false;
     }

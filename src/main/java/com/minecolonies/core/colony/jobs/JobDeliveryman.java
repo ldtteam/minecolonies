@@ -719,4 +719,10 @@ public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeli
     {
         getDataStore().getOngoingDeliveries().remove(requestToken);
     }
+
+    @Override
+    public double getSaturationFactor()
+    {
+        return 1.2;
+    }
 }
