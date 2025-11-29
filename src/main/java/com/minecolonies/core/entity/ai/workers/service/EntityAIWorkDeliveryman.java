@@ -421,7 +421,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
                           .triggerInteraction(new PosBasedInteraction(Component.translatableEscape(COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN_NAMEDCHESTFULL,
                             targetBuilding.getFirstModuleOccurance(WorkerBuildingModule.class).getFirstCitizen().getName()),
                             ChatPriority.IMPORTANT,
-                            Component.translatableEscape(COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN_CHESTFULL),
+                            Component.translatableEscape(COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN_NAMEDCHESTFULL),
                             targetBuilding.getID()));
                     }
                     else

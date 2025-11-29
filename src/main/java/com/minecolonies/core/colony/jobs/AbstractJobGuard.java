@@ -81,4 +81,10 @@ public abstract class AbstractJobGuard<J extends AbstractJobGuard<J>> extends Ab
                 AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
         }
     }
+
+    @Override
+    public double getSaturationFactor()
+    {
+        return 1.2;
+    }
 }
