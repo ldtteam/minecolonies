@@ -60,4 +60,10 @@ public class JobMiner extends AbstractJobStructure<EntityAIStructureMiner, JobMi
 
         return super.ignoresDamage(damageSource);
     }
+
+    @Override
+    public double getSaturationFactor()
+    {
+        return 1.2;
+    }
 }

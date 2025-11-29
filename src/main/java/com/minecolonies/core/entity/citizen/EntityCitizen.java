@@ -229,6 +229,11 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     private boolean isGlowing;
 
     /**
+     * Cached decrease of saturation. Is processed every minute in the main loop.
+     */
+    private double cachedActionSaturationDecrease;
+
+    /**
      * Constructor for a new citizen typed entity.
      *
      * @param type  the entity type.
@@ -1063,11 +1068,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     @Override
     public void decreaseSaturationForAction()
     {
-        if (citizenData != null)
-        {
-            citizenData.decreaseSaturation(citizenColonyHandler.getPerBuildingFoodCost() / 2.0);
-            citizenData.markDirty(20 * 20);
-        }
+        this.cachedActionSaturationDecrease += citizenColonyHandler.getPerBuildingFoodCost() / 2.0;
     }
 
     /**
@@ -1076,11 +1077,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     @Override
     public void decreaseSaturationForContinuousAction()
     {
-        if (citizenData != null)
-        {
-            citizenData.decreaseSaturation(citizenColonyHandler.getPerBuildingFoodCost() / 150.0);
-            citizenData.markDirty(20 * 60 * 2);
-        }
+        this.cachedActionSaturationDecrease += citizenColonyHandler.getPerBuildingFoodCost() / 150.0;
     }
 
     /**
@@ -1920,11 +1917,24 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
                 case 5 -> 0.5;
                 default -> 0.1;
             };
+
+            if (citizenData.getJob() != null)
+            {
+                decrease *= citizenData.getJob().getSaturationFactor();
+            }
+
+            if (cachedActionSaturationDecrease != 0)
+            {
+                decrease += Math.min(decrease / 3, cachedActionSaturationDecrease);
+                cachedActionSaturationDecrease = 0;
+            }
+
             if (citizenData.isChild())
             {
                 decrease = decrease / 2.0;
             }
             citizenData.decreaseSaturation(decrease);
+            Log.getLogger().warn("Decreased saturation by: " + decrease + " now: " + citizenData.getSaturation());
         }
         return false;
     }
