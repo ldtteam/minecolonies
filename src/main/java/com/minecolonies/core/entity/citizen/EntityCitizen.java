@@ -3,6 +3,7 @@ package com.minecolonies.core.entity.citizen;
 import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.*;
+import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IGuardBuilding;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
@@ -1934,11 +1935,12 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
                 decrease = decrease / 2.0;
             }
             citizenData.decreaseSaturation(decrease);
+
             final String job = Optional.ofNullable(getCitizenJobHandler().getColonyJob())
                 .map(j -> Component.translatable(j.getJobRegistryEntry().getTranslationKey()).getString())
                 .orElse("unemployed");
-            Log.getLogger().info("[CONSUMPTION DEBUG] Citizen {} with job '{}' lost {} saturation", getCitizenData().getId(), job, decrease);
-
+            final String building = Optional.ofNullable(getCitizenData().getWorkBuilding()).map(IBuilding::getBuildingDisplayName).orElse("no building");
+            Log.getLogger().info("[CONSUMPTION DEBUG] Citizen {} with job '{}' lost {} saturation in building {} (idle)", getCitizenData().getId(), job, decrease, building);
         }
         return false;
     }
