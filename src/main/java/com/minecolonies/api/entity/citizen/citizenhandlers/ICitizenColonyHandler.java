@@ -32,13 +32,6 @@ public interface ICitizenColonyHandler
     void updateColonyClient();
 
     /**
-     * Get the amount the worker should decrease its saturation by each action done or x blocks traveled.
-     *
-     * @return the double describing it.
-     */
-    double getPerBuildingFoodCost();
-
-    /**
      * Getter for the colony.
      *
      * @return the colony of the citizen or null.
