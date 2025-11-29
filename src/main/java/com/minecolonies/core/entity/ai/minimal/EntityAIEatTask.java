@@ -171,6 +171,12 @@ public class EntityAIEatTask implements IStateAI
             return EAT;
         }
 
+        if (citizen.getCitizenData().getJob() instanceof JobCook jobCook && jobCook.getBuildingPos().equals(restaurantPos))
+        {
+            reset();
+            return DONE;
+        }
+
         return GO_TO_HUT;
     }
 
@@ -261,12 +267,6 @@ public class EntityAIEatTask implements IStateAI
                     (FULL_SATURATION - citizen.getCitizenData().getSaturation()) / FoodUtils.getFoodValue(storageToGet.getItemStack(), citizen)));
                 InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(cookBuilding, storageToGet, qty, citizen.getInventoryCitizen());
                 return EAT;
-            }
-
-            if (citizen.getCitizenData().getJob() instanceof JobCook jobCook && jobCook.getBuildingPos().equals(restaurantPos) && MathUtils.RANDOM.nextInt(TICKS_SECOND) <= 0)
-            {
-                reset();
-                return DONE;
             }
         }
 
@@ -369,6 +369,13 @@ public class EntityAIEatTask implements IStateAI
         if (hasFood())
         {
             return EAT;
+        }
+
+        if (citizenData.getSaturation() >= CitizenConstants.AVERAGE_SATURATION)
+        {
+            reset();
+            citizenData.setJustAte(true);
+            return DONE;
         }
 
         return WAIT_FOR_FOOD;
