@@ -2952,7 +2952,7 @@
   "block.minecolonies.colonysign": "Colony Sign",
   "com.minecolonies.core.item.sign.needcolony": "No colony set (sneak + use the sign on a gate house or a previous sign)",
   "com.minecolonies.core.item.sign.registered": "Noted %s on the sign.",
-  "com.minecolonies.core.item.sign.toofar": "Sign too far from previous sign or not in colony.",
+  "com.minecolonies.core.item.sign.toofar": "Sign too far from previous sign or gatehouse.",
   "com.minecolonies.core.item.colonysign.tip": "Shift-right-click a Gatehouse to begin.\nPlace signs every 50 blocks along the path to the other colony.\nShift-right-click the target Gatehouse or Colony Sign to complete the connection.",
   "com.minecolonies.core.item.sign.nullcolony": "Colony not found. Colony of Sign might've been deleted.",
   "com.minecolonies.core.item.sign.noperm": "No permission to setup signs. Needs Manage Huts permission.",
@@ -2982,6 +2982,7 @@
   "com.minecolonies.core.gui.connectionevent.disconnected": "§6Severed Ties with your Colony!",
   "com.minecolonies.core.item.sign.connected": "Successfully connected sign %s to %s",
   "com.minecolonies.core.item.sign.disrupted": "Connection to Sign at %s disrupted",
+  "com.minecolonies.core.item.sign.badgatehouse": "Your gatehouse level is too low for this!",
   "com.minecolonies.core.colonyconnection.path.failure": "Couldn't Path from %s to %s",
   "com.minecolonies.coremod.debug.gui.tabicon": "Debugging Options",
 

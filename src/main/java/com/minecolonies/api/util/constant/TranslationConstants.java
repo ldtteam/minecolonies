@@ -689,6 +689,8 @@ public final class TranslationConstants
     @NonNls
     public static final String COM_MINECOLONIES_SIGN_NULL_COLONY                  = "com.minecolonies.core.item.sign.nullcolony";
     @NonNls
+    public static final String COM_MINECOLONIES_SIGN_BAD_GATEHOUSE                  = "com.minecolonies.core.item.sign.badgatehouse";
+    @NonNls
     public static final String FOOD_QUALITY                                       = "foodquality";
     @NonNls
     public static final String FOOD_DIVERSITY                                     = "fooddiversity";
