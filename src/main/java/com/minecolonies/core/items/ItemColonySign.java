@@ -45,7 +45,7 @@ public class ItemColonySign extends BlockItem
     public static final String TAG_COLONY = "colony";
 
     /**
-     * Sets the name, creative tab, and registers the Clipboard item.
+     * Sets the name, creative tab, and registers the colony sign item.
      *
      * @param properties the properties.
      */
@@ -58,7 +58,6 @@ public class ItemColonySign extends BlockItem
     public InteractionResult useOn(final UseOnContext ctx)
     {
         final ItemStack sign = ctx.getPlayer().getItemInHand(ctx.getHand());
-
         final CompoundTag compound = sign.getOrCreateTag();
         final BlockEntity entity = ctx.getLevel().getBlockEntity(ctx.getClickedPos());
         final BlockState state = ctx.getLevel().getBlockState(ctx.getClickedPos());
@@ -71,6 +70,12 @@ public class ItemColonySign extends BlockItem
                     if (buildingEntity.getColony() == null)
                     {
                         MessageUtils.format(COM_MINECOLONIES_SIGN_NULL_COLONY).sendTo(ctx.getPlayer());
+                        return InteractionResult.SUCCESS;
+                    }
+
+                    if (buildingEntity.getBuilding() != null && buildingEntity.getBuilding().getBuildingLevel() <= 0)
+                    {
+                        MessageUtils.format(COM_MINECOLONIES_SIGN_BAD_GATEHOUSE).sendTo(ctx.getPlayer());
                         return InteractionResult.SUCCESS;
                     }
 
@@ -201,7 +206,7 @@ public class ItemColonySign extends BlockItem
     {
         if (stack.getOrCreateTag().contains(TAG_COLONY))
         {
-            final MutableComponent colonyHint = Component.translatable(TranslationConstants.COM_MINECOLONIES_CORE_COLONY_SIGN_TOOLTIP_COLONY, stack.getTag().getInt(TAG_COLONY));
+            final MutableComponent colonyHint = Component.translatable(TranslationConstants.COM_MINECOLONIES_CORE_COLONY_SIGN_TOOLTIP_COLONY, stack.getOrCreateTag().getInt(TAG_COLONY));
             colonyHint.setStyle(Style.EMPTY.withColor(ChatFormatting.DARK_BLUE));
             tooltip.add(colonyHint);
         }

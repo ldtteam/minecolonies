@@ -506,7 +506,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
 
     protected int getLargestCell(FarmField farmField)
     {
-        return (int) Math.pow(farmField.getMaxRadius() * 2D + 1D, 2);
+        return (int) Math.pow(FarmField.MAX_RANGE * 2D + 1D, 2);
     }
 
     /**
@@ -531,6 +531,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
                 {
                     return getState();
                 }
+                equipHoe();
 
                 switch ((AIWorkerState) getState())
                 {
@@ -538,7 +539,6 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
                     {
                         if (!hoeIfAble(position, farmField))
                         {
-                            didWork = true;
                             return getState();
                         }
                     }
@@ -546,7 +546,6 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
                     {
                         if (!tryToPlant(farmField, position))
                         {
-                            didWork = true;
                             return PREPARING;
                         }
                     }
@@ -554,7 +553,6 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
                     {
                         if (!harvestIfAble(position))
                         {
-                            didWork = true;
                             return getState();
                         }
                     }
@@ -604,6 +602,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
         {
             if (mineBlock(position.above()))
             {
+                didWork = true;
                 equipHoe();
                 worker.swing(worker.getUsedItemHand());
                 createCorrectFarmlandForSeed(farmField.getSeed(), position);
@@ -666,6 +665,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
         {
             if (mineBlock(position.above()))
             {
+                didWork = true;
                 worker.getCitizenColonyHandler().getColonyOrRegister().getStatisticsManager().increment(CROPS_HARVESTED, worker.getCitizenColonyHandler().getColonyOrRegister().getDay());
                 worker.getCitizenExperienceHandler().addExperience(XP_PER_HARVEST);
             }
@@ -768,6 +768,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
             world.setBlockAndUpdate(position.above(), ((BlockItem) item.getItem()).getBlock().defaultBlockState());
             worker.decreaseSaturationForContinuousAction();
             getInventory().extractItem(slot, 1, false);
+            didWork = true;
         }
         return true;
     }

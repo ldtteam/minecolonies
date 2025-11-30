@@ -1902,12 +1902,10 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     public ImmutableCollection<IRequestResolver<?>> createResolvers()
     {
         final ImmutableList.Builder<IRequestResolver<?>> builder = ImmutableList.builder();
-
         for (final ICreatesResolversModule module : getModulesByType(ICreatesResolversModule.class))
         {
             builder.addAll(module.createResolvers());
         }
-        builder.add(new BuildingRequestResolver(getRequester().getLocation(), colony.getRequestManager().getFactoryController().getNewInstance(TypeConstants.ITOKEN)));
         return builder.build();
     }
 

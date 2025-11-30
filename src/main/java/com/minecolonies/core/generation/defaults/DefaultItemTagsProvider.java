@@ -188,6 +188,15 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
           .add(Items.RABBIT)
           .add(Items.MUTTON);
 
+        tag(ModTags.feed)
+          .add(Items.WHEAT)
+          .add(ModBlocks.blockDurum.asItem())
+          .addTag(Tags.Items.CROPS_WHEAT);
+
+        tag(ModTags.leather)
+          .add(Items.SADDLE)
+          .add(Items.LEATHER);
+
         final Item[] paperExtras = getDomumExtra(ExtraBlockType.BASE_PAPER, ExtraBlockType.LIGHT_PAPER);
 
         tag(ModTags.crafterIngredient.get(TagConstants.CRAFTING_BAKER))

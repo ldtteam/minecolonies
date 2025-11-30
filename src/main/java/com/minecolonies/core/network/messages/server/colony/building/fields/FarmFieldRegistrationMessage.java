@@ -53,7 +53,7 @@ public class FarmFieldRegistrationMessage extends AbstractColonyServerMessage
 
         if (field.isEmpty())
         {
-            colony.getBuildingManager().addBuildingExtension(FarmField.create(position));
+            colony.getBuildingManager().addBuildingExtension(FarmField.create(position, ctxIn.getSender().level));
         }
     }
 

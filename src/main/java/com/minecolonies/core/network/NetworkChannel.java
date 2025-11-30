@@ -132,7 +132,6 @@ public class NetworkChannel
         registerMessage(++idx, PermissionsMessage.AddRank.class, PermissionsMessage.AddRank::new);
         registerMessage(++idx, PermissionsMessage.RemoveRank.class, PermissionsMessage.RemoveRank::new);
         registerMessage(++idx, PermissionsMessage.EditRankType.class, PermissionsMessage.EditRankType::new);
-        registerMessage(++idx, PermissionsMessage.SetSubscriber.class, PermissionsMessage.SetSubscriber::new);
 
         //  Colony Request messages
         registerMessage(++idx, BuildRequestMessage.class, BuildRequestMessage::new);

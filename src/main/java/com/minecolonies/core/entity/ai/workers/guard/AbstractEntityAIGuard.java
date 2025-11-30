@@ -98,7 +98,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
     /**
      * The current blockPos we're patrolling at.
      */
-    private BlockPos currentPatrolPoint = null;
+    protected BlockPos currentPatrolPoint = null;
 
     /**
      * The guard building assigned to this job.
@@ -314,7 +314,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
      *
      * @return the next state to go into
      */
-    private IAIState sleep()
+    protected IAIState sleep()
     {
         if (worker.getLastHurtByMob() != null || (sleepTimer -= getTickRate()) < 0)
         {
@@ -494,6 +494,15 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
     }
 
     /**
+     * Provides a random patrol point from all buildings in the colony when the guard is set to automatic patrol mode.
+     * @return a BlockPos of the patrol point.
+     */
+    protected BlockPos randomPatrolPoint()
+    {
+        return buildingGuards.getColony().getBuildingManager().getRandomBuilding(b -> true);
+    }
+
+    /**
      * Patrol between a list of patrol points.
      *
      * @return the next patrol point to go to.
@@ -512,7 +521,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
 
                 if (worker.getRandom().nextInt(5) <= 1)
                 {
-                    currentPatrolPoint = buildingGuards.getColony().getBuildingManager().getRandomBuilding(b -> true);
+                    currentPatrolPoint = randomPatrolPoint();
                     if (currentPatrolPoint != null)
                     {
                         walkToSafePos(currentPatrolPoint);
@@ -822,8 +831,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
         }
 
         // Players
-        if (entity instanceof Player && (colony.getPermissions().hasPermission((Player) entity, Action.GUARDS_ATTACK)
-                                           || colony.isValidAttackingPlayer((Player) entity)))
+        if (entity instanceof Player && (colony.getPermissions().getRank((Player) entity).isHostile() || colony.isValidAttackingPlayer((Player) entity)))
         {
             return true;
         }

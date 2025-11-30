@@ -75,7 +75,7 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob<?, J>, B
         super.registerTargets(
           new AITarget(IDLE, START_WORKING, STANDARD_DELAY),
           new AITarget(START_WORKING, this::startWorking, 60),
-          new AITarget(START_USING_FURNACE, this::fillUpFurnace, STANDARD_DELAY),
+          new AITarget(FILL_UP_FURNACES, this::fillUpFurnace, STANDARD_DELAY),
           new AIEventTarget(AIBlockingEventType.AI_BLOCKING, this::accelerateFurnaces, TICKS_SECOND),
           new AITarget(RETRIEVING_END_PRODUCT_FROM_FURNACE, this::retrieveSmeltableFromFurnace, STANDARD_DELAY),
           new AITarget(RETRIEVING_USED_FUEL_FROM_FURNACE, this::retrieveUsedFuel, STANDARD_DELAY));
@@ -333,7 +333,7 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob<?, J>, B
                       || (amountOfFuel > 0 && amountOfSmeltable > 0 && hasNeitherFuelNorSmeltAble(furnace)))
                 {
                     walkTo = pos;
-                    return START_USING_FURNACE;
+                    return FILL_UP_FURNACES;
                 }
             }
             else

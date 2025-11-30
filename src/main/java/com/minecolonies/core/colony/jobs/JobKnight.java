@@ -94,7 +94,6 @@ public class JobKnight extends AbstractJobGuard<JobKnight> implements IJobWithCo
             CompoundTag nbt = shieldStack.getOrCreateTagElement("BlockEntityTag");
             nbt.put(TAG_BANNER_PATTERNS, worker.getCitizenColonyHandler().getColonyOrRegister().getColonyFlag());
 
-            worker.decreaseSaturationForContinuousAction();
             return true;
         }
         return super.ignoresDamage(damageSource);

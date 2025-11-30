@@ -3,6 +3,7 @@ package com.minecolonies.core.colony;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.ldtteam.structurize.util.BlockUtils;
+import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.*;
 import com.minecolonies.api.colony.buildings.IBuilding;
@@ -20,6 +21,8 @@ import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.ITickRat
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickRateStateMachine;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickingTransition;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.eventbus.events.colony.permissions.PlayerEnteringModEvent;
+import com.minecolonies.api.eventbus.events.colony.permissions.PlayerLeavingModEvent;
 import com.minecolonies.api.quests.IQuestManager;
 import com.minecolonies.api.research.IResearchManager;
 import com.minecolonies.api.util.*;
@@ -519,7 +522,7 @@ public class Colony implements IColony
         {
             for (final ServerPlayer sub : getPackageManager().getCloseSubscribers())
             {
-                if (getPermissions().hasPermission(sub, Action.CAN_KEEP_COLONY_ACTIVE_WHILE_AWAY))
+                if (getPermissions().getRank(sub).isColonyManager())
                 {
                     this.forceLoadTimer = getConfig().getServer().loadtime.get() * 20 * 60;
                     pendingChunks.addAll(pendingToUnloadChunks);
@@ -1407,7 +1410,7 @@ public class Colony implements IColony
 
         for (final ServerPlayer player : packageManager.getImportantColonyPlayers())
         {
-            if (permissions.hasPermission(player, Action.RECEIVE_MESSAGES_FAR_AWAY))
+            if (permissions.getRank(player).isColonyManager())
             {
                 playerList.add(player);
             }
@@ -1660,7 +1663,14 @@ public class Colony implements IColony
             {
                 MessageUtils.format(ENTERING_COLONY_MESSAGE, this.getName()).sendTo(player);
             }
-            MessageUtils.format(ENTERING_COLONY_MESSAGE_NOTIFY, player.getName()).sendTo(this, true).forManagers();
+
+            final PlayerEnteringModEvent notifyPlayerEnteringModEvent = new PlayerEnteringModEvent(this, player);
+            IMinecoloniesAPI.getInstance().getEventBus().post(notifyPlayerEnteringModEvent);
+
+            if (notifyPlayerEnteringModEvent.shouldShowNotification())
+            {
+                MessageUtils.format(ENTERING_COLONY_MESSAGE_NOTIFY, player.getName()).sendTo(this, true).forManagers();
+            }
         }
     }
 
@@ -1674,7 +1684,14 @@ public class Colony implements IColony
             {
                 MessageUtils.format(LEAVING_COLONY_MESSAGE, this.getName()).sendTo(player);
             }
-            MessageUtils.format(LEAVING_COLONY_MESSAGE_NOTIFY, player.getName()).sendTo(this, true).forManagers();
+
+            final PlayerLeavingModEvent notifyPlayerLeavingModEvent = new PlayerLeavingModEvent(this, player);
+            IMinecoloniesAPI.getInstance().getEventBus().post(notifyPlayerLeavingModEvent);
+
+            if (notifyPlayerLeavingModEvent.shouldShowNotification())
+            {
+                MessageUtils.format(LEAVING_COLONY_MESSAGE_NOTIFY, player.getName()).sendTo(this, true).forManagers();
+            }
         }
     }
 

@@ -2,8 +2,10 @@ package com.minecolonies.core.entity.ai.workers.guard;
 
 import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.colony.guardtype.registry.ModGuardTypes;
+import com.minecolonies.api.entity.ai.combat.CombatAIStates;
 import com.minecolonies.api.entity.ai.combat.threat.IThreatTableEntity;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.ITickRateStateMachine;
+import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickingTransition;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.util.BlockPosUtil;
@@ -40,6 +42,7 @@ import java.util.function.BiPredicate;
 
 import static com.minecolonies.api.research.util.ResearchConstants.DRUID_USE_POTIONS;
 import static com.minecolonies.api.util.constant.GuardConstants.*;
+import static com.minecolonies.core.entity.ai.BehaviourStateGroup.GUARD_ABORT_AND_FIGHT;
 import static com.minecolonies.core.entity.ai.workers.guard.AbstractEntityAIFight.SPEED_LEVEL_BONUS;
 
 /**
@@ -99,9 +102,13 @@ public class DruidCombatAI extends AttackMoveAI<EntityCitizen>
     {
         super(owner, stateMachine);
 
+        stateMachine.addTransitionGroup(GUARD_ABORT_AND_FIGHT, new TickingTransition(this::checkForTarget, () -> CombatAIStates.ATTACKING, 5).withName("busy_checkTarget"));
+        stateMachine.addTransitionGroup(GUARD_ABORT_AND_FIGHT, new TickingTransition(this::searchNearbyTarget, () -> CombatAIStates.ATTACKING, 80).withName("busy_searchTarget"));
+
         this.parentAI = parentAI;
         combatPathingOptions = new PathingOptions();
         combatPathingOptions.setEnterDoors(true);
+        combatPathingOptions.setEnterGates(true);
         combatPathingOptions.setCanOpenDoors(true);
         combatPathingOptions.setCanSwim(true);
         combatPathingOptions.withOnPathCost(0.8);
@@ -165,7 +172,6 @@ public class DruidCombatAI extends AttackMoveAI<EntityCitizen>
 
         user.getThreatTable().removeCurrentTarget();
 
-        user.decreaseSaturationForContinuousAction();
         user.getCitizenExperienceHandler().addExperience(PER_POTION_XP);
     }
 
@@ -341,7 +347,8 @@ public class DruidCombatAI extends AttackMoveAI<EntityCitizen>
     @Override
     protected void onTargetDied(final LivingEntity entity)
     {
-        parentAI.incrementActionsDoneAndDecSaturation();
+        parentAI.incrementActionsDone();
         user.getCitizenExperienceHandler().addExperience(EXP_PER_MOB_DEATH);
+        user.decreaseSaturationForContinuousAction();
     }
 }

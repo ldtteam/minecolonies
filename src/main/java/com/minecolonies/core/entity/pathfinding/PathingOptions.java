@@ -86,9 +86,15 @@ public class PathingOptions
      */
     private boolean canSwim          = false;
     /**
-     * Allowed to enter doors?
+     * Allowed to enter doors (includes gates).
      */
     private boolean enterDoors       = false;
+
+    /**
+     * Allowed to enter gates?
+     */
+    private boolean enterGates       = true;
+
     /**
      * Allowed to open doors?
      */
@@ -156,14 +162,33 @@ public class PathingOptions
         this.canSwim = canSwim;
     }
 
+    /**
+     * Whether the entity can enter doors, including gates.
+     * 
+     * @return true if the entity can enter doors, false otherwise
+     */
     public boolean canEnterDoors()
     {
         return enterDoors;
     }
 
+    /**
+     * Whether the entity can enter gates (not counting doors)
+     * @return true if the entity can enter gates, false otherwise
+     */
+    public boolean canEnterGates()
+    {
+        return enterGates;
+    }
+
     public void setEnterDoors(final boolean enterDoors)
     {
         this.enterDoors = enterDoors;
+    }
+
+    public void setEnterGates(final boolean enterGates)
+    {
+        this.enterGates = enterGates;
     }
 
     public void setPassDanger(final boolean danger)
@@ -269,6 +294,16 @@ public class PathingOptions
     }
 
     /**
+     * @param canEnter whether we can enter gates
+     * @return
+     */
+    public PathingOptions withCanEnterGates(final boolean canEnter)
+    {
+        setEnterGates(canEnter);
+        return this;
+    }
+
+    /**
      * Set under water walking opening capability
      * @param walkUnderWater whether we can walk underwater
      * @return
@@ -300,6 +335,7 @@ public class PathingOptions
         canUseRails = pathingOptions.canUseRails;
         canSwim = pathingOptions.canSwim;
         enterDoors = pathingOptions.enterDoors;
+        enterGates = pathingOptions.enterGates;
         canOpenDoors = pathingOptions.canOpenDoors;
         canClimbAdvanced = pathingOptions.canClimbAdvanced;
         canPassDanger = pathingOptions.canPassDanger;

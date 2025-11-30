@@ -243,7 +243,7 @@ public class SittingEntity extends Entity
         }
 
         entity.getNavigation().stop();
-        sittingEntity.setPos(pos.getX() + 0.5, (pos.getY() + minY) - entity.getBbHeight() / 2, pos.getZ() + 0.5);
+        sittingEntity.setPos(pos.getX() + 0.5, (pos.getY() + minY) - entity.getBbHeight() / 2 - 0.1, pos.getZ() + 0.5);
         sittingEntity.setMaxLifeTime(maxLifeTime);
         sittingEntity.setSittingPos(pos);
         entity.level.addFreshEntity(sittingEntity);

@@ -1,0 +1,7 @@
+{
+  "values": [
+    "minecraft:wheat",
+    "minecolonies:durum",
+    "#forge:crops/wheat"
+  ]
+}

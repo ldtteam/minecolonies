@@ -52,6 +52,7 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_BANNER_PATT
 import static com.minecolonies.api.util.constant.StatisticsConstants.MOBS_KILLED;
 import static com.minecolonies.api.util.constant.StatisticsConstants.MOB_KILLED;
 import static com.minecolonies.core.colony.buildings.modules.BuildingModules.STATS_MODULE;
+import static com.minecolonies.core.entity.ai.BehaviourStateGroup.GUARD_ABORT_AND_FIGHT;
 import static com.minecolonies.core.entity.ai.workers.guard.AbstractEntityAIFight.SPEED_LEVEL_BONUS;
 import static com.minecolonies.core.entity.ai.workers.guard.AbstractEntityAIGuard.PATROL_DEVIATION_RAID_POINT;
 
@@ -101,6 +102,8 @@ public class KnightCombatAI extends AttackMoveAI<EntityCitizen>
 
         this.parentAI = parentAI;
         stateMachine.addTransition(new TickingTransition<>(CombatAIStates.ATTACKING, () -> true, this::attackProtect, 8));
+        stateMachine.addTransitionGroup(GUARD_ABORT_AND_FIGHT, new TickingTransition(this::checkForTarget, () -> CombatAIStates.ATTACKING, 5).withName("busy_checkTarget"));
+        stateMachine.addTransitionGroup(GUARD_ABORT_AND_FIGHT, new TickingTransition(this::searchNearbyTarget, () -> CombatAIStates.ATTACKING, 80).withName("busy_searchTarget"));
     }
 
     /**
@@ -126,7 +129,6 @@ public class KnightCombatAI extends AttackMoveAI<EntityCitizen>
                 user.getInventoryCitizen().markDirty();
             }
             user.lookAt(target, (float) TURN_AROUND, (float) TURN_AROUND);
-            user.decreaseSaturationForContinuousAction();
         }
 
         return null;
@@ -192,9 +194,13 @@ public class KnightCombatAI extends AttackMoveAI<EntityCitizen>
         }
 
         user.stopUsingItem();
-        user.decreaseSaturationForContinuousAction();
-        user.getCitizenData().setVisibleStatus(KNIGHT_COMBAT);
+        user.getCitizenData().setVisibleStatus(getCombatStatus());
         CitizenItemUtils.damageItemInHand(user, InteractionHand.MAIN_HAND, 1);
+    }
+
+    protected VisibleCitizenStatus getCombatStatus()
+    {
+        return KNIGHT_COMBAT;
     }
 
     /**
@@ -254,7 +260,7 @@ public class KnightCombatAI extends AttackMoveAI<EntityCitizen>
      *
      * @return attack damage
      */
-    private double getAttackDamage()
+    protected double getAttackDamage()
     {
         double addDmg = 0;
 
@@ -371,12 +377,13 @@ public class KnightCombatAI extends AttackMoveAI<EntityCitizen>
     @Override
     protected void onTargetDied(final LivingEntity entity)
     {
-        parentAI.incrementActionsDoneAndDecSaturation();
+        parentAI.incrementActionsDone();
         user.getCitizenExperienceHandler().addExperience(EXP_PER_MOB_DEATH);
         user.getCitizenColonyHandler().getColonyOrRegister().getStatisticsManager().increment(MOBS_KILLED, user.getCitizenColonyHandler().getColonyOrRegister().getDay());
         if (entity.getType().getDescription().getContents() instanceof TranslatableContents translatableContents)
         {
             parentAI.building.getModule(STATS_MODULE).increment(MOB_KILLED + ";" + translatableContents.getKey());
         }
+        user.decreaseSaturationForContinuousAction();
     }
 }

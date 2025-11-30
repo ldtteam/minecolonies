@@ -726,7 +726,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
 
         if (workingNode.getRot().isPresent() && workingNode.getRot().get() != rotation)
         {
-            Log.getLogger().warn("Calculated rotation doesn't match recorded: x:" + workingNodeX + " z:" + workingNodeZ);
+            Log.getLogger().warn("Calculated rotation doesn't match recorded: x:" + workingNodeX + " z:" + workingNodeZ + " at: " + building.getColony().getID());
         }
 
         final MineNode parentNode = currentLevel.getNode(workingNode.getParent());

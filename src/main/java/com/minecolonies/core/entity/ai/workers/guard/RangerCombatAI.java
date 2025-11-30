@@ -1,6 +1,8 @@
 package com.minecolonies.core.entity.ai.workers.guard;
 
+import com.minecolonies.api.entity.ai.combat.CombatAIStates;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.ITickRateStateMachine;
+import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickingTransition;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.equipment.ModEquipmentTypes;
@@ -44,6 +46,7 @@ import static com.minecolonies.api.util.constant.GuardConstants.*;
 import static com.minecolonies.api.util.constant.StatisticsConstants.MOBS_KILLED;
 import static com.minecolonies.api.util.constant.StatisticsConstants.MOB_KILLED;
 import static com.minecolonies.core.colony.buildings.modules.BuildingModules.STATS_MODULE;
+import static com.minecolonies.core.entity.ai.BehaviourStateGroup.GUARD_ABORT_AND_FIGHT;
 import static com.minecolonies.core.entity.ai.workers.guard.AbstractEntityAIFight.SPEED_LEVEL_BONUS;
 import static com.minecolonies.core.entity.ai.workers.guard.AbstractEntityAIGuard.PATROL_DEVIATION_RAID_POINT;
 
@@ -94,9 +97,13 @@ public class RangerCombatAI extends AttackMoveAI<EntityCitizen>
     {
         super(owner, stateMachine);
 
+        stateMachine.addTransitionGroup(GUARD_ABORT_AND_FIGHT, new TickingTransition(this::checkForTarget, () -> CombatAIStates.ATTACKING, 5).withName("busy_checkTarget"));
+        stateMachine.addTransitionGroup(GUARD_ABORT_AND_FIGHT, new TickingTransition(this::searchNearbyTarget, () -> CombatAIStates.ATTACKING, 80).withName("busy_searchTarget"));
+
         this.parentAI = parentAI;
         combatPathingOptions = new PathingOptions();
         combatPathingOptions.setEnterDoors(true);
+        combatPathingOptions.setEnterGates(true);
         combatPathingOptions.setCanOpenDoors(true);
         combatPathingOptions.setCanSwim(true);
         combatPathingOptions.withOnPathCost(0.8);
@@ -200,7 +207,6 @@ public class RangerCombatAI extends AttackMoveAI<EntityCitizen>
         target.setLastHurtByMob(user);
         CitizenItemUtils.damageItemInHand(user, InteractionHand.MAIN_HAND, 1);
         user.stopUsingItem();
-        user.decreaseSaturationForContinuousAction();
     }
 
     @Override
@@ -385,12 +391,13 @@ public class RangerCombatAI extends AttackMoveAI<EntityCitizen>
     @Override
     protected void onTargetDied(final LivingEntity entity)
     {
-        parentAI.incrementActionsDoneAndDecSaturation();
+        parentAI.incrementActionsDone();
         user.getCitizenExperienceHandler().addExperience(EXP_PER_MOB_DEATH);
         user.getCitizenColonyHandler().getColonyOrRegister().getStatisticsManager().increment(MOBS_KILLED, user.getCitizenColonyHandler().getColonyOrRegister().getDay());
         if (entity.getType().getDescription().getContents() instanceof TranslatableContents translatableContents)
         {
             parentAI.building.getModule(STATS_MODULE).increment(MOB_KILLED + ";" + translatableContents.getKey());
         }
+        user.decreaseSaturationForContinuousAction();
     }
 }

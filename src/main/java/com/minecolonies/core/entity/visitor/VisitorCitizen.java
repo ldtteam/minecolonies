@@ -56,6 +56,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import static com.minecolonies.api.util.ItemStackUtils.ISFOOD;
+import static com.minecolonies.api.util.constant.CitizenConstants.SATURATION_DECREASE_FACTOR;
 import static com.minecolonies.api.util.constant.CitizenConstants.TICKS_20;
 import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_CITIZEN;
@@ -267,7 +268,7 @@ public class VisitorCitizen extends AbstractEntityCitizen
     {
         if (citizenData != null)
         {
-            citizenData.decreaseSaturation(citizenColonyHandler.getPerBuildingFoodCost());
+            citizenData.decreaseSaturation(SATURATION_DECREASE_FACTOR);
             citizenData.markDirty(20 * 20);
         }
     }
@@ -280,7 +281,7 @@ public class VisitorCitizen extends AbstractEntityCitizen
     {
         if (citizenData != null)
         {
-            citizenData.decreaseSaturation(citizenColonyHandler.getPerBuildingFoodCost() / 100.0);
+            citizenData.decreaseSaturation(SATURATION_DECREASE_FACTOR / 100.0);
             citizenData.markDirty(20 * 60 * 2);
         }
     }

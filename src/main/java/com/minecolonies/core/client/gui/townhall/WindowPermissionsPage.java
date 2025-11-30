@@ -132,7 +132,6 @@ public class WindowPermissionsPage extends AbstractWindowTownHall
         registerButton(BUTTON_ADD_RANK, this::addRank);
         registerButton(TOWNHALL_RANK_BUTTON, this::onRankButtonClicked);
         registerButton(BUTTON_REMOVE_RANK, this::onRemoveRankButtonClicked);
-        registerButton(TOWNHALL_BUTTON_SUBSCRIBER, this::setSubscriber);
         registerButton(BUTTON_ADD_PLAYER_OR_FAKEPLAYER, this::addPlayerToColonyClicked);
 
         registerButton(BUTTON_OPEN_ONLINE_PLAYER_LIST, this::onPickPlayer);
@@ -207,21 +206,6 @@ public class WindowPermissionsPage extends AbstractWindowTownHall
             final PermissionEvent user = buildingView.getPermissionEvents().get(row);
             Network.getNetwork().sendToServer(new PermissionsMessage.AddPlayerOrFakePlayer(buildingView.getColony(), user.getName(), user.getId()));
         }
-    }
-
-    /**
-     * Toggle the subscriber flag on client
-     * Send message to change it on server
-     *
-     * @param button the button clicked
-     */
-    private void setSubscriber(Button button)
-    {
-        Network.getNetwork().sendToServer(new PermissionsMessage.SetSubscriber(buildingView.getColony(), actionsRank, !actionsRank.isSubscriber()));
-        actionsRank.setSubscriber(!actionsRank.isSubscriber());
-        button.setText(Component.translatable(actionsRank.isSubscriber()
-            ? COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_ON
-            : COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_OFF));
     }
 
     /**
@@ -355,9 +339,6 @@ public class WindowPermissionsPage extends AbstractWindowTownHall
         }
 
         findPaneOfTypeByID(TOWNHALL_RANK_TYPE_PICKER, DropDownList.class).setSelectedIndex(actionsRank.isColonyManager() ? 0 : (actionsRank.isHostile() ? 1 : 2));
-        findPaneOfTypeByID(TOWNHALL_BUTTON_SUBSCRIBER, Button.class).setText(Component.translatable(actionsRank.isSubscriber()
-            ? COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_ON
-            : COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_OFF));
     }
 
     /**
@@ -435,9 +416,6 @@ public class WindowPermissionsPage extends AbstractWindowTownHall
             findPaneOfTypeByID(BUTTON_REMOVE_RANK, Button.class).setEnabled(!actionsRank.isInitial());
 
             findPaneOfTypeByID(TOWNHALL_RANK_TYPE_PICKER, DropDownList.class).setSelectedIndex(actionsRank.isColonyManager() ? 0 : (actionsRank.isHostile() ? 1 : 2));
-            findPaneOfTypeByID(TOWNHALL_BUTTON_SUBSCRIBER, Button.class).setText(Component.translatable(actionsRank.isSubscriber()
-                ? COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_ON
-                : COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_OFF));
         }
     }
 

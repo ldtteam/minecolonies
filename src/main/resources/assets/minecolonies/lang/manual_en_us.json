@@ -211,6 +211,8 @@
   "minecolonies.config.maxkeptbackups.comment": "Set the max amount of backups kept",
   "minecolonies.config.turnoffexplosionsincolonies": "Turn off Explosions in Colonies",
   "minecolonies.config.turnoffexplosionsincolonies.comment": "Independent from the colony protection, should explosions be turned off inside colonies? DAMAGE_NOTHING prevents explosions completely. DAMAGE_PLAYERS, allows explosions to damage players and hostile mobs, but not blocks or neutral or friendly mobs. DAMAGE_ENTITIES allows damage to all entities. DAMAGE_EVERYTHING allows explosions to damage entities and blocks.",
+  "minecolonies.config.permissioneventbypassminpermlevel": "Permission Event Minimum Permission Level",
+  "minecolonies.config.permissioneventbypassminpermlevel.comment": "Disables colony permissions if player has a given permission level.",
   "minecolonies.config.specialpermgroup": "Special Permissions Group",
   "minecolonies.config.specialpermgroup.comment": "Players who have special permissions, especially to change citizen names (see \"Name Changes\" above).",
   "minecolonies.config.freetointeractblocks": "Free-to-Interact Blocks",
@@ -896,6 +898,7 @@
   "com.minecolonies.coremod.tooltype.chestplate": "Chestplate",
   "com.minecolonies.coremod.tooltype.boots": "Boots",
   "com.minecolonies.coremod.tooltype.lighter": "Flint and Steel",
+  "com.minecolonies.coremod.tooltype.lead": "Lead",
 
   "com.minecolonies.coremod.armorlevel.0": "Leather",
   "com.minecolonies.coremod.armorlevel.1": "Gold",
@@ -1433,6 +1436,7 @@
   "com.minecolonies.gui.visiblestatus.emptying": "Emptying a grave",
   "com.minecolonies.gui.visiblestatus.digging": "Digging a grave",
   "com.minecolonies.gui.visiblestatus.burying": "Burying a citizen",
+  "com.minecolonies.gui.visiblestatus.stablemaster": "Finding horses",
 
   "entity.fisherman.messagewatertoofar": "I can't find any suitable water for fishing! There should be an area of water at least 7 blocks long and wide, and 2 blocks deep nearby.",
   "entity.fisherman.messagesuboptimalpond": "This pond at at position X:%d Y:%d Z:%d isn't great - the currents under the surface are too strong. If you want me to fish there, replace the flowing water with water source blocks.",
@@ -2140,6 +2144,8 @@
   "block.minecolonies.blockhutkitchen.name": "Chef's Kitchen",
   "block.minecolonies.blockhutgatehouse": "Gatehouse",
   "block.minecolonies.blockhutgatehouse.name": "Gatehouse",
+  "block.minecolonies.blockhutstable": "Stable",
+  "block.minecolonies.blockhutstable.name": "Stable",
   "com.minecolonies.coremod.gui.maintab": "Main",
   "com.minecolonies.coremod.setting.minecolonies:producedirt": "Produce Dirt:",
   "com.minecolonies.coremod.setting.minecolonies:breeding": "Breeding:",
@@ -2266,6 +2272,8 @@
   "com.minecolonies.job.chickenherder": "Chickenherder",
   "com.minecolonies.job.ranger": "Archer",
   "com.minecolonies.job.knight": "Knight",
+  "com.minecolonies.job.stablemaster": "Stablemaster",
+  "com.minecolonies.job.cavalry": "Cavalry",
   "com.minecolonies.job.composter": "Composter",
   "com.minecolonies.job.student": "Student",
   "com.minecolonies.job.archertraining": "Archer Squire",
@@ -2345,6 +2353,7 @@
   "com.minecolonies.building.stash": "Stash",
   "com.minecolonies.building.postbox": "Postbox",
   "com.minecolonies.building.gatehouse": "Gatehouse",
+  "com.minecolonies.building.stable": "Stable",
 
   "com.minecolonies.coremod.gui.chat.potatogod": "I used to be just Jack then I made a bet with the Devil.. What was his name?.. 'Ray', I think. Anyways, being a cactus has.. interrupted my relationships. I've been wandering these lands for as long as I can remember. Then finally, I saw your pathetic village and thought 'hmm.. someone that lame could definitely use my help!'",
   "com.minecolonies.coremod.gui.chat.legodoc": "While experimenting with ender pearls, I somehow turned into a blue fox. Now, I’m trying to settle down and figure out how to undo this—or at least, get rid of the relentless urge to chase every chicken I come across.",
@@ -2529,6 +2538,7 @@
   "com.minecolonies.building.mediumquarry.desc": "Large excavation area for a quarrier, used for mining and extracting stones",
   "com.minecolonies.building.kitchen.desc": "Prepares unique and tasty dishes your citizens will appreciate",
   "com.minecolonies.building.gatehouse.desc": "Houses two guards to defend the colony and allows connecting to other colonies",
+  "com.minecolonies.building.stable.desc": "Stable cares for cavarly mounts",
 
   "com.minecolonies.coremod.structures.nocustomhuts": "The builder has never heard of this blueprint for this building. Are you sure you handled this correctly?",
   "com.minecolonies.coremod.structures.nocustomcamps": "Ehrmm? This is not a valid supplycamp!",
@@ -2587,6 +2597,9 @@
   "com.minecolonies.coremod.gui.townhall.stats.visitors_recruited": "Visitors Recruited: %d", 
   "com.minecolonies.coremod.gui.townhall.stats.visitors_absconded": "Recruits Stole: %d",  
   "com.minecolonies.coremod.gui.townhall.stats.research_completed": "Research Completed: %d",  
+  "com.minecolonies.coremod.gui.townhall.stats.horses_trained": "Horses Trained: %d",  
+  "com.minecolonies.coremod.gui.townhall.stats.mounts_readied": "Mounts Readied: %d", 
+  "com.minecolonies.coremod.gui.townhall.stats.roundups_completed": "Roundups Completed: %d",  
   "com.minecolonies.coremod.gui.interval.yesterday": "Since Yesterday",
   "com.minecolonies.coremod.gui.interval.lastweek": "Last Week",
   "com.minecolonies.coremod.gui.interval.100days": "Last 100 Days",
@@ -2908,6 +2921,8 @@
   "entity.campdrownedpirate": "Drowned Pirate",
   "entity.campdrownedarcherpirate": "Drowned Pirate Archer",
   "entity.campdrownedchiefpirate": "Drowned Pirate Chief",
+  
+  "entity.cavalry.nohorse": "No trained horses are ready for me to ride.",
 
   "death.attack.entity.minecolonies.campbarbarian": "%s was sliced and diced by a Barbarian",
   "death.attack.entity.minecolonies.campchiefbarbarian": "%s was macerated by a Great Chief",
@@ -2944,7 +2959,7 @@
   "block.minecolonies.colonysign": "Colony Sign",
   "com.minecolonies.core.item.sign.needcolony": "No colony set (sneak + use the sign on a gate house or a previous sign)",
   "com.minecolonies.core.item.sign.registered": "Noted %s on the sign.",
-  "com.minecolonies.core.item.sign.toofar": "Sign too far from previous sign or not in colony.",
+  "com.minecolonies.core.item.sign.toofar": "Sign too far from previous sign or gatehouse.",
   "com.minecolonies.core.item.colonysign.tip": "Shift-right-click a Gatehouse to begin.\nPlace signs every 50 blocks along the path to the other colony.\nShift-right-click the target Gatehouse or Colony Sign to complete the connection.",
   "com.minecolonies.core.item.sign.nullcolony": "Colony not found. Colony of Sign might've been deleted.",
   "com.minecolonies.core.item.sign.noperm": "No permission to setup signs. Needs Manage Huts permission.",
@@ -2974,6 +2989,7 @@
   "com.minecolonies.core.gui.connectionevent.disconnected": "§6Severed Ties with your Colony!",
   "com.minecolonies.core.item.sign.connected": "Successfully connected sign %s to %s",
   "com.minecolonies.core.item.sign.disrupted": "Connection to Sign at %s disrupted",
+  "com.minecolonies.core.item.sign.badgatehouse": "Your gatehouse level is too low for this!",
   "com.minecolonies.core.colonyconnection.path.failure": "Couldn't Path from %s to %s",
   "com.minecolonies.coremod.debug.gui.tabicon": "Debugging Options",
 
@@ -2989,5 +3005,8 @@
   "com.ldtteam.tag.tooltip.gate": "Position where the gate transitions from inside to outside",
   "com.ldtteam.gatehouse.travel.cost": "You don't have enough nuggets to pay for this trip!",
   "com.minecolonies.coremod.gui.chat.mosochi": "Before I came here, I used to own a small village myself. Let me tell ya something, I'd rather not have another colony fall under my watch!",
-  "com.minecolonies.coremod.gui.chat.missanilka": "Bring me in and your commons rise fast without crowns, hands work lighter, songs get louder, people stay free!"
+  "com.minecolonies.coremod.gui.chat.missanilka": "Bring me in and your commons rise fast without crowns, hands work lighter, songs get louder, people stay free!",
+
+  "com.minecolonies.coremod.stablemaster.needed.readyitems": "Cavalry readiness items.",
+  "com.minecolonies.coremod.stablemaster.needed.feeditems": "Cavalry feed items."
 }

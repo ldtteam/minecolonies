@@ -267,7 +267,7 @@ public class CitizenAI implements IStateAI
      */
     public boolean shouldEat()
     {
-        if (citizen.getCitizenData().justAte())
+        if (citizen.getCitizenData().justAte() || citizen.getCitizenData().getSaturation() >= FULL_SATURATION)
         {
             return false;
         }

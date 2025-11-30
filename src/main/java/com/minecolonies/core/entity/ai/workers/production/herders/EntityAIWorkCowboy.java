@@ -180,7 +180,8 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, Buildi
                 worker.queueSound(sound, animal.blockPosition(), 10, 0, 0.9f, worker.getRandom().nextFloat());
             }
 
-            incrementActionsDoneAndDecSaturation();
+            this.incrementActionsDone();
+            worker.decreaseSaturationForContinuousAction();
             StatsUtil.trackStat(building, MILKING_ATTEMPTS, 1);
             worker.getCitizenExperienceHandler().addExperience(1.0);
             return INVENTORY_FULL;
@@ -237,7 +238,8 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, Buildi
                 fakePlayer.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
             }
 
-            incrementActionsDoneAndDecSaturation();
+            this.incrementActionsDone();
+            worker.decreaseSaturationForContinuousAction();
             StatsUtil.trackStat(building, MILKING_ATTEMPTS, 1);
             worker.getCitizenExperienceHandler().addExperience(1.0);
             return INVENTORY_FULL;

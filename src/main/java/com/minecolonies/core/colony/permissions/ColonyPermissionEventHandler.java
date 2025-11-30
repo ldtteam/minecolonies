@@ -354,8 +354,7 @@ public class ColonyPermissionEventHandler
 
             final Permissions perms = colony.getPermissions();
 
-            if (isFreeToInteractWith(block, event.getPos())
-                  && perms.hasPermission(event.getEntity(), Action.ACCESS_FREE_BLOCKS))
+            if (isFreeToInteractWith(block, event.getPos()) && !perms.getRank(event.getEntity()).isHostile())
             {
                 return;
             }
@@ -431,7 +430,7 @@ public class ColonyPermissionEventHandler
     public void on(final PlayerInteractEvent.EntityInteract event)
     {
         if (isFreeToInteractWith(null, event.getPos())
-              && colony.getPermissions().hasPermission(event.getEntity(), Action.ACCESS_FREE_BLOCKS))
+              && !colony.getPermissions().getRank(event.getEntity()).isHostile())
         {
             return;
         }
@@ -492,8 +491,7 @@ public class ColonyPermissionEventHandler
     @SubscribeEvent
     public void on(final PlayerInteractEvent.EntityInteractSpecific event)
     {
-        if (isFreeToInteractWith(null, event.getPos())
-              && colony.getPermissions().hasPermission(event.getEntity(), Action.ACCESS_FREE_BLOCKS))
+        if (isFreeToInteractWith(null, event.getPos()) && !colony.getPermissions().getRank(event.getEntity()).isHostile())
         {
             return;
         }
@@ -581,7 +579,7 @@ public class ColonyPermissionEventHandler
               && event.getSource().getEntity() instanceof EntityCitizen
               && ((EntityCitizen) event.getSource().getEntity()).getCitizenColonyHandler().getColonyId() == colony.getID()
               && colony.getRaiderManager().isRaided()
-              && !colony.getPermissions().hasPermission((Player) event.getEntity(), Action.GUARDS_ATTACK))
+              && !colony.getPermissions().getRank((Player) event.getEntity()).isHostile())
         {
             event.setCanceled(true);
         }
@@ -611,7 +609,7 @@ public class ColonyPermissionEventHandler
             if (event.getTarget() instanceof EntityCitizen)
             {
                 final AbstractEntityCitizen citizen = (AbstractEntityCitizen) event.getTarget();
-                if (citizen.getCitizenJobHandler().getColonyJob() instanceof AbstractJobGuard && perms.hasPermission(event.getEntity(), Action.GUARDS_ATTACK))
+                if (citizen.getCitizenJobHandler().getColonyJob() instanceof AbstractJobGuard && perms.getRank(event.getEntity()).isHostile())
                 {
                     return;
                 }

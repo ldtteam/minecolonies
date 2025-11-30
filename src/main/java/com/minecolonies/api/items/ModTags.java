@@ -1,5 +1,6 @@
 package com.minecolonies.api.items;
 
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.TagConstants;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
@@ -69,6 +70,8 @@ public class ModTags
     public static final TagKey<Item> poisonous_food = ItemTags.create(TagConstants.POISONOUS_FOOD);
 
     public static final TagKey<Item> rawMeat       = ItemTags.create(TagConstants.RAW_MEAT);
+    public static final TagKey<Item> feed           = ItemTags.create(TagConstants.FEED);
+    public static final TagKey<Item> leather        = ItemTags.create(TagConstants.LEATHER);
 
     public static final TagKey<EntityType<?>> hostile = TagKey.create(Registries.ENTITY_TYPE, TagConstants.HOSTILE);
     public static final TagKey<EntityType<?>> mobAttackBlacklist = TagKey.create(Registries.ENTITY_TYPE, TagConstants.MOB_ATTACK_BLACKLIST);

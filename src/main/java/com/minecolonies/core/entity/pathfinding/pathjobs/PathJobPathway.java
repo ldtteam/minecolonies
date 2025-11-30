@@ -47,7 +47,7 @@ public class PathJobPathway extends AbstractPathJob implements IDestinationPathJ
         this.colonyid = colonyID;
         this.buildings = buildings;
         this.end = end;
-        setPathingOptions(new PathingOptions().withJumpCost(30).withStartSwimCost(30).withSwimCost(5).withCanSwim(true).withCanEnterDoors(true));
+        setPathingOptions(new PathingOptions().withJumpCost(30).withStartSwimCost(30).withSwimCost(5).withCanSwim(true).withCanEnterDoors(true).withCanEnterGates(true));
     }
 
     // TODO: Before usage not thread safe chunk/cap access. Should be using passed along info

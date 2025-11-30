@@ -79,15 +79,7 @@
                 </view>
             </dropdown>
 
-            <text id="isSubscriber" size="98 11" pos="201 60" label="Is Subscriber:" color="black"/>
-            <button id="setSubscriber"
-                         size="29 15"
-                         pos="301 57"
-                         color="black"
-                         label="$(com.minecolonies.coremod.gui.workerhuts.retrieveOff)"
-                         source="minecolonies:textures/gui/builderhut/builder_button_very_small.png"/>
-
-            <list id="rankList" size="138 120" pos="201 77">
+            <list id="rankList" size="150 130" pos="201 60">
                 <box size="100% 21" linewidth="1">
                     <text id="name" size="110 18" pos="2 2" color="black"/>
                     <button id="trigger" size="29 15" pos="2 3" align="TOP_RIGHT" color="black"
