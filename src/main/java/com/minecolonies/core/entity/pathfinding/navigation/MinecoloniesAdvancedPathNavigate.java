@@ -939,6 +939,14 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
     @Override
     protected void followThePath()
     {
+        if (path.getNextNodeIndex() == 0)
+        {
+            if (BlockPosUtil.dist(path.getNextNodePos(), ourEntity.blockPosition()) > 2)
+            {
+                Log.getLogger().warn("far distance for start");
+            }
+        }
+
         // TODO: Rework pathfollow
         getSpeedFactor();
         final int curNode = path.getNextNodeIndex();
