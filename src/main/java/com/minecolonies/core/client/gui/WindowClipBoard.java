@@ -34,9 +34,9 @@ import static com.minecolonies.api.util.constant.WindowConstants.CLIPBOARD_TOGGL
 public class WindowClipBoard extends AbstractWindowSkeleton
 {
     /**
-     * The request tree capability.
+     * The request tree module.
      */
-    private final ClipboardRequestTreeWindowModule requestTreeWindowCapability;
+    private final ClipboardRequestTreeWindowModule requestTreeWindowModule;
 
     /**
      * Hide or show not important requests.
@@ -52,7 +52,7 @@ public class WindowClipBoard extends AbstractWindowSkeleton
     {
         super(new ResourceLocation(Constants.MOD_ID, "gui/windowclipboard.xml"));
         this.showImportant = showImportant;
-        this.requestTreeWindowCapability = registerLayoutModule(ClipboardRequestTreeWindowModule::new, new ClipboardRequestTreeWindowModule.Options(colony, () -> this.showImportant), 16, 44);
+        this.requestTreeWindowModule = registerLayoutModule(ClipboardRequestTreeWindowModule::new, new ClipboardRequestTreeWindowModule.Options(colony, () -> this.showImportant), 16, 44);
 
         registerButton(CLIPBOARD_TOGGLE, this::toggleImportant);
         paintButtonState();
@@ -74,7 +74,7 @@ public class WindowClipBoard extends AbstractWindowSkeleton
         hideSetting.setSetting(ItemClipboard.TAG_HIDEUNIMPORTANT, this.showImportant ? 1 : 0);
         Network.getNetwork().sendToServer(hideSetting);
 
-        requestTreeWindowCapability.refreshOpenRequests();
+        requestTreeWindowModule.refreshOpenRequests();
     }
 
     /**

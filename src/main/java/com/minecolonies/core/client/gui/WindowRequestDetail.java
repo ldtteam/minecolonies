@@ -74,9 +74,9 @@ public class WindowRequestDetail extends AbstractWindowSkeleton implements Butto
     private final int colonyId;
 
     /**
-     * The request tree window capability.
+     * The request tree window module.
      */
-    private final RequestTreeWindowModule requestTreeWindowCapability;
+    private final RequestTreeWindowModule requestTreeWindowModule;
 
     /**
      * Life count.
@@ -86,17 +86,17 @@ public class WindowRequestDetail extends AbstractWindowSkeleton implements Butto
     /**
      * Open the request detail.
      *
-     * @param parent                      the window we're coming from.
-     * @param request                     the request.
-     * @param colonyId                    the colony id.
-     * @param requestTreeWindowCapability the request tree capability.
+     * @param parent                  the window we're coming from.
+     * @param request                 the request.
+     * @param colonyId                the colony id.
+     * @param requestTreeWindowModule the request tree module.
      */
-    public WindowRequestDetail(@Nullable final BOWindow parent, final IRequest<?> request, final int colonyId, final RequestTreeWindowModule requestTreeWindowCapability)
+    public WindowRequestDetail(@Nullable final BOWindow parent, final IRequest<?> request, final int colonyId, final RequestTreeWindowModule requestTreeWindowModule)
     {
         super(parent, WINDOW_ID);
         this.request = request;
         this.colonyId = colonyId;
-        this.requestTreeWindowCapability = requestTreeWindowCapability;
+        this.requestTreeWindowModule = requestTreeWindowModule;
     }
 
     /**
@@ -157,8 +157,8 @@ public class WindowRequestDetail extends AbstractWindowSkeleton implements Butto
             Log.getLogger().warn("---IRequestResolver Null in WindowRequestDetail---", e);
         }
 
-        findPaneOfTypeByID(REQUEST_FULFILL, ButtonImage.class).setEnabled(requestTreeWindowCapability.isFulfillable(request));
-        findPaneOfTypeByID(REQUEST_CANCEL, ButtonImage.class).setEnabled(requestTreeWindowCapability.isCancellable(request));
+        findPaneOfTypeByID(REQUEST_FULFILL, ButtonImage.class).setEnabled(requestTreeWindowModule.isFulfillable(request));
+        findPaneOfTypeByID(REQUEST_CANCEL, ButtonImage.class).setEnabled(requestTreeWindowModule.isCancellable(request));
     }
 
     @Override
@@ -193,7 +193,7 @@ public class WindowRequestDetail extends AbstractWindowSkeleton implements Butto
     {
         if (button.getID().equals(REQUEST_FULFILL))
         {
-            if (requestTreeWindowCapability instanceof final RequestTreeWindowModule.IRequestTreeSupportsFulfill requestTreeSupportsFulfill)
+            if (requestTreeWindowModule instanceof final RequestTreeWindowModule.IRequestTreeSupportsFulfill requestTreeSupportsFulfill)
             {
                 requestTreeSupportsFulfill.onFulfill(request);
             }
@@ -201,7 +201,7 @@ public class WindowRequestDetail extends AbstractWindowSkeleton implements Butto
         }
         else if (button.getID().equals(REQUEST_CANCEL))
         {
-            requestTreeWindowCapability.cancel(request);
+            requestTreeWindowModule.cancel(request);
             this.window.close();
         }
     }

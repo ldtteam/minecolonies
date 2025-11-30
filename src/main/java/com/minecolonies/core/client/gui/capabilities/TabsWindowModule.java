@@ -30,7 +30,7 @@ public class TabsWindowModule implements IWindowModule
     private static final int TAB_ICON_OFFSET_Y = 3;
 
     /**
-     * The window this capability is attached to.
+     * The window this module is attached to.
      */
     private final AbstractWindowSkeleton parent;
 
@@ -55,7 +55,7 @@ public class TabsWindowModule implements IWindowModule
     private int tabYSpacing = TAB_Y_SPACING;
 
     /**
-     * Constructor to initiate the tab window capability.
+     * Constructor to initiate the tab window module.
      *
      * @param parent     the parenting window.
      * @param iconRandom the random generator for creating the icons, should use a consistent seed upon reload so it generates the same icons each time it's opened.

@@ -52,13 +52,13 @@ public abstract class AbstractBuildingWindow<B extends IBuildingView> extends Ab
         super(parent, resource);
         this.buildingView = buildingView;
 
-        final TabsWindowModule tabsWindowCapability = registerModule(TabsWindowModule::new, new Random(buildingView.getID().hashCode()));
+        final TabsWindowModule tabsWindowModule = registerModule(TabsWindowModule::new, new Random(buildingView.getID().hashCode()));
 
         if (shouldRenderDefaultSidebar())
         {
             int nextTabIndex = 0;
 
-            tabsWindowCapability.renderTabButton(nextTabIndex++,
+            tabsWindowModule.renderTabButton(nextTabIndex++,
                 TabsWindowModule.TabImageSide.LEFT,
                 new ResourceLocation(Constants.MOD_ID, "textures/gui/modules/main.png"),
                 Component.translatable(LABEL_MAIN_TAB_NAME),
@@ -72,7 +72,7 @@ public abstract class AbstractBuildingWindow<B extends IBuildingView> extends Ab
                     continue;
                 }
 
-                tabsWindowCapability.renderTabButton(nextTabIndex++,
+                tabsWindowModule.renderTabButton(nextTabIndex++,
                     TabsWindowModule.TabImageSide.LEFT,
                     view.getIconResourceLocation(),
                     Optional.ofNullable(view.getDesc()).map(Component::copy).orElse(null),

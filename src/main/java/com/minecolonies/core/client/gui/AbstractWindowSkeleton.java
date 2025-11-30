@@ -196,7 +196,7 @@ public abstract class AbstractWindowSkeleton extends BOWindow implements ButtonH
             Network.getNetwork().sendToServer(new ClickGuiButtonTriggerMessage(button.getID(), this.xmlResourceLocation));
         }
 
-        modules.forEach(capability -> capability.onButtonClicked(button));
+        modules.forEach(module -> module.onButtonClicked(button));
     }
 
     /**

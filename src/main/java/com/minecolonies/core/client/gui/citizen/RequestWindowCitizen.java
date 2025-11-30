@@ -44,9 +44,9 @@ public class RequestWindowCitizen extends AbstractWindowCitizen
     private final IRequest<?> autoOpenRequest;
 
     /**
-     * The window capability instance for handling requests.
+     * The window module instance for handling requests.
      */
-    private final RequestTreeWindowModule requestTreeCapability;
+    private final RequestTreeWindowModule requestTreeModule;
 
     /**
      * Constructor to initiate the citizen windows.
@@ -68,7 +68,7 @@ public class RequestWindowCitizen extends AbstractWindowCitizen
     {
         super(citizen, WINDOW_ID);
         this.autoOpenRequest = autoOpenRequest;
-        this.requestTreeCapability = registerLayoutModule(CitizenRequestTreeWindowModule::new, citizen, 33, 29);
+        this.requestTreeModule = registerLayoutModule(CitizenRequestTreeWindowModule::new, citizen, 33, 29);
     }
 
     @Override
@@ -77,7 +77,7 @@ public class RequestWindowCitizen extends AbstractWindowCitizen
         super.onOpened();
         if (autoOpenRequest != null)
         {
-            requestTreeCapability.openDetails(autoOpenRequest);
+            requestTreeModule.openDetails(autoOpenRequest);
         }
     }
 

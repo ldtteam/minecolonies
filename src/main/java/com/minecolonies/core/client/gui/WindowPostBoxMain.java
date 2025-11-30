@@ -70,9 +70,9 @@ public class WindowPostBoxMain extends AbstractWindowSkeleton
     private final PostBox.View postBoxView;
 
     /**
-     * The request tree window capability.
+     * The request tree window module.
      */
-    private final PostBoxRequestTreeWindowCapability requestTreeWindowCapability;
+    private final PostBoxRequestTreeWindowModule requestTreeWindowModule;
 
     /**
      * The filter for the resource list.
@@ -98,7 +98,7 @@ public class WindowPostBoxMain extends AbstractWindowSkeleton
     {
         super(new ResourceLocation(Constants.MOD_ID, "gui/windowpostboxrequest.xml"));
         this.postBoxView = postBoxView;
-        this.requestTreeWindowCapability = registerLayoutModule(PostBoxRequestTreeWindowCapability::new, postBoxView, 261, 44);
+        this.requestTreeWindowModule = registerLayoutModule(PostBoxRequestTreeWindowModule::new, postBoxView, 261, 44);
         registerPostboxTabs(this, postBoxView);
 
         registerButton(BUTTON_INVENTORY, this::inventoryClicked);
@@ -173,7 +173,7 @@ public class WindowPostBoxMain extends AbstractWindowSkeleton
         }
 
         Network.getNetwork().sendToServer(new PostBoxRequestMessage(postBoxView, stack.copy(), qty, deliverAvailable));
-        requestTreeWindowCapability.refreshOpenRequests();
+        requestTreeWindowModule.refreshOpenRequests();
     }
 
     private void deliverPartialClicked(@NotNull final Button button)
@@ -195,12 +195,12 @@ public class WindowPostBoxMain extends AbstractWindowSkeleton
      */
     public static void registerPostboxTabs(final AbstractWindowSkeleton window, final IBuildingView buildingView)
     {
-        final TabsWindowModule tabsWindowCapability = window.registerModule(TabsWindowModule::new, new Random(buildingView.getID().hashCode()));
-        tabsWindowCapability.setTabXOffset(TABS_X_OFFSET);
+        final TabsWindowModule tabsWindowModule = window.registerModule(TabsWindowModule::new, new Random(buildingView.getID().hashCode()));
+        tabsWindowModule.setTabXOffset(TABS_X_OFFSET);
 
         int nextTabIndex = 0;
 
-        tabsWindowCapability.renderTabButton(nextTabIndex++,
+        tabsWindowModule.renderTabButton(nextTabIndex++,
             TabsWindowModule.TabImageSide.LEFT,
             new ResourceLocation(Constants.MOD_ID, "textures/gui/modules/main.png"),
             Component.translatable(LABEL_MAIN_TAB_NAME),
@@ -214,7 +214,7 @@ public class WindowPostBoxMain extends AbstractWindowSkeleton
                 continue;
             }
 
-            tabsWindowCapability.renderTabButton(nextTabIndex++,
+            tabsWindowModule.renderTabButton(nextTabIndex++,
                 TabsWindowModule.TabImageSide.LEFT,
                 view.getIconResourceLocation(),
                 Optional.ofNullable(view.getDesc()).map(Component::copy).orElse(null),
@@ -265,7 +265,7 @@ public class WindowPostBoxMain extends AbstractWindowSkeleton
         }
     }
 
-    private static class PostBoxRequestTreeWindowCapability extends RequestTreeWindowModule
+    private static class PostBoxRequestTreeWindowModule extends RequestTreeWindowModule
     {
         @NotNull
         private final PostBox.View buildingView;
@@ -275,7 +275,7 @@ public class WindowPostBoxMain extends AbstractWindowSkeleton
          *
          * @param parent the parenting window
          */
-        private PostBoxRequestTreeWindowCapability(final AbstractWindowSkeleton parent, final PostBox.View buildingView)
+        private PostBoxRequestTreeWindowModule(final AbstractWindowSkeleton parent, final PostBox.View buildingView)
         {
             super(parent, buildingView.getColony());
             this.buildingView = buildingView;
