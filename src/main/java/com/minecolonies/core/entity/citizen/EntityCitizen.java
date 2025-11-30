@@ -1068,7 +1068,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     @Override
     public void decreaseSaturationForAction()
     {
-        this.cachedActionSaturationDecrease += SATURATION_DECREASE_FACTOR;
+        this.cachedActionSaturationDecrease += BIG_SATURATION_FACTOR;
     }
 
     /**
@@ -1077,7 +1077,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     @Override
     public void decreaseSaturationForContinuousAction()
     {
-        this.cachedActionSaturationDecrease += SATURATION_DECREASE_FACTOR / 10.0;
+        this.cachedActionSaturationDecrease += SATURATION_DECREASE_FACTOR / 4.0;
     }
 
     /**
