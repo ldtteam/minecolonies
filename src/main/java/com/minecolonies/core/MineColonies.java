@@ -327,7 +327,6 @@ public class MineColonies
         PermissionsMessage.AddRank.TYPE.register(registry);
         PermissionsMessage.RemoveRank.TYPE.register(registry);
         PermissionsMessage.EditRankType.TYPE.register(registry);
-        PermissionsMessage.SetSubscriber.TYPE.register(registry);
 
         //  Colony Request messages
         BuildRequestMessage.TYPE.register(registry);

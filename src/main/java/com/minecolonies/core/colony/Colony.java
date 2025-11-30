@@ -529,7 +529,7 @@ public class Colony implements IColony
         {
             for (final ServerPlayer sub : getPackageManager().getCloseSubscribers())
             {
-                if (getPermissions().hasPermission(sub, Action.CAN_KEEP_COLONY_ACTIVE_WHILE_AWAY))
+                if (getPermissions().getRank(sub).isColonyManager())
                 {
                     this.forceLoadTimer = getConfig().getServer().loadtime.get() * 20 * 60;
                     pendingChunks.addAll(pendingToUnloadChunks);
@@ -1440,7 +1440,7 @@ public class Colony implements IColony
 
         for (final ServerPlayer player : packageManager.getImportantColonyPlayers())
         {
-            if (permissions.hasPermission(player, Action.RECEIVE_MESSAGES_FAR_AWAY))
+            if (permissions.getRank(player).isColonyManager())
             {
                 playerList.add(player);
             }

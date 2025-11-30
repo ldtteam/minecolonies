@@ -976,7 +976,6 @@ public final class WindowConstants
     public static final String TOWNHALL_PERM_LIST         = "permissionsList";
     public static final String TOWNHALL_PERM_SETTINGS     = "permissionsSettings";
     public static final String TOWNHALL_PERM_MODE_TOGGLE  = "permissionsModeToggle";
-    public static final String TOWNHALL_BUTTON_SUBSCRIBER = "setSubscriber";
     public static final String TOWNHALL_RANK_TYPE_PICKER  = "rankTypePicker";
 
     /**

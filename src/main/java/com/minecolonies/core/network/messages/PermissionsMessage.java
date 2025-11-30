@@ -12,7 +12,6 @@ import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.colony.Colony;
-import com.minecolonies.core.entity.other.FireArrowEntity;
 import com.minecolonies.core.network.messages.server.AbstractColonyServerMessage;
 import io.netty.buffer.Unpooled;
 import net.minecraft.core.registries.Registries;
@@ -520,65 +519,6 @@ public class PermissionsMessage
                     rank.setColonyManager(false);
                     break;
             }
-            colony.markDirty();
-        }
-
-        @Override
-        @Nullable
-        protected Action permissionNeeded()
-        {
-            return Action.EDIT_PERMISSIONS;
-        }
-    }
-
-    /**
-     * Message to change whether a rank is a subscriber to certain colony events
-     */
-    public static class SetSubscriber extends AbstractColonyServerMessage
-    {
-        public static final PlayMessageType<?> TYPE = PlayMessageType.forServer(Constants.MOD_ID, "permission_set_subscriber", SetSubscriber::new);
-
-        /**
-         * the rank ID
-         */
-        private final int rankId;
-        /**
-         * the new isSubscriber state
-         */
-        private final boolean isSubscriber;
-
-        /**
-         * Constructor to change whether the given rank is a subscriber
-         * @param colony the colony of the rank
-         * @param rank the rank
-         * @param isSubscriber whether the rank should be a subscriber
-         */
-        public SetSubscriber(@NotNull final IColonyView colony, @NotNull final Rank rank, final boolean isSubscriber)
-        {
-            super(TYPE, colony);
-            this.rankId = rank.getId();
-            this.isSubscriber = isSubscriber;
-        }
-
-        @Override
-        protected void toBytes(final RegistryFriendlyByteBuf buf)
-        {
-            super.toBytes(buf);
-            buf.writeInt(rankId);
-            buf.writeBoolean(isSubscriber);
-        }
-
-        protected SetSubscriber(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
-        {
-            super(buf, type);
-            this.rankId = buf.readInt();
-            this.isSubscriber = buf.readBoolean();
-        }
-
-        @Override
-        protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony)
-        {
-            colony.getPermissions().getRank(rankId).setSubscriber(isSubscriber);
             colony.markDirty();
         }
 

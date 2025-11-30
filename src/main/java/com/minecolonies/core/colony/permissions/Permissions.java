@@ -43,7 +43,6 @@ public class Permissions implements IPermissions
     private static final String TAG_OWNER_ID        = "ownerid";
     private static final String TAG_FULLY_ABANDONED = "fully_abandoned";
     private static final String TAG_RANKS           = "ranks";
-    private static final String TAG_SUBSCRIBER      = "is_subscriber";
     private static final String TAG_INITIAL         = "is_initial";
     private static final String TAG_COLONY_MANAGER  = "is_colony_manager";
     private static final String TAG_HOSTILE         = "is_hostile";
@@ -69,10 +68,11 @@ public class Permissions implements IPermissions
          */
         for (Action a : Action.values())
         {
-            if (a != Action.GUARDS_ATTACK
-                  && a != Action.EDIT_PERMISSIONS && a != Action.MANAGE_HUTS
-                  && a != Action.TELEPORT_TO_COLONY && a != Action.EXPLODE
-                  && a != Action.CAN_KEEP_COLONY_ACTIVE_WHILE_AWAY && a != Action.RALLY_GUARDS)
+            if (a != Action.EDIT_PERMISSIONS
+                && a != Action.MANAGE_HUTS
+                && a != Action.TELEPORT_TO_COLONY
+                && a != Action.EXPLODE
+                && a != Action.RALLY_GUARDS)
             {
                 fullyAbandonedPermissionsFlag |= a.getFlag();
             }
@@ -119,7 +119,7 @@ public class Permissions implements IPermissions
     /**
      * Special OP rank.
      */
-    private static final Rank OP_RANK = new Rank(-1, "OP", false, true);
+    private static final Rank OP_RANK = new Rank(-1, "OP", true);
     static {
         OP_RANK.addPermission(Action.ACCESS_HUTS);
         OP_RANK.addPermission(Action.USE_SCAN_TOOL);
@@ -132,7 +132,6 @@ public class Permissions implements IPermissions
         OP_RANK.addPermission(Action.ATTACK_CITIZEN);
         OP_RANK.addPermission(Action.ATTACK_ENTITY);
         OP_RANK.addPermission(Action.TELEPORT_TO_COLONY);
-        OP_RANK.addPermission(Action.ACCESS_FREE_BLOCKS);
         OP_RANK.addPermission(Action.ACCESS_TOGGLEABLES);
         OP_RANK.addPermission(Action.PLACE_HUTS);
         OP_RANK.addPermission(Action.BREAK_HUTS);
@@ -167,7 +166,7 @@ public class Permissions implements IPermissions
         {
             String name = oldRank.name();
             name = name.substring(0, 1).toUpperCase(Locale.US) + name.substring(1).toLowerCase(Locale.US);
-            Rank rank = new Rank(oldRank.ordinal(), name, oldRank.isSubscriber, true);
+            Rank rank = new Rank(oldRank.ordinal(), name, true);
             ranks.put(rank.getId(), rank);
             switch (oldRank)
             {
@@ -184,8 +183,6 @@ public class Permissions implements IPermissions
                     rank.addPermission(Action.BREAK_BLOCKS);
                     rank.addPermission(Action.FILL_BUCKET);
                     rank.addPermission(Action.OPEN_CONTAINER);
-                    rank.addPermission(Action.RECEIVE_MESSAGES_FAR_AWAY);
-                    rank.addPermission(Action.CAN_KEEP_COLONY_ACTIVE_WHILE_AWAY);
                     rank.addPermission(Action.RALLY_GUARDS);
                     rank.addPermission(Action.MAP_BORDER);
                     rank.addPermission(Action.MAP_DEATHS);
@@ -205,12 +202,10 @@ public class Permissions implements IPermissions
                     rank.addPermission(Action.ACCESS_TOGGLEABLES);
                     rank.addPermission(Action.MAP_BORDER);
                 case NEUTRAL:
-                    rank.addPermission(Action.ACCESS_FREE_BLOCKS);
                     rank.addPermission(Action.ACCESS_TOGGLEABLES);
                     rank.addPermission(Action.MAP_BORDER);
                     break;
                 case HOSTILE:
-                    rank.addPermission(Action.GUARDS_ATTACK);
                     rank.addPermission(Action.HURT_CITIZEN);
                     rank.addPermission(Action.HURT_VISITOR);
                     rank.addPermission(Action.MAP_BORDER);
@@ -344,12 +339,11 @@ public class Permissions implements IPermissions
                 final CompoundTag rankCompound = rankTagList.getCompound(i);
                 final int id = rankCompound.getInt(TAG_ID);
                 final String name = rankCompound.getString(TAG_NAME);
-                final boolean isSubscriber = rankCompound.getBoolean(TAG_SUBSCRIBER);
                 final boolean isInitial = rankCompound.getBoolean(TAG_INITIAL);
                 final boolean isColonyManager = rankCompound.getBoolean(TAG_COLONY_MANAGER);
                 final boolean isHostile = rankCompound.getBoolean(TAG_HOSTILE);
 
-                final Rank rank = new Rank(id, 0L, name, isSubscriber, isInitial, isColonyManager, isHostile);
+                final Rank rank = new Rank(id, 0L, name, isInitial, isColonyManager, isHostile);
                 ranks.put(id, rank);
                 upgradePermissions(version, rank);
             }
@@ -570,7 +564,6 @@ public class Permissions implements IPermissions
             @NotNull final CompoundTag rankCompound = new CompoundTag();
             rankCompound.putInt(TAG_ID, rank.getId());
             rankCompound.putString(TAG_NAME, rank.getName());
-            rankCompound.putBoolean(TAG_SUBSCRIBER, rank.isSubscriber());
             rankCompound.putBoolean(TAG_INITIAL, rank.isInitial());
             rankCompound.putBoolean(TAG_COLONY_MANAGER, rank.isColonyManager());
             rankCompound.putBoolean(TAG_HOSTILE, rank.isHostile());
@@ -643,8 +636,7 @@ public class Permissions implements IPermissions
     @Override
     public boolean hasPermission(final Rank rank, @NotNull final Action action)
     {
-        if (rank == getRankNeutral() && (action == Action.CAN_KEEP_COLONY_ACTIVE_WHILE_AWAY
-            || action == Action.RECEIVE_MESSAGES_FAR_AWAY || action == Action.EDIT_PERMISSIONS || action == Action.TELEPORT_TO_COLONY))
+        if (rank == getRankNeutral() && (action == Action.EDIT_PERMISSIONS || action == Action.TELEPORT_TO_COLONY))
         {
             return false;
         }
@@ -911,29 +903,6 @@ public class Permissions implements IPermissions
     }
 
     /**
-     * Checks if a user is a subscriber.
-     *
-     * @param player {@link Player} to check for subscription.
-     * @return True is subscriber, otherwise false.
-     */
-    @Override
-    public boolean isSubscriber(@NotNull final Player player)
-    {
-        return isSubscriber(player.getGameProfile().getId());
-    }
-
-    /**
-     * See {@link #isSubscriber(Player)}.
-     *
-     * @param player {@link UUID} of the player.
-     * @return True if subscriber, otherwise false.
-     */
-    private boolean isSubscriber(final UUID player)
-    {
-        return getRank(player).isSubscriber();
-    }
-
-    /**
      * Returns if the instance is dirty.
      *
      * @return True if dirty, otherwise false.
@@ -965,7 +934,6 @@ public class Permissions implements IPermissions
             buf.writeVarInt(rank.getId());
             buf.writeLong(rank.getPermissions());
             buf.writeUtf(rank.getName());
-            buf.writeBoolean(rank.isSubscriber());
             buf.writeBoolean(rank.isInitial());
             buf.writeBoolean(rank.isColonyManager());
             buf.writeBoolean(rank.isHostile());
@@ -1091,7 +1059,7 @@ public class Permissions implements IPermissions
                 break;
             }
         }
-        Rank rank = new Rank(id, name, false, false);
+        Rank rank = new Rank(id, name, false);
         ranks.put(id, rank);
         markDirty();
     }

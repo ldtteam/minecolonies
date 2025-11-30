@@ -91,14 +91,6 @@ public interface IPermissions
     String getOwnerName();
 
     /**
-     * Checks if a user is a subscriber.
-     *
-     * @param player {@link Player} to check for subscription.
-     * @return True is subscriber, otherwise false.
-     */
-    boolean isSubscriber(@NotNull Player player);
-
-    /**
      * Returns whether the player is a member of the colony.
      *
      * @param player {@link Player} to check.

@@ -830,8 +830,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
         }
 
         // Players
-        if (entity instanceof Player && (colony.getPermissions().hasPermission((Player) entity, Action.GUARDS_ATTACK)
-                                           || colony.isValidAttackingPlayer((Player) entity)))
+        if (entity instanceof Player && (colony.getPermissions().getRank((Player) entity).isHostile() || colony.isValidAttackingPlayer((Player) entity)))
         {
             return true;
         }

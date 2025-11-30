@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 public class PermissionsView implements IPermissions
 {
     /** this rank is used if something asks for permissions before they have been synched from server */
-    private static final Rank MISSINGNO_RANK = new Rank(-1, "missingno", false, true);
+    private static final Rank MISSINGNO_RANK = new Rank(-1, "missingno", true);
 
     @NotNull
     private final Map<UUID, ColonyPlayer>  players     = new HashMap<>();
@@ -233,7 +233,7 @@ public class PermissionsView implements IPermissions
         for (int i = 0; i < ranksSize; ++i)
         {
             final int id = buf.readVarInt();
-            final Rank rank = new Rank(id, buf.readLong(), buf.readUtf(32767), buf.readBoolean(), buf.readBoolean(), buf.readBoolean(), buf.readBoolean());
+            final Rank rank = new Rank(id, buf.readLong(), buf.readUtf(32767), buf.readBoolean(), buf.readBoolean(), buf.readBoolean());
             ranks.put(id, rank);
         }
         userRank = ranks.get(buf.readVarInt());
@@ -317,12 +317,6 @@ public class PermissionsView implements IPermissions
             }
         }
         return ownerName;
-    }
-
-    @Override
-    public boolean isSubscriber(@NotNull final Player player)
-    {
-        return false;
     }
 
     @Override
