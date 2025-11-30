@@ -2,6 +2,7 @@ package com.minecolonies.core.blocks;
 
 import com.minecolonies.api.blocks.AbstractBlockMinecolonies;
 import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.colony.Colony;
@@ -11,11 +12,12 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.BoneMealItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.*;
@@ -30,6 +32,7 @@ import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.level.pathfinder.PathComputationType;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
@@ -149,6 +152,35 @@ public class MinecoloniesCropBlock extends AbstractBlockMinecolonies<Minecolonie
                 }
             }
         }
+    }
+
+    @Override
+    protected ItemInteractionResult useItemOn(
+        final ItemStack stack,
+        final BlockState state,
+        final Level level,
+        final BlockPos pos,
+        final Player player,
+        final InteractionHand hand,
+        final BlockHitResult result)
+    {
+        if (stack.is(ItemTags.HOES) && hand == InteractionHand.MAIN_HAND)
+        {
+            final int i = state.getValue(AGE);
+            if (i >= this.getMaxAge())
+            {
+                if (level instanceof ServerLevel serverLevel)
+                {
+                    for (final ItemStack dropStack : getDrops(state, serverLevel, pos, null))
+                    {
+                        InventoryUtils.spawnItemStack(level, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, dropStack);
+                    }
+                    stack.hurtAndBreak(1, player, EquipmentSlot.MAINHAND);
+                }
+                level.setBlock(pos, state.setValue(AGE, 0), 2);
+            }
+        }
+        return super.useItemOn(stack, state, level, pos, player, hand, result);
     }
 
     @Override
