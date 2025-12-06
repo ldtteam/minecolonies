@@ -172,7 +172,7 @@ public class ItemColonySign extends BlockItem
         {
             if (ctx.getLevel().isClientSide)
             {
-                MessageUtils.format(COM_MINECOLONIES_SIGN_TOO_FAR).sendTo(ctx.getPlayer());
+                MessageUtils.format(COM_MINECOLONIES_NEED_COLONY).sendTo(ctx.getPlayer());
             }
             return false;
         }
@@ -183,7 +183,7 @@ public class ItemColonySign extends BlockItem
             final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyId, ctx.getLevel().dimension());
             if (colony == null)
             {
-                MessageUtils.format(COM_MINECOLONIES_SIGN_TOO_FAR).sendTo(ctx.getPlayer());
+                MessageUtils.format(COM_MINECOLONIES_NEED_COLONY).sendTo(ctx.getPlayer());
                 return false;
             }
             if (colony.getConnectionManager().addNewConnectionNode(ctx.getClickedPos()))

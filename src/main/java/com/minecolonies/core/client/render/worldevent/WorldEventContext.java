@@ -3,6 +3,7 @@ package com.minecolonies.core.client.render.worldevent;
 import com.ldtteam.structurize.util.WorldRenderMacros;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.core.client.render.TileEntityColonySignRenderer;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -74,6 +75,7 @@ public class WorldEventContext
             ColonyBlueprintRenderer.renderBoxes(this);
             ItemOverlayBoxesRenderer.render(this);
             HighlightManager.render(this);
+            TileEntityColonySignRenderer.renderSignHover(this);
 
             bufferSource.endBatch();
         }

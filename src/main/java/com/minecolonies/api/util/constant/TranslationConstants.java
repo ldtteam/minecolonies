@@ -708,6 +708,18 @@ public final class TranslationConstants
     public static final String COM_MINECOLONIES_SIGN_DISRUPTED                 = "com.minecolonies.core.item.sign.disrupted";
     @NonNls
     public static final String COM_MINECOLONIES_CONNECTION_PATH_FAILURE        = "com.minecolonies.core.colonyconnection.path.failure";
+    @NonNls
+    public static final String COM_MINECOLONIES_CONNECTION_PATH_PENDING        = "com.minecolonies.core.colonyconnection.path.pending";
+    @NonNls
+    public static final String COM_MINECOLONIES_CONNECTION_NO_COLONY           = "com.minecolonies.core.colonyconnection.fail.nocolony";
+    @NonNls
+    public static final String COM_MINECOLONIES_NEED_COLONY                    =  "com.minecolonies.core.item.sign.needcolony";
+    @NonNls
+    public static final String COM_MINECOLONIES_CONNECTION_BROKEN              = "com.minecolonies.core.colonyconnection.broken";
+    @NonNls
+    public static final String PREVIOUS                                        = "com.minecolonies.core.previous";
+    @NonNls
+    public static final String NEXT                                            = "com.minecolonies.core.next";
     //<editor-fold desc="Partial keys">
 
     @NonNls

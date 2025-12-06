@@ -1,10 +1,12 @@
 package com.minecolonies.core.colony.managers;
 
+import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.*;
 import com.minecolonies.api.colony.connections.*;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.WorldUtil;
+import com.minecolonies.core.blocks.BlockColonySign;
 import com.minecolonies.core.entity.pathfinding.Pathfinding;
 import com.minecolonies.core.entity.pathfinding.pathjobs.PathJobSignConnection;
 import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
@@ -14,6 +16,8 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -25,6 +29,11 @@ import static com.minecolonies.api.util.constant.TranslationConstants.*;
 
 public class ColonyConnectionManager implements IColonyConnectionManager
 {
+    /**
+     * Max sign range for stacking.
+     */
+    private static final int MAX_SIGN_RANGE = 5;
+
     /**
      * There are the individual connection points. The position represents the position a sign is at.
      */
@@ -75,7 +84,7 @@ public class ColonyConnectionManager implements IColonyConnectionManager
      * @return a possible node or null.
      */
     @Nullable
-    private ColonyConnectionNode getClosestNodeWithOpenConnection(final BlockPos pos)
+    private ColonyConnectionNode getClosestNodeWithOpenConnection(final BlockPos pos, final boolean logIfNull)
     {
         int distance = Integer.MAX_VALUE;
         ColonyConnectionNode potentialConnection = null;
@@ -92,38 +101,20 @@ public class ColonyConnectionManager implements IColonyConnectionManager
                 }
             }
         }
+        if (potentialConnection == null)
+        {
+            MessageUtils.format(COM_MINECOLONIES_SIGN_TOO_FAR, distance).sendTo(this.colony).forManagers();
+        }
         return potentialConnection;
     }
 
     @Override
     public boolean addNewConnectionNode(final BlockPos connectionPoint)
     {
-        final ColonyConnectionNode potentialConnection = getClosestNodeWithOpenConnection(connectionPoint);
-        if (potentialConnection != null)
+        if (!pendingColonyConnections.isEmpty())
         {
-            Set<BlockPos> visitedNodes = new HashSet<>();
-            BlockPos tempNode = potentialConnection.getPreviousNode();
-            while (colonyConnections.containsKey(tempNode) && !visitedNodes.contains(tempNode))
-            {
-                tempNode = colonyConnections.get(tempNode).getPreviousNode();
-                visitedNodes.add(tempNode);
-            }
-
-            if (tempNode == null && !gateHouses.contains(tempNode))
-            {
-                MessageUtils.format(COM_MINECOLONIES_SIGN_MISSING_LINK).withPriority(MessageUtils.MessagePriority.DANGER).sendTo(colony).forManagers();
-                return false;
-            }
-
-            final PendingConnectionNode newNode = new PendingConnectionNode(connectionPoint, createSignPath(connectionPoint, potentialConnection.getPosition()), PendingConnectionNode.PendingConnectionType.DEFAULT);
-            newNode.alterPreviousNode(potentialConnection.getPosition());
-            if (potentialConnection.getTargetColonyId() != -1)
-            {
-                newNode.setTargetColonyId(potentialConnection.getTargetColonyId());
-            }
-
-            pendingColonyConnections.put(connectionPoint, newNode);
-            return true;
+            MessageUtils.format(COM_MINECOLONIES_CONNECTION_PATH_PENDING).withPriority(MessageUtils.MessagePriority.DANGER).sendTo(colony).forManagers();
+            return false;
         }
 
         for (final BlockPos gateHousePos : gateHouses)
@@ -138,8 +129,34 @@ public class ColonyConnectionManager implements IColonyConnectionManager
             }
         }
 
-        MessageUtils.format(COM_MINECOLONIES_SIGN_TOO_FAR).withPriority(MessageUtils.MessagePriority.DANGER).sendTo(colony).forManagers();
-        return false;
+        final ColonyConnectionNode potentialConnection = getClosestNodeWithOpenConnection(connectionPoint, true);
+        if (potentialConnection == null)
+        {
+            return false;
+        }
+        Set<BlockPos> visitedNodes = new HashSet<>();
+        BlockPos tempNode = potentialConnection.getPreviousNode();
+        while (colonyConnections.containsKey(tempNode) && !visitedNodes.contains(tempNode))
+        {
+            tempNode = colonyConnections.get(tempNode).getPreviousNode();
+            visitedNodes.add(tempNode);
+        }
+
+        if (tempNode == null && !gateHouses.contains(tempNode))
+        {
+            MessageUtils.format(COM_MINECOLONIES_SIGN_MISSING_LINK).withPriority(MessageUtils.MessagePriority.DANGER).sendTo(colony).forManagers();
+            return false;
+        }
+
+        final PendingConnectionNode newNode = new PendingConnectionNode(connectionPoint, createSignPath(connectionPoint, potentialConnection.getPosition()), PendingConnectionNode.PendingConnectionType.DEFAULT);
+        newNode.alterPreviousNode(potentialConnection.getPosition());
+        if (potentialConnection.getTargetColonyId() != -1)
+        {
+            newNode.setTargetColonyId(potentialConnection.getTargetColonyId());
+        }
+
+        pendingColonyConnections.put(connectionPoint, newNode);
+        return true;
     }
 
     @Override
@@ -167,10 +184,9 @@ public class ColonyConnectionManager implements IColonyConnectionManager
     @Override
     public boolean attemptEstablishConnection(final BlockPos targetColonyConnectionPos, final IColony targetColony)
     {
-        final ColonyConnectionNode thisColonyConnectionPos = getClosestNodeWithOpenConnection(targetColonyConnectionPos);
+        final ColonyConnectionNode thisColonyConnectionPos = getClosestNodeWithOpenConnection(targetColonyConnectionPos, true);
         if (thisColonyConnectionPos == null)
         {
-            MessageUtils.format(COM_MINECOLONIES_SIGN_TOO_FAR).sendTo(this.colony).forManagers();
             return false;
         }
 
@@ -216,7 +232,7 @@ public class ColonyConnectionManager implements IColonyConnectionManager
                         colonyConnections.put(pendingConnection.getKey(), pendingConnection.getValue());
                     }
 
-                    MessageUtils.format(COM_MINECOLONIES_SIGN_CONNECTED, pendingConnection.getValue().getPosition(), pendingConnection.getValue().getPreviousNode().toShortString())
+                    MessageUtils.format(COM_MINECOLONIES_SIGN_CONNECTED, pendingConnection.getValue().getPosition().toShortString(), pendingConnection.getValue().getPreviousNode().toShortString())
                         .withPriority(MessageUtils.MessagePriority.IMPORTANT)
                         .sendTo(colony)
                         .forManagers();
@@ -224,6 +240,11 @@ public class ColonyConnectionManager implements IColonyConnectionManager
                     if (connection != null)
                     {
                         connection.alterNextNode(pendingConnection.getValue().getPosition());
+                        final ColonyConnectionNode thisNode = colonyConnections.get(pendingConnection.getValue().getPosition());
+                        if (thisNode != null)
+                        {
+                            thisNode.alterPreviousNode(connection.getPosition());
+                        }
                     }
 
                     if (gateHouses.contains(pendingConnection.getKey()))
@@ -317,14 +338,16 @@ public class ColonyConnectionManager implements IColonyConnectionManager
         final IColony targetColony = IColonyManager.getInstance().getColonyByDimension(targetColonyId, colony.getDimension());
         if (targetColony == null)
         {
-            MessageUtils.format(Component.translatable(COM_MINECOLONIES_CONNECTION_FAIL)).sendTo(this.colony).forManagers();
+            MessageUtils.format(Component.translatable(COM_MINECOLONIES_CONNECTION_NO_COLONY)).sendTo(this.colony).forManagers();
             return;
         }
         // Make sure we're connected until the gate.
         BlockPos thisColonyGatePos = thisColonyConnectionPos;
         Set<BlockPos> visitedNodes = new HashSet<>();
+        BlockPos lastPos = thisColonyGatePos;
         while (colonyConnections.containsKey(thisColonyGatePos))
         {
+            lastPos = thisColonyGatePos;
             thisColonyGatePos = colonyConnections.get(thisColonyGatePos).getPreviousNode();
             if (!visitedNodes.add(thisColonyGatePos))
             {
@@ -334,7 +357,7 @@ public class ColonyConnectionManager implements IColonyConnectionManager
 
         if (thisColonyGatePos == null || !gateHouses.contains(thisColonyGatePos))
         {
-            MessageUtils.format(Component.translatable(COM_MINECOLONIES_CONNECTION_FAIL)).sendTo(this.colony).forManagers();
+            MessageUtils.format(Component.translatable(COM_MINECOLONIES_CONNECTION_BROKEN, lastPos.toShortString())).sendTo(this.colony).forManagers();
             return;
         }
 
@@ -410,9 +433,31 @@ public class ColonyConnectionManager implements IColonyConnectionManager
      */
     private PathResult createSignPath(final BlockPos originPos, final BlockPos targetPos)
     {
-        final PathJobSignConnection job = new PathJobSignConnection(colony.getWorld(), originPos, targetPos, 16);
+        final BlockPos lowestOriginPos = findLowestPoint(originPos);
+        final BlockPos lowestTargetPos = findLowestPoint(targetPos);
+
+        final PathJobSignConnection job = new PathJobSignConnection(colony.getWorld(), lowestOriginPos, lowestTargetPos, 16);
         job.getResult().startJob(Pathfinding.getExecutor());
         return job.getResult();
+    }
+
+    /**
+     * Try to path to bottom of sign (to allow stacking signs and allow putting them on fences)
+     * @param targetPos
+     * @return
+     */
+    private BlockPos findLowestPoint(final BlockPos targetPos)
+    {
+        int range = 0;
+        BlockPos lowestPoint = targetPos;
+        BlockState lowestState = colony.getWorld().getBlockState(lowestPoint.below());
+        while ((lowestState.is(BlockTags.FENCES) || lowestState.getBlock() == ModBlocks.blockColonySign) && range < MAX_SIGN_RANGE)
+        {
+            lowestPoint = lowestPoint.below();
+            lowestState = colony.getWorld().getBlockState(lowestPoint.below());
+            range++;
+        }
+        return lowestPoint;
     }
 
     /**
