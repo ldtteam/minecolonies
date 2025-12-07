@@ -21,8 +21,6 @@ import net.minecraftforge.registries.RegisterEvent;
 
 import static com.minecolonies.api.blocks.decorative.AbstractBlockGate.IRON_GATE;
 import static com.minecolonies.api.blocks.decorative.AbstractBlockGate.WOODEN_GATE;
-import static com.minecolonies.api.util.constant.Constants.CHIEFSWORD_NAME;
-import static com.minecolonies.api.util.constant.Constants.SCIMITAR_NAME;
 
 @Mod.EventBusSubscriber(modid = Constants.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public final class ModItemsInitializer
@@ -261,11 +259,11 @@ public final class ModItemsInitializer
         registry.register(new ResourceLocation(Constants.MOD_ID, "banner_rally_guards"), ModItems.bannerRallyGuards);
         registry.register(new ResourceLocation(Constants.MOD_ID, "supplycampdeployer"), ModItems.supplyCamp);
         registry.register(new ResourceLocation(Constants.MOD_ID, "ancienttome"), ModItems.ancientTome);
-        registry.register(new ResourceLocation(Constants.MOD_ID, CHIEFSWORD_NAME), ModItems.chiefSword);
+        registry.register(new ResourceLocation(Constants.MOD_ID, "chiefsword"), ModItems.chiefSword);
         registry.register(new ResourceLocation(Constants.MOD_ID, "clipboard"), ModItems.clipboard);
         registry.register(new ResourceLocation(Constants.MOD_ID, "compost"), ModItems.compost);
         registry.register(new ResourceLocation(Constants.MOD_ID, "resourcescroll"), ModItems.resourceScroll);
-        registry.register(new ResourceLocation(Constants.MOD_ID, SCIMITAR_NAME), ModItems.scimitar);
+        registry.register(new ResourceLocation(Constants.MOD_ID, "iron_scimitar"), ModItems.scimitar);
         registry.register(new ResourceLocation(Constants.MOD_ID, "scepterlumberjack"), ModItems.scepterLumberjack);
         registry.register(new ResourceLocation(Constants.MOD_ID, "pharaoscepter"), ModItems.pharaoscepter);
         registry.register(new ResourceLocation(Constants.MOD_ID, "firearrow"), ModItems.firearrow);
