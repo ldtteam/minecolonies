@@ -2989,6 +2989,9 @@
   "com.minecolonies.core.gui.connectioneventlist.desc": "Connection Event List",
   "com.minecolonies.core.gui.connectioneventlist.accept_ally": "Accept Alliance",
   "com.minecolonies.core.gui.connectioneventlist.howto": "How to build an Alliance: \n\n - Build a Gatehouse in your colony.\n\n- Ensure the target colony also has a Gatehouse.\n\n- Place colony signs between the two Gatehouses to create a connection.",
+  "com.minecolonies.core.gui.connectioneventlist.noconnections": "This is where we would list our connections... \n\n \n\n If we had some!",
+
+
   "com.minecolonies.core.gui.connectionevent.ally_request": "§2Requested an Alliance!",
   "com.minecolonies.core.gui.connectionevent.ally_confirmed": "§2Confirmed the Alliance!",
   "com.minecolonies.core.gui.connectionevent.feud_started": "§4Declared a Feud!",

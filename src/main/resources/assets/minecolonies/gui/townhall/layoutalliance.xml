@@ -3,7 +3,8 @@
 
     <view id="missingconnections">
         <text id="howto" size="160 140" pos="100 60" label="$(com.minecolonies.core.gui.connectioneventlist.howto)" color="black"/>
-        <image source="minecolonies:textures/gui/ifihadsome.png" size="125 175" pos="280 35"/>
+        <text id="howto" size="125 175" pos="290 25" label="$(com.minecolonies.core.gui.connectioneventlist.noconnections)" color="black"/>
+
     </view>
 
     <view id ="activeconnections">
