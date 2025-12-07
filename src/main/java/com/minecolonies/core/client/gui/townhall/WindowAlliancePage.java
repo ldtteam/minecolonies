@@ -66,6 +66,17 @@ public class WindowAlliancePage extends AbstractWindowTownHall
         indirectConnections = findPaneOfTypeByID(LIST_INDIRECT, ScrollingList.class);
         connectionEvents = findPaneOfTypeByID(LIST_EVENTS, ScrollingList.class);
 
+        if (building.getColony().getConnectionManager().getConnectionEvents().isEmpty() && building.getColony().getConnectionManager().getDirectlyConnectedColonies().isEmpty())
+        {
+            findPaneByID("missingconnections").show();
+            findPaneByID("activeconnections").hide();
+        }
+        else
+        {
+            findPaneByID("missingconnections").hide();
+            findPaneByID("activeconnections").show();
+        }
+
         directConnectionData = new ArrayList<>(building.getColony().getConnectionManager().getDirectlyConnectedColonies().values());
         indirectConnectionData = new ArrayList<>(building.getColony().getConnectionManager().getIndirectlyConnectedColonies().values());
 
