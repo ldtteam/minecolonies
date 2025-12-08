@@ -1,5 +1,5 @@
 {
-  "effect": true,
+  "effect": "minecolonies:citizen_cap",
   "levels": [
     25.0,
     50.0,

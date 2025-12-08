@@ -620,17 +620,31 @@ public abstract class AbstractResearchProvider implements DataProvider
          * and remain unless the colony is destroyed or the research is undone.
          * See ModBuildings for a list of supported buildings.  Whenever possible, use the public static String BUILDINGNAME_ID constants from ModBuildings
          * Buildings with no applicable research effects loaded default to unlocked.
+         * Multiple Effects are supported. Defaults to unlocking the highest possible building level.
+         *
+         * @param buildingBlock the building block to lock behind this research.
+         * @return this
+         */
+        public Research addEffect(final AbstractColonyBlock<?> buildingBlock)
+        {
+            return this.addEffect(buildingBlock, buildingBlock.getBuildingEntry().produceBuilding(null, null).getMaxBuildingLevel());
+        }
+
+        /**
+         * Add an unlock building effect to the research.  Research Effects are applied on completion,
+         * and remain unless the colony is destroyed or the research is undone.
+         * See ModBuildings for a list of supported buildings.  Whenever possible, use the public static String BUILDINGNAME_ID constants from ModBuildings
+         * Buildings with no applicable research effects loaded default to unlocked.
          * Multiple Effects are supported.
-         * @param buildingBlock    the building block to lock behind this research.
-         * @param level            the strength of the research effect to apply on completion.
-         *                    Automatically generated effects will unlock up to Building Tier 10 at Level 1.
-         *                    Manually generated effects can limited to individual tiers based on strength.
+         *
+         * @param buildingBlock the building block to lock behind this research.
+         * @param level         the building unlock level.
          * @return this
          */
         public Research addEffect(final AbstractColonyBlock<?> buildingBlock, int level)
         {
             final JsonArray effects;
-            if(this.json.has("effects") && this.json.get("effects").isJsonArray())
+            if (this.json.has("effects") && this.json.get("effects").isJsonArray())
             {
                 effects = this.json.getAsJsonArray("effects");
                 this.json.remove("effects");
@@ -721,36 +735,38 @@ public abstract class AbstractResearchProvider implements DataProvider
 
         /**
          * Creates a new instances of a ResearchEffect.
-         * @param id    A unique identifier.  Suggested path format is effects/name.json.
+         *
+         * @param id A unique identifier.  Suggested path format is effects/name.json.
          */
         public ResearchEffect(final ResourceLocation id)
         {
-            this.id = id;
-            this.json.addProperty("effect", true);
+            this(id, ModResearchEffects.GLOBAL_EFFECT_ID);
         }
 
         /**
          * Creates a new instances of a ResearchEffect that locks and unlocks a Building
          * See ModBuildings for a list of supported buildings.
-         * @param buildingBlock    A Building hut block.  This will auto-generate an unlock effect ID of effects/blockhutname.json.
+         *
+         * @param buildingBlock A Building hut block.  This will auto-generate an unlock effect ID of effects/blockhutname.json.
          */
         public ResearchEffect(final AbstractColonyBlock<?> buildingBlock)
         {
             final ResourceLocation registryName = ForgeRegistries.BLOCKS.getKey(buildingBlock);
             this.id = new ResourceLocation(registryName.getNamespace(), "effects/" + registryName.getPath());
-            this.json.addProperty("effect", true);
+            this.json.addProperty("effect", ModResearchEffects.BUILDING_EFFECT_ID.toString());
+            this.json.addProperty("building", buildingBlock.getBuildingEntry().getRegistryName().toString());
         }
 
         /**
-         * Create a new instance of a ResearchEffect with an effectType.
-         * @param id    A unique identifier.  Suggested path format is effects/name.json.
-         * @param type  The type of the research effect.
+         * Creates a new instances of a ResearchEffect.
+         *
+         * @param id                 A unique identifier. Suggested path format is effects/name.json.
+         * @param researchEffectType the type of research effect.
          */
-        public ResearchEffect(final ResourceLocation id, final String type)
+        public ResearchEffect(final ResourceLocation id, final ResourceLocation researchEffectType)
         {
             this.id = id;
-            this.json.addProperty("effect", true);
-            this.json.addProperty("effectType", type);
+            this.json.addProperty("effect", researchEffectType.toString());
         }
 
         /**

@@ -5,7 +5,8 @@ import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.research.*;
 import com.minecolonies.api.util.Log;
-import com.minecolonies.core.research.*;
+import com.minecolonies.core.research.GlobalResearch;
+import com.minecolonies.core.research.GlobalResearchBranch;
 import com.minecolonies.core.util.GsonHelper;
 import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.resources.ResourceLocation;
@@ -18,7 +19,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 import static com.minecolonies.core.research.GlobalResearchBranch.*;
 
@@ -32,15 +32,8 @@ public class ResearchListener extends SimpleJsonResourceReloadListener
     /**
      * Generator functions for default parsed values.
      */
-    private static final Function<ResourceLocation, String> DEFAULT_RESEARCH_NAME          =
+    public static final Function<ResourceLocation, String> DEFAULT_RESEARCH_NAME          =
         (effectId) -> String.format("com.%s.research.%s.name", effectId.getNamespace(), effectId.getPath().replaceAll("[ /]", "."));
-    private static final Function<ResourceLocation, String> DEFAULT_RESEARCH_EFFECT_NAME   =
-        (effectId) -> String.format("com.%s.research.%s.description", effectId.getNamespace(), effectId.getPath().replaceAll("[ /]", "."));
-    private static final Supplier<JsonArray>                DEFAULT_RESEARCH_EFFECT_LEVELS = () -> {
-        final JsonArray defaultArray = new JsonArray();
-        defaultArray.add(1);
-        return defaultArray;
-    };
 
     //region [JSON properties]
     /**
@@ -163,7 +156,7 @@ public class ResearchListener extends SimpleJsonResourceReloadListener
         // First, index and map out all research effects.  We need to be able to map them before creating Researches themselves.
         // Because data packs, can't assume effects are in one specific location.
         // For now, we'll populate relative levels when doing so, but we probably want to do that dynamically.
-        final Map<ResourceLocation, ResearchEffectCategory> effectCategories = parseResearchEffectCategories(object);
+        final Map<ResourceLocation, JsonObject> effectCategories = parseResearchEffectCategories(object);
 
         // We /shouldn't/ get any removes before the Research they're trying to remove exists,
         // but it can happen if multiple data packs affect each other.
@@ -191,9 +184,9 @@ public class ResearchListener extends SimpleJsonResourceReloadListener
      * @param object a map containing the resource location of each json file, and the element within that json file.
      * @return a map containing the ResearchEffectIds and ResearchEffectCategories each ID corresponds to.
      */
-    private Map<ResourceLocation, ResearchEffectCategory> parseResearchEffectCategories(final Map<ResourceLocation, JsonElement> object)
+    private Map<ResourceLocation, JsonObject> parseResearchEffectCategories(final Map<ResourceLocation, JsonElement> object)
     {
-        final Map<ResourceLocation, ResearchEffectCategory> effectCategories = new HashMap<>();
+        final Map<ResourceLocation, JsonObject> effectCategories = new HashMap<>();
         for (final Map.Entry<ResourceLocation, JsonElement> entry : object.entrySet())
         {
             final ResourceLocation effectId = entry.getKey();
@@ -201,19 +194,7 @@ public class ResearchListener extends SimpleJsonResourceReloadListener
 
             if (effectJson.has(EFFECT_PROP))
             {
-                final String effectName = GsonHelper.getAsString(effectJson, RESEARCH_NAME_PROP, DEFAULT_RESEARCH_EFFECT_NAME, effectId);
-                final String effectSubtitle = GsonHelper.getAsString(effectJson, RESEARCH_SUBTITLE_PROP, "");
-
-                final List<Double> levels = new ArrayList<>();
-                for (final JsonElement levelElement : GsonHelper.getAsJsonArray(effectJson, EFFECT_LEVELS_PROP, DEFAULT_RESEARCH_EFFECT_LEVELS))
-                {
-                    if (GsonHelper.isNumberValue(levelElement))
-                    {
-                        levels.add(levelElement.getAsNumber().doubleValue());
-                    }
-                }
-
-                effectCategories.put(effectId, new ResearchEffectCategory(effectId, effectName, effectSubtitle, levels));
+                effectCategories.put(effectId, effectJson);
             }
         }
         return effectCategories;
@@ -228,7 +209,7 @@ public class ResearchListener extends SimpleJsonResourceReloadListener
      * @param removeBranches   a collection of research branches to remove, including all component researches, if present.
      * @return a map containing the ResearchIds and the GlobalResearches each ID corresponds to.
      */
-    private Map<ResourceLocation, GlobalResearch> parseResearches(final Map<ResourceLocation, JsonElement> object, final Map<ResourceLocation, ResearchEffectCategory> effectCategories, final Collection<ResourceLocation> removeResearches, final Collection<ResourceLocation> removeBranches)
+    private Map<ResourceLocation, GlobalResearch> parseResearches(final Map<ResourceLocation, JsonElement> object, final Map<ResourceLocation, JsonObject> effectCategories, final Collection<ResourceLocation> removeResearches, final Collection<ResourceLocation> removeBranches)
     {
         final Map<ResourceLocation, GlobalResearch> researchMap = new HashMap<>();
         for (final Map.Entry<ResourceLocation, JsonElement> entry : object.entrySet())
@@ -288,7 +269,7 @@ public class ResearchListener extends SimpleJsonResourceReloadListener
             final List<IResearchCost> costs = parseResearchCosts(researchId,
                 GsonHelper.getAsJsonArray(researchJson, RESEARCH_COSTS_PROP, new JsonArray()),
                 GsonHelper.getAsJsonArray(researchJson, RESEARCH_REQUIREMENTS_PROP, new JsonArray()));
-            final List<GlobalResearchEffect> effects =
+            final List<IResearchEffect> effects =
                 parseResearchEffects(researchId, GsonHelper.getAsJsonArray(researchJson, RESEARCH_EFFECTS_PROP, new JsonArray()), effectCategories);
 
             final GlobalResearch research = new GlobalResearch(researchId, parent, branch, name, subtitle, depth, sortOrder, onlyChild, hidden, autostart, instant, immutable);
@@ -399,14 +380,14 @@ public class ResearchListener extends SimpleJsonResourceReloadListener
      * Parses a JSON object for research effects IDs and their levels.
      *
      * @param researchId               a json object to retrieve the ID from.
-     * @param researchEffectCategories the Map of {@link ResearchEffectCategory} used to convert ResearchEffectIds into absolute effects and descriptions.
+     * @param researchEffectCategories the Map of {@link JsonObject} used to convert ResearchEffectIds into absolute effects and descriptions.
      */
-    private List<GlobalResearchEffect> parseResearchEffects(
+    private List<IResearchEffect> parseResearchEffects(
         final ResourceLocation researchId,
         final JsonArray researchEffectsArray,
-        final Map<ResourceLocation, ResearchEffectCategory> researchEffectCategories)
+        final Map<ResourceLocation, JsonObject> researchEffectCategories)
     {
-        final List<GlobalResearchEffect> effects = new ArrayList<>();
+        final List<IResearchEffect> effects = new ArrayList<>();
         for (int index = 0; index < researchEffectsArray.size(); index++)
         {
             final JsonElement researchEffectElement = researchEffectsArray.get(index);
@@ -452,23 +433,26 @@ public class ResearchListener extends SimpleJsonResourceReloadListener
                 }
             }
 
-            final ResearchEffectCategory researchEffectCategory = researchEffectCategories.get(effectId);
+            final JsonObject researchEffectCategory = researchEffectCategories.get(effectId);
             if (researchEffectCategory == null)
             {
                 Log.getLogger().warn("Research '{}' effect #{} looking for non-existent research effect {}", researchId, index, effectId);
                 continue;
             }
-            if (effectLevel > researchEffectCategory.getMaxLevel())
+
+            final ResourceLocation researchEffectTypeId =
+                (researchEffectCategory.get(EFFECT_PROP).isJsonPrimitive() && researchEffectCategory.getAsJsonPrimitive(EFFECT_PROP).isBoolean())
+                    ? ModResearchEffects.globalResearchEffect.getId()
+                    : GsonHelper.getAsResourceLocation(researchEffectCategory, EFFECT_PROP);
+
+            final ModResearchEffects.ResearchEffectEntry researchEffectType = IMinecoloniesAPI.getInstance().getResearchEffectRegistry().getValue(researchEffectTypeId);
+            if (researchEffectType == null)
             {
-                Log.getLogger().warn("Research '{}' effect #{} requested higher effect strength than exists.", researchId, index);
+                Log.getLogger().warn("Research '{}' effect #{} looking for non-existent research effect type {}", researchId, index, researchEffectTypeId);
                 continue;
             }
 
-            effects.add(new GlobalResearchEffect(effectId,
-                researchEffectCategory.getName(),
-                researchEffectCategory.getSubtitle(),
-                researchEffectCategory.get(effectLevel),
-                researchEffectCategory.getDisplay(effectLevel)));
+            effects.add(researchEffectType.readFromJson(effectId, effectLevel, researchEffectCategory));
         }
         return effects;
     }
