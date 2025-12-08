@@ -1,4 +1,4 @@
-package com.minecolonies.core.client.gui.modules;
+package com.minecolonies.core.client.gui.modules.building;
 
 import com.ldtteam.blockui.controls.*;
 import com.ldtteam.blockui.views.View;

@@ -242,4 +242,7 @@ public interface ICitizenDataView extends ICitizen
      * @return true if so.
      */
     boolean isSick();
+
+    @Override
+    IColonyView getColony();
 }

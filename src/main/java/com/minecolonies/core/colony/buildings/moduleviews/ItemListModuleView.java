@@ -1,18 +1,18 @@
 package com.minecolonies.core.colony.buildings.moduleviews;
 
 import com.ldtteam.blockui.views.BOWindow;
-import com.minecolonies.api.colony.buildings.modules.*;
+import com.minecolonies.api.colony.buildings.modules.AbstractBuildingModuleView;
+import com.minecolonies.api.colony.buildings.modules.IItemListModuleView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.Utils;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.core.client.gui.modules.ItemListModuleWindow;
+import com.minecolonies.core.client.gui.modules.building.ItemListModuleWindow;
 import com.minecolonies.core.network.messages.server.colony.building.AssignFilterableItemMessage;
+import com.minecolonies.core.network.messages.server.colony.building.ResetFilterableItemMessage;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-
-import com.minecolonies.core.network.messages.server.colony.building.ResetFilterableItemMessage;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;

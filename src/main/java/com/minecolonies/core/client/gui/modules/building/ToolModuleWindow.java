@@ -1,4 +1,4 @@
-package com.minecolonies.core.client.gui.modules;
+package com.minecolonies.core.client.gui.modules.building;
 
 import com.ldtteam.blockui.controls.Text;
 import com.minecolonies.api.util.constant.Constants;

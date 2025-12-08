@@ -1,6 +1,5 @@
 package com.minecolonies.core.client.gui;
 
-import com.ldtteam.blockui.Pane;
 import com.ldtteam.blockui.PaneBuilders;
 import com.ldtteam.blockui.controls.*;
 import com.ldtteam.blockui.views.BOWindow;
@@ -14,35 +13,35 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.client.gui.citizen.RequestWindowCitizen;
 import com.minecolonies.core.network.messages.server.ClickGuiButtonTriggerMessage;
+import com.minecolonies.core.client.gui.modules.RequestTreeWindowModule;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.ChatFormatting;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-import static com.minecolonies.api.util.constant.Suppression.EXCEPTION_HANDLERS_SHOULD_PRESERVE_THE_ORIGINAL_EXCEPTIONS;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 import static com.minecolonies.core.colony.requestsystem.requests.AbstractRequest.MISSING;
 
 /**
  * BOWindow for the request detail.
  */
-public class WindowRequestDetail extends BOWindow implements ButtonHandler
+public class WindowRequestDetail extends AbstractWindowSkeleton implements ButtonHandler
 {
     public static final ResourceLocation WINDOW_ID = new ResourceLocation(Constants.MOD_ID, "gui/windowrequestdetail.xml");
 
     /**
-     * Id of the requester label.
+     * ID of the requester label.
      */
     private static final String REQUESTER = "requester";
 
     /**
-     * Requestst stack id.
+     * Requests stack id.
      */
     private static final String LIST_ELEMENT_ID_REQUEST_STACK = "requestStack";
 
@@ -77,28 +76,91 @@ public class WindowRequestDetail extends BOWindow implements ButtonHandler
     private final int colonyId;
 
     /**
+     * The request tree window module.
+     */
+    private final RequestTreeWindowModule requestTreeWindowModule;
+
+    /**
      * Life count.
      */
     private int lifeCount = 0;
 
     /**
-     * The previous window.
-     */
-    private final BOWindow prevWindow;
-
-    /**
      * Open the request detail.
      *
-     * @param prevWindow the window we're coming from.
-     * @param request    the request.
-     * @param colonyId   the colony id.
+     * @param parent                  the window we're coming from.
+     * @param request                 the request.
+     * @param colonyId                the colony id.
+     * @param requestTreeWindowModule the request tree module.
      */
-    public WindowRequestDetail(@Nullable final BOWindow prevWindow, final IRequest<?> request, final int colonyId)
+    public WindowRequestDetail(@Nullable final BOWindow parent, final IRequest<?> request, final int colonyId, final RequestTreeWindowModule requestTreeWindowModule)
     {
-        super(WINDOW_ID);
-        this.prevWindow = prevWindow;
+        super(parent, WINDOW_ID);
         this.request = request;
         this.colonyId = colonyId;
+        this.requestTreeWindowModule = requestTreeWindowModule;
+    }
+
+    /**
+     * Called when the GUI has been opened. Will fill the fields and lists.
+     */
+    @Override
+    public void onOpened()
+    {
+        if (request instanceof IStackBasedTask)
+        {
+            final ItemIcon icon = findPaneOfTypeByID("detailIcon", ItemIcon.class);
+            final ItemStack copyStack = ((IStackBasedTask) request).getTaskStack().copy();
+            copyStack.setCount(((IStackBasedTask) request).getDisplayCount());
+            icon.setItem(copyStack);
+            icon.setVisible(true);
+            findPaneOfTypeByID(REQUEST_SHORT_DETAIL, Text.class).setText(((IStackBasedTask) request).getDisplayPrefix().withStyle(ChatFormatting.BLACK));
+        }
+        else
+        {
+            findPaneOfTypeByID("detailIcon", ItemIcon.class).setVisible(false);
+            findPaneOfTypeByID(REQUEST_SHORT_DETAIL, Text.class).setText(Component.literal(request.getLongDisplayString().getString().replace("§f", ""))
+                .withStyle(ChatFormatting.BLACK));
+        }
+
+        final Image logo = findPaneOfTypeByID(DELIVERY_IMAGE, Image.class);
+
+        final ItemIcon exampleStackDisplay = findPaneOfTypeByID(LIST_ELEMENT_ID_REQUEST_STACK, ItemIcon.class);
+        final List<ItemStack> displayStacks = request.getDisplayStacks();
+        final IColonyView colony = IColonyManager.getInstance().getColonyView(colonyId, Minecraft.getInstance().level.dimension());
+
+        if (!displayStacks.isEmpty())
+        {
+            exampleStackDisplay.setItem(displayStacks.get((lifeCount / LIFE_COUNT_DIVIDER) % displayStacks.size()));
+        }
+        else if (!request.getDisplayIcon().equals(MISSING))
+        {
+            logo.setVisible(true);
+            logo.setImage(request.getDisplayIcon(), false);
+            PaneBuilders.tooltipBuilder().hoverPane(logo).build().setText(request.getResolverToolTip(colony));
+        }
+
+        findPaneOfTypeByID(REQUESTER, Text.class).setText(request.getRequester().getRequesterDisplayName(colony.getRequestManager(), request));
+        findPaneOfTypeByID(LIST_ELEMENT_ID_REQUEST_LOCATION, Text.class).setText(Component.literal(request.getRequester().getLocation().toString()));
+
+        try
+        {
+            final IRequestResolver<?> resolver = colony.getRequestManager().getResolverForRequest(request.getId());
+            if (resolver == null)
+            {
+                Log.getLogger().warn("---IRequestResolver Null in WindowRequestDetail---");
+                return;
+            }
+
+            findPaneOfTypeByID(RESOLVER, Text.class).setText(Component.literal("Resolver: " + resolver.getRequesterDisplayName(colony.getRequestManager(), request).getString()));
+        }
+        catch (final IllegalArgumentException e)
+        {
+            Log.getLogger().warn("---IRequestResolver Null in WindowRequestDetail---", e);
+        }
+
+        findPaneOfTypeByID(REQUEST_FULFILL, ButtonImage.class).setEnabled(requestTreeWindowModule.isFulfillable(request));
+        findPaneOfTypeByID(REQUEST_CANCEL, ButtonImage.class).setEnabled(requestTreeWindowModule.isCancellable(request));
     }
 
     @Override
@@ -124,86 +186,6 @@ public class WindowRequestDetail extends BOWindow implements ButtonHandler
     }
 
     /**
-     * Called when the GUI has been opened. Will fill the fields and lists.
-     */
-    @Override
-    public void onOpened()
-    {
-        if (request instanceof IStackBasedTask)
-        {
-            final ItemIcon icon = findPaneOfTypeByID("detailIcon", ItemIcon.class);
-            final ItemStack copyStack = ((IStackBasedTask) request).getTaskStack().copy();
-            copyStack.setCount(((IStackBasedTask) request).getDisplayCount());
-            icon.setItem(copyStack);
-            icon.setVisible(true);
-            findPaneOfTypeByID(REQUEST_SHORT_DETAIL, Text.class).setText(((IStackBasedTask) request).getDisplayPrefix().withStyle(ChatFormatting.BLACK));
-        }
-        else
-        {
-            findPaneOfTypeByID("detailIcon", ItemIcon.class).setVisible(false);
-            findPaneOfTypeByID(REQUEST_SHORT_DETAIL, Text.class).setText(Component.literal(request.getLongDisplayString().getString().replace("§f", "")).withStyle(ChatFormatting.BLACK));
-        }
-
-        final Image logo = findPaneOfTypeByID(DELIVERY_IMAGE, Image.class);
-
-        final ItemIcon exampleStackDisplay = findPaneOfTypeByID(LIST_ELEMENT_ID_REQUEST_STACK, ItemIcon.class);
-        final List<ItemStack> displayStacks = request.getDisplayStacks();
-        final IColonyView colony = IColonyManager.getInstance().getColonyView(colonyId, Minecraft.getInstance().level.dimension());
-
-        if (!displayStacks.isEmpty())
-        {
-            exampleStackDisplay.setItem(displayStacks.get((lifeCount / LIFE_COUNT_DIVIDER) % displayStacks.size()));
-        }
-        else if (!request.getDisplayIcon().equals(MISSING))
-        {
-            logo.setVisible(true);
-            logo.setImage(request.getDisplayIcon(), false);
-            PaneBuilders.tooltipBuilder().hoverPane(logo).build().setText(request.getResolverToolTip(colony));
-        }
-
-        findPaneOfTypeByID(REQUESTER, Text.class).setText(request.getRequester().getRequesterDisplayName(colony.getRequestManager(), request));
-        findPaneOfTypeByID(LIST_ELEMENT_ID_REQUEST_LOCATION, Text.class).setText(Component.literal(request.getRequester().getLocation().toString()));
-
-        if (colony == null)
-        {
-            Log.getLogger().warn("---Colony Null in WindowRequestDetail---");
-            return;
-        }
-
-        try
-        {
-            final IRequestResolver<?> resolver = colony.getRequestManager().getResolverForRequest(request.getId());
-            if (resolver == null)
-            {
-                Log.getLogger().warn("---IRequestResolver Null in WindowRequestDetail---");
-                return;
-            }
-
-            findPaneOfTypeByID(RESOLVER, Text.class).setText(Component.literal("Resolver: " + resolver.getRequesterDisplayName(colony.getRequestManager(), request).getString()));
-        }
-        catch (@SuppressWarnings(EXCEPTION_HANDLERS_SHOULD_PRESERVE_THE_ORIGINAL_EXCEPTIONS) final IllegalArgumentException e)
-        {
-            /*
-             * Do nothing we just need to know if it has a resolver or not.
-             */
-            Log.getLogger().warn("---IRequestResolver Null in WindowRequestDetail---", e);
-        }
-
-        //Checks if fulfill button should be displayed
-        Pane fulfillButton = this.window.getChildren().stream().filter(pane -> pane.getID().equals(REQUEST_FULLFIL)).findFirst().get();
-        if ((this.prevWindow instanceof RequestWindowCitizen && !((RequestWindowCitizen) prevWindow).fulfillable(request)) || this.prevWindow instanceof WindowClipBoard)
-        {
-            fulfillButton.hide();
-        }
-        //Checks if cancel button should be displayed
-        Pane cancelButton = this.window.getChildren().stream().filter(pane -> pane.getID().equals(REQUEST_CANCEL)).findFirst().get();
-        if (this.prevWindow instanceof RequestWindowCitizen && !((RequestWindowCitizen) prevWindow).cancellable(request))
-        {
-            cancelButton.hide();
-        }
-    }
-
-    /**
      * Called when any button has been clicked.
      *
      * @param button the clicked button.
@@ -211,27 +193,18 @@ public class WindowRequestDetail extends BOWindow implements ButtonHandler
     @Override
     public void onButtonClicked(@NotNull final Button button)
     {
-        if (button.getID().equals(REQUEST_FULLFIL))
+        if (button.getID().equals(REQUEST_FULFILL))
         {
-            if (this.prevWindow instanceof RequestWindowCitizen)
+            if (requestTreeWindowModule instanceof final RequestTreeWindowModule.IRequestTreeSupportsFulfill requestTreeSupportsFulfill)
             {
-                ((RequestWindowCitizen) this.prevWindow).fulfill(request);
-                // because this isn't an AbstractWindowSkeleton, and we want to trigger an advancement...
-                new ClickGuiButtonTriggerMessage(button.getID(), new ResourceLocation(Constants.MOD_ID, "gui/windowrequestdetail.xml")).sendToServer();
+                requestTreeSupportsFulfill.onFulfill(request);
             }
             this.window.close();
         }
         else if (button.getID().equals(REQUEST_CANCEL))
         {
-            if (this.prevWindow instanceof RequestWindowCitizen)
-            {
-                ((RequestWindowCitizen) this.prevWindow).cancel(request);
-            }
+            requestTreeWindowModule.cancel(request);
             this.window.close();
-        }
-        else
-        {
-            prevWindow.open();
         }
     }
 }
