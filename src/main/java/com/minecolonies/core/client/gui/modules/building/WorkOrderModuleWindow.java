@@ -1,4 +1,4 @@
-package com.minecolonies.core.client.gui.modules;
+package com.minecolonies.core.client.gui.modules.building;
 
 import com.ldtteam.blockui.Pane;
 import com.ldtteam.blockui.PaneBuilders;
@@ -8,8 +8,8 @@ import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.blockui.views.ScrollingList;
 import com.minecolonies.api.colony.workorders.IWorkOrderView;
 import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.core.Network;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.core.Network;
 import com.minecolonies.core.client.gui.AbstractModuleWindow;
 import com.minecolonies.core.colony.buildings.moduleviews.SettingsModuleView;
 import com.minecolonies.core.colony.buildings.moduleviews.WorkOrderListModuleView;
@@ -26,8 +26,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.function.Predicate;
 
-import static com.minecolonies.api.util.constant.WindowConstants.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
+import static com.minecolonies.api.util.constant.WindowConstants.*;
 
 /**
  * BOWindow for the builder hut work orders list.

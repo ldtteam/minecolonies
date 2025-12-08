@@ -1,31 +1,37 @@
-package com.minecolonies.core.client.gui.modules;
+package com.minecolonies.core.client.gui.modules.building;
 
 import com.ldtteam.blockui.Pane;
-import com.ldtteam.blockui.controls.*;
+import com.ldtteam.blockui.controls.Button;
+import com.ldtteam.blockui.controls.Text;
+import com.ldtteam.blockui.controls.TextField;
 import com.ldtteam.blockui.views.ScrollingList;
-import com.minecolonies.api.colony.buildings.modules.IItemListModuleView;
-import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.buildings.modules.IEntityListModuleView;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.client.gui.AbstractModuleWindow;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 import static org.jline.utils.AttributedStyle.WHITE;
 
 /**
- * BOWindow for all the filterable lists.
+ * BOWindow for all the filterable entity lists.
  */
-public class ItemListModuleWindow extends AbstractModuleWindow<IItemListModuleView>
+public class EntityListModuleWindow extends AbstractModuleWindow<IEntityListModuleView>
 {
     /**
      * Resource scrolling list.
      */
-    protected final ScrollingList resourceList;
+    private final ScrollingList resourceList;
 
     /**
      * The filter for the resource list.
@@ -35,17 +41,17 @@ public class ItemListModuleWindow extends AbstractModuleWindow<IItemListModuleVi
     /**
      * Check for inversion of the list.
      */
-    protected final boolean isInverted;
+    private final boolean isInverted;
 
     /**
      * Grouped list that can be further filtered.
      */
-    protected List<ItemStorage> groupedItemList;
+    private final List<ResourceLocation> groupedItemList;
 
     /**
      * Grouped list after applying the current temporary filter.
      */
-    protected final List<ItemStorage> currentDisplayedList = new ArrayList<>();
+    private final List<ResourceLocation> currentDisplayedList = new ArrayList<>();
 
     /**
      * Update delay.
@@ -54,19 +60,15 @@ public class ItemListModuleWindow extends AbstractModuleWindow<IItemListModuleVi
 
     /**
      * @param moduleView the assigned module view.
-     * @param resource   window resource location.
      */
-    public ItemListModuleWindow(final IItemListModuleView moduleView, final ResourceLocation resource)
+    public EntityListModuleWindow(final IEntityListModuleView moduleView)
     {
-        super(moduleView, resource);
+        super(moduleView, new ResourceLocation(Constants.MOD_ID, "gui/layouthuts/layoutfilterableentitylist.xml"));
         this.isInverted = moduleView.isInverted();
         this.id = moduleView.getId();
 
-        registerButton(BUTTON_SWITCH, this::switchClicked);
-        registerButton(BUTTON_RESET_DEFAULT, this::reset);
-
         resourceList = window.findPaneOfTypeByID(LIST_RESOURCES, ScrollingList.class);
-        groupedItemList = new ArrayList<>(moduleView.getAllItems().apply(buildingView));
+        groupedItemList = new ArrayList<>(IColonyManager.getInstance().getCompatibilityManager().getAllMonsters());
         window.findPaneOfTypeByID(INPUT_FILTER, TextField.class).setHandler(input -> {
             final String newFilter = input.getText();
             if (!newFilter.equals(filter))
@@ -77,6 +79,19 @@ public class ItemListModuleWindow extends AbstractModuleWindow<IItemListModuleVi
         });
     }
 
+    @Override
+    public void onButtonClicked(@NotNull final Button button)
+    {
+        super.onButtonClicked(button);
+        if (Objects.equals(button.getID(), BUTTON_SWITCH))
+        {
+            switchClicked(button);
+        }
+        else if (Objects.equals(button.getID(), BUTTON_RESET_DEFAULT))
+        {
+            reset();
+        }
+    }
 
     @Override
     public void onOpened()
@@ -102,17 +117,18 @@ public class ItemListModuleWindow extends AbstractModuleWindow<IItemListModuleVi
     private void switchClicked(@NotNull final Button button)
     {
         final int row = resourceList.getListElementIndexByPane(button);
-        final ItemStorage item = currentDisplayedList.get(row);
+        final ResourceLocation item = currentDisplayedList.get(row);
         final boolean on = button.getText().equals(Component.translatable(ON));
         final boolean add = (on && isInverted) || (!on && !isInverted);
+        final IEntityListModuleView module = buildingView.getModuleViewMatching(IEntityListModuleView.class, view -> view.getId().equals(id));
 
         if (add)
         {
-            moduleView.addItem(item);
+            module.addEntity(item);
         }
         else
         {
-            moduleView.removeItem(item);
+            module.removeEntity(item);
         }
 
         resourceList.refreshElementPanes();
@@ -123,7 +139,8 @@ public class ItemListModuleWindow extends AbstractModuleWindow<IItemListModuleVi
      */
     private void reset()
     {
-        moduleView.clearItems();
+        final IEntityListModuleView module = buildingView.getModuleViewMatching(IEntityListModuleView.class, view -> view.getId().equals(id));
+        module.clearEntities();
         resourceList.refreshElementPanes();
     }
 
@@ -132,28 +149,21 @@ public class ItemListModuleWindow extends AbstractModuleWindow<IItemListModuleVi
      */
     private void updateResources()
     {
-        final Predicate<ItemStack> filterPredicate = stack -> filter.isEmpty()
-                                                                || stack.getDescriptionId().toLowerCase(Locale.US).contains(filter.toLowerCase(Locale.US))
-                                                                || stack.getHoverName().getString().toLowerCase(Locale.US).contains(filter.toLowerCase(Locale.US));
+        final Predicate<ResourceLocation> filterPredicate = res -> filter.isEmpty() || ForgeRegistries.ENTITY_TYPES.getValue(res).getDescription().getString().toLowerCase(Locale.US).contains(filter.toLowerCase(Locale.US)) || res.toString().toLowerCase(Locale.US).contains(filter.toLowerCase(Locale.US));
         currentDisplayedList.clear();
-        for (final ItemStorage storage : groupedItemList)
+        for (final ResourceLocation storage : groupedItemList)
         {
-            if (filterPredicate.test(storage.getItemStack()))
+            if (filterPredicate.test(storage))
             {
                 currentDisplayedList.add(storage);
             }
         }
 
-        applySorting(currentDisplayedList);
+        currentDisplayedList.sort((o1, o2) -> {
 
-        updateResourceList();
-    }
+            boolean o1Allowed = buildingView.getModuleViewMatching(IEntityListModuleView.class, view -> view.getId().equals(id)).isAllowedEntity(o1);
 
-    protected void applySorting(final List<ItemStorage> displayedList)
-    {
-        displayedList.sort((o1, o2) -> {
-            boolean o1Allowed = moduleView.isAllowedItem(o1);
-            boolean o2Allowed = moduleView.isAllowedItem(o2);
+            boolean o2Allowed = buildingView.getModuleViewMatching(IEntityListModuleView.class, view -> view.getId().equals(id)).isAllowedEntity(o2);
 
             if(!o1Allowed && o2Allowed)
             {
@@ -168,12 +178,14 @@ public class ItemListModuleWindow extends AbstractModuleWindow<IItemListModuleVi
                 return 0;
             }
         });
+
+        updateResourceList();
     }
 
     /**
      * Updates the resource list in the GUI with the info we need.
      */
-    protected void updateResourceList()
+    private void updateResourceList()
     {
         resourceList.enable();
         resourceList.show();
@@ -199,12 +211,11 @@ public class ItemListModuleWindow extends AbstractModuleWindow<IItemListModuleVi
             @Override
             public void updateElement(final int index, @NotNull final Pane rowPane)
             {
-                final ItemStack resource = currentDisplayedList.get(index).getItemStack();
+                final ResourceLocation resource = currentDisplayedList.get(index);
                 final Text resourceLabel = rowPane.findPaneOfTypeByID(RESOURCE_NAME, Text.class);
-                resourceLabel.setText(resource.getHoverName());
+                resourceLabel.setText(ForgeRegistries.ENTITY_TYPES.getValue(resource).getDescription());
                 resourceLabel.setColors(WHITE);
-                rowPane.findPaneOfTypeByID(RESOURCE_ICON, ItemIcon.class).setItem(resource);
-                final boolean isAllowedItem = moduleView.isAllowedItem(new ItemStorage(resource));
+                final boolean isAllowedItem  = buildingView.getModuleViewMatching(IEntityListModuleView.class, view -> view.getId().equals(id)).isAllowedEntity(resource);
                 final Button switchButton = rowPane.findPaneOfTypeByID(BUTTON_SWITCH, Button.class);
 
                 if ((isInverted && !isAllowedItem) || (!isInverted && isAllowedItem))
@@ -219,4 +230,3 @@ public class ItemListModuleWindow extends AbstractModuleWindow<IItemListModuleVi
         });
     }
 }
-

@@ -3,7 +3,7 @@ package com.minecolonies.core.colony.buildings.moduleviews;
 import com.ldtteam.blockui.views.BOWindow;
 import com.minecolonies.api.colony.buildings.modules.AbstractBuildingModuleView;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.core.client.gui.modules.WindowBuilderResModule;
+import com.minecolonies.core.client.gui.modules.building.WindowBuilderResModule;
 import com.minecolonies.core.colony.buildings.utils.BuildingBuilderResource;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;

@@ -6,7 +6,7 @@ import com.minecolonies.api.colony.buildings.modules.IMinimumStockModuleView;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.core.client.gui.modules.MinimumStockModuleWindow;
+import com.minecolonies.core.client.gui.modules.building.MinimumStockModuleWindow;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -14,7 +14,8 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Client side representation of the minimum stock module.

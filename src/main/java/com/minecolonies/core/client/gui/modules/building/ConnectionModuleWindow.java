@@ -1,4 +1,4 @@
-package com.minecolonies.core.client.gui.modules;
+package com.minecolonies.core.client.gui.modules.building;
 
 import com.ldtteam.blockui.Pane;
 import com.ldtteam.blockui.PaneBuilders;
@@ -12,11 +12,9 @@ import com.minecolonies.api.colony.connections.DiplomacyStatus;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.MessageUtils;
-import com.minecolonies.core.Network;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.core.Network;
 import com.minecolonies.core.client.gui.AbstractBuildingWindow;
-import com.minecolonies.core.client.gui.AbstractModuleWindow;
-import com.minecolonies.core.colony.buildings.moduleviews.ColonyConnectionModuleView;
 import com.minecolonies.core.commands.ClickEventWithExecutable;
 import com.minecolonies.core.network.messages.server.colony.TeleportToColonyMessage;
 import net.minecraft.client.Minecraft;

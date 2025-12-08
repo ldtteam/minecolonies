@@ -10,13 +10,12 @@ import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.Network;
-import com.minecolonies.core.client.gui.modules.SpecialAssignmentModuleWindow;
+import com.minecolonies.core.client.gui.modules.building.SpecialAssignmentModuleWindow;
 import com.minecolonies.core.network.messages.server.colony.building.HireFireMessage;
 import com.minecolonies.core.network.messages.server.colony.building.QuarryHiringModeMessage;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;

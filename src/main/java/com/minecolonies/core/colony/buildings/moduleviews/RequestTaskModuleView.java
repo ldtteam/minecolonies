@@ -4,7 +4,7 @@ import com.ldtteam.blockui.views.BOWindow;
 import com.minecolonies.api.colony.buildings.modules.AbstractBuildingModuleView;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.core.client.gui.modules.WindowHutRequestTaskModule;
+import com.minecolonies.core.client.gui.modules.building.WindowHutRequestTaskModule;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;

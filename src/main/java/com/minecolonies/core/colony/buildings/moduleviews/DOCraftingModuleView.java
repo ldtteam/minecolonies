@@ -1,7 +1,7 @@
 package com.minecolonies.core.colony.buildings.moduleviews;
 
 import com.minecolonies.api.util.OptionalPredicate;
-import com.minecolonies.core.client.gui.modules.DOCraftingWindow;
+import com.minecolonies.core.client.gui.modules.building.DOCraftingWindow;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 

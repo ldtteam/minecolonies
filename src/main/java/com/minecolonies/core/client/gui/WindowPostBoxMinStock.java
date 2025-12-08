@@ -2,7 +2,7 @@ package com.minecolonies.core.client.gui;
 
 import com.minecolonies.api.colony.buildings.modules.IMinimumStockModuleView;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.core.client.gui.modules.MinimumStockModuleWindow;
+import com.minecolonies.core.client.gui.modules.building.MinimumStockModuleWindow;
 import net.minecraft.resources.ResourceLocation;
 
 /**

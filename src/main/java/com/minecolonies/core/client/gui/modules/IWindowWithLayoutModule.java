@@ -1,4 +1,4 @@
-package com.minecolonies.core.client.gui.modules.reusable;
+package com.minecolonies.core.client.gui.modules;
 
 import com.ldtteam.blockui.Pane;
 import net.minecraft.resources.ResourceLocation;

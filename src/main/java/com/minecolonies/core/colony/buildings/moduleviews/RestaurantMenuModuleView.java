@@ -5,7 +5,7 @@ import com.minecolonies.api.colony.buildings.modules.AbstractBuildingModuleView;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.translation.RequestSystemTranslationConstants;
-import com.minecolonies.core.client.gui.modules.RestaurantMenuModuleWindow;
+import com.minecolonies.core.client.gui.modules.building.RestaurantMenuModuleWindow;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;

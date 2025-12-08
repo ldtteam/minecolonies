@@ -5,7 +5,7 @@ import com.minecolonies.api.colony.buildings.modules.AbstractBuildingModuleView;
 import com.minecolonies.api.colony.buildings.modules.IEntityListModuleView;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.Network;
-import com.minecolonies.core.client.gui.modules.EntityListModuleWindow;
+import com.minecolonies.core.client.gui.modules.building.EntityListModuleWindow;
 import com.minecolonies.core.network.messages.server.colony.building.AssignFilterableEntityMessage;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;

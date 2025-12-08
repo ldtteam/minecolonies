@@ -4,7 +4,7 @@ import com.ldtteam.blockui.views.BOWindow;
 import com.minecolonies.api.colony.buildings.modules.IBuildingModuleView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.core.client.gui.modules.reusable.TabsWindowModule;
+import com.minecolonies.core.client.gui.modules.TabsWindowModule;
 import com.minecolonies.core.colony.buildings.views.AbstractBuildingView;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.Component;
