@@ -15,7 +15,7 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.Network;
-import com.minecolonies.core.client.gui.capabilities.RequestTreeWindowModule;
+import com.minecolonies.core.client.gui.modules.reusable.RequestTreeWindowModule;
 import com.minecolonies.core.items.ItemClipboard;
 import com.minecolonies.core.network.messages.server.ItemSettingMessage;
 import net.minecraft.client.Minecraft;

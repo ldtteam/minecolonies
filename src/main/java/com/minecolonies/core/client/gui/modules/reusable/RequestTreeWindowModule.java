@@ -1,4 +1,4 @@
-package com.minecolonies.core.client.gui.capabilities;
+package com.minecolonies.core.client.gui.modules.reusable;
 
 import com.ldtteam.blockui.Pane;
 import com.ldtteam.blockui.PaneBuilders;
