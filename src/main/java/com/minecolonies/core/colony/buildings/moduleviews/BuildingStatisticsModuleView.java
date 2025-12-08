@@ -4,12 +4,11 @@ import com.ldtteam.blockui.views.BOWindow;
 import com.minecolonies.api.colony.buildings.modules.AbstractBuildingModuleView;
 import com.minecolonies.api.colony.managers.interfaces.IStatisticsManager;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.core.client.gui.modules.WindowStatsModule;
+import com.minecolonies.core.client.gui.modules.building.WindowStatsModule;
 import com.minecolonies.core.colony.managers.StatisticsManager;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-
 import org.jetbrains.annotations.NotNull;
 
 /**

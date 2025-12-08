@@ -1,7 +1,7 @@
 <window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" size="440 244"
         xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/ldtteam/BlockUI/version/1.20.1/src/main/resources/assets/blockui/gui/block_ui.xsd"
 >
-    <layout source="minecolonies:gui/windowpostboxnav.xml"/>
+    <image source="minecolonies:textures/gui/citizen/colonist_paper.png" size="430 244" pos="10 0"/>
 
     <text size="440 13" pos="0 14" color="black" textalign="MIDDLE" label="$(com.minecolonies.coremod.gui.warehouse.stock)"/>
 

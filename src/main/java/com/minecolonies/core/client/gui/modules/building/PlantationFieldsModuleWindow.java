@@ -1,30 +1,36 @@
-package com.minecolonies.core.client.gui.modules;
+package com.minecolonies.core.client.gui.modules.building;
 
 import com.ldtteam.blockui.Pane;
 import com.ldtteam.blockui.PaneBuilders;
-import com.ldtteam.blockui.controls.*;
+import com.ldtteam.blockui.controls.Button;
+import com.ldtteam.blockui.controls.ButtonImage;
+import com.ldtteam.blockui.controls.ItemIcon;
+import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.blockui.views.ScrollingList;
 import com.minecolonies.api.colony.buildingextensions.IBuildingExtension;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.BlockPosUtil.DirectionResult;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.client.gui.AbstractModuleWindow;
-import com.minecolonies.core.colony.buildingextensions.FarmField;
+import com.minecolonies.core.colony.buildingextensions.PlantationField;
 import com.minecolonies.core.colony.buildings.moduleviews.FieldsModuleView;
+import com.minecolonies.core.colony.buildings.workerbuildings.BuildingPlantation;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-import static com.minecolonies.api.util.constant.TranslationConstants.*;
-import static com.minecolonies.api.util.constant.translation.GuiTranslationConstants.FIELD_LIST_LABEL_DISTANCE;
-import static com.minecolonies.api.util.constant.translation.GuiTranslationConstants.FIELD_LIST_LABEL_FIELD_COUNT;
+import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_HIRING_OFF;
+import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_HIRING_ON;
+import static com.minecolonies.api.util.constant.translation.GuiTranslationConstants.*;
 
 /**
  * BOWindow for the fields tab in huts.
  */
-public class FarmFieldsModuleWindow extends AbstractModuleWindow<FieldsModuleView>
+public class PlantationFieldsModuleWindow extends AbstractModuleWindow<BuildingPlantation.PlantationFieldsModuleView>
 {
     /**
      * ID of the fields list inside the GUI.
@@ -35,16 +41,6 @@ public class FarmFieldsModuleWindow extends AbstractModuleWindow<FieldsModuleVie
      * ID of the distance label inside the GUI.
      */
     private static final String TAG_DISTANCE = "dist";
-
-    /**
-     * ID of the stage label inside the GUI.
-     */
-    private static final String TAG_STAGE_TEXT = "nextstagetext";
-
-    /**
-     * ID of the stage label inside the GUI.
-     */
-    private static final String TAG_STAGE_ICON = "nextstageicon";
 
     /**
      * ID of the assign button inside the GUI.
@@ -60,6 +56,11 @@ public class FarmFieldsModuleWindow extends AbstractModuleWindow<FieldsModuleVie
      * ID of the field count label inside the GUI.
      */
     private static final String TAG_FIELD_COUNT = "fieldCount";
+
+    /**
+     * ID of the plant count label inside the GUI.
+     */
+    private static final String TAG_PLANT_COUNT = "plantCount";
 
     /**
      * ID of the icon inside the GUI.
@@ -96,10 +97,9 @@ public class FarmFieldsModuleWindow extends AbstractModuleWindow<FieldsModuleVie
      *
      * @param moduleView {@link FieldsModuleView}.
      */
-    public FarmFieldsModuleWindow(final FieldsModuleView moduleView)
+    public PlantationFieldsModuleWindow(final BuildingPlantation.PlantationFieldsModuleView moduleView)
     {
-        super(moduleView, new ResourceLocation(Constants.MOD_ID, "gui/layouthuts/layoutfarmfields.xml"));
-
+        super(moduleView, new ResourceLocation(Constants.MOD_ID, "gui/layouthuts/layoutplantationfields.xml"));
         registerButton(TAG_BUTTON_ASSIGNMENT_MODE, this::assignmentModeClicked);
         registerButton(TAG_BUTTON_ASSIGN, this::assignClicked);
     }
@@ -144,6 +144,8 @@ public class FarmFieldsModuleWindow extends AbstractModuleWindow<FieldsModuleVie
           .setText(Component.translatableEscape(moduleView.assignFieldManually() ? COM_MINECOLONIES_COREMOD_GUI_HIRING_ON : COM_MINECOLONIES_COREMOD_GUI_HIRING_OFF));
         findPaneOfTypeByID(TAG_FIELD_COUNT, Text.class)
           .setText(Component.translatableEscape(FIELD_LIST_LABEL_FIELD_COUNT, moduleView.getOwnedFields().size(), moduleView.getMaxFieldCount()));
+        findPaneOfTypeByID(TAG_PLANT_COUNT, Text.class)
+          .setText(Component.translatableEscape(FIELD_LIST_LABEL_PLANT_COUNT, moduleView.getCurrentPlants(), moduleView.getMaxConcurrentPlants()));
     }
 
     @Override
@@ -163,28 +165,15 @@ public class FarmFieldsModuleWindow extends AbstractModuleWindow<FieldsModuleVie
             @Override
             public void updateElement(final int index, @NotNull final Pane rowPane)
             {
-                final IBuildingExtension field = moduleView.getFields().get(index);
-                Image iconPane = rowPane.findPaneOfTypeByID(TAG_STAGE_ICON, Image.class);
-
-                if (field instanceof FarmField farmField && !farmField.getSeed().isEmpty())
-                {
-                    rowPane.findPaneOfTypeByID(TAG_ICON, ItemIcon.class).setItem(farmField.getSeed());
-                    rowPane.findPaneOfTypeByID(TAG_STAGE_TEXT, Text.class).setText(Component.translatable(FIELD_STATUS));
-                    iconPane.setImage(farmField.getFieldStage().getStageIcon(), true);
-                    AbstractTextBuilder.TooltipBuilder hoverText = PaneBuilders.tooltipBuilder().hoverPane(iconPane);
-                    hoverText.append(Component.translatable(FIELD_STATUS_CURRENT, farmField.getFieldStage().getStageText())).paragraphBreak();
-                    hoverText.append(Component.translatable(FIELD_STATUS_NEXT, farmField.getFieldStage().getNextStage().getStageText()));
-                    hoverText.build();
-                }
-                else
-                {
-                    iconPane.hide();
-                }
+                final PlantationField field = (PlantationField) moduleView.getFields().get(index);
+                final Item item = field.getModule().getItem();
+                rowPane.findPaneOfTypeByID(TAG_ICON, ItemIcon.class).setItem(new ItemStack(item));
 
                 final String distance = Integer.toString(field.getSqDistance(buildingView));
                 final DirectionResult direction = BlockPosUtil.calcDirection(buildingView.getPosition(), field.getPosition());
 
                 final Component directionText = switch (direction) {
+                    case SAME -> Component.translatableEscape(FIELD_LIST_PLANTATION_DIRECTION);
                     case UP, DOWN -> direction.getLongText();
                     default -> Component.translatableEscape(FIELD_LIST_LABEL_DISTANCE, Component.literal(distance + "m"), direction.getShortText());
                 };

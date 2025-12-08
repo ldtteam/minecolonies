@@ -1,4 +1,4 @@
-package com.minecolonies.core.client.gui.modules;
+package com.minecolonies.core.client.gui.modules.building;
 
 import com.ldtteam.blockui.PaneBuilders;
 import com.ldtteam.blockui.controls.Button;
@@ -15,20 +15,20 @@ import com.minecolonies.core.colony.buildings.workerbuildings.BuildingWareHouse;
 import com.minecolonies.core.network.messages.server.colony.building.MarkBuildingDirtyMessage;
 import com.minecolonies.core.network.messages.server.colony.building.warehouse.SortBuildingMessage;
 import com.minecolonies.core.network.messages.server.colony.building.warehouse.UpgradeWarehouseMessage;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.level.block.Blocks;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.Style;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.network.chat.Style;
-import net.minecraft.ChatFormatting;
-import net.minecraft.network.chat.Component;
 import net.neoforged.neoforge.items.wrapper.InvWrapper;
+import net.minecraft.world.level.block.Blocks;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.LABEL_X_OF_Z;
 import static com.minecolonies.api.util.constant.TranslationConstants.WAREHOUSE_SORTED;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
-import static com.minecolonies.core.client.gui.modules.WindowBuilderResModule.*;
+import static com.minecolonies.core.client.gui.modules.building.WindowBuilderResModule.*;
 
 /**
  * BOWindow for the warehouse options.

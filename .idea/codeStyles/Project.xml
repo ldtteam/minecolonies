@@ -11,6 +11,7 @@
       <option name="BLANK_LINES_AROUND_INITIALIZER" value="0" />
       <option name="RECORD_COMPONENTS_WRAP" value="2" />
       <option name="NEW_LINE_AFTER_LPAREN_IN_RECORD_HEADER" value="true" />
+      <option name="ENABLE_JAVADOC_FORMATTING" value="false" />
     </JavaCodeStyleSettings>
     <MarkdownNavigatorCodeStyleSettings>
       <option name="RIGHT_MARGIN" value="72" />

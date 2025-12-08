@@ -52,4 +52,10 @@ public abstract class AbstractWindowTownHall extends AbstractBuildingMainWindow<
      * @return the string id.
      */
     protected abstract String getWindowId();
+
+    @Override
+    protected boolean shouldRenderDefaultSidebar()
+    {
+        return false;
+    }
 }

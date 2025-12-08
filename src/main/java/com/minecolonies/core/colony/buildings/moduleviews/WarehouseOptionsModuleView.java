@@ -5,6 +5,7 @@ import com.minecolonies.api.colony.buildings.modules.AbstractBuildingModuleView;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.client.gui.modules.WarehouseOptionsModuleWindow;
 import net.minecraft.network.RegistryFriendlyByteBuf;
+import com.minecolonies.core.client.gui.modules.building.WarehouseOptionsModuleWindow;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.api.distmarker.Dist;

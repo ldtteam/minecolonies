@@ -15,7 +15,6 @@ import com.minecolonies.core.network.messages.server.colony.building.HireFireMes
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;

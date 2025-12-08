@@ -17,6 +17,7 @@ import com.minecolonies.api.colony.requestsystem.resolver.retrying.IRetryingRequ
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.core.Network;
 import com.minecolonies.core.items.ItemClipboard;
 import com.minecolonies.core.network.messages.server.ItemSettingMessage;
 import com.minecolonies.core.network.messages.server.colony.UpdateRequestStateMessage;
@@ -69,7 +70,7 @@ public class WindowClipBoard extends AbstractWindowRequestTree
                 asyncRequest.addAll(view.getJobView().getAsyncRequests());
             }
         }
-        
+
         registerButton(CLIPBOARD_TOGGLE, this::toggleImportant);
         paintButtonState();
     }
@@ -86,7 +87,9 @@ public class WindowClipBoard extends AbstractWindowRequestTree
 
         paintButtonState();
 
-        new ItemSettingMessage(ItemClipboard.TAG_HIDEUNIMPORTANT, this.hide ? 1 : 0).sendToServer();
+        ItemSettingMessage hideSetting = new ItemSettingMessage();
+        hideSetting.setSetting(ItemClipboard.TAG_HIDEUNIMPORTANT, this.hide ? 1 : 0);
+        Network.getNetwork().sendToServer(hideSetting);
     }
 
 
@@ -121,10 +124,6 @@ public class WindowClipBoard extends AbstractWindowRequestTree
         }
 
         final IRequestManager requestManager = colony.getRequestManager();
-        if (requestManager == null)
-        {
-            return ImmutableList.of();
-        }
 
         try
         {
@@ -184,6 +183,6 @@ public class WindowClipBoard extends AbstractWindowRequestTree
     @Override
     protected void cancel(@NotNull final IRequest<?> request)
     {
-        new UpdateRequestStateMessage(colony, request.getId(), RequestState.CANCELLED, null).sendToServer();
+        Network.getNetwork().sendToServer(new UpdateRequestStateMessage(colony, request.getId(), RequestState.CANCELLED, null));
     }
 }
