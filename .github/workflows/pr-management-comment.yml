@@ -21,7 +21,7 @@ jobs:
           result-encoding: string
           retries: 3
           script: |
-            const body = "";
+            let body = "";
             if (process.env.IS_FIRST_TIME == 'true') {
               body += "# Thanks for your first contribution to MineColonies!\n\n";
             }
