@@ -12,7 +12,7 @@ jobs:
       - name: Remove in testing label
         uses: actions/github-script@v8
         env:
-          REQUIRED_LABEL: 'PR: Requires Testing'
+          REQUIRED_LABEL: 'Untested'
         with:
           result-encoding: string
           retries: 3
