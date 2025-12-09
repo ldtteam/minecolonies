@@ -9,7 +9,7 @@ jobs:
   add-testing-label:
     runs-on: ubuntu-latest
     steps:
-      - name: Remove in testing label
+      - name: Add testing label
         uses: actions/github-script@v8
         env:
           REQUIRED_LABEL: 'Untested'
