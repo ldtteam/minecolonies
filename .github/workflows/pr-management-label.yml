@@ -3,7 +3,7 @@ name: Pull Request Management - Testing label
 on:
   pull_request:
     paths:
-      - src
+      - src/**
 
 env:
   REQUIRES_TESTING_LABEL_NAME: 'PR: Requires Testing'

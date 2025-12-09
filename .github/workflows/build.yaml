@@ -3,6 +3,8 @@ name: Build and Pre-release
 on:
   merge_group:
   pull_request:
+    paths:
+      - src/**
     types:
       - opened
       - synchronize
