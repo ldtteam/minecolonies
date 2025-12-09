@@ -1,0 +1,25 @@
+name: Pull Request Management - Settings
+
+on:
+  pull_request:
+    types:
+      - opened
+
+jobs:
+  add-reviewers-and-assignee:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Add reviewers
+        uses: actions/github-script@v8
+        env:
+          REQUIRED_LABEL: 'Untested'
+        with:
+          result-encoding: string
+          retries: 3
+          script: |
+            github.rest.issues.addLabels({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              labels: [process.env.REQUIRED_LABEL]
+            })

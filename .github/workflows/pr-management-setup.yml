@@ -1,4 +1,4 @@
-name: Pull Request Management - Intro comment
+name: Pull Request Management - Setup
 
 on:
   pull_request:
@@ -7,7 +7,7 @@ on:
       - reopened
 
 jobs:
-  auto-comment:
+  setup-pr:
     runs-on: ubuntu-latest
     steps:
       - name: Add initial pull request comment
@@ -31,3 +31,30 @@ jobs:
               issue_number: context.issue.number,
               body,
             })
+      - name: Add reviewers
+        uses: actions/github-script@v8
+        env:
+          REQUIRED_REVIEWER_TEAM: 'maintainers'
+        with:
+          result-encoding: string
+          retries: 3
+          script: |
+            github.rest.pulls.requestReviewers({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.issue.number,
+              team_reviewers: [process.env.REQUIRED_REVIEWER_TEAM]
+            });
+      - name: Set assignee
+        uses: actions/github-script@v8
+        with:
+          result-encoding: string
+          retries: 3
+          script: |
+            github.rest.issues.addAssignees({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              assignees: [context.actor]
+            });
+
