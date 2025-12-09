@@ -4,8 +4,6 @@ on:
   pull_request:
     paths:
       - src
-    types:
-      - synchronize
 
 env:
   REQUIRES_TESTING_LABEL_NAME: 'PR: Requires Testing'
