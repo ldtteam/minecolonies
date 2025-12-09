@@ -1,0 +1,35 @@
+name: Pull Request Management - Intro comment
+
+on:
+  pull_request:
+    types:
+      - opened
+
+env:
+  REQUIRES_TESTING_LABEL_NAME: 'PR: Requires testing'
+
+jobs:
+  auto-comment:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Add initial pull request comment
+        uses: actions/github-script@v8
+        env:
+          IS_FIRST_TIME: ${{ github.event.pull_request.author_association == 'FIRST_TIME_CONTRIBUTOR' || github.event.pull_request.author_association == 'FIRST_TIMER' }}
+          REQUIRED_LABEL: ${{ github.env.REQUIRES_TESTING_LABEL_NAME }}
+        with:
+          result-encoding: string
+          retries: 3
+          script: |
+            const body = "";
+            if (process.env.IS_FIRST_TIME == 'true') {
+              body += "# Thanks for your first contribution to MineColonies!\n\n";
+            }
+            body += `## In order for this pull request to be merged, make sure you test whether your changes work.\nIf they do, remove the \`${process.env.REQUIRED_LABEL}\` from the pull request.\nAs long as this label is on the pull request, it cannot be merged.\nIf there are no code changes, this label will not be added.`
+            
+            github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body,
+            })
