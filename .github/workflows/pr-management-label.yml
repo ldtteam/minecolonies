@@ -5,9 +5,6 @@ on:
     paths:
       - src/**
 
-env:
-  REQUIRES_TESTING_LABEL_NAME: 'PR: Requires Testing'
-
 jobs:
   add-testing-label:
     runs-on: ubuntu-latest
@@ -15,7 +12,7 @@ jobs:
       - name: Remove in testing label
         uses: actions/github-script@v8
         env:
-          REQUIRED_LABEL: ${{ github.env.REQUIRES_TESTING_LABEL_NAME }}
+          REQUIRED_LABEL: 'PR: Requires Testing'
         with:
           result-encoding: string
           retries: 3
