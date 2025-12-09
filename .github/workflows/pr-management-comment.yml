@@ -4,6 +4,7 @@ on:
   pull_request:
     types:
       - opened
+      - reopened
 
 env:
   REQUIRES_TESTING_LABEL_NAME: 'PR: Requires Testing'
