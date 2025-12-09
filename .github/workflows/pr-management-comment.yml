@@ -6,7 +6,7 @@ on:
       - opened
 
 env:
-  REQUIRES_TESTING_LABEL_NAME: 'PR: Requires testing'
+  REQUIRES_TESTING_LABEL_NAME: 'PR: Requires Testing'
 
 jobs:
   auto-comment:
