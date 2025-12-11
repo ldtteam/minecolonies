@@ -20,13 +20,10 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.SharedSuggestionProvider;
-import net.minecraft.commands.arguments.ResourceKeyArgument;
 import net.minecraft.commands.arguments.coordinates.BlockPosArgument;
 import net.minecraft.commands.arguments.coordinates.Coordinates;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Registry;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.ArrayList;
@@ -36,9 +33,6 @@ import static com.minecolonies.core.commands.CommandArgumentNames.*;
 
 public class CommandRaid implements IMCOPCommand
 {
-    private static final ResourceKey<Registry<ColonyEventTypeRegistryEntry>> COLONY_EVENT_TYPES =
-        ResourceKey.createRegistryKey(new ResourceLocation(Constants.MOD_ID, "colonyeventtypes"));
-
     private static final DynamicCommandExceptionType ERROR_INVALID_COLONY_EVENT_TYPE =
         new DynamicCommandExceptionType(entry -> Component.translatable("com.minecolonies.command.raid.colony_type.invalid", entry));
 
@@ -99,26 +93,26 @@ public class CommandRaid implements IMCOPCommand
      */
     private String getRaidType(final CommandContext<CommandSourceStack> context) throws CommandSyntaxException
     {
-        final ResourceLocation raidType =
-            ResourceKeyArgument.resolveKey(context, RAID_TYPE_ARG, COLONY_EVENT_TYPES, ERROR_INVALID_COLONY_EVENT_TYPE).key().location();
+        final String raidTypeString = StringArgumentType.getString(context, RAID_TYPE_ARG);
+        final ResourceLocation raidType = new ResourceLocation(Constants.MOD_ID, raidTypeString);
         final ColonyEventTypeRegistryEntry colonyEventTypeRegistryEntry = IMinecoloniesAPI.getInstance().getColonyEventRegistry().getValue(raidType);
         if (colonyEventTypeRegistryEntry != null && colonyEventTypeRegistryEntry.isRaidEvent())
         {
-            return raidType.getPath();
+            return raidTypeString;
         }
-        throw ERROR_INVALID_COLONY_EVENT_TYPE.create(raidType);
+        throw ERROR_INVALID_COLONY_EVENT_TYPE.create(raidTypeString);
     }
 
     @Override
     public final LiteralArgumentBuilder<CommandSourceStack> build()
     {
         final List<String> raidTimes = List.of(RAID_NOW, RAID_TONIGHT);
-        final List<ResourceLocation> raidTypes = new ArrayList<>();
+        final List<String> raidTypes = new ArrayList<>();
         for (final ColonyEventTypeRegistryEntry colonyEventType : IMinecoloniesAPI.getInstance().getColonyEventRegistry())
         {
             if (colonyEventType.isRaidEvent())
             {
-                raidTypes.add(colonyEventType.getRegistryName());
+                raidTypes.add(colonyEventType.getRegistryName().getPath());
             }
         }
 
@@ -128,9 +122,9 @@ public class CommandRaid implements IMCOPCommand
             IMCCommand.newArgument(RAID_AMOUNT_ARG, IntegerArgumentType.integer(1)).executes(this::onExecuteWithAmount).then(raidLocationArg);
         final RequiredArgumentBuilder<CommandSourceStack, Boolean> raidShipArg =
             IMCCommand.newArgument(SHIP_ARG, BoolArgumentType.bool()).executes(this::onExecuteWithType).then(raidAmountArg);
-        final RequiredArgumentBuilder<CommandSourceStack, ResourceKey<ColonyEventTypeRegistryEntry>> raidTypeArg =
-            IMCCommand.newArgument(RAID_TYPE_ARG, ResourceKeyArgument.key(COLONY_EVENT_TYPES))
-                .suggests((ctx, builder) -> SharedSuggestionProvider.suggestResource(raidTypes, builder))
+        final RequiredArgumentBuilder<CommandSourceStack, String> raidTypeArg =
+            IMCCommand.newArgument(RAID_TYPE_ARG, StringArgumentType.string())
+                .suggests((ctx, builder) -> SharedSuggestionProvider.suggest(raidTypes, builder))
                 .then(raidShipArg);
         final RequiredArgumentBuilder<CommandSourceStack, String> raidTimeArg = IMCCommand.newArgument(RAID_TIME_ARG, StringArgumentType.string())
             .suggests((ctx, builder) -> SharedSuggestionProvider.suggest(raidTimes, builder))
