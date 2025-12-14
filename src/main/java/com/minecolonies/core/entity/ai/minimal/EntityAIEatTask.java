@@ -172,12 +172,6 @@ public class EntityAIEatTask implements IStateAI
             return EAT;
         }
 
-        if (citizen.getCitizenData().getJob() instanceof JobCook jobCook && jobCook.getBuildingPos().equals(restaurantPos))
-        {
-            reset();
-            return DONE;
-        }
-
         return GO_TO_HUT;
     }
 
@@ -402,23 +396,44 @@ public class EntityAIEatTask implements IStateAI
             return SEARCH_RESTAURANT;
         }
 
-        if (EntityNavigationUtils.walkToBuilding(citizen, buildingWorker))
+        if (!EntityNavigationUtils.walkToBuilding(citizen, buildingWorker))
         {
-            final int slot = FoodUtils.getBestFoodForCitizen(citizen.getInventoryCitizen(), citizen.getCitizenData(), null);
-            if (slot != -1)
-            {
-                final ItemStorage storageToGet = FoodUtils.checkForFoodInBuilding(citizen.getCitizenData(), null, buildingWorker);
-                if (storageToGet != null && InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(buildingWorker, storageToGet, citizen.getInventoryCitizen()))
-                {
-                    restaurant = null;
-                    return EAT;
-                }
-            }
-            return SEARCH_RESTAURANT;
+            restaurant = null;
+            return GO_TO_HUT;
         }
 
-        restaurant = null;
-        return GO_TO_HUT;
+        final int slot;
+        if (buildingWorker instanceof BuildingCook buildingCook)
+        {
+            slot = FoodUtils.getBestFoodForCitizen(citizen.getInventoryCitizen(), citizen.getCitizenData(), buildingCook.getModule(RESTAURANT_MENU).getMenu());
+        }
+        else
+        {
+            slot = FoodUtils.getBestFoodForCitizen(citizen.getInventoryCitizen(), citizen.getCitizenData(), null);
+        }
+
+        if (slot == -1)
+        {
+            final ItemStorage storageToGet = FoodUtils.checkForFoodInBuilding(citizen.getCitizenData(), null, buildingWorker);
+            if (storageToGet != null && InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(buildingWorker, storageToGet, citizen.getInventoryCitizen()))
+            {
+                restaurant = null;
+                return EAT;
+            }
+        }
+        else
+        {
+            restaurant = null;
+            return EAT;
+        }
+
+        if (citizen.getCitizenData().getJob() instanceof JobCook)
+        {
+            reset();
+            return DONE;
+        }
+
+        return SEARCH_RESTAURANT;
     }
 
     /**

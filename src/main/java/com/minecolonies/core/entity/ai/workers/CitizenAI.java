@@ -282,7 +282,7 @@ public class CitizenAI implements IStateAI
             return true;
         }
 
-        if (citizen.getCitizenData().getJob() != null && (citizen.getCitizenData().getJob().getJobRegistryEntry() == ModJobs.cook.get()) && MathUtils.RANDOM.nextInt(20) > 0)
+        if (citizen.getCitizenData().getJob() != null && (citizen.getCitizenData().getJob().getJobRegistryEntry() == ModJobs.cook.get()) && MathUtils.RANDOM.nextInt(200) > 0)
         {
             return false;
         }
