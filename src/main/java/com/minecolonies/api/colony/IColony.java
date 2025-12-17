@@ -10,7 +10,6 @@ import com.minecolonies.api.colony.workorders.IWorkManager;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.quests.IQuestManager;
 import com.minecolonies.api.research.IResearchManager;
-import com.minecolonies.core.colony.buildings.workerbuildings.BuildingTownHall;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -472,34 +471,4 @@ public interface IColony
      * @return the settings module.
      */
     ICommonSettingsModule getSettings();
-
-    /**
-     * Getter for letting citizens move in or not.
-     *
-     * @return the boolean true or false.
-     */
-    default boolean canMoveIn()
-    {
-        return getSettings().getSetting(BuildingTownHall.MOVE_IN).getValue();
-    }
-
-    /**
-     * Getter for the manual housing or not.
-     *
-     * @return the boolean true or false.
-     */
-    default boolean isManualHousing()
-    {
-        return getSettings().getSetting(BuildingTownHall.AUTO_HOUSING_MODE).getValue();
-    }
-
-    /**
-     * Getter for the manual hiring or not.
-     *
-     * @return the boolean true or false.
-     */
-    default boolean isManualHiring()
-    {
-        return getSettings().getSetting(BuildingTownHall.AUTO_HIRING_MODE).getValue();
-    }
 }

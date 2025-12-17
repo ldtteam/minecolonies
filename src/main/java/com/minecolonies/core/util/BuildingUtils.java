@@ -10,6 +10,7 @@ import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.WorldUtil;
+import com.minecolonies.core.colony.buildings.workerbuildings.BuildingTownHall;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.BlockItem;
@@ -105,7 +106,7 @@ public final class BuildingUtils
                                       @Nullable final JobEntry job)
     {
         return building.canAssignCitizens()
-                && (hiringMode == HiringMode.DEFAULT && !building.getColony().isManualHiring() || hiringMode == HiringMode.AUTO)
+                && (hiringMode == HiringMode.DEFAULT && !building.getColony().getSettings().getSetting(BuildingTownHall.AUTO_HIRING_MODE).getValue() || hiringMode == HiringMode.AUTO)
                 && (job == null || getAllowedJobs(building.getColony().getWorld(), building.getPosition()).test(job));
     }
 

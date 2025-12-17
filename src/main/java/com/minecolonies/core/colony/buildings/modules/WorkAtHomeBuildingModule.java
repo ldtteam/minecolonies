@@ -8,6 +8,7 @@ import com.minecolonies.api.colony.buildings.modules.*;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.core.colony.buildings.workerbuildings.BuildingTownHall;
 import net.minecraft.network.chat.MutableComponent;
 import com.minecolonies.api.util.MessageUtils;
 
@@ -41,7 +42,8 @@ public class WorkAtHomeBuildingModule extends WorkerBuildingModule implements IA
                 if (oldHome.hasModule(LIVING) && !oldHome.hasModule(WorkAtHomeBuildingModule.class))
                 {
                     final LivingBuildingModule livingBuildingModule = oldHome.getModule(LIVING);
-                    if (livingBuildingModule.getHiringMode() == HiringMode.MANUAL || (livingBuildingModule.getHiringMode() == HiringMode.DEFAULT && building.getColony().isManualHiring()))
+                    if (livingBuildingModule.getHiringMode() == HiringMode.MANUAL || (livingBuildingModule.getHiringMode() == HiringMode.DEFAULT && building.getColony().getSettings().getSetting(
+                        BuildingTownHall.AUTO_HIRING_MODE).getValue()))
                     {
                         final MutableComponent jobComponent = MessageUtils.format(citizen.getJob().getJobRegistryEntry().getTranslationKey()).create();
                         final MutableComponent buildingComponent = MessageUtils.format(oldHome.getBuildingDisplayName()).create();
