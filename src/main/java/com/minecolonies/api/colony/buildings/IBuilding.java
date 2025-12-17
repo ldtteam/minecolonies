@@ -22,7 +22,6 @@ import com.minecolonies.api.inventory.api.CombinedItemHandler;
 import com.minecolonies.core.util.SortingUtils;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.entity.player.Player;
@@ -36,13 +35,11 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.function.Predicate;
 
-import javax.annotation.Nonnull;
-
 import static com.minecolonies.api.util.constant.EquipmentLevelConstants.BASIC_TOOL_LEVEL;
 import static com.minecolonies.api.util.constant.EquipmentLevelConstants.TOOL_LEVEL_MAXIMUM;
 import static com.minecolonies.api.util.constant.Suppression.GENERIC_WILDCARD;
 
-public interface IBuilding extends IBuildingContainer, IBuildingModuleContainer, IRequestResolverProvider, IRequester, ISchematicProvider
+public interface IBuilding extends IBuildingContainer, IBuildingModuleContainer, IRequestResolverProvider, IRequester, ISchematicProvider, ICommonBuilding
 {
     /**
      * Minimal level to ask for wood tools. (WOOD_HUT_LEVEL + 1 == stone)
@@ -425,13 +422,6 @@ public interface IBuilding extends IBuildingContainer, IBuildingModuleContainer,
      * @param player the player picking it up.
      */
     void pickUp(final Player player);
-
-    /**
-     * Get the Building type
-     *
-     * @return building type
-     */
-    BuildingEntry getBuildingType();
 
     /**
      * Set the building type

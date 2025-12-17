@@ -170,7 +170,7 @@ public class WindowAssignCitizen extends AbstractWindowSkeleton implements Butto
      */
     private void cancelClicked(@NotNull final Button button)
     {
-        if (button.getID().equals(BUTTON_CANCEL) && colony.getTownHall() != null)
+        if (button.getID().equals(BUTTON_CANCEL) && colony.getClientBuildingManager().getTownHall() != null)
         {
             building.openGui(false);
         }

@@ -49,7 +49,7 @@ public class ColonyPatrolPointRenderer
             return;
         }
 
-        final IBuildingView guardTowerView = colony.getBuilding(BlockPosUtil.read(itemStackNbt, TAG_POS));
+        final IBuildingView guardTowerView = colony.getClientBuildingManager().getBuilding(BlockPosUtil.read(itemStackNbt, TAG_POS));
         if (guardTowerView == null)
         {
             return;

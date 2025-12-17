@@ -92,8 +92,8 @@ public class ItemAssistantHammer extends AbstractItemMinecolonies
         for (final IWorkOrder workOrder : view.getWorkOrders())
         {
             if (workOrder.isClaimed()
-                && view.getBuilding(workOrder.getClaimedBy()) != null
-                && view.getBuilding(workOrder.getClaimedBy()).getBuildingType() == ModBuildings.builder.get()
+                && view.getClientBuildingManager().getBuilding(workOrder.getClaimedBy()) != null
+                && view.getClientBuildingManager().getBuilding(workOrder.getClaimedBy()).getBuildingType() == ModBuildings.builder.get()
                 && workOrder.getBoundingBox() != null && workOrder.getBoundingBox().inflate(2).contains(Vec3.atLowerCornerOf(interactPos)))
             {
                 unclaimed = false;
@@ -105,7 +105,7 @@ public class ItemAssistantHammer extends AbstractItemMinecolonies
 
                 List<IPlacementHandler> handlers = new ArrayList<>(PlacementHandlers.handlers);
                 SolidPlaceholderPlacementHandler solidPlaceHolderHandler = new SolidPlaceholderPlacementHandler();
-                solidPlaceHolderHandler.setReplacement(view.getBuilding(workOrder.getClaimedBy())
+                solidPlaceHolderHandler.setReplacement(view.getClientBuildingManager().getBuilding(workOrder.getClaimedBy())
                     .getModuleView(BuildingModules.BUILDER_SETTINGS)
                     .getSetting(BuildingMiner.FILL_BLOCK)
                     .getValue()
@@ -160,7 +160,7 @@ public class ItemAssistantHammer extends AbstractItemMinecolonies
 
             List<IPlacementHandler> handlers = new ArrayList<>(PlacementHandlers.handlers);
             SolidPlaceholderPlacementHandler solidPlaceHolderHandler = new SolidPlaceholderPlacementHandler();
-            solidPlaceHolderHandler.setReplacement(colony.getBuildingManager().getBuilding(workOrder.getClaimedBy())
+            solidPlaceHolderHandler.setReplacement(colony.getServerBuildingManager().getBuilding(workOrder.getClaimedBy())
                 .getModule(BuildingModules.BUILDER_SETTINGS)
                 .getSetting(BuildingMiner.FILL_BLOCK)
                 .getValue()
@@ -323,7 +323,7 @@ public class ItemAssistantHammer extends AbstractItemMinecolonies
 
                         if (!colony.getWorld().isClientSide())
                         {
-                            final IBuilding building = colony.getBuildingManager().getBuilding(workOrder.getLocation());
+                            final IBuilding building = colony.getServerBuildingManager().getBuilding(workOrder.getLocation());
                             if (building != null)
                             {
                                 building.registerBlockPosition(blockInfo.getState(), workPos, colony.getWorld());
@@ -343,7 +343,7 @@ public class ItemAssistantHammer extends AbstractItemMinecolonies
                         }
                         else
                         {
-                            final IBuilding building = colony.getBuildingManager().getBuilding(workOrder.getClaimedBy());
+                            final IBuilding building = colony.getServerBuildingManager().getBuilding(workOrder.getClaimedBy());
                             for (final ItemStack stack : requiredItem)
                             {
                                 building.getModule(BuildingModules.BUILDING_RESOURCES).reduceNeededResource(stack, 1);
@@ -351,7 +351,7 @@ public class ItemAssistantHammer extends AbstractItemMinecolonies
 
                             if (ColonyConstants.rand.nextInt(20) == 0)
                             {
-                                final var buildingBuilder = colony.getBuildingManager().getBuilding(workOrder.getClaimedBy());
+                                final var buildingBuilder = colony.getServerBuildingManager().getBuilding(workOrder.getClaimedBy());
                                 if (buildingBuilder != null)
                                 {
                                     buildingBuilder.getModule(BuildingModules.BUILDER_WORK).getAssignedCitizen()

@@ -6,7 +6,6 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IGuardBuilding;
 import com.minecolonies.api.colony.jobs.ModJobs;
-import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.entity.ai.combat.CombatAIStates;
 import com.minecolonies.api.entity.ai.combat.threat.IThreatTableEntity;
@@ -499,7 +498,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
      */
     protected BlockPos randomPatrolPoint()
     {
-        return buildingGuards.getColony().getBuildingManager().getRandomBuilding(b -> true);
+        return buildingGuards.getColony().getServerBuildingManager().getRandomBuilding(b -> true);
     }
 
     /**
@@ -554,7 +553,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
         }
         if (currentPatrolPoint == null || walkToSafePos(currentPatrolPoint))
         {
-            final IBuilding building = buildingGuards.getColony().getBuildingManager().getBuilding(buildingGuards.getMinePos());
+            final IBuilding building = buildingGuards.getColony().getServerBuildingManager().getBuilding(buildingGuards.getMinePos());
             if (building != null)
             {
                 if (building instanceof BuildingMiner)

@@ -177,7 +177,7 @@ public class BlockScarecrow extends AbstractBlockMinecoloniesDefault<BlockScarec
         final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld(worldIn, pos);
         if (colony != null)
         {
-            colony.getBuildingManager().addBuildingExtension(FarmField.create(pos, worldIn));
+            colony.getServerBuildingManager().addBuildingExtension(FarmField.create(pos, worldIn));
         }
     }
 
@@ -218,7 +218,7 @@ public class BlockScarecrow extends AbstractBlockMinecoloniesDefault<BlockScarec
             final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld(worldIn, pos);
             if (colony != null)
             {
-                colony.getBuildingManager().removeBuildingExtension(field -> field.getBuildingExtensionType().equals(BuildingExtensionRegistries.farmField.get()) && field.getPosition().equals(pos));
+                colony.getServerBuildingManager().removeBuildingExtension(field -> field.getBuildingExtensionType().equals(BuildingExtensionRegistries.farmField.get()) && field.getPosition().equals(pos));
             }
         }
     }

@@ -11,13 +11,6 @@ import java.util.Set;
 public interface ISchematicProvider extends INBTSerializable<CompoundTag>
 {
     /**
-     * Returns the {@code BlockPos} of the current object, also used as ID.
-     *
-     * @return {@code BlockPos} of the current object.
-     */
-    BlockPos getPosition();
-
-    /**
      * Sets the corners of the building based on the schematic.
      *
      * @param corner1 the first corner.
@@ -100,23 +93,6 @@ public interface ISchematicProvider extends INBTSerializable<CompoundTag>
      * @param path String value of the blueprint-path.
      */
     void setBlueprintPath(String path);
-
-    /**
-     * Returns the level of the current object.
-     *
-     * @return Level of the current object.
-     */
-    int getBuildingLevel();
-
-    /**
-     * Get the equivalent building level for equipment, etc.
-     * Normally it's just the building level, but for buildings with fewer levels it can be 1,3,5 for example.
-     * @return the adjusted level.
-     */
-    default int getBuildingLevelEquivalent()
-    {
-        return getBuildingLevel();
-    }
 
     /**
      * Sets the current level of the building.

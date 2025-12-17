@@ -165,15 +165,15 @@ public class ColonyPermissionEventHandler
             event.setCanceled(true);
             if (entity == null)
             {
-                if (colony.hasTownHall())
+                if (colony.getServerBuildingManager().hasTownHall())
                 {
-                    colony.getBuildingManager().getTownHall().addPermissionEvent(new PermissionEvent(null, "-", action, pos));
+                    colony.getServerBuildingManager().getTownHall().addPermissionEvent(new PermissionEvent(null, "-", action, pos));
                 }
                 return;
             }
-            if (colony.hasTownHall())
+            if (colony.getServerBuildingManager().hasTownHall())
             {
-                colony.getBuildingManager().getTownHall().addPermissionEvent(new PermissionEvent(entity.getUUID(), entity.getName().getString(), action, pos));
+                colony.getServerBuildingManager().getTownHall().addPermissionEvent(new PermissionEvent(entity.getUUID(), entity.getName().getString(), action, pos));
             }
 
 
@@ -260,7 +260,7 @@ public class ColonyPermissionEventHandler
             {
                 return;
             }
-            colony.getBuildingManager().removeLeisureSite(event.getPos());
+            colony.getServerBuildingManager().removeLeisureSite(event.getPos());
         }
         else
         {

@@ -126,7 +126,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
 
             if (wo instanceof WorkOrderBuilding)
             {
-                final IBuilding building = job.getColony().getBuildingManager().getBuilding(wo.getLocation());
+                final IBuilding building = job.getColony().getServerBuildingManager().getBuilding(wo.getLocation());
                 if (building == null)
                 {
                     Log.getLogger().error(
@@ -176,7 +176,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
         }
 
         final BlockPos pos = workOrder.getLocation();
-        if (workOrder instanceof WorkOrderBuilding && worker.getCitizenColonyHandler().getColonyOrRegister().getBuildingManager().getBuilding(pos) == null)
+        if (workOrder instanceof WorkOrderBuilding && worker.getCitizenColonyHandler().getColonyOrRegister().getServerBuildingManager().getBuilding(pos) == null)
         {
             Log.getLogger().warn("AbstractBuilding does not exist - removing build request");
             worker.getCitizenColonyHandler().getColonyOrRegister().getWorkManager().removeWorkOrder(workOrder);
@@ -425,7 +425,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
 
             if (wo instanceof WorkOrderBuilding workOrderBuilding)
             {
-                final IBuilding building = colony.getBuildingManager().getBuilding(wo.getLocation());
+                final IBuilding building = colony.getServerBuildingManager().getBuilding(wo.getLocation());
                 if (building == null)
                 {
                     Log.getLogger()

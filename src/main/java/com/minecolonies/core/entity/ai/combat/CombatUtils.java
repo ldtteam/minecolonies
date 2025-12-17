@@ -100,7 +100,7 @@ public class CombatUtils
 
         if (target instanceof AbstractEntityMinecoloniesRaider)
         {
-            for (final Map.Entry<BlockPos, IBuilding> entry : user.getCitizenColonyHandler().getColonyOrRegister().getBuildingManager().getBuildings().entrySet())
+            for (final Map.Entry<BlockPos, IBuilding> entry : user.getCitizenColonyHandler().getColonyOrRegister().getServerBuildingManager().getBuildings().entrySet())
             {
                 if (entry.getValue() instanceof AbstractBuildingGuards &&
                       user.blockPosition().distSqr(entry.getKey()) < callRange)

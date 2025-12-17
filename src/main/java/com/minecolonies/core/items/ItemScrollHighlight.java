@@ -70,7 +70,7 @@ public class ItemScrollHighlight extends AbstractItemScroll
             }
 
             final TileEntityColonyBuilding building = (TileEntityColonyBuilding) te;
-            final Set<ICitizenData> citizens = building.getColony().getBuildingManager().getBuilding(ctx.getClickedPos()).getAllAssignedCitizen();
+            final Set<ICitizenData> citizens = building.getColony().getServerBuildingManager().getBuilding(ctx.getClickedPos()).getAllAssignedCitizen();
 
             for (final ICitizenData citizenData : citizens)
             {

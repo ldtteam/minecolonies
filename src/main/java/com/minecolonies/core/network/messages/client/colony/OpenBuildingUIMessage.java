@@ -76,7 +76,7 @@ public class OpenBuildingUIMessage implements IMessage
     @Override
     public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
     {
-        if (IColonyManager.getInstance().getColonyView(colonyId, dimension) instanceof ColonyView colonyView && colonyView.getBuilding(buildingId) instanceof AbstractBuildingView buildingView)
+        if (IColonyManager.getInstance().getColonyView(colonyId, dimension) instanceof ColonyView colonyView && colonyView.getClientBuildingManager().getBuilding(buildingId) instanceof AbstractBuildingView buildingView)
         {
             buildingView.openGui(false);
         }

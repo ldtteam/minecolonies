@@ -110,7 +110,7 @@ public class WorkOrderMiner extends AbstractWorkOrder
     @Override
     public boolean isValid(final IColony colony)
     {
-        return super.isValid(colony) && colony.getBuildingManager().getBuilding(minerBuilding) != null;
+        return super.isValid(colony) && colony.getServerBuildingManager().getBuilding(minerBuilding) != null;
     }
 
     /**

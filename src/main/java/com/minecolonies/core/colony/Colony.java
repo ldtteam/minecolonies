@@ -338,6 +338,9 @@ public class Colony implements IColony
      */
     private int day = 0;
 
+    /**
+     * Colony level settings manager.
+     */
     private final SettingsModule settingsModule = (SettingsModule) BuildingEntry.produceModuleWithoutBuilding(BuildingModules.TOWNHALL_SETTINGS.key);
 
     /**
@@ -1288,12 +1291,6 @@ public class Colony implements IColony
         return BlockPosUtil.getDistanceSquared2D(center, pos);
     }
 
-    @Override
-    public boolean hasTownHall()
-    {
-        return buildingManager.hasTownHall();
-    }
-
     /**
      * Returns the ID of the colony.
      *
@@ -1303,40 +1300,6 @@ public class Colony implements IColony
     public int getID()
     {
         return id;
-    }
-
-    @Override
-    public boolean hasWarehouse()
-    {
-        return buildingManager.hasWarehouse();
-    }
-
-    @Override
-    public boolean hasBuilding(final ResourceLocation name, final int level, boolean singleBuilding)
-    {
-        int sum = 0;
-        for (final IBuilding building : this.getBuildingManager().getBuildings().values())
-        {
-            if (building.getBuildingType().getRegistryName().equals(name))
-            {
-                if (singleBuilding)
-                {
-                    if (building.getBuildingLevel() >= level)
-                    {
-                        return true;
-                    }
-                }
-                else
-                {
-                    sum += building.getBuildingLevel();
-                    if (sum >= level)
-                    {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
     }
 
     @Override
@@ -1416,36 +1379,6 @@ public class Colony implements IColony
             }
         }
         return new ArrayList<>(playerList);
-    }
-
-    /**
-     * Getter which checks if jobs should be manually allocated.
-     *
-     * @return true of false.
-     */
-    public boolean isManualHiring()
-    {
-        return !settingsModule.getSetting(BuildingTownHall.AUTO_HIRING_MODE).getValue();
-    }
-
-    /**
-     * Getter which checks if houses should be manually allocated.
-     *
-     * @return true of false.
-     */
-    public boolean isManualHousing()
-    {
-        return !settingsModule.getSetting(BuildingTownHall.AUTO_HOUSING_MODE).getValue();
-    }
-
-    /**
-     * Getter which checks if houses should be manually allocated.
-     *
-     * @return true of false.
-     */
-    public boolean canMoveIn()
-    {
-        return settingsModule.getSetting(BuildingTownHall.MOVE_IN).getValue();
     }
 
     /**
@@ -1546,8 +1479,15 @@ public class Colony implements IColony
      * @return the buildingManager.
      */
     @Override
-    public IRegisteredStructureManager getBuildingManager()
+    public IRegisteredStructureManager getServerBuildingManager()
     {
+        return buildingManager;
+    }
+
+    @Override
+    public ICommonRegisteredStructureManager getCommonBuildingManager()
+    {
+        //todo merge with above.
         return buildingManager;
     }
 
@@ -2004,11 +1944,7 @@ public class Colony implements IColony
         return citizenManager.getCivilian(id);
     }
 
-    /**
-     * Gets the colonies settings
-     *
-     * @return
-     */
+    @Override
     public ISettingsModule getSettings()
     {
         return settingsModule;

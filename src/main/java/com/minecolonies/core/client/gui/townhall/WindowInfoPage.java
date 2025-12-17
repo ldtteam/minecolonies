@@ -278,7 +278,7 @@ public class WindowInfoPage extends AbstractWindowTownHall
                 }
 
                 //Searches citizen of id x
-                for (@NotNull final IBuildingView buildingView : buildingView.getColony().getBuildings())
+                for (@NotNull final IBuildingView buildingView : buildingView.getColony().getClientBuildingManager().getBuildings().values())
                 {
                     if (buildingView.getPosition().equals(workOrder.getClaimedBy()) && buildingView instanceof AbstractBuildingBuilderView)
                     {

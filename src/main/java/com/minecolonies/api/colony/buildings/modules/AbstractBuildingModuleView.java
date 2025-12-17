@@ -17,6 +17,11 @@ public abstract class AbstractBuildingModuleView implements IBuildingModuleView
     protected IBuildingView buildingView;
 
     /**
+     * The colony view.
+     */
+    protected IColonyView colonyView;
+
+    /**
      * The creator and identity of this module
      */
     private BuildingEntry.ModuleProducer producer = null;
@@ -25,13 +30,24 @@ public abstract class AbstractBuildingModuleView implements IBuildingModuleView
     public IBuildingModuleView setBuildingView(final IBuildingView buildingView)
     {
         this.buildingView = buildingView;
+        if (this.buildingView != null)
+        {
+            this.colonyView = this.buildingView.getColony();
+        }
+        return this;
+    }
+
+    @Override
+    public IBuildingModuleView setColonyView(final IColonyView colonyView)
+    {
+        this.colonyView = colonyView;
         return this;
     }
 
     @Override
     public IColonyView getColony()
     {
-        return buildingView.getColony();
+        return colonyView;
     }
 
     /**

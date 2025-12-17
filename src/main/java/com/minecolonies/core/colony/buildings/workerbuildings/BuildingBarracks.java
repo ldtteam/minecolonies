@@ -101,14 +101,14 @@ public class BuildingBarracks extends AbstractBuilding
             }
         }
         super.onDestroyed();
-        colony.getBuildingManager().guardBuildingChangedAt(this, 0);
+        colony.getServerBuildingManager().guardBuildingChangedAt(this, 0);
     }
 
     @Override
     public void onUpgradeComplete(final int newLevel)
     {
         super.onUpgradeComplete(newLevel);
-        colony.getBuildingManager().guardBuildingChangedAt(this, newLevel);
+        colony.getServerBuildingManager().guardBuildingChangedAt(this, newLevel);
     }
 
     @Override
@@ -117,7 +117,7 @@ public class BuildingBarracks extends AbstractBuilding
         super.registerBlockPosition(block, pos, world);
         if (block.getBlock() == ModBlocks.blockHutBarracksTower)
         {
-            final IBuilding building = getColony().getBuildingManager().getBuilding(pos);
+            final IBuilding building = getColony().getServerBuildingManager().getBuilding(pos);
             if (building instanceof BuildingBarracksTower)
             {
                 building.setStructurePack(this.getStructurePack());
@@ -168,7 +168,7 @@ public class BuildingBarracks extends AbstractBuilding
         int barracksClaimRadius = 3;
         for (final BlockPos pos : towers)
         {
-            final IBuilding building = colony.getBuildingManager().getBuilding(pos);
+            final IBuilding building = colony.getServerBuildingManager().getBuilding(pos);
             if (building != null)
             {
                 if (building.getBuildingLevel() < 4) 

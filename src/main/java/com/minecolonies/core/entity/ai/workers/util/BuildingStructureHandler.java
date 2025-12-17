@@ -121,7 +121,7 @@ public class BuildingStructureHandler<J extends AbstractJobStructure<?, J>, B ex
         final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld(getWorld(), getWorldPos());
         if (colony != null)
         {
-            this.building = colony.getBuildingManager().getBuilding(getWorldPos());
+            this.building = colony.getServerBuildingManager().getBuilding(getWorldPos());
         }
     }
 

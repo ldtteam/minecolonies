@@ -473,7 +473,7 @@ public class CitizenWindowUtils
      */
     public static void updateJobPage(final ICitizenDataView citizen, final JobWindowCitizen windowCitizen, final IColonyView colony)
     {
-        final IBuildingView building = colony.getBuilding(citizen.getWorkBuilding());
+        final IBuildingView building = colony.getClientBuildingManager().getBuilding(citizen.getWorkBuilding());
 
         if (building instanceof AbstractBuildingView && building.getBuildingType() != ModBuildings.library.get() && citizen.getJobView() != null)
         {

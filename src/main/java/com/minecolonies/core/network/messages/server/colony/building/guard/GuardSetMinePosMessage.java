@@ -79,11 +79,11 @@ public class GuardSetMinePosMessage extends AbstractBuildingServerMessage<Abstra
         final IBuilding miner;
         if (this.minePos == null)
         {
-            miner = building.getColony().getBuildingManager().getBuilding(building.getMinePos());
+            miner = building.getColony().getServerBuildingManager().getBuilding(building.getMinePos());
         }
         else
         {
-            miner = building.getColony().getBuildingManager().getBuilding(this.minePos);
+            miner = building.getColony().getServerBuildingManager().getBuilding(this.minePos);
         }
         if (miner instanceof BuildingMiner)
         {

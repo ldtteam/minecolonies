@@ -1,7 +1,7 @@
 package com.minecolonies.core.colony.buildings.modules;
 
 import java.util.List;
-import com.ldtteam.structurize.api.util.Log;
+
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.managers.interfaces.IStatisticsManager;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingBarracks;
@@ -28,7 +28,7 @@ public class BarracksStatisticsModule extends BuildingStatisticsModule
 
         for (final BlockPos towerPos : towers)
         {
-            IBuilding tower = building.getColony().getBuildingManager().getBuilding(towerPos);
+            IBuilding tower = building.getColony().getServerBuildingManager().getBuilding(towerPos);
             if (tower != null)
             {
                 BuildingStatisticsModule towerStats = tower.getModule(STATS_MODULE);

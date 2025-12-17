@@ -1,5 +1,6 @@
 package com.minecolonies.api.colony;
 
+import com.minecolonies.api.colony.buildings.modules.ICommonSettingsModule;
 import com.minecolonies.api.colony.connections.IColonyConnectionManager;
 import com.minecolonies.api.colony.managers.interfaces.*;
 import com.minecolonies.api.colony.permissions.IPermissions;
@@ -9,12 +10,12 @@ import com.minecolonies.api.colony.workorders.IWorkManager;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.quests.IQuestManager;
 import com.minecolonies.api.research.IResearchManager;
+import com.minecolonies.core.colony.buildings.workerbuildings.BuildingTownHall;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -88,35 +89,11 @@ public interface IColony
     long getDistanceSquared(BlockPos pos);
 
     /**
-     * Returns whether or not the colony has a town hall.
-     *
-     * @return whether or not the colony has a town hall.
-     */
-    boolean hasTownHall();
-
-    /**
      * returns this colonies unique id.
      *
      * @return an int representing the id.
      */
     int getID();
-
-    /**
-     * Check if the colony has a warehouse.
-     *
-     * @return true if so.
-     */
-    boolean hasWarehouse();
-
-    /**
-     * Check if the colony has a building type at a specific level or higher.
-     *
-     * @param building       The identifier for the building, based on schematic name.
-     * @param level          The level requirement.
-     * @param singleBuilding If true, requires that a single building meet the minimum requirement.
-     * @return true if at least one building of at least the target level is present.
-     */
-    boolean hasBuilding(final ResourceLocation building, final int level, final boolean singleBuilding);
 
     /**
      * Getter for the team colony color.
@@ -202,7 +179,7 @@ public interface IColony
     {
         final List<BlockPos> tempWayPoints = new ArrayList<>();
         tempWayPoints.addAll(getWayPoints().keySet());
-        tempWayPoints.addAll(getBuildingManager().getBuildings().keySet());
+        tempWayPoints.addAll(getServerBuildingManager().getBuildings().keySet());
 
         final double maxX = Math.max(position.getX(), target.getX());
         final double maxZ = Math.max(position.getZ(), target.getZ());
@@ -233,7 +210,9 @@ public interface IColony
 
     void setStructurePack(String style);
 
-    IRegisteredStructureManager getBuildingManager();
+    IRegisteredStructureManager getServerBuildingManager();
+
+    ICommonRegisteredStructureManager getCommonBuildingManager();
 
     ICitizenManager getCitizenManager();
 
@@ -367,12 +346,6 @@ public interface IColony
     @NotNull
     List<Player> getImportantMessageEntityPlayers();
 
-    boolean isManualHiring();
-
-    boolean isManualHousing();
-
-    boolean canMoveIn();
-
     /**
      * Tries to use a given amount of additional growth-time for childs.
      *
@@ -493,4 +466,40 @@ public interface IColony
      * @return the cit.
      */
     ICitizen getCitizen(int id);
+
+    /**
+     * Get the colony level settings module.
+     * @return the settings module.
+     */
+    ICommonSettingsModule getSettings();
+
+    /**
+     * Getter for letting citizens move in or not.
+     *
+     * @return the boolean true or false.
+     */
+    default boolean canMoveIn()
+    {
+        return getSettings().getSetting(BuildingTownHall.MOVE_IN).getValue();
+    }
+
+    /**
+     * Getter for the manual housing or not.
+     *
+     * @return the boolean true or false.
+     */
+    default boolean isManualHousing()
+    {
+        return getSettings().getSetting(BuildingTownHall.AUTO_HOUSING_MODE).getValue();
+    }
+
+    /**
+     * Getter for the manual hiring or not.
+     *
+     * @return the boolean true or false.
+     */
+    default boolean isManualHiring()
+    {
+        return getSettings().getSetting(BuildingTownHall.AUTO_HIRING_MODE).getValue();
+    }
 }

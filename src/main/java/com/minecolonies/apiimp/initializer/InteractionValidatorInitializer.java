@@ -66,11 +66,11 @@ public class InteractionValidatorInitializer
           citizen -> citizen.getSaturation() == 0 && citizen.isChild() && citizen.needsBetterFood());
         InteractionValidatorRegistry.registerStandardPredicate(Component.translatable(NO_RESTAURANT),
           citizen -> citizen.getColony() != null && citizen.getSaturation() <= LOW_SATURATION && citizen.getEntity().isPresent()
-                       && citizen.getColony().getBuildingManager().getBestBuilding(citizen.getEntity().get(), BuildingCook.class) == null
+                       && citizen.getColony().getServerBuildingManager().getBestBuilding(citizen.getEntity().get(), BuildingCook.class) == null
                        && InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(citizen.getInventory(), ISFOOD) == -1);
         InteractionValidatorRegistry.registerStandardPredicate(Component.translatable(NO_HOSPITAL),
             citizen -> citizen.getColony() != null && citizen.getEntity().isPresent() && citizen.getCitizenDiseaseHandler().isSick()
-                       && citizen.getColony().getBuildingManager().getBestBuilding(citizen.getEntity().get(), BuildingHospital.class) == null);
+                       && citizen.getColony().getServerBuildingManager().getBestBuilding(citizen.getEntity().get(), BuildingHospital.class) == null);
         InteractionValidatorRegistry.registerStandardPredicate(Component.translatable(WAITING_FOR_CURE),
           citizen -> citizen.getColony() != null && citizen.getEntity().isPresent() && citizen.getCitizenDiseaseHandler().getDisease() != null);
 
@@ -82,7 +82,7 @@ public class InteractionValidatorInitializer
                   final IColony colony = citizen.getColony();
                   if (colony != null)
                   {
-                      final IBuilding building = colony.getBuildingManager().getBuilding(pos);
+                      final IBuilding building = colony.getServerBuildingManager().getBuilding(pos);
                       if (building != null)
                       {
                           final IItemHandler inv = building.getCapability(ForgeCapabilities.ITEM_HANDLER, null).resolve().orElse(null);
