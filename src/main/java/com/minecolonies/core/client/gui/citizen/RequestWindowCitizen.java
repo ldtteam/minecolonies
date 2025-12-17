@@ -110,6 +110,11 @@ public class RequestWindowCitizen extends AbstractWindowCitizen
         @Override
         protected Collection<IRequest<?>> getOpenRequests()
         {
+            if (buildingView == null)
+            {
+                return List.of();
+            }
+
             final List<IRequest<?>> requests = new ArrayList<>();
             for (final IToken<?> token : buildingView.getOpenRequestsByCitizen().getOrDefault(citizenDataView.getId(), Collections.emptyList()))
             {
