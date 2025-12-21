@@ -726,12 +726,6 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
             rotMir = RotationMirror.R90;
         }
 
-
-        if (workingNode.getRotationMirror().isPresent() && workingNode.getRotationMirror().get() != rotMir)
-        {
-            Log.getLogger().warn("Calculated rotation doesn't match recorded: x:" + workingNodeX + " z:" + workingNodeZ + " at: " + building.getColony().getID());
-        }
-
         final MineNode parentNode = currentLevel.getNode(workingNode.getParent());
 
         if (parentNode != null && parentNode.getStyle() != MineNode.NodeType.SHAFT && parentNode.getStatus() != MineNode.NodeStatus.COMPLETED)
@@ -741,6 +735,12 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
             module.setActiveNode(parentNode);
             buildingMiner.markDirty();
             //We need to make sure to walk back to the last valid parent
+
+            if (workingNode.getRotationMirror().isPresent() && workingNode.getRotationMirror().get() != rotMir)
+            {
+                Log.getLogger().warn("Calculated rotation doesn't match recorded: x:" + workingNodeX + " z:" + workingNodeZ + " at: " + building.getColony().getID());
+            }
+
             return MINER_CHECK_MINESHAFT;
         }
         @NotNull final BlockPos standingPosition = new BlockPos(workingNode.getParent().getX(), currentLevel.getDepth(), workingNode.getParent().getZ());

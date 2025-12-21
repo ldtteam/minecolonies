@@ -150,8 +150,10 @@ public class MineNode
         }
         node.setStyle(style);
         node.setStatus(status);
-        node.setRotationMirror(RotationMirror.values()[compound.getByte(TAG_ROTATION_MIRROR)]);
-
+        if (compound.contains(TAG_ROTATION_MIRROR))
+        {
+            node.setRotationMirror(RotationMirror.values()[compound.getByte(TAG_ROTATION_MIRROR)]);
+        }
         return node;
     }
 
