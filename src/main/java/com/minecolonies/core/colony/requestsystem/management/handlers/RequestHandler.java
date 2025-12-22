@@ -203,6 +203,13 @@ public class RequestHandler implements IRequestHandler
                     {
                         previousResolver = resolver;
                         previousMetric = resolver.getSuitabilityMetric(manager, request);
+                        if (!attemptResult.isEmpty())
+                        {
+                            for (final IToken<?> iToken : attemptResult)
+                            {
+                                manager.updateRequestState(iToken, RequestState.CANCELLED);
+                            }
+                        }
                         attemptResult = tempAttemptResolveRequest;
                     }
                 }
