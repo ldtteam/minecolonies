@@ -23,11 +23,6 @@ import com.minecolonies.api.util.constant.WindowConstants;
 import com.minecolonies.core.client.gui.WindowHutGuide;
 import com.minecolonies.core.client.gui.WindowRequestDetail;
 import com.minecolonies.core.client.gui.citizen.RequestWindowCitizen;
-import net.minecraft.advancements.Advancement;
-import net.minecraft.advancements.AdvancementHolder;
-import net.minecraft.advancements.AdvancementType;
-import net.minecraft.advancements.Criterion;
-import net.minecraft.advancements.DisplayInfo;
 import net.minecraft.advancements.*;
 import net.minecraft.advancements.critereon.ItemPredicate;
 import net.minecraft.advancements.critereon.ItemUsedOnLocationTrigger;
@@ -115,7 +110,7 @@ public class DefaultAdvancementsProvider extends AdvancementProvider
                         ClickGuiButtonTriggerInstance.clickGuiButton(WindowConstants.REQUEST_FULFILL, RequestWindowCitizen.WINDOW_ID))
             .addCriterion("click_request_button_fulfill",
                         ClickGuiButtonTriggerInstance.clickGuiButton(WindowConstants.REQUEST_FULFILL, WindowRequestDetail.WINDOW_ID))
-                .requirements(Strategy.OR)
+                .requirements(AdvancementRequirements.Strategy.OR)
             .save(consumer, new ResourceLocation(MOD_ID, GROUP + "fulfill_request"), fileHelper);
 
         final AdvancementHolder buildBuilder = Advancement.Builder.advancement()

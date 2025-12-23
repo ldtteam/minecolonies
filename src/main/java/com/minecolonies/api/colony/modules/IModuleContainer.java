@@ -68,7 +68,7 @@ public interface IModuleContainer<T>
         final List<T2> modules = new ArrayList<>();
         for (final T module : getModules())
         {
-            if (module.getClass().isInstance(clazz))
+            if (clazz.isInstance(module))
             {
                 final T2 castedModule = clazz.cast(module);
                 if (predicate.test(castedModule))
@@ -90,7 +90,7 @@ public interface IModuleContainer<T>
     @Nullable
     default <T2 extends T> T2 getModule(final Class<T2> clazz)
     {
-        return clazz.cast(getModule(module -> module.getClass().isInstance(clazz)));
+        return clazz.cast(getModule(clazz::isInstance));
     }
 
     /**
@@ -118,7 +118,7 @@ public interface IModuleContainer<T>
     {
         for (final T module : getModules())
         {
-            if (module.getClass().isInstance(clazz))
+            if (clazz.isInstance(module))
             {
                 final T2 castedModule = clazz.cast(module);
                 if (predicate.test(castedModule))

@@ -11,8 +11,6 @@ import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.core.colony.buildings.views.AbstractBuildingView;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.client.gui.modules.RequestTreeWindowModule;
 import com.minecolonies.core.client.gui.modules.TabsWindowModule;
 import com.minecolonies.core.colony.buildings.workerbuildings.PostBox;
@@ -30,6 +28,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 import static com.minecolonies.api.util.constant.translation.GuiTranslationConstants.LABEL_MAIN_TAB_NAME;

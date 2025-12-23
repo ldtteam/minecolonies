@@ -106,13 +106,13 @@ public class TabsWindowModule implements IWindowModule
         view.setSize(TAB_WIDTH, TAB_HEIGHT);
 
         final ButtonImage image = new ButtonImage();
-        image.setImage(side.getImage(iconRandom), false);
+        image.setImage(side.getImage(iconRandom));
         image.setSize(TAB_WIDTH, TAB_HEIGHT);
         image.setHandler(handler);
 
         final ButtonImage iconImage = new ButtonImage();
         iconImage.setID(icon.getPath());
-        iconImage.setImage(icon, false);
+        iconImage.setImage(icon);
         iconImage.setSize(TAB_ICON_WIDTH, TAB_ICON_HEIGHT);
         iconImage.setPosition(TAB_ICON_OFFSET_X, TAB_ICON_OFFSET_Y);
         iconImage.setHandler(handler);

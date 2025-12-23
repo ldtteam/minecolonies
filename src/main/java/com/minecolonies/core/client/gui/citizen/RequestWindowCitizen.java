@@ -9,7 +9,6 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.core.Network;
 import com.minecolonies.core.client.gui.AbstractWindowSkeleton;
 import com.minecolonies.core.client.gui.modules.RequestTreeWindowModule;
 import com.minecolonies.core.network.messages.server.colony.UpdateRequestStateMessage;
@@ -193,15 +192,15 @@ public class RequestWindowCitizen extends AbstractWindowCitizen
                 itemStack = inventory.getItem(slot);
             }
 
+            if (citizenDataView.getWorkBuilding() != null)
+            {
+                colony.getBuilding(citizenDataView.getWorkBuilding()).onRequestedRequestComplete(colony.getRequestManager(), request);
+            }
+            new TransferItemsToCitizenRequestMessage(colony, citizenDataView, itemStack, isCreative ? amount : Math.min(amount, count)).sendToServer();
 
-        if (citizenDataView.getWorkBuilding() != null)
-        {
-            colony.getBuilding(citizenDataView.getWorkBuilding()).onRequestedRequestComplete(colony.getRequestManager(), request);
+            final ItemStack copy = itemStack.copy();
+            copy.setCount(isCreative ? amount : Math.min(amount, count));
+            new UpdateRequestStateMessage(colony, request.getId(), RequestState.OVERRULED, copy).sendToServer();
         }
-        new TransferItemsToCitizenRequestMessage(colony, citizenDataView, itemStack, isCreative ? amount : Math.min(amount, count)).sendToServer();
-
-        final ItemStack copy = itemStack.copy();
-        copy.setCount(isCreative ? amount : Math.min(amount, count));
-        new UpdateRequestStateMessage(colony, request.getId(), RequestState.OVERRULED, copy).sendToServer();
     }
 }

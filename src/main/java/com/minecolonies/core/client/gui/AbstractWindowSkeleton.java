@@ -151,7 +151,7 @@ public abstract class AbstractWindowSkeleton extends BOWindow implements ButtonH
     public final <T extends IWindowWithLayoutModule, A> T registerLayoutModule(final BiFunction<AbstractWindowSkeleton, A, T> moduleBuilder, A argument, int xPos, int yPos)
     {
         final T module = moduleBuilder.apply(this, argument);
-        final Pane rootPane = Loader.createFromXMLFile2(module.getLayout(), this);
+        final Pane rootPane = Loader.createFromXMLFile(module.getLayout(), this);
         rootPane.setPosition(xPos, yPos);
         module.onLayoutMounted(rootPane);
         this.modules.add(module);
