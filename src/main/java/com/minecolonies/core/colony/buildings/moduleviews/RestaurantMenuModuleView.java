@@ -2,6 +2,7 @@ package com.minecolonies.core.colony.buildings.moduleviews;
 
 import com.ldtteam.blockui.views.BOWindow;
 import com.minecolonies.api.colony.buildings.modules.AbstractBuildingModuleView;
+import com.minecolonies.api.colony.buildings.modules.ITemplateModuleView;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.Utils;
 import com.minecolonies.api.util.constant.Constants;
@@ -24,7 +25,7 @@ import static com.minecolonies.core.colony.buildings.workerbuildings.BuildingCoo
 /**
  * Client side version of food menu.
  */
-public class RestaurantMenuModuleView extends AbstractBuildingModuleView
+public class RestaurantMenuModuleView extends AbstractBuildingModuleView implements ITemplateModuleView
 {
     /**
      * The menu.
@@ -73,5 +74,12 @@ public class RestaurantMenuModuleView extends AbstractBuildingModuleView
     public boolean hasReachedLimit()
     {
         return menu.size() >= buildingView.getBuildingLevel() * STOCK_PER_LEVEL;
+    }
+
+    @Override
+    @NotNull
+    public ResourceLocation getTemplateStorageId()
+    {
+        return new ResourceLocation(Constants.MOD_ID, "restaurant_menu");
     }
 }

@@ -9,7 +9,7 @@ import java.util.function.Function;
 /**
  * Client side version of the abstract class for all buildings which require a filterable list of allowed items.
  */
-public interface IItemListModuleView extends IBuildingModuleView
+public interface IItemListModuleView extends IBuildingModuleView, ITemplateModuleView
 {
     /**
      * Add item to the view and notify the server side.

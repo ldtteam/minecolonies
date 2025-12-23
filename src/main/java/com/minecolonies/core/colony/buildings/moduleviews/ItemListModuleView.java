@@ -149,4 +149,11 @@ public class ItemListModuleView extends AbstractBuildingModuleView implements II
     {
         return new ResourceLocation(Constants.MOD_ID, "textures/gui/modules/" + this.getId() + ".png");
     }
+
+    @Override
+    @NotNull
+    public ResourceLocation getTemplateStorageId()
+    {
+        return new ResourceLocation(Constants.MOD_ID, id + "_item_list");
+    }
 }

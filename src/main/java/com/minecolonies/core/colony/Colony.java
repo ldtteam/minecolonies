@@ -219,6 +219,11 @@ public class Colony implements IColony
     private final ColonyConnectionManager connectionManager = new ColonyConnectionManager(this);
 
     /**
+     * Building module template manager of the colony.
+     */
+    private final BuildingModuleTemplateManager moduleTemplateManager = new BuildingModuleTemplateManager(this);
+
+    /**
      * The Positions which players can freely interact.
      */
     private ImmutableSet<BlockPos> freePositions = ImmutableSet.of();
@@ -878,6 +883,11 @@ public class Colony implements IColony
         {
             this.connectionManager.deserializeNBT(provider, compound.getCompound(NbtTagConstants.TAG_CONNECTION_MANAGER));
         }
+
+        if (compound.contains(NbtTagConstants.TAG_MODULE_TEMPLATE_MANAGER))
+        {
+            this.moduleTemplateManager.deserializeNBT(provider, compound.getCompound(NbtTagConstants.TAG_MODULE_TEMPLATE_MANAGER));
+        }
     }
 
     /**
@@ -990,6 +1000,7 @@ public class Colony implements IColony
 
         compound.put(TAG_TRAVELLING_DATA, travellingManager.serializeNBT(provider));
         compound.put(TAG_CONNECTION_MANAGER, connectionManager.serializeNBT(provider));
+        compound.put(TAG_MODULE_TEMPLATE_MANAGER, moduleTemplateManager.serializeNBT(provider));
 
         @NotNull final ListTag claimTagList = new ListTag();
         for (final Long2ObjectMap.Entry<ChunkClaimData> chunkClaimData : claimData.long2ObjectEntrySet())
@@ -2023,6 +2034,12 @@ public class Colony implements IColony
     public IQuestManager getQuestManager()
     {
         return questManager;
+    }
+
+    @Override
+    public IBuildingModuleTemplateManager getBuildingModuleTemplateManager()
+    {
+        return moduleTemplateManager;
     }
 
     @Override

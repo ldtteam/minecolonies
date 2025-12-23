@@ -117,4 +117,11 @@ public class SettingsModuleView extends AbstractBuildingModuleView implements IS
             new TriggerSettingMessage(buildingView, key, setting, getProducer().getRuntimeID()).sendToServer();
         }
     }
+
+    @Override
+    @NotNull
+    public ResourceLocation getTemplateStorageId()
+    {
+        return new ResourceLocation(Constants.MOD_ID, "settings");
+    }
 }

@@ -3,7 +3,10 @@ package com.minecolonies.core.client.gui;
 import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.blockui.views.BOWindow;
 import com.minecolonies.api.colony.buildings.modules.IBuildingModuleView;
+import com.minecolonies.api.colony.buildings.modules.ITemplateModuleView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
+import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.core.client.gui.modules.TemplatesModuleWindow;
 import com.minecolonies.core.colony.buildings.views.AbstractBuildingView;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -48,6 +51,25 @@ public abstract class AbstractModuleWindow<T extends IBuildingModuleView> extend
         this.moduleView = moduleView;
 
         setHeader(Optional.ofNullable(moduleView.getDesc()).map(Component::copy).orElse(null));
+
+        if (moduleView instanceof ITemplateModuleView templateModuleView && canShowTemplateButton())
+        {
+            renderTabButton(0,
+                TabImageSide.RIGHT,
+                new ResourceLocation(Constants.MOD_ID, "textures/gui/modules/template.png"),
+                Optional.ofNullable(templateModuleView.getTemplateText()).map(Component::copy).orElse(null),
+                button -> new TemplatesModuleWindow(this, templateModuleView).open());
+        }
+    }
+
+    /**
+     * Whether the template button will show or not.
+     *
+     * @return true if so.
+     */
+    protected boolean canShowTemplateButton()
+    {
+        return true;
     }
 
     /**
