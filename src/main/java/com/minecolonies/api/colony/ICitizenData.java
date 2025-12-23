@@ -2,6 +2,7 @@ package com.minecolonies.api.colony;
 
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.jobs.IJob;
+import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.entity.ai.JobStatus;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
@@ -457,4 +458,16 @@ public interface ICitizenData extends ICivilianData, IQuestGiver, IQuestParticip
      * @return the instance of the handler
      */
     ICitizenFoodHandler getCitizenFoodHandler();
+
+    /**
+     * Get leisure time. Time in ticks citizens might be wanting to do leisure instead of work.
+     * @return the leftover leisure time.
+     */
+    int getLeisureTime();
+
+    /**
+     * Request completed hook into citizen data.
+     * @param token the id.
+     */
+    void onRequestCompleted(IToken<?> token);
 }

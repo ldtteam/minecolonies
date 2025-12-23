@@ -7,6 +7,7 @@ import com.minecolonies.api.colony.ICitizenDataManager;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.HiringMode;
 import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.jobs.IJobWithColonyFlag;
 import com.minecolonies.api.colony.managers.interfaces.ICitizenManager;
 import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.entity.citizen.AbstractCivilianEntity;
@@ -701,6 +702,18 @@ public class CitizenManager implements ICitizenManager
         for(final ICitizenData data: citizens.values())
         {
             data.onBuildingLoad();
+        }
+    }
+
+    @Override
+    public void onFlagChange()
+    {
+        for (ICitizenData citizen : this.getCitizens())
+        {
+            if (citizen.getEntity().isPresent() && citizen.getJob() instanceof IJobWithColonyFlag flagUser)
+            {
+                flagUser.onColonyFlagChanged();
+            }
         }
     }
 }

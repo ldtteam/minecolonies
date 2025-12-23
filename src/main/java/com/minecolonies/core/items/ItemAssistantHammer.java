@@ -10,6 +10,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.colony.workorders.IWorkOrder;
@@ -90,7 +91,10 @@ public class ItemAssistantHammer extends AbstractItemMinecolonies
         boolean unclaimed = true;
         for (final IWorkOrder workOrder : view.getWorkOrders())
         {
-            if (workOrder.isClaimed() && workOrder.getBoundingBox() != null && workOrder.getBoundingBox().inflate(2).contains(Vec3.atLowerCornerOf(interactPos)))
+            if (workOrder.isClaimed()
+                && view.getBuilding(workOrder.getClaimedBy()) != null
+                && view.getBuilding(workOrder.getClaimedBy()).getBuildingType() == ModBuildings.builder.get()
+                && workOrder.getBoundingBox() != null && workOrder.getBoundingBox().inflate(2).contains(Vec3.atLowerCornerOf(interactPos)))
             {
                 unclaimed = false;
                 if (workOrder.getBlueprint() == null)
@@ -127,6 +131,7 @@ public class ItemAssistantHammer extends AbstractItemMinecolonies
 
     /**
      * Tries to place a block on serverside
+     * Sends a full inventory on failure, as client side does already the item logic
      *
      * @param player
      * @param colony
@@ -140,6 +145,7 @@ public class ItemAssistantHammer extends AbstractItemMinecolonies
             if (stage == BuildingProgressStage.CLEAR || stage == BuildingProgressStage.CLEAR_NON_SOLIDS)
             {
                 player.displayClientMessage(Component.translatable("item.minecolonies.assistanthammer.notcleared"), true);
+                player.inventoryMenu.broadcastFullState();
                 return;
             }
 
@@ -148,6 +154,7 @@ public class ItemAssistantHammer extends AbstractItemMinecolonies
             {
                 workOrder.loadBlueprint(player.level(), b -> {});
                 player.displayClientMessage(Component.translatable("item.minecolonies.assistanthammer.notloaded"), true);
+                player.inventoryMenu.broadcastFullState();
                 return;
             }
 
@@ -165,6 +172,7 @@ public class ItemAssistantHammer extends AbstractItemMinecolonies
             if (buildAttemptResult.areBlocksToBuildNearby() && !buildAttemptResult.didTryBuilding())
             {
                 player.displayClientMessage(Component.translatable("item.minecolonies.assistanthammer.noitems"), true);
+                player.inventoryMenu.broadcastFullState();
             }
 
             if (buildAttemptResult.areBlocksToBuildNearby() && buildAttemptResult.didTryBuilding() && !player.isCreative())
@@ -333,15 +341,24 @@ public class ItemAssistantHammer extends AbstractItemMinecolonies
                             Network.getNetwork()
                                 .sendToServer(new PlayerAssistantBuildRequestMessage(colony, workOrder.getID(), interactPos));
                         }
-                        else if (ColonyConstants.rand.nextInt(20) == 0)
+                        else
                         {
-                            final var buildingBuilder = colony.getBuildingManager().getBuilding(workOrder.getClaimedBy());
-                            if (buildingBuilder != null)
+                            final IBuilding building = colony.getBuildingManager().getBuilding(workOrder.getClaimedBy());
+                            for (final ItemStack stack : requiredItem)
                             {
-                                buildingBuilder.getModule(BuildingModules.BUILDER_WORK).getAssignedCitizen()
-                                    .forEach(citizen -> citizen.triggerInteraction(new SimpleNotificationInteraction(Component.translatable(
-                                        "item.minecolonies.assistanthammer.happybuilder"),
-                                        ChatPriority.CHITCHAT)));
+                                building.getModule(BuildingModules.BUILDING_RESOURCES).reduceNeededResource(stack, 1);
+                            }
+
+                            if (ColonyConstants.rand.nextInt(20) == 0)
+                            {
+                                final var buildingBuilder = colony.getBuildingManager().getBuilding(workOrder.getClaimedBy());
+                                if (buildingBuilder != null)
+                                {
+                                    buildingBuilder.getModule(BuildingModules.BUILDER_WORK).getAssignedCitizen()
+                                        .forEach(citizen -> citizen.triggerInteraction(new SimpleNotificationInteraction(Component.translatable(
+                                            "item.minecolonies.assistanthammer.happybuilder"),
+                                            ChatPriority.CHITCHAT)));
+                                }
                             }
                         }
 

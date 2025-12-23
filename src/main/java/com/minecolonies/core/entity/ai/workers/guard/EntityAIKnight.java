@@ -1,5 +1,6 @@
 package com.minecolonies.core.entity.ai.workers.guard;
 
+import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.ai.workers.util.GuardGear;
 import com.minecolonies.api.equipment.ModEquipmentTypes;
 import com.minecolonies.core.colony.buildings.AbstractBuildingGuards;
@@ -46,12 +47,12 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight, AbstractBui
 
     @NotNull
     @Override
-    protected List<ItemStack> itemsNiceToHave()
+    protected List<ItemStorage> itemsNiceToHave()
     {
-        final List<ItemStack> list = super.itemsNiceToHave();
+        final List<ItemStorage> list = super.itemsNiceToHave();
         if (worker.getCitizenColonyHandler().getColonyOrRegister().getResearchManager().getResearchEffects().getEffectStrength(SHIELD_USAGE) > 0)
         {
-            list.add(new ItemStack(Items.SHIELD, 1));
+            list.add(new ItemStorage(Items.SHIELD, 1));
         }
         return list;
     }

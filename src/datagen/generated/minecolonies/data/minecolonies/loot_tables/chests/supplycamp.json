@@ -8,7 +8,7 @@
           "type": "minecraft:item",
           "conditions": [
             {
-              "chance": 0.1,
+              "chance": 0.01,
               "condition": "minecraft:random_chance"
             }
           ],
@@ -35,14 +35,14 @@
           "type": "minecraft:item",
           "conditions": [
             {
-              "chance": 0.2,
+              "chance": 0.1,
               "condition": "minecraft:random_chance"
             }
           ],
           "functions": [
             {
               "add": false,
-              "count": 8.0,
+              "count": 4.0,
               "function": "minecraft:set_count"
             }
           ],

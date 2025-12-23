@@ -3,20 +3,20 @@ package com.minecolonies.core.entity.mobs.registry;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.minecolonies.api.entity.ai.IStateAI;
-import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesRaider;
-import com.minecolonies.api.entity.mobs.drownedpirate.AbstractDrownedEntityPirateRaider;
-import com.minecolonies.api.entity.mobs.registry.IMobAIRegistry;
 import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMonster;
+import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesRaider;
 import com.minecolonies.api.entity.mobs.IArcherMobEntity;
 import com.minecolonies.api.entity.mobs.IRangedMobEntity;
+import com.minecolonies.api.entity.mobs.drownedpirate.AbstractDrownedEntityPirateRaider;
+import com.minecolonies.api.entity.mobs.registry.IMobAIRegistry;
 import com.minecolonies.core.entity.ai.minimal.EntityAIInteractToggleAble;
 import com.minecolonies.core.entity.citizen.EntityCitizen;
 import com.minecolonies.core.entity.mobs.aitasks.*;
 import com.minecolonies.core.util.MultimapCollector;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
-import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-import static com.minecolonies.api.util.constant.RaiderConstants.*;
+import static com.minecolonies.core.colony.events.raid.RaiderConstants.*;
 import static com.minecolonies.core.entity.ai.minimal.EntityAIInteractToggleAble.FENCE_TOGGLE;
 
 public class MobAIRegistry implements IMobAIRegistry

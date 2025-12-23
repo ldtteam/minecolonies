@@ -147,6 +147,12 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
     }
 
     @Override
+    public boolean hasWorkToDo()
+    {
+        return super.hasWorkToDo() || building.isReadyForTrip();
+    }
+
+    @Override
     public Class<BuildingNetherWorker> getExpectedBuildingClass()
     {
         return BuildingNetherWorker.class;
@@ -167,10 +173,10 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
     private void goToVault()
     {
         worker.playSound(SoundEvents.PORTAL_TRIGGER, worker.getRandom().nextFloat() * 0.5F + 0.25F, 0.25F);
-        worker.getCitizenData().getColony().getTravelingManager().startTravellingTo(
+        worker.getCitizenData().getColony().getTravellingManager().startTravellingTo(
             worker.getCitizenData(),
             building.getPortalLocation(),
-            job.getCraftedResults().size() * 20, //One second of travelling time per item, task or adventure that we complete, maybe parameterize in the config.
+            job.getCraftedResults().size() * 400, //Twenty seconds of travelling time per item, task or adventure that we complete, maybe parameterize in the config.
             true
         );
 
@@ -181,13 +187,13 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
     protected IAIState decide()
     {
         //Check if we are traveling, we don't spawn an entity if we are traveling.
-        if (worker.getCitizenData().getColony().getTravelingManager().isTravelling(worker.getCitizenData()) || job.isInNether())
+        if (worker.getCitizenData().getColony().getTravellingManager().isTravelling(worker.getCitizenData()) || job.isInNether())
         {
             return NETHER_AWAY;
         }
 
         //Now check if travelling finished.
-        final Optional<BlockPos> travelingTarget = worker.getCitizenData().getColony().getTravelingManager().getTravellingTargetFor(worker.getCitizenData());
+        final Optional<BlockPos> travelingTarget = worker.getCitizenData().getColony().getTravellingManager().getTravellingTargetFor(worker.getCitizenData());
         if (travelingTarget.isPresent())
         {
             worker.getCitizenData().setNextRespawnPosition(EntityUtils.getSpawnPoint(job.getColony().getWorld(), travelingTarget.get()));

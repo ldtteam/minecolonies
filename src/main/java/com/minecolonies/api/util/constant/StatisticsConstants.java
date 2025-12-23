@@ -110,6 +110,17 @@ public final class StatisticsConstants
 
     // Chef
     public static final String FOOD_COOKED_DETAIL = "food_cooked_detail";
+
+    // Teacher
+    public static final String LESSONS_GIVEN = "lessons_given";
+
+    // Tavern
+    public static final String NEW_VISITORS = "new_visitors";
+    public static final String VISITORS_RECRUITED = "visitors_recruited";
+    public static final String VISITORS_ABSCONDED = "visitors_absconded";
+
+    // University
+    public static final String RESEARCH_COMPLETED = "research_completed";
 }
 
 

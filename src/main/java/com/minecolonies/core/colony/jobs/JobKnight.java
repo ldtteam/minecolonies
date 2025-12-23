@@ -1,5 +1,6 @@
 package com.minecolonies.core.colony.jobs;
 
+import com.minecolonies.api.colony.jobs.IJobWithColonyFlag;
 import com.minecolonies.core.util.citizenutils.CitizenItemUtils;
 import net.minecraft.resources.ResourceLocation;
 import com.minecolonies.api.client.render.modeltype.ModModelTypes;
@@ -28,7 +29,7 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_BANNER_PATT
  *
  * @author Asherslab
  */
-public class JobKnight extends AbstractJobGuard<JobKnight>
+public class JobKnight extends AbstractJobGuard<JobKnight> implements IJobWithColonyFlag
 {
     /**
      * Desc of knight job.
@@ -61,9 +62,9 @@ public class JobKnight extends AbstractJobGuard<JobKnight>
 
             // +1 Heart every 2 level
             final AttributeModifier healthModLevel =
-              new AttributeModifier(GUARD_HEALTH_MOD_LEVEL_NAME,
-                getCitizen().getCitizenSkillHandler().getLevel(Skill.Stamina) + KNIGHT_HP_BONUS,
-                AttributeModifier.Operation.ADDITION);
+                new AttributeModifier(GUARD_HEALTH_MOD_LEVEL_NAME,
+                    getCitizen().getCitizenSkillHandler().getLevel(Skill.Stamina) + KNIGHT_HP_BONUS,
+                    AttributeModifier.Operation.ADDITION);
             AttributeModifierUtils.addHealthModifier(citizen, healthModLevel);
         }
     }
@@ -77,8 +78,8 @@ public class JobKnight extends AbstractJobGuard<JobKnight>
     @Override
     public boolean ignoresDamage(@NotNull final DamageSource damageSource)
     {
-        if(damageSource.is(DamageTypeTags.IS_EXPLOSION) && this.getColony().getResearchManager().getResearchEffects().getEffectStrength(SHIELD_USAGE) > 0
-                && InventoryUtils.findFirstSlotInItemHandlerWith(this.getCitizen().getInventory(), Items.SHIELD) != -1)
+        if (damageSource.is(DamageTypeTags.IS_EXPLOSION) && this.getColony().getResearchManager().getResearchEffects().getEffectStrength(SHIELD_USAGE) > 0
+            && InventoryUtils.findFirstSlotInItemHandlerWith(this.getCitizen().getInventory(), Items.SHIELD) != -1)
         {
             if (!this.getCitizen().getEntity().isPresent())
             {
@@ -93,9 +94,22 @@ public class JobKnight extends AbstractJobGuard<JobKnight>
             CompoundTag nbt = shieldStack.getOrCreateTagElement("BlockEntityTag");
             nbt.put(TAG_BANNER_PATTERNS, worker.getCitizenColonyHandler().getColonyOrRegister().getColonyFlag());
 
-            worker.decreaseSaturationForContinuousAction();
             return true;
         }
         return super.ignoresDamage(damageSource);
+    }
+
+    @Override
+    public void onColonyFlagChanged()
+    {
+        if (this.getCitizen().getEntity().isPresent())
+        {
+            final AbstractEntityCitizen worker = this.getCitizen().getEntity().get();
+            CitizenItemUtils.setHeldItem(worker, InteractionHand.OFF_HAND, InventoryUtils.findFirstSlotInItemHandlerWith(this.getCitizen().getInventory(), Items.SHIELD));
+            worker.startUsingItem(InteractionHand.OFF_HAND);
+            ItemStack shieldStack = worker.getInventoryCitizen().getHeldItem(InteractionHand.OFF_HAND);
+            CompoundTag nbt = shieldStack.getOrCreateTagElement("BlockEntityTag");
+            nbt.put(TAG_BANNER_PATTERNS, worker.getCitizenColonyHandler().getColonyOrRegister().getColonyFlag());
+        }
     }
 }

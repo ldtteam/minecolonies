@@ -130,7 +130,7 @@ public interface ICitizenDataView extends ICitizen
      * 
      * @return true if so.
      */
-    boolean hasVisibleInteractions();
+    boolean hasVisibleStatus();
 
     /**
      * Check if the citizen has any interactions.
@@ -158,7 +158,7 @@ public interface ICitizenDataView extends ICitizen
      *
      * @return resourcelocation
      */
-    ResourceLocation getInteractionIcon();
+    ResourceLocation getStatusIcon();
 
     /**
      * Get the visible citizen status

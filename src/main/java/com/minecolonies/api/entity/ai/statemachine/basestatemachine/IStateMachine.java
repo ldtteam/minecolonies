@@ -2,7 +2,10 @@ package com.minecolonies.api.entity.ai.statemachine.basestatemachine;
 
 import com.minecolonies.api.entity.ai.statemachine.states.IState;
 import com.minecolonies.api.entity.ai.statemachine.transitions.IStateMachineTransition;
+import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 /**
  * Statemachine interface, implement to add more statemachine types. Contains all needed functions for a basic statemachine
@@ -18,6 +21,13 @@ public interface IStateMachine<T extends IStateMachineTransition<S>, S extends I
      * @param transition the transition to add.
      */
     void addTransition(final T transition);
+
+    /**
+     * Add a transition to a group of states has higher priority than normal transitions
+     *
+     * @param transition the transition to add
+     */
+    void addTransitionGroup(List<S> stateGroup, T transition);
 
     /**
      * Removes a transition from the machine's transition table
@@ -42,8 +52,8 @@ public interface IStateMachine<T extends IStateMachineTransition<S>, S extends I
     /**
      * Change the state to the next
      *
-     * @param transition the next transition.
-     * @return true if transitioned.
+     * @param transition the transition providing the state change
+     * @return true if the transition provided a state to change to, false on null
      */
     boolean transitionToNext(@NotNull final T transition);
 
@@ -58,4 +68,19 @@ public interface IStateMachine<T extends IStateMachineTransition<S>, S extends I
      * Reset the statemachine to the start
      */
     void reset();
+
+    /**
+     * Set whether the state history is tracked
+     *
+     * @param enabled
+     * @param memorySize amount of entries kept
+     */
+    void setHistoryEnabled(boolean enabled, final int memorySize);
+
+    /**
+     * Get the state transition history for display
+     *
+     * @return
+     */
+    Component getHistory();
 }

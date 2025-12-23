@@ -81,7 +81,6 @@ public class WindowMainPage extends AbstractWindowTownHall
      */
     private final Text title;
 
-
     /**
      * Constructor for the town hall window.
      *
@@ -93,6 +92,8 @@ public class WindowMainPage extends AbstractWindowTownHall
         initDropDowns();
 
         title = findPaneOfTypeByID(LABEL_BUILDING_NAME, Text.class);
+        findPaneOfTypeByID("actions1", Button.class).setText(Component.translatable(building.getBuildingDisplayName())
+            .append(Component.literal(" " + building.getBuildingLevel())));
 
         registerButton(BUTTON_CHANGE_SPEC, this::doNothing);
         registerButton(BUTTON_RENAME, this::renameClicked);
@@ -117,16 +118,15 @@ public class WindowMainPage extends AbstractWindowTownHall
         checkFeatureUnlock();
     }
 
-
     /**
      * Switch the structure style pack.
      */
     private void switchPack()
     {
         new WindowSwitchPack(() -> {
-            building.getColony().setStructurePack(StructurePacks.selectedPack.getName());
-            Network.getNetwork().sendToServer(new ColonyStructureStyleMessage(building.getColony(), StructurePacks.selectedPack.getName()));
-            return new WindowMainPage((BuildingTownHall.View) this.building);
+            buildingView.getColony().setStructurePack(StructurePacks.selectedPack.getName());
+            Network.getNetwork().sendToServer(new ColonyStructureStyleMessage(buildingView.getColony(), StructurePacks.selectedPack.getName()));
+            return new WindowMainPage((BuildingTownHall.View) this.buildingView);
         }).open();
     }
 
@@ -186,13 +186,13 @@ public class WindowMainPage extends AbstractWindowTownHall
             @Override
             public int getElementCount()
             {
-                return building.getColony().getNameFileIds().size();
+                return buildingView.getColony().getNameFileIds().size();
             }
 
             @Override
             public String getLabel(final int index)
             {
-                return building.getColony().getNameFileIds().get(index);
+                return buildingView.getColony().getNameFileIds().get(index);
             }
         });
     }
@@ -206,7 +206,7 @@ public class WindowMainPage extends AbstractWindowTownHall
     {
         if (dropDownList.getSelectedIndex() != initialTextureIndex)
         {
-            Network.getNetwork().sendToServer(new ColonyTextureStyleMessage(building.getColony(), TEXTURE_PACKS.get(dropDownList.getSelectedIndex())));
+            Network.getNetwork().sendToServer(new ColonyTextureStyleMessage(buildingView.getColony(), TEXTURE_PACKS.get(dropDownList.getSelectedIndex())));
         }
     }
 
@@ -219,7 +219,7 @@ public class WindowMainPage extends AbstractWindowTownHall
     {
         if (dropDownList.getSelectedIndex() != initialNamePackIndex)
         {
-            Network.getNetwork().sendToServer(new ColonyNameStyleMessage(building.getColony(), building.getColony().getNameFileIds().get(dropDownList.getSelectedIndex())));
+            Network.getNetwork().sendToServer(new ColonyNameStyleMessage(buildingView.getColony(), buildingView.getColony().getNameFileIds().get(dropDownList.getSelectedIndex())));
         }
     }
 
@@ -230,7 +230,7 @@ public class WindowMainPage extends AbstractWindowTownHall
      */
     private void onDropDownListChanged(final DropDownList dropDownList)
     {
-        Network.getNetwork().sendToServer(new TeamColonyColorChangeMessage(dropDownList.getSelectedIndex(), building));
+        Network.getNetwork().sendToServer(new TeamColonyColorChangeMessage(dropDownList.getSelectedIndex(), buildingView));
     }
 
     /**
@@ -240,7 +240,7 @@ public class WindowMainPage extends AbstractWindowTownHall
      */
     private void openBannerPicker(@NotNull final Button button)
     {
-        Screen window = new WindowBannerPicker(building.getColony(), this, isFeatureUnlocked);
+        Screen window = new WindowBannerPicker(buildingView.getColony(), this, isFeatureUnlocked);
         Minecraft.getInstance().setScreen(window);
     }
 
@@ -249,7 +249,7 @@ public class WindowMainPage extends AbstractWindowTownHall
      */
     private void resetTextureStyle()
     {
-        Network.getNetwork().sendToServer(new ColonyTextureStyleMessage(building.getColony(), TEXTURE_PACKS.get(0)));
+        Network.getNetwork().sendToServer(new ColonyTextureStyleMessage(buildingView.getColony(), TEXTURE_PACKS.get(0)));
     }
 
     @Override
@@ -259,7 +259,7 @@ public class WindowMainPage extends AbstractWindowTownHall
         final Pane textPane = findPaneByID(DROPDOWN_TEXT_ID);
         final Pane namePane = findPaneByID(DROPDOWN_NAME_ID);
         final Pane resetButton = findPaneByID(BUTTON_RESET_TEXTURE);
-        final boolean isOwner = building.getColony().getPermissions().getOwner().equals(Minecraft.getInstance().player.getUUID());
+        final boolean isOwner = buildingView.getColony().getPermissions().getOwner().equals(Minecraft.getInstance().player.getUUID());
         if (isFeatureUnlocked.get() && isOwner)
         {
             findPaneByID(BUTTON_PATREON).hide();
@@ -274,7 +274,7 @@ public class WindowMainPage extends AbstractWindowTownHall
             textPane.disable();
             namePane.disable();
 
-            if (!building.getColony().getTextureStyleId().equals("default"))
+            if (!buildingView.getColony().getTextureStyleId().equals("default"))
             {
                 resetButton.show();
                 textPane.hide();
@@ -284,17 +284,18 @@ public class WindowMainPage extends AbstractWindowTownHall
                 textPane.show();
             }
 
-            final AbstractTextBuilder.TooltipBuilder textPaneToolTipBuilder = PaneBuilders.tooltipBuilder().hoverPane(textPane).append(Component.translatable("com.minecolonies.core.townhall.patreon.textures"))
-              .paragraphBreak()
-              .appendNL(Component.empty())
-              .appendNL(Component.translatable("com.minecolonies.core.townhall.patreon"))
-              .paragraphBreak();
+            final AbstractTextBuilder.TooltipBuilder textPaneToolTipBuilder =
+                PaneBuilders.tooltipBuilder().hoverPane(textPane).append(Component.translatable("com.minecolonies.core.townhall.patreon.textures"))
+                    .paragraphBreak()
+                    .appendNL(Component.empty())
+                    .appendNL(Component.translatable("com.minecolonies.core.townhall.patreon"))
+                    .paragraphBreak();
 
 
             final AbstractTextBuilder.TooltipBuilder namePaneToolTipBuilder = PaneBuilders.tooltipBuilder().hoverPane(namePane)
-              .append(Component.translatable("com.minecolonies.core.townhall.patreon.names")).paragraphBreak()
-              .appendNL(Component.empty())
-              .appendNL(Component.translatable("com.minecolonies.core.townhall.patreon")).paragraphBreak();
+                .append(Component.translatable("com.minecolonies.core.townhall.patreon.names")).paragraphBreak()
+                .appendNL(Component.empty())
+                .appendNL(Component.translatable("com.minecolonies.core.townhall.patreon")).paragraphBreak();
 
             if (isFeatureUnlocked.get() && !isOwner)
             {
@@ -353,7 +354,8 @@ public class WindowMainPage extends AbstractWindowTownHall
     private void patreonClicked()
     {
         Minecraft.getInstance().setScreen(new ConfirmLinkScreen((check) -> {
-            if (check) {
+            if (check)
+            {
                 Util.getPlatform().openUri("https://www.patreon.com/Minecolonies");
             }
 
@@ -366,10 +368,10 @@ public class WindowMainPage extends AbstractWindowTownHall
     {
         super.onOpened();
 
-        title.setText(Component.literal(building.getColony().getName()));
+        title.setText(Component.literal(buildingView.getColony().getName()));
 
-        if (building.getColony().getMercenaryUseTime() != 0
-              && building.getColony().getWorld().getGameTime() - building.getColony().getMercenaryUseTime() < TICKS_FOURTY_MIN)
+        if (buildingView.getColony().getMercenaryUseTime() != 0
+              && buildingView.getColony().getWorld().getGameTime() - buildingView.getColony().getMercenaryUseTime() < TICKS_FOURTY_MIN)
         {
             findPaneOfTypeByID(BUTTON_MERCENARY, Button.class).disable();
         }
@@ -380,7 +382,7 @@ public class WindowMainPage extends AbstractWindowTownHall
      */
     private void renameClicked()
     {
-        new WindowTownHallNameEntry(building.getColony()).open();
+        new WindowTownHallNameEntry(buildingView.getColony()).open();
     }
 
     /**
@@ -388,7 +390,7 @@ public class WindowMainPage extends AbstractWindowTownHall
      */
     private void mercenaryClicked()
     {
-        new WindowTownHallMercenary(building.getColony()).open();
+        new WindowTownHallMercenary(buildingView.getColony()).open();
     }
 
     /**
@@ -404,7 +406,7 @@ public class WindowMainPage extends AbstractWindowTownHall
      */
     private void mapButtonClicked()
     {
-        new WindowColonyMap(true, building).open();
+        new WindowColonyMap(true, buildingView).open();
     }
 
     @Override

@@ -191,4 +191,9 @@ public interface ICitizenManager extends IEntityManager<ICitizenData>
      * Post building load actions
      */
     void afterBuildingLoad();
+
+    /**
+     * Called when flag is changed
+     */
+    void onFlagChange();
 }

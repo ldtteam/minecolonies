@@ -5,16 +5,26 @@ import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.ReflectionUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
+
+import net.minecraft.core.Holder;
+import net.minecraft.core.HolderSet;
+import net.minecraft.core.Registry;
+import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -430,5 +440,50 @@ public class StackList implements IConcreteDeliverable, INonExhaustiveDeliverabl
     public Set<TypeToken<?>> getSuperClasses()
     {
         return TYPE_TOKENS;
+    }
+
+    public StackList(@NotNull final TagKey<Item> tag,
+        @NotNull final ServerLevel level,
+        final String description,
+        final int count,
+        final int minCount,
+        final int leftOver)
+    {
+        this(tagToStacks(tag, level.registryAccess(), count), description, count, minCount, leftOver);
+    }
+
+
+    /**
+     * Transforms a given tag into a list of itemstacks, with each
+     * itemstack having a count of perStackCount.
+     *
+     * @param tag the tag to transform.
+     * @param registryAccess the registry access.
+     * @param perStackCount the count of each itemstack.
+     * @return the resulting list of itemstacks.
+     */
+    private static List<ItemStack> tagToStacks(@NotNull final TagKey<Item> tag,
+        @NotNull final RegistryAccess registryAccess,
+        final int perStackCount)
+    {
+        final Registry<Item> itemReg = registryAccess.registryOrThrow(Registries.ITEM);
+        final Optional<HolderSet.Named<Item>> opt = itemReg.getTag(tag);
+
+        if (opt.isEmpty())
+        {
+            return List.of();
+        }
+
+        final HolderSet.Named<Item> holders = opt.get();
+        final List<ItemStack> stacks = new ArrayList<>(holders.size());
+
+        for (Holder<Item> holder : holders)
+        {
+            ItemStack stack = new ItemStack(holder.value());
+            stack.setCount(perStackCount);
+            stacks.add(stack);
+        }
+
+        return stacks;
     }
 }

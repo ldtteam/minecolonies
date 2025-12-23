@@ -39,6 +39,7 @@ import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
+import static com.minecolonies.core.client.gui.modules.building.WindowBuilderResModule.BLACK;
 import static com.minecolonies.core.client.gui.generic.ResourceItem.BLACK;
 
 /**
@@ -89,7 +90,7 @@ public class WindowHireWorker extends AbstractWindowSkeleton
      */
     public WindowHireWorker(final IColonyView c, final BlockPos buildingId)
     {
-        super(Constants.MOD_ID + HIRE_WORKER_SUFFIX);
+        super(new ResourceLocation(Constants.MOD_ID, "gui/windowhireworker.xml"));
         this.colony = c;
         building = (AbstractBuildingView) colony.getBuilding(buildingId);
 
@@ -424,7 +425,7 @@ public class WindowHireWorker extends AbstractWindowSkeleton
                 {
                     rowPane.findPaneOfTypeByID(BUTTON_DONE, Button.class).off();
 
-                    if (citizen.getColony().getTravelingManager().isTravelling(citizen))
+                    if (citizen.getColony().getTravellingManager().isTravelling(citizen))
                     {
                         rowPane.findPaneOfTypeByID(BUTTON_FIRE, Button.class).off();
                     }

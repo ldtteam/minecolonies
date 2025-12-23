@@ -96,17 +96,17 @@ public abstract class AbstractBuildingGuards extends AbstractBuilding implements
     /**
      * The Bonus Health for each building level
      */
-    private static final int BONUS_HEALTH_PER_LEVEL = 2;
+    protected static final int BONUS_HEALTH_PER_LEVEL = 2;
 
     /**
      * Vision range per building level.
      */
-    private static final int VISION_RANGE_PER_LEVEL = 3;
+    protected static final int VISION_RANGE_PER_LEVEL = 3;
 
     /**
      * Base Vision range per building level.
      */
-    private static final int BASE_VISION_RANGE = 15;
+    protected static final int BASE_VISION_RANGE = 15;
 
     /**
      * The position at which the guard should guard at.
@@ -524,7 +524,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuilding implements
     }
 
     @Override
-    public BlockPos getGuardPos()
+    public BlockPos getGuardPos(final @NotNull AbstractEntityCitizen worker)
     {
         return guardPos;
     }

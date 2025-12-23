@@ -31,6 +31,7 @@ public final class NbtTagConstants
     public static final String TAG_PRIO                = "prio";
     public static final String TAG_LAST_ONLINE         = "lastOnlineTime";
     public static final String TAG_SOUND_PROFILE       = "soundProfile";
+    public static final String TAG_CONNECTION_MANAGER  = "connectionmanager";
 
     /**
      * @deprecated Superseeded by request-based pickup system.
@@ -48,6 +49,8 @@ public final class NbtTagConstants
     public static final String TAG_SAP_LEAF               = "tagSapLeaves";
     public static final String TAG_BLOCK                  = "block";
     public static final String TAG_POS                    = "pos";
+    public static final String TAG_PREV_POS               = "prevpos";
+    public static final String TAG_NEXT_POS               = "nextpos";
     public static final String TAG_PLANTGROUND            = "plantGround";
     public static final String TAG_BOOKCASES              = "bookcase";
     public static final String TAG_BUILDING_MANAGER       = "buildingManager";
@@ -57,6 +60,13 @@ public final class NbtTagConstants
     public static final String TAG_GRAVE_MANAGER          = "graveManager";
     public static final String TAG_EXPEDITION_MANAGER     = "expedition_manager";
     public static final String TAG_COLONY_ID              = "colony";
+    public static final String TAG_TARGET_COLONY_ID       = "targetcolony";
+    public static final String TAG_TARGET_COLONY_NAME     = "targetname";
+    public static final String TAG_DISTANCE               = "distance";
+    public static final String TAG_TARGET_DISTANCE        = "targetdistance";
+    public static final String TAG_CACHED_ABOVE           = "cachedabove";
+    public static final String TAG_ANIMAL_MANAGER         = "animalManager";
+    
     public static final String TAG_CITIZEN                = "citizen";
     public static final String TAG_HELD_ITEM_SLOT         = "HeldItemSlot";
     public static final String TAG_OFFHAND_HELD_ITEM_SLOT = "OffhandHeldItemSlot";
@@ -87,6 +97,12 @@ public final class NbtTagConstants
     public static final String TAG_DESC           = "desc";
     public static final String TAG_BREWING_STAND  = "brewingStand";
     public static final String TAG_SUMMARIZE      = "summarize";
+    public static final String TAG_CONNECTIONS    = "connections";
+    public static final String TAG_CONNECTION_POINT = "connectionPoint";
+    public static final String TAG_GATEHOUSES     = "gatehouses";
+    public static final String TAG_CONNECTION_EVENTS = "connectionevents";
+    public static final String TAG_PENDING         = "pending";
+    public static final String TAG_CONNECTION_TYPE = "connectiontype";
 
     public static final String TAG_PARENT_A = "parentA";
     public static final String TAG_PARENT_B = "parentB";
@@ -559,9 +575,10 @@ public final class NbtTagConstants
     /**
      * Crafter job tags.
      */
-    public static final String TAG_PROGRESS      = "progress";
-    public static final String TAG_MAX_COUNTER   = "maxCounter";
-    public static final String TAG_CRAFT_COUNTER = "craftCounter";
+    public static final String TAG_PROGRESS          = "progress";
+    public static final String TAG_MAX_COUNTER       = "maxCounter";
+    public static final String TAG_CRAFT_COUNTER     = "craftCounter";
+    public static final String TAG_SECONDARY_OUTPUTS = "secondaryOutputs";
 
     /**
      * Enchanter tags
@@ -752,7 +769,14 @@ public final class NbtTagConstants
      */
     public static final String TAG_CELL           = "cell";
     public static final String TAG_WORKING_OFFSET = "workingoffset";
-    public static final String TAG_PREV_POS       = "prevpos";
+
+    /**
+     * Managed animal related things.
+     */
+    public static final String TAG_ANIMALHOME       = "animalhome";
+    public static final String TAG_MANAGED_ANIMALID = "animalid";
+    public static final String TAG_COMBAT_COOLDOWN  = "combatcooldown";
+    public static final String TAG_MAX_HEALTH       = "maxhealth";
 
     /**
      * Private constructor to hide the implicit one.

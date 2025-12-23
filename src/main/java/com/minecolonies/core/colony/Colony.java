@@ -3,11 +3,13 @@ package com.minecolonies.core.colony;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.ldtteam.structurize.util.BlockUtils;
+import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.*;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.modules.ISettingsModule;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
+import com.minecolonies.api.colony.connections.IColonyConnectionManager;
 import com.minecolonies.api.colony.managers.interfaces.*;
 import com.minecolonies.api.colony.managers.interfaces.expeditions.IColonyExpeditionManager;
 import com.minecolonies.api.colony.permissions.Action;
@@ -20,6 +22,8 @@ import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.ITickRat
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickRateStateMachine;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickingTransition;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.eventbus.events.colony.permissions.PlayerEnteringModEvent;
+import com.minecolonies.api.eventbus.events.colony.permissions.PlayerLeavingModEvent;
 import com.minecolonies.api.quests.IQuestManager;
 import com.minecolonies.api.research.IResearchManager;
 import com.minecolonies.api.util.*;
@@ -70,6 +74,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import static com.minecolonies.api.colony.ColonyState.*;
 import static com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickRateConstants.MAX_TICKRATE;
+import static com.minecolonies.api.research.util.ResearchConstants.SHIELD_USAGE;
 import static com.minecolonies.api.util.constant.ColonyConstants.*;
 import static com.minecolonies.api.util.constant.Constants.DEFAULT_STYLE;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
@@ -151,6 +156,11 @@ public class Colony implements IColony
     private final IVisitorManager visitorManager = new VisitorManager(this);
 
     /**
+     * Animal manager of the colony.
+     */
+    private final IAnimalManager animalManager = new AnimalManager(this);
+
+    /**
      * Barbarian manager of the colony.
      */
     private final IRaiderManager raidManager = new RaidManager(this);
@@ -181,11 +191,19 @@ public class Colony implements IColony
     private final IStatisticsManager statisticManager = new StatisticsManager();
 
     /**
-     * Quest manager for this colony
+     * Quest manager of the colony
      */
     private IQuestManager questManager;
 
+    /**
+     * Traveling manager of the colony.
+     */
     private final TravellingManager travellingManager = new TravellingManager(this);
+
+    /**
+     * Connection manager of the colony.
+     */
+    private final ColonyConnectionManager connectionManager = new ColonyConnectionManager(this);
 
     /**
      * Expedition manager for this colony
@@ -370,9 +388,10 @@ public class Colony implements IColony
         researchManager = new ResearchManager(this);
         colonyStateMachine = new TickRateStateMachine<>(INACTIVE, e ->
         {
-            Log.getLogger().warn("Exception triggered in colony:" + getID() + " in dimension:" + getDimension().location(), e);
+            Log.getLogger().warn("Exception triggered in colony:{} in dimension:{} history:{}", getID(), getDimension().location(), colonyStateMachine.getHistory(), e);
             colonyStateMachine.setCurrentDelay(20 * 60 * 5);
         });
+        colonyStateMachine.setHistoryEnabled(true, 10);
 
         colonyStateMachine.addTransition(new TickingTransition<>(INACTIVE, () -> true, this::updateState, UPDATE_STATE_INTERVAL));
         colonyStateMachine.addTransition(new TickingTransition<>(UNLOADED, () -> true, this::updateState, UPDATE_STATE_INTERVAL));
@@ -382,13 +401,17 @@ public class Colony implements IColony
             visitorManager.tickVisitorData(TICKS_SECOND * 3);
             return false;
         }, () -> ACTIVE, TICKS_SECOND * 3));
-
+        colonyStateMachine.addTransition(new TickingTransition<>(ACTIVE, () -> {
+            animalManager.tickAnimalData(TICKS_SECOND * 3);
+            return false;
+        }, () -> ACTIVE, TICKS_SECOND * 3));
         colonyStateMachine.addTransition(new TickingTransition<>(ACTIVE, this::updateSubscribers, () -> ACTIVE, UPDATE_SUBSCRIBERS_INTERVAL));
         colonyStateMachine.addTransition(new TickingTransition<>(ACTIVE, this::tickRequests, () -> ACTIVE, UPDATE_RS_INTERVAL));
         colonyStateMachine.addTransition(new TickingTransition<>(ACTIVE, this::tickTravellers, () -> ACTIVE, UPDATE_TRAVELING_INTERVAL));
         colonyStateMachine.addTransition(new TickingTransition<>(ACTIVE, this::checkDayTime, () -> ACTIVE, UPDATE_DAYTIME_INTERVAL));
         colonyStateMachine.addTransition(new TickingTransition<>(ACTIVE, this::updateWayPoints, () -> ACTIVE, CHECK_WAYPOINT_EVERY));
         colonyStateMachine.addTransition(new TickingTransition<>(ACTIVE, this::worldTickSlow, () -> ACTIVE, MAX_TICKRATE));
+        colonyStateMachine.addTransition(new TickingTransition<>(ACTIVE, this::tickWorkManager, () -> ACTIVE, 20));
         colonyStateMachine.addTransition(new TickingTransition<>(UNLOADED, this::worldTickUnloaded, () -> UNLOADED, MAX_TICKRATE));
     }
 
@@ -452,9 +475,9 @@ public class Colony implements IColony
      */
     private boolean tickTravellers()
     {
-        if (getTravelingManager() != null)
+        if (getTravellingManager() != null)
         {
-            return !getTravelingManager().onTick();
+            return !getTravellingManager().onTick();
         }
         return false;
     }
@@ -469,11 +492,11 @@ public class Colony implements IColony
         buildingManager.cleanUpBuildings(this);
         citizenManager.onColonyTick(this);
         visitorManager.onColonyTick(this);
+        animalManager.onColonyTick(this);
         updateAttackingPlayers();
         eventManager.onColonyTick(this);
         buildingManager.onColonyTick(this);
         graveManager.onColonyTick(this);
-        workManager.onColonyTick(this);
         reproductionManager.onColonyTick(this);
         questManager.onColonyTick();
 
@@ -497,6 +520,15 @@ public class Colony implements IColony
     }
 
     /**
+     * Tick the work Manager.
+     */
+    private boolean tickWorkManager()
+    {
+        workManager.onColonyTick(this);
+        return false;
+    }
+
+    /**
      * Check if we can unload the colony now.
      * Update chunk unload timer and releases chunks when it hits 0.
      */
@@ -506,7 +538,7 @@ public class Colony implements IColony
         {
             for (final ServerPlayer sub : getPackageManager().getCloseSubscribers())
             {
-                if (getPermissions().hasPermission(sub, Action.CAN_KEEP_COLONY_ACTIVE_WHILE_AWAY))
+                if (getPermissions().getRank(sub).isColonyManager())
                 {
                     this.forceLoadTimer = getConfig().getServer().loadtime.get() * 20 * 60;
                     pendingChunks.addAll(pendingToUnloadChunks);
@@ -671,6 +703,10 @@ public class Colony implements IColony
     public void setColonyFlag(ListTag colonyFlag)
     {
         this.colonyFlag = colonyFlag;
+        if (researchManager.getResearchEffects().getEffectStrength(SHIELD_USAGE) > 0)
+        {
+            citizenManager.onFlagChange();
+        }
         markDirty();
     }
 
@@ -729,6 +765,7 @@ public class Colony implements IColony
 
         citizenManager.read(compound.getCompound(TAG_CITIZEN_MANAGER));
         visitorManager.read(compound);
+        animalManager.read(compound.getCompound(TAG_ANIMAL_MANAGER));
         buildingManager.read(compound.getCompound(TAG_BUILDING_MANAGER));
 
         // Recalculate max after citizens and buildings are loaded.
@@ -847,6 +884,11 @@ public class Colony implements IColony
         {
             this.travellingManager.deserializeNBT(compound.getCompound(NbtTagConstants.TAG_TRAVELLING_DATA));
         }
+
+        if (compound.contains(NbtTagConstants.TAG_CONNECTION_MANAGER))
+        {
+            this.connectionManager.deserializeNBT(compound.getCompound(NbtTagConstants.TAG_CONNECTION_MANAGER));
+        }
     }
 
     /**
@@ -892,6 +934,10 @@ public class Colony implements IColony
         compound.put(TAG_CITIZEN_MANAGER, citizenCompound);
 
         visitorManager.write(compound);
+
+        final CompoundTag animalCompound = new CompoundTag();
+        animalManager.write(animalCompound);
+        compound.put(TAG_ANIMAL_MANAGER, animalCompound);
 
         final CompoundTag graveCompound = new CompoundTag();
         graveManager.write(graveCompound);
@@ -960,6 +1006,7 @@ public class Colony implements IColony
         compound.put(BuildingModules.TOWNHALL_SETTINGS.key, settings);
 
         compound.put(TAG_TRAVELLING_DATA, travellingManager.serializeNBT());
+        compound.put(TAG_CONNECTION_MANAGER, connectionManager.serializeNBT());
 
         this.colonyTag = compound;
 
@@ -1156,6 +1203,11 @@ public class Colony implements IColony
             return;
         }
 
+        if (!event.level.isClientSide && (event.level.getGameTime() + id) % 20 == 0)
+        {
+            connectionManager.tick();
+        }
+
         colonyStateMachine.tick();
     }
 
@@ -1285,12 +1337,12 @@ public class Colony implements IColony
     }
 
     @Override
-    public boolean hasBuilding(final String name, final int level, boolean singleBuilding)
+    public boolean hasBuilding(final ResourceLocation name, final int level, boolean singleBuilding)
     {
         int sum = 0;
         for (final IBuilding building : this.getBuildingManager().getBuildings().values())
         {
-            if (building.getBuildingType().getRegistryName().getPath().equalsIgnoreCase(name))
+            if (building.getBuildingType().getRegistryName().equals(name))
             {
                 if (singleBuilding)
                 {
@@ -1383,7 +1435,7 @@ public class Colony implements IColony
 
         for (final ServerPlayer player : packageManager.getImportantColonyPlayers())
         {
-            if (permissions.hasPermission(player, Action.RECEIVE_MESSAGES_FAR_AWAY))
+            if (permissions.getRank(player).isColonyManager())
             {
                 playerList.add(player);
             }
@@ -1558,6 +1610,17 @@ public class Colony implements IColony
     }
 
     /**
+     * Get the animal manager of the colony.
+     *
+     * @return the animal manager.
+     */
+    @Override
+    public IAnimalManager getAnimalManager()
+    {
+        return animalManager;
+    }
+
+    /**
      * Get the barbManager of the colony.
      *
      * @return the barbManager.
@@ -1604,9 +1667,15 @@ public class Colony implements IColony
     }
 
     @Override
-    public TravellingManager getTravelingManager()
+    public TravellingManager getTravellingManager()
     {
         return travellingManager;
+    }
+
+    @Override
+    public IColonyConnectionManager getConnectionManager()
+    {
+        return connectionManager;
     }
 
     /**
@@ -1630,7 +1699,14 @@ public class Colony implements IColony
             {
                 MessageUtils.format(ENTERING_COLONY_MESSAGE, this.getName()).sendTo(player);
             }
-            MessageUtils.format(ENTERING_COLONY_MESSAGE_NOTIFY, player.getName()).sendTo(this, true).forManagers();
+
+            final PlayerEnteringModEvent notifyPlayerEnteringModEvent = new PlayerEnteringModEvent(this, player);
+            IMinecoloniesAPI.getInstance().getEventBus().post(notifyPlayerEnteringModEvent);
+
+            if (notifyPlayerEnteringModEvent.shouldShowNotification())
+            {
+                MessageUtils.format(ENTERING_COLONY_MESSAGE_NOTIFY, player.getName()).sendTo(this, true).forManagers();
+            }
         }
     }
 
@@ -1644,7 +1720,14 @@ public class Colony implements IColony
             {
                 MessageUtils.format(LEAVING_COLONY_MESSAGE, this.getName()).sendTo(player);
             }
-            MessageUtils.format(LEAVING_COLONY_MESSAGE_NOTIFY, player.getName()).sendTo(this, true).forManagers();
+
+            final PlayerLeavingModEvent notifyPlayerLeavingModEvent = new PlayerLeavingModEvent(this, player);
+            IMinecoloniesAPI.getInstance().getEventBus().post(notifyPlayerLeavingModEvent);
+
+            if (notifyPlayerLeavingModEvent.shouldShowNotification())
+            {
+                MessageUtils.format(LEAVING_COLONY_MESSAGE_NOTIFY, player.getName()).sendTo(this, true).forManagers();
+            }
         }
     }
 

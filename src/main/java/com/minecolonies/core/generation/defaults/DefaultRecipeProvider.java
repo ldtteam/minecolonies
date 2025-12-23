@@ -208,6 +208,26 @@ public class DefaultRecipeProvider extends RecipeProvider
                 .unlockedBy("has_items", hasAllOf(buildTool.get(), ModBlocks.blockHutMiner))
                 .save(consumer);
 
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.blockHutGateHouse)
+            .pattern("XTX")
+            .pattern("CXB")
+            .pattern("XXX")
+            .define('X', ItemTags.PLANKS)
+            .define('B', Items.BOW)
+            .define('C', Items.IRON_SWORD)
+            .define('T', buildTool.get())
+            .unlockedBy("has_items", hasAllOf(buildTool.get(), Items.IRON_SWORD, Items.BOW))
+            .save(consumer);
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.blockColonySign, 6)
+            .pattern("XXX")
+            .pattern("XXX")
+            .pattern(" T ")
+            .define('X', ItemTags.PLANKS)
+            .define('T', buildTool.get())
+            .unlockedBy("has_items", hasAllOf(buildTool.get()))
+            .save(consumer);
+
 //        ShapedRecipeBuilder.shaped(ModBlocks.blockLargeQuarry)
 //                .pattern("XTX")
 //                .pattern("XDX")
@@ -547,35 +567,35 @@ public class DefaultRecipeProvider extends RecipeProvider
                 .save(consumer);
 
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC,Items.CHAINMAIL_HELMET)
-                .pattern("NNN")
-                .pattern("NIN")
-                .define('I', Items.IRON_INGOT)
+                .pattern("NCN")
+                .pattern("N N")
+                .define('C', Items.CHAIN)
                 .define('N', Items.IRON_NUGGET)
                 .unlockedBy("has_iron", has(Items.IRON_INGOT))
                 .save(consumer, new ResourceLocation(MOD_ID, "chainmailhelmet"));
 
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC,Items.CHAINMAIL_CHESTPLATE)
-                .pattern("I I")
+                .pattern("C C")
                 .pattern("NNN")
                 .pattern("NNN")
-                .define('I', Items.IRON_INGOT)
+                .define('C', Items.CHAIN)
                 .define('N', Items.IRON_NUGGET)
                 .unlockedBy("has_iron", has(Items.IRON_INGOT))
                 .save(consumer, new ResourceLocation(MOD_ID, "chainmailchestplate"));
 
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC,Items.CHAINMAIL_LEGGINGS)
-                .pattern("III")
+                .pattern("CNC")
                 .pattern("N N")
                 .pattern("N N")
-                .define('I', Items.IRON_INGOT)
+                .define('C', Items.CHAIN)
                 .define('N', Items.IRON_NUGGET)
                 .unlockedBy("has_iron", has(Items.IRON_INGOT))
                 .save(consumer, new ResourceLocation(MOD_ID, "chainmailleggings"));
 
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC,Items.CHAINMAIL_BOOTS)
-                .pattern("I I")
+                .pattern("C C")
                 .pattern("N N")
-                .define('I', Items.IRON_INGOT)
+                .define('C', Items.CHAIN)
                 .define('N', Items.IRON_NUGGET)
                 .unlockedBy("has_iron", has(Items.IRON_INGOT))
                 .save(consumer, new ResourceLocation(MOD_ID, "chainmailboots"));
@@ -679,12 +699,6 @@ public class DefaultRecipeProvider extends RecipeProvider
           .requires(Items.WATER_BUCKET)
           .unlockedBy("has_bottle", has(ModItems.large_empty_bottle))
           .save(consumer, new ResourceLocation(MOD_ID, "large_water_bottle"));
-
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.large_milk_bottle)
-          .requires(ModItems.large_empty_bottle)
-          .requires(Items.MILK_BUCKET)
-          .unlockedBy("has_bottle", has(ModItems.large_empty_bottle))
-          .save(consumer, new ResourceLocation(MOD_ID, "large_milk_bottle"));
 
         ShapedRecipeBuilder.shaped(RecipeCategory.FOOD, ModItems.butter, 3)
           .pattern("MMM")
@@ -842,7 +856,7 @@ public class DefaultRecipeProvider extends RecipeProvider
           .requires(ModBlocks.blockGarlic)
           .requires(ModBlocks.blockOnion)
           .requires(Items.CHICKEN)
-          .requires(Items.BOWL)
+          .requires(Items.BOWL, 2)
           .requires(ModItems.large_water_bottle)
           .unlockedBy("has_durum", has(ModBlocks.blockDurum))
           .save(consumer, new ResourceLocation(MOD_ID, "chicken_broth"));
@@ -851,7 +865,7 @@ public class DefaultRecipeProvider extends RecipeProvider
           .requires(ModBlocks.blockGarlic)
           .requires(ModBlocks.blockOnion)
           .requires(ModBlocks.blockCorn)
-          .requires(Items.BOWL)
+          .requires(Items.BOWL, 2)
           .requires(ModItems.large_milk_bottle)
           .unlockedBy("has_corn", has(ModBlocks.blockCorn))
           .save(consumer, new ResourceLocation(MOD_ID, "corn_chowder"));
@@ -860,7 +874,7 @@ public class DefaultRecipeProvider extends RecipeProvider
           .requires(ModBlocks.blockGarlic)
           .requires(ModBlocks.blockOnion)
           .requires(ModBlocks.blockCorn)
-          .requires(Items.BOWL)
+          .requires(Items.BOWL, 2)
           .requires(ModItems.large_soy_milk_bottle)
           .unlockedBy("has_corn", has(ModBlocks.blockCorn))
           .save(consumer, new ResourceLocation(MOD_ID, "soy_corn_chowder"));
@@ -895,7 +909,7 @@ public class DefaultRecipeProvider extends RecipeProvider
           .requires(ModBlocks.blockOnion)
           .requires(ModBlocks.blockPeas)
           .requires(ModItems.large_milk_bottle)
-          .requires(Items.BOWL)
+          .requires(Items.BOWL, 2)
           .unlockedBy("has_peas", has(ModBlocks.blockPeas))
           .save(consumer, new ResourceLocation(MOD_ID, "pea_soup"));
 
@@ -904,7 +918,7 @@ public class DefaultRecipeProvider extends RecipeProvider
           .requires(ModBlocks.blockOnion)
           .requires(ModBlocks.blockPeas)
           .requires(ModItems.large_soy_milk_bottle)
-          .requires(Items.BOWL)
+          .requires(Items.BOWL, 2)
           .unlockedBy("has_peas", has(ModBlocks.blockPeas))
           .save(consumer, new ResourceLocation(MOD_ID, "soy_pea_soup"));
 
@@ -912,7 +926,7 @@ public class DefaultRecipeProvider extends RecipeProvider
           .requires(ModItems.cornmeal)
           .requires(ModItems.cornmeal)
           .requires(ModItems.large_water_bottle)
-          .requires(Items.BOWL)
+          .requires(Items.BOWL, 2)
           .unlockedBy("has_corn", has(ModBlocks.blockCorn))
           .save(consumer, new ResourceLocation(MOD_ID, "polenta"));
 
@@ -920,7 +934,7 @@ public class DefaultRecipeProvider extends RecipeProvider
           .requires(ModBlocks.blockGarlic)
           .requires(ModBlocks.blockOnion)
           .requires(Items.POTATO)
-          .requires(Items.BOWL)
+          .requires(Items.BOWL, 2)
           .unlockedBy("has_potato", has(Items.POTATO))
           .save(consumer, new ResourceLocation(MOD_ID, "potato_soup"));
 
@@ -928,7 +942,7 @@ public class DefaultRecipeProvider extends RecipeProvider
           .requires(ModBlocks.blockGarlic)
           .requires(ModBlocks.blockOnion)
           .requires(ModBlocks.blockButternutSquash)
-          .requires(Items.BOWL)
+          .requires(Items.BOWL, 2)
           .unlockedBy("has_squash", has(ModBlocks.blockButternutSquash))
           .save(consumer, new ResourceLocation(MOD_ID, "squash_soup"));
 
@@ -1032,7 +1046,7 @@ public class DefaultRecipeProvider extends RecipeProvider
           .requires(Items.SWEET_BERRIES)
           .requires(Items.SWEET_BERRIES)
           .requires(Items.SWEET_BERRIES)
-          .requires(Items.BOWL)
+          .requires(Items.BOWL, 2)
           .unlockedBy("has_yogurt", has(ModItems.yogurt))
           .save(consumer, new ResourceLocation(MOD_ID, "yogurt_with_berries"));
 
@@ -1075,5 +1089,14 @@ public class DefaultRecipeProvider extends RecipeProvider
           .requires(Items.EGG)
           .unlockedBy("has_butter", has(ModItems.butter))
           .save(consumer, new ResourceLocation(MOD_ID, "plain_cheesecake"));
+
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.fried_rice, 1)
+          .requires(ModBlocks.blockOnion)
+          .requires(Items.CARROT)
+          .requires(ModItems.cooked_rice)
+          .requires(Items.EGG)
+          .requires(ModTags.rawMeat)
+          .unlockedBy("has_onion", has(ModBlocks.blockOnion))
+          .save(consumer, new ResourceLocation(MOD_ID, "fried_rice"));
     }
 }

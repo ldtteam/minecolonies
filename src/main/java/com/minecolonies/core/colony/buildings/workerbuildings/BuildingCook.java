@@ -3,22 +3,21 @@ package com.minecolonies.core.colony.buildings.workerbuildings;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.crafting.ItemStorage;
-import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.MathUtils;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
 import com.minecolonies.core.colony.buildings.modules.ItemListModule;
-import com.minecolonies.core.colony.buildings.modules.MinimumStockModule;
+import com.minecolonies.core.entity.other.SittingEntity;
 import net.minecraft.core.BlockPos;
-import net.minecraft.util.Tuple;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.List;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.BuildingConstants.FUEL_LIST;
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
-import static com.minecolonies.api.util.constant.SchematicTagConstants.TAG_SITTING;
+import static com.minecolonies.api.util.constant.SchematicTagConstants.*;
 import static com.minecolonies.api.util.constant.Suppression.OVERRIDE_EQUALS;
 
 /**
@@ -43,21 +42,6 @@ public class BuildingCook extends AbstractBuilding
     private static final int MAX_BUILDING_LEVEL = 5;
 
     /**
-     * Whether we did init tags
-     */
-    private boolean initTags = false;
-
-    /**
-     * Sitting positions
-     */
-    private List<BlockPos> sitPositions;
-
-    /**
-     * Current sitting index
-     */
-    private int lastSitting = 0;
-
-    /**
      * Instantiates a new cook building.
      *
      * @param c the colony.
@@ -68,25 +52,10 @@ public class BuildingCook extends AbstractBuilding
         super(c, l);
     }
 
-    /**
-     * Reads the tag positions
-     */
-    public void initTagPositions()
-    {
-        if (initTags)
-        {
-            return;
-        }
-
-        sitPositions = getLocationsFromTag(TAG_SITTING);
-        initTags = !sitPositions.isEmpty();
-    }
-
     @Override
     public void onUpgradeComplete(final int newLevel)
     {
         super.onUpgradeComplete(newLevel);
-        initTags = false;
     }
 
     @Override
@@ -102,21 +71,49 @@ public class BuildingCook extends AbstractBuilding
      */
     public BlockPos getNextSittingPosition()
     {
-        initTagPositions();
-
-        if (sitPositions.isEmpty())
+        if (getLocationsFromTag(TAG_SITTING).isEmpty() && getLocationsFromTag(TAG_SIT_IN).isEmpty() && getLocationsFromTag(TAG_SIT_OUT).isEmpty())
         {
+            Log.getLogger().error("Restaurant without sitting position. Style: {} Schematic: {}", getStructurePack(), getTileEntity().getBlueprintPath());
             return null;
         }
 
-        lastSitting++;
+        final int sittingSize = getLocationsFromTag(TAG_SITTING).size();
+        final int sitInSize = getLocationsFromTag(TAG_SIT_IN).size();
+        final int sitOutSize = getLocationsFromTag(TAG_SIT_OUT).size();
 
-        if (lastSitting >= sitPositions.size())
+        final int totalSize = sittingSize + sitInSize + (colony.getWorld().isRaining() ? 0 : sitOutSize);
+
+        // Three attempts
+        for (int i = 0; i < 3; i++)
         {
-            lastSitting = 0;
-        }
+            final int rng = MathUtils.RANDOM.nextInt(totalSize);
 
-        return sitPositions.get(lastSitting);
+            if (rng < sittingSize)
+            {
+                final BlockPos pos = getLocationsFromTag(TAG_SITTING).get(rng);
+                if (!SittingEntity.isSittingPosOccupied(pos, colony.getWorld()))
+                {
+                    return pos;
+                }
+            }
+            else if (rng < sittingSize + sitInSize)
+            {
+                final BlockPos pos = getLocationsFromTag(TAG_SIT_IN).get(rng - sittingSize);
+                if (!SittingEntity.isSittingPosOccupied(pos, colony.getWorld()))
+                {
+                    return pos;
+                }
+            }
+            else
+            {
+                final BlockPos pos = getLocationsFromTag(TAG_SIT_OUT).get(rng - sittingSize - sitInSize);
+                if (!SittingEntity.isSittingPosOccupied(pos, colony.getWorld()))
+                {
+                    return pos;
+                }
+            }
+        }
+        return null;
     }
 
     @NotNull
@@ -139,12 +136,7 @@ public class BuildingCook extends AbstractBuilding
         {
             return 0;
         }
-
-        if (inventory && getFirstModuleOccurance(MinimumStockModule.class).isStocked(stack))
-        {
-            return stack.getCount();
-        }
-
+        
         final Predicate<ItemStack> allowedFuel = theStack -> getModuleMatching(ItemListModule.class, m -> m.getId().equals(FUEL_LIST)).isItemInList(new ItemStorage(theStack));
         if (allowedFuel.test(stack) && (localAlreadyKept.stream().filter(storage -> allowedFuel.test(storage.getItemStack())).mapToInt(ItemStorage::getAmount).sum() < STACKSIZE
               || !inventory))

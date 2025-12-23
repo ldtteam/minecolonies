@@ -1,6 +1,7 @@
 package com.minecolonies.api.advancements.open_gui_window;
 
 import com.minecolonies.api.advancements.CriterionListeners;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.PlayerAdvancements;
 
 /**
@@ -14,7 +15,7 @@ public class OpenGuiWindowListeners extends CriterionListeners<OpenGuiWindowCrit
         super(playerAdvancements);
     }
 
-    public void trigger(final String windowResource)
+    public void trigger(final ResourceLocation windowResource)
     {
         trigger(instance -> instance.test(windowResource));
     }

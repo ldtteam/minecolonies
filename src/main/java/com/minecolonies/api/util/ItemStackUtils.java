@@ -262,7 +262,7 @@ public final class ItemStackUtils
      */
     public static boolean verifyEquipmentLevel(@NotNull final ItemStack itemStack, final int equipmentLevel, final int minimalLevel, final int maximumLevel)
     {
-        if (equipmentLevel < minimalLevel)
+        if (equipmentLevel + getMaxEnchantmentLevel(itemStack) < minimalLevel)
         {
             return false;
         }
@@ -617,6 +617,25 @@ public final class ItemStackUtils
     public static boolean compareItemStackListIgnoreStackSize(final List<ItemStack> stacks, final ItemStack stack)
     {
         return compareItemStackListIgnoreStackSize(stacks, stack, true, true);
+    }
+
+    /**
+     * Method to check if a stack is in a list of ItemStorage items.
+     *
+     * @param stacks the list of stacks.
+     * @param stack  the stack.
+     * @return true if so.
+     */
+    public static boolean compareItemStorageListIgnoreStackSize(final List<ItemStorage> stacks, final ItemStack stack)
+    {
+        for (final ItemStorage tempStack : stacks)
+        {
+            if (compareItemStacksIgnoreStackSize(tempStack.getItemStack(), stack, true, true))
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

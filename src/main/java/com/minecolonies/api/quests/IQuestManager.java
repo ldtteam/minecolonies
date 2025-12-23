@@ -1,6 +1,7 @@
 package com.minecolonies.api.quests;
 
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.util.INBTSerializable;
@@ -83,6 +84,8 @@ public interface IQuestManager extends INBTSerializable<CompoundTag>
      */
     double getReputation();
 
+    void markDirty();
+
     /**
      * Get the list of available quests in the colony.
      *
@@ -109,4 +112,19 @@ public interface IQuestManager extends INBTSerializable<CompoundTag>
      * @param questInstance the quest instance to inject.
      */
     void injectAvailableQuest(IQuestInstance questInstance);
+
+    /**
+     * Serialize to network data
+     *
+     * @param buf
+     * @param hasNewSubscribers
+     */
+    void serialize(FriendlyByteBuf buf, boolean hasNewSubscribers);
+
+    /**
+     * Deserialize network data
+     *
+     * @param buf
+     */
+    void deserialize(FriendlyByteBuf buf);
 }

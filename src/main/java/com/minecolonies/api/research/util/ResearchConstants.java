@@ -138,6 +138,7 @@ public final class ResearchConstants
     public static final ResourceLocation TEACHING          = new ResourceLocation(Constants.MOD_ID, "effects/teachingmultiplier");
     public static final ResourceLocation TOOL_DURABILITY   = new ResourceLocation(Constants.MOD_ID, "effects/tooldurabilitymultiplier");
     public static final ResourceLocation WALKING           = new ResourceLocation(Constants.MOD_ID, "effects/walkingmultiplier");
+    public static final ResourceLocation LOOTING           = new ResourceLocation(Constants.MOD_ID, "effects/looting");
 
     //Unlock Ability modifiers.
     public static final ResourceLocation CRUSHING_11       = new ResourceLocation(Constants.MOD_ID, "effects/crushing11unlock");

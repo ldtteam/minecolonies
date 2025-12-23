@@ -1,6 +1,7 @@
 package com.minecolonies.core.entity.ai.minimal;
 
 import com.minecolonies.api.util.WorldUtil;
+import com.minecolonies.api.util.constant.ColonyConstants;
 import com.minecolonies.core.colony.jobs.AbstractJobGuard;
 import com.minecolonies.core.entity.citizen.EntityCitizen;
 import net.minecraft.world.entity.Entity;
@@ -47,7 +48,7 @@ public class LookAtEntityGoal extends Goal
     @Override
     public boolean canUse()
     {
-        if (this.mob.getRandom().nextFloat() >= this.probability)
+        if (ColonyConstants.rand.nextFloat() >= this.probability)
         {
             return false;
         }

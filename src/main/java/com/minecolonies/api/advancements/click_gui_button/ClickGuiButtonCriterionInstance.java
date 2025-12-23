@@ -2,12 +2,12 @@ package com.minecolonies.api.advancements.click_gui_button;
 
 import com.google.gson.JsonObject;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.core.util.GsonHelper;
 import net.minecraft.advancements.critereon.AbstractCriterionTriggerInstance;
 import net.minecraft.advancements.critereon.ContextAwarePredicate;
 import net.minecraft.advancements.critereon.DeserializationContext;
 import net.minecraft.advancements.critereon.SerializationContext;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.GsonHelper;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -16,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
 public class ClickGuiButtonCriterionInstance extends AbstractCriterionTriggerInstance
 {
     private String buttonId;
-    private String windowResource;
+    private ResourceLocation windowResource;
 
     public ClickGuiButtonCriterionInstance()
     {
@@ -39,7 +39,7 @@ public class ClickGuiButtonCriterionInstance extends AbstractCriterionTriggerIns
      * @param buttonId the button to be clicked to succeed
      * @param windowResource the window id of the button to be clicked
      */
-    public ClickGuiButtonCriterionInstance(final String buttonId, final String windowResource)
+    public ClickGuiButtonCriterionInstance(final String buttonId, final ResourceLocation windowResource)
     {
         super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_CLICK_GUI_BUTTON), ContextAwarePredicate.ANY);
 
@@ -53,11 +53,11 @@ public class ClickGuiButtonCriterionInstance extends AbstractCriterionTriggerIns
      * @param windowResource the blockui window id to check
      * @return whether the check succeeded
      */
-    public boolean test(final String buttonId, final String windowResource)
+    public boolean test(final String buttonId, final ResourceLocation windowResource)
     {
         if (this.buttonId != null && this.windowResource != null)
         {
-            return this.buttonId.equalsIgnoreCase(buttonId) && this.windowResource.equalsIgnoreCase(windowResource);
+            return this.buttonId.equalsIgnoreCase(buttonId) && this.windowResource.equals(windowResource);
         }
         else if (this.buttonId != null)
         {
@@ -76,7 +76,7 @@ public class ClickGuiButtonCriterionInstance extends AbstractCriterionTriggerIns
             final String buttonId = GsonHelper.getAsString(jsonObject, "button_id");
             if (jsonObject.has("window_resource_location"))
             {
-                final String windowResource = GsonHelper.getAsString(jsonObject, "window_resource_location");
+                final ResourceLocation windowResource = GsonHelper.getAsResourceLocation(jsonObject, "window_resource_location");
                 return new ClickGuiButtonCriterionInstance(buttonId, windowResource);
             }
             return new ClickGuiButtonCriterionInstance(buttonId);
@@ -94,7 +94,7 @@ public class ClickGuiButtonCriterionInstance extends AbstractCriterionTriggerIns
             json.addProperty("button_id", this.buttonId);
             if (this.windowResource != null)
             {
-                json.addProperty("window_resource_location", this.windowResource);
+                json.addProperty("window_resource_location", this.windowResource.toString());
             }
         }
         return json;

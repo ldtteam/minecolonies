@@ -13,6 +13,8 @@ import net.minecraftforge.registries.RegistryObject;
 
 import java.util.function.Consumer;
 
+import static com.minecolonies.api.util.constant.SchematicTagConstants.*;
+
 public final class ModBuildingExtensionsInitializer
 {
     public static final DeferredRegister<BuildingExtensionEntry> DEFERRED_REGISTER = DeferredRegister.create(new ResourceLocation(Constants.MOD_ID, "buildingextensions"), Constants.MOD_ID);
@@ -22,51 +24,51 @@ public final class ModBuildingExtensionsInitializer
 
         BuildingExtensionRegistries.plantationSugarCaneField = createEntry(BuildingExtensionRegistries.PLANTATION_SUGAR_CANE_FIELD_ID,
           builder -> builder.setExtensionProducer(PlantationField::new)
-                       .addExtensionModuleProducer(field -> new SugarCanePlantModule(field, "sugar_field", "sugar", Items.SUGAR_CANE)));
+                       .addExtensionModuleProducer(field -> new SugarCanePlantModule(field, SUGAR_FIELD, SUGAR_CROP, Items.SUGAR_CANE)));
 
         BuildingExtensionRegistries.plantationCactusField = createEntry(BuildingExtensionRegistries.PLANTATION_CACTUS_FIELD_ID,
-          builder -> builder.setExtensionProducer(PlantationField::new).addExtensionModuleProducer(field -> new CactusPlantModule(field, "cactus_field", "cactus", Items.CACTUS)));
+          builder -> builder.setExtensionProducer(PlantationField::new).addExtensionModuleProducer(field -> new CactusPlantModule(field, CACTUS_FIELD, CACTUS_CROP, Items.CACTUS)));
 
         BuildingExtensionRegistries.plantationBambooField = createEntry(BuildingExtensionRegistries.PLANTATION_BAMBOO_FIELD_ID,
-          builder -> builder.setExtensionProducer(PlantationField::new).addExtensionModuleProducer(field -> new BambooPlantModule(field, "bamboo_field", "bamboo", Items.BAMBOO)));
+          builder -> builder.setExtensionProducer(PlantationField::new).addExtensionModuleProducer(field -> new BambooPlantModule(field, BAMBOO_FIELD, BAMBOO_CROP, Items.BAMBOO)));
 
         BuildingExtensionRegistries.plantationCocoaBeansField = createEntry(BuildingExtensionRegistries.PLANTATION_COCOA_BEANS_FIELD_ID,
           builder -> builder.setExtensionProducer(PlantationField::new)
-                       .addExtensionModuleProducer(field -> new CocoaPlantModule(field, "cocoa_field", "cocoa", Items.COCOA_BEANS)));
+                       .addExtensionModuleProducer(field -> new CocoaPlantModule(field, COCOA_FIELD, COCOA_CROP, Items.COCOA_BEANS)));
 
         BuildingExtensionRegistries.plantationVinesField = createEntry(BuildingExtensionRegistries.PLANTATION_VINES_FIELD_ID,
-          builder -> builder.setExtensionProducer(PlantationField::new).addExtensionModuleProducer(field -> new VinePlantModule(field, "vine_field", "vine", Items.VINE)));
+          builder -> builder.setExtensionProducer(PlantationField::new).addExtensionModuleProducer(field -> new VinePlantModule(field, VINE_FIELD, VINE_CROP, Items.VINE)));
 
         BuildingExtensionRegistries.plantationKelpField = createEntry(BuildingExtensionRegistries.PLANTATION_KELP_FIELD_ID,
-          builder -> builder.setExtensionProducer(PlantationField::new).addExtensionModuleProducer(field -> new KelpPlantModule(field, "kelp_field", "kelp", Items.KELP)));
+          builder -> builder.setExtensionProducer(PlantationField::new).addExtensionModuleProducer(field -> new KelpPlantModule(field, KELP_FIELD, KELP_CROP, Items.KELP)));
 
         BuildingExtensionRegistries.plantationSeagrassField = createEntry(BuildingExtensionRegistries.PLANTATION_SEAGRASS_FIELD_ID,
           builder -> builder.setExtensionProducer(PlantationField::new)
-                       .addExtensionModuleProducer(field -> new SeagrassPlantModule(field, "seagrass_field", "seagrass", Items.SEAGRASS)));
+                       .addExtensionModuleProducer(field -> new SeagrassPlantModule(field, SEA_GRASS_FIELD, SEA_GRASS_CROP, Items.SEAGRASS)));
 
         BuildingExtensionRegistries.plantationSeaPicklesField = createEntry(BuildingExtensionRegistries.PLANTATION_SEA_PICKLES_FIELD_ID,
           builder -> builder.setExtensionProducer(PlantationField::new)
-                       .addExtensionModuleProducer(field -> new SeapicklePlantModule(field, "seapickle_field", "seapickle", Items.SEA_PICKLE)));
+                       .addExtensionModuleProducer(field -> new SeapicklePlantModule(field, SEA_PICKLE_FIELD, SEA_PICKLE_CROP, Items.SEA_PICKLE)));
 
         BuildingExtensionRegistries.plantationGlowberriesField = createEntry(BuildingExtensionRegistries.PLANTATION_GLOWBERRIES_FIELD_ID,
           builder -> builder.setExtensionProducer(PlantationField::new)
-                       .addExtensionModuleProducer(field -> new GlowBerriesPlantModule(field, "glowb_field", "glowb_vine", Items.GLOW_BERRIES)));
+                       .addExtensionModuleProducer(field -> new GlowBerriesPlantModule(field, GLOW_BERRY_FIELD, GLOW_BERRY_CROP, Items.GLOW_BERRIES)));
 
         BuildingExtensionRegistries.plantationWeepingVinesField = createEntry(BuildingExtensionRegistries.PLANTATION_WEEPING_VINES_FIELD_ID,
           builder -> builder.setExtensionProducer(PlantationField::new)
-                       .addExtensionModuleProducer(field -> new WeepingVinesPlantModule(field, "weepv_field", "weepv_vine", Items.WEEPING_VINES)));
+                       .addExtensionModuleProducer(field -> new WeepingVinesPlantModule(field, WEEPY_VINE_FIELD, WEEPY_VINE_CROP, Items.WEEPING_VINES)));
 
         BuildingExtensionRegistries.plantationTwistingVinesField = createEntry(BuildingExtensionRegistries.PLANTATION_TWISTING_VINES_FIELD_ID,
           builder -> builder.setExtensionProducer(PlantationField::new)
-                       .addExtensionModuleProducer(field -> new TwistingVinesPlantModule(field, "twistv_field", "twistv_vine", Items.TWISTING_VINES)));
+                       .addExtensionModuleProducer(field -> new TwistingVinesPlantModule(field, TWISTY_VINE_FIELD, TWISTY_VINE_CROP, Items.TWISTING_VINES)));
 
         BuildingExtensionRegistries.plantationCrimsonPlantsField = createEntry(BuildingExtensionRegistries.PLANTATION_CRIMSON_PLANTS_FIELD_ID,
           builder -> builder.setExtensionProducer(PlantationField::new)
-                       .addExtensionModuleProducer(field -> new CrimsonPlantsPlantModule(field, "crimsonp_field", "crimsonp_ground", Items.CRIMSON_FUNGUS)));
+                       .addExtensionModuleProducer(field -> new CrimsonPlantsPlantModule(field, CRIMSON_FIELD, CRIMSON_CROP, Items.CRIMSON_FUNGUS)));
 
         BuildingExtensionRegistries.plantationWarpedPlantsField = createEntry(BuildingExtensionRegistries.PLANTATION_WARPED_PLANTS_FIELD_ID,
           builder -> builder.setExtensionProducer(PlantationField::new)
-                       .addExtensionModuleProducer(field -> new WarpedPlantsPlantModule(field, "warpedp_field", "warpedp_ground", Items.WARPED_FUNGUS)));
+                       .addExtensionModuleProducer(field -> new WarpedPlantsPlantModule(field, WARPED_FIELD, WARPED_CROP, Items.WARPED_FUNGUS)));
     }
     private ModBuildingExtensionsInitializer()
     {

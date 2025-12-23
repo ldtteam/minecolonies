@@ -281,7 +281,7 @@ public class InteractionValidatorInitializer
             {
                 return false;
             }
-            final int homeBuildingLevel = citizen.getHomeBuilding().getBuildingLevel();
+            final int homeBuildingLevel = citizen.getHomeBuilding().getBuildingLevelEquivalent();
             if (homeBuildingLevel <= 2)
             {
                 return false;
@@ -295,7 +295,7 @@ public class InteractionValidatorInitializer
               {
                   return false;
               }
-              final int homeBuildingLevel = citizen.getHomeBuilding().getBuildingLevel();
+              final int homeBuildingLevel = citizen.getHomeBuilding().getBuildingLevelEquivalent();
               if (homeBuildingLevel <= 1)
               {
                   return false;
@@ -309,7 +309,7 @@ public class InteractionValidatorInitializer
               {
                   return false;
               }
-              final int homeBuildingLevel = citizen.getHomeBuilding().getBuildingLevel();
+              final int homeBuildingLevel = citizen.getHomeBuilding().getBuildingLevelEquivalent();
               if (homeBuildingLevel <= 2)
               {
                   return false;
@@ -324,7 +324,7 @@ public class InteractionValidatorInitializer
               {
                   return false;
               }
-              final int homeBuildingLevel = citizen.getHomeBuilding().getBuildingLevel();
+              final int homeBuildingLevel = citizen.getHomeBuilding().getBuildingLevelEquivalent();
               if (homeBuildingLevel <= 1)
               {
                   return false;

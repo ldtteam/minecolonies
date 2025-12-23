@@ -8,6 +8,7 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.Network;
 import com.minecolonies.core.network.messages.server.DirectPlaceMessage;
 import com.minecolonies.core.network.messages.server.SwitchBuildingWithToolMessage;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.item.ItemStack;
@@ -51,7 +52,7 @@ public class WindowSuggestBuildTool extends AbstractWindowSkeleton
      */
     public WindowSuggestBuildTool(@NotNull final BlockPos pos, @NotNull final BlockState state, @NotNull final ItemStack stack)
     {
-        super(Constants.MOD_ID + SUGGEST_BUILDING_SOURCE_SUFFIX);
+        super(new ResourceLocation(Constants.MOD_ID, "gui/windowsuggestbuildtool.xml"));
         this.pos = pos;
         this.building = state;
         this.stack = stack;

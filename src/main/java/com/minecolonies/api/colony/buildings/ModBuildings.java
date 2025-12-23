@@ -58,7 +58,8 @@ public final class ModBuildings
     public static final String MEDIUM_QUARRY_ID  = "mediumquarry";
     public static final String LARGE_QUARRY_ID   = "largequarry";
     public static final String ALCHEMIST_ID      = "alchemist";
-    public static final String KITCHEN_ID      = "kitchen";
+    public static final String KITCHEN_ID        = "kitchen";
+    public static final String GATE_HOUSE_ID     = "gatehouse";
 
     public static RegistryObject<BuildingEntry> archery;
     public static RegistryObject<BuildingEntry> bakery;
@@ -113,6 +114,7 @@ public final class ModBuildings
     //public static RegistryObject<BuildingEntry> largeQuarry;
     public static RegistryObject<BuildingEntry> alchemist;
     public static RegistryObject<BuildingEntry> kitchen;
+    public static RegistryObject<BuildingEntry> gateHouse;
 
     private ModBuildings()
     {

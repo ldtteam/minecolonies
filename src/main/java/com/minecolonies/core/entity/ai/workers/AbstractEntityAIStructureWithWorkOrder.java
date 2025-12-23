@@ -38,7 +38,6 @@ import org.jetbrains.annotations.Nullable;
 
 import static com.ldtteam.structurize.placement.AbstractBlueprintIterator.NULL_POS;
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.IDLE;
-import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.PICK_UP_RESIDUALS;
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 import static com.minecolonies.api.util.constant.StatisticsConstants.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILD_START;
@@ -111,17 +110,17 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
             return getState();
         }
 
-        if (job.getWorkOrder().getBlueprint() == null || structurePlacer == null)
+        if (building.getWorkOrder() == null || building.getWorkOrder().getBlueprint() == null || structurePlacer == null)
         {
             loadStructure();
-            final IBuilderWorkOrder wo = job.getWorkOrder();
+            final IBuilderWorkOrder wo = building.getWorkOrder();
             if (wo == null)
             {
                 Log.getLogger().error(
-                  String.format("Worker (%d:%d) ERROR - Starting and missing work order(%d)",
+                  String.format("Worker (%d:%d) ERROR - Starting and missing work order",
                     worker.getCitizenColonyHandler().getColonyOrRegister().getID(),
-                    worker.getCitizenData().getId(), job.getWorkOrderId()), new Exception());
-                job.setWorkOrder(null);
+                    worker.getCitizenData().getId()), new Exception());
+                building.setWorkOrder(null);
                 return IDLE;
             }
 
@@ -136,7 +135,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
                     return IDLE;
                 }
 
-                MessageUtils.forCitizen(worker, COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILD_START, job.getWorkOrder().getDisplayName())
+                MessageUtils.forCitizen(worker, COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILD_START, this.building.getWorkOrder().getDisplayName())
                   .sendTo(worker.getCitizenColonyHandler().getColonyOrRegister().getMessagePlayerEntities());
 
                 //Don't go through the CLEAR stage for repairs and upgrades
@@ -147,14 +146,14 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
             }
             else if (!(wo instanceof WorkOrderMiner))
             {
-                MessageUtils.forCitizen(worker, COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILD_START, job.getWorkOrder().getDisplayName())
+                MessageUtils.forCitizen(worker, COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILD_START, building.getWorkOrder().getDisplayName())
                   .sendTo(worker.getCitizenColonyHandler().getColonyOrRegister().getMessagePlayerEntities());
                 ;
             }
             return getState();
         }
 
-        if (job.getWorkOrder().isRequested())
+        if (building.getWorkOrder().isRequested())
         {
             return afterStructureLoading();
         }
@@ -169,7 +168,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
      */
     private void loadStructure()
     {
-        final IBuilderWorkOrder workOrder = job.getWorkOrder();
+        final IBuilderWorkOrder workOrder = building.getWorkOrder();
 
         if (workOrder == null)
         {
@@ -196,7 +195,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
      */
     private void requestMaterialsState()
     {
-        if (Constants.BUILDER_INF_RESOURECES || job.getWorkOrder().isRequested() || job.getWorkOrder().getWorkOrderType() == WorkOrderType.REMOVE)
+        if (Constants.BUILDER_INF_RESOURECES || building.getWorkOrder().isRequested() || building.getWorkOrder().getWorkOrderType() == WorkOrderType.REMOVE)
         {
             recalculated = true;
             return;
@@ -205,18 +204,18 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
         final AbstractBuildingStructureBuilder buildingWorker = building;
         if (requestMaterials())
         {
-            job.getWorkOrder().setRequested(true);
+            building.getWorkOrder().setRequested(true);
         }
         int newQuantity = buildingWorker.getNeededResources().values().stream().mapToInt(ItemStorage::getAmount).sum();
-        if (job.getWorkOrder().getAmountOfResources() == 0 || newQuantity > job.getWorkOrder().getAmountOfResources())
+        if (building.getWorkOrder().getAmountOfResources() == 0 || newQuantity > building.getWorkOrder().getAmountOfResources())
         {
-            job.getWorkOrder().setAmountOfResources(newQuantity);
+            building.getWorkOrder().setAmountOfResources(newQuantity);
         }
     }
     @Override
     protected boolean checkIfNeedsItem()
     {
-        if (job.hasWorkOrder() && building.getNeededResources().isEmpty() && !building.hasCitizenCompletedRequests(worker.getCitizenData()) && !recalculated && (structurePlacer == null || !structurePlacer.getB().hasBluePrint() || !job.getWorkOrder().isRequested()))
+        if (building.hasWorkOrder() && building.getNeededResources().isEmpty() && !building.hasCitizenCompletedRequests(worker.getCitizenData()) && !recalculated && (structurePlacer == null || !structurePlacer.getB().hasBluePrint() || !building.getWorkOrder().isRequested()))
         {
             return false;
         }
@@ -234,13 +233,13 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
           true,
           this);
 
-        if (job.getWorkOrder().getIteratorType().isEmpty())
+        if (building.getWorkOrder().getIteratorType().isEmpty())
         {
             final String mode = BuilderModeSetting.getActualValue(building);
-            job.getWorkOrder().setIteratorType(mode);
+            building.getWorkOrder().setIteratorType(mode);
         }
 
-        final StructurePlacer placer = new StructurePlacer(structure, job.getWorkOrder().getIteratorType());
+        final StructurePlacer placer = new StructurePlacer(structure, building.getWorkOrder().getIteratorType());
 
         if (requestProgress == null)
         {
@@ -373,25 +372,24 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
     @Override
     public void executeSpecificCompleteActions()
     {
-        if (job.getWorkOrder().getBlueprint() == null && job.hasWorkOrder())
+        if (building.getWorkOrder().getBlueprint() == null && building.hasWorkOrder())
         {
             //fix for bad structures
-            job.complete();
+            building.complete(worker.getCitizenData());
         }
 
-        if (job.getWorkOrder().getBlueprint() == null)
+        if (building.getWorkOrder().getBlueprint() == null)
         {
             return;
         }
 
-        final IWorkOrder wo = job.getWorkOrder();
+        final IWorkOrder wo = building.getWorkOrder();
 
         if (wo == null)
         {
-            Log.getLogger().error(String.format("Worker (%d:%d) ERROR - Finished, but missing work order(%d)",
+            Log.getLogger().error(String.format("Worker (%d:%d) ERROR - Finished, but missing work order",
               worker.getCitizenColonyHandler().getColonyOrRegister().getID(),
-              worker.getCitizenData().getId(),
-              job.getWorkOrderId()));
+              worker.getCitizenData().getId()));
         }
         else
         {
@@ -423,7 +421,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
                     break;
             }
 
-            job.complete();
+            building.complete(worker.getCitizenData());
 
             if (wo instanceof WorkOrderBuilding workOrderBuilding)
             {
@@ -481,27 +479,27 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
     @Override
     protected boolean checkIfCanceled()
     {
-        if ((job.getWorkOrder() == null && structurePlacer != null) || (structurePlacer != null && !structurePlacer.getB().hasBluePrint()))
+        if ((building.getWorkOrder() == null && structurePlacer != null) || (structurePlacer != null && !structurePlacer.getB().hasBluePrint()))
         {
-            if (job.hasWorkOrder())
+            if (building.hasWorkOrder())
             {
-                job.getWorkOrder().clearBlueprint();
-                job.getColony().getWorkManager().removeWorkOrder(job.getWorkOrderId());
+                building.getWorkOrder().clearBlueprint();
+                building.getColony().getWorkManager().removeWorkOrder(building.getWorkOrder());
             }
-            job.setWorkOrder(null);
+            building.setWorkOrder(null);
             resetCurrentStructure();
-            building.cancelAllRequestsOfCitizen(worker.getCitizenData());
-            building.cancelAllRequestsOfCitizen(null);
+            building.cancelAllRequestsOfCitizenOrBuilding(worker.getCitizenData());
+            building.cancelAllRequestsOfCitizenOrBuilding(null);
             building.setProgressPos(null, BuildingProgressStage.CLEAR);
             return true;
         }
-        return job.getWorkOrder() != null && (!WorldUtil.isBlockLoaded(world, job.getWorkOrder().getLocation())) && getState() != PICK_UP_RESIDUALS;
+        return building.getWorkOrder() != null && (!WorldUtil.isBlockLoaded(world, building.getWorkOrder().getLocation()));
     }
 
     @Override
     protected boolean isAlreadyCleared()
     {
-        return job.getWorkOrder() != null && job.getWorkOrder().isCleared();
+        return building.getWorkOrder() != null && building.getWorkOrder().isCleared();
     }
 
     /**
@@ -541,7 +539,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
     @Override
     public void handleSpecificCancelActions()
     {
-        building.getColony().getWorkManager().removeWorkOrder(job.getWorkOrderId());
-        job.setWorkOrder(null);
+        building.getColony().getWorkManager().removeWorkOrder(building.getWorkOrder());
+        building.setWorkOrder(null);
     }
 }

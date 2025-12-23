@@ -14,7 +14,7 @@ import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.util.CraftingUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.OptionalPredicate;
-import com.minecolonies.core.client.gui.modules.PlantationFieldsModuleWindow;
+import com.minecolonies.core.client.gui.modules.building.PlantationFieldsModuleWindow;
 import com.minecolonies.core.colony.buildingextensions.PlantationField;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
 import com.minecolonies.core.colony.buildings.modules.AbstractCraftingBuildingModule;
@@ -406,7 +406,7 @@ public class BuildingPlantation extends AbstractBuilding
         @OnlyIn(Dist.CLIENT)
         public BOWindow getWindow()
         {
-            return new PlantationFieldsModuleWindow(buildingView, this);
+            return new PlantationFieldsModuleWindow(this);
         }
 
         /**

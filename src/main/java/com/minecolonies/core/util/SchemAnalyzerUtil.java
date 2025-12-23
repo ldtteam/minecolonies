@@ -1,12 +1,12 @@
 package com.minecolonies.core.util;
 
 import com.ldtteam.domumornamentum.client.model.data.MaterialTextureData;
-import com.ldtteam.structurize.api.util.ItemStorage;
 import com.ldtteam.structurize.blocks.schematic.BlockSolidSubstitution;
 import com.ldtteam.structurize.blocks.schematic.BlockSubstitution;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.util.BlockInfo;
 import com.minecolonies.api.blocks.AbstractBlockHut;
+import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.items.ModTags;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.item.ItemStack;

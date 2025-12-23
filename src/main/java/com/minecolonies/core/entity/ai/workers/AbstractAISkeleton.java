@@ -15,6 +15,7 @@ import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
+import java.util.List;
 
 import static com.minecolonies.api.entity.citizen.AbstractEntityCitizen.ENTITY_AI_TICKRATE;
 
@@ -74,6 +75,16 @@ public abstract class AbstractAISkeleton<J extends IJob<?>> implements ITickingS
     }
 
     /**
+     * Register a target for a group of states
+     *
+     * @param target the target to register.
+     */
+    public void registerGroupTarget(final List<IAIState> states, final TickingTransition<IAIState> target)
+    {
+        stateMachine.addTransitionGroup(states, target);
+    }
+
+    /**
      * Register all targets your ai needs. They will be checked in the order of registration, so sort them accordingly.
      *
      * @param targets a number of targets that need registration
@@ -126,11 +137,7 @@ public abstract class AbstractAISkeleton<J extends IJob<?>> implements ITickingS
         worker.setRenderMetadata("");
     }
 
-    /**
-     * Get the statemachine of the AI
-     *
-     * @return statemachine
-     */
+    @Override
     public ITickRateStateMachine<IAIState> getStateAI()
     {
         return stateMachine;

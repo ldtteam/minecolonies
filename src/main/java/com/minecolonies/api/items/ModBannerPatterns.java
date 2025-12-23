@@ -44,5 +44,7 @@ public final class ModBannerPatterns
         BANNER_PATTERNS.register("tinyflowers", () -> new BannerPattern("tflw"));
         BANNER_PATTERNS.register("stripe_middle_up", () -> new BannerPattern("stmiu"));
         BANNER_PATTERNS.register("vesper", () -> new BannerPattern("vesp"));
+        BANNER_PATTERNS.register("dancing_otter", () -> new BannerPattern("dcgo"));
+        BANNER_PATTERNS.register("anarchy", () -> new BannerPattern("anar"));
     }
 }

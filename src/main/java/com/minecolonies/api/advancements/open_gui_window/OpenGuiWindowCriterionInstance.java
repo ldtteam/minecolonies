@@ -2,20 +2,22 @@ package com.minecolonies.api.advancements.open_gui_window;
 
 import com.google.gson.JsonObject;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.core.util.GsonHelper;
 import net.minecraft.advancements.critereon.AbstractCriterionTriggerInstance;
 import net.minecraft.advancements.critereon.ContextAwarePredicate;
 import net.minecraft.advancements.critereon.DeserializationContext;
 import net.minecraft.advancements.critereon.SerializationContext;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.GsonHelper;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Objects;
 
 /**
  * The test instance to check the "window_resource_location" for the "open_gui_window" trigger
  */
 public class OpenGuiWindowCriterionInstance extends AbstractCriterionTriggerInstance
 {
-    private String windowResource;
+    private ResourceLocation windowResource;
 
     public OpenGuiWindowCriterionInstance()
     {
@@ -26,7 +28,7 @@ public class OpenGuiWindowCriterionInstance extends AbstractCriterionTriggerInst
      * Construct the check with a single condition
      * @param windowResource the window that has to be opened to succeed
      */
-    public OpenGuiWindowCriterionInstance(final String windowResource)
+    public OpenGuiWindowCriterionInstance(final ResourceLocation windowResource)
     {
         super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_OPEN_GUI_WINDOW), ContextAwarePredicate.ANY);
 
@@ -38,13 +40,9 @@ public class OpenGuiWindowCriterionInstance extends AbstractCriterionTriggerInst
      * @param windowResource the blockui window id that was just opened
      * @return whether the check succeeded
      */
-    public boolean test(final String windowResource)
+    public boolean test(final ResourceLocation windowResource)
     {
-        if (this.windowResource != null)
-        {
-            return this.windowResource.equalsIgnoreCase(windowResource);
-        }
-        return true;
+        return Objects.equals(this.windowResource, windowResource);
     }
 
     @NotNull
@@ -53,7 +51,7 @@ public class OpenGuiWindowCriterionInstance extends AbstractCriterionTriggerInst
     {
         if (jsonObject.has("window_resource_location"))
         {
-            final String windowResource = GsonHelper.getAsString(jsonObject, "window_resource_location");
+            final ResourceLocation windowResource = GsonHelper.getAsResourceLocation(jsonObject, "window_resource_location");
             return new OpenGuiWindowCriterionInstance(windowResource);
         }
         return new OpenGuiWindowCriterionInstance();
@@ -66,7 +64,7 @@ public class OpenGuiWindowCriterionInstance extends AbstractCriterionTriggerInst
         final JsonObject json = super.serializeToJson(context);
         if (this.windowResource != null)
         {
-            json.addProperty("window_resource_location", this.windowResource);
+            json.addProperty("window_resource_location", this.windowResource.toString());
         }
         return json;
     }

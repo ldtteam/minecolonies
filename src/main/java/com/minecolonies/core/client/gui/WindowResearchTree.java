@@ -6,11 +6,12 @@ import com.ldtteam.blockui.views.View;
 import com.ldtteam.blockui.views.ZoomDragView;
 import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.MinecoloniesAPIProxy;
+import com.minecolonies.api.colony.buildings.registry.IBuildingRegistry;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.research.*;
-import com.minecolonies.api.research.IResearchCost;
-import com.minecolonies.api.research.IResearchEffect;
+import com.minecolonies.api.research.requirements.BuildingAlternatesResearchRequirement;
+import com.minecolonies.api.research.requirements.BuildingResearchRequirement;
 import com.minecolonies.api.research.util.ResearchState;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
@@ -18,16 +19,13 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.Network;
 import com.minecolonies.core.client.gui.blockui.RotatingItemIcon;
-import com.minecolonies.core.client.gui.modules.UniversityModuleWindow;
+import com.minecolonies.core.client.gui.modules.building.UniversityModuleWindow;
 import com.minecolonies.core.network.messages.server.colony.building.university.TryResearchMessage;
-import com.minecolonies.api.research.requirements.BuildingAlternatesResearchRequirement;
-import com.minecolonies.api.research.requirements.BuildingResearchRequirement;
 import com.minecolonies.core.research.GlobalResearchEffect;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraftforge.items.wrapper.InvWrapper;
@@ -36,7 +34,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
+import java.util.Optional;
 
 import static com.minecolonies.api.research.util.ResearchConstants.*;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
@@ -112,7 +110,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
      */
     public WindowResearchTree(final ResourceLocation branch, final IBuildingView building, final UniversityModuleWindow last)
     {
-        super(Constants.MOD_ID + R_TREE_RESOURCE_SUFFIX, last);
+        super(last, new ResourceLocation(Constants.MOD_ID, "gui/windowresearch.xml"));
         this.branch = branch;
         this.building = building;
         this.last = last;
@@ -849,8 +847,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
         final List<IResearchCost> itemRequirements = research.getCostList();
 
         research.getResearchRequirements().forEach(requirement -> {
-            // There will only ever be one AlternateBuildingRequirement per research, under the current implementation.
-            if (requirement instanceof BuildingAlternatesResearchRequirement alternateBuildingRequirement && alternateBuildingRequirements.isEmpty())
+            if (requirement instanceof BuildingAlternatesResearchRequirement alternateBuildingRequirement)
             {
                 alternateBuildingRequirements.add(alternateBuildingRequirement);
             }
@@ -862,65 +859,35 @@ public class WindowResearchTree extends AbstractWindowSkeleton
 
         for (final BuildingAlternatesResearchRequirement requirement : alternateBuildingRequirements)
         {
-            for (Map.Entry<String, Integer> building : requirement.getBuildings().entrySet())
+            final List<ItemStack> stacks = new ArrayList<>();
+            for (final ResourceLocation building : requirement.getBuildings())
             {
-                final Item item;
-                if (IMinecoloniesAPI.getInstance().getBuildingRegistry().containsKey(
-                  new ResourceLocation(Constants.MOD_ID, building.getKey())))
-                {
-                    item = IMinecoloniesAPI.getInstance().getBuildingRegistry().getValue(
-                      new ResourceLocation(Constants.MOD_ID, building.getKey())).getBuildingBlock().asItem();
-                }
-                else
-                {
-                    item = Items.AIR.asItem();
-                }
-                final ItemStack stack = new ItemStack(item);
-                stack.setCount(building.getValue());
-                final ItemIcon icon = new ItemIcon();
-                icon.setItem(stack);
-                icon.setPosition(offsetX + storageXOffset, offsetY + NAME_LABEL_HEIGHT);
-                icon.setSize(DEFAULT_COST_SIZE, DEFAULT_COST_SIZE);
-                view.addChild(icon);
-                if (requirement.isFulfilled(this.building.getColony()))
-                {
-                    PaneBuilders.tooltipBuilder().hoverPane(icon).paragraphBreak().append(requirement.getDesc()).color(COLOR_TEXT_FULFILLED).build();
-                }
-                else
-                {
-                    PaneBuilders.tooltipBuilder().hoverPane(icon).paragraphBreak().append(requirement.getDesc()).color(COLOR_TEXT_UNFULFILLED).build();
-                }
-
-                storageXOffset += COST_OFFSET;
+                stacks.add(Optional.ofNullable(IBuildingRegistry.getInstance().getValue(building))
+                    .map(entry -> new ItemStack(entry.getBuildingBlock().asItem(), requirement.getBuildingLevel()))
+                    .orElse(Items.AIR.getDefaultInstance()));
             }
-        }
+            final RotatingItemIcon icon = new RotatingItemIcon();
+            icon.setItems(stacks);
+            icon.setPosition(offsetX + storageXOffset, offsetY + NAME_LABEL_HEIGHT + TEXT_Y_OFFSET);
+            icon.setSize(DEFAULT_COST_SIZE, DEFAULT_COST_SIZE);
+            view.addChild(icon);
+            if (requirement.isFulfilled(this.building.getColony()))
+            {
+                PaneBuilders.tooltipBuilder().hoverPane(icon).paragraphBreak().append(requirement.getDesc()).color(COLOR_TEXT_FULFILLED).build();
+            }
+            else
+            {
+                PaneBuilders.tooltipBuilder().hoverPane(icon).paragraphBreak().append(requirement.getDesc()).color(COLOR_TEXT_UNFULFILLED).build();
+            }
 
-        // If there are more than one requirement, we want a clear divider before normal building research requirements.
-        if (!alternateBuildingRequirements.isEmpty() && !buildingRequirements.isEmpty())
-        {
-            final Image divider = new Image();
-            divider.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/research/research_button_large_stitches.png"), false);
-            divider.setSize(ICON_X_OFFSET, Y_SPACING);
-            divider.setPosition(offsetX + storageXOffset, offsetY + NAME_LABEL_HEIGHT + 4);
-            view.addChild(divider);
-            storageXOffset += ICON_X_OFFSET;
+            storageXOffset += COST_OFFSET;
         }
 
         for (final BuildingResearchRequirement requirement : buildingRequirements)
         {
-            final Item item;
-            if (IMinecoloniesAPI.getInstance().getBuildingRegistry().containsKey(
-              new ResourceLocation(Constants.MOD_ID, requirement.getBuilding())))
-            {
-                item = IMinecoloniesAPI.getInstance().getBuildingRegistry().getValue(
-                  new ResourceLocation(Constants.MOD_ID, requirement.getBuilding())).getBuildingBlock().asItem();
-            }
-            else
-            {
-                item = Items.AIR.asItem();
-            }
-            final ItemStack stack = new ItemStack(item);
-            stack.setCount(requirement.getBuildingLevel());
+            final ItemStack stack = Optional.ofNullable(IBuildingRegistry.getInstance().getValue(requirement.getBuilding()))
+                .map(entry -> new ItemStack(entry.getBuildingBlock().asItem(), requirement.getBuildingLevel()))
+                .orElse(Items.AIR.getDefaultInstance());
             final ItemIcon icon = new ItemIcon();
             icon.setItem(stack);
             icon.setPosition(offsetX + storageXOffset, offsetY + NAME_LABEL_HEIGHT + TEXT_Y_OFFSET);

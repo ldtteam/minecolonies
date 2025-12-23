@@ -357,19 +357,24 @@ public final class WindowConstants
     public static final String HIDDEN_WORKORDER_ID = "hiddenId";
 
     /**
-     * Link to the xml file of the window.
-     */
-    public static final String TOWNHALL_RESOURCE_SUFFIX = ":gui/townhall/windowtownhall.xml";
-
-    /**
-     * The button to toggle showing permission events instead of colony events.
-     */
-    public static final String BUTTON_PERMISSION_EVENTS = "permissionEvents";
-
-    /**
      * The button to add a player or fakeplayer to a colony.
      */
     public static final String BUTTON_ADD_PLAYER_OR_FAKEPLAYER = "addfakeplayer";
+
+    /**
+     * The button to select an online player
+     */
+    public static final String BUTTON_OPEN_ONLINE_PLAYER_LIST = "addOnlinePlayer";
+
+    /**
+     * The list to select online players from
+     */
+    public static final String LIST_SELECT_PLAYER = "playerPicker";
+
+    /**
+     * Button to select a player from the player list
+     */
+    public static final String BUTTON_SELECT_PLAYER_LIST = "playerSelectButton";
 
     /**
      * The view of the permission management.
@@ -491,10 +496,6 @@ public final class WindowConstants
      */
     public static final String BUTTON_TOGGLE = "toggle";
 
-    /**
-     * The builders gui file.
-     */
-    public static final String HUT_BUILDER_RESOURCE_SUFFIX = ":gui/windowhutworkerplaceholder.xml";
     public static final String LIST_RESOURCES              = "resources";
 
     public static final String LIST_WORK_ORDERS          = "workOrders";
@@ -518,19 +519,9 @@ public final class WindowConstants
     public static final String WORK_ORDER_POS            = "buildingPos";
     public static final String WORK_ORDER_SELECT         = "manage";
 
-    public static final String GUIDE_RESOURCE_SUFFIX = ":gui/windowhutguide.xml";
     public static final String GUIDE_CONFIRM         = "confirm";
     public static final String GUIDE_CLOSE           = "close";
 
-    /**
-     * BOWindow resource list gui file.
-     */
-    public static final String RESOURCE_SCROLL_RESOURCE_SUFFIX = ":gui/windowresourcescroll.xml";
-
-    /**
-     * BOWindow all Items list gui file.
-     */
-    public static final String HUT_ALL_INVENTORY_SUFFIX = ":gui/windowhutallinventory.xml";
     /**
      * No Sorting stage. how it comes from Database so it gets feeded
      */
@@ -560,10 +551,6 @@ public final class WindowConstants
      */
     public static final String BUTTON_SORT              = "sortStorageFilter";
 
-    /**
-     * BOWindow resource list gui file.
-     */
-    public static final String R_TREE_RESOURCE_SUFFIX = ":gui/windowresearch.xml";
 
     public static final String BUTTON_BUILD        = "build";
     public static final String BUTTON_REPAIR       = "repair";
@@ -654,7 +641,7 @@ public final class WindowConstants
     /**
      * Id of the resource add button.
      */
-    public static final String REQUEST_FULLFIL = "fulfill";
+    public static final String REQUEST_FULFILL = "fulfill";
 
     /**
      * Id of the resource add button.
@@ -910,11 +897,6 @@ public final class WindowConstants
     public static final String WINDOW_ID_LIST_REQUESTS = "requests";
 
     /**
-     * Requests box id.
-     */
-    public static final String WINDOW_ID_REQUEST_BOX = "requestx";
-
-    /**
      * Requestst stack id.
      */
     public static final String LIST_ELEMENT_ID_REQUEST_STACK = "requestStack";
@@ -970,16 +952,9 @@ public final class WindowConstants
     public static final int LIFE_COUNT_DIVIDER = 30;
 
     /**
-     * Warehouse constants
-     */
-    public static final String HUT_WAREHOUSE_RESOURCE_SUFFIX = ":gui/layouthuts/layoutwarehouseoptions.xml";
-    public static final String SORT_WAREHOUSE_BUTTON         = "sort";
-
-    /**
      * Postbox constants.
      */
     public static final String INPUT_NAME     = "name";
-    public static final String WINDOW_POSTBOX = ":gui/windowpostbox.xml";
     public static final String INPUT_QTY      = "qty";
     public static final String BUTTON_REQUEST = "request";
 
@@ -987,7 +962,6 @@ public final class WindowConstants
      * Id of the done button in the GUI.
      */
     public static final String BUTTON_DONE = "done";
-
 
     /**
      * Id of the hire button.
@@ -1013,11 +987,6 @@ public final class WindowConstants
      * Assign button of the gui.
      */
     public static final String CITIZEN_DONE = "done";
-
-    /**
-     * Link to the xml file of the window.
-     */
-    public static final String ASSIGN_CITIZEN_RESOURCE_SUFFIX = ":gui/windowassigncitizen.xml";
 
     /**
      * Id of the job label in the GUI.
@@ -1070,11 +1039,6 @@ public final class WindowConstants
     public static final String DISTANCE_LABEL = "distance";
 
     /**
-     * Link to the xml file of the window.
-     */
-    public static final String HIRE_WORKER_SUFFIX = ":gui/windowhireworker.xml";
-
-    /**
      * Id of the fire button
      */
     public static final String BUTTON_FIRE = "fire";
@@ -1105,46 +1069,6 @@ public final class WindowConstants
     public static final String BUTTON_REACTIVATE = "reactivate";
 
     /**
-     * String of the suggest building GUI.
-     */
-    public static final String SUGGEST_BUILDING_SOURCE_SUFFIX = ":gui/windowsuggestbuildtool.xml";
-
-    /**
-     * String of the reactivate building GUI.
-     */
-    public static final String REACTIVATE_BUILDING_SOURCE_SUFFIX = ":gui/windowreactivatebuilding.xml";
-
-    /**
-     * String of the Townhall colony management GUI.
-     */
-    public static final String TOWNHALL_COLONY_MANAGEMENT_GUI = ":gui/townhall/windowcolonymanagement.xml";
-
-    /**
-     * String of the Townhall colony delete GUI.
-     */
-    public static final String TOWNHALL_COLONY_DELETE_GUI = ":gui/townhall/windowcolonymanagementdelete.xml";
-
-    /**
-     * Interaction suffix.
-     */
-    public static final String INTERACTION_RESOURCE_SUFFIX = ":gui/citizen/windowinteraction.xml";
-
-    /**
-     * String of the Townhall colony management GUI.
-     */
-    public static final String TOWNHALL_CANT_CREATE_GUI = ":gui/townhall/windowcantfoundcolony.xml";
-
-    /**
-     * String of the Townhall colony abandon delete GUI.
-     */
-    public static final String TOWNHALL_DELETE_ABANDON_GUI = ":gui/townhall/windowdeleteabandoncolony.xml";
-
-    /**
-     * String of the Townhall colony management GUI.
-     */
-    public static final String TOWNHALL_COLONY_REACTIVATE_GUI = ":gui/townhall/windowcolonyreactivate.xml";
-
-    /**
      * Id of the chat label.
      */
     public static final String CHAT_LABEL_ID = "chat";
@@ -1160,11 +1084,6 @@ public final class WindowConstants
     public static final String RESPONSE_BOX_ID         = "responseOptions";
     public static final String MEDIUM_SIZED_BUTTON_RES = "textures/gui/builderhut/builder_button_medium_large.png";
     public static final String MEDIUM_SIZED_BUTTON_DIS = "textures/gui/builderhut/builder_button_medium_large_disabled.png";
-
-    /**
-     * The resource string.
-     */
-    public static final String RESOURCE_STRING = ":gui/layouthuts/layoutuniversity.xml";
 
     /**
      * The job modifier page.
@@ -1227,7 +1146,6 @@ public final class WindowConstants
     public static final String TOWNHALL_PERM_LIST         = "permissionsList";
     public static final String TOWNHALL_PERM_SETTINGS     = "permissionsSettings";
     public static final String TOWNHALL_PERM_MODE_TOGGLE  = "permissionsModeToggle";
-    public static final String TOWNHALL_BUTTON_SUBSCRIBER = "setSubscriber";
     public static final String TOWNHALL_RANK_TYPE_PICKER  = "rankTypePicker";
 
     /**
@@ -1269,16 +1187,6 @@ public final class WindowConstants
      * Settings list ID.
      */
     public static final String LIST_SETTINGS = "settingslist";
-
-    /**
-     * Supplies window.
-     */
-    public static final String SUPPLIES_RESOURCE_SUFFIX = ":gui/windowsupplies.xml";
-
-    /**
-     * Supplies story window.
-     */
-    public static final String SUPPLIES_STORY_RESOURCE_SUFFIX = ":gui/windowsupplystory.xml";
 
     /**
      * Placement button

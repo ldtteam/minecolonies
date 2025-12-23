@@ -7,6 +7,10 @@ import com.minecolonies.api.network.IMessage;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.colony.crafting.CustomRecipeManagerMessage;
+import com.minecolonies.core.debug.messages.DebugEnableMessage;
+import com.minecolonies.core.debug.messages.DebugEnablePathfindingMessage;
+import com.minecolonies.core.debug.messages.DebugOutputMessage;
+import com.minecolonies.core.debug.messages.QueryCitizenAIHistoryMessage;
 import com.minecolonies.core.network.messages.PermissionsMessage;
 import com.minecolonies.core.network.messages.client.*;
 import com.minecolonies.core.network.messages.client.colony.*;
@@ -22,7 +26,7 @@ import com.minecolonies.core.network.messages.server.colony.building.miner.Miner
 import com.minecolonies.core.network.messages.server.colony.building.miner.MinerSetLevelMessage;
 import com.minecolonies.core.network.messages.server.colony.building.postbox.PostBoxRequestMessage;
 import com.minecolonies.core.network.messages.server.colony.building.university.TryResearchMessage;
-import com.minecolonies.core.network.messages.server.colony.building.warehouse.SortWarehouseMessage;
+import com.minecolonies.core.network.messages.server.colony.building.warehouse.SortBuildingMessage;
 import com.minecolonies.core.network.messages.server.colony.building.warehouse.UpgradeWarehouseMessage;
 import com.minecolonies.core.network.messages.server.colony.building.worker.*;
 import com.minecolonies.core.network.messages.server.colony.citizen.*;
@@ -130,7 +134,6 @@ public class NetworkChannel
         registerMessage(++idx, PermissionsMessage.AddRank.class, PermissionsMessage.AddRank::new);
         registerMessage(++idx, PermissionsMessage.RemoveRank.class, PermissionsMessage.RemoveRank::new);
         registerMessage(++idx, PermissionsMessage.EditRankType.class, PermissionsMessage.EditRankType::new);
-        registerMessage(++idx, PermissionsMessage.SetSubscriber.class, PermissionsMessage.SetSubscriber::new);
 
         //  Colony Request messages
         registerMessage(++idx, BuildRequestMessage.class, BuildRequestMessage::new);
@@ -152,6 +155,7 @@ public class NetworkChannel
         registerMessage(++idx, ColonyViewRemoveMessage.class, ColonyViewRemoveMessage::new);
         registerMessage(++idx, GiveToolMessage.class, GiveToolMessage::new);
         registerMessage(++idx, ColonyAbandonOwnMessage.class, ColonyAbandonOwnMessage::new);
+        registerMessage(++idx, TriggerConnectionEventMessage.class, TriggerConnectionEventMessage::new);
 
         registerMessage(++idx, AssignUnassignMessage.class, AssignUnassignMessage::new);
         registerMessage(++idx, OpenCraftingGUIMessage.class, OpenCraftingGUIMessage::new);
@@ -170,7 +174,7 @@ public class NetworkChannel
         registerMessage(++idx, ColonyStructureStyleMessage.class, ColonyStructureStyleMessage::new);
         registerMessage(++idx, PauseCitizenMessage.class, PauseCitizenMessage::new);
         registerMessage(++idx, RestartCitizenMessage.class, RestartCitizenMessage::new);
-        registerMessage(++idx, SortWarehouseMessage.class, SortWarehouseMessage::new);
+        registerMessage(++idx, SortBuildingMessage.class, SortBuildingMessage::new);
         registerMessage(++idx, PostBoxRequestMessage.class, PostBoxRequestMessage::new);
         registerMessage(++idx, HireMercenaryMessage.class, HireMercenaryMessage::new);
         registerMessage(++idx, HutRenameMessage.class, HutRenameMessage::new);
@@ -204,7 +208,7 @@ public class NetworkChannel
         registerMessage(++idx, InteractionClose.class, InteractionClose::new);
         registerMessage(++idx, GetColonyInfoMessage.class, GetColonyInfoMessage::new);
         registerMessage(++idx, PickupBlockMessage.class, PickupBlockMessage::new);
-        registerMessage(++idx, MarkStoryReadOnItem.class, MarkStoryReadOnItem::new);
+        registerMessage(++idx, MarkStoryReadOnItemMessage.class, MarkStoryReadOnItemMessage::new);
         registerMessage(++idx, AlterRestaurantMenuItemMessage.class, AlterRestaurantMenuItemMessage::new);
         registerMessage(++idx, OpenExpeditionSheetInventoryMessage.class, OpenExpeditionSheetInventoryMessage::new);
         registerMessage(++idx, AssignGuardMessage.class, AssignGuardMessage::new);
@@ -226,6 +230,7 @@ public class NetworkChannel
         registerMessage(++idx, PlayAudioMessage.class, PlayAudioMessage::new);
         registerMessage(++idx, PlayMusicAtPosMessage.class, PlayMusicAtPosMessage::new);
         registerMessage(++idx, ColonyVisitorViewDataMessage.class, ColonyVisitorViewDataMessage::new);
+        registerMessage(++idx, ColonyViewAnimalViewDataMessage.class, ColonyViewAnimalViewDataMessage::new);
         registerMessage(++idx, SyncPathMessage.class, SyncPathMessage::new);
         registerMessage(++idx, SyncPathReachedMessage.class, SyncPathReachedMessage::new);
         registerMessage(++idx, ReactivateBuildingMessage.class, ReactivateBuildingMessage::new);
@@ -270,6 +275,15 @@ public class NetworkChannel
 
         // Assistant block place request
         registerMessage(++idx, PlayerAssistantBuildRequestMessage.class, PlayerAssistantBuildRequestMessage::new);
+
+        // Debug messages
+        registerMessage(++idx, QueryCitizenAIHistoryMessage.class, QueryCitizenAIHistoryMessage::new);
+        registerMessage(++idx, DebugEnablePathfindingMessage.class, DebugEnablePathfindingMessage::new);
+        registerMessage(++idx, DebugOutputMessage.class, DebugOutputMessage::new);
+        registerMessage(++idx, DebugEnableMessage.class, DebugEnableMessage::new);
+
+        // Item Setting Messages
+        registerMessage(++idx, ItemSettingMessage.class, ItemSettingMessage::new);
     }
 
     private void setupInternalMessages()

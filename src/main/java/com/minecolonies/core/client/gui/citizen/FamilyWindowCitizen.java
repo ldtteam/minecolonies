@@ -6,20 +6,14 @@ import com.ldtteam.blockui.views.ScrollingList;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
-
-import static com.minecolonies.api.util.constant.WindowConstants.CITIZEN_FAM_RESOURCE_SUFFIX;
 
 /**
  * BOWindow for the citizen.
  */
 public class FamilyWindowCitizen extends AbstractWindowCitizen
 {
-    /**
-     * Assigned citizen.
-     */
-    private final ICitizenDataView citizen;
-
     /**
      * Holder of a list element
      */
@@ -33,8 +27,7 @@ public class FamilyWindowCitizen extends AbstractWindowCitizen
      */
     public FamilyWindowCitizen(final ICitizenDataView citizen)
     {
-        super(citizen, Constants.MOD_ID + CITIZEN_FAM_RESOURCE_SUFFIX);
-        this.citizen = citizen;
+        super(citizen, new ResourceLocation(Constants.MOD_ID, "gui/citizen/family.xml"));
         siblingList = findPaneOfTypeByID("siblings", ScrollingList.class);
         childrenList = findPaneOfTypeByID("children", ScrollingList.class);
     }

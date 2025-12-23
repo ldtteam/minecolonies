@@ -51,7 +51,7 @@ public class OpenDeleteAbandonColonyMessage implements IMessage
     @Override
     public void onExecute(NetworkEvent.Context ctxIn, boolean isLogicalServer)
     {
-        new WindowTownHallDeleteAbandonColony(currentTownHallPos, oldColonyName, oldColonyPos, oldColonyId).open();
+        new WindowTownHallDeleteAbandonColony(currentTownHallPos, oldColonyName, oldColonyPos).open();
     }
 
     @Override

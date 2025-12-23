@@ -18,7 +18,7 @@
   "requirements": [
     {
       "type": "minecolonies:building",
-      "building": "residence",
+      "building": "minecolonies:residence",
       "level": 3
     }
   ],

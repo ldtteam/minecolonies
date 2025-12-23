@@ -55,7 +55,7 @@ public class PathJobRaiderPathing extends AbstractPathJob implements IDestinatio
         direction = targetSpawnPoint;
         maxNodes = 20000;
         heuristicMod = 5.0;
-        setPathingOptions(new PathingOptions().withJumpCost(1).withStartSwimCost(1).withSwimCost(1).withCanSwim(true).withCanEnterDoors(true).withDropCost(5));
+        setPathingOptions(new PathingOptions().withJumpCost(1).withStartSwimCost(1).withSwimCost(1).withCanSwim(true).withCanEnterDoors(true).withCanEnterGates(true).withDropCost(5));
     }
 
     @Override

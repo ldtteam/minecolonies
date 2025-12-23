@@ -181,6 +181,22 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
           .add(Items.SPIDER_EYE)
           .add(Items.ROTTEN_FLESH);
 
+        tag(ModTags.rawMeat)
+          .add(Items.BEEF)
+          .add(Items.CHICKEN)
+          .add(Items.PORKCHOP)
+          .add(Items.RABBIT)
+          .add(Items.MUTTON);
+
+        tag(ModTags.feed)
+          .add(Items.WHEAT)
+          .add(ModBlocks.blockDurum.asItem())
+          .addTag(Tags.Items.CROPS_WHEAT);
+
+        tag(ModTags.leather)
+          .add(Items.SADDLE)
+          .add(Items.LEATHER);
+
         final Item[] paperExtras = getDomumExtra(ExtraBlockType.BASE_PAPER, ExtraBlockType.LIGHT_PAPER);
 
         tag(ModTags.crafterIngredient.get(TagConstants.CRAFTING_BAKER))
@@ -557,6 +573,13 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
 
         tag(ModTags.ignoreNBT)
           .addTag(ItemTags.BANNERS);
+
+        tag(ItemTags.BOOKSHELF_BOOKS)
+            .add(ModItems.ancientTome)
+            .add(ModItems.colonyMap)
+            .add(ModItems.clipboard)
+            .add(ModItems.questLog)
+            .add(ModItems.resourceScroll);
     }
 
     @NotNull

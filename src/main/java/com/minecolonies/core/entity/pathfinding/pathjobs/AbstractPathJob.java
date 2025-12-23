@@ -35,6 +35,7 @@ import net.minecraft.world.level.block.state.properties.Half;
 import net.minecraft.world.level.pathfinder.BlockPathTypes;
 import net.minecraft.world.level.pathfinder.Node;
 import net.minecraft.world.level.pathfinder.Path;
+import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -155,6 +156,11 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
      * First node
      */
     private MNode startNode = null;
+
+    /**
+     * Current best node
+     */
+    private MNode bestNode = null;
 
     /**
      * Visited level
@@ -327,7 +333,7 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
     @Nullable
     protected Path search()
     {
-        MNode bestNode = getAndSetupStartNode();
+        bestNode = getAndSetupStartNode();
         double bestNodeEndScore = getEndNodeScore(bestNode);
         // Node count since we found a better end node than the current one
         int nodesSinceEndNode = 0;
@@ -584,6 +590,12 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
             return false;
         }
 
+        // When reaching and never having done a heuristic rebalance and we did explore a high cost assume that we found a possibly too expensive path
+        if (reaches && maxCost > 20 && visitedLevel == 1 && totalNodesVisited < maxNodes * 0.5)
+        {
+            costPerEstimation *= 0.7;
+        }
+
         // Detect an overstimating heuristic(not guranteed, but can check the found path)
         if (costPerEstimation < 0.9 || (costPerEstimation > 1.2 && !reaches))
         {
@@ -720,6 +732,12 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
         //  Can we traverse into this node?  Fix the y up, skip on already explored nodes
         if (node.isVisited())
         {
+            if (node.isCornerNode() && node.parent != null && node.parent.y == node.y)
+            {
+                // Corner nodes can only connect sideways when going up
+                return;
+            }
+
             final Block target = cachedBlockLookup.getBlockState(nextX, nextY, nextZ).getBlock();
             if (target instanceof PanelBlock || target instanceof TrapDoorBlock)
             {
@@ -840,7 +858,7 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
         final boolean onRoad = WorkerUtil.isPathBlock(belowState.getBlock());
         final boolean onRails = pathingOptions.canUseRails() && (corner ? belowState : state).getBlock() instanceof BaseRailBlock;
         final boolean railsExit = !onRails && node != null && node.isOnRails();
-        final boolean ladder = PathfindingUtils.isLadder(state, pathingOptions);
+        final boolean ladder = PathfindingUtils.isLadder(state, pathingOptions, nextX, nextY, nextZ, cachedBlockLookup);
         final boolean isDiving = isSwimming && PathfindingUtils.isWater(world, null, aboveState, null);
 
         double nextCost = 0;
@@ -872,7 +890,7 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
 
         if (nextNode == null)
         {
-            nextNode = createNode(node, nextX, nextY, nextZ, nodeKey, heuristic, cost);
+            nextNode = createNode(node, nextX, nextY, nextZ, heuristic, cost);
             nextNode.setOnRails(onRails);
             nextNode.setCornerNode(corner);
             if (isSwimming)
@@ -895,11 +913,11 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
 
     @NotNull
     private MNode createNode(
-      final MNode parent, final int x, final int y, final int z, final int nodeKey, final double heuristic, final double cost)
+        final MNode parent, final int x, final int y, final int z, final double heuristic, final double cost)
     {
         final MNode node;
         node = new MNode(parent, x, y, z, cost, heuristic);
-        nodes.put(nodeKey, node);
+        nodes.put(MNode.computeNodeKey(x, y, z), node);
         if (debugDrawEnabled)
         {
             debugNodesNotVisited.add(node);
@@ -1262,7 +1280,12 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
         if (!isPassable(x, y + 1, z, true, parent))
         {
             // TODO: Checking +1 and -1 seems odd? probably one intended to be current instead
-            final VoxelShape bb1 = cachedBlockLookup.getBlockState(x, y - 1, z).getCollisionShape(world, tempWorldPos.set(x, y - 1, z));
+            VoxelShape bb1 = cachedBlockLookup.getBlockState(x, y - 1, z).getCollisionShape(world, tempWorldPos.set(x, y - 1, z));
+            if (PathfindingUtils.isLiquid(cachedBlockLookup.getBlockState(x, y - 1, z)))
+            {
+                bb1 = Shapes.block();
+            }
+
             final VoxelShape bb2 = cachedBlockLookup.getBlockState(x, y + 1, z).getCollisionShape(world, tempWorldPos.set(x, y + 1, z));
             if ((y + 1 + ShapeUtil.getStartY(bb2, 1)) - (y - 1 + ShapeUtil.getEndY(bb1, 0)) < 2)
             {
@@ -1357,17 +1380,18 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
                         return true;
                     }
 
-                    // We cannot enter a space of a trapdoor if its facing the opposite direction.
+                    // We cannot enter a space of a trapdoor if its facing the opposite direction, unless we are above it
                     if (direction == facing)
                     {
-                        return false;
+                        return dY < 0;
                     }
 
                     return true;
                 }
                 else
                 {
-                    return pathingOptions.canEnterDoors() && (block.getBlock() instanceof DoorBlock || block.getBlock() instanceof FenceGateBlock)
+                    return (pathingOptions.canEnterDoors() && block.getBlock() instanceof DoorBlock)
+                             || (pathingOptions.canEnterGates() && block.getBlock() instanceof FenceGateBlock)
                              || block.getBlock() instanceof AbstractBlockMinecoloniesConstructionTape
                              || block.getBlock() instanceof PressurePlateBlock
                              || block.getBlock() instanceof BlockDecorationController
@@ -1420,7 +1444,7 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
         if (ShapeUtil.isEmpty(shape) || ShapeUtil.max(shape, Direction.Axis.Y) <= 0.1)
         {
             return !head
-                     || !(state.getBlock() instanceof WoolCarpetBlock || state.getBlock() instanceof FloatingCarpetBlock)
+                     || !(state.getBlock() instanceof WoolCarpetBlock || state.getBlock() instanceof FloatingCarpetBlock || state.getBlock() instanceof WaterlilyBlock)
                      || PathfindingUtils.isLadder(state, pathingOptions);
         }
         return isPassable(state, x, y, z, parent, head);
@@ -1511,7 +1535,7 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
             return handleInLiquid(x, y, z, below, isSwimming);
         }
 
-        if (PathfindingUtils.isLadder(below, pathingOptions))
+        if (PathfindingUtils.isLadder(below, pathingOptions, x, y - 1, z, cachedBlockLookup))
         {
             return y;
         }
@@ -1644,7 +1668,7 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
                 }
             }
         }
-        else if (parentBlock instanceof FloatingCarpetBlock)
+        else if (parentBlock instanceof FloatingCarpetBlock || parentBlock instanceof WaterlilyBlock)
         {
             if (dY < 0)
             {
@@ -1860,8 +1884,10 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
     @Override
     public String toString()
     {
-        return getClass().getSimpleName() + " start:" + start + " entity:" + entity + " maxNodes:" + maxNodes + " totalNodesVisited:" + totalNodesVisited + " h-rebalances:" + (
+        return getClass().getSimpleName() + " start:" + start.toShortString() + " entity:" + entity + " maxNodes:" + maxNodes + " totalNodesVisited:" + totalNodesVisited
+            + " bestNodeCost:"
+            + bestNode.getCost() + " heuristicCostEstimate:" + startNode.getHeuristic() + " h-rebalances:" + (
             visitedLevel - 1) + " reaches:"
-            + reachesDestination;
+            + reachesDestination + (this instanceof IDestinationPathJob ? " dest:" + ((IDestinationPathJob) this).getDestination().toShortString() : "");
     }
 }

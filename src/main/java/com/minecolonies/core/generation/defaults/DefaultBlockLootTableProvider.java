@@ -73,6 +73,7 @@ public class DefaultBlockLootTableProvider extends SimpleLootTableProvider
 
         saveBlock(ModBlocks.farmland, registrar, lootPool -> lootPool.add(AlternativesEntry.alternatives().otherwise(LootItem.lootTableItem(Blocks.DIRT))));
         saveBlock(ModBlocks.floodedFarmland, registrar, lootPool -> lootPool.add(AlternativesEntry.alternatives().otherwise(LootItem.lootTableItem(Blocks.DIRT))));
+        saveBlock(ModBlocks.blockColonySign, registrar);
 
         for (Block block : ModBlocks.getCrops())
         {

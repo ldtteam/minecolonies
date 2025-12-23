@@ -58,6 +58,7 @@ public class ModEquipmentTypes
     public static final RegistryObject<EquipmentTypeEntry> chestplate;
     public static final RegistryObject<EquipmentTypeEntry> boots;
     public static final RegistryObject<EquipmentTypeEntry> flint_and_steel;
+    public static final RegistryObject<EquipmentTypeEntry> lead;
 
     static
     {
@@ -167,6 +168,13 @@ public class ModEquipmentTypes
                        .setIsEquipment((itemStack, equipmentType) -> itemStack.getItem() instanceof FlintAndSteelItem)
                        .setEquipmentLevel((itemStack, equipmentType) -> durabilityBasedLevel(itemStack, Items.FLINT_AND_STEEL.getMaxDamage()))
                   .build());
+
+        lead = register("lead",
+          builder -> builder.setDisplayName(Component.translatable(ToolTranslationConstants.TOOL_TYPE_LEAD))
+                       .setIsEquipment((itemStack, equipmentType) -> itemStack.getItem() instanceof LeadItem)
+                       .setEquipmentLevel((itemStack, equipmentType) -> -1)
+                  .build());
+
     }
 
     /**

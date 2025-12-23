@@ -133,7 +133,7 @@ public abstract class AbstractCraftingRequestResolver extends AbstractRequestRes
     {
         if (building.getBuildingLevel() <= 0
               || !building.hasModule(WorkerBuildingModule.class)
-              || building.getModuleMatching(WorkerBuildingModule.class, m -> m.getJobEntry() == jobEntry).getAssignedCitizen().isEmpty())
+            || !hasModuleForJob(building, jobEntry))
         {
             return false;
         }
@@ -151,7 +151,13 @@ public abstract class AbstractCraftingRequestResolver extends AbstractRequestRes
             // If this building is resolving a generic food request, then only allow it to resolve non-smeltables.
             if (recipe != null && (!isFood || recipe.getIntermediate() != Blocks.FURNACE) && canBuildingCraftRecipe(building, recipe))
             {
-                final int recipeCount = request.getRequest().getCount() / recipe.getPrimaryOutput().getCount();
+                final int outputCount = recipe.getPrimaryOutput().getCount();
+                if (outputCount == 0)
+                {
+                    continue;
+                }
+
+                final int recipeCount = request.getRequest().getCount() / outputCount;
                 boolean success = true;
                 for (final ItemStorage ingredient : recipe.getCleanedInput())
                 {
@@ -165,6 +171,26 @@ public abstract class AbstractCraftingRequestResolver extends AbstractRequestRes
                 {
                     return true;
                 }
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Checks whether a fitting module for the job exists
+     *
+     * @param building
+     * @param jobEntry
+     * @return
+     */
+    private boolean hasModuleForJob(final AbstractBuilding building, final JobEntry jobEntry)
+    {
+        for (final var module : building.getModulesByType(WorkerBuildingModule.class))
+        {
+            if (module.getJobEntry() == jobEntry && module.hasAssignedCitizen())
+            {
+                return true;
             }
         }
 

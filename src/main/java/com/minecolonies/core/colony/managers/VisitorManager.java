@@ -169,9 +169,7 @@ public class VisitorManager implements IVisitorManager
     @Override
     public void sendPackets(@NotNull final Set<ServerPlayer> closeSubscribers, @NotNull final Set<ServerPlayer> newSubscribers)
     {
-        Set<ServerPlayer> players = new HashSet<>(newSubscribers);
-        players.addAll(closeSubscribers);
-        Set<IVisitorData> toSend = new HashSet<>();
+        Set<IVisitorData> toSend = null;
         boolean refresh = !newSubscribers.isEmpty() || this.isDirty;
 
         if (refresh)
@@ -189,16 +187,24 @@ public class VisitorManager implements IVisitorManager
             {
                 if (data.isDirty())
                 {
+                    if (toSend == null)
+                    {
+                        toSend = new HashSet<>();
+                    }
+
                     toSend.add(data);
                 }
                 data.clearDirty();
             }
         }
 
-        if (toSend.isEmpty())
+        if (toSend == null || toSend.isEmpty())
         {
             return;
         }
+
+        Set<ServerPlayer> players = new HashSet<>(newSubscribers);
+        players.addAll(closeSubscribers);
 
         final ColonyVisitorViewDataMessage message = new ColonyVisitorViewDataMessage(colony, toSend, refresh);
 

@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "connected=false": {
+      "model": "minecolonies:block/colonysign"
+    },
+    "connected=true": {
+      "model": "minecolonies:block/colonysign2"
+    }
+  }
+}

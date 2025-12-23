@@ -181,6 +181,7 @@ public class ColonyPackageManager implements IColonyPackageManager
 
             colony.getCitizenManager().sendPackets(closeSubscribers, newSubscribers);
             colony.getVisitorManager().sendPackets(closeSubscribers, newSubscribers);
+            colony.getAnimalManager().sendPackets(closeSubscribers, newSubscribers);
             colony.getBuildingManager().sendPackets(closeSubscribers, newSubscribers);
             colony.getResearchManager().sendPackets(closeSubscribers, newSubscribers);
         }
@@ -193,6 +194,7 @@ public class ColonyPackageManager implements IColonyPackageManager
         colony.getBuildingManager().clearDirty();
         colony.getCitizenManager().clearDirty();
         colony.getVisitorManager().clearDirty();
+        colony.getAnimalManager().clearDirty();
         colony.getResearchManager().clearDirty();
         newSubscribers = new HashSet<>();
     }

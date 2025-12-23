@@ -57,7 +57,7 @@ public class WindowInteraction extends AbstractWindowSkeleton
      */
     public WindowInteraction(final ICitizenDataView citizen)
     {
-        super(Constants.MOD_ID + INTERACTION_RESOURCE_SUFFIX, new MainWindowCitizen(citizen));
+        super(new MainWindowCitizen(citizen), new ResourceLocation(Constants.MOD_ID, "gui/citizen/windowinteraction.xml"));
         this.citizen = citizen;
         this.interactions = new ArrayList<>(citizen.getOrderedInteractions());
         registerButton(BUTTON_CANCEL, this::cancelClicked);

@@ -11,7 +11,9 @@ import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.crafting.GenericRecipe;
 import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.equipment.ModEquipmentTypes;
 import com.minecolonies.api.items.ModItems;
+import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
 import com.minecolonies.core.colony.buildings.modules.AnimalHerdingModule;
 import com.minecolonies.core.colony.buildings.modules.settings.IntSetting;
@@ -24,6 +26,7 @@ import net.minecraft.util.Tuple;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.animal.Cow;
 import net.minecraft.world.entity.animal.MushroomCow;
+import net.minecraft.world.entity.animal.goat.Goat;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.NotNull;
@@ -33,6 +36,7 @@ import java.util.*;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.Constants.MOD_ID;
+import static com.minecolonies.api.util.constant.EquipmentLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 
 /**
  * Creates a new building for the Cowboy.
@@ -138,7 +142,7 @@ public class BuildingCowboy extends AbstractBuilding
     /**
      * Cow (and Mooshroom) herding module
      */
-    public static class HerdingModule extends AnimalHerdingModule implements IBuildingEventsModule, IHasRequiredItemsModule, IPersistentModule
+    public static class HerdingModule extends AnimalHerdingModule implements IBuildingEventsModule, IPersistentModule
     {
         private int currentMilk;
         private int currentStew;
@@ -146,17 +150,17 @@ public class BuildingCowboy extends AbstractBuilding
 
         public HerdingModule()
         {
-            super(ModJobs.cowboy.get(), a -> a instanceof Cow, new ItemStack(Items.WHEAT, 2));
+            super(ModJobs.cowboy.get(), a -> a instanceof Cow || a instanceof Goat, new ItemStorage(Items.WHEAT, 2));
         }
 
         @Override
         public Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> getRequiredItemsAndAmount()
         {
+            final Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> requiredItems = super.getRequiredItemsAndAmount();
             final int days = Math.max(1, getBuilding().getSetting(MILKING_DAYS).getValue());
             final int bucketsToKeep = (int) Math.ceil(2D * getBuilding().getSetting(MILKING_AMOUNT).getValue() / days);
             final int bowlsToKeep = (int) Math.ceil(2D * getBuilding().getSetting(STEWING_AMOUNT).getValue() / days);
 
-            final Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> requiredItems = new HashMap<>();
             if (bucketsToKeep > 0)
             {
                 requiredItems.put(s -> s.is(Items.BUCKET), new Tuple<>(bucketsToKeep, false));
@@ -169,12 +173,6 @@ public class BuildingCowboy extends AbstractBuilding
             }
 
             return requiredItems;
-        }
-
-        @Override
-        public Map<ItemStorage, Integer> reservedStacksExcluding(@Nullable IRequest<? extends IDeliverable> excluded)
-        {
-            return Collections.emptyMap();
         }
 
         @NotNull
@@ -204,6 +202,19 @@ public class BuildingCowboy extends AbstractBuilding
                         .withInputs(List.of(List.of(ModItems.large_empty_bottle.getDefaultInstance())))
                         .withRequiredEntity(animal.getType())
                         .build());
+            }
+            else if (animal instanceof Goat)
+            {
+                recipes.add(GenericRecipe.builder()
+                    .withOutput(Items.MILK_BUCKET)
+                    .withInputs(List.of(List.of(Items.BUCKET.getDefaultInstance())))
+                    .withRequiredEntity(animal.getType())
+                    .build());
+                recipes.add(GenericRecipe.builder()
+                    .withOutput(ModItems.large_milk_bottle)
+                    .withInputs(List.of(List.of(ModItems.large_empty_bottle.getDefaultInstance())))
+                    .withRequiredEntity(animal.getType())
+                    .build());
             }
 
             return recipes;

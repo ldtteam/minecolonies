@@ -54,10 +54,6 @@ public enum AIWorkerState implements IAIState
      */
     COMPLETE_BUILD(false),
     /**
-     * Pick up left over items after building.
-     */
-    PICK_UP_RESIDUALS(true),
-    /**
      * Decide what AIstate to go to next.
      */
     DECIDE(true),
@@ -65,10 +61,6 @@ public enum AIWorkerState implements IAIState
      * Do not work, can be used for freetime activities.
      */
     PAUSED(true),
-    /**
-     * Walk to goal for debugging.
-     */
-    WALK_TO(true),
     /*
 ###FISHERMAN###
      */
@@ -310,7 +302,7 @@ public enum AIWorkerState implements IAIState
     /**
      * smelter smelts ore until its a bar.
      */
-    START_USING_FURNACE(true),
+    FILL_UP_FURNACES(true),
 
     /**
      * Gathering ore from his building.
@@ -321,6 +313,11 @@ public enum AIWorkerState implements IAIState
      * Retrieve the ore from the furnace.
      */
     RETRIEVING_END_PRODUCT_FROM_FURNACE(true),
+
+    /**
+     * Retrieve unrelated product from furnace.
+     */
+    RETRIEVING_UNRELATED_PRODUCT_FROM_FURNACE(true),
 
     /**
      * Retrieve used fuel from the furnace.

@@ -5,6 +5,7 @@ import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.api.util.StatsUtil;
 import com.minecolonies.core.Network;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingSchool;
 import com.minecolonies.core.colony.interactionhandling.StandardInteraction;
@@ -30,6 +31,8 @@ import static com.minecolonies.api.research.util.ResearchConstants.TEACHING;
 import static com.minecolonies.api.util.constant.Constants.DEFAULT_SPEED;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.api.util.constant.TranslationConstants.PUPIL_NO_CARPET;
+import static com.minecolonies.api.util.constant.StatisticsConstants.LEVELS_GAINED;
+import static com.minecolonies.api.util.constant.StatisticsConstants.ITEM_USED;
 
 public class EntityAIWorkPupil extends AbstractEntityAIInteract<JobPupil, BuildingSchool>
 {
@@ -175,10 +178,21 @@ public class EntityAIWorkPupil extends AbstractEntityAIInteract<JobPupil, Buildi
 
         if (slot != -1)
         {
+            int priorIntLevel = worker.getCitizenData().getCitizenSkillHandler().getLevel(Skill.Intelligence);
+
             InventoryUtils.reduceStackInItemHandler(worker.getInventoryCitizen(), new ItemStack(Items.PAPER), 1);
+            StatsUtil.trackStatByName(building, ITEM_USED, new ItemStack(Items.PAPER).getHoverName(), 1);
+
             final double bonus = 50.0 * (1 + worker.getCitizenColonyHandler().getColonyOrRegister().getResearchManager().getResearchEffects().getEffectStrength(TEACHING));
 
             worker.getCitizenData().getCitizenSkillHandler().addXpToSkill(Skill.Intelligence, bonus, worker.getCitizenData());
+
+            int intGain = worker.getCitizenData().getCitizenSkillHandler().getLevel(Skill.Intelligence) - priorIntLevel;
+
+            if (intGain > 0)
+            {
+                StatsUtil.trackStatByName(building, LEVELS_GAINED, Skill.Intelligence.name(), intGain);
+            }
         }
 
         worker.decreaseSaturationForContinuousAction();

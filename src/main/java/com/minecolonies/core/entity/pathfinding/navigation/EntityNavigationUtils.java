@@ -1,6 +1,7 @@
 package com.minecolonies.core.entity.pathfinding.navigation;
 
 import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.entity.ai.combat.threat.IThreatTableEntity;
 import com.minecolonies.api.entity.other.AbstractFastMinecoloniesEntity;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.core.entity.pathfinding.pathjobs.PathJobMoveAwayFromLocation;
@@ -9,6 +10,7 @@ import com.minecolonies.core.entity.pathfinding.pathjobs.PathJobMoveToLocation;
 import com.minecolonies.core.entity.pathfinding.pathjobs.PathJobRandomPos;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Tuple;
+import net.minecraft.world.entity.Mob;
 
 public class EntityNavigationUtils
 {
@@ -149,8 +151,8 @@ public class EntityNavigationUtils
      *
      * @return True when arrived
      */
-    public static boolean walkToPos(
-        final AbstractFastMinecoloniesEntity entity, final BlockPos desiredPosition,
+    public static <T extends Mob> boolean walkToPos(
+        final T entity, final BlockPos desiredPosition,
         final int distToDesired, final boolean safeDestination, final double speedFactor)
     {
         final MinecoloniesAdvancedPathNavigate nav = ((MinecoloniesAdvancedPathNavigate) entity.getNavigation());
@@ -202,11 +204,6 @@ public class EntityNavigationUtils
                     return true;
                 }
             }
-            else if (BlockPosUtil.dist(entity.blockPosition(), avoid) >= REACHED_DIST)
-            {
-                nav.stop();
-                return true;
-            }
 
             nav.walkAwayFrom(avoid, distance, speed, false);
         }
@@ -243,7 +240,7 @@ public class EntityNavigationUtils
      *
      * @return True when arrived
      */
-    public static boolean walkToRandomPosWithin(final AbstractFastMinecoloniesEntity entity, final int range, final double speedFactor, final Tuple<BlockPos, BlockPos> corners)
+    public static boolean walkToRandomPosWithin(final AbstractFastMinecoloniesEntity entity, final int range, final double speedFactor, final Tuple<BlockPos, BlockPos> corners, final boolean preferInside)
     {
         final MinecoloniesAdvancedPathNavigate nav = ((MinecoloniesAdvancedPathNavigate) entity.getNavigation());
         boolean isOnRightTask = (nav.getPathResult() != null && nav.getPathResult().getJob() instanceof PathJobRandomPos);
@@ -256,10 +253,20 @@ public class EntityNavigationUtils
                 return true;
             }
 
-            nav.walkToRandomPos(range, speedFactor, corners);
+            nav.walkToRandomPos(range, speedFactor, corners, preferInside);
         }
 
         return false;
+    }
+
+    /**
+     * Walks to a random position a given distance away within the provided box
+     *
+     * @return True when arrived
+     */
+    public static boolean walkToRandomPosWithin(final AbstractFastMinecoloniesEntity entity, final int range, final double speedFactor, final Tuple<BlockPos, BlockPos> corners)
+    {
+        return walkToRandomPosWithin(entity, range, speedFactor, corners, false);
     }
 
     /**
@@ -270,6 +277,32 @@ public class EntityNavigationUtils
     public static boolean walkToRandomPosAround(final AbstractFastMinecoloniesEntity entity, final BlockPos center, final int range, final double speedFactor)
     {
         final MinecoloniesAdvancedPathNavigate nav = ((MinecoloniesAdvancedPathNavigate) entity.getNavigation());
+        return walkToRandomPosHelper(nav, center, range, speedFactor);
+    }
+
+
+    /**
+     * Walks to a random position a given distance away around the provided center
+     *
+     * @return True when arrived
+     */
+    public static <T extends Mob> boolean walkToRandomPosAround(T entity, final BlockPos center, final int range, final double speedFactor)
+    {
+        final MinecoloniesAdvancedPathNavigate nav = ((MinecoloniesAdvancedPathNavigate) entity.getNavigation());
+        return walkToRandomPosHelper(nav, center, range, speedFactor);
+    }
+
+    /**
+     * Helper function to walk to a random position a given distance away around the provided center.
+     *
+     * @param nav the navigation to use
+     * @param center the center of the random position
+     * @param range the range of the random position
+     * @param speedFactor the speed factor to use
+     * @return true if an acceptible destination has been reached.
+     */
+    protected static boolean walkToRandomPosHelper(MinecoloniesAdvancedPathNavigate nav, final BlockPos center, final int range, final double speedFactor)
+    {
         boolean isOnRightTask = (nav.getPathResult() != null && PathJobRandomPos.isJobFor(nav.getPathResult().getJob(), center, range));
 
         if (nav.isDone() || !isOnRightTask)
@@ -285,4 +318,5 @@ public class EntityNavigationUtils
 
         return false;
     }
+
 }

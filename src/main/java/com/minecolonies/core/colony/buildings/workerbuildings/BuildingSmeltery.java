@@ -1,5 +1,6 @@
 package com.minecolonies.core.colony.buildings.workerbuildings;
 
+import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
@@ -115,7 +116,7 @@ public class BuildingSmeltery extends AbstractBuilding
             final ICompatibilityManager compatibility = IColonyManager.getInstance().getCompatibilityManager();
             for (final ItemStack stack : compatibility.getListOfAllItems())
             {
-                if (ItemStackUtils.IS_SMELTABLE.and(compatibility::isOre).and(s -> !s.is(ModTags.breakable_ore)).test(stack))
+                if (ItemStackUtils.IS_SMELTABLE.and(compatibility::isOre).and(s -> !compatibility.isBreakableOre(s)).test(stack))
                 {
                     final ItemStack output = FurnaceRecipes.getInstance().getSmeltingResult(stack);
                     recipes.add(createSmeltingRecipe(stack, output, Blocks.FURNACE));
@@ -172,14 +173,19 @@ public class BuildingSmeltery extends AbstractBuilding
         public List<IGenericRecipe> getAdditionalRecipesForDisplayPurposesOnly(@NotNull final Level world)
         {
             final List<IGenericRecipe> recipes = new ArrayList<>(super.getAdditionalRecipesForDisplayPurposesOnly(world));
+            final ICompatibilityManager compat = IMinecoloniesAPI.getInstance().getColonyManager().getCompatibilityManager();
 
             //noinspection ConstantConditions
             for (final Item input : ForgeRegistries.ITEMS.tags().getTag(ModTags.breakable_ore))
             {
-                recipes.add(GenericRecipe.builder()
-                        .withInputs(List.of(List.of(input.getDefaultInstance())))
-                        .withLootTable(getLootTable(input))
-                        .build());
+                final ItemStack inputStack = input.getDefaultInstance();
+                if (compat.isBreakableOre(inputStack))
+                {
+                    recipes.add(GenericRecipe.builder()
+                            .withInputs(List.of(List.of(inputStack)))
+                            .withLootTable(getLootTable(input))
+                            .build());
+                }
             }
 
             return recipes;
@@ -190,8 +196,16 @@ public class BuildingSmeltery extends AbstractBuilding
         {
             super.checkForWorkerSpecificRecipes();
 
+            final ICompatibilityManager compat = IMinecoloniesAPI.getInstance().getColonyManager().getCompatibilityManager();
+
             for (final Item input : ForgeRegistries.ITEMS.tags().getTag(ModTags.breakable_ore))
             {
+                final ItemStack inputStack = input.getDefaultInstance();
+                if (!compat.isBreakableOre(inputStack))
+                {
+                    continue;
+                }
+
                 Block b = Block.byItem(input);
                 List<ItemStack> drops = Block.getDrops(b.defaultBlockState(), (ServerLevel) building.getColony().getWorld(), building.getID(), null);
                 for (ItemStack drop : drops)
@@ -203,8 +217,8 @@ public class BuildingSmeltery extends AbstractBuilding
                 }
 
                 final RecipeStorage tempRecipe = RecipeStorage.builder()
-                        .withInputs(Collections.singletonList(new ItemStorage(new ItemStack(input))))
-                        .withSecondaryOutputs(drops)
+                        .withInputs(Collections.singletonList(new ItemStorage(inputStack)))
+                        .withSecondaryOutputs(drops)    // this is just a display example
                         .withLootTable(getLootTable(input))
                         .build();
                 IToken<?> token = IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(tempRecipe);

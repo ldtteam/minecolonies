@@ -1,9 +1,9 @@
 package com.minecolonies.api.colony.buildingextensions;
 
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.buildingextensions.modules.IBuildingExtensionModule;
 import com.minecolonies.api.colony.buildingextensions.registry.BuildingExtensionRegistries;
+import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.modules.IModuleContainer;
 import com.minecolonies.api.util.BlockPosUtil;
 import net.minecraft.core.BlockPos;
@@ -119,6 +119,13 @@ public interface IBuildingExtension extends IModuleContainer<IBuildingExtensionM
      * @return the unique id.
      */
     ExtensionId getId();
+
+    /**
+     * Register a specific module to the object.
+     *
+     * @param module the module to register.
+     */
+    void registerModule(@NotNull final IBuildingExtensionModule module);
 
     /**
      * Unique extension id.

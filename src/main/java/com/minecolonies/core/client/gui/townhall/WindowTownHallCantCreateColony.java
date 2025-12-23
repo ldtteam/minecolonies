@@ -3,17 +3,16 @@ package com.minecolonies.core.client.gui.townhall;
 import com.ldtteam.blockui.PaneBuilders;
 import com.ldtteam.blockui.controls.Text;
 import com.minecolonies.core.Network;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.client.gui.AbstractWindowSkeleton;
 import com.minecolonies.core.network.messages.server.PickupBlockMessage;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.Level;
 
-import static com.minecolonies.api.util.constant.Constants.MOD_ID;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 
 /**
@@ -28,7 +27,7 @@ public class WindowTownHallCantCreateColony extends AbstractWindowSkeleton
 
     public WindowTownHallCantCreateColony(final BlockPos pos, final MutableComponent warningMsg, final boolean displayConfigTooltip)
     {
-        super(MOD_ID + TOWNHALL_CANT_CREATE_GUI);
+        super(new ResourceLocation(Constants.MOD_ID, "gui/townhall/windowcantfoundcolony.xml"));
         mc.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.BOOK_PAGE_TURN, 1.0F));
         this.pos = pos;
         registerButton(BUTTON_CANCEL, this::close);

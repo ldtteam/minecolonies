@@ -162,9 +162,10 @@ public abstract class PercentageHarvestPlantModule extends AbstractPlantationMod
         else if (minimumPlantCount < harvestablePositions.size())
         {
             Set<BlockPos> duplicateLocator = new HashSet<>();
+            Set<BlockPos> harvestablePositionsSet = new HashSet<>(harvestablePositions);
             return harvestablePositions.stream()
                      .flatMap(f -> Stream.of(f, f.above(), f.below(), f.north(), f.south(), f.west(), f.east()))
-                     .filter(f -> !duplicateLocator.add(f))
+                     .filter(f -> harvestablePositionsSet.contains(f) && !duplicateLocator.add(f))
                      .findFirst()
                      .orElse(harvestablePositions.get(0));
         }

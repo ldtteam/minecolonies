@@ -7,9 +7,6 @@
     <image source="minecolonies:textures/gui/builderhut/builder_sketch_right.png" size="6 15" pos="140 12"/>
     <text size="130 11" pos="30 14" color="red" textalign="MIDDLE" label="$(block.minecolonies.blockhutfield)"/>
 
-    <text id="not-in-colony" size="164 11" pos="13 55" color="black" textalign="MIDDLE"
-           label="$(com.minecolonies.coremod.gui.workerhuts.fields.notincolony)"/>
-
     <text id="current-farmer" size="164 11" pos="13 30" color="black"/>
 
     <button id="select-seed" size="86 17" pos="13 72" color="black"

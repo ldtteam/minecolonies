@@ -51,6 +51,11 @@ public class PathingStuckHandler<NAV extends PathNavigation & IMinecoloniesNavig
     private static final int TICKS_PER_BLOCK = 7;
 
     /**
+     * Initial stucklevel
+     */
+    private static final int STARTING_STUCK_LEVEL = -5;
+
+    /**
      * Amount of path steps allowed to teleport on stuck, 0 = disabled
      */
     private int teleportRange = 0;
@@ -63,7 +68,7 @@ public class PathingStuckHandler<NAV extends PathNavigation & IMinecoloniesNavig
     /**
      * The current stucklevel, determines actions taken
      */
-    private int stuckLevel = 0;
+    private int stuckLevel = STARTING_STUCK_LEVEL;
 
     /**
      * Global timeout counter, used to determine when we're completly stuck
@@ -119,9 +124,9 @@ public class PathingStuckHandler<NAV extends PathNavigation & IMinecoloniesNavig
     private int     progressedNodes = 0;
 
     /**
-     * Delay before taking unstuck actions in ticks, default 60 seconds
+     * Delay before taking unstuck actions in ticks, default 5 seconds
      */
-    private int delayBeforeActions       = 10 * 20;
+    private int delayBeforeActions = 5 * 20;
     private int delayToNextUnstuckAction = delayBeforeActions;
 
     /**
@@ -230,30 +235,18 @@ public class PathingStuckHandler<NAV extends PathNavigation & IMinecoloniesNavig
                 // Stuck when we have a path, but are not progressing on it
                 tryUnstuck(navigator);
             }
-            else
+            else if (lastPathIndex != -1)
             {
-                if (lastPathIndex != -1)
+                // Delay next action when the entity is moving
+                delayToNextUnstuckAction = Math.max(delayToNextUnstuckAction, 100);
+
+                if ((stuckLevel == 0 || (prevDestination != null && prevDestination != BlockPos.ZERO && navigator.getPath().getTarget().distSqr(prevDestination) < 25)))
                 {
-                    if (lastPathIndex != navigator.getPath().getNextNodeIndex())
+                    progressedNodes = navigator.getPath().getNextNodeIndex() > lastPathIndex ? progressedNodes + 1 : progressedNodes;
+                    if (progressedNodes > 5 && (navigator.getPath().getEndNode() == null || !moveAwayStartPos.equals(navigator.getPath().getEndNode().asBlockPos())))
                     {
-                        // Delay next action when the entity is moving
-                        delayToNextUnstuckAction = Math.max(delayToNextUnstuckAction, 100);
-                    }
-                    else if (lastPathIndex < 2 && navigator.getPath().getNodeCount() > 2)
-                    {
-                        // Skip ahead on the node index, incase the starting position is bad
-                        navigator.getPath().setNextNodeIndex(2);
-                    }
-
-                    if ((stuckLevel == 0 || (prevDestination != null && prevDestination != BlockPos.ZERO && navigator.getPath().getTarget().distSqr(prevDestination) < 25)))
-                    {
-                        progressedNodes = navigator.getPath().getNextNodeIndex() > lastPathIndex ? progressedNodes + 1 : progressedNodes - 1;
-
-                        if (progressedNodes > 5 && (navigator.getPath().getEndNode() == null || !moveAwayStartPos.equals(navigator.getPath().getEndNode().asBlockPos())))
-                        {
-                            // Not stuck when progressing
-                            resetStuckTimers();
-                        }
+                        // Not stuck when progressing
+                        resetStuckTimers();
                     }
                 }
             }
@@ -294,9 +287,9 @@ public class PathingStuckHandler<NAV extends PathNavigation & IMinecoloniesNavig
         if (canTeleportGoal && desired != null && desired != BlockPos.ZERO)
         {
             final BlockPos tpPos = BlockPosUtil.findAround(world, desired, 10, 10,
-              (posworld, pos) -> SurfaceType.getSurfaceType(posworld, posworld.getBlockState(pos.below()), pos.below()) == SurfaceType.WALKABLE
-                                   && SurfaceType.getSurfaceType(posworld, posworld.getBlockState(pos), pos) == SurfaceType.DROPABLE
-                                   && SurfaceType.getSurfaceType(posworld, posworld.getBlockState(pos.above()), pos.above()) == SurfaceType.DROPABLE);
+                (posworld, pos) -> SurfaceType.getSurfaceType(posworld, posworld.getBlockState(pos.below()), pos.below()) == SurfaceType.WALKABLE
+                    && SurfaceType.getSurfaceType(posworld, posworld.getBlockState(pos), pos) == SurfaceType.DROPABLE
+                    && SurfaceType.getSurfaceType(posworld, posworld.getBlockState(pos.above()), pos.above()) == SurfaceType.DROPABLE);
             if (tpPos != null)
             {
                 entity.teleportTo(tpPos.getX() + 0.5, tpPos.getY(), tpPos.getZ() + 0.5);
@@ -317,8 +310,8 @@ public class PathingStuckHandler<NAV extends PathNavigation & IMinecoloniesNavig
             for (int i = 1; i <= completeStuckBlockBreakRange; i++)
             {
                 if (!world.isEmptyBlock(BlockPos.containing(entity.position()).relative(facing, i)) || !world.isEmptyBlock(BlockPos.containing(entity.position())
-                  .relative(facing, i)
-                  .above()))
+                    .relative(facing, i)
+                    .above()))
                 {
                     breakBlocksAhead(world, BlockPos.containing(entity.position()).relative(facing, i - 1), facing);
                     break;
@@ -340,6 +333,23 @@ public class PathingStuckHandler<NAV extends PathNavigation & IMinecoloniesNavig
             return;
         }
         delayToNextUnstuckAction = 50;
+
+        if (stuckLevel < 0)
+        {
+            if (navigator.getPath() != null && !navigator.isDone() && navigator.getPath().getNextNodeIndex() < navigator.getPath().getNodeCount() - 1)
+            {
+                // Skip ahead on the node index in hopes that the potentially different direction helps us unstuck
+                navigator.getPath().setNextNodeIndex(navigator.getPath().getNextNodeIndex() + 1);
+                delayToNextUnstuckAction = 30;
+                stuckLevel++;
+            }
+            else
+            {
+                stuckLevel = 0;
+            }
+
+            return;
+        }
 
         // Clear path
         if (stuckLevel == 0)
@@ -435,7 +445,7 @@ public class PathingStuckHandler<NAV extends PathNavigation & IMinecoloniesNavig
         delayToNextUnstuckAction = delayBeforeActions;
         lastPathIndex = -1;
         progressedNodes = 0;
-        stuckLevel = 0;
+        stuckLevel = STARTING_STUCK_LEVEL;
         moveAwayStartPos = BlockPos.ZERO;
     }
 
@@ -594,7 +604,7 @@ public class PathingStuckHandler<NAV extends PathNavigation & IMinecoloniesNavig
     {
         final BlockState state = world.getBlockState(pos);
         if ((canBreakBlocks || state.canBeReplaced() || state.isAir()) && state.getBlock() != Blocks.LADDER && !(state.getBlock() instanceof IBuilderUndestroyable) && !state.is(
-          ModTags.indestructible))
+            ModTags.indestructible))
         {
             for (final Direction dir : HORIZONTAL_DIRS)
             {

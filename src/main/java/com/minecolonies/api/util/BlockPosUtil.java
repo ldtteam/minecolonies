@@ -15,6 +15,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.AirBlock;
 import net.minecraft.world.level.block.Block;
@@ -791,7 +792,7 @@ public final class BlockPosUtil
      * @param pos1Z start-z
      * @param pos2X end-x
      * @param pos2Z end-z
-     * @return the direction.
+     * @return the horizontal direction or "up" if it faces neither.
      */
     public static Direction getXZFacing(final int pos1X, final int pos1Z, final int pos2X, final int pos2Z)
     {
@@ -807,10 +808,11 @@ public final class BlockPosUtil
         {
             return Direction.NORTH;
         }
-        else
+        else if (pos2Z > pos1Z)
         {
             return Direction.SOUTH;
         }
+        return Direction.UP;
     }
 
     /**
@@ -1224,5 +1226,18 @@ public final class BlockPosUtil
         return location.getX() >= x1 - 1 && location.getX() <= x2 + 1
                  && location.getY() >= y1 - 1 && location.getY() <= y2 + 1
                  && location.getZ() >= z1 - 1 && location.getZ() <= z2 + 1;
+    }
+
+    /**
+     * Calculate chunkpos distance squared from two chunkpos.
+     * @param a the first one.
+     * @param b the second one.
+     * @return the distance squared.
+     */
+    public static int chunkDistanceSquared(final ChunkPos a, final ChunkPos b)
+    {
+        int i = a.x - b.x;
+        int j = a.z - b.z;
+        return i * i + j * j;
     }
 }

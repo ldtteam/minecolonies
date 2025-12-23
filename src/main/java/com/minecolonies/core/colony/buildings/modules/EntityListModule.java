@@ -5,6 +5,7 @@ import com.minecolonies.api.colony.buildings.modules.AbstractBuildingModule;
 import com.minecolonies.api.colony.buildings.modules.IEntityListModule;
 import com.minecolonies.api.colony.buildings.modules.IPersistentModule;
 
+import com.minecolonies.api.colony.buildings.modules.*;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;

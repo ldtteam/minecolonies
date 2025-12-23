@@ -52,6 +52,8 @@ import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import static com.minecolonies.api.util.ItemStackUtils.ISFOOD;
+import static com.minecolonies.api.util.constant.CitizenConstants.SATURATION_DECREASE_FACTOR;
 import static com.minecolonies.api.util.constant.CitizenConstants.TICKS_20;
 import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_CITIZEN;
@@ -278,7 +280,7 @@ public class VisitorCitizen extends AbstractEntityVisitor
     {
         if (visitorData != null)
         {
-            visitorData.decreaseSaturation(citizenColonyHandler.getPerBuildingFoodCost());
+            visitorData.decreaseSaturation(SATURATION_DECREASE_FACTOR);
             visitorData.markDirty(20 * 20);
         }
     }
@@ -291,7 +293,7 @@ public class VisitorCitizen extends AbstractEntityVisitor
     {
         if (visitorData != null)
         {
-            visitorData.decreaseSaturation(citizenColonyHandler.getPerBuildingFoodCost() / 100.0);
+            visitorData.decreaseSaturation(SATURATION_DECREASE_FACTOR / 100.0);
             visitorData.markDirty(20 * 60 * 2);
         }
     }

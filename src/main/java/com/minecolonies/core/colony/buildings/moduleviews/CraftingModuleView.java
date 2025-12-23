@@ -9,12 +9,13 @@ import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.crafting.registry.CraftingType;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.Network;
-import com.minecolonies.core.client.gui.modules.WindowListRecipes;
+import com.minecolonies.core.client.gui.modules.building.WindowListRecipes;
 import com.minecolonies.core.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.core.network.messages.server.colony.building.OpenCraftingGUIMessage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.MenuProvider;
 import net.minecraftforge.api.distmarker.Dist;
@@ -179,7 +180,7 @@ public class CraftingModuleView extends AbstractBuildingModuleView
     @OnlyIn(Dist.CLIENT)
     public BOWindow getWindow()
     {
-        return new WindowListRecipes(buildingView, Constants.MOD_ID + ":gui/layouthuts/layoutlistrecipes.xml", this);
+        return new WindowListRecipes(this);
     }
 
     @Override
@@ -189,9 +190,9 @@ public class CraftingModuleView extends AbstractBuildingModuleView
     }
 
     @Override
-    public String getDesc()
+    public Component getDesc()
     {
-        return "com.minecolonies.coremod.gui.workerhuts.recipe." + id ;
+        return Component.translatable("com.minecolonies.coremod.gui.workerhuts.recipe." + id);
     }
 
     /**
@@ -236,6 +237,11 @@ public class CraftingModuleView extends AbstractBuildingModuleView
             recipes.set(i, recipes.get(j));
             recipes.set(j, storage);
         }
+    }
+
+    public int getActiveRecipes()
+    {
+        return Math.max(0, recipes.size() - disabledRecipes.size());
     }
 
     public int getMaxRecipes()

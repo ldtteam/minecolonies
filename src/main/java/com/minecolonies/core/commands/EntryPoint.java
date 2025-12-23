@@ -7,6 +7,7 @@ import com.minecolonies.core.commands.colonycommands.requestsystem.CommandRSRese
 import com.minecolonies.core.commands.colonycommands.requestsystem.CommandRSResetAll;
 import com.minecolonies.core.commands.generalcommands.*;
 import com.minecolonies.core.commands.killcommands.*;
+import com.minecolonies.core.debug.command.CommandToggleDebug;
 import com.mojang.brigadier.CommandDispatcher;
 import net.minecraft.commands.CommandSourceStack;
 
@@ -90,7 +91,6 @@ public class EntryPoint
             .addNode(new CommandWhoAmI().build())
             .addNode(new CommandGetRanks().build())
             .addNode(new CommandUnloadForcedChunks().build())
-            .addNode(new CommandRaidAll().build())
             .addNode(new CommandBackup().build())
             .addNode(new CommandResetPlayerSupplies().build())
             .addNode(new CommandHelp().build())
@@ -110,10 +110,10 @@ public class EntryPoint
             .addNode(new CommandWhoAmI().build())
             .addNode(new CommandGetRanks().build())
             .addNode(new CommandUnloadForcedChunks().build())
-            .addNode(new CommandRaidAll().build())
             .addNode(new CommandBackup().build())
             .addNode(new CommandResetPlayerSupplies().build())
             .addNode(new CommandHelp().build())
+            .addNode(new CommandToggleDebug().build())
             .addNode(new CommandPruneWorld().build());
 
         // Adds all command trees to the dispatcher to register the commands.

@@ -106,9 +106,9 @@ public class WorkerBuildingModuleView extends AbstractBuildingModuleView impleme
     }
 
     @Override
-    public String getDesc()
+    public Component getDesc()
     {
-        return "";
+        return Component.literal("");
     }
 
     @Override

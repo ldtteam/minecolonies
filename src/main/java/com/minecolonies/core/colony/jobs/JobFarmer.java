@@ -37,4 +37,10 @@ public class JobFarmer extends AbstractJobCrafter<EntityAIWorkFarmer, JobFarmer>
     {
         return new EntityAIWorkFarmer(this);
     }
+
+    @Override
+    public double getSaturationFactor()
+    {
+        return 1.2;
+    }
 }

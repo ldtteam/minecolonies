@@ -85,7 +85,10 @@ public class GuardTaskSetting extends StringSettingWithDesc
         super.setupHandler(key, pane, settingsModuleView, building, window);
 
         final ButtonImage setPositionsButton = pane.findPaneOfTypeByID("setPositions", ButtonImage.class);
-        setPositionsButton.setHandler(button -> building.getModuleView(BuildingModules.GUARD_TOOL).getWindow().open());
+        if (building.getModuleView(BuildingModules.GUARD_TOOL) != null)
+        {
+            setPositionsButton.setHandler(button -> building.getModuleView(BuildingModules.GUARD_TOOL).getWindow().open());
+        }
     }
 
     @Override

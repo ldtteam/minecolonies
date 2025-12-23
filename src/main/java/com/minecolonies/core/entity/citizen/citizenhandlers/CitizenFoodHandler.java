@@ -73,10 +73,10 @@ public class CitizenFoodHandler implements ICitizenFoodHandler
         dirty = true;
         if (lastEatenFoods.size() >= FOOD_QUEUE_SIZE)
         {
-            citizenData.triggerInteraction(new StandardInteraction(Component.translatable(NO + FOOD_DIVERSITY), ChatPriority.IMPORTANT));
-            citizenData.triggerInteraction(new StandardInteraction(Component.translatable(NO + FOOD_QUALITY), ChatPriority.IMPORTANT));
-            citizenData.triggerInteraction(new StandardInteraction(Component.translatable(NO + FOOD_DIVERSITY + URGENT), ChatPriority.BLOCKING));
-            citizenData.triggerInteraction(new StandardInteraction(Component.translatable(NO + FOOD_QUALITY + URGENT), ChatPriority.BLOCKING));
+            citizenData.triggerInteraction(new StandardInteraction(Component.translatable(NO + FOOD_DIVERSITY), ChatPriority.CHITCHAT));
+            citizenData.triggerInteraction(new StandardInteraction(Component.translatable(NO + FOOD_QUALITY), ChatPriority.CHITCHAT));
+            citizenData.triggerInteraction(new StandardInteraction(Component.translatable(NO + FOOD_DIVERSITY + URGENT), ChatPriority.IMPORTANT));
+            citizenData.triggerInteraction(new StandardInteraction(Component.translatable(NO + FOOD_QUALITY + URGENT), ChatPriority.IMPORTANT));
         }
     }
 

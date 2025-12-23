@@ -45,7 +45,7 @@ public class FoodUtils
             return false;
         }
 
-        final int homeBuildingLevel = homeBuilding == null ? 0 : homeBuilding.getBuildingLevel();
+        final int homeBuildingLevel = homeBuilding == null ? 0 : homeBuilding.getBuildingLevelEquivalent();
         return canEatLevel(stack, homeBuildingLevel) && (workBuilding == null || workBuilding.canEat(stack));
     }
 
@@ -107,6 +107,28 @@ public class FoodUtils
     }
 
     /**
+     * Calculate the food tier from the food value
+     *
+     * @param foodValue
+     * @return
+     */
+    public static int getFoodTier(final double foodValue)
+    {
+        if (foodValue <= 4)
+        {
+            return 1;
+        }
+        else if (foodValue <= 6)
+        {
+            return 2;
+        }
+        else
+        {
+            return 3;
+        }
+    }
+
+    /**
      * Get the best food for a given citizen from a given inventory and return the index where it is.
      * @param inventoryCitizen the inventory to check.
      * @param citizenData the citizen data the food is for.
@@ -123,8 +145,8 @@ public class FoodUtils
 
         final ICitizenFoodHandler foodHandler = citizenData.getCitizenFoodHandler();
         final ICitizenFoodHandler.CitizenFoodStats foodStats = foodHandler.getFoodHappinessStats();
-        final int diversityRequirement = FoodUtils.getMinFoodDiversityRequirement(citizenData.getHomeBuilding() == null ? 0 : citizenData.getHomeBuilding().getBuildingLevel());
-        final int qualityRequirement = FoodUtils.getMinFoodQualityRequirement(citizenData.getHomeBuilding() == null ? 0 : citizenData.getHomeBuilding().getBuildingLevel());
+        final int diversityRequirement = FoodUtils.getMinFoodDiversityRequirement(citizenData.getHomeBuilding() == null ? 0 : citizenData.getHomeBuilding().getBuildingLevelEquivalent());
+        final int qualityRequirement = FoodUtils.getMinFoodQualityRequirement(citizenData.getHomeBuilding() == null ? 0 : citizenData.getHomeBuilding().getBuildingLevelEquivalent());
         for (int i = 0; i < inventoryCitizen.getSlots(); i++)
         {
             final ItemStorage invStack = new ItemStorage(inventoryCitizen.getStackInSlot(i));
@@ -132,11 +154,6 @@ public class FoodUtils
             {
                 final boolean isMinecolfood = invStack.getItem() instanceof IMinecoloniesFoodItem;
                 final int localScore = foodHandler.checkLastEaten(invStack.getItem()) * (isMinecolfood ? 1 : 2);
-                // If we're not at the restaurant and we've eaten this very recently, we should check out food at restaurant instead.
-                if (menu == null && foodHandler.getLastEaten() == invStack.getItem() && restaurantExists)
-                {
-                    continue;
-                }
 
                 // If the quality and diversity requirement would be fulfilled, already go ahead with this food. Don't need to check others.
                 if ((localScore < 0 && isMinecolfood)
@@ -156,7 +173,7 @@ public class FoodUtils
         }
 
         // If we're not at the restaurant and are the brink of complaining about food, go to the restaurant instead of eating the food you got in the inventory.
-        if (restaurantExists && menu == null &&
+        if (restaurantExists && menu == null && citizenData.getCitizenFoodHandler().hasFullFoodHistory() &&
               ((bestScore >= 0 && foodStats.diversity() <= diversityRequirement)
               || (!(bestItem instanceof IMinecoloniesFoodItem) && foodStats.quality() <= qualityRequirement)))
         {
@@ -179,11 +196,11 @@ public class FoodUtils
         ItemStorage bestStorage = null;
 
         final Level world = building.getColony().getWorld();
-        final int homeBuildingLevel = citizenData.getHomeBuilding() == null ? 0 : citizenData.getHomeBuilding().getBuildingLevel();
+        final int homeBuildingLevel = citizenData.getHomeBuilding() == null ? 0 : citizenData.getHomeBuilding().getBuildingLevelEquivalent();
 
         final ICitizenFoodHandler.CitizenFoodStats foodStats = citizenData.getCitizenFoodHandler().getFoodHappinessStats();
-        final int diversityRequirement = FoodUtils.getMinFoodDiversityRequirement(citizenData.getHomeBuilding() == null ? 0 : citizenData.getHomeBuilding().getBuildingLevel());
-        final int qualityRequirement = FoodUtils.getMinFoodQualityRequirement(citizenData.getHomeBuilding() == null ? 0 : citizenData.getHomeBuilding().getBuildingLevel());
+        final int diversityRequirement = FoodUtils.getMinFoodDiversityRequirement(citizenData.getHomeBuilding() == null ? 0 : citizenData.getHomeBuilding().getBuildingLevelEquivalent());
+        final int qualityRequirement = FoodUtils.getMinFoodQualityRequirement(citizenData.getHomeBuilding() == null ? 0 : citizenData.getHomeBuilding().getBuildingLevelEquivalent());
 
         final boolean criticalDiversity = foodStats.diversity() <= diversityRequirement;
         final boolean criticalQuality = foodStats.quality() <= qualityRequirement;
@@ -258,11 +275,11 @@ public class FoodUtils
         ItemStorage bestStorage = null;
 
         final Level world = building.getColony().getWorld();
-        final int homeBuildingLevel = citizenData.getHomeBuilding() == null ? 0 : citizenData.getHomeBuilding().getBuildingLevel();
+        final int homeBuildingLevel = citizenData.getHomeBuilding() == null ? 0 : citizenData.getHomeBuilding().getBuildingLevelEquivalent();
 
         final ICitizenFoodHandler.CitizenFoodStats foodStats = citizenData.getCitizenFoodHandler().getFoodHappinessStats();
-        final int diversityRequirement = FoodUtils.getMinFoodDiversityRequirement(citizenData.getHomeBuilding() == null ? 0 : citizenData.getHomeBuilding().getBuildingLevel());
-        final int qualityRequirement = FoodUtils.getMinFoodQualityRequirement(citizenData.getHomeBuilding() == null ? 0 : citizenData.getHomeBuilding().getBuildingLevel());
+        final int diversityRequirement = FoodUtils.getMinFoodDiversityRequirement(citizenData.getHomeBuilding() == null ? 0 : citizenData.getHomeBuilding().getBuildingLevelEquivalent());
+        final int qualityRequirement = FoodUtils.getMinFoodQualityRequirement(citizenData.getHomeBuilding() == null ? 0 : citizenData.getHomeBuilding().getBuildingLevelEquivalent());
 
         final boolean criticalDiversity = foodStats.diversity() <= diversityRequirement;
         final boolean criticalQuality = foodStats.quality() <= qualityRequirement;

@@ -9,7 +9,7 @@ import com.minecolonies.api.crafting.ModCraftingTypes;
 import com.minecolonies.api.inventory.container.ContainerCrafting;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.core.Network;
-import com.minecolonies.core.client.gui.modules.WindowSelectRequest;
+import com.minecolonies.core.client.gui.modules.building.WindowSelectRequest;
 import com.minecolonies.core.colony.buildings.moduleviews.CraftingModuleView;
 import com.minecolonies.core.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.core.network.messages.server.SwitchRecipeCraftingTeachingMessage;
@@ -182,7 +182,7 @@ public class WindowCrafting extends AbstractContainerScreen<ContainerCrafting>
                 CRAFTING_SWITCH_SIZE.width + 1, 0, CRAFTING_SWITCH_SIZE.height + 1, CRAFTING_SWITCH_TEXTURE, btn ->
         {
             requestables.clear();
-            new WindowSelectRequest(this.building, this::matchingRequest, this::reopenWithRequest).open();
+            new WindowSelectRequest(module, this::matchingRequest, this::reopenWithRequest).open();
         });
         requestsButton.visible = Compatibility.jeiProxy.isLoaded();
         this.addRenderableWidget(requestsButton);

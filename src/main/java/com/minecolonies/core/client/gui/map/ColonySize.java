@@ -4,6 +4,7 @@ import com.ldtteam.blockui.Loader;
 import com.ldtteam.blockui.Pane;
 import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.blockui.views.View;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.network.messages.client.colony.ColonyListMessage;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -13,14 +14,15 @@ import net.minecraft.resources.ResourceLocation;
  */
 public enum ColonySize
 {
-    SMALL("minecolonies:gui/map/colonysmall.xml", 25),
-    MEDIUM("minecolonies:gui/map/colonymedium.xml", 75),
-    LARGE("minecolonies:gui/map/colonylarge.xml", 5000);
+    SMALL(new ResourceLocation(Constants.MOD_ID, "gui/map/colonysmall.xml"), 25),
+    MEDIUM(new ResourceLocation(Constants.MOD_ID, "gui/map/colonymedium.xml"), 75),
+    LARGE(new ResourceLocation(Constants.MOD_ID, "gui/map/colonylarge.xml"), 5000);
 
-    private final String imagePath;
-    private final int    maxCitizens;
+    private final ResourceLocation imagePath;
 
-    ColonySize(final String imagePath, final int maxCitizens)
+    private final int maxCitizens;
+
+    ColonySize(final ResourceLocation imagePath, final int maxCitizens)
     {
         this.imagePath = imagePath;
         this.maxCitizens = maxCitizens;
@@ -32,7 +34,7 @@ public enum ColonySize
 
         final ColonySize size = getSizeByCount(colony.getCitizencount());
 
-        Loader.createFromXMLFile(new ResourceLocation(size.imagePath), colonyPane);
+        Loader.createFromXMLFile(size.imagePath, colonyPane);
 
         final Pane background = colonyPane.findPaneByID("background");
         colonyPane.setSize(background.getWidth(), background.getHeight());

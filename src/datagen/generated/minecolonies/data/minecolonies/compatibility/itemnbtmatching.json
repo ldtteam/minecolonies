@@ -910,6 +910,9 @@
     "item": "minecolonies:blockhutflorist"
   },
   {
+    "item": "minecolonies:blockhutgatehouse"
+  },
+  {
     "item": "minecolonies:blockhutglassblower"
   },
   {
@@ -1078,6 +1081,9 @@
     "item": "minecolonies:colonymap"
   },
   {
+    "item": "minecolonies:colonysign"
+  },
+  {
     "item": "minecolonies:compost"
   },
   {
@@ -1139,6 +1145,9 @@
   },
   {
     "item": "minecolonies:floodedfarmland"
+  },
+  {
+    "item": "minecolonies:fried_rice"
   },
   {
     "item": "minecolonies:garlic"

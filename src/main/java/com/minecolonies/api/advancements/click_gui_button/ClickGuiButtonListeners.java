@@ -1,6 +1,7 @@
 package com.minecolonies.api.advancements.click_gui_button;
 
 import com.minecolonies.api.advancements.CriterionListeners;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.PlayerAdvancements;
 
 /**
@@ -14,7 +15,7 @@ public class ClickGuiButtonListeners extends CriterionListeners<ClickGuiButtonCr
         super(playerAdvancements);
     }
 
-    public void trigger(final String buttonId, final String windowResource)
+    public void trigger(final String buttonId, final ResourceLocation windowResource)
     {
         trigger(instance -> instance.test(buttonId, windowResource));
     }

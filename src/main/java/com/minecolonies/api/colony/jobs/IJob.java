@@ -315,4 +315,13 @@ public interface IJob<AI extends ITickingStateAI> extends INBTSerializable<Compo
      * @return
      */
     boolean assignTo(IAssignsJob module);
+
+    /**
+     * Job saturation factor.
+     * @return increase in saturation consumption based on job.
+     */
+    default double getSaturationFactor()
+    {
+        return 1.0;
+    }
 }

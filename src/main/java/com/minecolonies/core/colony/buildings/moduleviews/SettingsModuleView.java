@@ -8,17 +8,21 @@ import com.minecolonies.api.colony.buildings.modules.settings.ISettingsModuleVie
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.Network;
-import com.minecolonies.core.client.gui.modules.SettingsModuleWindow;
+import com.minecolonies.core.client.gui.modules.building.SettingsModuleWindow;
 import com.minecolonies.core.colony.buildings.modules.settings.SettingKey;
 import com.minecolonies.core.network.messages.server.colony.building.TriggerSettingMessage;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Module containing all settings (client side).
@@ -92,7 +96,7 @@ public class SettingsModuleView extends AbstractBuildingModuleView implements IS
     @Override
     public BOWindow getWindow()
     {
-        return new SettingsModuleWindow(Constants.MOD_ID + ":gui/layouthuts/layoutsettings.xml", buildingView, this);
+        return new SettingsModuleWindow(this);
     }
 
     @Override
@@ -102,9 +106,9 @@ public class SettingsModuleView extends AbstractBuildingModuleView implements IS
     }
 
     @Override
-    public String getDesc()
+    public Component getDesc()
     {
-        return "com.minecolonies.coremod.gui.workerhuts.settings";
+        return Component.translatable("com.minecolonies.coremod.gui.workerhuts.settings");
     }
 
     @Override
