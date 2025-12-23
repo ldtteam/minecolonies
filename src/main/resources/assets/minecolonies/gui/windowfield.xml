@@ -8,6 +8,8 @@
     <text size="130 11" pos="30 14" color="red" textalign="MIDDLE" label="$(block.minecolonies.blockhutfield)"/>
 
     <text id="current-farmer" size="164 11" pos="13 30" color="black"/>
+    <text id="biome" size="164 11" pos="13 43" color="black"/>
+    <text id="climate" size="164 11" pos="13 56" color="black"/>
 
     <button id="select-seed" size="86 17" pos="13 72" color="black"
                  source="minecolonies:textures/gui/builderhut/builder_button_medium.png"
