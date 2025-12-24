@@ -1,7 +1,7 @@
 name: Pull Request Management - Testing label
 
 on:
-  pull_request:
+  pull_request_target:
     paths:
       - src/**
 
