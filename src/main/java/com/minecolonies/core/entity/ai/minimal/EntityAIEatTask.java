@@ -388,15 +388,16 @@ public class EntityAIEatTask implements IStateAI
             return SEARCH_RESTAURANT;
         }
 
+        restaurant = null;
         if (!EntityNavigationUtils.walkToBuilding(citizen, buildingWorker))
         {
-            restaurant = null;
             return GO_TO_HUT;
         }
 
         final int slot;
         if (buildingWorker instanceof BuildingCook buildingCook)
         {
+            restaurant = buildingCook;
             slot = FoodUtils.getBestFoodForCitizen(citizen.getInventoryCitizen(), citizen.getCitizenData(), buildingCook.getModule(RESTAURANT_MENU).getMenu());
         }
         else
@@ -409,13 +410,11 @@ public class EntityAIEatTask implements IStateAI
             final ItemStorage storageToGet = FoodUtils.checkForFoodInBuilding(citizen.getCitizenData(), null, buildingWorker);
             if (storageToGet != null && InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(buildingWorker, storageToGet, citizen.getInventoryCitizen()))
             {
-                restaurant = null;
                 return EAT;
             }
         }
         else
         {
-            restaurant = null;
             return EAT;
         }
 
