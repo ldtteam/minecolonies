@@ -1,7 +1,7 @@
 name: Pull Request Management - Setup
 
 on:
-  pull_request:
+  pull_request_target:
     types:
       - opened
 
@@ -13,7 +13,6 @@ jobs:
         uses: actions/github-script@v8
         env:
           IS_FIRST_TIME: ${{ github.event.pull_request.author_association == 'FIRST_TIME_CONTRIBUTOR' || github.event.pull_request.author_association == 'FIRST_TIMER' }}
-          REQUIRED_LABEL: 'Untested'
         with:
           result-encoding: string
           retries: 3
