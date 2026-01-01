@@ -228,5 +228,10 @@ public class DefaultBlockTagsProvider extends BlockTagsProvider
           .addTags(BlockTags.WOOL_CARPETS);
 
         tag(com.ldtteam.structurize.tag.ModTags.GOOD_SOLID_FOR_PLACEHOLDER).add(ModBlocks.farmland, ModBlocks.floodedFarmland);
+        tag(ModTags.builderIgnoreStateDif)
+            .add(ModBlocks.blockBarrel)
+            .add(Blocks.BARREL)
+            .add(Blocks.BEEHIVE)
+            .add(Blocks.BEE_NEST);
     }
 }

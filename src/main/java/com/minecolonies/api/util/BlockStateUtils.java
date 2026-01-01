@@ -1,5 +1,9 @@
 package com.minecolonies.api.util;
 
+import com.minecolonies.api.blocks.ModBlocks;
+import com.minecolonies.api.items.ModTags;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -183,5 +187,30 @@ public class BlockStateUtils
             }
         }
         return true;
+    }
+
+    /**
+     * If two blockstates should be considered equal by a minecolonies builder.
+     * @param state1 the first state.
+     * @param state2 the second state.
+     */
+    public static boolean areBlockStatesEqual(final BlockState state1, final BlockState state2)
+    {
+        final Block block1 = state1.getBlock();
+        final Block block2 = state2.getBlock();
+
+        if (block1 == Blocks.FLOWER_POT)
+        {
+            return block1 == block2;
+        }
+
+        if (block1 == block2 && state1.is(ModTags.builderIgnoreStateDif))
+        {
+            return true;
+        }
+
+        return (block1 == Blocks.GRASS_BLOCK && block2 == Blocks.DIRT)
+            || (block2 == Blocks.GRASS_BLOCK && block1 == Blocks.DIRT)
+            || (block1 == ModBlocks.blockRack && block2 == ModBlocks.blockRack);
     }
 }
