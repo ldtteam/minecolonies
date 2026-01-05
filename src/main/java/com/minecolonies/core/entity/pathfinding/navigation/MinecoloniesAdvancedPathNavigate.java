@@ -110,7 +110,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
     /**
      * wanted position for movecontrol
      */
-    private Vec3Mutable wantedPosition = new Vec3Mutable(0, 0, 0);
+    private Vec3Mutable wantedPosition = Vec3Mutable.createEmpty();
 
     /**
      * The recheck delay for checking stuck
@@ -355,7 +355,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
             else if (pathResult.getStatus() == PathFindingStatus.CALCULATION_COMPLETE)
             {
                 processCompletedCalculationResult();
-                wantedPosition.set(0, 0, 0);
+                wantedPosition.setEmpty();
             }
         }
 

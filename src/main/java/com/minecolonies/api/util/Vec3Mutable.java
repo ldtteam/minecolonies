@@ -27,6 +27,13 @@ public class Vec3Mutable
         this.z = z;
     }
 
+    public static Vec3Mutable createEmpty()
+    {
+        Vec3Mutable empty = new Vec3Mutable(0, 0, 0);
+        empty.setEmpty();
+        return empty;
+    }
+
     public BlockPos asBlockPos()
     {
         return new BlockPos(Mth.floor(x), Mth.floor(y), Mth.floor(z));
@@ -39,7 +46,14 @@ public class Vec3Mutable
 
     public boolean empty()
     {
-        return x == 0 && y == 0 && z == 0;
+        return x == Double.NEGATIVE_INFINITY && y == Double.NEGATIVE_INFINITY && z == Double.NEGATIVE_INFINITY;
+    }
+
+    public void setEmpty()
+    {
+        x = Double.NEGATIVE_INFINITY;
+        y = Double.NEGATIVE_INFINITY;
+        z = Double.NEGATIVE_INFINITY;
     }
 
     public double getX()
