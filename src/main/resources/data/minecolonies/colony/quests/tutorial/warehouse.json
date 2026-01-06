@@ -154,7 +154,7 @@
       "unlocks-rewards": [0,1,2,3],
       "type": "minecolonies:dialogue",
       "target": 0,
-      "text": "Neat! The food your farmer produces will now automatically reach the restaurant through the warehouse. Here, have a set of tools you can drop off in the warehouse to be delivered to your citizens on demand.",
+      "text": "Neat! The food your farmer produces will now automatically reach the dining hall through the warehouse. Here, have a set of tools you can drop off in the warehouse to be delivered to your citizens on demand.",
       "options": [
         {
           "answer": "Thank you. Bye!",

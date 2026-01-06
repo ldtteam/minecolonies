@@ -279,14 +279,14 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
             style = mineNode.getStyle().getSchematicName();
         }
 
-        if (job == null || job.getWorkOrder() == null)
+        if (job == null || buildingMiner.getWorkOrder() == null)
         {
             final WorkOrderMiner wo = new WorkOrderMiner(structurePack, style + ".blueprint", style, rotMir, structurePos, false, buildingMiner.getPosition());
             wo.setClaimedBy(buildingMiner.getPosition());
             buildingMiner.getColony().getWorkManager().addWorkOrder(wo, false);
             if (job != null)
             {
-                job.setWorkOrder(wo);
+                buildingMiner.setWorkOrder(wo);
             }
             else
             {

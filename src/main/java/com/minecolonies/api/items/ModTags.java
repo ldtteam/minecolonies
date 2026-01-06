@@ -13,6 +13,7 @@ import net.minecraft.world.level.block.Block;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static com.minecolonies.api.util.constant.Constants.MOD_ID;
@@ -69,6 +70,8 @@ public class ModTags
     public static final TagKey<Item> poisonous_food = ItemTags.create(TagConstants.POISONOUS_FOOD);
 
     public static final TagKey<Item> rawMeat       = ItemTags.create(TagConstants.RAW_MEAT);
+    public static final TagKey<Item> feed           = ItemTags.create(TagConstants.FEED);
+    public static final TagKey<Item> leather        = ItemTags.create(TagConstants.LEATHER);
 
     public static final TagKey<EntityType<?>> hostile = TagKey.create(Registries.ENTITY_TYPE, TagConstants.HOSTILE);
     public static final TagKey<EntityType<?>> mobAttackBlacklist = TagKey.create(Registries.ENTITY_TYPE, TagConstants.MOB_ATTACK_BLACKLIST);
@@ -83,6 +86,8 @@ public class ModTags
     public static final TagKey<Biome> temperateBiomes = TagKey.create(Registries.BIOME, TagConstants.TEMPERATE_BIOMES);
     public static final TagKey<Biome> humidBiomes = TagKey.create(Registries.BIOME, TagConstants.HUMID_BIOMES);
     public static final TagKey<Biome> dryBiomes = TagKey.create(Registries.BIOME, TagConstants.DRY_BIOMES);
+
+    public static List<TagKey<Biome>> cropBiomeTags = List.of(coldBiomes, temperateBiomes, humidBiomes, dryBiomes);
 
     public static final Map<String, TagKey<Item>> crafterProduct              = new HashMap<>();
     public static final Map<String, TagKey<Item>> crafterProductExclusions    = new HashMap<>();

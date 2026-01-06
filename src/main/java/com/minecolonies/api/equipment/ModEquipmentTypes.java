@@ -42,6 +42,7 @@ public class ModEquipmentTypes
     public static final DeferredHolder<EquipmentTypeEntry, EquipmentTypeEntry> chestplate;
     public static final DeferredHolder<EquipmentTypeEntry, EquipmentTypeEntry> boots;
     public static final DeferredHolder<EquipmentTypeEntry, EquipmentTypeEntry> flint_and_steel;
+    public static final DeferredHolder<EquipmentTypeEntry, EquipmentTypeEntry> lead;
 
     static
     {
@@ -151,6 +152,12 @@ public class ModEquipmentTypes
           builder -> builder.setDisplayName(Component.translatable(ToolTranslationConstants.TOOL_TYPE_LIGHTER))
                        .setIsEquipment((itemStack, equipmentType) -> itemStack.getItem() instanceof FlintAndSteelItem)
                        .setEquipmentLevel((itemStack, equipmentType) -> durabilityBasedLevel(itemStack, Items.FLINT_AND_STEEL.getMaxDamage(itemStack)))
+                  .build());
+
+        lead = register("lead",
+          builder -> builder.setDisplayName(Component.translatable(ToolTranslationConstants.TOOL_TYPE_LEAD))
+                       .setIsEquipment((itemStack, equipmentType) -> itemStack.getItem() instanceof LeadItem)
+                       .setEquipmentLevel((itemStack, equipmentType) -> -1)
                   .build());
     }
 

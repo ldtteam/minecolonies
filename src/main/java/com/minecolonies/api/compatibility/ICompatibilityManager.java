@@ -23,6 +23,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Predicate;
 
 /**
  * Interface for all compatabilityManagers. The compatability manager retrieves certain blocks from oreData and stores them.
@@ -107,6 +108,14 @@ public interface ICompatibilityManager
     boolean isMineableOre(@NotNull ItemStack stack);
 
     /**
+     * Check if a stack belongs to a breakable ore.
+     *
+     * @param stack the stack to test.
+     * @return true if so.
+     */
+    boolean isBreakableOre(@NotNull ItemStack stack);
+
+    /**
      * Get a copy of the list of compost recipes.
      *
      * @return the list of compost recipes, indexed by input item.
@@ -157,11 +166,18 @@ public interface ICompatibilityManager
     boolean isOre(ItemStack stack);
 
     /**
-     * Get a list of all blocks.
+     * Get a list of all items.
      *
      * @return the immutable list.
      */
     List<ItemStack> getListOfAllItems();
+
+    /**
+     * Get a list of all matching items.
+     *
+     * @return the immutable list.
+     */
+    List<ItemStack> getListOfMatchingItems(final Predicate<ItemStack> predicate);
 
     /**
      * Get a set of all items (marked to ignore damage but not NBT).

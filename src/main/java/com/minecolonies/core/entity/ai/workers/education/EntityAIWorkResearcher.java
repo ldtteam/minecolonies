@@ -34,6 +34,11 @@ public class EntityAIWorkResearcher extends AbstractEntityAIInteract<JobResearch
     private BlockPos studyPos = null;
 
     /**
+     * How long they tried walking to a given study pos.
+     */
+    public int walkDelay = 0;
+
+    /**
      * Constructor for the AI
      *
      * @param job the job to fulfill
@@ -44,7 +49,7 @@ public class EntityAIWorkResearcher extends AbstractEntityAIInteract<JobResearch
         super.registerTargets(
           new AITarget(IDLE, START_WORKING, 1),
           new AITarget(START_WORKING, this::startWorkingAtOwnBuilding, TICKS_SECOND),
-          new AITarget(STUDY, this::study, STUDY_DELAY)
+          new AITarget(STUDY, this::study, TICKS_SECOND)
         );
         worker.setCanPickUpLoot(true);
     }
@@ -67,10 +72,12 @@ public class EntityAIWorkResearcher extends AbstractEntityAIInteract<JobResearch
             studyPos = building.getRandomBookShelf();
         }
 
-        if (!walkToWorkPos(studyPos))
+        if (!walkToWorkPos(studyPos) && walkDelay < STUDY_DELAY)
         {
+            walkDelay += TICKS_SECOND;
             return getState();
         }
+        walkDelay = 0;
 
         final IColony colony = building.getColony();
         final List<ILocalResearch> inProgress = colony.getResearchManager().getResearchTree().getResearchInProgress();
@@ -93,6 +100,7 @@ public class EntityAIWorkResearcher extends AbstractEntityAIInteract<JobResearch
         worker.getCitizenExperienceHandler().addExperience(XP_PER_STUDYPOS);
         studyPos = null;
         worker.queueSound(SoundEvents.BOOK_PAGE_TURN, worker.blockPosition().above(), 80, 15, 0.25f, 1.5f);
+        setDelay(STUDY_DELAY);
         return START_WORKING;
     }
 

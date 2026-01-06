@@ -94,7 +94,7 @@ public class RaiderWalkAI implements IStateAI
 
                 if (raider.getNavigation().getPathResult() != null)
                 {
-                    raider.getNavigation().getPathResult().getJob().getPathingOptions().withCanEnterDoors(true).withToggleCost(0).withNonLadderClimbableCost(0);
+                    raider.getNavigation().getPathResult().getJob().getPathingOptions().withCanEnterDoors(true).withCanEnterGates(true).withToggleCost(0).withNonLadderClimbableCost(0);
                 }
             }
             else if (raider.blockPosition().distSqr(targetBlock) < 25)

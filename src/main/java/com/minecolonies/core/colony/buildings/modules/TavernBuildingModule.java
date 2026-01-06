@@ -14,7 +14,6 @@ import com.minecolonies.api.util.StatsUtil;
 import com.minecolonies.api.util.MathUtils;
 import com.minecolonies.core.client.gui.huts.WindowHutLiving;
 import com.minecolonies.core.colony.buildings.views.LivingBuildingView;
-import com.minecolonies.core.colony.eventhooks.citizenEvents.VisitorSpawnedEvent;
 import com.minecolonies.core.colony.interactionhandling.RecruitmentInteraction;
 import com.minecolonies.core.datalistener.CustomVisitorListener;
 import com.minecolonies.core.datalistener.RecruitmentItemsListener;
@@ -232,7 +231,6 @@ public class TavernBuildingModule extends AbstractBuildingModule implements IDef
         {
             newCitizen.getEntity().get().setItemSlot(EquipmentSlot.FEET, cost.boots());
         }
-        building.getColony().getEventDescriptionManager().addEventDescription(new VisitorSpawnedEvent(spawnPos, newCitizen.getName()));
 
         StatsUtil.trackStat(building, NEW_VISITORS, 1);
 

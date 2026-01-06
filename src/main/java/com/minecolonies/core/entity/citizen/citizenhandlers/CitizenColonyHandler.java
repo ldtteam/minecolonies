@@ -177,18 +177,6 @@ public class CitizenColonyHandler implements ICitizenColonyHandler
     }
 
     /**
-     * Get the amount the worker should decrease its saturation by each action done or x blocks traveled.
-     *
-     * @return the double describing it.
-     */
-    @Override
-    public double getPerBuildingFoodCost()
-    {
-        return getWorkBuilding() == null || getWorkBuilding().getBuildingLevelEquivalent() == 0 ? 1
-                 : (SATURATION_DECREASE_FACTOR * Math.pow(2, getWorkBuilding().getBuildingLevelEquivalent()));
-    }
-
-    /**
      * Getter for the colony.
      *
      * @return the colony of the citizen or null.

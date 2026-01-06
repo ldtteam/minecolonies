@@ -1,0 +1,23 @@
+<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" size="440 244"
+        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/ldtteam/BlockUI/version/1.20.1/src/main/resources/assets/blockui/gui/block_ui.xsd"
+>
+    <image source="minecolonies:textures/gui/citizen/colonist_paper.png" size="430 244" pos="10 0"/>
+
+    <text size="440 13" pos="0 14" color="black" textalign="MIDDLE" label="$(com.minecolonies.coremod.gui.warehouse.stock)"/>
+
+    <list id="resourcesstock" size="170 180" pos="135 50" emptytext="$(com.minecolonies.coremod.gui.warehouse.stock.empty)" emptycolor="black">
+        <box size="100% 17" linewidth="1">
+            <itemicon id="resourceIcon" size="17 17" pos="0 0"/>
+            <text id="resourceName" size="90 12" pos="20 1" color="black"/>
+            <text id="resourceQty" size="12 12" pos="115 1" color="black"/>
+
+            <button label="X" id="removeStock" pos="130 1" size="29 15"
+                    source="minecolonies:textures/gui/builderhut/builder_button_very_small.png" color="red"/>
+        </box>
+    </list>
+
+    <button id="addStock" size="86 17" pos="177 30" color="black"
+            source="minecolonies:textures/gui/builderhut/builder_button_medium.png"
+            label="$(com.minecolonies.coremod.gui.warehouse.add)"/>
+</window>
+

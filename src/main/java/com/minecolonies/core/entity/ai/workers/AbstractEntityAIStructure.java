@@ -58,6 +58,7 @@ import static com.ldtteam.structurize.placement.AbstractBlueprintIterator.NULL_P
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.research.util.ResearchConstants.BLOCK_PLACE_SPEED;
 import static com.minecolonies.api.util.constant.CitizenConstants.*;
+import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.core.colony.buildings.workerbuildings.BuildingMiner.FILL_BLOCK;
 import static com.minecolonies.core.entity.ai.workers.AbstractEntityAIStructure.ItemCheckResult.*;
 import static com.minecolonies.core.entity.ai.workers.util.BuildingProgressStage.*;
@@ -171,7 +172,11 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
           /*
            * Check if we have to build something.
            */
-          new AITarget(IDLE, this::isThereAStructureToBuild, () -> START_BUILDING, 10),
+          new AITarget(IDLE, START_WORKING, 10),
+          /*
+           * Start working at the building.
+           */
+          new AITarget(START_WORKING, this::startWorkingAtOwnBuilding, TICKS_SECOND),
           /*
            * Build the structure and foundation of the building.
            */
@@ -182,6 +187,19 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
           new AITarget(COMPLETE_BUILD, this::completeBuild, STANDARD_DELAY),
           new AITarget(PICK_UP, this::pickUpMaterial, 5)
         );
+    }
+
+    /**
+     * Start working at own building. Override for worker specific implementations.
+     * @return next state.
+     */
+    protected IAIState startWorkingAtOwnBuilding()
+    {
+        if (isThereAStructureToBuild())
+        {
+            return START_BUILDING;
+        }
+        return IDLE;
     }
 
     /**
@@ -304,6 +322,10 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
      */
     protected IAIState structureStep()
     {
+        if (!isThereAStructureToBuild())
+        {
+            return IDLE;
+        }
         if (structurePlacer.getB().getStage() == null)
         {
             resetCurrentStructure();
@@ -456,7 +478,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
         {
             if (hasListOfResInInvOrRequest(this, result.getBlockResult().getRequiredItems(), result.getBlockResult().getRequiredItems().size() > 1) == RECALC)
             {
-                job.getWorkOrder().setRequested(false);
+                building.getWorkOrder().setRequested(false);
                 return LOAD_STRUCTURE;
             }
             return NEEDS_ITEM;
@@ -495,7 +517,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
         }
         else
         {
-            return job.getWorkOrder().getLocation();
+            return building.getWorkOrder().getLocation();
         }
     }
 
@@ -620,6 +642,11 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
         if (blockToMine == null)
         {
             return BUILDING_STEP;
+        }
+
+        if (structurePlacer == null)
+        {
+            return IDLE;
         }
 
         final BlockState worldState = world.getBlockState(blockToMine);
@@ -958,7 +985,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
      */
     protected boolean isThereAStructureToBuild()
     {
-        if (structurePlacer == null || !structurePlacer.getB().hasBluePrint() || job.getWorkOrder() == null)
+        if (structurePlacer == null || !structurePlacer.getB().hasBluePrint() || building.getWorkOrder() == null)
         {
             return false;
         }

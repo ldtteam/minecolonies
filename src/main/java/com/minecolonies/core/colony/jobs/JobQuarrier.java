@@ -109,4 +109,10 @@ public class JobQuarrier extends AbstractJobStructure<EntityAIQuarrier, JobQuarr
 
         return super.ignoresDamage(damageSource);
     }
+
+    @Override
+    public double getSaturationFactor()
+    {
+        return 1.2;
+    }
 }

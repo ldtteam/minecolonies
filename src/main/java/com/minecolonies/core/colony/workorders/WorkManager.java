@@ -17,7 +17,6 @@ import com.minecolonies.core.colony.Colony;
 import com.minecolonies.core.colony.buildings.AbstractBuildingStructureBuilder;
 import com.minecolonies.core.colony.buildings.modules.WorkerBuildingModule;
 import com.minecolonies.core.colony.buildings.modules.settings.StringSetting;
-import com.minecolonies.core.colony.jobs.AbstractJobStructure;
 import com.minecolonies.core.util.AdvancementUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -78,8 +77,12 @@ public class WorkManager implements IWorkManager
      * @param order {@link IWorkOrder} to remove.
      */
     @Override
-    public void removeWorkOrder(@NotNull final IServerWorkOrder order)
+    public void removeWorkOrder(@Nullable final IServerWorkOrder order)
     {
+        if (order == null)
+        {
+            return;
+        }
         removeWorkOrder(order.getID());
     }
 
@@ -421,7 +424,7 @@ public class WorkManager implements IWorkManager
     {
         for (IBuilding building : colony.getBuildingManager().getBuildings().values())
         {
-            if (building instanceof AbstractBuildingStructureBuilder)
+            if (building instanceof AbstractBuildingStructureBuilder abstractBuildingStructureBuilder)
             {
                 final @Nullable ICitizenData citizen = building.getFirstModuleOccurance(WorkerBuildingModule.class).getFirstCitizen();
                 if (citizen == null)
@@ -429,35 +432,32 @@ public class WorkManager implements IWorkManager
                     continue;
                 }
 
-                if (citizen.getJob() instanceof AbstractJobStructure<?,?> abstractJobStructure)
+                if (abstractBuildingStructureBuilder.hasWorkOrder())
                 {
-                    if (abstractJobStructure.hasWorkOrder())
-                    {
-                        continue;
-                    }
+                    continue;
+                }
 
-                    if (order.isClaimed())
+                if (order.isClaimed())
+                {
+                    if (order.getClaimedBy().equals(building.getPosition()))
                     {
-                        if (order.getClaimedBy().equals(building.getPosition()))
-                        {
-                            abstractJobStructure.setWorkOrder(order);
-                            order.setClaimedBy(building.getID());
-                            continue;
-                        }
-                        continue;
-                    }
-
-                    final StringSetting setting = building.getSetting(MODE);
-                    if (setting != null && setting.getValue().equals(MANUAL_SETTING))
-                    {
-                        continue;
-                    }
-
-                    if (predicate.test(building))
-                    {
-                        abstractJobStructure.setWorkOrder(order);
+                        abstractBuildingStructureBuilder.setWorkOrder(order);
                         order.setClaimedBy(building.getID());
+                        continue;
                     }
+                    continue;
+                }
+
+                final StringSetting setting = building.getSetting(MODE);
+                if (setting != null && setting.getValue().equals(MANUAL_SETTING))
+                {
+                    continue;
+                }
+
+                if (predicate.test(building))
+                {
+                    abstractBuildingStructureBuilder.setWorkOrder(order);
+                    order.setClaimedBy(building.getID());
                 }
             }
         }

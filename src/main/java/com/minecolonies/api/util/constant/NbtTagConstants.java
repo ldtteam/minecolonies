@@ -68,6 +68,7 @@ public final class NbtTagConstants
     public static final String TAG_TARGET_COLONY_NAME     = "targetname";
     public static final String TAG_DISTANCE               = "distance";
     public static final String TAG_TARGET_DISTANCE        = "targetdistance";
+    public static final String TAG_CACHED_ABOVE           = "cachedabove";
 
     public static final String TAG_CITIZEN                = "citizen";
     public static final String TAG_HELD_ITEM_SLOT         = "HeldItemSlot";
@@ -582,9 +583,10 @@ public final class NbtTagConstants
     /**
      * Crafter job tags.
      */
-    public static final String TAG_PROGRESS      = "progress";
-    public static final String TAG_MAX_COUNTER   = "maxCounter";
-    public static final String TAG_CRAFT_COUNTER = "craftCounter";
+    public static final String TAG_PROGRESS          = "progress";
+    public static final String TAG_MAX_COUNTER       = "maxCounter";
+    public static final String TAG_CRAFT_COUNTER     = "craftCounter";
+    public static final String TAG_SECONDARY_OUTPUTS = "secondaryOutputs";
 
     /**
      * Enchanter tags

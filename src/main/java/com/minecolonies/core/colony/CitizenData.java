@@ -1775,6 +1775,15 @@ public class CitizenData implements ICitizenData
     }
 
     @Override
+    public void onRequestCompleted(final IToken<?> token)
+    {
+        if (isRequestAsync(token))
+        {
+            job.getAsyncRequests().remove(token);
+        }
+    }
+
+    @Override
     public boolean isRequestAsync(@NotNull final IToken<?> token)
     {
         if (job != null)

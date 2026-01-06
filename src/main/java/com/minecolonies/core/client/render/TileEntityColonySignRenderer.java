@@ -1,15 +1,19 @@
 package com.minecolonies.core.client.render;
 
 import com.minecolonies.api.blocks.ModBlocks;
+import com.minecolonies.core.client.render.worldevent.WorldEventContext;
 import com.minecolonies.core.tileentities.TileEntityColonySign;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.client.gui.Font;
@@ -17,14 +21,20 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.network.chat.Style;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.client.RenderTypeHelper;
 import net.neoforged.neoforge.client.model.data.ModelData;
 import org.jetbrains.annotations.NotNull;
+import org.joml.Matrix4f;
 
 import java.util.List;
 
+import static com.minecolonies.api.util.constant.TranslationConstants.NEXT;
+import static com.minecolonies.api.util.constant.TranslationConstants.PREVIOUS;
 import static com.minecolonies.core.blocks.BlockColonySign.CONNECTED;
 
 @OnlyIn(Dist.CLIENT)
@@ -58,51 +68,66 @@ public class TileEntityColonySignRenderer implements BlockEntityRenderer<TileEnt
         final int combinedLight,
         final int combinedOverlay)
     {
-        if (tileEntity != null)
+        final float relativeRotationToColony = tileEntity.getRelativeRotation();
+        final BlockState state = tileEntity.getBlockState();
+        if (state.getBlock() == ModBlocks.blockColonySign)
         {
-            final float relativeRotationToColony = tileEntity.getRelativeRotation();
-            final BlockState state = tileEntity.getLevel().getBlockState(tileEntity.getBlockPos());
-            if (state.getBlock() == ModBlocks.blockColonySign)
+            matrixStack.pushPose();
+            matrixStack.translate(0.5, 0.5, 0.5);
+            matrixStack.mulPose(Axis.YP.rotationDegrees(relativeRotationToColony));
+            matrixStack.translate(-0.5, -0.5, -0.5);
+            renderSingleBlock(state, matrixStack, buffer, combinedLight, combinedOverlay, tileEntity.getTargetColonyId() != tileEntity.getCachedSignAboveColony());
+            matrixStack.popPose();
+
+           renderTextOnSide(matrixStack, relativeRotationToColony, tileEntity, buffer, combinedLight, true);
+           renderTextOnSide(matrixStack, relativeRotationToColony, tileEntity, buffer, combinedLight, false);
+        }
+    }
+
+    /**
+     * Render the text on the sign and handle rotation etc.
+     * @param matrixStack the matrix stack.
+     * @param relativeRotationToColony the relative rotation.
+     * @param tileEntity the block entity.
+     * @param buffer the buffer.
+     * @param combinedLight the light.
+     * @param mirrored if mirrored or not.
+     */
+    private void renderTextOnSide(final PoseStack matrixStack, final float relativeRotationToColony, final @NotNull TileEntityColonySign tileEntity, final @NotNull MultiBufferSource buffer, final int combinedLight, final boolean mirrored)
+    {
+        matrixStack.pushPose();
+        matrixStack.translate(0.5f, 0.5F, 0.5f);
+        matrixStack.mulPose(Axis.YP.rotationDegrees(relativeRotationToColony));
+        if (mirrored)
+        {
+            matrixStack.mulPose(Axis.YP.rotationDegrees(180));
+        }
+        matrixStack.translate(-0.0f, -0.1F, 0.2f);
+
+        matrixStack.scale(0.007F, -0.007F, 0.007F);
+
+        final String colonyName = tileEntity.getColonyName();
+        final int distance = tileEntity.getColonyDistance();
+        if (colonyName.isEmpty())
+        {
+            renderText(matrixStack, buffer, combinedLight, "Unknown Colony", 0, 0);
+            renderText(matrixStack, buffer, combinedLight, Component.translatable("com.minecolonies.coremod.dist.blocks",distance).getString(), 3, 0);
+        }
+        else
+        {
+            final String targetColonyName = tileEntity.getTargetColonyName();
+            if (!targetColonyName.isEmpty() && tileEntity.getTargetColonyId() != tileEntity.getCachedSignAboveColony())
             {
-                matrixStack.pushPose();
-                matrixStack.translate(0.5, 0.5, 0.5);
-                matrixStack.mulPose(Axis.YP.rotationDegrees(relativeRotationToColony));
-                matrixStack.translate(-0.5, -0.5, -0.5);
-                renderSingleBlock(state, matrixStack, buffer, combinedLight, combinedOverlay, tileEntity.getTargetColonyId() != -1);
-                matrixStack.popPose();
-
-                matrixStack.pushPose();
-                matrixStack.translate(0.5f, 0.5F, 0.5f);
-                matrixStack.mulPose(Axis.YP.rotationDegrees(relativeRotationToColony));
-                matrixStack.mulPose(Axis.YP.rotationDegrees(180));
-                matrixStack.translate(-0.0f, -0.1F, 0.2f);
-
-                matrixStack.scale(0.007F, -0.007F, 0.007F);
-
-                final String colonyName = tileEntity.getColonyName();
-                final int distance = tileEntity.getColonyDistance();
-                if (colonyName.isEmpty())
-                {
-                    renderText(matrixStack, buffer, combinedLight, "Unknown Colony", 0, 0);
-                    renderText(matrixStack, buffer, combinedLight, Component.translatable("com.minecolonies.coremod.dist.blocks",distance).getString(), 3, 0);
-                }
-                else
-                {
-                    final String targetColonyName = tileEntity.getTargetColonyName();
-                    if (!targetColonyName.isEmpty())
-                    {
-                        final int targetColonyDistance = tileEntity.getTargetColonyDistance();
-                        renderColonyNameOnSign(colonyName, matrixStack, buffer, combinedLight, distance, -10);
-                        renderColonyNameOnSign(targetColonyName, matrixStack, buffer, combinedLight, targetColonyDistance, -60);
-                    }
-                    else
-                    {
-                        renderColonyNameOnSign(colonyName, matrixStack, buffer, combinedLight, distance, 0);
-                    }
-                }
-                matrixStack.popPose();
+                final int targetColonyDistance = tileEntity.getTargetColonyDistance();
+                renderColonyNameOnSign(colonyName, matrixStack, buffer, combinedLight, distance, -10);
+                renderColonyNameOnSign(targetColonyName, matrixStack, buffer, combinedLight, targetColonyDistance, -60);
+            }
+            else
+            {
+                renderColonyNameOnSign(colonyName, matrixStack, buffer, combinedLight, distance, -35);
             }
         }
+        matrixStack.popPose();
     }
 
     /**
@@ -193,5 +218,95 @@ public class TileEntityColonySignRenderer implements BlockEntityRenderer<TileEnt
     public boolean shouldRenderOffScreen(TileEntityColonySign tileEntityMBE21)
     {
         return false;
+    }
+
+    public static void renderSignHover(final WorldEventContext context)
+    {
+        final HitResult rayTraceResult = Minecraft.getInstance().hitResult;
+        if (!(rayTraceResult instanceof final BlockHitResult blockRayTraceResult) || blockRayTraceResult.getType() == HitResult.Type.MISS)
+            return;
+
+        final BlockPos posAtCamera = blockRayTraceResult.getBlockPos();
+        if (context.clientLevel.getBlockState(posAtCamera).getBlock() != ModBlocks.blockColonySign)
+        {
+            return;
+        }
+
+        if (context.clientLevel.getBlockEntity(posAtCamera) instanceof TileEntityColonySign tileEntityColonySign)
+        {
+            if (!BlockPos.ZERO.equals(tileEntityColonySign.getPreviousPos()))
+            {
+                renderTextBoxAtPos(context, tileEntityColonySign.getPreviousPos(), List.of(Component.translatable(PREVIOUS).getString()));
+            }
+            if (!BlockPos.ZERO.equals(tileEntityColonySign.getNextPosition()))
+            {
+                renderTextBoxAtPos(context, tileEntityColonySign.getNextPosition(), List.of(Component.translatable(NEXT).getString()));
+            }
+        }
+    }
+
+    private static void renderTextBoxAtPos(final WorldEventContext context, final BlockPos pos, final List<String> text)
+    {
+        context.pushPoseCameraToPos(pos);
+        context.renderLineBoxWithShadow(BlockPos.ZERO, 0xffffffff, WorldEventContext.DEFAULT_LINE_WIDTH * 2);
+        context.popPose();
+        renderDebugText(pos, text, context.poseStack, true, 3, 2.5f, context.bufferSource, context.cameraPosition);
+    }
+
+    public static void renderDebugText(final BlockPos renderPos,
+        final List<String> text,
+        final PoseStack matrixStack,
+        final boolean forceWhite,
+        final int mergeEveryXListElements,
+        final float scale,
+        final MultiBufferSource buffer, final Vec3 cameraPosition)
+    {
+        if (mergeEveryXListElements < 1)
+        {
+            throw new IllegalArgumentException("mergeEveryXListElements is less than 1");
+        }
+
+        final EntityRenderDispatcher erm = Minecraft.getInstance().getEntityRenderDispatcher();
+        final int cap = text.size();
+        if (cap > 0)
+        {
+            final Font fontrenderer = Minecraft.getInstance().font;
+
+            matrixStack.pushPose();
+            matrixStack.translate(renderPos.getX() + 0.5d - cameraPosition.x(), renderPos.getY() + 0.6d - cameraPosition.y(), renderPos.getZ() + 0.5d - cameraPosition.z());
+            matrixStack.mulPose(erm.cameraOrientation());
+            matrixStack.scale(0.014f, -0.014f, 0.014f);
+
+            final float backgroundTextOpacity = Minecraft.getInstance().options.getBackgroundOpacity(0.25F);
+            final int alphaMask = (int) (backgroundTextOpacity * 255.0F) << 24;
+
+            final Matrix4f rawPosMatrix = matrixStack.last().pose();
+            rawPosMatrix.scale(scale, scale, scale);
+
+            for (int i = 0; i < cap; i += mergeEveryXListElements)
+            {
+                final MutableComponent renderText = Component.literal(
+                    mergeEveryXListElements == 1 ? text.get(i) : text.subList(i, Math.min(i + mergeEveryXListElements, cap)).toString());
+                final float textCenterShift = (float) (-fontrenderer.width(renderText) / 2);
+
+                fontrenderer.drawInBatch(renderText,
+                    textCenterShift,
+                    0,
+                    forceWhite ? 0xffffffff : 0x20ffffff,
+                    false,
+                    rawPosMatrix,
+                    buffer,
+                    Font.DisplayMode.SEE_THROUGH,
+                    alphaMask,
+                    0x00f000f0);
+                if (!forceWhite)
+                {
+                    fontrenderer.drawInBatch(renderText, textCenterShift, 0, 0xffffffff, false, rawPosMatrix, buffer, Font.DisplayMode.NORMAL, 0, 0x00f000f0);
+                }
+                matrixStack.translate(0.0d, fontrenderer.lineHeight + 1, 0.0d);
+            }
+
+            matrixStack.popPose();
+        }
     }
 }

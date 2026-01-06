@@ -5,12 +5,12 @@ import com.minecolonies.api.colony.buildings.modules.AbstractBuildingModuleView;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.colony.workorders.IWorkOrderView;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.core.client.gui.modules.WindowHutMinerModule;
-import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
-
-import com.minecolonies.core.colony.workorders.view.WorkOrderMinerView;
+import com.minecolonies.core.client.gui.modules.building.WindowHutMinerModule;
 import com.minecolonies.core.colony.workorders.AbstractWorkOrder;
+import com.minecolonies.core.colony.workorders.view.WorkOrderMinerView;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Tuple;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
@@ -67,7 +67,7 @@ public class MinerLevelManagementModuleView extends AbstractBuildingModuleView
     @Override
     public BOWindow getWindow()
     {
-        return new WindowHutMinerModule(buildingView, this);
+        return new WindowHutMinerModule(this);
     }
 
     @Override
@@ -77,9 +77,9 @@ public class MinerLevelManagementModuleView extends AbstractBuildingModuleView
     }
 
     @Override
-    public String getDesc()
+    public Component getDesc()
     {
-        return "com.minecolonies.coremod.gui.miner.levels";
+        return Component.translatable("com.minecolonies.coremod.gui.miner.levels");
     }
 
     @Override

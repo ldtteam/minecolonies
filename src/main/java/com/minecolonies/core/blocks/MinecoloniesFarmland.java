@@ -11,7 +11,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.ParticleUtils;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.item.BoneMealItem;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -148,7 +147,8 @@ public class MinecoloniesFarmland extends AbstractBlockMinecolonies<Minecolonies
         int growthChance = 4;
         if (level.isRaining())
         {
-            growthChance = 6;
+            // Increased growth during rain, rain is usually short and frequently skipped since citizens do not work
+            growthChance = 12;
         }
         if (aboveState.getBlock() instanceof MinecoloniesCropBlock cropBlock && rng.nextInt(100) <= growthChance)
         {
@@ -160,7 +160,7 @@ public class MinecoloniesFarmland extends AbstractBlockMinecolonies<Minecolonies
     @Override
     public void animateTick(final BlockState state, final Level level, final BlockPos pos, final RandomSource rng)
     {
-        if (level.isRaining() && rng.nextInt(100) < 25)
+        if (level.isRaining() && rng.nextInt(100) < 25 && level.getBlockState(pos.above()).getBlock() instanceof MinecoloniesCropBlock)
         {
             ParticleUtils.spawnParticleInBlock(level, pos, 1, ParticleTypes.HAPPY_VILLAGER);
 

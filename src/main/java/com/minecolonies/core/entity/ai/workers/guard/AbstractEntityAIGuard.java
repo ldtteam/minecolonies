@@ -6,7 +6,6 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IGuardBuilding;
 import com.minecolonies.api.colony.jobs.ModJobs;
-import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.entity.ai.combat.CombatAIStates;
 import com.minecolonies.api.entity.ai.combat.threat.IThreatTableEntity;
@@ -47,7 +46,8 @@ import java.util.Random;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.research.util.ResearchConstants.*;
-import static com.minecolonies.api.util.constant.Constants.*;
+import static com.minecolonies.api.util.constant.Constants.GLOW_EFFECT_DURATION;
+import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.api.util.constant.GuardConstants.GUARD_FOLLOW_LOSE_RANGE;
 import static com.minecolonies.api.util.constant.GuardConstants.GUARD_FOLLOW_TIGHT_RANGE;
 import static com.minecolonies.core.colony.buildings.AbstractBuildingGuards.HOSTILE_LIST;
@@ -97,7 +97,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
     /**
      * The current blockPos we're patrolling at.
      */
-    private BlockPos currentPatrolPoint = null;
+    protected BlockPos currentPatrolPoint = null;
 
     /**
      * The guard building assigned to this job.
@@ -313,7 +313,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
      *
      * @return the next state to go into
      */
-    private IAIState sleep()
+    protected IAIState sleep()
     {
         if (worker.getLastHurtByMob() != null || (sleepTimer -= getTickRate()) < 0)
         {
@@ -473,7 +473,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
                 // when they're at half-max, so at about skill60. Therefore, divide the skill by 20.
                 worker.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED,
                   5 * TICKS_SECOND,
-                  Mth.clamp((citizenData.getCitizenSkillHandler().getLevel(Skill.Adaptability) / 20), 2, 5),
+                    Mth.clamp((citizenData.getCitizenSkillHandler().getLevel(Skill.Adaptability) / 30), 0, 3),
                   false,
                   false));
             }
@@ -490,6 +490,15 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
             buildingGuards.setTempNextPatrolPoint(buildingGuards.getPosition());
         }
         return DECIDE;
+    }
+
+    /**
+     * Provides a random patrol point from all buildings in the colony when the guard is set to automatic patrol mode.
+     * @return a BlockPos of the patrol point.
+     */
+    protected BlockPos randomPatrolPoint()
+    {
+        return buildingGuards.getColony().getBuildingManager().getRandomBuilding(b -> true);
     }
 
     /**
@@ -511,7 +520,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
 
                 if (worker.getRandom().nextInt(5) <= 1)
                 {
-                    currentPatrolPoint = buildingGuards.getColony().getBuildingManager().getRandomBuilding(b -> true);
+                    currentPatrolPoint = randomPatrolPoint();
                     if (currentPatrolPoint != null)
                     {
                         walkToSafePos(currentPatrolPoint);
@@ -521,13 +530,10 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
         }
         else
         {
-            if (currentPatrolPoint == null)
-            {
-                currentPatrolPoint = buildingGuards.getNextPatrolTarget(false);
-            }
-
+            currentPatrolPoint = buildingGuards.getNextPatrolTarget(false);
             if (currentPatrolPoint != null && (walkToSafePos(currentPatrolPoint)))
             {
+                setCurrentDelay(10);
                 buildingGuards.arrivedAtPatrolPoint(worker);
             }
         }
@@ -574,24 +580,6 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
             }
         }
         return null;
-    }
-
-    /**
-     * Sets the next patrol target, and moves to it if patrolling
-     *
-     * @param target the next patrol target.
-     */
-    public void setNextPatrolTargetAndMove(final BlockPos target)
-    {
-        setNextPatrolTarget(target);
-        registerTarget(new AIOneTimeEventTarget(() ->
-        {
-            if (getState() == CombatAIStates.NO_TARGET)
-            {
-                return decide();
-            }
-            return getState();
-        }));
     }
 
     /**
@@ -708,7 +696,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
 
         if (rallyLocation != null || buildingGuards.getTask().equals(GuardTaskSetting.FOLLOW))
         {
-            worker.addEffect(new MobEffectInstance(MobEffects.GLOWING, GLOW_EFFECT_DURATION, GLOW_EFFECT_MULTIPLIER, false, false));
+            worker.addEffect(new MobEffectInstance(MobEffects.GLOWING, GLOW_EFFECT_DURATION, 0, false, false));
         }
         else
         {
@@ -842,8 +830,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
         }
 
         // Players
-        if (entity instanceof Player && (colony.getPermissions().hasPermission((Player) entity, Action.GUARDS_ATTACK)
-                                           || colony.isValidAttackingPlayer((Player) entity)))
+        if (entity instanceof Player && (colony.getPermissions().getRank((Player) entity).isHostile() || colony.isValidAttackingPlayer((Player) entity)))
         {
             return true;
         }

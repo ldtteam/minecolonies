@@ -10,6 +10,7 @@ import com.minecolonies.core.tileentities.TileEntityColonyBuilding;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.WindowConstants.*;
@@ -31,7 +32,7 @@ public class WindowReactivateBuilding extends AbstractWindowSkeleton
      */
     public WindowReactivateBuilding(@NotNull final BlockPos pos)
     {
-        super(Constants.MOD_ID + REACTIVATE_BUILDING_SOURCE_SUFFIX);
+        super(new ResourceLocation(Constants.MOD_ID, "gui/windowreactivatebuilding.xml"));
         this.pos = pos;
         registerButton(BUTTON_REACTIVATE, this::reactivateClicked);
         registerButton(BUTTON_CANCEL, this::cancelClicked);

@@ -8,7 +8,7 @@ public enum Action
     //counts for citizen and huts.
     ACCESS_HUTS(0),
     //If guards can attack, player can attack back
-    GUARDS_ATTACK(1),
+    // GUARDS_ATTACK(1), replaced by hostile type
     PLACE_HUTS(2),
     BREAK_HUTS(3),
     //Including promote, demote and remove.
@@ -30,11 +30,11 @@ public enum Action
     ATTACK_CITIZEN(18),
     ATTACK_ENTITY(19),
     //has access to allowed list, "hostile+" or "neutral+"
-    ACCESS_FREE_BLOCKS(20),
+    // ACCESS_FREE_BLOCKS(20), replaced by all minus hostile
     TELEPORT_TO_COLONY(21),
     EXPLODE(22),
-    RECEIVE_MESSAGES_FAR_AWAY(23),
-    CAN_KEEP_COLONY_ACTIVE_WHILE_AWAY(24),
+    // RECEIVE_MESSAGES_FAR_AWAY(23), replaced by colony manager
+    // CAN_KEEP_COLONY_ACTIVE_WHILE_AWAY(24), replaced by colony manager
     RALLY_GUARDS(25),
     HURT_CITIZEN(26),
     HURT_VISITOR(27),

@@ -2,7 +2,10 @@ package com.minecolonies.core.client.gui.modules;
 
 import com.ldtteam.blockui.Pane;
 import com.ldtteam.blockui.PaneBuilders;
-import com.ldtteam.blockui.controls.*;
+import com.ldtteam.blockui.controls.Button;
+import com.ldtteam.blockui.controls.Gradient;
+import com.ldtteam.blockui.controls.ItemIcon;
+import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.blockui.views.ScrollingList;
 import com.minecolonies.api.colony.buildings.modules.IItemListModuleView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
@@ -10,8 +13,11 @@ import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.items.IMinecoloniesFoodItem;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.FoodUtils;
+import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.core.client.gui.modules.building.ItemListModuleWindow;
 import com.minecolonies.core.colony.buildings.moduleviews.ItemListModuleView;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
@@ -36,7 +42,7 @@ public class FoodItemListModuleWindow extends ItemListModuleWindow
       final IBuildingView building,
       final IItemListModuleView moduleView)
     {
-        super(res, building, moduleView);
+        super(moduleView, new ResourceLocation(Constants.MOD_ID, "gui/foodlist.xml"));
         groupedItemList.removeIf(c -> c.getItemStack().is(ModTags.excludedFood) || !FoodUtils.canEatLevel(c.getItemStack(), building.getBuildingLevel() - 1));
     }
 
@@ -44,8 +50,8 @@ public class FoodItemListModuleWindow extends ItemListModuleWindow
     protected void applySorting(final List<ItemStorage> displayedList)
     {
         displayedList.sort((o1, o2) -> {
-            int score = building.getModuleViewMatching(ItemListModuleView.class, view -> view.getId().equals(id)).isAllowedItem(o1) ? 500 : -500;
-            int score2 = building.getModuleViewMatching(ItemListModuleView.class, view -> view.getId().equals(id)).isAllowedItem(o2) ? 500 : -500;
+            int score = buildingView.getModuleViewMatching(ItemListModuleView.class, view -> view.getId().equals(id)).isAllowedItem(o1) ? 500 : -500;
+            int score2 = buildingView.getModuleViewMatching(ItemListModuleView.class, view -> view.getId().equals(id)).isAllowedItem(o2) ? 500 : -500;
             score += o1.getItem() instanceof IMinecoloniesFoodItem foodItem ? foodItem.getTier()* -100 : -o1.getItemStack().getFoodProperties(null).nutrition();
             score2 += o2.getItem() instanceof IMinecoloniesFoodItem foodItem2 ? foodItem2.getTier()* -100 : -o2.getItemStack().getFoodProperties(null).nutrition();
             return score - score2;
@@ -85,7 +91,7 @@ public class FoodItemListModuleWindow extends ItemListModuleWindow
                 resourceLabel.setColors(WHITE);
                 final ItemIcon itemIcon = rowPane.findPaneOfTypeByID(RESOURCE_ICON, ItemIcon.class);
                 itemIcon.setItem(resource);
-                final boolean isAllowedItem  = building.getModuleViewMatching(ItemListModuleView.class, view -> view.getId().equals(id)).isAllowedItem(new ItemStorage(resource));
+                final boolean isAllowedItem = buildingView.getModuleViewMatching(ItemListModuleView.class, view -> view.getId().equals(id)).isAllowedItem(new ItemStorage(resource));
                 final Button switchButton = rowPane.findPaneOfTypeByID(BUTTON_SWITCH, Button.class);
                 final Gradient gradient = rowPane.findPaneOfTypeByID("gradient", Gradient.class);
                 if (resource.getItem() instanceof IMinecoloniesFoodItem foodItem)

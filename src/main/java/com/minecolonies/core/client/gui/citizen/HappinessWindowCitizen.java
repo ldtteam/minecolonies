@@ -2,8 +2,7 @@ package com.minecolonies.core.client.gui.citizen;
 
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.util.constant.Constants;
-
-import static com.minecolonies.api.util.constant.WindowConstants.CITIZEN_HAP_RESOURCE_SUFFIX;
+import net.minecraft.resources.ResourceLocation;
 
 /**
  * BOWindow for the citizen.
@@ -11,24 +10,13 @@ import static com.minecolonies.api.util.constant.WindowConstants.CITIZEN_HAP_RES
 public class HappinessWindowCitizen extends AbstractWindowCitizen
 {
     /**
-     * The citizenData.View object.
-     */
-    private final ICitizenDataView citizen;
-
-    /**
      * Constructor to initiate the citizen windows.
      *
      * @param citizen citizen to bind the window to.
      */
     public HappinessWindowCitizen(final ICitizenDataView citizen)
     {
-        super(citizen, Constants.MOD_ID + CITIZEN_HAP_RESOURCE_SUFFIX);
-        this.citizen = citizen;
-    }
-
-    public ICitizenDataView getCitizen()
-    {
-        return citizen;
+        super(citizen, new ResourceLocation(Constants.MOD_ID, "gui/citizen/happiness.xml"));
     }
 
     /**

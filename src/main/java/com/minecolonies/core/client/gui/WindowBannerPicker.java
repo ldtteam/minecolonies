@@ -140,7 +140,7 @@ public class WindowBannerPicker extends Screen
 
         /* Get all patterns, then remove excluded and item-required patterns */
         List<Holder<BannerPattern>> exclusion = new ArrayList<>();
-        for (int i = hallWindow.building.getBuildingLevel(); i <= hallWindow.building.getBuildingMaxLevel(); i++)
+        for (int i = hallWindow.buildingView.getBuildingLevel(); i <= hallWindow.buildingView.getBuildingMaxLevel(); i++)
         {
             for (final ResourceKey key : EXCLUSION[i])
             {

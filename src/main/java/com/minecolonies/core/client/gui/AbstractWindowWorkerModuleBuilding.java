@@ -16,6 +16,7 @@ import com.minecolonies.core.network.messages.server.colony.building.ForcePickup
 import com.minecolonies.core.network.messages.server.colony.building.worker.RecallCitizenMessage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -28,7 +29,7 @@ import static com.minecolonies.api.util.constant.TranslationConstants.*;
  *
  * @param <B> Class extending {@link AbstractBuildingView}
  */
-public abstract class AbstractWindowWorkerModuleBuilding<B extends IBuildingView> extends AbstractWindowModuleBuilding<B>
+public abstract class AbstractWindowWorkerModuleBuilding<B extends IBuildingView> extends AbstractBuildingMainWindow<B>
 {
     /**
      * Id of the hire/fire button in the GUI.
@@ -73,15 +74,15 @@ public abstract class AbstractWindowWorkerModuleBuilding<B extends IBuildingView
     /**
      * Current pickup priority of the building.
      */
-    private int prio = building.getBuildingDmPrio();
+    private int prio = buildingView.getBuildingDmPrio();
 
     /**
      * Constructor for the window of the worker building.
      *
      * @param building class extending {@link AbstractBuildingView}.
-     * @param resource Resource of the window.
+     * @param resource window resource location.
      */
-    protected AbstractWindowWorkerModuleBuilding(final B building, final String resource)
+    protected AbstractWindowWorkerModuleBuilding(final B building, final ResourceLocation resource)
     {
         super(building, resource);
 
@@ -114,7 +115,7 @@ public abstract class AbstractWindowWorkerModuleBuilding<B extends IBuildingView
         {
             prio++;
         }
-        new ChangeDeliveryPriorityMessage(building, true).sendToServer();
+        new ChangeDeliveryPriorityMessage(buildingView, true).sendToServer();
         updatePriorityLabel();
     }
 
@@ -124,13 +125,13 @@ public abstract class AbstractWindowWorkerModuleBuilding<B extends IBuildingView
         {
             prio--;
         }
-        new ChangeDeliveryPriorityMessage(building, false).sendToServer();
+        new ChangeDeliveryPriorityMessage(buildingView, false).sendToServer();
         updatePriorityLabel();
     }
 
     private void forcePickup()
     {
-        new ForcePickupMessage(building).sendToServer();
+        new ForcePickupMessage(buildingView).sendToServer();
     }
 
     /**
@@ -140,13 +141,13 @@ public abstract class AbstractWindowWorkerModuleBuilding<B extends IBuildingView
      */
     protected void hireClicked(@NotNull final Button button)
     {
-        if (!building.allowsAssignment())
+        if (!buildingView.allowsAssignment())
         {
             MessageUtils.format(COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_LEVEL_0).sendTo(Minecraft.getInstance().player);
             return;
         }
 
-        new WindowHireWorker(building.getColony(), building.getPosition()).open();
+        new WindowHireWorker(buildingView.getColony(), buildingView.getPosition()).open();
     }
 
     /**
@@ -154,7 +155,7 @@ public abstract class AbstractWindowWorkerModuleBuilding<B extends IBuildingView
      */
     private void recallClicked()
     {
-        new RecallCitizenMessage(building).sendToServer();
+        new RecallCitizenMessage(buildingView).sendToServer();
     }
 
     @Override
@@ -186,7 +187,7 @@ public abstract class AbstractWindowWorkerModuleBuilding<B extends IBuildingView
                 public void updateElement(final int index, @NotNull final Pane rowPane)
                 {
 
-                    final ICitizenDataView worker = building.getColony().getCitizen(workers.get(index).getB());
+                    final ICitizenDataView worker = buildingView.getColony().getCitizen(workers.get(index).getB());
                     if (worker != null)
                     {
                         Text workerNameField = rowPane.findPaneOfTypeByID(LABEL_WORKERNAME, Text.class);

@@ -3,9 +3,4 @@
 
     <text size="164 11" pos="33 14" color="black" textalign="MIDDLE"
            label="$(com.minecolonies.coremod.gui.citizen.requests)"/>
-    <list id="requests" size="164 185" pos="33 29">
-        <box id="requestx" size="100% 40" linewidth="1">
-            <layout source="minecolonies:gui/layouthuts/layoutrequeststree.xml"/>
-        </box>
-    </list>
 </window>

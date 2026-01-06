@@ -1,0 +1,31 @@
+name: Pull Request Management - Setup
+
+on:
+  pull_request_target:
+    types:
+      - opened
+
+jobs:
+  setup-pr:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Add initial pull request comment
+        uses: actions/github-script@v8
+        env:
+          IS_FIRST_TIME: ${{ github.event.pull_request.author_association == 'FIRST_TIME_CONTRIBUTOR' || github.event.pull_request.author_association == 'FIRST_TIMER' }}
+        with:
+          result-encoding: string
+          retries: 3
+          script: |
+            let body = "";
+            if (process.env.IS_FIRST_TIME == 'true') {
+              body += "# Thanks for your first contribution to MineColonies!\n\n";
+            }
+            body += `### In order for this pull request to be merged, make sure you test whether your changes work.\nIf the changes are working as intended, remove the https://github.com/${context.repo.owner}/${context.repo.repo}/labels/${process.env.REQUIRED_LABEL} label from the pull request.\nAs long as this label is on the pull request, it will not be merged.\nIf your pull request made no changes to the source code, the label will not be automatically added to the pull request.\n\n**Contributors, please review this pull request!**`
+            
+            github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body,
+            })

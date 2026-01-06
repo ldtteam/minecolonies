@@ -6,8 +6,8 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
 
-import static com.minecolonies.api.util.constant.RaiderConstants.ONE;
-import static com.minecolonies.api.util.constant.RaiderConstants.OUT_OF_ONE_HUNDRED;
+import static com.minecolonies.core.colony.events.raid.RaiderConstants.ONE;
+import static com.minecolonies.core.colony.events.raid.RaiderConstants.OUT_OF_ONE_HUNDRED;
 
 /**
  * Abstract for all Barbarian entities.

@@ -1,7 +1,7 @@
 package com.minecolonies.core.colony.buildings.moduleviews;
 
 import com.minecolonies.api.util.OptionalPredicate;
-import com.minecolonies.core.client.gui.modules.DOCraftingWindow;
+import com.minecolonies.core.client.gui.modules.building.DOCraftingWindow;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
@@ -22,7 +22,7 @@ public class DOCraftingModuleView extends CraftingModuleView
     @Override
     public void openCraftingGUI()
     {
-        new DOCraftingWindow(buildingView, this).open();
+        new DOCraftingWindow(this).open();
     }
 
     /**

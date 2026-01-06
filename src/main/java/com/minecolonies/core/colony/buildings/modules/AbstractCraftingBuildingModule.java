@@ -1,5 +1,6 @@
 package com.minecolonies.core.colony.buildings.modules;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.MinecoloniesAPIProxy;
@@ -33,6 +34,7 @@ import com.minecolonies.core.colony.crafting.CustomRecipeManager;
 import com.minecolonies.core.colony.jobs.AbstractJobCrafter;
 import com.minecolonies.core.colony.requestsystem.resolvers.PublicWorkerCraftingProductionResolver;
 import com.minecolonies.core.colony.requestsystem.resolvers.PublicWorkerCraftingRequestResolver;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
@@ -46,6 +48,8 @@ import net.minecraft.util.Tuple;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.FurnaceBlockEntity;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.neoforged.neoforge.items.IItemHandler;
@@ -58,11 +62,14 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.minecolonies.api.research.util.ResearchConstants.RECIPES;
+import static com.minecolonies.api.util.ItemStackUtils.isEmpty;
 import static com.minecolonies.api.util.constant.BuildingConstants.*;
+import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_DISABLED_RECIPES;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_RECIPES;
 import static com.minecolonies.api.util.constant.TagConstants.CRAFTING_REDUCEABLE;
 import static com.minecolonies.api.util.constant.TranslationConstants.RECIPE_IMPROVED;
+import static com.minecolonies.core.colony.buildings.modules.BuildingModules.FURNACE;
 
 /**
  * Basic implementation of a crafting module.
@@ -148,7 +155,15 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
      */
     private boolean hasSpaceForMoreRecipes()
     {
-        return getMaxRecipes() > recipes.size();
+        return getMaxRecipes() > getActiveRecipes();
+    }
+
+    /**
+     * Gets the number of currently enabled recipes.
+     */
+    private int getActiveRecipes()
+    {
+        return Math.max(0, recipes.size() - disabledRecipes.size());
     }
 
     /**

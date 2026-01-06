@@ -3,6 +3,7 @@ package com.minecolonies.core.colony;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.IVisitorViewData;
 import com.minecolonies.api.util.Utils;
+import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.yggdrasil.ProfileResult;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
@@ -26,6 +27,11 @@ public class VisitorDataView extends CitizenDataView implements IVisitorViewData
      * Cached player info for custom texture.
      */
     private volatile ResourceLocation cachedTexture;
+
+    /**
+     * Session profile cache for a given special visitor.
+     */
+    private GameProfile cachedProfile = null;
 
     /**
      * Create a CitizenData given an ID. Used as a super-constructor or during loading.
@@ -59,19 +65,31 @@ public class VisitorDataView extends CitizenDataView implements IVisitorViewData
         {
             return null;
         }
-        if (cachedTexture == null)
+
+        if (cachedProfile == null)
         {
-            cachedTexture = DefaultPlayerSkin.get(textureUUID).texture();
             Util.backgroundExecutor().execute(() ->
             {
-                Minecraft minecraft = Minecraft.getInstance();
-                final ProfileResult profile = minecraft.getMinecraftSessionService().fetchProfile(textureUUID, true);
-                if (profile != null)
+                if (cachedProfile == null)
                 {
-                    minecraft.submit(() -> cachedTexture = minecraft.getSkinManager().getInsecureSkin(profile.profile()).texture());
+                    final ProfileResult profile = Minecraft.getInstance().getMinecraftSessionService().fetchProfile(textureUUID, true);
+                    if (profile != null)
+                    {
+                        cachedProfile = profile.profile();
+                    }
                 }
             });
         }
-        return cachedTexture;
+
+        if (cachedProfile != null && cachedTexture == null)
+        {
+            final ResourceLocation texture = Minecraft.getInstance().getSkinManager().getInsecureSkin(cachedProfile).texture();
+            if (texture != DefaultPlayerSkin.get(textureUUID).texture())
+            {
+                cachedTexture = texture;
+            }
+        }
+
+        return cachedTexture == null ? DefaultPlayerSkin.get(textureUUID).texture() : cachedTexture;
     }
 }

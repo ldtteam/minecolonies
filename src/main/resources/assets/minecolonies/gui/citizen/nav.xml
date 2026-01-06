@@ -1,36 +1,36 @@
 <window size="210 244" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/ldtteam/BlockUI/version/main/src/main/resources/assets/blockui/gui/block_ui.xsd">
     <button id="mainTab" size="32 26" pos="0 36"
-                 source="minecolonies:textures/gui/modules/tab_side1.png"/>
+                 source="minecolonies:textures/gui/modules/tab_left_side1.png"/>
     <button id="mainIcon" size="20 20" pos="5 39"
                  source="minecolonies:textures/gui/modules/info.png"/>
 
     <button id="requestTab" size="32 26" pos="0 64"
-                 source="minecolonies:textures/gui/modules/tab_side2.png"/>
+                 source="minecolonies:textures/gui/modules/tab_left_side2.png"/>
     <button id="requestIcon" size="20 20" pos="5 67"
                  source="minecolonies:textures/gui/modules/requests.png"/>
 
     <button id="inventoryTab" size="32 26" pos="0 92"
-                 source="minecolonies:textures/gui/modules/tab_side3.png"/>
+                 source="minecolonies:textures/gui/modules/tab_left_side3.png"/>
     <button id="inventoryIcon" size="20 20" pos="5 95"
                  source="minecolonies:textures/gui/modules/inventory.png"/>
 
     <button id="happinessTab" size="32 26" pos="0 118"
-                 source="minecolonies:textures/gui/modules/tab_side2.png"/>
+                 source="minecolonies:textures/gui/modules/tab_left_side2.png"/>
     <button id="happinessIcon" size="20 20" pos="5 121"
                  source="minecolonies:textures/gui/modules/happiness.png"/>
 
     <button id="familyTab" size="32 26" pos="0 144"
-                 source="minecolonies:textures/gui/modules/tab_side1.png"/>
+                 source="minecolonies:textures/gui/modules/tab_left_side1.png"/>
     <button id="familyIcon" size="20 20" pos="5 147"
                  source="minecolonies:textures/gui/modules/family.png"/>
 
     <button id="jobTab" size="32 26" pos="0 170" visible="false"
-                 source="minecolonies:textures/gui/modules/tab_side3.png"/>
+                 source="minecolonies:textures/gui/modules/tab_left_side3.png"/>
     <button id="jobIcon" size="20 20" pos="5 173" visible="false"
                  source="minecolonies:textures/gui/modules/main.png"/>
 
     <button id="debugTab" size="32 26" pos="0 196" visible="false"
-            source="minecolonies:textures/gui/modules/tab_side3.png"/>
+            source="minecolonies:textures/gui/modules/tab_left_side3.png"/>
     <button id="debugIcon" size="20 20" pos="5 199" visible="false"
             source="minecolonies:textures/gui/modules/settings.png"/>
 

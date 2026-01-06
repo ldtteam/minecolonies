@@ -9,6 +9,9 @@ import com.minecolonies.core.debug.messages.DebugEnablePathfindingMessage;
 import com.minecolonies.core.debug.messages.QueryCitizenAIHistoryMessage;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.resources.ResourceLocation;
+
+import java.util.Objects;
 
 /**
  * Debug window for citizens
@@ -21,24 +24,17 @@ public class DebugWindowCitizen extends AbstractWindowSkeleton
     public static MutableComponent outputMessage = Component.empty();
 
     /**
-     * Assigned citizen.
-     */
-    private final ICitizenDataView citizen;
-
-    /**
      * Whether pathfinding tracking is enabled(not synced!)
      */
     private static boolean trackingDebug = false;
 
     public DebugWindowCitizen(final ICitizenDataView citizen)
     {
-        super(Constants.MOD_ID + ":gui/citizen/debug.xml");
-        if (outputMessage == Component.empty())
+        super(new ResourceLocation(Constants.MOD_ID, "gui/citizen/debug.xml"));
+        if (Objects.equals(outputMessage, Component.empty()))
         {
             outputMessage = Component.literal("Enabled Citizen AI History!");
         }
-
-        this.citizen = citizen;
 
         findPaneOfTypeByID("citizenid", Text.class).setText(Component.literal("Citizen ID:" + citizen.getId()));
         findPaneOfTypeByID("colonyid", Text.class).setText(Component.literal("Colony ID:" + citizen.getColonyId()));

@@ -2,31 +2,40 @@ package com.minecolonies.core.client.gui.citizen;
 
 import com.ldtteam.blockui.PaneBuilders;
 import com.minecolonies.api.colony.ICitizenDataView;
-import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
-import com.minecolonies.core.client.gui.AbstractWindowRequestTree;
+import com.minecolonies.core.client.gui.AbstractWindowSkeleton;
 import com.minecolonies.core.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.core.debug.DebugPlayerManager;
 import com.minecolonies.core.debug.gui.DebugWindowCitizen;
 import com.minecolonies.core.network.messages.server.colony.OpenInventoryMessage;
-import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 
 /**
  * BOWindow for the citizen.
  */
-public abstract class AbstractWindowCitizen extends AbstractWindowRequestTree
+public abstract class AbstractWindowCitizen extends AbstractWindowSkeleton
 {
+    protected final IColonyView colony;
+
+    /**
+     * The citizenData.View object.
+     */
+    protected final ICitizenDataView citizen;
+
     /**
      * Constructor to initiate the citizen windows.
      *
      * @param citizen citizen to bind the window to.
      * @param ui the xml res loc.
      */
-    public AbstractWindowCitizen(final ICitizenDataView citizen, final String ui)
+    public AbstractWindowCitizen(final ICitizenDataView citizen, final ResourceLocation ui)
     {
-        super(citizen.getWorkBuilding(), ui, IColonyManager.getInstance().getColonyView(citizen.getColonyId(), Minecraft.getInstance().level.dimension()));
+        super(ui);
+        this.colony = citizen.getColony();
+        this.citizen = citizen;
 
         registerButton("mainTab", () -> new MainWindowCitizen(citizen).open());
         registerButton("mainIcon", () -> new MainWindowCitizen(citizen).open());
@@ -36,8 +45,8 @@ public abstract class AbstractWindowCitizen extends AbstractWindowRequestTree
         registerButton("requestIcon", () -> new RequestWindowCitizen(citizen).open());
         PaneBuilders.tooltipBuilder().hoverPane(findPaneByID("requestIcon")).build().setText(Component.translatableEscape("com.minecolonies.coremod.gui.citizen.requests"));
 
-        registerButton("inventoryTab", () -> new OpenInventoryMessage(colony, citizen.getName(), citizen.getEntityId()).sendToServer());
-        registerButton("inventoryIcon", () -> new OpenInventoryMessage(colony, citizen.getName(), citizen.getEntityId()).sendToServer());
+        registerButton("inventoryTab", () -> new OpenInventoryMessage(citizen.getColony(), citizen.getName(), citizen.getEntityId()).sendToServer());
+        registerButton("inventoryIcon", () -> new OpenInventoryMessage(citizen.getColony(), citizen.getName(), citizen.getEntityId()).sendToServer());
         PaneBuilders.tooltipBuilder().hoverPane(findPaneByID("inventoryIcon")).build().setText(Component.translatableEscape("com.minecolonies.coremod.gui.citizen.inventory"));
 
         registerButton("happinessTab", () -> new HappinessWindowCitizen(citizen).open());
@@ -57,7 +66,7 @@ public abstract class AbstractWindowCitizen extends AbstractWindowRequestTree
             PaneBuilders.singleLineTooltip(Component.translatable("com.minecolonies.coremod.debug.gui.tabicon"), findPaneByID("debugIcon"));
         }
 
-        final IBuildingView building = colony.getBuilding(citizen.getWorkBuilding());
+        final IBuildingView building = citizen.getColony().getBuilding(citizen.getWorkBuilding());
 
         if (building instanceof AbstractBuildingView && building.getBuildingType() != ModBuildings.library.get())
         {

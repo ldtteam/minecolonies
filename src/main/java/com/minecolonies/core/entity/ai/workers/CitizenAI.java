@@ -115,6 +115,10 @@ public class CitizenAI implements IStateAI
         IState next = calculateNextState();
         if (next == null || next == lastState)
         {
+            if (citizen.getCitizenAI().getState() == CitizenAIState.IDLE && next != CitizenAIState.IDLE)
+            {
+                return next;
+            }
             return null;
         }
 
@@ -264,7 +268,7 @@ public class CitizenAI implements IStateAI
      */
     public boolean shouldEat()
     {
-        if (citizen.getCitizenData().justAte())
+        if (citizen.getCitizenData().justAte() || citizen.getCitizenData().getSaturation() >= FULL_SATURATION)
         {
             return false;
         }
@@ -279,7 +283,7 @@ public class CitizenAI implements IStateAI
             return true;
         }
 
-        if (citizen.getCitizenData().getJob() != null && (citizen.getCitizenData().getJob().getJobRegistryEntry() == ModJobs.cook.get()) && MathUtils.RANDOM.nextInt(20) > 0)
+        if (citizen.getCitizenData().getJob() != null && (citizen.getCitizenData().getJob().getJobRegistryEntry() == ModJobs.cook.get()) && MathUtils.RANDOM.nextInt(200) > 0)
         {
             return false;
         }

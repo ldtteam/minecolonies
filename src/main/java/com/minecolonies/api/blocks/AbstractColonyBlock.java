@@ -9,6 +9,7 @@ import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.entity.ai.workers.util.IBuilderUndestroyable;
+import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.Constants;
@@ -141,6 +142,17 @@ public abstract class AbstractColonyBlock<B extends AbstractColonyBlock<B>> exte
         final TileEntityColonyBuilding building = (TileEntityColonyBuilding) MinecoloniesTileEntities.BUILDING.get().create(blockPos, blockState);
         building.registryName = this.getBuildingEntry().getRegistryName();
         return building;
+    }
+
+    @Override
+    public void onRemove(final @NotNull BlockState blockState, final @NotNull Level level, final @NotNull BlockPos pos, final @NotNull BlockState newBlockState, final boolean p_60519_)
+    {
+        final BlockEntity tileentity = level.getBlockEntity(pos);
+        if (tileentity instanceof AbstractTileEntityColonyBuilding tileEntityColonyBuilding)
+        {
+            InventoryUtils.dropItemHandler(tileEntityColonyBuilding.getInventory(), level, pos.getX(), pos.getY(), pos.getZ());
+        }
+        super.onRemove(blockState, level, pos, newBlockState, p_60519_);
     }
 
     /**

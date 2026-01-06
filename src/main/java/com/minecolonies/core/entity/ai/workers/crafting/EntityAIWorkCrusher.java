@@ -225,8 +225,8 @@ public class EntityAIWorkCrusher extends AbstractEntityAICrafting<JobCrusher, Bu
             {
                 incrementActionsDone(getActionRewardForCraftingSuccess());
                 currentRecipeStorage = null;
+                worker.decreaseSaturationForAction();
                 resetValues();
-
                 if (inventoryNeedsDump())
                 {
                     if (job.getMaxCraftingCount() == 0 && job.getProgress() == 0 && job.getCraftCounter() == 0 && currentRequest != null)
@@ -240,7 +240,6 @@ public class EntityAIWorkCrusher extends AbstractEntityAICrafting<JobCrusher, Bu
         {
             currentRequest = null;
             job.finishRequest(false);
-            incrementActionsDoneAndDecSaturation();
             resetValues();
         }
 

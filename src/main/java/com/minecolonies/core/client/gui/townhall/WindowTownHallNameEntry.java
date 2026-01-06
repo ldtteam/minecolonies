@@ -20,8 +20,6 @@ import static com.minecolonies.api.util.constant.WindowConstants.*;
  */
 public class WindowTownHallNameEntry extends BOWindow implements ButtonHandler
 {
-    private static final String TOWNHALL_NAME_RESOURCE_SUFFIX = ":gui/townhall/windowtownhallnameentry.xml";
-
     private final IColonyView colony;
 
     /**
@@ -31,7 +29,7 @@ public class WindowTownHallNameEntry extends BOWindow implements ButtonHandler
      */
     public WindowTownHallNameEntry(final IColonyView c)
     {
-        super(ResourceLocation.parse(Constants.MOD_ID + TOWNHALL_NAME_RESOURCE_SUFFIX));
+        super(new ResourceLocation(Constants.MOD_ID, "gui/townhall/windowtownhallnameentry.xml"));
         this.colony = c;
     }
 

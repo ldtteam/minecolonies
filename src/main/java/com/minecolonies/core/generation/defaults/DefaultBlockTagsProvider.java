@@ -188,10 +188,13 @@ public class DefaultBlockTagsProvider extends BlockTagsProvider
                 .add(ModBlocks.blockCompostedDirt)
                 .add(ModBlocks.blockGrave)
                 .add(ModBlocks.blockNamedGrave);
+
         tag(ModTags.validSpawn)
           .add(Blocks.AIR, Blocks.CAVE_AIR, Blocks.SNOW, Blocks.TALL_GRASS, Blocks.SHORT_GRASS, Blocks.FERN, Blocks.TORCH)
           .addTags(BlockTags.BUTTONS)
           .addTags(BlockTags.RAILS)
           .addTags(BlockTags.WOOL_CARPETS);
+
+        tag(com.ldtteam.structurize.tag.ModTags.GOOD_SOLID_FOR_PLACEHOLDER).add(ModBlocks.farmland, ModBlocks.floodedFarmland);
     }
 }

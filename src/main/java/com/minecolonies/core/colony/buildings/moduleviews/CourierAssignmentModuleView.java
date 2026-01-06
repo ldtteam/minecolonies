@@ -9,12 +9,12 @@ import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.core.client.gui.modules.SpecialAssignmentModuleWindow;
+import com.minecolonies.core.client.gui.modules.building.SpecialAssignmentModuleWindow;
 import com.minecolonies.core.network.messages.server.colony.building.CourierHiringModeMessage;
 import com.minecolonies.core.network.messages.server.colony.building.HireFireMessage;
 import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -36,11 +36,6 @@ public class CourierAssignmentModuleView extends AbstractBuildingModuleView impl
      * The hiring mode of the building.
      */
     private HiringMode hiringMode;
-
-    /**
-     * Max number of miners.
-     */
-    private int maxSize;
 
     @Override
     public List<Integer> getAssignedCitizens()
@@ -66,7 +61,7 @@ public class CourierAssignmentModuleView extends AbstractBuildingModuleView impl
         }
 
         this.hiringMode = HiringMode.values()[buf.readInt()];
-        this.maxSize = buf.readInt();
+        buf.readInt();
     }
 
     @Override
@@ -76,15 +71,9 @@ public class CourierAssignmentModuleView extends AbstractBuildingModuleView impl
     }
 
     @Override
-    public String getDesc()
+    public Component getDesc()
     {
-        return "com.minecolonies.coremod.gui.workerhuts.warehouse.couriers";
-    }
-
-    @Override
-    public boolean isPageVisible()
-    {
-        return true;
+        return Component.translatable("com.minecolonies.coremod.gui.workerhuts.warehouse.couriers");
     }
 
     @Override
@@ -132,7 +121,7 @@ public class CourierAssignmentModuleView extends AbstractBuildingModuleView impl
     @Override
     public BOWindow getWindow()
     {
-        return new SpecialAssignmentModuleWindow(buildingView, Constants.MOD_ID + ":gui/layouthuts/layoutcourierassignment.xml");
+        return new SpecialAssignmentModuleWindow(this, new ResourceLocation(Constants.MOD_ID, "gui/layouthuts/layoutcourierassignment.xml"));
     }
 
     @Override

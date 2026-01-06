@@ -3,6 +3,7 @@ package com.minecolonies.core.colony.managers;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.minecolonies.api.IMinecoloniesAPI;
+import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.*;
@@ -142,11 +143,18 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
         }
         for (int i = 0; i < extensionsTagList.size(); ++i)
         {
-            final CompoundTag extensionCompound = extensionsTagList.getCompound(i);
-            final IBuildingExtension extension = BuildingExtensionDataManager.compoundToExtension(provider, extensionCompound);
-            if (extension != null)
+            try
             {
-                addBuildingExtension(extension);
+                final CompoundTag extensionCompound = extensionsTagList.getCompound(i);
+                final IBuildingExtension extension = BuildingExtensionDataManager.compoundToExtension(provider, extensionCompound);
+                if (extension != null)
+                {
+                    addBuildingExtension(extension);
+                }
+            }
+            catch (final Exception e)
+            {
+                Log.getLogger().error("Failure loading building extension", e);
             }
         }
 
@@ -592,7 +600,6 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
                 if (world != null && !(building instanceof IRSComponent))
                 {
                     building.onPlacement();
-                    ConstructionTapeHelper.placeConstructionTape(building);
                 }
 
                 colony.getRequestManager().onProviderAddedToColony(building);
@@ -691,21 +698,23 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
     public <T extends IBuilding> BlockPos getBestBuilding(final BlockPos pos, final Class<T> building, @NotNull final Predicate<T> filter)
     {
         double distance = Double.MAX_VALUE;
-        BlockPos goodCook = null;
+        BlockPos goodFit = null;
         for (final IBuilding currentBuilding : buildings.values())
         {
-            if (building.isInstance(currentBuilding) && currentBuilding.getBuildingLevel() > 0 && WorldUtil.isBlockLoaded(colony.getWorld(), currentBuilding.getPosition()) && filter.test(
-                (T) currentBuilding))
+            if (building.isInstance(currentBuilding)
+                && currentBuilding.getBuildingLevel() > 0
+                && WorldUtil.isBlockLoaded(colony.getWorld(), currentBuilding.getPosition())
+                && filter.test((T) currentBuilding))
             {
                 final double localDistance = currentBuilding.getPosition().distSqr(pos);
                 if (localDistance < distance)
                 {
                     distance = localDistance;
-                    goodCook = currentBuilding.getPosition();
+                    goodFit = currentBuilding.getPosition();
                 }
             }
         }
-        return goodCook;
+        return goodFit;
     }
 
     @Override
@@ -886,28 +895,9 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
     @Override
     public boolean canPlaceAt(final Block block, final BlockPos pos, final Player player)
     {
-        if (block instanceof BlockHutTownHall)
+        if (block instanceof AbstractBlockHut hutblock)
         {
-            if (colony.hasTownHall())
-            {
-                if (colony.getWorld() != null && !colony.getWorld().isClientSide)
-                {
-                    MessageUtils.format(WARNING_DUPLICATE_TOWN_HALL, townHall.getPosition().toShortString()).sendTo(player);
-                }
-                return false;
-            }
-            return true;
-        }
-        else if (block instanceof BlockHutTavern)
-        {
-            for (final IBuilding building : buildings.values())
-            {
-                if (building.hasModule(BuildingModules.TAVERN_VISITOR))
-                {
-                    MessageUtils.format(WARNING_DUPLICATE_TAVERN, building.getPosition().toShortString()).sendTo(player);
-                    return false;
-                }
-            }
+            return hutblock.canPlaceAt(pos, player);
         }
 
         return true;

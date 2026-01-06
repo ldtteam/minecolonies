@@ -15,6 +15,7 @@ import net.minecraft.world.entity.EquipmentSlot;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
+import java.util.List;
 
 import static com.minecolonies.api.entity.citizen.AbstractEntityCitizen.ENTITY_AI_TICKRATE;
 
@@ -71,6 +72,16 @@ public abstract class AbstractAISkeleton<J extends IJob<?>> implements ITickingS
     public void registerTarget(final TickingTransition<IAIState> target)
     {
         stateMachine.addTransition(target);
+    }
+
+    /**
+     * Register a target for a group of states
+     *
+     * @param target the target to register.
+     */
+    public void registerGroupTarget(final List<IAIState> states, final TickingTransition<IAIState> target)
+    {
+        stateMachine.addTransitionGroup(states, target);
     }
 
     /**

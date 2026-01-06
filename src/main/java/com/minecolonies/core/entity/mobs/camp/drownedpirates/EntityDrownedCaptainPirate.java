@@ -1,7 +1,6 @@
 package com.minecolonies.core.entity.mobs.camp.drownedpirates;
 
 import com.minecolonies.api.entity.mobs.drownedpirate.AbstractDrownedEntityPirate;
-import com.minecolonies.api.entity.mobs.drownedpirate.AbstractDrownedEntityPirateRaider;
 import com.minecolonies.api.entity.mobs.pirates.ICaptainPirateEntity;
 import com.minecolonies.api.util.MathUtils;
 import net.minecraft.network.chat.Component;
@@ -10,7 +9,6 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.level.Level;
 
 import static com.minecolonies.api.entity.mobs.RaiderMobUtils.MOB_ATTACK_DAMAGE;
-import static com.minecolonies.api.util.constant.RaiderConstants.BASE_ENV_DAMAGE_RESIST;
 
 /**
  * Class for the Chief Pirate entity.

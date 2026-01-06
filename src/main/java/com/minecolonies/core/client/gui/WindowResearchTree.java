@@ -11,16 +11,16 @@ import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.research.*;
 import com.minecolonies.api.research.IResearchEffect;
+import com.minecolonies.api.research.requirements.BuildingAlternatesResearchRequirement;
+import com.minecolonies.api.research.requirements.BuildingResearchRequirement;
 import com.minecolonies.api.research.util.ResearchState;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.client.gui.blockui.RotatingItemIcon;
-import com.minecolonies.core.client.gui.modules.UniversityModuleWindow;
+import com.minecolonies.core.client.gui.modules.building.UniversityModuleWindow;
 import com.minecolonies.core.network.messages.server.colony.building.university.TryResearchMessage;
-import com.minecolonies.api.research.requirements.BuildingAlternatesResearchRequirement;
-import com.minecolonies.api.research.requirements.BuildingResearchRequirement;
 import com.minecolonies.core.research.GlobalResearchEffect;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
@@ -111,7 +111,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
      */
     public WindowResearchTree(final ResourceLocation branch, final IBuildingView building, final UniversityModuleWindow last)
     {
-        super(Constants.MOD_ID + R_TREE_RESOURCE_SUFFIX, last);
+        super(last, new ResourceLocation(Constants.MOD_ID, "gui/windowresearch.xml"));
         this.branch = branch;
         this.building = building;
         this.last = last;
