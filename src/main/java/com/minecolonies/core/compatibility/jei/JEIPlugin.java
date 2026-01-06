@@ -49,6 +49,7 @@ public class JEIPlugin implements IModPlugin
 {
     @Nullable IJeiRuntime jei;
     boolean recipesLoaded;
+    boolean subscribed;
 
     public JEIPlugin()
     {
@@ -167,7 +168,13 @@ public class JEIPlugin implements IModPlugin
     @Override
     public void registerRecipes(@NotNull final IRecipeRegistration registration)
     {
-        IMinecoloniesAPI.getInstance().getEventBus().subscribe(CustomRecipesReloadedEvent.class, this::onRecipesLoaded);
+        if (!subscribed)
+        {
+            // check required because Minecolonies event bus doesn't support unsubscribe, unlike NeoForge.
+            // assumes that JEI re-uses this instance instead of creating fresh ones on reload/reconnect.
+            IMinecoloniesAPI.getInstance().getEventBus().subscribe(CustomRecipesReloadedEvent.class, this::onRecipesLoaded);
+            subscribed = true;
+        }
 
         registration.addIngredientInfo(ModBlocks.blockHutComposter,
                 Component.translatableEscape(TranslationConstants.PARTIAL_JEI_INFO + ModJobs.COMPOSTER_ID.getPath()));
@@ -262,5 +269,6 @@ public class JEIPlugin implements IModPlugin
     public void onRuntimeUnavailable()
     {
         this.jei = null;
+        this.recipesLoaded = false;
     }
 }
