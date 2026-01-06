@@ -385,7 +385,7 @@ public final class ColonyView implements IColonyView
         for (final Long2ObjectMap.Entry<ChunkClaimData> entry : colonyClaimData.long2ObjectEntrySet())
         {
             buf.writeLong(entry.getLongKey());
-            buf.writeNbt(entry.getValue().serializeNBT(buf.registryAccess()));
+            entry.getValue().serialize(buf);
         }
 
         final CompoundTag graveTag = new CompoundTag();
@@ -836,7 +836,7 @@ public final class ColonyView implements IColonyView
         {
             final ChunkClaimData chunkClaimData = new ChunkClaimData();
             final long pos = buf.readLong();
-            chunkClaimData.deserializeNBT(buf.registryAccess(), buf.readNbt());
+            chunkClaimData.deSerialize(buf);
             colonyClaimData.put(pos, chunkClaimData);
         }
 

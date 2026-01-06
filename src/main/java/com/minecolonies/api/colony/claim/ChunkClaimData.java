@@ -10,6 +10,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.IntTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.neoforged.neoforge.common.util.INBTSerializable;
@@ -297,6 +298,61 @@ public class ChunkClaimData implements IChunkClaimData, INBTSerializable<Compoun
         if (owningColony == NO_COLONY_ID && !getStaticClaimColonies().isEmpty())
         {
             owningColony = getStaticClaimColonies().get(0);
+        }
+    }
+
+    /**
+     * Serialize data to buffer
+     * @param buf
+     */
+    public void serialize(final RegistryFriendlyByteBuf buf)
+    {
+        buf.writeInt(owningColony);
+        buf.writeInt(colonies.size());
+        for (final int colonyId : colonies)
+        {
+            buf.writeInt(colonyId);
+        }
+
+        buf.writeInt(claimingBuildings.size());
+        for (final Map.Entry<Integer, Set<BlockPos>> entry : claimingBuildings.entrySet())
+        {
+            buf.writeInt(entry.getKey());
+            buf.writeInt(entry.getValue().size());
+            for (final BlockPos pos : entry.getValue())
+            {
+                buf.writeLong(pos.asLong());
+            }
+        }
+    }
+
+    /**
+     * Deserialize claims from buffer
+     * @param buf
+     */
+    public void deSerialize(final RegistryFriendlyByteBuf buf)
+    {
+        owningColony = buf.readInt();
+
+        final int colonyAmount = buf.readInt();
+        this.colonies = new HashSet<>();
+        for (int i = 0; i < colonyAmount; i++)
+        {
+            colonies.add(buf.readInt());
+        }
+
+        final int buildingClaimAmount = buf.readInt();
+        for (int i = 0; i < buildingClaimAmount; i++)
+        {
+            final int colonyID = buf.readInt();
+            final int positionAmount = buf.readInt();
+            Set<BlockPos> positions = new HashSet<>();
+            for (int j = 0; j < positionAmount; j++)
+            {
+                positions.add(BlockPos.of(buf.readLong()));
+            }
+
+            claimingBuildings.put(colonyID, positions);
         }
     }
 }
