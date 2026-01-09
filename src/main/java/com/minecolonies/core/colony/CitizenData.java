@@ -1641,7 +1641,7 @@ public class CitizenData implements ICitizenData
             return;
         }
 
-        final int homeBuildingLevel = homeBuilding == null ? 1 : homeBuilding.getBuildingLevel();
+        final int homeBuildingLevel = homeBuilding == null ? 1 : Math.max(homeBuilding.getBuildingLevel(), 1);
         if (leisureTime > 0)
         {
             leisureTime -= tickRate;
