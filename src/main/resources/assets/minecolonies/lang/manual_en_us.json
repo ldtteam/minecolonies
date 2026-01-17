@@ -2738,7 +2738,11 @@
   "com.minecolonies.core.item.crop.tooltip.biome.temperatebiomes": "Only suitable for Temperate Biomes",
   "com.minecolonies.core.item.crop.tooltip.biome.humidbiomes": "Only suitable for Hot and Humid Biomes",
   "com.minecolonies.core.item.crop.tooltip.biome.drybiomes": "Only suitable for Hot and Dry Biomes",
-
+  "com.minecolonies.core.tag.crop.biome.coldbiomes": "Cold",
+  "com.minecolonies.core.tag.crop.biome.temperatebiomes": "Temperate",
+  "com.minecolonies.core.tag.crop.biome.humidbiomes": "Hot and Humid",
+  "com.minecolonies.core.tag.crop.biome.drybiomes": "Hot and Dry",
+  "com.minecolonies.core.biome": "Biome: ",
   "block.minecolonies.eggplant": "Eggplant",
   "block.minecolonies.cabbage": "Cabbage",
   "block.minecolonies.chickpea": "Chickpea",

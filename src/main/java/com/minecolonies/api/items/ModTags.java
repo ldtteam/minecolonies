@@ -1,6 +1,5 @@
 package com.minecolonies.api.items;
 
-import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.TagConstants;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
@@ -14,6 +13,7 @@ import net.minecraft.world.level.block.Block;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static com.minecolonies.api.util.constant.Constants.MOD_ID;
@@ -86,6 +86,8 @@ public class ModTags
     public static final TagKey<Biome> temperateBiomes = TagKey.create(Registries.BIOME, TagConstants.TEMPERATE_BIOMES);
     public static final TagKey<Biome> humidBiomes = TagKey.create(Registries.BIOME, TagConstants.HUMID_BIOMES);
     public static final TagKey<Biome> dryBiomes = TagKey.create(Registries.BIOME, TagConstants.DRY_BIOMES);
+
+    public static List<TagKey<Biome>> cropBiomeTags = List.of(coldBiomes, temperateBiomes, humidBiomes, dryBiomes);
 
     public static final Map<String, TagKey<Item>> crafterProduct              = new HashMap<>();
     public static final Map<String, TagKey<Item>> crafterProductExclusions    = new HashMap<>();
