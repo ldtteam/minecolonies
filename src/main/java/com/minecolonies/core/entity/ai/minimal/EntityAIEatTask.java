@@ -262,12 +262,6 @@ public class EntityAIEatTask implements IStateAI
                 InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(cookBuilding, storageToGet, qty, citizen.getInventoryCitizen());
                 return EAT;
             }
-
-            if (citizen.getCitizenData().getJob() instanceof JobCook jobCook && jobCook.getBuildingPos().equals(restaurantPos) && MathUtils.RANDOM.nextInt(TICKS_SECOND) <= 0)
-            {
-                reset();
-                return DONE;
-            }
         }
 
         return WAIT_FOR_FOOD;
@@ -371,6 +365,13 @@ public class EntityAIEatTask implements IStateAI
             return EAT;
         }
 
+        if (citizenData.getSaturation() >= CitizenConstants.AVERAGE_SATURATION)
+        {
+            reset();
+            citizenData.setJustAte(true);
+            return DONE;
+        }
+
         return WAIT_FOR_FOOD;
     }
 
@@ -387,23 +388,43 @@ public class EntityAIEatTask implements IStateAI
             return SEARCH_RESTAURANT;
         }
 
-        if (EntityNavigationUtils.walkToBuilding(citizen, buildingWorker))
+        restaurant = null;
+        if (!EntityNavigationUtils.walkToBuilding(citizen, buildingWorker))
         {
-            final int slot = FoodUtils.getBestFoodForCitizen(citizen.getInventoryCitizen(), citizen.getCitizenData(), null);
-            if (slot != -1)
-            {
-                final ItemStorage storageToGet = FoodUtils.checkForFoodInBuilding(citizen.getCitizenData(), null, buildingWorker);
-                if (storageToGet != null && InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(buildingWorker, storageToGet, citizen.getInventoryCitizen()))
-                {
-                    restaurant = null;
-                    return EAT;
-                }
-            }
-            return SEARCH_RESTAURANT;
+            return GO_TO_HUT;
         }
 
-        restaurant = null;
-        return GO_TO_HUT;
+        final int slot;
+        if (buildingWorker instanceof BuildingCook buildingCook)
+        {
+            restaurant = buildingCook;
+            slot = FoodUtils.getBestFoodForCitizen(citizen.getInventoryCitizen(), citizen.getCitizenData(), buildingCook.getModule(RESTAURANT_MENU).getMenu());
+        }
+        else
+        {
+            slot = FoodUtils.getBestFoodForCitizen(citizen.getInventoryCitizen(), citizen.getCitizenData(), null);
+        }
+
+        if (slot == -1)
+        {
+            final ItemStorage storageToGet = FoodUtils.checkForFoodInBuilding(citizen.getCitizenData(), null, buildingWorker);
+            if (storageToGet != null && InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(buildingWorker, storageToGet, citizen.getInventoryCitizen()))
+            {
+                return EAT;
+            }
+        }
+        else
+        {
+            return EAT;
+        }
+
+        if (citizen.getCitizenData().getJob() instanceof JobCook)
+        {
+            reset();
+            return DONE;
+        }
+
+        return SEARCH_RESTAURANT;
     }
 
     /**
@@ -490,11 +511,11 @@ public class EntityAIEatTask implements IStateAI
         {
             if (citizenData.isChild())
             {
-                citizenData.triggerInteraction(new StandardInteraction(Component.translatableEscape(BETTER_FOOD_CHILDREN), ChatPriority.BLOCKING));
+                citizenData.triggerInteraction(new StandardInteraction(Component.translatableEscape(BETTER_FOOD_CHILDREN), ChatPriority.IMPORTANT));
             }
             else
             {
-                citizenData.triggerInteraction(new StandardInteraction(Component.translatableEscape(BETTER_FOOD), ChatPriority.BLOCKING));
+                citizenData.triggerInteraction(new StandardInteraction(Component.translatableEscape(BETTER_FOOD), ChatPriority.IMPORTANT));
             }
         }
         else if (InventoryUtils.hasItemInItemHandler(citizen.getInventoryCitizen(), ISCOOKABLE))

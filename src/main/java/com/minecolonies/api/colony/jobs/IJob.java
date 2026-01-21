@@ -12,7 +12,6 @@ import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.item.ItemStack;
@@ -316,4 +315,13 @@ public interface IJob<AI extends ITickingStateAI> extends INBTSerializable<Compo
      * @return
      */
     boolean assignTo(IAssignsJob module);
+
+    /**
+     * Job saturation factor.
+     * @return increase in saturation consumption based on job.
+     */
+    default double getSaturationFactor()
+    {
+        return 1.0;
+    }
 }

@@ -176,7 +176,7 @@ public class FoodUtils
         }
 
         // If we're not at the restaurant and are the brink of complaining about food, go to the restaurant instead of eating the food you got in the inventory.
-        if (restaurantExists && menu == null &&
+        if (restaurantExists && menu == null && citizenData.getCitizenFoodHandler().hasFullFoodHistory() &&
               ((bestScore >= 0 && foodStats.diversity() <= diversityRequirement)
               || (!(bestItem instanceof IMinecoloniesFoodItem) && foodStats.quality() <= qualityRequirement)))
         {

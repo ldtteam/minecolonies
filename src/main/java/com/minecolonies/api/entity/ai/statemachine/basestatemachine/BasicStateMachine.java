@@ -96,6 +96,7 @@ public class BasicStateMachine<T extends IStateMachineTransition<S>, S extends I
      *
      * @param transition the transition to add
      */
+    @Override
     public void addTransition(final T transition)
     {
         if (transition.getState() != null)
@@ -105,6 +106,28 @@ public class BasicStateMachine<T extends IStateMachineTransition<S>, S extends I
         if (transition instanceof IStateMachineEvent)
         {
             eventTransitionMap.computeIfAbsent(((IStateMachineEvent<?>) transition).getEventType(), k -> new ArrayList<>()).add(transition);
+        }
+    }
+
+    @Override
+    public void addTransitionGroup(final List<S> stateGroup, final T transition)
+    {
+        if (transition.getState() != null)
+        {
+            throw new RuntimeException("Only transitions without a state may act as group transitions");
+        }
+
+        for (final S state : stateGroup)
+        {
+            if (state != null)
+            {
+                transitionMap.computeIfAbsent(state, k -> new ArrayList<>()).add(0, transition);
+            }
+        }
+
+        if (transition instanceof IStateMachineEvent)
+        {
+            eventTransitionMap.computeIfAbsent(((IStateMachineEvent<?>) transition).getEventType(), k -> new ArrayList<>()).add(0, transition);
         }
     }
 

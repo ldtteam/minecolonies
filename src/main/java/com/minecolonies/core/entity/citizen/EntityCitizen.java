@@ -229,6 +229,11 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     private boolean isGlowing;
 
     /**
+     * Cached decrease of saturation. Is processed every minute in the main loop.
+     */
+    private double cachedActionSaturationDecrease;
+
+    /**
      * Constructor for a new citizen typed entity.
      *
      * @param type  the entity type.
@@ -1063,11 +1068,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     @Override
     public void decreaseSaturationForAction()
     {
-        if (citizenData != null)
-        {
-            citizenData.decreaseSaturation(citizenColonyHandler.getPerBuildingFoodCost() / 2.0);
-            citizenData.markDirty(20 * 20);
-        }
+        this.cachedActionSaturationDecrease += BIG_SATURATION_FACTOR;
     }
 
     /**
@@ -1076,11 +1077,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     @Override
     public void decreaseSaturationForContinuousAction()
     {
-        if (citizenData != null)
-        {
-            citizenData.decreaseSaturation(citizenColonyHandler.getPerBuildingFoodCost() / 150.0);
-            citizenData.markDirty(20 * 60 * 2);
-        }
+        this.cachedActionSaturationDecrease += SATURATION_DECREASE_FACTOR / 4.0;
     }
 
     /**
@@ -1908,18 +1905,35 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
      */
     private boolean decreaseIdleSaturation()
     {
-        if (citizenData != null)
+        if (citizenData != null && level() != null && !level().isNight() && !citizenSleepHandler.isAsleep())
         {
-            final int buildingLevel = citizenData.getHomeBuilding() == null ? 1 :  citizenData.getHomeBuilding().getBuildingLevelEquivalent();
-            if (buildingLevel <= 2)
+            final int buildingLevel = citizenData.getHomeBuilding() == null ? 0 :  citizenData.getHomeBuilding().getBuildingLevelEquivalent();
+            double decrease = switch (buildingLevel)
             {
-                citizenData.decreaseSaturation(buildingLevel / 25.0);
-            }
-            else
+                case 1 -> 0.2;
+                case 2 -> 0.256;
+                case 3 -> 0.32;
+                case 4 -> 0.4;
+                case 5 -> 0.5;
+                default -> 0.1;
+            };
+
+            if (citizenData.getJob() != null)
             {
-                citizenData.decreaseSaturation(buildingLevel / 10.0);
+                decrease *= citizenData.getJob().getSaturationFactor();
             }
 
+            if (cachedActionSaturationDecrease != 0)
+            {
+                decrease += Math.min(decrease / 2.0, cachedActionSaturationDecrease);
+                cachedActionSaturationDecrease = 0;
+            }
+
+            if (citizenData.isChild())
+            {
+                decrease = decrease / 2.0;
+            }
+            citizenData.decreaseSaturation(decrease);
         }
         return false;
     }

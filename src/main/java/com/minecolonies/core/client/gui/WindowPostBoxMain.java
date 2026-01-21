@@ -1,21 +1,27 @@
 package com.minecolonies.core.client.gui;
 
 import com.ldtteam.blockui.Pane;
-import com.ldtteam.blockui.PaneBuilders;
 import com.ldtteam.blockui.controls.Button;
 import com.ldtteam.blockui.controls.ItemIcon;
 import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.blockui.controls.TextField;
-import com.ldtteam.blockui.views.BOWindow;
 import com.ldtteam.blockui.views.ScrollingList;
+import com.minecolonies.api.colony.buildings.modules.IBuildingModuleView;
+import com.minecolonies.api.colony.buildings.views.IBuildingView;
+import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.core.colony.buildings.views.AbstractBuildingView;
+import com.minecolonies.core.client.gui.modules.RequestTreeWindowModule;
+import com.minecolonies.core.client.gui.modules.TabsWindowModule;
+import com.minecolonies.core.colony.buildings.workerbuildings.PostBox;
 import com.minecolonies.core.network.messages.server.colony.OpenInventoryMessage;
 import com.minecolonies.core.network.messages.server.colony.building.postbox.PostBoxRequestMessage;
-import net.minecraft.network.chat.Component;
-import net.minecraft.world.item.EnchantedBookItem;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.item.EnchantedBookItem;
 import net.minecraft.world.item.ItemStack;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
@@ -25,15 +31,17 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.WindowConstants.*;
-import static com.minecolonies.core.colony.buildings.modules.BuildingModules.MIN_STOCK_POSTBOX;
+import static com.minecolonies.api.util.constant.translation.GuiTranslationConstants.LABEL_MAIN_TAB_NAME;
 
 /**
  * BOWindow for the request PostBox GUI.
  */
-public class WindowPostBoxMain extends AbstractWindowRequestTree
+public class WindowPostBoxMain extends AbstractWindowSkeleton
 {
+    private static final int TABS_X_OFFSET = 34;
+
     /**
-     * Id of the deliver available button inside the GUI.
+     * ID of the delivery available button inside the GUI.
      */
     private static final String TAG_BUTTON_DELIVER_AVAILABLE = "deliverAvailable";
 
@@ -43,7 +51,7 @@ public class WindowPostBoxMain extends AbstractWindowRequestTree
     private static final String RED_X = "§n§4X";
 
     /**
-     * String which displays partial delivery..
+     * String which displays partial delivery.
      */
     private static final String APPROVE = "✓";
 
@@ -58,9 +66,14 @@ public class WindowPostBoxMain extends AbstractWindowRequestTree
     private final ScrollingList stackList;
 
     /**
-     * The building view of this window.
+     * The post box view instance.
      */
-    private final AbstractBuildingView buildingView;
+    private final PostBox.View postBoxView;
+
+    /**
+     * The request tree window module.
+     */
+    private final PostBoxRequestTreeWindowModule requestTreeWindowModule;
 
     /**
      * The filter for the resource list.
@@ -80,14 +93,15 @@ public class WindowPostBoxMain extends AbstractWindowRequestTree
     /**
      * Create the postBox GUI.
      *
-     * @param buildingView the building view.
+     * @param postBoxView the building view.
      */
-    public WindowPostBoxMain(final AbstractBuildingView buildingView)
+    public WindowPostBoxMain(final PostBox.View postBoxView)
     {
-        super(buildingView.getID(), Constants.MOD_ID + WINDOW_POSTBOX_REQUEST, buildingView.getColony());
+        super(new ResourceLocation(Constants.MOD_ID, "gui/windowpostboxrequest.xml"));
+        this.postBoxView = postBoxView;
+        this.requestTreeWindowModule = registerLayoutModule(PostBoxRequestTreeWindowModule::new, postBoxView, 261, 44);
+        registerPostboxTabs(this, postBoxView);
 
-        this.buildingView = buildingView;
-        this.stackList = findPaneOfTypeByID(LIST_RESOURCES, ScrollingList.class);
         registerButton(BUTTON_INVENTORY, this::inventoryClicked);
         registerButton(BUTTON_REQUEST, this::requestClicked);
         registerButton(TAG_BUTTON_DELIVER_AVAILABLE, this::deliverPartialClicked);
@@ -101,34 +115,30 @@ public class WindowPostBoxMain extends AbstractWindowRequestTree
             }
         });
 
-        WindowPostBoxMain.registerNavButtons(this, buildingView);
-    }
+        stackList = findPaneOfTypeByID(LIST_RESOURCES, ScrollingList.class);
+        stackList.setDataProvider(new ScrollingList.DataProvider()
+        {
+            @Override
+            public int getElementCount()
+            {
+                return allItems.size();
+            }
 
-    private static void registerNavButtons(AbstractWindowSkeleton window, final AbstractBuildingView buildingView)
-    {
-        window.registerButton("requestTab", () -> new WindowPostBoxMain(buildingView).open());
-        window.registerButton("requestIcon", () -> new WindowPostBoxMain(buildingView).open());
-        PaneBuilders.tooltipBuilder()
-            .hoverPane(window.findPaneByID("requestIcon"))
-            .build()
-            .setText(Component.translatable("com.minecolonies.coremod.gui.citizen.requests"));
+            @Override
+            public boolean shouldUpdate()
+            {
+                return false;
+            }
 
-        window.registerButton("minimumStockTab", () -> openMinimumStockWindow(buildingView));
-        window.registerButton("minimumStockIcon", () -> openMinimumStockWindow(buildingView));
-        PaneBuilders.tooltipBuilder()
-            .hoverPane(window.findPaneByID("minimumStockIcon"))
-            .build()
-            .setText(Component.translatable("com.minecolonies.coremod.gui.warehouse.stock"));
-    }
-
-    private static void openMinimumStockWindow(final AbstractBuildingView buildingView)
-    {
-        final BOWindow min_stock_window = buildingView.getModuleView(MIN_STOCK_POSTBOX).getWindow();
-
-        /* We add our own nav buttons */
-        WindowPostBoxMain.registerNavButtons((AbstractWindowSkeleton) min_stock_window, buildingView);
-
-        min_stock_window.open();
+            @Override
+            public void updateElement(final int index, @NotNull final Pane rowPane)
+            {
+                final ItemStack resource = allItems.get(index);
+                final Text resourceLabel = rowPane.findPaneOfTypeByID(RESOURCE_NAME, Text.class);
+                resourceLabel.setText(resource.getHoverName());
+                rowPane.findPaneOfTypeByID(RESOURCE_ICON, ItemIcon.class).setItem(resource);
+            }
+        });
     }
 
     /**
@@ -136,7 +146,7 @@ public class WindowPostBoxMain extends AbstractWindowRequestTree
      */
     private void inventoryClicked()
     {
-        new OpenInventoryMessage(buildingView).sendToServer();
+        new OpenInventoryMessage(postBoxView).sendToServer();
     }
 
     /**
@@ -157,19 +167,18 @@ public class WindowPostBoxMain extends AbstractWindowRequestTree
                 {
                     qty = Integer.parseInt(((TextField) child).getText());
                 }
-                catch (final NumberFormatException ex)
+                catch (final NumberFormatException ignored)
                 {
-                    //Be quiet about it.
                 }
             }
         }
 
-        new PostBoxRequestMessage(buildingView, stack.copy(), qty, deliverAvailable).sendToServer();
+        new PostBoxRequestMessage(postBoxView, stack.copy(), qty, deliverAvailable).sendToServer();
+        requestTreeWindowModule.refreshOpenRequests();
     }
 
     private void deliverPartialClicked(@NotNull final Button button)
     {
-
         if (button.getTextAsString().equals(RED_X))
         {
             button.setText(Component.literal(APPROVE));
@@ -182,12 +191,46 @@ public class WindowPostBoxMain extends AbstractWindowRequestTree
         }
     }
 
+    /**
+     * Reusable method for the postbox to render the tabs.
+     */
+    public static void registerPostboxTabs(final AbstractWindowSkeleton window, final IBuildingView buildingView)
+    {
+        final TabsWindowModule tabsWindowModule = window.registerModule(TabsWindowModule::new, new Random(buildingView.getID().hashCode()));
+        tabsWindowModule.setTabXOffset(TABS_X_OFFSET);
+
+        int nextTabIndex = 0;
+
+        tabsWindowModule.renderTabButton(nextTabIndex++,
+            TabsWindowModule.TabImageSide.LEFT,
+            new ResourceLocation(Constants.MOD_ID, "textures/gui/modules/main.png"),
+            Component.translatable(LABEL_MAIN_TAB_NAME),
+            button -> buildingView.getWindow().open());
+
+        final List<IBuildingModuleView> allModuleViews = buildingView.getAllModuleViews();
+        for (final IBuildingModuleView view : allModuleViews)
+        {
+            if (!view.isPageVisible())
+            {
+                continue;
+            }
+
+            tabsWindowModule.renderTabButton(nextTabIndex++,
+                TabsWindowModule.TabImageSide.LEFT,
+                view.getIconResourceLocation(),
+                Optional.ofNullable(view.getDesc()).map(Component::copy).orElse(null),
+                button -> {
+                    Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.BOOK_PAGE_TURN, 1.0F));
+                    view.getWindow().open();
+                });
+        }
+    }
+
     @Override
     public void onOpened()
     {
         super.onOpened();
         findPaneOfTypeByID(TAG_BUTTON_DELIVER_AVAILABLE, Button.class).setText(Component.literal(RED_X));
-
         updateResources();
     }
 
@@ -196,10 +239,14 @@ public class WindowPostBoxMain extends AbstractWindowRequestTree
      */
     private void updateResources()
     {
-        final Predicate<ItemStack> filterPredicate = stack -> filter.isEmpty()
-                                                                || stack.getDescriptionId().toLowerCase(Locale.US).contains(filter.toLowerCase(Locale.US))
-                                                                || stack.getHoverName().getString().toLowerCase(Locale.US).contains(filter.toLowerCase(Locale.US))
-                                                                || (stack.getItem() instanceof EnchantedBookItem && stack.getTagEnchantments().entrySet().stream().anyMatch(f -> f.getKey().getRegisteredName().contains(filter.toLowerCase(Locale.US))));
+        final Predicate<ItemStack> filterPredicate =
+            stack -> filter.isEmpty() || stack.getDescriptionId().toLowerCase(Locale.US).contains(filter.toLowerCase(Locale.US)) || stack.getHoverName()
+                .getString()
+                .toLowerCase(Locale.US)
+                .contains(filter.toLowerCase(Locale.US)) || (stack.getItem() instanceof EnchantedBookItem && stack.getTagEnchantments()
+                .entrySet()
+                .stream()
+                .anyMatch(f -> f.getKey().getRegisteredName().contains(filter.toLowerCase(Locale.US))));
         allItems.clear();
         allItems.addAll(getBlockList(filterPredicate));
         allItems.sort(Comparator.comparingInt(s1 -> StringUtils.getLevenshteinDistance(s1.getHoverName().getString(), filter)));
@@ -268,6 +315,35 @@ public class WindowPostBoxMain extends AbstractWindowRequestTree
         if (tick > 0 && --tick == 0)
         {
             updateResources();
+        }
+    }
+
+    private static class PostBoxRequestTreeWindowModule extends RequestTreeWindowModule
+    {
+        @NotNull
+        private final PostBox.View buildingView;
+
+        /**
+         * Constructor to initiate the window request tree windows.
+         *
+         * @param parent the parenting window
+         */
+        private PostBoxRequestTreeWindowModule(final AbstractWindowSkeleton parent, final PostBox.View buildingView)
+        {
+            super(parent, buildingView.getColony());
+            this.buildingView = buildingView;
+        }
+
+        @Override
+        protected Collection<IRequest<?>> getOpenRequests()
+        {
+            return buildingView.getOpenRequestsOfBuilding();
+        }
+
+        @Override
+        protected void onCancel(final @NotNull IRequest<?> request)
+        {
+            buildingView.onRequestedRequestCancelled(buildingView.getColony().getRequestManager(), request);
         }
     }
 }

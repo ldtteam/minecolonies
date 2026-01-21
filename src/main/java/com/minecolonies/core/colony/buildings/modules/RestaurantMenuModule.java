@@ -4,7 +4,10 @@ import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
-import com.minecolonies.api.colony.buildings.modules.*;
+import com.minecolonies.api.colony.buildings.modules.AbstractBuildingModule;
+import com.minecolonies.api.colony.buildings.modules.IAltersRequiredItems;
+import com.minecolonies.api.colony.buildings.modules.IPersistentModule;
+import com.minecolonies.api.colony.buildings.modules.ITickingModule;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.requestable.MinimumStack;
@@ -13,20 +16,26 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.crafting.RecipeStorage;
 import com.minecolonies.api.util.*;
+import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import org.apache.logging.log4j.util.TriConsumer;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.research.util.ResearchConstants.MIN_ORDER;
+import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 
 /**
  * Minimum stock module.
@@ -83,6 +92,12 @@ public class RestaurantMenuModule extends AbstractBuildingModule implements IPer
      */
     public void addMenuItem(final ItemStack itemStack)
     {
+        if (!FoodUtils.EDIBLE.test(itemStack))
+        {
+            Log.getLogger().warn("Tried to add nonedible food stack: " + itemStack);
+            return;
+        }
+
         if (menu.size() >= building.getBuildingLevel() * STOCK_PER_LEVEL)
         {
             return;
@@ -144,7 +159,7 @@ public class RestaurantMenuModule extends AbstractBuildingModule implements IPer
                 {
                     if (request == null)
                     {
-                        final int qty = Math.min(16, Math.min(requestStack.getMaxStackSize(), delta));
+                        final int qty = Math.min(STACKSIZE, Math.min(requestStack.getMaxStackSize(), delta));
                         final MinimumStack stack = new MinimumStack(requestStack, false, true, ItemStackUtils.EMPTY, qty, 1);
 
                         stack.setCanBeResolvedByBuilding(false);

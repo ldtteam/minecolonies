@@ -1,0 +1,25 @@
+name: Pull Request Management - Testing label
+
+on:
+  pull_request_target:
+    paths:
+      - src/**
+
+jobs:
+  add-testing-label:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Add testing label
+        uses: actions/github-script@v8
+        env:
+          REQUIRED_LABEL: 'Untested'
+        with:
+          result-encoding: string
+          retries: 3
+          script: |
+            github.rest.issues.addLabels({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              labels: [process.env.REQUIRED_LABEL]
+            })

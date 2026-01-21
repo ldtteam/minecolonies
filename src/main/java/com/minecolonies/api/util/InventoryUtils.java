@@ -2908,7 +2908,6 @@ public class InventoryUtils
             {
                 addItemStackToItemHandler(invWrapper, new ItemStack(Items.BUCKET, quantity));
             }
-            return;
         }
     }
 

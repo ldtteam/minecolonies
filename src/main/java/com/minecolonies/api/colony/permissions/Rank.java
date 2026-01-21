@@ -6,11 +6,6 @@ import java.util.Objects;
 
 public class Rank
 {
-
-    /**
-     * Whether the rank is automatically a subscriber to certain events
-     */
-    private boolean isSubscriber;
     /**
      * The name of the rank
      */
@@ -44,23 +39,21 @@ public class Rank
      *
      * @param id           the id of the rank
      * @param name         the name of the rank
-     * @param isSubscriber whether the rank is a subscriber
      * @param isInitial    whether the rank is an initial rank
      */
-    public Rank(int id, long permissionData, String name, boolean isSubscriber, boolean isInitial, boolean isColonyManager, boolean isHostile)
+    public Rank(int id, long permissionData, String name, boolean isInitial, boolean isColonyManager, boolean isHostile)
     {
         this.id = id;
         this.permissionData = permissionData;
         this.name = name;
-        this.isSubscriber = isSubscriber;
         this.isInitial = isInitial;
         this.isColonyManager = isColonyManager;
         this.isHostile = isHostile;
     }
 
-    public Rank(int id, String name, boolean isSubscriber, boolean isInitial)
+    public Rank(int id, String name, boolean isInitial)
     {
-        this(id, 0L, name, isSubscriber, isInitial, false, false);
+        this(id, 0L, name, isInitial, false, false);
     }
 
     /**
@@ -70,15 +63,6 @@ public class Rank
     public int getId()
     {
         return id;
-    }
-
-    /**
-     * Get whether the rank is a subscriber to certain colony events
-     * @return true if so
-     */
-    public boolean isSubscriber()
-    {
-        return isSubscriber;
     }
 
     /**
@@ -125,12 +109,6 @@ public class Rank
     {
         this.isHostile = isHostile;
     }
-
-    /**
-     * Set whether this rank is a subscriber (receives certain colony events)
-     * @param isSubscriber whether the rank is a subscriber
-     */
-    public void setSubscriber(boolean isSubscriber) { this.isSubscriber = isSubscriber; }
 
     @Override
     public boolean equals(final Object o)

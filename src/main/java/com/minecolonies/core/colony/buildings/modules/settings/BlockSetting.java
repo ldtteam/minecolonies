@@ -4,11 +4,12 @@ import com.ldtteam.blockui.Pane;
 import com.ldtteam.blockui.controls.ButtonImage;
 import com.ldtteam.blockui.controls.ItemIcon;
 import com.ldtteam.blockui.views.BOWindow;
+import com.ldtteam.structurize.client.gui.WindowSelectRes;
+import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.modules.settings.ISetting;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingsModuleView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
-import com.minecolonies.core.client.gui.WindowSelectRes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -117,32 +118,36 @@ public class BlockSetting implements ISetting<BlockItem>
       final IBuildingView building,
       final BOWindow window)
     {
-        pane.findPaneOfTypeByID("trigger", ButtonImage.class).setHandler(button -> new WindowSelectRes(
-          window,
-          stack -> {
-              final Item item = stack.getItem();
-              if (!( item instanceof BlockItem ))
-              {
-                  return false;
-              }
+        pane.findPaneOfTypeByID("trigger", ButtonImage.class).setHandler(button ->
+            new WindowSelectRes(
+                window,
+                Component.empty(),
+                new ItemStack(value),
+                IColonyManager.getInstance().getCompatibilityManager().getListOfMatchingItems(stack -> {
+                    final Item item = stack.getItem();
+                    if (!(item instanceof BlockItem))
+                    {
+                        return false;
+                    }
 
-              final Block block = ((BlockItem) item).getBlock();
-              final BlockState state = block.defaultBlockState();
-              if (block instanceof EntityBlock || block instanceof FallingBlock || state.is(BlockTags.LEAVES))
-              {
-                  return false;
-              }
+                    final Block block = ((BlockItem) item).getBlock();
+                    final BlockState state = block.defaultBlockState();
+                    if (block instanceof EntityBlock || block instanceof FallingBlock || state.is(BlockTags.LEAVES))
+                    {
+                        return false;
+                    }
 
-              return state.getShape(new SingleStateBlockGetter(state), BlockPos.ZERO).equals(Shapes.block()) && state.blocksMotion();
-          }, (stack, qty) -> {
-              if (stack.isEmpty())
-              {
-                  return;
-              }
-            value = (BlockItem) stack.getItem();
-            settingsModuleView.getSetting(new SettingKey(key.getType(), key.getUniqueId())).updateSetting(this);
-            settingsModuleView.trigger(key);
-        }, false).open());
+                    return state.getShape(new SingleStateBlockGetter(state), BlockPos.ZERO, CollisionContext.empty()).equals(Shapes.block()) && state.blocksMotion();
+                }),
+                (stack, qty) -> {
+                    if (stack.isEmpty())
+                    {
+                        return;
+                    }
+                    value = (BlockItem) stack.getItem();
+                    settingsModuleView.getSetting(new SettingKey(key.getType(), key.getUniqueId())).updateSetting(this);
+                    settingsModuleView.trigger(key);
+                }).open());
     }
 
     @Override

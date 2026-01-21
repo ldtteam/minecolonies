@@ -52,6 +52,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -336,6 +337,20 @@ public class CompatibilityManager implements ICompatibilityManager
             Log.getLogger().error("getListOfAllItems when empty");
         }
         return allItems;
+    }
+
+    @Override
+    public List<ItemStack> getListOfMatchingItems(final Predicate<ItemStack> predicate)
+    {
+        List<ItemStack> list = new ArrayList<>();
+        for (final ItemStack stack : allItems)
+        {
+            if (predicate.test(stack))
+            {
+                list.add(stack);
+            }
+        }
+        return list;
     }
 
     @Override

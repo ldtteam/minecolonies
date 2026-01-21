@@ -151,7 +151,13 @@ public abstract class AbstractCraftingRequestResolver extends AbstractRequestRes
             // If this building is resolving a generic food request, then only allow it to resolve non-smeltables.
             if (recipe != null && (!isFood || recipe.getIntermediate() != Blocks.FURNACE) && canBuildingCraftRecipe(building, recipe))
             {
-                final int recipeCount = request.getRequest().getCount() / recipe.getPrimaryOutput().getCount();
+                final int outputCount = recipe.getPrimaryOutput().getCount();
+                if (outputCount == 0)
+                {
+                    continue;
+                }
+
+                final int recipeCount = request.getRequest().getCount() / outputCount;
                 boolean success = true;
                 for (final ItemStorage ingredient : recipe.getCleanedInput())
                 {

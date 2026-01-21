@@ -222,7 +222,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
             to resolve state.
            */
           new AIEventTarget(AIBlockingEventType.STATE_BLOCKING, this::inventoryNeedsDump, INVENTORY_FULL, 100),
-            new AITarget(INVENTORY_FULL, this::dumpInventory, 20),
+          new AITarget(INVENTORY_FULL, this::dumpInventory, 20),
           /*
             Check if any items are needed.
             If yes, transition to NEEDS_ITEM.
@@ -575,7 +575,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
                 }
                 catch (final Exception ex)
                 {
-                    Log.getLogger().warn("Resolver died for finished request. Oopsy. " + worker.getCitizenData().getName() + " witnessed it.");
+                    Log.getLogger().warn("Resolver died for finished request. Oopsy. " + worker.getCitizenData().getName() + " witnessed it.", ex);
                 }
                 final ILocation pickupLocation = resolver instanceof StationRequestResolver ? resolver.getLocation() : building.getLocation();
 
@@ -1483,7 +1483,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
      *
      * @see #incrementActionsDone(int)
      */
-    protected final void incrementActionsDone()
+    public final void incrementActionsDone()
     {
         job.incrementActionsDone();
     }
@@ -1592,7 +1592,8 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
      */
     public boolean checkIfRequestForItemExistOrCreate(@NotNull final ItemStack stack)
     {
-        return checkIfRequestForItemExistOrCreate(stack, stack.getCount(), stack.getCount());
+        final int amount = stack.getCount();
+        return checkIfRequestForItemExistOrCreate(stack.copyWithCount(1), amount, amount);
     }
 
     /**
@@ -1605,22 +1606,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
      */
     public boolean checkIfRequestForItemExistOrCreate(@NotNull final ItemStack stack, final int count, final int minCount)
     {
-        if (InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(),
-          s -> ItemStackUtils.compareItemStacksIgnoreStackSize(s, stack)))
-        {
-            return true;
-        }
-
-        if (building.getOpenRequestsOfTypeFiltered(worker.getCitizenData(), TypeConstants.DELIVERABLE,
-          (IRequest<? extends IDeliverable> r) -> r.getRequest().matches(stack)).isEmpty()
-              && building.getCompletedRequestsOfTypeFiltered(worker.getCitizenData(), TypeConstants.DELIVERABLE,
-          (IRequest<? extends IDeliverable> r) -> r.getRequest().matches(stack)).isEmpty())
-        {
-            final Stack stackRequest = new Stack(stack, count, minCount);
-            worker.getCitizenData().createRequest(stackRequest);
-        }
-
-        return false;
+        return checkIfRequestForItemExistOrCreate(stack, count, minCount, true, false);
     }
 
     /**
@@ -1653,7 +1639,8 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
      */
     public boolean checkIfRequestForItemExistOrCreateAsync(@NotNull final ItemStack stack)
     {
-        return checkIfRequestForItemExistOrCreateAsync(stack, stack.getCount(), stack.getCount());
+        final int amount = stack.getCount();
+        return checkIfRequestForItemExistOrCreateAsync(stack.copyWithCount(1), amount, amount);
     }
 
     /**
@@ -1679,6 +1666,21 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
      * @return true if in the inventory, else false.
      */
     public boolean checkIfRequestForItemExistOrCreateAsync(@NotNull final ItemStack stack, final int count, final int minCount, final boolean matchNBT)
+    {
+        return checkIfRequestForItemExistOrCreate(stack, count, minCount, matchNBT, true);
+    }
+
+    /**
+     * Check if a stack has been requested already or is in the inventory. If not in the inventory and not requested already, create request
+     *
+     * @param stack    the requested stack.
+     * @param count    the total count.
+     * @param minCount the minimum count.
+     * @param matchNBT if nbt has to be matched.
+     * @param async    if should be an async request.
+     * @return true if in the inventory, else false.
+     */
+    public boolean checkIfRequestForItemExistOrCreate(@NotNull final ItemStack stack, final int count, final int minCount, final boolean matchNBT, final boolean async)
     {
         if (stack.isEmpty())
         {
@@ -1709,7 +1711,14 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
           (IRequest<? extends IDeliverable> r) -> r.getRequest().matches(stack)).isEmpty())
         {
             final Stack stackRequest = new Stack(stack, updatedCount, updatedMinCount, matchNBT);
-            worker.getCitizenData().createRequestAsync(stackRequest);
+            if (async)
+            {
+                worker.getCitizenData().createRequestAsync(stackRequest);
+            }
+            else
+            {
+                worker.getCitizenData().createRequest(stackRequest);
+            }
         }
 
         return false;

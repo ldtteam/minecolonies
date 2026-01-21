@@ -7,7 +7,6 @@
     }
   ],
   "intermediate": "minecraft:air",
-  "loot-table": "minecolonies:recipes/gravel",
   "research-id": "minecolonies:effects/crushing11unlock",
   "result": {
     "id": "minecraft:gravel"

@@ -69,6 +69,21 @@ public class TileEntityColonySign extends BlockEntity implements ITickable
      */
     private final int tickOffset;
 
+    /**
+     * Cached colony in sign above.
+     */
+    private int cachedSignAboveColony = -1;
+
+    /**
+     * Previous sign/connection.
+     */
+    private BlockPos previousPosition = BlockPos.ZERO;
+
+    /**
+     * Next sign/connection.
+     */
+    private BlockPos nextPosition = BlockPos.ZERO;
+
     public TileEntityColonySign(final BlockPos pos, final BlockState state)
     {
         super(MinecoloniesTileEntities.COLONY_SIGN.get(), pos, state);
@@ -99,6 +114,18 @@ public class TileEntityColonySign extends BlockEntity implements ITickable
         this.targetColonyNameCache = compound.getString(TAG_TARGET_COLONY_NAME);
         this.distance = compound.getInt(TAG_DISTANCE);
         this.targetColonyDistance = compound.getInt(TAG_TARGET_DISTANCE);
+        if (compound.contains(TAG_CACHED_ABOVE))
+        {
+            this.cachedSignAboveColony = compound.getInt(TAG_CACHED_ABOVE);
+        }
+        if (compound.contains(TAG_PREV_POS))
+        {
+            this.previousPosition = BlockPosUtil.read(compound, TAG_PREV_POS);
+        }
+        if (compound.contains(TAG_NEXT_POS))
+        {
+            this.nextPosition = BlockPosUtil.read(compound, TAG_NEXT_POS);
+        }
     }
 
     @Override
@@ -116,6 +143,9 @@ public class TileEntityColonySign extends BlockEntity implements ITickable
         compound.putString(TAG_TARGET_COLONY_NAME, this.targetColonyNameCache);
         compound.putInt(TAG_DISTANCE, this.distance);
         compound.putInt(TAG_TARGET_DISTANCE, this.targetColonyDistance);
+        compound.putInt(TAG_CACHED_ABOVE, this.cachedSignAboveColony);
+        BlockPosUtil.write(compound, TAG_NEXT_POS, nextPosition);
+        BlockPosUtil.write(compound, TAG_PREV_POS, previousPosition);
     }
 
     @Nullable
@@ -147,10 +177,28 @@ public class TileEntityColonySign extends BlockEntity implements ITickable
     {
         if (!level.isClientSide && (level.getGameTime() + tickOffset) % TICKS_PER_SECOND * 60 == 0)
         {
+            final BlockEntity blockEntity = level.getBlockEntity(getBlockPos().above());
+            if (blockEntity instanceof TileEntityColonySign tileEntityColonySign)
+            {
+                if (cachedSignAboveColony != tileEntityColonySign.getColonyId())
+                {
+                    cachedSignAboveColony = tileEntityColonySign.getColonyId();
+                    setChanged();
+                }
+            }
+            else
+            {
+                cachedSignAboveColony = -1;
+            }
+
             final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyId, level.dimension());
             if (colony != null)
             {
-                colonyNameCache = colony.getName();
+                if (!colony.getName().equals(colonyNameCache))
+                {
+                    colonyNameCache = colony.getName();
+                    setChanged();
+                }
                 final ColonyConnectionNode node = colony.getConnectionManager().getNode(getBlockPos());
                 if (node != null)
                 {
@@ -158,6 +206,7 @@ public class TileEntityColonySign extends BlockEntity implements ITickable
                     final BlockPos previousNodePos = node.getPreviousNode();
                     if (!previousNodePos.equals(BlockPos.ZERO) && WorldUtil.isBlockLoaded(level, previousNodePos))
                     {
+                        final int prevDistance = this.distance;
                         if (level.getBlockEntity(previousNodePos) instanceof TileEntityColonySign tileEntityColonySign)
                         {
                             this.distance = (int) BlockPosUtil.dist(previousNodePos, getBlockPos()) + tileEntityColonySign.distance;
@@ -167,35 +216,56 @@ public class TileEntityColonySign extends BlockEntity implements ITickable
                             this.distance = (int) BlockPosUtil.dist(previousNodePos, getBlockPos());
                         }
 
+                        if (prevDistance != this.distance)
+                        {
+                            setChanged();
+                        }
+                    }
+
+                    if (!previousNodePos.equals(BlockPos.ZERO) && !previousNodePos.equals(previousPosition))
+                    {
+                        this.previousPosition = previousNodePos;
+                        setChanged();
+                    }
+
+                    final BlockPos nextNodePos = node.getNextNode();
+                    if (!nextNodePos.equals(nextPosition))
+                    {
+                        this.nextPosition = nextNodePos;
                         setChanged();
                     }
 
                     this.targetColonyId = node.getTargetColonyId();
                     if (this.targetColonyId != -1)
                     {
-                        final BlockPos nextNodePos = node.getNextNode();
-                        if (!nextNodePos.equals(BlockPos.ZERO) && WorldUtil.isBlockLoaded(level, nextNodePos))
+                        if (!nextNodePos.equals(BlockPos.ZERO))
                         {
-                            if (level.getBlockEntity(nextNodePos) instanceof TileEntityColonySign tileEntityColonySign)
+                            if (WorldUtil.isBlockLoaded(level, nextNodePos))
                             {
-                                this.targetColonyDistance = (int) BlockPosUtil.dist(nextNodePos, getBlockPos()) + tileEntityColonySign.targetColonyDistance;
+                                final int prevDistance = this.targetColonyDistance;
+                                if (level.getBlockEntity(nextNodePos) instanceof TileEntityColonySign tileEntityColonySign)
+                                {
+                                    this.targetColonyDistance = (int) BlockPosUtil.dist(nextNodePos, getBlockPos()) + tileEntityColonySign.targetColonyDistance;
+                                }
+                                else
+                                {
+                                    this.targetColonyDistance = (int) BlockPosUtil.dist(nextNodePos, getBlockPos());
+                                }
+                                if (prevDistance != this.targetColonyDistance)
+                                {
+                                    setChanged();
+                                }
                             }
-                            else
-                            {
-                                this.targetColonyDistance = (int) BlockPosUtil.dist(nextNodePos, getBlockPos());
-                            }
-                            setChanged();
                         }
 
                         final IColony targetColony = IColonyManager.getInstance().getColonyByDimension(targetColonyId, level.dimension());
-                        if (targetColony != null)
+                        if (targetColony != null && !targetColonyNameCache.equals(targetColony.getName()))
                         {
-                            targetColonyNameCache = targetColony.getName();
+                            this.targetColonyNameCache = targetColony.getName();
                             setChanged();
                         }
                     }
                 }
-                setChanged();
             }
         }
     }
@@ -269,7 +339,7 @@ public class TileEntityColonySign extends BlockEntity implements ITickable
         return colonyId;
     }
 
-    /**
+    /**+
      * Get target colony id from sign, -1 if not set.
      * @return the target colony id.
      */
@@ -295,5 +365,34 @@ public class TileEntityColonySign extends BlockEntity implements ITickable
     public int getTargetColonyDistance()
     {
         return targetColonyDistance;
+    }
+
+    /**
+     * Get colony of sign above (cached).
+     * @return the colony id (-1 default).
+     */
+    public int getCachedSignAboveColony()
+    {
+        return cachedSignAboveColony;
+    }
+
+    /**
+     * Get previous node pos.
+     * @return the pos.
+     */
+    @NotNull
+    public BlockPos getPreviousPos()
+    {
+        return previousPosition;
+    }
+
+    /**
+     * Get next node pos.
+     * @return the pos.
+     */
+    @NotNull
+    public BlockPos getNextPosition()
+    {
+        return nextPosition;
     }
 }

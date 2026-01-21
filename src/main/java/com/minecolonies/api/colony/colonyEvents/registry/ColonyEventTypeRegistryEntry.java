@@ -27,12 +27,32 @@ public class ColonyEventTypeRegistryEntry
     private final ResourceLocation registryName;
 
     /**
+     * Whether this is a raid event or not.
+     */
+    private final boolean isRaidEvent;
+
+    /**
      * Creates a new registry entry for the given function and registry name
      *
      * @param eventCreator the event creator.
      * @param registryID   the registry id.
      */
     public ColonyEventTypeRegistryEntry(@NotNull final TriFunction<IColony, CompoundTag, HolderLookup.Provider, IColonyEvent> eventCreator, @NotNull final ResourceLocation registryID)
+    {
+        this(eventCreator, registryID, false);
+    }
+
+    /**
+     * Creates a new registry entry for the given function and registry name
+     *
+     * @param eventCreator the event creator.
+     * @param registryID   the registry id.
+     * @param isRaidEvent  whether this is a raid event (must extend from IColonyRaidEvent)
+     */
+    public ColonyEventTypeRegistryEntry(
+        @NotNull final TriFunction<IColony, CompoundTag, HolderLookup.Provider, IColonyEvent> eventCreator,
+        @NotNull final ResourceLocation registryID,
+        final boolean isRaidEvent)
     {
         if (registryID.getPath().isEmpty())
         {
@@ -41,6 +61,7 @@ public class ColonyEventTypeRegistryEntry
 
         this.eventCreator = eventCreator;
         this.registryName = registryID;
+        this.isRaidEvent = isRaidEvent;
     }
 
     /**
@@ -57,10 +78,21 @@ public class ColonyEventTypeRegistryEntry
 
     /**
      * Get the fitting registry name.
+     *
      * @return the name.
      */
     public ResourceLocation getRegistryName()
     {
         return registryName;
+    }
+
+    /**
+     * Check whether this is a raid event or not.
+     *
+     * @return true if so.
+     */
+    public boolean isRaidEvent()
+    {
+        return isRaidEvent;
     }
 }

@@ -164,7 +164,7 @@ public class BuildingResourcesModule extends AbstractBuildingModule implements I
      */
     public Map<String, BuildingBuilderResource> getNeededResources()
     {
-        return new HashMap<>(neededResources);
+        return Collections.unmodifiableMap(neededResources);
     }
 
     /**

@@ -143,11 +143,18 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
         }
         for (int i = 0; i < extensionsTagList.size(); ++i)
         {
-            final CompoundTag extensionCompound = extensionsTagList.getCompound(i);
-            final IBuildingExtension extension = BuildingExtensionDataManager.compoundToExtension(provider, extensionCompound);
-            if (extension != null)
+            try
             {
-                addBuildingExtension(extension);
+                final CompoundTag extensionCompound = extensionsTagList.getCompound(i);
+                final IBuildingExtension extension = BuildingExtensionDataManager.compoundToExtension(provider, extensionCompound);
+                if (extension != null)
+                {
+                    addBuildingExtension(extension);
+                }
+            }
+            catch (final Exception e)
+            {
+                Log.getLogger().error("Failure loading building extension", e);
             }
         }
 
@@ -593,7 +600,6 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
                 if (world != null && !(building instanceof IRSComponent))
                 {
                     building.onPlacement();
-                    ConstructionTapeHelper.placeConstructionTape(building);
                 }
 
                 colony.getRequestManager().onProviderAddedToColony(building);
@@ -692,21 +698,23 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
     public <T extends IBuilding> BlockPos getBestBuilding(final BlockPos pos, final Class<T> building, @NotNull final Predicate<T> filter)
     {
         double distance = Double.MAX_VALUE;
-        BlockPos goodCook = null;
+        BlockPos goodFit = null;
         for (final IBuilding currentBuilding : buildings.values())
         {
-            if (building.isInstance(currentBuilding) && currentBuilding.getBuildingLevel() > 0 && WorldUtil.isBlockLoaded(colony.getWorld(), currentBuilding.getPosition()) && filter.test(
-                (T) currentBuilding))
+            if (building.isInstance(currentBuilding)
+                && currentBuilding.getBuildingLevel() > 0
+                && WorldUtil.isBlockLoaded(colony.getWorld(), currentBuilding.getPosition())
+                && filter.test((T) currentBuilding))
             {
                 final double localDistance = currentBuilding.getPosition().distSqr(pos);
                 if (localDistance < distance)
                 {
                     distance = localDistance;
-                    goodCook = currentBuilding.getPosition();
+                    goodFit = currentBuilding.getPosition();
                 }
             }
         }
-        return goodCook;
+        return goodFit;
     }
 
     @Override

@@ -7,7 +7,7 @@ import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMonster;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.api.util.constant.RaiderConstants;
+import com.minecolonies.core.colony.events.raid.RaiderConstants;
 import com.minecolonies.core.entity.ai.combat.AttackMoveAI;
 import com.minecolonies.core.entity.citizen.EntityCitizen;
 import com.minecolonies.core.entity.pathfinding.navigation.EntityNavigationUtils;
@@ -22,31 +22,13 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 
 import static com.minecolonies.api.entity.mobs.RaiderMobUtils.MOB_ATTACK_DAMAGE;
+import static com.minecolonies.core.colony.events.raid.RaiderConstants.*;
 
 /**
  * Raider AI for melee attacking a target
  */
 public class RaiderMeleeAI<T extends AbstractEntityMinecoloniesMonster & IThreatTableEntity> extends AttackMoveAI<T>
 {
-    /**
-     * Extended reach based on difficulty
-     */
-    private static final double EXTENDED_REACH_DIFFICULTY = 1.9;
-    private static final double EXTENDED_REACH            = 0.4;
-    private static final double MIN_DISTANCE_FOR_ATTACK   = 2.5;
-
-    /**
-     * Attack delay
-     */
-    private static final int ATTACK_DELAY = 30;
-
-    /**
-     * Additional movement speed difficulty
-     */
-    private static final double ADD_SPEED_DIFFICULTY = 2.3;
-    private static final double BONUS_SPEED          = 1.2;
-    private static final double BASE_COMBAT_SPEED    = 1.2;
-
     public RaiderMeleeAI(
       final T owner,
       final ITickRateStateMachine<IState> stateMachine)
@@ -80,7 +62,7 @@ public class RaiderMeleeAI<T extends AbstractEntityMinecoloniesMonster & IThreat
     @Override
     protected int getAttackDelay()
     {
-        return ATTACK_DELAY;
+        return MELEE_ATTACK_DELAY;
     }
 
     @Override

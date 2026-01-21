@@ -3,6 +3,7 @@ package com.minecolonies.core.client.render.worldevent;
 import com.ldtteam.structurize.util.WorldRenderMacros;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.core.client.render.TileEntityColonySignRenderer;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.FastColor;
@@ -42,6 +43,11 @@ public class WorldEventContext extends WorldRenderMacros
             ColonyBlueprintRenderer.renderBoxes(this);
             ItemOverlayBoxesRenderer.render(this);
             HighlightManager.render(this);
+
+        }
+        else if (stage == Stage.AFTER_TRIPWIRE_BLOCKS)
+        {
+            TileEntityColonySignRenderer.renderSignHover(this);
         }
     }
 

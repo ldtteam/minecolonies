@@ -16,7 +16,7 @@ public class PathJobSignConnection extends PathJobMoveToLocation implements IDes
     {
         super(world, start, end, range, null);
         maxNodes = 20000;
-        setPathingOptions(new PathingOptions().withCanSwim(true).withCanEnterDoors(true));
+        setPathingOptions(new PathingOptions().withCanSwim(true).withCanEnterDoors(true).withCanEnterGates(true));
     }
 
     @Override

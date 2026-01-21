@@ -1,15 +1,13 @@
 package com.minecolonies.core.entity.mobs.camp.norsemen;
 
 import com.minecolonies.api.entity.mobs.vikings.AbstractEntityNorsemen;
-import com.minecolonies.api.entity.mobs.vikings.AbstractEntityNorsemenRaider;
 import com.minecolonies.api.entity.mobs.vikings.INorsemenChiefEntity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.level.Level;
 
 import static com.minecolonies.api.entity.mobs.RaiderMobUtils.MOB_ATTACK_DAMAGE;
-import static com.minecolonies.api.util.constant.RaiderConstants.BASE_ENV_DAMAGE_RESIST;
-import static com.minecolonies.api.util.constant.RaiderConstants.CHIEF_BONUS_ARMOR;
+import static com.minecolonies.core.colony.events.raid.RaiderConstants.CHIEF_BONUS_ARMOR;
 
 /**
  * Class for the Chief norsemen entity.

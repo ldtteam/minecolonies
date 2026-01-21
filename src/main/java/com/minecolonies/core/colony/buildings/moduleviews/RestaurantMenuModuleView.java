@@ -6,12 +6,12 @@ import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.Utils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.translation.RequestSystemTranslationConstants;
-import com.minecolonies.core.client.gui.modules.RestaurantMenuModuleWindow;
+import com.minecolonies.core.client.gui.modules.building.RestaurantMenuModuleWindow;
 import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -45,7 +45,7 @@ public class RestaurantMenuModuleView extends AbstractBuildingModuleView
     @OnlyIn(Dist.CLIENT)
     public BOWindow getWindow()
     {
-        return new RestaurantMenuModuleWindow(buildingView, this);
+        return new RestaurantMenuModuleWindow(this);
     }
 
     @Override
@@ -55,9 +55,9 @@ public class RestaurantMenuModuleView extends AbstractBuildingModuleView
     }
 
     @Override
-    public String getDesc()
+    public Component getDesc()
     {
-        return RequestSystemTranslationConstants.REQUESTS_TYPE_FOOD;
+        return Component.translatable(RequestSystemTranslationConstants.REQUESTS_TYPE_FOOD);
     }
 
     /**

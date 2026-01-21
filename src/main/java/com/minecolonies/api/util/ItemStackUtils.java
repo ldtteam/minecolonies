@@ -258,7 +258,7 @@ public final class ItemStackUtils
      */
     public static boolean verifyEquipmentLevel(@NotNull final ItemStack itemStack, final int equipmentLevel, final int minimalLevel, final int maximumLevel)
     {
-        if (equipmentLevel < minimalLevel)
+        if (equipmentLevel + getMaxEnchantmentLevel(itemStack) < minimalLevel)
         {
             return false;
         }

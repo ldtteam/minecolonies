@@ -113,7 +113,7 @@ public class StandardRecipeManager implements IRecipeManager
         for (int i = 0; i < list.size(); i++)
         {
             IRecipeStorage recipe = StandardFactoryController.getInstance().deserializeTag(provider, list.getCompound(i));
-            if (recipe != null && !recipes.containsValue(recipe) && !recipe.getCleanedInput().isEmpty())
+            if (recipe != null && !recipes.containsValue(recipe) && !recipe.getCleanedInput().isEmpty() && (!recipe.getPrimaryOutput().isEmpty() || recipe.getLootTable() != null || !recipe.getAlternateOutputs().isEmpty()))
             {
                 try
                 {

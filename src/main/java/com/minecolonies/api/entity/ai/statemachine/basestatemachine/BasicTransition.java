@@ -41,7 +41,7 @@ public class BasicTransition<S extends IState> implements IStateMachineTransitio
     /**
      * The name of the transition
      */
-    private final Component name;
+    private Component name;
 
     /**
      * Creating a new transition from State A to B under condition C
@@ -144,5 +144,12 @@ public class BasicTransition<S extends IState> implements IStateMachineTransitio
         }
 
         return "Unknown";
+    }
+
+    @Override
+    public BasicTransition<S> withName(final String name)
+    {
+        this.name = Component.literal(name);
+        return this;
     }
 }

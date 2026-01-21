@@ -5,7 +5,6 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.workorders.IWorkOrder;
 import com.minecolonies.api.colony.workorders.WorkOrderType;
-import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.MessageUtils;
@@ -33,7 +32,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
-import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_MANUAL_SUFFIX;
 
 /**
@@ -69,10 +67,6 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
     public EntityAIStructureBuilder(@NotNull final JobBuilder job)
     {
         super(job);
-        super.registerTargets(
-            new AITarget(IDLE, START_WORKING, 10),
-            new AITarget(START_WORKING, this::checkForWorkOrder, this::startWorkingAtOwnBuilding, TICKS_SECOND)
-        );
         worker.setCanPickUpLoot(true);
     }
 
@@ -146,13 +140,24 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
         return !checkForWorkOrder();
     }
 
-    private IAIState startWorkingAtOwnBuilding()
+    @Override
+    protected IAIState startWorkingAtOwnBuilding()
     {
         if (!walkToBuilding())
         {
             return getState();
         }
-        return LOAD_STRUCTURE;
+
+        if (checkForWorkOrder())
+        {
+            final IAIState state = super.startWorkingAtOwnBuilding();
+            if (state == IDLE)
+            {
+                return LOAD_STRUCTURE;
+            }
+            return state;
+        }
+        return IDLE;
     }
 
     /**
@@ -218,7 +223,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
                     4,
                     worker);
                 gotoPath = ((MinecoloniesAdvancedPathNavigate) worker.getNavigation()).setPathJob(pathJob, currentBlock, 1.0, false);
-                pathJob.getPathingOptions().dropCost = 200;
+                pathJob.getPathingOptions().canDrop = false;
                 pathJob.extraNodes = 0;
             }
             else if (gotoPath.isDone())
@@ -240,7 +245,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
         if (!walkToSafePos(workFrom))
         {
             // Something might have changed, new wall and we can't reach the position anymore. Reset workfrom if stuck.
-            if (worker.getNavigation() instanceof MinecoloniesAdvancedPathNavigate pathNavigate && pathNavigate.getStuckHandler().getStuckLevel() > 0)
+            if (worker.getNavigation() instanceof MinecoloniesAdvancedPathNavigate pathNavigate && pathNavigate.isStuck())
             {
                 workFrom = null;
             }

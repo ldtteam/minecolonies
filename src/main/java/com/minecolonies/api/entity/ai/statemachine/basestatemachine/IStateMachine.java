@@ -5,6 +5,8 @@ import com.minecolonies.api.entity.ai.statemachine.transitions.IStateMachineTran
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
+
 /**
  * Statemachine interface, implement to add more statemachine types. Contains all needed functions for a basic statemachine
  *
@@ -19,6 +21,13 @@ public interface IStateMachine<T extends IStateMachineTransition<S>, S extends I
      * @param transition the transition to add.
      */
     void addTransition(final T transition);
+
+    /**
+     * Add a transition to a group of states has higher priority than normal transitions
+     *
+     * @param transition the transition to add
+     */
+    void addTransitionGroup(List<S> stateGroup, T transition);
 
     /**
      * Removes a transition from the machine's transition table

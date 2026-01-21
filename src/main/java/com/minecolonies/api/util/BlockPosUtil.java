@@ -795,7 +795,7 @@ public final class BlockPosUtil
      * @param pos1Z start-z
      * @param pos2X end-x
      * @param pos2Z end-z
-     * @return the direction.
+     * @return the horizontal direction or "up" if it faces neither.
      */
     public static Direction getXZFacing(final int pos1X, final int pos1Z, final int pos2X, final int pos2Z)
     {
@@ -811,10 +811,11 @@ public final class BlockPosUtil
         {
             return Direction.NORTH;
         }
-        else
+        else if (pos2Z > pos1Z)
         {
             return Direction.SOUTH;
         }
+        return Direction.UP;
     }
 
     /**

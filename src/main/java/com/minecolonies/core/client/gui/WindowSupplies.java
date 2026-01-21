@@ -32,7 +32,6 @@ import static com.ldtteam.structurize.api.constants.Constants.GROUNDSTYLE_LEGACY
 import static com.ldtteam.structurize.api.constants.GUIConstants.BUTTON_SWITCH_STYLE;
 import static com.minecolonies.api.util.constant.TranslationConstants.PARTIAL_WARNING_SUPPLY_BUILDING_ERROR;
 import static com.minecolonies.api.util.constant.TranslationConstants.WARNING_SUPPLY_BUILDING_BAD_BLOCKS;
-import static com.minecolonies.api.util.constant.WindowConstants.SUPPLIES_RESOURCE_SUFFIX;
 
 /**
  * Adjust the supply tool window.
@@ -57,12 +56,11 @@ public class WindowSupplies extends AbstractBlueprintManipulationWindow
     /**
      * Create a new supply tool window.
      *
-     * @param pos        the pos its initiated at.
-     * @param itemInHand
+     * @param pos the pos its initiated at.
      */
     public WindowSupplies(@Nullable final BlockPos pos, final String type)
     {
-        super(Constants.MOD_ID + SUPPLIES_RESOURCE_SUFFIX, pos, (type.equals("supplycamp") ? GROUNDSTYLE_LEGACY_CAMP : GROUNDSTYLE_LEGACY_SHIP), "supplies");
+        super(Constants.MOD_ID + ":gui/windowsupplies.xml", pos, (type.equals("supplycamp") ? GROUNDSTYLE_LEGACY_CAMP : GROUNDSTYLE_LEGACY_SHIP), "supplies");
         registerButton(BUTTON_SWITCH_STYLE, this::switchPackClicked);
 
         if (!type.equals(WindowSupplies.type))

@@ -2,8 +2,7 @@ package com.minecolonies.core.client.gui.citizen;
 
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.util.constant.Constants;
-
-import static com.minecolonies.api.util.constant.WindowConstants.CITIZEN_JOB_RESOURCE_SUFFIX;
+import net.minecraft.resources.ResourceLocation;
 
 /**
  * BOWindow for the citizen.
@@ -17,7 +16,7 @@ public class JobWindowCitizen extends AbstractWindowCitizen
      */
     public JobWindowCitizen(final ICitizenDataView citizen)
     {
-        super(citizen, Constants.MOD_ID + CITIZEN_JOB_RESOURCE_SUFFIX);
+        super(citizen, new ResourceLocation(Constants.MOD_ID, "gui/citizen/job.xml"));
         CitizenWindowUtils.updateJobPage(citizen, this, colony);
     }
 }

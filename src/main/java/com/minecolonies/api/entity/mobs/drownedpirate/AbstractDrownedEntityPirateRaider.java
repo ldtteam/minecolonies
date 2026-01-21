@@ -14,8 +14,8 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import org.jetbrains.annotations.NotNull;
 
-import static com.minecolonies.api.util.constant.RaiderConstants.ONE;
-import static com.minecolonies.api.util.constant.RaiderConstants.OUT_OF_ONE_HUNDRED;
+import static com.minecolonies.core.colony.events.raid.RaiderConstants.ONE;
+import static com.minecolonies.core.colony.events.raid.RaiderConstants.OUT_OF_ONE_HUNDRED;
 
 /**
  * Abstract for all drowned pirate entities.
@@ -79,7 +79,7 @@ public abstract class AbstractDrownedEntityPirateRaider extends AbstractEntityMi
             this.navigation = newNavigator;
             newNavigator.setSwimSpeedFactor(getSwimSpeedFactor());
             newNavigator.setSpeedModifier(0.5);
-            newNavigator.getPathingOptions().withStartSwimCost(0.0D).withSwimCost(0.0D).withDivingCost(0.0D).withCanEnterDoors(true).withDropCost(0.0D).withJumpCost(0.0D).withWalkUnderWater(true).withNonLadderClimbableCost(0.0D).setPassDanger(true);
+            newNavigator.getPathingOptions().withStartSwimCost(0.0D).withSwimCost(0.0D).withDivingCost(0.0D).withCanEnterDoors(true).withCanEnterGates(true).withDropCost(0.0D).withJumpCost(0.0D).withWalkUnderWater(true).withNonLadderClimbableCost(0.0D).setPassDanger(true);
             PathingStuckHandler stuckHandler = PathingStuckHandler.createStuckHandler()
                                                  .withTakeDamageOnStuck(0.4f)
                                                  .withBuildLeafBridges()

@@ -1,20 +1,20 @@
 package com.minecolonies.core.client.gui.townhall;
 
 import com.ldtteam.blockui.controls.Text;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.client.gui.AbstractWindowSkeleton;
 import com.minecolonies.core.event.ColonyStoryListener;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.level.biome.Biome;
 
 import java.util.Random;
 
-import static com.minecolonies.api.util.constant.Constants.MOD_ID;
 import static com.minecolonies.api.util.constant.WindowConstants.BUTTON_CANCEL;
-import static com.minecolonies.api.util.constant.WindowConstants.TOWNHALL_COLONY_REACTIVATE_GUI;
 
 /**
  * UI to reactivate a colony.
@@ -33,7 +33,7 @@ public class WindowTownHallColonyReactivate extends AbstractWindowSkeleton
 
     public WindowTownHallColonyReactivate(final BlockPos pos, final String closestName, final int closestDistance)
     {
-        super(MOD_ID + TOWNHALL_COLONY_REACTIVATE_GUI);
+        super(new ResourceLocation(Constants.MOD_ID, "gui/townhall/windowcolonyreactivate.xml"));
         this.pos = pos;
         this.closestName = closestName;
         this.closestDistance = closestDistance;

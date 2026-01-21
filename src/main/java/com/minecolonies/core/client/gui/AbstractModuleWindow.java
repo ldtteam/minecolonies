@@ -1,111 +1,66 @@
 package com.minecolonies.core.client.gui;
 
-import com.ldtteam.blockui.PaneBuilders;
-import com.ldtteam.blockui.controls.ButtonImage;
+import com.ldtteam.blockui.controls.Text;
+import com.ldtteam.blockui.views.BOWindow;
 import com.minecolonies.api.colony.buildings.modules.IBuildingModuleView;
-import com.minecolonies.api.colony.buildings.modules.IModuleWindow;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.core.colony.buildings.views.AbstractBuildingView;
-import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.sounds.SoundEvents;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.Locale;
-import java.util.Random;
+import java.util.Optional;
 
-import static com.minecolonies.api.util.constant.translation.GuiTranslationConstants.LABEL_MAIN_TAB_NAME;
+import static com.minecolonies.api.util.constant.WindowConstants.DESC_LABEL;
 
 /**
  * Generic module window class. This creates the navigational menu.
  */
-public abstract class AbstractModuleWindow extends AbstractWindowSkeleton implements IModuleWindow
+public abstract class AbstractModuleWindow<T extends IBuildingModuleView> extends AbstractBuildingWindow<IBuildingView>
 {
     /**
-     * Building view matching the module.
+     * Module view.
      */
-    protected final IBuildingView buildingView;
+    protected final T moduleView;
 
     /**
-     * Constructor for the window of the the filterable lists.
+     * Constructor for the window.
      *
-     * @param building   {@link AbstractBuildingView}.
-     * @param res        the resource String.
+     * @param moduleView {@link AbstractBuildingView}.
+     * @param resource   window resource location.
      */
-    public AbstractModuleWindow(final IBuildingView building, final String res)
+    public AbstractModuleWindow(final T moduleView, final ResourceLocation resource)
     {
-        super(res);
-        this.buildingView = building;
-        final Random random = new Random(building.getID().hashCode());
-        int offset = 0;
+        this(null, moduleView, resource);
+    }
 
-        boolean anyVisible = false;
+    /**
+     * Constructor for the window.
+     *
+     * @param parent     the parent window.
+     * @param moduleView {@link AbstractBuildingView}.
+     * @param resource   window resource location.
+     */
+    public AbstractModuleWindow(final BOWindow parent, final T moduleView, final ResourceLocation resource)
+    {
+        super(parent, moduleView.getBuildingView(), resource);
+        this.moduleView = moduleView;
 
-        for (IBuildingModuleView view : building.getAllModuleViews())
+        setHeader(Optional.ofNullable(moduleView.getDesc()).map(Component::copy).orElse(null));
+    }
+
+    /**
+     * Update the header
+     *
+     * @param header the header text.
+     */
+    protected void setHeader(@Nullable final MutableComponent header)
+    {
+        final Text labelPane = window.findPaneOfTypeByID(DESC_LABEL, Text.class);
+        if (labelPane != null && header != null)
         {
-            if (view.isPageVisible())
-            {
-                anyVisible = true;
-                break;
-            }
-        }
-
-            //todo We have to move this to 0 as soon as we're finished with modularization and remove the switch views in favor of a sidenav xml.
-        if (building.getAllModuleViews().size() > 0 && anyVisible)
-        {
-            final ButtonImage image = new ButtonImage();
-            image.setImage(new ResourceLocation("minecolonies", "textures/gui/modules/tab_side" + (random.nextInt(3) + 1) + ".png"));
-            image.setPosition(-20, 10 + offset);
-            image.setSize(32, 26);
-            image.setID("background/modules/main");
-            image.setHandler(button -> building.getWindow().open());
-
-            final ButtonImage iconImage = new ButtonImage();
-            iconImage.setImage(new ResourceLocation("minecolonies", "textures/gui/modules/main.png"));
-            iconImage.setID("modules/main");
-            iconImage.setPosition(-15, 13 + offset);
-            iconImage.setSize(20, 20);
-            iconImage.setHandler(button -> building.getWindow().open());
-
-            offset += image.getHeight() + 2;
-
-            this.addChild(image);
-            this.addChild(iconImage);
-
-            PaneBuilders.tooltipBuilder().hoverPane(iconImage).build().setText(Component.translatableEscape(LABEL_MAIN_TAB_NAME));
-        }
-
-        for (IBuildingModuleView view : building.getAllModuleViews())
-        {
-            if (!view.isPageVisible()) continue;
-            final ResourceLocation icon = view.getIconResourceLocation();
-
-            final ButtonImage image = new ButtonImage();
-            image.setImage(new ResourceLocation("minecolonies", "textures/gui/modules/tab_side" + (random.nextInt(3) + 1) + ".png"));
-            image.setPosition(-20, 10 + offset);
-            image.setSize(32, 26);
-            image.setID("background/" + icon.getPath());
-            image.setHandler(button -> {
-                mc.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.BOOK_PAGE_TURN, 1.0F));
-                view.getWindow().open();
-            });
-
-            final ButtonImage iconImage = new ButtonImage();
-            iconImage.setImage(icon);
-            iconImage.setSize(20, 20);
-            iconImage.setID(icon.getPath());
-            iconImage.setPosition(-15, 13 + offset);
-            iconImage.setHandler(button -> {
-                mc.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.BOOK_PAGE_TURN, 1.0F));
-                view.getWindow().open();
-            });
-
-            offset += image.getHeight() + 2;
-
-            this.addChild(image);
-            this.addChild(iconImage);
-
-            PaneBuilders.tooltipBuilder().hoverPane(iconImage).build().setText(Component.translatableEscape(view.getDesc().toLowerCase(Locale.US)));
+            labelPane.setText(header);
         }
     }
 }

@@ -3,10 +3,11 @@ package com.minecolonies.core.colony.buildings.moduleviews;
 import com.ldtteam.blockui.views.BOWindow;
 import com.minecolonies.api.colony.buildings.modules.AbstractBuildingModuleView;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.core.client.gui.modules.ToolModuleWindow;
-import net.minecraft.world.item.Item;
+import com.minecolonies.core.client.gui.modules.building.ToolModuleWindow;
 import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
@@ -32,9 +33,9 @@ public class ToolModuleView extends AbstractBuildingModuleView
     }
 
     @Override
-    public String getDesc()
+    public Component getDesc()
     {
-        return "com.minecolonies.coremod.gui.workerhuts.tools";
+        return Component.translatable("com.minecolonies.coremod.gui.workerhuts.tools");
     }
 
     @Override
@@ -47,7 +48,7 @@ public class ToolModuleView extends AbstractBuildingModuleView
     @OnlyIn(Dist.CLIENT)
     public BOWindow getWindow()
     {
-        return new ToolModuleWindow(Constants.MOD_ID + ":gui/layouthuts/layouttool.xml", buildingView, this);
+        return new ToolModuleWindow(this);
     }
 
     @Override

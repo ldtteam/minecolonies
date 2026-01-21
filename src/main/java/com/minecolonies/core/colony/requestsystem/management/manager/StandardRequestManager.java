@@ -19,6 +19,7 @@ import com.minecolonies.api.colony.requestsystem.resolver.player.IPlayerRequestR
 import com.minecolonies.api.colony.requestsystem.resolver.retrying.IRetryingRequestResolver;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.core.colony.requestsystem.management.IStandardRequestManager;
@@ -34,6 +35,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
@@ -502,6 +504,22 @@ public class StandardRequestManager implements IStandardRequestManager
         if (dataStoreManager == null)
         {
             reset();
+        }
+
+        int wrongRequest = 0;
+        for (Iterator<IRequest<?>> it = getRequestIdentitiesDataStore().getIdentities().values().iterator(); it.hasNext(); )
+        {
+            final IRequest<?> request = it.next();
+            if (getRequestResolverRequestAssignmentDataStore().getAssignmentForValue(request.getId()) == null)
+            {
+                it.remove();
+                wrongRequest++;
+            }
+        }
+
+        if (wrongRequest > 0)
+        {
+            Log.getLogger().warn("Removed " + wrongRequest + " requests without resolver assignments");
         }
 
         updateIfRequired();

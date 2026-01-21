@@ -4,6 +4,7 @@ import com.minecolonies.api.entity.pathfinding.IStuckHandlerEntity;
 import com.minecolonies.api.util.EntityUtils;
 import com.minecolonies.api.util.LookHandler;
 import com.minecolonies.api.util.constant.ColonyConstants;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.damagesource.DamageSource;

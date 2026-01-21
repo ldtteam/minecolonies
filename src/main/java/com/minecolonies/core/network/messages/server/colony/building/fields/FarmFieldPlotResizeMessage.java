@@ -1,21 +1,28 @@
 package com.minecolonies.core.network.messages.server.colony.building.fields;
 
+import com.ldtteam.common.network.AbstractServerPlayMessage;
 import com.ldtteam.common.network.PlayMessageType;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildingextensions.registry.BuildingExtensionRegistries;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.colony.buildingextensions.FarmField;
-import com.minecolonies.core.network.messages.server.AbstractColonyServerMessage;
+import com.minecolonies.core.tileentities.TileEntityScarecrow;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
+
+import java.util.Arrays;
+
+import static com.minecolonies.core.colony.buildingextensions.FarmField.DEFAULT_RANGE;
+import static com.minecolonies.core.colony.buildingextensions.FarmField.MAX_RANGE;
 
 /**
  * Message to change the farmer field plot size.
  */
-public class FarmFieldPlotResizeMessage extends AbstractColonyServerMessage
+public class FarmFieldPlotResizeMessage extends AbstractServerPlayMessage
 {
     public static final PlayMessageType<?> TYPE = PlayMessageType.forServer(Constants.MOD_ID, "farm_field_plot_resize", FarmFieldPlotResizeMessage::new);
 
@@ -39,27 +46,43 @@ public class FarmFieldPlotResizeMessage extends AbstractColonyServerMessage
      * @param direction the specified direction for the new radius
      * @param position  the field position.
      */
-    public FarmFieldPlotResizeMessage(final IColony colony, final int size, final Direction direction, final BlockPos position)
+    public FarmFieldPlotResizeMessage(final int size, final Direction direction, final BlockPos position)
     {
-        super(TYPE, colony);
+        super(TYPE);
         this.size = size;
         this.direction = direction;
         this.position = position;
     }
 
     @Override
-    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony)
+    protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player)
     {
-        colony.getBuildingManager()
-          .getMatchingBuildingExtension(f -> f.getBuildingExtensionType().equals(BuildingExtensionRegistries.farmField.get()) && f.getPosition().equals(position))
-          .map(m -> (FarmField) m)
-          .ifPresent(field -> field.setRadius(direction, size));
+        final BlockEntity fieldBlock = player.level().getBlockEntity(position);
+        if (fieldBlock instanceof TileEntityScarecrow scarecrow)
+        {
+            final int currentSum = Arrays.stream(scarecrow.getFieldSize()).sum();
+            final int currentDirSize = scarecrow.getFieldSize()[direction.get2DDataValue()];
+
+            if (size < 0 || (size > currentDirSize && currentSum - currentDirSize + size > MAX_RANGE))
+            {
+                return;
+            }
+
+            scarecrow.setFieldSize(direction, size);
+            final IColony colony = scarecrow.getCurrentColony();
+            if (colony != null)
+            {
+                colony.getBuildingManager()
+                    .getMatchingBuildingExtension(f -> f.getBuildingExtensionType().equals(BuildingExtensionRegistries.farmField.get()) && f.getPosition().equals(position))
+                    .map(m -> (FarmField) m)
+                    .ifPresent(field -> field.setRadius(direction, size));
+            }
+        }
     }
 
     @Override
     protected void toBytes(final RegistryFriendlyByteBuf buf)
     {
-        super.toBytes(buf);
         buf.writeInt(size);
         buf.writeInt(direction.get2DDataValue());
         buf.writeBlockPos(position);
