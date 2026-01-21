@@ -172,3 +172,23 @@ Found a bug in our code? Think you can make it more efficient? Want to help in g
 4. Click `Pull Request` in the middle.
 5. Click 'New pull request' to create a pull request for this comparison, enter your PR's title, and create a detailed description telling us what you changed.
 6. Click `Create pull request` and wait for feedback!
+
+### License and Forking
+
+This project uses the GNU General Public License v3.0 following the majority of the codebase. There are however a few exceptions that are All Rights Reserved:
+
+- `src/main/resources/assets/minecolonies`
+- `src/main/resources/blueprints/minecolonies`
+
+What does this mean? You may create a fork (new version) of Minecolonies under the following rules:
+
+**Not intended for distribution (fair use):**
+
+- No rules apply, even the above-mentioned All Rights Reserved folders
+
+**Intended for distribution:**
+
+- New versions **may** copy the entire codebase
+- New versions **may not** copy over the above-mentioned All Rights Reserved folders
+- New versions **must not** use the name "Minecolonies" directly in their version name; they must be released under a different name
+- New versions **must** provide their own support and clearly state so. Minecolonies will not be responsible for your version
