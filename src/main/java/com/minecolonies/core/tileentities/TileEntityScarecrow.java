@@ -72,7 +72,7 @@ public class TileEntityScarecrow extends AbstractTileEntityScarecrow
         {
             this.currentColony = IColonyManager.getInstance().getIColony(level, worldPosition);
             // TODO: Remove in 1.20.2
-            if (this.currentColony != null && currentColony instanceof IColonyView)
+            if (currentColony instanceof IColonyView)
             {
                 Network.getNetwork().sendToServer(new FarmFieldRegistrationMessage(currentColony, worldPosition));
             }
