@@ -58,6 +58,7 @@ public final class NbtTagConstants
     public static final String TAG_EVENT_DESC_MANAGER     = "event_desc_manager";
     public static final String TAG_QUEST_MANAGER          = "quest_manager";
     public static final String TAG_GRAVE_MANAGER          = "graveManager";
+    public static final String TAG_EXPEDITION_MANAGER     = "expedition_manager";
     public static final String TAG_COLONY_ID              = "colony";
     public static final String TAG_TARGET_COLONY_ID       = "targetcolony";
     public static final String TAG_TARGET_COLONY_NAME     = "targetname";
@@ -756,11 +757,12 @@ public final class NbtTagConstants
     public static final String TAG_SAW_STORY  = "sawstory";
     public static final String TAG_RANDOM_KEY = "randkey";
 
-    public static final String TAG_LAST_FOODS          = "lastfoods";
-    public static final String TRAVELER_DATA           = "travelerData";
-    public static final String TAG_INITIAL_TRAVEL_TIME = "initialTravelTime";
+    public static final String TAG_LAST_FOODS            = "lastfoods";
+    public static final String TRAVELER_DATA             = "travelerData";
+    public static final String TAG_INITIAL_TRAVEL_TIME   = "initialTravelTime";
     public static final String TAG_REMAINING_TRAVEL_TIME = "remainingTravelTime";
-    public static final String TAG_TRAVELLING_DATA     = "travellingData";
+    public static final String TAG_CAN_RECALL            = "canRecall";
+    public static final String TAG_TRAVELLING_DATA       = "travellingData";
 
     /**
      * Farmer building related things.

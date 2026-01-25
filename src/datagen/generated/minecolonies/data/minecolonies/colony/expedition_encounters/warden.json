@@ -1,0 +1,9 @@
+{
+  "armor": 0,
+  "damage": 30.0,
+  "entity-type": "minecraft:warden",
+  "health": 500.0,
+  "loot-table": "minecraft:entities/warden",
+  "reflect": 0.0,
+  "xp": 5.0
+}

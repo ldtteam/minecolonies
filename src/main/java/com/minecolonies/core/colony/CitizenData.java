@@ -949,7 +949,7 @@ public class CitizenData implements ICitizenData
 
         if (nextRespawnPos != null)
         {
-            ICitizenData data = colony.getCitizenManager().spawnOrCreateCivilian(this, colony.getWorld(), nextRespawnPos, true);
+            ICitizenData data = colony.getCitizenManager().spawnOrCreateCitizen(this, colony.getWorld(), nextRespawnPos, true);
             data.getEntity().ifPresent(entity -> {
                 entity.getCitizenJobHandler().setModelDependingOnJob(data.getJob());
                 if (!spawnVisible)
@@ -963,8 +963,19 @@ public class CitizenData implements ICitizenData
         }
         else
         {
-            colony.getCitizenManager().spawnOrCreateCivilian(this, colony.getWorld(), lastPosition, true);
+            respawnAfterUpdate(lastPosition);
         }
+    }
+
+    /**
+     * Method called from {@link CitizenData#updateEntityIfNecessary()} to trigger a respawn of the entity
+     * at the given position.
+     *
+     * @param position the position to spawn at.
+     */
+    protected void respawnAfterUpdate(final BlockPos position)
+    {
+        colony.getCitizenManager().spawnOrCreateCitizen(this, colony.getWorld(), position, true);
     }
 
     @Override
@@ -1679,7 +1690,7 @@ public class CitizenData implements ICitizenData
         for (final IInteractionResponseHandler handler : toRemove)
         {
             citizenChatOptions.remove(handler.getId());
-            for (final Component comp : handler.getPossibleResponses())
+            for (final Component comp : handler.getPossibleResponses(this))
             {
                 if (citizenChatOptions.containsKey(handler.getResponseResult(comp)))
                 {
@@ -1900,9 +1911,9 @@ public class CitizenData implements ICitizenData
         else
         {
             int slotBadFood = InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(inventory,
-                stack -> FoodUtils.canEat(stack, getHomeBuilding(), getWorkBuilding()));
+              stack -> FoodUtils.canEat(stack, getHomeBuilding(), getWorkBuilding()));
             int slotGoodFood = InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(inventory,
-                stack -> FoodUtils.canEat(stack, getHomeBuilding(), getWorkBuilding()));
+              stack -> FoodUtils.canEat(stack, getHomeBuilding(), getWorkBuilding()));
             return slotBadFood != -1 && slotGoodFood == -1;
         }
     }

@@ -4,6 +4,7 @@ import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.registries.RegistryObject;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -125,5 +126,14 @@ public final class ModJobs
     public static List<ResourceLocation> getJobs()
     {
         return jobs;
+    }
+
+    @NotNull
+    public static JobEntry[] getExpeditionMembersList()
+    {
+        return new JobEntry[] {
+            knight.get(),
+            archer.get()
+        };
     }
 }

@@ -285,7 +285,7 @@ public interface IJob<AI extends ITickingStateAI> extends INBTSerializable<Compo
     /**
      * Whether the job is a guard
      *
-     * @return
+     * @return true if so.
      */
     default boolean isGuard()
     {

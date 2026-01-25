@@ -29,7 +29,7 @@ public class CommandCitizenSpawnNew implements IMCOPCommand
     public int onExecute(final CommandContext<CommandSourceStack> context)
     {
         final IColony colony = ColonyIdArgument.getColony(context, COLONYID_ARG);
-        final ICitizenData newCitizen = colony.getCitizenManager().spawnOrCreateCivilian(null, colony.getWorld(), null, true);
+        final ICitizenData newCitizen = colony.getCitizenManager().spawnOrCreateCitizen(null, colony.getWorld(), null, true);
         context.getSource().sendSuccess(() -> Component.translatable(COMMAND_CITIZEN_SPAWN_SUCCESS, newCitizen.getName()), true);
 
         IMinecoloniesAPI.getInstance().getEventBus().post(new CitizenAddedModEvent(newCitizen, CitizenAddedModEvent.CitizenAddedSource.COMMANDS));

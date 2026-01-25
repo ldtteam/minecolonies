@@ -1,0 +1,9 @@
+{
+  "armor": 0,
+  "damage": 5.0,
+  "entity-type": "minecraft:pillager",
+  "health": 24.0,
+  "loot-table": "minecraft:entities/pillager",
+  "reflect": 0.0,
+  "xp": 10.0
+}

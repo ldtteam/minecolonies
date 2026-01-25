@@ -69,10 +69,11 @@ public interface ITravellingManager
      * @param citizenData       The data of the citizen.
      * @param target            The target to which the citizen is travelling, aka his respawn point.
      * @param travelTimeInTicks The time in ticks which needs to have passed for the travelling to complete.
+     * @param canRecall         whether the given citizen is allowed to be recalled or not.
      */
-    default void startTravellingTo(final ICitizenData citizenData, final BlockPos target, final int travelTimeInTicks)
+    default void startTravellingTo(final ICitizenData citizenData, final BlockPos target, final int travelTimeInTicks, final boolean canRecall)
     {
-        startTravellingTo(citizenData.getId(), target, travelTimeInTicks);
+        startTravellingTo(citizenData.getId(), target, travelTimeInTicks, canRecall);
     }
 
     /**
@@ -84,8 +85,9 @@ public interface ITravellingManager
      * @param citizenId The id of the citizen.
      * @param target The target to which the citizen is travelling, aka his respawn point.
      * @param travelTimeInTicks The time in ticks which needs to have passed for the travelling to complete.
+     * @param canRecall         whether the given citizen is allowed to be recalled or not.
      */
-    void startTravellingTo(final int citizenId, final BlockPos target, final int travelTimeInTicks);
+    void startTravellingTo(final int citizenId, final BlockPos target, final int travelTimeInTicks, final boolean canRecall);
 
     /**
      * Triggers the cleanup of the travelling data when the citizen finishes travelling, either by design, or through an abort.

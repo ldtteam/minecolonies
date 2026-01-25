@@ -1,0 +1,9 @@
+{
+  "armor": 0,
+  "damage": 2.0,
+  "entity-type": "minecraft:spider",
+  "health": 16.0,
+  "loot-table": "minecraft:entities/spider",
+  "reflect": 0.0,
+  "xp": 5.0
+}

@@ -415,7 +415,7 @@ public interface IColonyView extends IColony
      * @param citizenId id to query
      * @return citizen data for visitor
      */
-    ICitizenDataView getVisitor(int citizenId);
+    IVisitorViewData getVisitor(int citizenId);
 
     /**
      * Gets the data view for an animal

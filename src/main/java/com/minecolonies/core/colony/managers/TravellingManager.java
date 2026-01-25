@@ -17,6 +17,7 @@ import net.minecraft.nbt.NbtUtils;
 import net.minecraft.nbt.Tag;
 import net.minecraftforge.common.util.INBTSerializable;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -49,9 +50,9 @@ public class TravellingManager implements ITravellingManager, INBTSerializable<C
     }
 
     @Override
-    public void startTravellingTo(final int citizenId, final BlockPos target, final int travelTimeInTicks)
+    public void startTravellingTo(final int citizenId, final BlockPos target, final int travelTimeInTicks, final boolean canRecall)
     {
-        travelerDataMap.put(citizenId, new TravelerData(citizenId, target, travelTimeInTicks));
+        travelerDataMap.put(citizenId, new TravelerData(citizenId, target, travelTimeInTicks, canRecall));
         colony.markDirty();
     }
 
@@ -68,9 +69,16 @@ public class TravellingManager implements ITravellingManager, INBTSerializable<C
     @Override
     public void recallAllTravellingCitizens()
     {
-        for (final Integer citizenId : travelerDataMap.keySet())
+        final Map<Integer, TravelerData> travelersToKeep = new HashMap<>();
+        for (final TravelerData travelerData : this.travelerDataMap.values())
         {
-            final ICitizenData citizenData = this.colony.getCitizenManager().getCivilian(citizenId);
+            if (!travelerData.canRecall)
+            {
+                travelersToKeep.put(travelerData.citizenId, travelerData);
+                continue;
+            }
+
+            final ICitizenData citizenData = this.colony.getCitizenManager().getCivilian(travelerData.citizenId);
             final BlockPos spawnHutPos;
             if (citizenData.getWorkBuilding() != null)
             {
@@ -94,6 +102,7 @@ public class TravellingManager implements ITravellingManager, INBTSerializable<C
         }
 
         this.travelerDataMap.clear();
+        this.travelerDataMap.putAll(travelersToKeep);
         colony.markDirty();
     }
 
@@ -136,26 +145,66 @@ public class TravellingManager implements ITravellingManager, INBTSerializable<C
         }
     }
 
+    /**
+     * Container class for a traveling citizen.
+     */
     private static final class TravelerData implements INBTSerializable<CompoundTag>
     {
-        private int      citizenId           = -1;
-        private BlockPos target              = BlockPos.ZERO;
-        private int      initialTravelTime   = 0;
-        private int      remainingTravelTime = 0;
+        /**
+         * The id of the citizen.
+         */
+        private int citizenId = -1;
 
-        public TravelerData(final int citizenId, final BlockPos target, final int initialTravelTime)
+        /**
+         * The position they are traveling to.
+         */
+        private BlockPos target = BlockPos.ZERO;
+
+        /**
+         * The amount of time they are traveling for.
+         */
+        private int initialTravelTime = 0;
+
+        /**
+         * How much of their travel time is remaining.
+         */
+        private int remainingTravelTime = 0;
+
+        /**
+         * Whether this citizen can be recalled to the town hall or not.
+         */
+        private boolean canRecall = true;
+
+        /**
+         * Default constructor.
+         *
+         * @param citizenId         the id of the citizen.
+         * @param target            the position they are traveling to.
+         * @param initialTravelTime the amount of time they are traveling for.
+         * @param canRecall         whether this citizen can be recalled to the town hall or not.
+         */
+        public TravelerData(final int citizenId, final BlockPos target, final int initialTravelTime, final boolean canRecall)
         {
             this.citizenId = citizenId;
             this.target = target;
             this.initialTravelTime = initialTravelTime;
             this.remainingTravelTime = initialTravelTime;
+            this.canRecall = canRecall;
         }
 
+        /**
+         * Deserialization constructor.
+         *
+         * @param tag the compound data.
+         */
         public TravelerData(final CompoundTag tag)
         {
             this.deserializeNBT(tag);
         }
 
+        /**
+         * Ticking method for the travelers.
+         */
         public void onTick()
         {
             if (remainingTravelTime > 0)
@@ -165,39 +214,84 @@ public class TravellingManager implements ITravellingManager, INBTSerializable<C
             }
         }
 
+        /**
+         * Whether the citizen has reached their target.
+         *
+         * @return true when the travel time is done.
+         */
         public boolean hasReachedTarget()
         {
             return remainingTravelTime == 0;
         }
 
+        /**
+         * Get the current percentage of travel time.
+         *
+         * @return a percentage.
+         */
         public double getTravelPercentage()
         {
             return ((double) remainingTravelTime * 100) / (double) initialTravelTime;
         }
 
+        /**
+         * Get the id of the citizen.
+         *
+         * @return the number.
+         */
         public int getCitizenId()
         {
             return citizenId;
         }
 
+        /**
+         * Get the position they are traveling to.
+         *
+         * @return the position.
+         */
         public BlockPos getTarget()
         {
             return target;
         }
 
+        /**
+         * Get the amount of time they are traveling for.
+         *
+         * @return the time.
+         */
         public int getInitialTravelTime()
         {
             return initialTravelTime;
         }
 
+        /**
+         * Get how much of their travel time is remaining.
+         *
+         * @return the time.
+         */
         public int getRemainingTravelTime()
         {
             return remainingTravelTime;
         }
 
+        /**
+         * Get whether the citizen is still busy traveling or not.
+         *
+         * @return true when the travel time is not done.
+         */
         public boolean isTraveling()
         {
             return !hasReachedTarget();
+        }
+
+        /**
+         * Get whether this citizen can be recalled to the town hall or not.
+         *
+         * @return true if so.
+         */
+        public boolean canRecall()
+        {
+            return canRecall;
         }
 
         @Override
@@ -208,6 +302,7 @@ public class TravellingManager implements ITravellingManager, INBTSerializable<C
             data.put(NbtTagConstants.TAG_TARGET, NbtUtils.writeBlockPos(target));
             data.putInt(NbtTagConstants.TAG_INITIAL_TRAVEL_TIME, initialTravelTime);
             data.putInt(NbtTagConstants.TAG_REMAINING_TRAVEL_TIME, remainingTravelTime);
+            data.putBoolean(NbtTagConstants.TAG_CAN_RECALL, canRecall);
             return data;
         }
 
@@ -218,6 +313,7 @@ public class TravellingManager implements ITravellingManager, INBTSerializable<C
             this.target = NbtUtils.readBlockPos(nbt.getCompound(NbtTagConstants.TAG_TARGET));
             this.initialTravelTime = nbt.getInt(NbtTagConstants.TAG_INITIAL_TRAVEL_TIME);
             this.remainingTravelTime = nbt.getInt(NbtTagConstants.TAG_REMAINING_TRAVEL_TIME);
+            this.canRecall = nbt.getBoolean(NbtTagConstants.TAG_CAN_RECALL);
         }
     }
 }

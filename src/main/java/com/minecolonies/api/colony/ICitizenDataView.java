@@ -243,6 +243,11 @@ public interface ICitizenDataView extends ICitizen
      */
     boolean isSick();
 
+    /**
+     * Get the colony this citizen belongs to.
+     *
+     * @return the colony view.
+     */
     @Override
     IColonyView getColony();
 }

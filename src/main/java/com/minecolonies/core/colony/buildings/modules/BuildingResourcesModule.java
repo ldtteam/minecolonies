@@ -80,7 +80,7 @@ public class BuildingResourcesModule extends AbstractBuildingModule implements I
         for (@NotNull final BuildingBuilderResource resource : neededResources.values())
         {
             buf.writeItem(resource.getItemStack());
-            buf.writeInt(resource.getAvailable());
+            buf.writeInt(resource.getAmountAvailable());
             buf.writeInt(resource.getAmount());
             qty += resource.getAmount();
         }

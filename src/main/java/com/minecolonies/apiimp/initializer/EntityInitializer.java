@@ -27,6 +27,8 @@ import com.minecolonies.core.entity.mobs.raider.drownedpirates.EntityDrownedCapt
 import com.minecolonies.core.entity.mobs.raider.drownedpirates.EntityDrownedPirateRaider;
 import com.minecolonies.core.entity.visitor.VisitorCitizen;
 import com.minecolonies.core.entity.mobs.EntityMercenary;
+import com.minecolonies.core.entity.visitor.ExpeditionaryVisitorType;
+import com.minecolonies.core.entity.visitor.RegularVisitorType;
 import com.minecolonies.core.entity.mobs.raider.amazons.EntityAmazonChiefRaider;
 import com.minecolonies.core.entity.mobs.raider.amazons.EntityAmazonSpearmanRaider;
 import com.minecolonies.core.entity.mobs.raider.amazons.EntityArcherAmazonRaider;
@@ -84,11 +86,19 @@ public class EntityInitializer
                 .setShouldReceiveVelocityUpdates(true)
                 .setCustomClientFactory(NewBobberEntity::new));
 
-            ModEntities.VISITOR = build(registry, "visitor", EntityType.Builder.of(VisitorCitizen::new, MobCategory.CREATURE)
-              .setTrackingRange(ENTITY_TRACKING_RANGE)
-              .setUpdateInterval(ENTITY_UPDATE_FREQUENCY)
-              .sized((float) CITIZEN_WIDTH, (float) CITIZEN_HEIGHT)
-              .setShouldReceiveVelocityUpdates(true));
+            ModEntities.VISITOR = build(registry, "visitor",
+              EntityType.Builder.of(VisitorCitizen.forVisitorType(new RegularVisitorType()), MobCategory.CREATURE)
+                .setTrackingRange(ENTITY_TRACKING_RANGE)
+                .setUpdateInterval(ENTITY_UPDATE_FREQUENCY)
+                .sized((float) CITIZEN_WIDTH, (float) CITIZEN_HEIGHT)
+                .setShouldReceiveVelocityUpdates(true));
+
+            ModEntities.EXPEDITIONARY = build(registry, "expeditionary",
+              EntityType.Builder.of(VisitorCitizen.forVisitorType(new ExpeditionaryVisitorType()), MobCategory.CREATURE)
+                .setTrackingRange(ENTITY_TRACKING_RANGE)
+                .setUpdateInterval(ENTITY_UPDATE_FREQUENCY)
+                .sized((float) CITIZEN_WIDTH, (float) CITIZEN_HEIGHT)
+                .setShouldReceiveVelocityUpdates(true));
 
             ModEntities.MERCENARY = build(registry, "mercenary",
               EntityType.Builder.of(EntityMercenary::new, MobCategory.CREATURE)

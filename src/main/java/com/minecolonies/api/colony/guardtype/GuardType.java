@@ -1,9 +1,12 @@
 package com.minecolonies.api.colony.guardtype;
 
+import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.entity.citizen.Skill;
+import com.minecolonies.api.equipment.registry.EquipmentTypeEntry;
 import net.minecraft.resources.ResourceLocation;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Supplier;
 
@@ -28,6 +31,11 @@ public class GuardType
     private final String buttonTranslationKey;
 
     /**
+     * Primary weapon key.
+     */
+    private final ResourceLocation primaryWeaponId;
+
+    /**
      * Primary skill.
      */
     private final Skill primarySkill;
@@ -45,7 +53,7 @@ public class GuardType
     /**
      * The class of the job.
      */
-    private final Class<IJob<?>> clazz;
+    private final Class<? extends IJob<?>> clazz;
 
     /**
      * Unique registry name.
@@ -55,28 +63,31 @@ public class GuardType
     /**
      * Constructor to create the type.
      *
-     * @param jobEntry             the job entry..
+     * @param jobEntry             the job entry.
      * @param jobTranslationKey    job translation key.
      * @param buttonTranslationKey button translation ky.
+     * @param primaryWeaponId      the primary weapon key.
      * @param primarySkill         primary skill.
      * @param secondarySkill       secondary skill.
      * @param workerSoundName      worker sound name.
-     * @param clazz                  the class of the job.
+     * @param clazz                the class of the job.
      */
     public GuardType(
-      final Supplier<JobEntry> jobEntry,
-      final String jobTranslationKey,
-      final String buttonTranslationKey,
-      final Skill primarySkill,
-      final Skill secondarySkill,
-      final String workerSoundName,
-      final Class<IJob<?>> clazz,
-      final ResourceLocation registryName)
+        final Supplier<JobEntry> jobEntry,
+        final String jobTranslationKey,
+        final String buttonTranslationKey,
+        final ResourceLocation primaryWeaponId,
+        final Skill primarySkill,
+        final Skill secondarySkill,
+        final String workerSoundName,
+        final Class<? extends IJob<?>> clazz,
+        final ResourceLocation registryName)
     {
         super();
         this.jobEntry = jobEntry;
         this.jobTranslationKey = jobTranslationKey;
         this.buttonTranslationKey = buttonTranslationKey;
+        this.primaryWeaponId = primaryWeaponId;
         this.primarySkill = primarySkill;
         this.secondarySkill = secondarySkill;
         this.workerSoundName = workerSoundName;
@@ -115,6 +126,27 @@ public class GuardType
     }
 
     /**
+     * Get the primary weapon equipment type entry.
+     *
+     * @return the equipment type entry, or null.
+     */
+    @Nullable
+    public EquipmentTypeEntry getPrimaryWeapon()
+    {
+        return IMinecoloniesAPI.getInstance().getEquipmentTypeRegistry().getValue(getPrimaryWeaponId());
+    }
+
+    /**
+     * Get the primary weapon equipment type id.
+     *
+     * @return the equipment type id.
+     */
+    public ResourceLocation getPrimaryWeaponId()
+    {
+        return primaryWeaponId;
+    }
+
+    /**
      * Getter for the primary key.
      *
      * @return the skill.
@@ -146,6 +178,7 @@ public class GuardType
 
     /**
      * Check if the job is of this type.
+     *
      * @param job the job to check.
      * @return true if so.
      */
@@ -155,18 +188,29 @@ public class GuardType
     }
 
     /**
+     * Get the registry name of the given guard type.
+     *
+     * @return the registry name.
+     */
+    public ResourceLocation getRegistryName()
+    {
+        return registryName;
+    }
+
+    /**
      * The builder.
      */
     public static class Builder
     {
-        private Supplier<JobEntry> jobEntry;
-        private String             jobTranslationKey;
-        private String                          buttonTranslationKey;
-        private Skill                           primarySkill;
-        private Skill                           secondarySkill;
-        private String                          workerSoundName;
-        private ResourceLocation                registryName;
-        private Class<IJob<?>>                  clazz;
+        private Supplier<JobEntry>       jobEntry;
+        private String                   jobTranslationKey;
+        private String                   buttonTranslationKey;
+        private ResourceLocation         primaryWeaponId;
+        private Skill                    primarySkill;
+        private Skill                    secondarySkill;
+        private String                   workerSoundName;
+        private ResourceLocation         registryName;
+        private Class<? extends IJob<?>> clazz;
 
         public Builder setJobEntry(final Supplier<JobEntry> jobEntry)
         {
@@ -183,6 +227,12 @@ public class GuardType
         public Builder setButtonTranslationKey(final String buttonTranslationKey)
         {
             this.buttonTranslationKey = buttonTranslationKey;
+            return this;
+        }
+
+        public Builder setPrimaryWeaponId(final ResourceLocation primaryWeaponId)
+        {
+            this.primaryWeaponId = primaryWeaponId;
             return this;
         }
 
@@ -210,7 +260,7 @@ public class GuardType
             return this;
         }
 
-        public Builder setClazz(final Class clazz)
+        public Builder setClazz(final Class<? extends IJob<?>> clazz)
         {
             this.clazz = clazz;
             return this;
@@ -218,7 +268,7 @@ public class GuardType
 
         public GuardType createGuardType()
         {
-            return new GuardType(jobEntry, jobTranslationKey, buttonTranslationKey, primarySkill, secondarySkill, workerSoundName, clazz, registryName);
+            return new GuardType(jobEntry, jobTranslationKey, buttonTranslationKey, primaryWeaponId, primarySkill, secondarySkill, workerSoundName, clazz, registryName);
         }
     }
 }

@@ -1,6 +1,7 @@
 package com.minecolonies.api.colony.interactionhandling;
 
 import com.ldtteam.blockui.views.BOWindow;
+import com.minecolonies.api.colony.ICitizen;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.ICitizenDataView;
 import net.minecraft.nbt.CompoundTag;
@@ -30,9 +31,11 @@ public interface IInteractionResponseHandler extends INBTSerializable<CompoundTa
     /**
      * The inquiry of the GUI to the player. This is the key for the interaction, functions as id.
      *
+     * @param player the player who clicked the citizen.
+     * @param data   the citizen related to it.
      * @return the text inquiry.
      */
-    default Component getInquiry(final Player player)
+    default Component getInquiry(final Player player, final ICitizen data)
     {
         return getInquiry();
     }
@@ -40,9 +43,10 @@ public interface IInteractionResponseHandler extends INBTSerializable<CompoundTa
     /**
      * Get a list of all possible responses.
      *
-     * @return a list of the possible responses the player can give..
+     * @param data the citizen related to it.
+     * @return a list of the possible responses the player can give.
      */
-    List<Component> getPossibleResponses();
+    List<Component> getPossibleResponses(final ICitizen data);
 
     /**
      * Get possible further interaction from the GUI on response.

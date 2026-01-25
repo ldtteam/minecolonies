@@ -80,6 +80,7 @@ public final class ModItemsInitializer
         ModItems.mistletoe = new ItemMistletoe(new Item.Properties());
         ModItems.spear = new ItemSpear(new Item.Properties());
         ModItems.questLog = new ItemQuestLog(new Item.Properties());
+        ModItems.expeditionSheet = new ItemExpeditionSheet(new Item.Properties());
 
         ModItems.breadDough = new ItemBreadDough(new Item.Properties());
         ModItems.cookieDough = new ItemCookieDough(new Item.Properties());
@@ -272,6 +273,7 @@ public final class ModItemsInitializer
         registry.register(new ResourceLocation(Constants.MOD_ID, "spear"), ModItems.spear);
         registry.register(new ResourceLocation(Constants.MOD_ID, "questlog"), ModItems.questLog);
         registry.register(new ResourceLocation(Constants.MOD_ID, "colonymap"), ModItems.colonyMap);
+        registry.register(new ResourceLocation(Constants.MOD_ID, "expedition_sheet"), ModItems.expeditionSheet);
 
         registry.register(new ResourceLocation(Constants.MOD_ID, "bread_dough"), ModItems.breadDough);
         registry.register(new ResourceLocation(Constants.MOD_ID, "cookie_dough"), ModItems.cookieDough);

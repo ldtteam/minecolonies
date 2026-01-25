@@ -4,6 +4,7 @@ import com.minecolonies.api.colony.guardtype.GuardType;
 import com.minecolonies.api.colony.guardtype.registry.ModGuardTypes;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.entity.citizen.Skill;
+import com.minecolonies.api.equipment.ModEquipmentTypes;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.colony.jobs.JobDruid;
 import com.minecolonies.core.colony.jobs.JobKnight;
@@ -27,10 +28,11 @@ public final class ModGuardTypesInitializer
         ModGuardTypes.knight = DEFERRED_REGISTER.register(ModGuardTypes.KNIGHT_ID.getPath(), () -> new GuardType.Builder()
                                  .setJobTranslationKey(JOB_KNIGHT)
                                  .setButtonTranslationKey(JOB_KNIGHT_BUTTON)
+                                 .setPrimaryWeaponId(ModEquipmentTypes.SWORD_ID)
                                  .setPrimarySkill(Skill.Adaptability)
                                  .setSecondarySkill(Skill.Stamina)
                                  .setWorkerSoundName("archer")
-                                 .setJobEntry(() -> ModJobs.knight.get())
+                                 .setJobEntry(ModJobs.knight)
                                  .setRegistryName(ModGuardTypes.KNIGHT_ID)
                                  .setClazz(JobKnight.class)
                                  .createGuardType());
@@ -38,10 +40,11 @@ public final class ModGuardTypesInitializer
         ModGuardTypes.ranger = DEFERRED_REGISTER.register(ModGuardTypes.RANGER_ID.getPath(), () -> new GuardType.Builder()
                                  .setJobTranslationKey(JOB_RANGER)
                                  .setButtonTranslationKey(JOB_RANGER_BUTTON)
+                                 .setPrimaryWeaponId(ModEquipmentTypes.BOW_ID)
                                  .setPrimarySkill(Skill.Agility)
                                  .setSecondarySkill(Skill.Adaptability)
                                  .setWorkerSoundName("archer")
-                                 .setJobEntry(() -> ModJobs.archer.get())
+                                 .setJobEntry(ModJobs.archer)
                                  .setRegistryName(ModGuardTypes.RANGER_ID)
                                  .setClazz(JobRanger.class)
                                  .createGuardType());
@@ -52,7 +55,7 @@ public final class ModGuardTypesInitializer
           .setPrimarySkill(Skill.Mana)
           .setSecondarySkill(Skill.Focus)
           .setWorkerSoundName("druid")
-          .setJobEntry(() -> ModJobs.druid.get())
+          .setJobEntry(ModJobs.druid)
           .setRegistryName(ModGuardTypes.DRUID_ID)
           .setClazz(JobDruid.class)
           .createGuardType());

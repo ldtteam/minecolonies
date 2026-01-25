@@ -11,6 +11,7 @@ import com.minecolonies.api.colony.buildings.modules.ISettingsModule;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.connections.IColonyConnectionManager;
 import com.minecolonies.api.colony.managers.interfaces.*;
+import com.minecolonies.api.colony.managers.interfaces.expeditions.IColonyExpeditionManager;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
@@ -205,6 +206,11 @@ public class Colony implements IColony
     private final ColonyConnectionManager connectionManager = new ColonyConnectionManager(this);
 
     /**
+     * Expedition manager for this colony
+     */
+    private final IColonyExpeditionManager expeditionManager = new ColonyExpeditionManager(this);
+
+    /**
      * The Positions which players can freely interact.
      */
     private ImmutableSet<BlockPos> freePositions = ImmutableSet.of();
@@ -392,6 +398,7 @@ public class Colony implements IColony
         colonyStateMachine.addTransition(new TickingTransition<>(ACTIVE, () -> true, this::updateState, UPDATE_STATE_INTERVAL));
         colonyStateMachine.addTransition(new TickingTransition<>(ACTIVE, () -> {
             citizenManager.tickCitizenData(TICKS_SECOND * 3);
+            visitorManager.tickVisitorData(TICKS_SECOND * 3);
             return false;
         }, () -> ACTIVE, TICKS_SECOND * 3));
         colonyStateMachine.addTransition(new TickingTransition<>(ACTIVE, () -> {
@@ -772,6 +779,8 @@ public class Colony implements IColony
         questManager.deserializeNBT(compound.getCompound(TAG_QUEST_MANAGER));
         eventDescManager.deserializeNBT(compound.getCompound(NbtTagConstants.TAG_EVENT_DESC_MANAGER));
 
+        expeditionManager.deserializeNBT(compound.getCompound(NbtTagConstants.TAG_EXPEDITION_MANAGER));
+
         if (compound.contains(TAG_RESEARCH))
         {
             researchManager.readFromNBT(compound.getCompound(TAG_RESEARCH));
@@ -944,6 +953,8 @@ public class Colony implements IColony
 
         compound.put(TAG_QUEST_MANAGER, questManager.serializeNBT());
         compound.put(NbtTagConstants.TAG_EVENT_DESC_MANAGER, eventDescManager.serializeNBT());
+        compound.put(NbtTagConstants.TAG_EXPEDITION_MANAGER, expeditionManager.serializeNBT());
+
         raidManager.write(compound);
 
         @NotNull final CompoundTag researchManagerCompound = new CompoundTag();
@@ -2021,6 +2032,13 @@ public class Colony implements IColony
     public IQuestManager getQuestManager()
     {
         return questManager;
+    }
+
+    @Override
+    @NotNull
+    public IColonyExpeditionManager getExpeditionManager()
+    {
+        return expeditionManager;
     }
 
     @Override

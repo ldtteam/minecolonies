@@ -9,6 +9,7 @@ import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.buildings.workerbuildings.ITownHallView;
 import com.minecolonies.api.colony.connections.IColonyConnectionManager;
 import com.minecolonies.api.colony.managers.interfaces.*;
+import com.minecolonies.api.colony.managers.interfaces.expeditions.IColonyExpeditionManager;
 import com.minecolonies.api.colony.permissions.ColonyPlayer;
 import com.minecolonies.api.colony.permissions.IPermissions;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
@@ -30,6 +31,7 @@ import com.minecolonies.core.colony.buildings.modules.BuildingModules;
 import com.minecolonies.core.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingTownHall;
 import com.minecolonies.core.colony.managers.ColonyConnectionManager;
+import com.minecolonies.core.colony.managers.ColonyExpeditionManager;
 import com.minecolonies.core.colony.managers.ResearchManager;
 import com.minecolonies.core.colony.managers.StatisticsManager;
 import com.minecolonies.core.colony.managers.TravellingManager;
@@ -246,6 +248,11 @@ public final class ColonyView implements IColonyView
     private final IColonyConnectionManager connectionManager = new ColonyConnectionManager(this);
 
     /**
+     * Client side expedition manager.
+     */
+    private final IColonyExpeditionManager expeditionManager;
+
+    /**
      * Day in the colony.
      */
     private int day;
@@ -260,6 +267,7 @@ public final class ColonyView implements IColonyView
         this.id = id;
         this.researchManager = new ResearchManager(this);
         this.questManager = new QuestManager(this);
+        this.expeditionManager = new ColonyExpeditionManager(this);
     }
 
     /**
@@ -392,6 +400,19 @@ public final class ColonyView implements IColonyView
         buf.writeInt(colony.getDay());
         buf.writeNbt(colony.getTravellingManager().serializeNBT());
         colony.getConnectionManager().serializeToView(buf);
+
+        // Write expedition manager
+        if (colony.getExpeditionManager().isDirty() || hasNewSubscribers)
+        {
+            buf.writeBoolean(true);
+            buf.writeNbt(colony.getExpeditionManager().serializeNBT());
+
+            colony.getExpeditionManager().setDirty(false);
+        }
+        else
+        {
+            buf.writeBoolean(false);
+        }
     }
 
     /**
@@ -831,6 +852,9 @@ public final class ColonyView implements IColonyView
         this.day = buf.readInt();
         this.travellingManager.deserializeNBT(buf.readNbt());
         this.connectionManager.deserializeFromView(buf);
+        if (buf.readBoolean()) {
+            this.expeditionManager.deserializeNBT(buf.readNbt());
+        }
         return null;
     }
 
@@ -1530,7 +1554,7 @@ public final class ColonyView implements IColonyView
     }
 
     @Override
-    public ICitizenDataView getVisitor(final int citizenId)
+    public IVisitorViewData getVisitor(final int citizenId)
     {
         return visitors.get(citizenId);
     }
@@ -1582,5 +1606,12 @@ public final class ColonyView implements IColonyView
     public IQuestManager getQuestManager()
     {
         return this.questManager;
+    }
+
+    @Override
+    @NotNull
+    public IColonyExpeditionManager getExpeditionManager()
+    {
+        return expeditionManager;
     }
 }

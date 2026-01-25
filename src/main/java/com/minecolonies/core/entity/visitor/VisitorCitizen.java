@@ -5,12 +5,12 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
-import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.citizenhandlers.*;
+import com.minecolonies.api.entity.visitor.AbstractEntityVisitor;
+import com.minecolonies.api.entity.visitor.IVisitorType;
 import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.api.inventory.container.ContainerCitizenInventory;
 import com.minecolonies.api.util.*;
-import com.minecolonies.api.util.MessageUtils.MessagePriority;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.core.MineColonies;
 import com.minecolonies.core.Network;
@@ -20,14 +20,12 @@ import com.minecolonies.core.colony.buildings.modules.TavernBuildingModule;
 import com.minecolonies.core.entity.ai.minimal.EntityAIInteractToggleAble;
 import com.minecolonies.core.entity.ai.minimal.LookAtEntityGoal;
 import com.minecolonies.core.entity.ai.minimal.LookAtEntityInteractGoal;
-import com.minecolonies.core.entity.ai.visitor.EntityAIVisitor;
 import com.minecolonies.core.entity.citizen.EntityCitizen;
 import com.minecolonies.core.entity.citizen.citizenhandlers.CitizenExperienceHandler;
 import com.minecolonies.core.entity.citizen.citizenhandlers.CitizenInventoryHandler;
 import com.minecolonies.core.entity.citizen.citizenhandlers.CitizenJobHandler;
 import com.minecolonies.core.entity.citizen.citizenhandlers.CitizenSleepHandler;
 import com.minecolonies.core.entity.pathfinding.navigation.MovementHandler;
-import com.minecolonies.core.network.messages.client.ItemParticleEffectMessage;
 import com.minecolonies.core.network.messages.server.colony.OpenInventoryMessage;
 import com.minecolonies.core.util.citizenutils.CitizenItemUtils;
 import net.minecraft.core.BlockPos;
@@ -35,7 +33,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
@@ -61,15 +58,18 @@ import static com.minecolonies.api.util.constant.CitizenConstants.TICKS_20;
 import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_CITIZEN;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_COLONY_ID;
-import static com.minecolonies.api.util.constant.TranslationConstants.MESSAGE_INFO_COLONY_VISITOR_DIED;
-import static com.minecolonies.api.util.constant.TranslationConstants.MESSAGE_INTERACTION_VISITOR_FOOD;
 import static com.minecolonies.core.entity.ai.minimal.EntityAIInteractToggleAble.*;
 
 /**
  * Visitor citizen entity
  */
-public class VisitorCitizen extends AbstractEntityCitizen
+public class VisitorCitizen extends AbstractEntityVisitor
 {
+    /**
+     * The visitor type.
+     */
+    private final IVisitorType visitorType;
+
     /**
      * The citizen experience handler
      */
@@ -83,7 +83,7 @@ public class VisitorCitizen extends AbstractEntityCitizen
      * Reference to the data representation inside the colony.
      */
     @Nullable
-    private ICitizenData citizenData;
+    private IVisitorData visitorData;
 
     /**
      * The citizen inv handler.
@@ -120,7 +120,7 @@ public class VisitorCitizen extends AbstractEntityCitizen
      * @param type  the Entity type.
      * @param world the world.
      */
-    public VisitorCitizen(final EntityType<? extends PathfinderMob> type, final Level world)
+    public VisitorCitizen(final EntityType<? extends PathfinderMob> type, final Level world, final IVisitorType visitorType)
     {
         super(type, world);
         this.citizenInventoryHandler = new CitizenInventoryHandler(this);
@@ -129,10 +129,22 @@ public class VisitorCitizen extends AbstractEntityCitizen
         this.citizenSleepHandler = new CitizenSleepHandler(this);
         this.citizenExperienceHandler = new CitizenExperienceHandler(this);
 
+        this.visitorType = visitorType;
         this.moveControl = new MovementHandler(this);
         this.setPersistenceRequired();
         this.setCustomNameVisible(MineColonies.getConfig().getServer().alwaysRenderNameTag.get());
         initTasks();
+    }
+
+    /**
+     * Create a visitor citizen class for the given visitor type.
+     *
+     * @param visitorType the type of the visitor.
+     * @return the visitor instance.
+     */
+    public static EntityType.EntityFactory<AbstractEntityVisitor> forVisitorType(final IVisitorType visitorType)
+    {
+        return (type, level) -> new VisitorCitizen(type, level, visitorType);
     }
 
     private void initTasks()
@@ -144,7 +156,7 @@ public class VisitorCitizen extends AbstractEntityCitizen
         this.goalSelector.addGoal(++priority, new LookAtEntityInteractGoal(this, Player.class, WATCH_CLOSEST2, 0.2F));
         this.goalSelector.addGoal(++priority, new LookAtEntityInteractGoal(this, EntityCitizen.class, WATCH_CLOSEST2_FAR, WATCH_CLOSEST2_FAR_CHANCE));
         this.goalSelector.addGoal(++priority, new LookAtEntityGoal(this, LivingEntity.class, WATCH_CLOSEST));
-        new EntityAIVisitor(this);
+        this.visitorType.createStateMachine(this);
     }
 
     @Override
@@ -199,23 +211,23 @@ public class VisitorCitizen extends AbstractEntityCitizen
 
     @Nullable
     @Override
-    public ICitizenData getCitizenData()
+    public IVisitorData getCitizenData()
     {
-        return citizenData;
+        return visitorData;
     }
 
     @Override
     public ICivilianData getCivilianData()
     {
-        return citizenData;
+        return visitorData;
     }
 
     @Override
     public void setCivilianData(@Nullable final ICivilianData data)
     {
-        if (data != null && data instanceof IVisitorData)
+        if (data instanceof IVisitorData newVisitorData)
         {
-            this.citizenData = (IVisitorData) data;
+            this.visitorData = newVisitorData;
             data.initEntityValues();
         }
     }
@@ -245,9 +257,9 @@ public class VisitorCitizen extends AbstractEntityCitizen
     @Override
     public void markDirty(final int time)
     {
-        if (citizenData != null)
+        if (visitorData != null)
         {
-            citizenData.markDirty(time);
+            visitorData.markDirty(time);
         }
     }
 
@@ -266,10 +278,10 @@ public class VisitorCitizen extends AbstractEntityCitizen
     @Override
     public void decreaseSaturationForAction()
     {
-        if (citizenData != null)
+        if (visitorData != null)
         {
-            citizenData.decreaseSaturation(SATURATION_DECREASE_FACTOR);
-            citizenData.markDirty(20 * 20);
+            visitorData.decreaseSaturation(SATURATION_DECREASE_FACTOR);
+            visitorData.markDirty(20 * 20);
         }
     }
 
@@ -279,10 +291,10 @@ public class VisitorCitizen extends AbstractEntityCitizen
     @Override
     public void decreaseSaturationForContinuousAction()
     {
-        if (citizenData != null)
+        if (visitorData != null)
         {
-            citizenData.decreaseSaturation(SATURATION_DECREASE_FACTOR / 100.0);
-            citizenData.markDirty(20 * 60 * 2);
+            visitorData.decreaseSaturation(SATURATION_DECREASE_FACTOR / 100.0);
+            visitorData.markDirty(20 * 60 * 2);
         }
     }
 
@@ -419,8 +431,8 @@ public class VisitorCitizen extends AbstractEntityCitizen
             return super.checkAndHandleImportantInteractions(player, hand);
         }
 
-        final InteractionResult result = directPlayerInteraction(player, hand);
-        if (result != null)
+        final InteractionResult result = visitorType.onPlayerInteraction(this, player, level, hand);
+        if (result.consumesAction())
         {
             return result;
         }
@@ -441,30 +453,6 @@ public class VisitorCitizen extends AbstractEntityCitizen
             }
         }
         return InteractionResult.SUCCESS;
-    }
-
-    /**
-     * Direct interaction on right click
-     *
-     * @param player
-     * @param hand
-     * @return
-     */
-    private InteractionResult directPlayerInteraction(final Player player, final InteractionHand hand)
-    {
-        final ItemStack usedStack = player.getItemInHand(hand);
-        if (ISFOOD.test(usedStack))
-        {
-            if (!level.isClientSide())
-            {
-                playSound(SoundEvents.GENERIC_EAT, 1.5f, (float) SoundUtils.getRandomPitch(getRandom()));
-                Network.getNetwork().sendToTrackingEntity(new ItemParticleEffectMessage(usedStack, getX(), getY(), getZ(), getXRot(), getYRot(), getEyeHeight()), this);
-                ItemStackUtils.consumeFood(usedStack, this, player.getInventory());
-                MessageUtils.forCitizen(this, MESSAGE_INTERACTION_VISITOR_FOOD).sendTo(player);
-            }
-            return InteractionResult.CONSUME;
-        }
-        return null;
     }
 
     @Override
@@ -538,9 +526,9 @@ public class VisitorCitizen extends AbstractEntityCitizen
         super.addAdditionalSaveData(compound);
 
         compound.putInt(TAG_COLONY_ID, citizenColonyHandler.getColonyId());
-        if (citizenData != null)
+        if (visitorData != null)
         {
-            compound.putInt(TAG_CITIZEN, citizenData.getId());
+            compound.putInt(TAG_CITIZEN, visitorData.getId());
         }
     }
 
@@ -560,28 +548,12 @@ public class VisitorCitizen extends AbstractEntityCitizen
     }
 
     @Override
-    public void die(DamageSource cause)
+    public void die(@NotNull DamageSource cause)
     {
         super.die(cause);
         if (!level.isClientSide())
         {
-            IColony colony = getCitizenColonyHandler().getColonyOrRegister();
-            if (colony != null && getCitizenData() != null)
-            {
-                colony.getVisitorManager().removeCivilian(getCitizenData());
-                if (getCitizenData().getHomeBuilding() instanceof TavernBuildingModule)
-                {
-                    TavernBuildingModule tavern = (TavernBuildingModule) getCitizenData().getHomeBuilding();
-                    tavern.setNoVisitorTime(level.getRandom().nextInt(5000) + 30000);
-                }
-
-                final String deathLocation = BlockPosUtil.getString(blockPosition());
-
-                MessageUtils.format(MESSAGE_INFO_COLONY_VISITOR_DIED, getCitizenData().getName(), cause.getMsgId(), deathLocation)
-                  .withPriority(MessagePriority.DANGER)
-                  .sendTo(colony)
-                  .forManagers();
-            }
+            visitorType.onDied(this, cause);
         }
     }
 
