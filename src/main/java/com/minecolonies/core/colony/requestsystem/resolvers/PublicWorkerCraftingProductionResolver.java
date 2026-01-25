@@ -52,7 +52,7 @@ public class PublicWorkerCraftingProductionResolver extends AbstractCraftingProd
     @Override
     public void onAssignedRequestBeingCancelled(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends PublicCrafting> request)
     {
-        manager.updateRequestState(request.getId(), RequestState.CANCELLED);
+
     }
 
     @Override
@@ -213,6 +213,7 @@ public class PublicWorkerCraftingProductionResolver extends AbstractCraftingProd
 
         if (freeCrafter == null)
         {
+            manager.updateRequestState(request.getId(), RequestState.CANCELLED);
             onAssignedRequestBeingCancelled(manager, request);
             return;
         }
