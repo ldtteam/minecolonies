@@ -10,7 +10,6 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.Utils;
 import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.MapCodec;
-import io.netty.buffer.Unpooled;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.HolderSet;
@@ -191,7 +190,15 @@ public final class LootTableAnalyzer
                 }
             }
             case "minecraft:loot_table" -> {
-                final ResourceLocation table = ResourceLocation.parse(GsonHelper.getAsString(entryJson, "value"));
+                final JsonElement value = entryJson.get("value");
+                if (value.isJsonObject())
+                {
+                    // inline loot table
+                    return toDrops(provider, value.getAsJsonObject());
+                }
+                
+                // loot table reference
+                final ResourceLocation table = ResourceLocation.parse(value.getAsString());
                 final List<LootDrop> tableDrops = toDrops(provider, ResourceKey.create(Registries.LOOT_TABLE, table));
                 final float quality = GsonHelper.getAsFloat(entryJson, "quality", 0);
                 final JsonArray conditions = GsonHelper.getAsJsonArray(entryJson, "conditions", new JsonArray());
