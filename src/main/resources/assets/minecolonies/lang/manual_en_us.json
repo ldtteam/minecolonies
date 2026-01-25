@@ -2970,7 +2970,7 @@
   "com.minecolonies.core.item.sign.noperm": "No permission to setup signs. Needs Manage Huts permission.",
   "com.minecolonies.core.colonyconnection.fail": "Attempted to connect to another colony, but the connection is incomplete or missing a gatehouse on the other colonies side",
   "com.minecolonies.core.colonyconnection.nocolony": "Attempted to connect to another colony, but the colony does not exist.",
-  "com.minecolonies.core.colonyconnection.path.pending": "Not to fast, the previous sign did not finish connecting yet!",
+  "com.minecolonies.core.colonyconnection.path.pending": "Not so fast, the previous sign did not finish connecting yet!",
   "com.minecolonies.core.colonyconnection.broken": "Attempted to connect to another colony, but the connection is broken at %s",
   "com.minecolonies.core.colonyconnection.nogatehouse": "Attempted to connect to another colony, but the s",
   "com.minecolonies.core.previous": "Previous",
