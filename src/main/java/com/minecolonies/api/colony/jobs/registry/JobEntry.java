@@ -23,6 +23,11 @@ public final class JobEntry
     private final Function<ICitizenData, IJob<?>> jobProducer;
 
     /**
+     * Job translation key
+     */
+    private final String translationKey;
+
+    /**
      * Builder for a {@link JobEntry}.
      */
     public static final class Builder
@@ -121,11 +126,12 @@ public final class JobEntry
         this.jobProducer = jobProducer;
         this.jobViewProducer = jobViewProducer;
         this.key = key;
+        this.translationKey = "com." + key.getNamespace() + ".job." + key.getPath();
     }
 
     public String getTranslationKey()
     {
-        return "com." + key.getNamespace() + ".job." + key.getPath();
+        return translationKey;
     }
 
 

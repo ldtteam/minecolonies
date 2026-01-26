@@ -2,10 +2,13 @@ name: Release
 
 on:
   push:
+    paths:
+      - src/**
     branches:
       - "version/*"
       - "release/*"
       - "testing/*"
+  workflow_dispatch:
 
 permissions:
   contents: write

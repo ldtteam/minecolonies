@@ -435,7 +435,7 @@ public class ColonyPermissionEventHandler
             return;
         }
 
-        if (event.getEntity().getType().is(ModTags.freeToInteractWith))
+        if (event.getTarget().getType().is(ModTags.freeToInteractWith))
         {
             return;
         }

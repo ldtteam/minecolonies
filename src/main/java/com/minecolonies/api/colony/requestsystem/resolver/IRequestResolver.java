@@ -85,7 +85,7 @@ public interface IRequestResolver<R extends IRequestable> extends IRequester
     }
 
     /**
-     * Indicates that a assigned request has been cancelled. Is called before graph is updated.
+     * Indicates that an assigned request has been cancelled. Is called before graph is updated.
      *
      * @param manager The manager that indicates the cancelling
      * @param request The request that has been cancelled.
@@ -93,7 +93,7 @@ public interface IRequestResolver<R extends IRequestable> extends IRequester
     void onAssignedRequestBeingCancelled(@NotNull IRequestManager manager, @NotNull IRequest<? extends R> request);
 
     /**
-     * Indicates that a assigned request has been cancelled. Is called after the graph has been updated.
+     * Indicates that an assigned request has been cancelled. Is called after the graph has been updated.
      *
      * @param manager The manager that indicates the cancelling
      * @param request The request that has been cancelled.

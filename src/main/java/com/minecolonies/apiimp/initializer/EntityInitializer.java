@@ -43,6 +43,8 @@ import com.minecolonies.core.entity.mobs.raider.pirates.EntityArcherPirateRaider
 import com.minecolonies.core.entity.mobs.raider.pirates.EntityCaptainPirateRaider;
 import com.minecolonies.core.entity.mobs.raider.pirates.EntityPirateRaider;
 import com.minecolonies.core.entity.other.*;
+import com.minecolonies.core.entity.other.cavalry.CavalryHorseEntity;
+
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -141,6 +143,12 @@ public class EntityInitializer
                 .setTrackingRange(ENTITY_TRACKING_RANGE)
                 .setUpdateInterval(ENTITY_UPDATE_FREQUENCY)
                 .sized(0.98F, 0.7F));
+
+            ModEntities.CAVALRY_HORSE = build(registry, "cavalry_horse",
+              EntityType.Builder.of(CavalryHorseEntity::new, MobCategory.CREATURE)
+                .setTrackingRange(ENTITY_TRACKING_RANGE)
+                .setUpdateInterval(ENTITY_UPDATE_FREQUENCY)
+                .sized(CavalryHorseEntity.SLIM_W, CavalryHorseEntity.BASE_H));           
 
             ModEntities.MUMMY = build(registry, "mummy",
               EntityType.Builder.of(EntityMummyRaider::new, MobCategory.MONSTER)

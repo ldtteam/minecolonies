@@ -149,7 +149,8 @@ public class MinecoloniesFarmland extends AbstractBlockMinecolonies<Minecolonies
         int growthChance = 4;
         if (level.isRaining())
         {
-            growthChance = 6;
+            // Increased growth during rain, rain is usually short and frequently skipped since citizens do not work
+            growthChance = 12;
         }
         if (aboveState.getBlock() instanceof MinecoloniesCropBlock cropBlock && rng.nextInt(100) <= growthChance)
         {
@@ -161,7 +162,7 @@ public class MinecoloniesFarmland extends AbstractBlockMinecolonies<Minecolonies
     @Override
     public void animateTick(final BlockState state, final Level level, final BlockPos pos, final RandomSource rng)
     {
-        if (level.isRaining())
+        if (level.isRaining() && level.getBlockState(pos.above()).getBlock() instanceof MinecoloniesCropBlock)
         {
             BoneMealItem.addGrowthParticles(level, pos, 1);
         }

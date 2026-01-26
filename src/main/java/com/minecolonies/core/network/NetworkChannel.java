@@ -225,6 +225,7 @@ public class NetworkChannel
         registerMessage(++idx, PlayAudioMessage.class, PlayAudioMessage::new);
         registerMessage(++idx, PlayMusicAtPosMessage.class, PlayMusicAtPosMessage::new);
         registerMessage(++idx, ColonyVisitorViewDataMessage.class, ColonyVisitorViewDataMessage::new);
+        registerMessage(++idx, ColonyViewAnimalViewDataMessage.class, ColonyViewAnimalViewDataMessage::new);
         registerMessage(++idx, SyncPathMessage.class, SyncPathMessage::new);
         registerMessage(++idx, SyncPathReachedMessage.class, SyncPathReachedMessage::new);
         registerMessage(++idx, ReactivateBuildingMessage.class, ReactivateBuildingMessage::new);

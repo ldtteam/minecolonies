@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.blocks.AbstractBlockHut;
+import com.minecolonies.api.colony.IAnimalData;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.*;
@@ -634,6 +635,12 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
         {
             citizen.onRemoveBuilding(building);
             building.cancelAllRequestsOfCitizenOrBuilding(citizen);
+        }
+
+        //Allow Animals to fix up any data that wasn't fixed up by the AbstractBuilding's own onDestroyed
+        for (@NotNull final IAnimalData animal : colony.getAnimalManager().getAnimals())
+        {
+            animal.onRemoveBuilding(building);
         }
 
         colony.getRequestManager().onProviderRemovedFromColony(building);

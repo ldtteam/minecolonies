@@ -421,6 +421,8 @@ public final class TranslationConstants
     @NonNls
     public static final String BIOME_TOOLTIP                                                        = "com.minecolonies.core.item.crop.tooltip.biome";
     @NonNls
+    public static final String CROP_CLIMATE = "com.minecolonies.core.tag.crop.biome";
+    @NonNls
     public static final String BP_NO_PERM                                         = "com.minecolonies.coremod.placement.noperm";
     @NonNls
     public static final String BUILDER_ACTION_BUILDING                            = "com.minecolonies.coremod.action.builder.building";

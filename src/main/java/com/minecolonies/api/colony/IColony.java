@@ -224,6 +224,13 @@ public interface IColony
      */
     IVisitorManager getVisitorManager();
 
+    /**
+     * Get the animal manager of the colony.
+     *
+     * @return the animal manager.
+     */
+    IAnimalManager getAnimalManager();
+
     IRaiderManager getRaiderManager();
 
     /**

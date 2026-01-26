@@ -468,15 +468,16 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
             return;
         }
 
+        final int min = colony.getWorld().getMinBuildHeight();
         final int max = colony.getWorld().getMaxBuildHeight();
         if (getCorners().getA().getY() >= max || getCorners().getB().getY() >= max)
         {
-            MessageUtils.format(BUILDER_BUILDING_TOO_HIGH).sendTo(colony).forAllPlayers();
+            MessageUtils.format(BUILDER_BUILDING_TOO_HIGH, max).sendTo(colony).forAllPlayers();
             return;
         }
-        else if (getPosition().getY() <= colony.getWorld().getMinBuildHeight())
+        else if (getPosition().getY() <= min)
         {
-            MessageUtils.format(BUILDER_BUILDING_TOO_LOW).sendTo(colony).forAllPlayers();
+            MessageUtils.format(BUILDER_BUILDING_TOO_LOW, min).sendTo(colony).forAllPlayers();
             return;
         }
 
@@ -1956,6 +1957,11 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
             colony.getRequestManager().updateRequestState(request.getId(), RequestState.RECEIVED);
         }
 
+        //Check if the citizen did not die.
+        if (colony.getCitizenManager().getCivilian(citizenThatRequested) != null)
+        {
+            colony.getCitizenManager().getCivilian(citizenThatRequested).onRequestCompleted(request.getId());
+        }
         markDirty();
     }
 

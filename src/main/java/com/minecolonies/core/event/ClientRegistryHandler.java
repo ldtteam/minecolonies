@@ -9,7 +9,6 @@ import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.client.model.*;
-import com.minecolonies.core.client.model.ScarecrowModel;
 import com.minecolonies.core.client.model.raiders.*;
 import com.minecolonies.core.client.render.*;
 import com.minecolonies.core.client.render.mobs.RenderMercenary;
@@ -38,6 +37,7 @@ import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.entity.HorseRenderer;
 import net.minecraft.client.renderer.entity.MinecartRenderer;
 import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import net.minecraft.client.renderer.entity.TippableArrowRenderer;
@@ -338,6 +338,12 @@ public class ClientRegistryHandler
         event.registerEntityRenderer(ModEntities.MERCENARY, RenderMercenary::new);
         event.registerEntityRenderer(ModEntities.SITTINGENTITY, RenderSitting::new);
         event.registerEntityRenderer(ModEntities.MINECART, (context) -> new MinecartRenderer<>(context, ModelLayers.MINECART));
+        event.registerEntityRenderer(ModEntities.CAVALRY_HORSE, ctx -> 
+        {
+            HorseRenderer renderer = new HorseRenderer(ctx); 
+            renderer.addLayer(new CavalryOverlayLayer(renderer));
+            return renderer;
+        });
 
         event.registerBlockEntityRenderer(MinecoloniesTileEntities.BUILDING.get(), EmptyTileEntitySpecialRenderer::new);
         event.registerBlockEntityRenderer(MinecoloniesTileEntities.SCARECROW.get(), TileEntityScarecrowRenderer::new);

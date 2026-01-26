@@ -51,15 +51,6 @@ public class ClipBoardDecorator implements IItemDecorator
                 {
                     try
                     {
-                        final Set<IToken<?>> asyncRequest = new HashSet<>();
-                        for (final ICitizenDataView view : colonyView.getCitizens().values())
-                        {
-                            if (view.getJobView() != null)
-                            {
-                                asyncRequest.addAll(view.getJobView().getAsyncRequests());
-                            }
-                        }
-
                         final IRequestManager requestManager = colonyView.getRequestManager();
                         if (requestManager != null)
                         {
@@ -70,22 +61,21 @@ public class ClipBoardDecorator implements IItemDecorator
                             requestTokens.addAll(resolver.getAllAssignedRequests());
                             requestTokens.addAll(retryingRequestResolver.getAllAssignedRequests());
 
-                            int count = 0;
-                            for (final IToken<?> reqId : requestTokens)
+                            for (final ICitizenDataView view : colonyView.getCitizens().values())
                             {
-                                if (!asyncRequest.contains(reqId))
+                                if (view.getJobView() != null)
                                 {
-                                    count++;
+                                    requestTokens.removeAll(view.getJobView().getAsyncRequests());
                                 }
                             }
 
-                            if (count > 0)
+                            if (!requestTokens.isEmpty())
                             {
                                 final PoseStack ps = graphics.pose();
                                 ps.pushPose();
                                 ps.translate(0, 0, 200);
                                 graphics.drawCenteredString(font,
-                                  Component.literal(count + ""),
+                                  Component.literal(requestTokens.size() + ""),
                                   xOffset + 15,
                                   yOffset - 2,
                                   0xFFFF4500);
