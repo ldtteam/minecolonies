@@ -191,15 +191,19 @@ public final class LootTableAnalyzer
             }
             case "minecraft:loot_table" -> {
                 final JsonElement value = entryJson.get("value");
+                final List<LootDrop> tableDrops;
                 if (value.isJsonObject())
                 {
                     // inline loot table
-                    return toDrops(provider, value.getAsJsonObject());
+                    tableDrops = toDrops(provider, value.getAsJsonObject());
                 }
-                
-                // loot table reference
-                final ResourceLocation table = ResourceLocation.parse(value.getAsString());
-                final List<LootDrop> tableDrops = toDrops(provider, ResourceKey.create(Registries.LOOT_TABLE, table));
+                else
+                {
+                    // loot table reference
+                    final ResourceLocation table = ResourceLocation.parse(value.getAsString());
+                    tableDrops = toDrops(provider, ResourceKey.create(Registries.LOOT_TABLE, table));
+                }
+
                 final float quality = GsonHelper.getAsFloat(entryJson, "quality", 0);
                 final JsonArray conditions = GsonHelper.getAsJsonArray(entryJson, "conditions", new JsonArray());
                 final boolean conditional = !conditions.isEmpty();
