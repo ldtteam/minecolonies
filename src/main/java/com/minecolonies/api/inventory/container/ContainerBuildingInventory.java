@@ -90,7 +90,7 @@ public class ContainerBuildingInventory extends AbstractContainerMenu
                               if (!inv.player.level().isClientSide && !ItemStackUtils.isEmpty(stack))
                               {
                                   final IColony colony = IColonyManager.getInstance().getColonyByWorld(colonyId, inv.player.level());
-                                  final IBuilding building = colony.getBuildingManager().getBuilding(pos);
+                                  final IBuilding building = colony.getServerBuildingManager().getBuilding(pos);
                                   if (building != null)
                                   {
                                       building.overruleNextOpenRequestWithStack(stack);

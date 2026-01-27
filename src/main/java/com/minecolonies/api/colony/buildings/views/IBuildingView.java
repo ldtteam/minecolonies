@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableList;
 import com.ldtteam.blockui.views.BOWindow;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.buildings.ICommonBuilding;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
@@ -21,7 +22,7 @@ import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.Suppression.GENERIC_WILDCARD;
 
-public interface IBuildingView extends IRequester, IModuleContainerView
+public interface IBuildingView extends IRequester, IModuleContainerView, ICommonBuilding
 {
     /**
      * Gets the id for this building.
@@ -32,26 +33,11 @@ public interface IBuildingView extends IRequester, IModuleContainerView
     BlockPos getID();
 
     /**
-     * Gets the location of this building.
-     *
-     * @return A BlockPos, where this building is.
-     */
-    @NotNull
-    BlockPos getPosition();
-
-    /**
      * Get the parent building
      *
      * @return
      */
     BlockPos getParent();
-
-    /**
-     * Get the current level of the building.
-     *
-     * @return AbstractBuilding current level.
-     */
-    int getBuildingLevel();
 
     /**
      * Get the BlockPos of the Containers.
@@ -228,12 +214,6 @@ public interface IBuildingView extends IRequester, IModuleContainerView
      * @return true if so.
      */
     boolean isDeconstructed();
-
-    /**
-     * Get the Building type
-     * @return building type
-     */
-    BuildingEntry getBuildingType();
 
     /**
      * Set the building type

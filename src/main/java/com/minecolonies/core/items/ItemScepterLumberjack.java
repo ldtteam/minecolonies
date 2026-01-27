@@ -117,7 +117,7 @@ public class ItemScepterLumberjack extends AbstractItemMinecolonies implements I
 
         MessageUtils.format(TOOL_LUMBERJACK_SCEPTER_AREA_SET, minX, maxX, minY, maxY, minZ, maxZ, volume, maxVolume).sendTo(player);
         final IColony colony = IColonyManager.getInstance().getColonyByWorld(compound.getInt(TAG_ID), worldIn);
-        final BuildingLumberjack hut = colony.getBuildingManager().getBuilding(box.anchor(), BuildingLumberjack.class);
+        final BuildingLumberjack hut = colony.getServerBuildingManager().getBuilding(box.anchor(), BuildingLumberjack.class);
         if (hut == null)
         {
             return;
@@ -167,7 +167,7 @@ public class ItemScepterLumberjack extends AbstractItemMinecolonies implements I
         }
 
         final IColony colony = IColonyManager.getInstance().getColonyByWorld(colonyId, world);
-        if (colony != null && colony.getBuildingManager().getBuilding(pos) instanceof final BuildingLumberjack hut)
+        if (colony != null && colony.getServerBuildingManager().getBuilding(pos) instanceof final BuildingLumberjack hut)
         {
             final BlockPos startRestriction = start != null ? start : Objects.requireNonNullElse(hut.getStartRestriction(), BlockPos.ZERO);
             final BlockPos endRestriction = end != null ? end : Objects.requireNonNullElse(hut.getEndRestriction(), BlockPos.ZERO);
@@ -187,7 +187,7 @@ public class ItemScepterLumberjack extends AbstractItemMinecolonies implements I
     {
         final IColonyView colony = IColonyManager.getInstance().getColonyView(colonyId, world.dimension());
 
-        if (colony != null && colony.getBuilding(pos) instanceof final BuildingLumberjack.View hut)
+        if (colony != null && colony.getClientBuildingManager().getBuilding(pos) instanceof final BuildingLumberjack.View hut)
         {
             final BlockPos startRestriction = start != null ? start : hut.getStartRestriction();
             final BlockPos endRestriction = end != null ? end : hut.getEndRestriction();

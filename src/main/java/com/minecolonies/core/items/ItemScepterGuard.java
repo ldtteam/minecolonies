@@ -95,7 +95,7 @@ public class ItemScepterGuard extends AbstractItemMinecolonies
         }
 
         final BlockPos guardTower = BlockPosUtil.read(compound, TAG_POS);
-        final IBuilding hut = colony.getBuildingManager().getBuilding(guardTower);
+        final IBuilding hut = colony.getServerBuildingManager().getBuilding(guardTower);
         if (!(hut instanceof AbstractBuildingGuards))
         {
             return InteractionResult.FAIL;

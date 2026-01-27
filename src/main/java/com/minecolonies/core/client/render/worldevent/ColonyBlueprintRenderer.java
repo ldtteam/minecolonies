@@ -404,7 +404,7 @@ public class ColonyBlueprintRenderer
             final AABB blueprintAABB = new AABB(zeroPos, zeroPos.offset(blueprint.getSizeX() - 1, blueprint.getSizeY() - 1, blueprint.getSizeZ() - 1))
                 .inflate(2 + MinecoloniesAPIProxy.getInstance().getConfig().getClient().neighborbuildingrange.get());
 
-            for (final IBuildingView buildingView : ctx.nearestColony.getBuildings())
+            for (final IBuildingView buildingView : ctx.nearestColony.getClientBuildingManager().getBuildings().values())
             {
                 final BlockPos currentPosition = buildingView.getPosition();
                 if (ctx.clientLevel.getBlockEntity(currentPosition) instanceof final TileEntityColonyBuilding tileEntityColonyBuilding)
@@ -475,7 +475,7 @@ public class ColonyBlueprintRenderer
             }
 
             // and also just the anchor pos for unbuilt non-work-orders, to help find lost huts
-            for (final IBuildingView building : ctx.nearestColony.getBuildings())
+            for (final IBuildingView building : ctx.nearestColony.getClientBuildingManager().getBuildings().values())
             {
                 if (!desired.containsKey(building.getPosition()) &&
                     building.getBuildingLevel() == 0 &&
@@ -502,7 +502,7 @@ public class ColonyBlueprintRenderer
         {
             if (builderPos != null && !builderPos.equals(BlockPos.ZERO))
             {
-                final IBuildingView builderView = colony.getBuilding(builderPos);
+                final IBuildingView builderView = colony.getClientBuildingManager().getBuilding(builderPos);
                 if (builderView != null)
                 {
                     final Set<Integer> builders = builderView.getAllAssignedCitizens();
@@ -542,7 +542,7 @@ public class ColonyBlueprintRenderer
                         continue;
                     }
 
-                    final IBuildingView building = ctx.nearestColony.getBuilding(workerPos);
+                    final IBuildingView building = ctx.nearestColony.getClientBuildingManager().getBuilding(workerPos);
                     if (building == null || building.getBuildingType() != ModBuildings.builder.get())
                     {
                         continue;

@@ -457,7 +457,7 @@ public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeli
             {
                 return true;
             }
-            for (final IWareHouse wareHouse : getColony().getBuildingManager().getWareHouses())
+            for (final IWareHouse wareHouse : getColony().getServerBuildingManager().getWareHouses())
             {
                 if (wareHouse.hasContainerPosition(requestA.getStart().getInDimensionLocation()) && wareHouse.hasContainerPosition(requestB.getStart().getInDimensionLocation()))
                 {
@@ -690,7 +690,7 @@ public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeli
      */
     public IWareHouse findWareHouse()
     {
-        for (final IWareHouse building : getColony().getBuildingManager().getWareHouses())
+        for (final IWareHouse building : getColony().getServerBuildingManager().getWareHouses())
         {
             if (building.getFirstModuleOccurance(CourierAssignmentModule.class).hasAssignedCitizen(getCitizen()))
             {

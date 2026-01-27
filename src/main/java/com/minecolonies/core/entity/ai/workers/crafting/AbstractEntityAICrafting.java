@@ -703,10 +703,10 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
 
         if (!job.getSecondaryOutputs().isEmpty())
         {
-            final BlockPos closestWarehouse = job.getColony().getBuildingManager().getBestBuilding(worker, BuildingWareHouse.class);
+            final BlockPos closestWarehouse = job.getColony().getServerBuildingManager().getBestBuilding(worker, BuildingWareHouse.class);
             if (closestWarehouse != null)
             {
-                final IBuilding warehouse = job.getColony().getBuildingManager().getBuilding(closestWarehouse);
+                final IBuilding warehouse = job.getColony().getServerBuildingManager().getBuilding(closestWarehouse);
                 for (final Map.Entry<ItemStorage, Integer> output : job.getSecondaryOutputs().entrySet())
                 {
                     warehouse.createRequest(new Delivery(building.getLocation(),

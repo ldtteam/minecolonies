@@ -8,7 +8,6 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.core.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.core.colony.buildings.modules.GuardBuildingModule;
 import com.minecolonies.core.colony.buildings.modules.settings.GuardTaskSetting;
-import com.minecolonies.core.colony.jobs.AbstractJobGuard;
 import net.minecraft.core.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
@@ -154,14 +153,14 @@ public class BuildingGateHouse extends AbstractBuildingGuards
     public void onDestroyed()
     {
         super.onDestroyed();
-        colony.getBuildingManager().guardBuildingChangedAt(this, 0);
+        colony.getServerBuildingManager().guardBuildingChangedAt(this, 0);
     }
 
     @Override
     public void onUpgradeComplete(final int newLevel)
     {
         super.onUpgradeComplete(newLevel);
-        colony.getBuildingManager().guardBuildingChangedAt(this, newLevel);
+        colony.getServerBuildingManager().guardBuildingChangedAt(this, newLevel);
     }
 
     @Override

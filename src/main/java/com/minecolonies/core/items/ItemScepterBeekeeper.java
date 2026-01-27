@@ -67,7 +67,7 @@ public class ItemScepterBeekeeper extends AbstractItemMinecolonies implements IB
 
         final IColony colony = IColonyManager.getInstance().getColonyByWorld(compound.getInt(TAG_ID), useContext.getLevel());
         final BlockPos hutPos = BlockPosUtil.read(compound, TAG_POS);
-        final IBuilding hut = colony.getBuildingManager().getBuilding(hutPos);
+        final IBuilding hut = colony.getServerBuildingManager().getBuilding(hutPos);
         final BuildingBeekeeper building = (BuildingBeekeeper) hut;
 
         if (useContext.getLevel().getBlockState(useContext.getClickedPos()).getBlock() instanceof BeehiveBlock)
@@ -115,7 +115,7 @@ public class ItemScepterBeekeeper extends AbstractItemMinecolonies implements IB
         final IColonyView colony = IColonyManager.getInstance().getColonyView(compound.getInt(TAG_ID), world.dimension());
         final BlockPos pos = BlockPosUtil.read(compound, TAG_POS);
 
-        if (colony != null && colony.getBuilding(pos) instanceof final BuildingBeekeeper.View hut)
+        if (colony != null && colony.getClientBuildingManager().getBuilding(pos) instanceof final BuildingBeekeeper.View hut)
         {
             final List<OverlayBox> overlays = new ArrayList<>();
 

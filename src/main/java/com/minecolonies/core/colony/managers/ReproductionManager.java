@@ -12,6 +12,7 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.core.colony.Colony;
 import com.minecolonies.core.colony.buildings.modules.LivingBuildingModule;
+import com.minecolonies.core.colony.buildings.workerbuildings.BuildingTownHall;
 import com.minecolonies.core.colony.eventhooks.citizenEvents.CitizenBornEvent;
 import com.minecolonies.core.util.AdvancementUtils;
 import net.minecraft.core.BlockPos;
@@ -88,14 +89,14 @@ public class ReproductionManager implements IReproductionManager
     public void trySpawnChild()
     {
         // Spawn a child when adults are present
-        if (colony.canMoveIn() && colony.getCitizenManager().getCurrentCitizenCount() < colony.getCitizenManager().getMaxCitizens() && colony.getCitizenManager().getCurrentCitizenCount() >= Math.min(MIN_SIZE_FOR_REPRO, MinecoloniesAPIProxy.getInstance().getConfig().getServer().initialCitizenAmount.get()))
+        if (colony.getSettings().getSetting(BuildingTownHall.MOVE_IN).getValue() && colony.getCitizenManager().getCurrentCitizenCount() < colony.getCitizenManager().getMaxCitizens() && colony.getCitizenManager().getCurrentCitizenCount() >= Math.min(MIN_SIZE_FOR_REPRO, MinecoloniesAPIProxy.getInstance().getConfig().getServer().initialCitizenAmount.get()))
         {
             if (!checkForBioParents())
             {
                 return;
             }
 
-            final IBuilding newHome = colony.getBuildingManager().getHouseWithSpareBed();
+            final IBuilding newHome = colony.getServerBuildingManager().getHouseWithSpareBed();
             if (newHome == null)
             {
                 return;
@@ -131,10 +132,10 @@ public class ReproductionManager implements IReproductionManager
                     }
                     else
                     {
-                        final BlockPos altPos = colony.getBuildingManager().getRandomBuilding(b -> b.hasModule(LivingBuildingModule.class) && !b.getPosition().equals(newHome.getPosition()) && BlockPosUtil.getDistance2D(b.getPosition(), newHome.getPosition()) < 50);
+                        final BlockPos altPos = colony.getServerBuildingManager().getRandomBuilding(b -> b.hasModule(LivingBuildingModule.class) && !b.getPosition().equals(newHome.getPosition()) && BlockPosUtil.getDistance2D(b.getPosition(), newHome.getPosition()) < 50);
                         if (altPos != null)
                         {
-                            final IBuilding building = colony.getBuildingManager().getBuilding(altPos);
+                            final IBuilding building = colony.getServerBuildingManager().getBuilding(altPos);
                             final LivingBuildingModule altModule = building.getFirstModuleOccurance(LivingBuildingModule.class);
 
                             final List<ICitizenData> newAssignedCitizens = altModule.getAssignedCitizen();

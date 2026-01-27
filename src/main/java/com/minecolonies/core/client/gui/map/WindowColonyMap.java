@@ -355,7 +355,7 @@ public class WindowColonyMap extends AbstractWindowSkeleton
             updateColonyInfoImage(info);
         }
 
-        for (final IBuildingView buildingView : building.getColony().getBuildings())
+        for (final IBuildingView buildingView : building.getColony().getClientBuildingManager().getBuildings().values())
         {
             updateBuildingView(buildingView);
         }

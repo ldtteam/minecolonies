@@ -195,7 +195,7 @@ public class ClientEventHandler
             final IColonyView colonyView = (IColonyView) citizenData.getColony();
 
             IBuildingView cookBuilding = null;
-            for (final IBuildingView buildingView : colonyView.getBuildings())
+            for (final IBuildingView buildingView : colonyView.getClientBuildingManager().getBuildings().values())
             {
                 if (buildingView.getBuildingType() == ModBuildings.cook.get())
                 {
@@ -207,7 +207,7 @@ public class ClientEventHandler
             }
 
             final int homeBuildingLevel =
-                colonyView.getBuilding(citizenData.getHomeBuilding()) == null ? 0 : colonyView.getBuilding(citizenData.getHomeBuilding()).getBuildingLevel();
+                colonyView.getClientBuildingManager().getBuilding(citizenData.getHomeBuilding()) == null ? 0 : colonyView.getClientBuildingManager().getBuilding(citizenData.getHomeBuilding()).getBuildingLevel();
             if (FoodUtils.canEatLevel(event.getItemStack(), homeBuildingLevel))
             {
                 event.getToolTip().add(Component.translatable(TranslationConstants.TIER_TOOLTIP + foodTier).withStyle(ChatFormatting.GRAY));
@@ -303,7 +303,7 @@ public class ClientEventHandler
                 // unless we can change how colony.hasBuilding uses its parameter...
 
                 final MutableComponent reqLevelText = Component.translatable(COM_MINECOLONIES_COREMOD_ITEM_BUILDLEVEL_TOOLTIP_GUI, craftingBuildingName, minimumLevel);
-                if (colony != null && colony.hasBuilding(schematicName, minimumLevel, true))
+                if (colony != null && colony.getCommonBuildingManager().hasBuilding(schematicName, minimumLevel, true))
                 {
                     reqLevelText.setStyle(Style.EMPTY.withColor(ChatFormatting.AQUA));
                 }

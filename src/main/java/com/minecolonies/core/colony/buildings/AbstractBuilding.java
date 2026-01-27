@@ -398,12 +398,12 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     public void destroy()
     {
         onDestroyed();
-        colony.getBuildingManager().removeBuilding(this, colony.getPackageManager().getCloseSubscribers());
+        colony.getServerBuildingManager().removeBuilding(this, colony.getPackageManager().getCloseSubscribers());
         colony.getRequestManager().getDataStoreManager().remove(this.rsDataStoreToken);
 
         for (final BlockPos childpos : getChildren())
         {
-            final IBuilding building = colony.getBuildingManager().getBuilding(childpos);
+            final IBuilding building = colony.getServerBuildingManager().getBuilding(childpos);
             if (building != null)
             {
                 building.destroy();
@@ -483,7 +483,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
 
         if (!builder.equals(BlockPos.ZERO))
         {
-            final IBuilding building = colony.getBuildingManager().getBuilding(builder);
+            final IBuilding building = colony.getServerBuildingManager().getBuilding(builder);
             if (building instanceof AbstractBuildingStructureBuilder &&
                   (building.getBuildingLevel() >= workOrder.getTargetLevel() || canBeBuiltByBuilder(workOrder.getTargetLevel())))
             {
@@ -539,7 +539,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
         dirty = true;
         if (colony != null)
         {
-            colony.getBuildingManager().markBuildingsDirty();
+            colony.getServerBuildingManager().markBuildingsDirty();
         }
     }
 
@@ -614,7 +614,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
                 markDirty();
 
                 final BlockPos buildingPos = o.getClaimedBy();
-                final IBuilding building = colony.getBuildingManager().getBuilding(buildingPos);
+                final IBuilding building = colony.getServerBuildingManager().getBuilding(buildingPos);
                 if (building != null)
                 {
                     for (final AbstractAssignedCitizenModule module : building.getModulesByType(AbstractAssignedCitizenModule.class))
@@ -749,7 +749,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
           .map(m -> (WorkOrderBuilding) m)
           .filter(f -> f.getLocation().equals(this.getID()) || this.getChildren().contains(f.getLocation()))
           .forEach(f -> {
-              IBuilding building = this.colony.getBuildingManager().getBuilding(f.getLocation());
+              IBuilding building = this.colony.getServerBuildingManager().getBuilding(f.getLocation());
               if (building != null)
               {
                   f.setCustomName(building);
@@ -793,7 +793,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
             return;
         }
 
-        final IBuilding parentBuilding = colony.getBuildingManager().getBuilding(getParent());
+        final IBuilding parentBuilding = colony.getServerBuildingManager().getBuilding(getParent());
 
         if (getBuildingLevel() == 0 && (parentBuilding == null || parentBuilding.getBuildingLevel() > 0))
         {
@@ -962,7 +962,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
 
         getModulesByType(IBuildingEventsModule.class).forEach(module -> module.onUpgradeComplete(newLevel));
         colony.getResearchManager().checkAutoStartResearch();
-        colony.getBuildingManager().onBuildingUpgradeComplete(this, newLevel);
+        colony.getServerBuildingManager().onBuildingUpgradeComplete(this, newLevel);
         cachedStandingPosition = null;
     }
 
@@ -1008,7 +1008,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     {
         if (recheckGuardBuildingNear)
         {
-            guardBuildingNear = colony.getBuildingManager().hasGuardBuildingNear(this);
+            guardBuildingNear = colony.getServerBuildingManager().hasGuardBuildingNear(this);
             recheckGuardBuildingNear = false;
         }
         return guardBuildingNear;

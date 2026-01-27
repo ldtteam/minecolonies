@@ -70,7 +70,7 @@ public abstract class AbstractBuildingServerMessage<T extends IBuilding> extends
     @SuppressWarnings("unchecked")
     public final void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony)
     {
-        final IBuilding building = colony.getBuildingManager().getBuilding(buildingId);
+        final IBuilding building = colony.getServerBuildingManager().getBuilding(buildingId);
         if (building == null)
         {
             return;
