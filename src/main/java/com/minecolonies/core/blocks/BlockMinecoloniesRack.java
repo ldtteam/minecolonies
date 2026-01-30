@@ -6,6 +6,7 @@ import com.minecolonies.api.blocks.AbstractBlockMinecoloniesRack;
 import com.minecolonies.api.blocks.types.RackType;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.constant.Constants;
@@ -122,6 +123,24 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecoloniesRack<BlockMi
             return defaultBlockState().setValue(FACING, context.getPlayer().getDirection().getOpposite());
         }
         return super.getStateForPlacement(context);
+    }
+
+    @Override
+    public void destroy(final @NotNull LevelAccessor level, final @NotNull BlockPos pos, final @NotNull BlockState state)
+    {
+        super.destroy(level, pos, state);
+
+        // Remove rack from registered building
+        final BlockEntity blockEntity = level.getBlockEntity(pos);
+        if (level instanceof Level world && blockEntity instanceof TileEntityRack rack && rack.getBuildingPos() != BlockPos.ZERO)
+        {
+            final IColony colony = IColonyManager.getInstance().getIColony(world, pos);
+            final IBuilding building = colony.getBuildingManager().getBuilding(rack.getBuildingPos());
+            if (building != null)
+            {
+                building.removeContainerPosition(pos);
+            }
+        }
     }
 
     /**

@@ -15,7 +15,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.NbtUtils;
 import net.minecraft.nbt.Tag;
 import net.minecraft.util.Mth;
 import net.minecraft.util.Tuple;
@@ -27,7 +26,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.Predicate;
@@ -138,7 +136,7 @@ public abstract class AbstractBuildingContainer extends AbstractSchematicProvide
     @Override
     public List<BlockPos> getContainers()
     {
-        final List<BlockPos> list = new ArrayList<>(containerList);;
+        final List<BlockPos> list = new ArrayList<>(containerList);
         list.add(this.getPosition());
         return list;
     }
@@ -159,7 +157,7 @@ public abstract class AbstractBuildingContainer extends AbstractSchematicProvide
             if (entity instanceof TileEntityColonyBuilding buildingEntity)
             {
                 buildingEntity.setStructurePack(StructurePacks.getStructurePack(getStructurePack()));
-               
+
                 final IBuilding building = colony.getBuildingManager().getBuilding(pos);
                 if (building != null)
                 {
@@ -180,7 +178,7 @@ public abstract class AbstractBuildingContainer extends AbstractSchematicProvide
     }
 
     /**
-     * Gets the list of tags, and finds the first location registered there. 
+     * Gets the list of tags, and finds the first location registered there.
      * @param tagName the name of the tag to query
      * @return the BlockPos, or null if not found
      */

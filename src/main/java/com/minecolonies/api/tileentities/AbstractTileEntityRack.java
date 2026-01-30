@@ -226,6 +226,16 @@ public abstract class AbstractTileEntityRack extends BlockEntity implements Menu
     public abstract void upgradeRackSize();
 
     /**
+     * Get the current building position.
+     *
+     * @return the pos of the building.
+     */
+    public BlockPos getBuildingPos()
+    {
+        return buildingPos;
+    }
+
+    /**
      * Set the building pos it belongs to.
      *
      * @param pos the pos of the building.

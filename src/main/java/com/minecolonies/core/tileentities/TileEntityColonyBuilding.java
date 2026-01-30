@@ -119,6 +119,11 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
     private CombinedItemHandler combinedInv;
 
     /**
+     * A list containing the current positions in the {@link TileEntityColonyBuilding#combinedInv}.
+     */
+    private Set<BlockPos> currentInvPositions = new HashSet<>();
+
+    /**
      * Pending blueprint future.
      */
     private Future<Blueprint> pendingBlueprintFuture = null;
@@ -452,17 +457,47 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
     @Override
     public void tick()
     {
-        if (combinedInv != null)
+        final IColony colony = getColony();
+        if (colony != null)
         {
-            invalidateCapabilities();
-            combinedInv = null;
+            final Level world = colony.getWorld();
+            boolean dirty = false;
+            int rackCount = 0;
+            for (final BlockPos pos : building.getContainers())
+            {
+                if (WorldUtil.isBlockLoaded(world, pos) && !pos.equals(this.worldPosition))
+                {
+                    final BlockEntity te = world.getBlockEntity(pos);
+                    if (te instanceof AbstractTileEntityRack rack)
+                    {
+                        rack.setBuildingPos(getPosition());
+
+                        if (!currentInvPositions.contains(pos))
+                        {
+                            dirty = true;
+                        }
+
+                        rackCount++;
+                    }
+                    else
+                    {
+                        building.removeContainerPosition(pos);
+                    }
+                }
+            }
+
+            if (dirty || rackCount != currentInvPositions.size())
+            {
+                invalidateCapabilities();
+                combinedInv = null;
+            }
         }
+
         if (!getLevel().isClientSide && colonyId == 0)
         {
-            final IColony tempColony = IColonyManager.getInstance().getColonyByPosFromWorld(getLevel(), this.getPosition());
-            if (tempColony != null)
+            if (colony != null)
             {
-                colonyId = tempColony.getID();
+                colonyId = colony.getID();
             }
         }
         else
@@ -620,35 +655,30 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
         {
             if (combinedInv == null)
             {
-                //Add additional containers
-                final Set<IItemHandlerModifiable> handlers = new LinkedHashSet<>();
+                final List<IItemHandlerModifiable> handlers = new ArrayList<>();
+                final Set<BlockPos> newPositions = new HashSet<>();
+
                 final Level world = colony.getWorld();
-                if (world != null)
+                for (final BlockPos pos : building.getContainers())
                 {
-                    for (final BlockPos pos : building.getContainers())
+                    if (WorldUtil.isBlockLoaded(world, pos) && !pos.equals(this.worldPosition))
                     {
-                        if (WorldUtil.isBlockLoaded(world, pos) && !pos.equals(this.worldPosition))
+                        final BlockEntity te = world.getBlockEntity(pos);
+                        if (te != null)
                         {
-                            final BlockEntity te = world.getBlockEntity(pos);
-                            if (te != null)
+                            if (te instanceof final AbstractTileEntityRack rack)
                             {
-                                if (te instanceof final AbstractTileEntityRack rack)
-                                {
-                                    handlers.add(rack.getInventory());
-                                    rack.setBuildingPos(this.getBlockPos());
-                                }
-                                else
-                                {
-                                    building.removeContainerPosition(pos);
-                                }
+                                handlers.add(rack.getInventory());
+                                newPositions.add(pos);
                             }
                         }
                     }
                 }
-                handlers.add(this.getInventory());
 
-                combinedInv = new CombinedItemHandler(building.getSchematicName(), handlers.toArray(new IItemHandlerModifiable[0]));
+                combinedInv = new CombinedItemHandler(handlers);
+                currentInvPositions = newPositions;
             }
+
             return combinedInv;
         }
         return super.getItemHandlerCap(side);

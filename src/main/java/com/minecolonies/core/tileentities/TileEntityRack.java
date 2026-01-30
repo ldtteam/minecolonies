@@ -53,7 +53,6 @@ import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
-import static com.minecolonies.api.util.constant.TranslationConstants.RACK;
 
 /**
  * Tile entity for the warehouse shelves.
@@ -501,14 +500,14 @@ public class TileEntityRack extends AbstractTileEntityRack implements IMateriall
 
         if (getBlockState().getBlock() != ModBlocks.blockRack)
         {
-            lastItemHandlerCap = new CombinedItemHandler(RACK, getInventory());
+            lastItemHandlerCap = new CombinedItemHandler(getInventory());
             return lastItemHandlerCap;
         }
 
         final RackType type = getBlockState().getValue(AbstractBlockMinecoloniesRack.VARIANT);
         if (!type.isDoubleVariant())
         {
-            lastItemHandlerCap = new CombinedItemHandler(RACK, getInventory());
+            lastItemHandlerCap = new CombinedItemHandler(getInventory());
             return lastItemHandlerCap;
         }
         else
@@ -516,17 +515,17 @@ public class TileEntityRack extends AbstractTileEntityRack implements IMateriall
             final AbstractTileEntityRack other = getOtherChest();
             if (other == null)
             {
-                lastItemHandlerCap = new CombinedItemHandler(RACK, getInventory());
+                lastItemHandlerCap = new CombinedItemHandler(getInventory());
             }
             else
             {
                 if (type != RackType.EMPTY)
                 {
-                    lastItemHandlerCap = new CombinedItemHandler(RACK, getInventory(), other.getInventory());
+                    lastItemHandlerCap = new CombinedItemHandler(getInventory(), other.getInventory());
                 }
                 else
                 {
-                    lastItemHandlerCap = new CombinedItemHandler(RACK, other.getInventory(), getInventory());
+                    lastItemHandlerCap = new CombinedItemHandler(other.getInventory(), getInventory());
                 }
             }
 
