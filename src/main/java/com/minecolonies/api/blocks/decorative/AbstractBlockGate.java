@@ -471,7 +471,7 @@ public abstract class AbstractBlockGate extends DoorBlock implements LiquidBlock
     {
         BlockPos blockpos = context.getClickedPos();
 
-        if (blockpos.getY() < 255 && context.getLevel().getBlockState(blockpos.above()).canBeReplaced(context))
+        if (blockpos.getY() < context.getLevel().getMaxBuildHeight() && context.getLevel().getBlockState(blockpos.above()).canBeReplaced(context))
         {
             return this.defaultBlockState().setValue(FACING, context.getHorizontalDirection());
         }
