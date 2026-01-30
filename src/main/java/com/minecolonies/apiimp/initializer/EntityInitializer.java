@@ -74,6 +74,7 @@ public class EntityInitializer
                 .setTrackingRange(ENTITY_TRACKING_RANGE)
                 .setUpdateInterval(ENTITY_UPDATE_FREQUENCY)
                 .sized((float) CITIZEN_WIDTH, (float) CITIZEN_HEIGHT)
+                .eyeHeight((float) CITIZEN_HEIGHT * 0.95f)
                 .setShouldReceiveVelocityUpdates(true));
 
             ModEntities.FISHHOOK = build(registry, "fishhook",
@@ -87,7 +88,8 @@ public class EntityInitializer
               .setTrackingRange(ENTITY_TRACKING_RANGE)
               .setUpdateInterval(ENTITY_UPDATE_FREQUENCY)
               .sized((float) CITIZEN_WIDTH, (float) CITIZEN_HEIGHT)
-              .setShouldReceiveVelocityUpdates(true));
+                .eyeHeight((float) CITIZEN_HEIGHT * 0.95f)
+                .setShouldReceiveVelocityUpdates(true));
 
             ModEntities.MERCENARY = build(registry, "mercenary",
               EntityType.Builder.of(EntityMercenary::new, MobCategory.CREATURE)
