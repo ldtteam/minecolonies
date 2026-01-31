@@ -10,6 +10,7 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.ModBuildings;
+import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.colony.workorders.IWorkOrder;
@@ -95,7 +96,14 @@ public class ItemAssistantHammer extends AbstractItemMinecolonies
 
                 List<IPlacementHandler> handlers = new ArrayList<>(PlacementHandlers.handlers);
                 SolidPlaceholderPlacementHandler solidPlaceHolderHandler = new SolidPlaceholderPlacementHandler();
-                solidPlaceHolderHandler.setReplacement(view.getClientBuildingManager().getBuilding(workOrder.getClaimedBy())
+                final IBuildingView building = view.getClientBuildingManager().getBuilding(workOrder.getClaimedBy());
+
+                if (building == null || !building.hasModuleView(BuildingModules.BUILDER_SETTINGS))
+                {
+                    return;
+                }
+
+                solidPlaceHolderHandler.setReplacement(building
                     .getModuleView(BuildingModules.BUILDER_SETTINGS)
                     .getSetting(BuildingMiner.FILL_BLOCK)
                     .getValue()

@@ -894,6 +894,7 @@ public final class ColonyManager implements IColonyManager
     public void resetColonyViews()
     {
         colonyViews.clear();
+        chunkClaimData.clear();
     }
 
     @Override
