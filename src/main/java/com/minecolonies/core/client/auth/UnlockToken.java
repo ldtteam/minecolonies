@@ -2,9 +2,8 @@ package com.minecolonies.core.client.auth;
 
 import com.google.gson.JsonObject;
 
-import javax.crypto.Mac;
-import javax.crypto.spec.SecretKeySpec;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -18,10 +17,6 @@ import static com.minecolonies.core.generation.DataGeneratorConstants.GSON;
 
 public final class UnlockToken
 {
-    private static final byte[] STATIC_SECRET =
-        "9ccvhWUtG4FYXd14vKtZkntUC1DrqOWD".getBytes(StandardCharsets.UTF_8);
-
-    private static final String HMAC_ALGO = "HmacSHA256";
     public static final  String VER       = "ver";
     public static final  String TIME_NOW  = "iat";
     public static final  String TIME_EXP  = "exp";
@@ -38,6 +33,7 @@ public final class UnlockToken
      * Path to the unlock token file, saved in a OS temp data folder
      */
     private static final Path tokenFile = getBaseDir().resolve("unlock.cache");
+    public static final int CURRENT_VERSION = 1;
 
     private UnlockToken() {}
 
@@ -80,14 +76,14 @@ public final class UnlockToken
         long exp = now + validMinutes * 60 * 1000;
 
         JsonObject payload = new JsonObject();
-        payload.addProperty(VER, 1);
+        payload.addProperty(VER, CURRENT_VERSION);
         payload.addProperty(TIME_NOW, now);
         payload.addProperty(TIME_EXP, exp);
         payload.addProperty(UUID, playerUuid.toString());
         payload.addProperty(UNLOCK, featureId);
 
         byte[] payloadBytes = GSON.toJson(payload).getBytes(StandardCharsets.UTF_8);
-        byte[] signature = sign(payloadBytes);
+        byte[] signature = signatureHash(GSON.toJson(payload));
 
         return base64(payloadBytes) + "." + base64(signature);
     }
@@ -118,7 +114,7 @@ public final class UnlockToken
             byte[] payloadBytes = base64Decode(parts[0]);
             byte[] sigBytes = base64Decode(parts[1]);
 
-            byte[] expectedSig = sign(payloadBytes);
+            byte[] expectedSig = signatureHash(new String(payloadBytes));
             if (!MessageDigest.isEqual(sigBytes, expectedSig))
             {
                 return false;
@@ -134,23 +130,14 @@ public final class UnlockToken
     }
 
     /**
-     * Creates the signature
+     * Creates a simple signature hash for a given string
      *
-     * @param data
+     * @param string
      * @return
      */
-    private static byte[] sign(byte[] data)
+    private static byte[] signatureHash(String string)
     {
-        try
-        {
-            Mac mac = Mac.getInstance(HMAC_ALGO);
-            mac.init(new SecretKeySpec(STATIC_SECRET, HMAC_ALGO));
-            return mac.doFinal(data);
-        }
-        catch (Exception e)
-        {
-            throw new RuntimeException("HMAC failure", e);
-        }
+        return ByteBuffer.allocate(4).putInt(string.hashCode()).array();
     }
 
     /**
@@ -187,6 +174,11 @@ public final class UnlockToken
             }
 
             if (!payload.get(UNLOCK).getAsString().contains(featureId))
+            {
+                return false;
+            }
+
+            if (payload.get(VER).getAsInt() != CURRENT_VERSION)
             {
                 return false;
             }

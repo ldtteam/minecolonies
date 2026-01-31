@@ -357,7 +357,10 @@ public class WindowMainPage extends AbstractWindowTownHall
             {
                 // Checks the token file when the api has issues
                 isFeatureUnlocked.set(UnlockToken.isFeatureEnabledFor(playerUuid, SKIN));
-                Log.getLogger().info("Auth failure: ", e.getCause());
+                if (isFeatureUnlocked.get())
+                {
+                    Log.getLogger().info("Auth failure: ", e);
+                }
             }
         }).start();
     }
