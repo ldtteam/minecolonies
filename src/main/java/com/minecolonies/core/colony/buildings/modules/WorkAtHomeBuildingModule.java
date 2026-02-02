@@ -42,8 +42,8 @@ public class WorkAtHomeBuildingModule extends WorkerBuildingModule implements IA
                 if (oldHome.hasModule(LIVING) && !oldHome.hasModule(WorkAtHomeBuildingModule.class))
                 {
                     final LivingBuildingModule livingBuildingModule = oldHome.getModule(LIVING);
-                    if (livingBuildingModule.getHiringMode() == HiringMode.MANUAL || (livingBuildingModule.getHiringMode() == HiringMode.DEFAULT && building.getColony().getSettings().getSetting(
-                        BuildingTownHall.AUTO_HIRING_MODE).getValue()))
+                    if (livingBuildingModule.getHiringMode() == HiringMode.MANUAL || (livingBuildingModule.getHiringMode() == HiringMode.DEFAULT
+                        && !building.getColony().getSettings().getSetting(BuildingTownHall.AUTO_HIRING_MODE).getValue()))
                     {
                         final MutableComponent jobComponent = MessageUtils.format(citizen.getJob().getJobRegistryEntry().getTranslationKey()).create();
                         final MutableComponent buildingComponent = MessageUtils.format(oldHome.getBuildingDisplayName()).create();
