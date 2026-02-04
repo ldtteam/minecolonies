@@ -862,7 +862,7 @@ public abstract class AbstractWorkOrder implements IBuilderWorkOrder
     @Override
     public boolean canBeResolved(final IColony colony, final int level)
     {
-        return colony.getBuildingManager()
+        return colony.getServerBuildingManager()
           .getBuildings()
           .values()
           .stream()

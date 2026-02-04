@@ -69,7 +69,8 @@ public final class NbtTagConstants
     public static final String TAG_DISTANCE               = "distance";
     public static final String TAG_TARGET_DISTANCE        = "targetdistance";
     public static final String TAG_CACHED_ABOVE           = "cachedabove";
-
+    public static final String TAG_ANIMAL_MANAGER         = "animalManager";
+    
     public static final String TAG_CITIZEN                = "citizen";
     public static final String TAG_HELD_ITEM_SLOT         = "HeldItemSlot";
     public static final String TAG_OFFHAND_HELD_ITEM_SLOT = "OffhandHeldItemSlot";
@@ -776,6 +777,14 @@ public final class NbtTagConstants
      */
     public static final String TAG_CELL           = "cell";
     public static final String TAG_WORKING_OFFSET = "workingoffset";
+
+    /**
+     * Managed animal related things.
+     */
+    public static final String TAG_ANIMALHOME       = "animalhome";
+    public static final String TAG_MANAGED_ANIMALID = "animalid";
+    public static final String TAG_COMBAT_COOLDOWN  = "combatcooldown";
+    public static final String TAG_MAX_HEALTH       = "maxhealth";
 
     /**
      * Private constructor to hide the implicit one.

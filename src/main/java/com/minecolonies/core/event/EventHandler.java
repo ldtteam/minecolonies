@@ -291,7 +291,7 @@ public class EventHandler
                 {
                     for (final BlockPos buildingPos : entry.getValue())
                     {
-                        IBuilding building = newColony.getBuildingManager().getBuilding(buildingPos);
+                        IBuilding building = newColony.getServerBuildingManager().getBuilding(buildingPos);
                         if (building != null)
                         {
                             building.onPlayerEnterNearby(event.getEntity());
@@ -335,7 +335,7 @@ public class EventHandler
 
         for (final BlockPos buildingPos : ColonyUtils.getAllClaimingBuildings(chunk).getOrDefault(owningColony, Collections.emptySet()))
         {
-            final IBuilding building = newColony.getBuildingManager().getBuilding(buildingPos);
+            final IBuilding building = newColony.getServerBuildingManager().getBuilding(buildingPos);
             if (building != null && building.getBuildingLevel() >= 1 && building.isInBuilding(pos))
             {
                 event.setResult(MobDespawnEvent.PositionCheck.Result.FAIL);
@@ -635,7 +635,7 @@ public class EventHandler
         }
         else
         {
-            return player.isCreative() || colony.getBuildingManager().canPlaceAt(block, pos, player);
+            return player.isCreative() || colony.getServerBuildingManager().canPlaceAt(block, pos, player);
         }
     }
 
@@ -720,17 +720,17 @@ public class EventHandler
         {
             final Level world = entity.getCommandSenderWorld();
             final IColony colony = IColonyManager.getInstance().getIColony(world, entity.blockPosition());
-            if (colony != null && colony.hasBuilding(ModBuildings.tavern.get().getRegistryName(), 1, false))
+            if (colony != null && colony.getCommonBuildingManager().hasBuilding(ModBuildings.tavern.get().getRegistryName(), 1, false))
             {
                 if (EventHooks.canLivingConvert(entity, ModEntities.VISITOR, null))
                 {
-                    final BlockPos tavernPos = colony.getBuildingManager().getRandomBuilding(b -> !b.getModulesByType(TavernBuildingModule.class).isEmpty());
+                    final BlockPos tavernPos = colony.getServerBuildingManager().getRandomBuilding(b -> !b.getModulesByType(TavernBuildingModule.class).isEmpty());
                     if (tavernPos == null)
                     {
                         return;
                     }
 
-                    final IBuilding tavern = colony.getBuildingManager().getBuilding(tavernPos);
+                    final IBuilding tavern = colony.getServerBuildingManager().getBuilding(tavernPos);
                     final TavernBuildingModule module = tavern.getModule(BuildingModules.TAVERN_VISITOR);
                     final IVisitorData visitorData = module.spawnVisitor();
                     if (visitorData == null)

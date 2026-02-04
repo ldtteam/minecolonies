@@ -24,6 +24,7 @@ import com.minecolonies.core.colony.buildings.modules.AbstractAssignedCitizenMod
 import com.minecolonies.core.colony.buildings.modules.BuildingModules;
 import com.minecolonies.core.colony.buildings.modules.LivingBuildingModule;
 import com.minecolonies.core.colony.buildings.modules.WorkAtHomeBuildingModule;
+import com.minecolonies.core.colony.buildings.workerbuildings.BuildingTownHall;
 import com.minecolonies.core.colony.eventhooks.citizenEvents.CitizenSpawnedEvent;
 import com.minecolonies.core.colony.jobs.AbstractJobGuard;
 import com.minecolonies.core.colony.jobs.JobUndertaker;
@@ -223,15 +224,15 @@ public class CitizenManager implements ICitizenManager
     @Override
     public ICitizenData spawnOrCreateCivilian(@Nullable final ICivilianData data, final Level world, final BlockPos spawnPos, final boolean force)
     {
-        if (!colony.getBuildingManager().hasTownHall() || (!colony.canMoveIn() && !force))
+        if (!colony.getServerBuildingManager().hasTownHall() || (!colony.getSettings().getSetting(BuildingTownHall.MOVE_IN).getValue() && !force))
         {
             return (ICitizenData) data;
         }
 
         BlockPos spawnLocation = spawnPos;
-        if (colony.hasTownHall() && (spawnLocation == null || spawnLocation.equals(BlockPos.ZERO)))
+        if (colony.getServerBuildingManager().hasTownHall() && (spawnLocation == null || spawnLocation.equals(BlockPos.ZERO)))
         {
-            spawnLocation = colony.getBuildingManager().getTownHall().getPosition();
+            spawnLocation = colony.getServerBuildingManager().getTownHall().getPosition();
         }
 
         if (WorldUtil.isEntityBlockLoaded(world, spawnLocation))
@@ -243,9 +244,9 @@ public class CitizenManager implements ICitizenManager
             }
             else
             {
-                if (colony.hasTownHall())
+                if (colony.getServerBuildingManager().hasTownHall())
                 {
-                    calculatedSpawn = EntityUtils.getSpawnPoint(world, colony.getBuildingManager().getTownHall().getID());
+                    calculatedSpawn = EntityUtils.getSpawnPoint(world, colony.getServerBuildingManager().getTownHall().getID());
                     if (calculatedSpawn != null)
                     {
                         return spawnCitizenOnPosition((ICitizenData) data, world, force, calculatedSpawn);
@@ -377,7 +378,7 @@ public class CitizenManager implements ICitizenManager
         //Remove the Citizen
         citizens.remove(citizen.getId());
 
-        for (@NotNull final IBuilding building : colony.getBuildingManager().getBuildings().values())
+        for (@NotNull final IBuilding building : colony.getServerBuildingManager().getBuildings().values())
         {
             for (final AbstractAssignedCitizenModule assignedCitizenModule : building.getModulesByType(AbstractAssignedCitizenModule.class))
             {
@@ -415,7 +416,7 @@ public class CitizenManager implements ICitizenManager
         int newMaxCitizens = 0;
         int potentialMax = 0;
 
-        for (final IBuilding b : colony.getBuildingManager().getBuildings().values())
+        for (final IBuilding b : colony.getServerBuildingManager().getBuildings().values())
         {
             if (b.getBuildingLevel() > 0)
             {
@@ -573,15 +574,15 @@ public class CitizenManager implements ICitizenManager
     @Override
     public void onColonyTick(final IColony colony)
     {
-        if (colony.hasTownHall())
+        if (colony.getServerBuildingManager().hasTownHall())
         {
             getCitizens().stream().filter(Objects::nonNull).forEach(ICitizenData::updateEntityIfNecessary);
         }
 
         //  Spawn initial Citizens
-        if (colony.canMoveIn() && colony.hasTownHall() && getCitizens().size() < MineColonies.getConfig().getServer().initialCitizenAmount.get())
+        if (colony.getSettings().getSetting(BuildingTownHall.MOVE_IN).getValue() && colony.getServerBuildingManager().hasTownHall() && getCitizens().size() < MineColonies.getConfig().getServer().initialCitizenAmount.get())
         {
-            respawnInterval -= 500 + (SECONDS_A_MINUTE * colony.getBuildingManager().getTownHall().getBuildingLevel());
+            respawnInterval -= 500 + (SECONDS_A_MINUTE * colony.getServerBuildingManager().getTownHall().getBuildingLevel());
 
             if (respawnInterval <= 0)
             {
@@ -618,7 +619,7 @@ public class CitizenManager implements ICitizenManager
                 spawnOrCreateCivilian(newCitizen, colony.getWorld(), null, true);
 
                 IMinecoloniesAPI.getInstance().getEventBus().post(new CitizenAddedModEvent(newCitizen, CitizenAddedModEvent.CitizenAddedSource.INITIAL));
-                colony.getEventDescriptionManager().addEventDescription(new CitizenSpawnedEvent(colony.getBuildingManager().getTownHall().getPosition(),
+                colony.getEventDescriptionManager().addEventDescription(new CitizenSpawnedEvent(colony.getServerBuildingManager().getTownHall().getPosition(),
                       newCitizen.getName()));
             }
         }

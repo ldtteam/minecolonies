@@ -1606,7 +1606,7 @@ public class CitizenData implements ICitizenData
 
         if (job.getBuildingPos() != null && job.getWorkBuilding() == null)
         {
-            final IBuilding building = colony.getBuildingManager().getBuilding(job.getBuildingPos());
+            final IBuilding building = colony.getServerBuildingManager().getBuilding(job.getBuildingPos());
 
             if (building != null)
             {
@@ -2128,14 +2128,14 @@ public class CitizenData implements ICitizenData
 
         if (colony != null)
         {
-            final IBuilding tavern = colony.getBuildingManager().getFirstBuildingMatching(b -> b.getBuildingType() == ModBuildings.tavern.get());
+            final IBuilding tavern = colony.getServerBuildingManager().getFirstBuildingMatching(b -> b.getBuildingType() == ModBuildings.tavern.get());
             if (tavern != null && tavern.getBuildingLevel() > 0)
             {
                 return tavern.getPosition();
             }
-            else if (colony.getBuildingManager().getTownHall() != null)
+            else if (colony.getServerBuildingManager().getTownHall() != null)
             {
-                return colony.getBuildingManager().getTownHall().getPosition();
+                return colony.getServerBuildingManager().getTownHall().getPosition();
             }
             return colony.getCenter();
         }

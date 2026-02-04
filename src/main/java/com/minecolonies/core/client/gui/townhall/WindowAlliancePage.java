@@ -223,7 +223,6 @@ public class WindowAlliancePage extends AbstractWindowTownHall
         });
     }
 
-
     @Override
     protected String getWindowId()
     {

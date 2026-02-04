@@ -73,6 +73,8 @@ public interface IBuildingModuleView
     @Nullable
     Component getDesc();
 
+    IBuildingModuleView setColonyView(IColonyView colonyView);
+
     /**
      * Get the colony view the module belongs to.
      * @return the colony view.

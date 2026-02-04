@@ -469,7 +469,7 @@ public final class BackUpHelper
     public static void reclaimChunks(final Colony colony)
     {
         ChunkDataHelper.claimColonyChunks(colony.getWorld(), true, colony, colony.getCenter());
-        for (final IBuilding building : colony.getBuildingManager().getBuildings().values())
+        for (final IBuilding building : colony.getServerBuildingManager().getBuildings().values())
         {
             ChunkDataHelper.claimBuildingChunks(colony,
               true,
@@ -506,7 +506,7 @@ public final class BackUpHelper
             int maxZ = Integer.MIN_VALUE;
             int minZ = Integer.MAX_VALUE;
 
-            for (final BlockPos buildingPos : colony.getBuildingManager().getBuildings().keySet())
+            for (final BlockPos buildingPos : colony.getServerBuildingManager().getBuildings().keySet())
             {
                 if (buildingPos.getX() > maxX)
                 {

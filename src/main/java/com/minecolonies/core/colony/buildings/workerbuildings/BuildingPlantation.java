@@ -102,17 +102,17 @@ public class BuildingPlantation extends AbstractBuilding
           plantationField.getModule().getValidWorkingPositions(colony.getWorld(), getLocationsFromTag(plantationField.getModule().getWorkTag()));
         if (workingPositions.isEmpty())
         {
-            colony.getBuildingManager().removeBuildingExtension(field -> field.equals(plantationField));
+            colony.getServerBuildingManager().removeBuildingExtension(field -> field.equals(plantationField));
             return;
         }
 
-        if (colony.getBuildingManager().addBuildingExtension(plantationField))
+        if (colony.getServerBuildingManager().addBuildingExtension(plantationField))
         {
             plantationField.setWorkingPositions(workingPositions);
         }
         else
         {
-            final Optional<IBuildingExtension> existingField = colony.getBuildingManager().getMatchingBuildingExtension(field -> field.equals(plantationField));
+            final Optional<IBuildingExtension> existingField = colony.getServerBuildingManager().getMatchingBuildingExtension(field -> field.equals(plantationField));
             if (existingField.isPresent() && existingField.get() instanceof PlantationField existingPlantationField)
             {
                 existingPlantationField.setWorkingPositions(workingPositions);
@@ -260,7 +260,7 @@ public class BuildingPlantation extends AbstractBuilding
         @Override
         public @NotNull List<IBuildingExtension> getMatchingExtension(final Predicate<IBuildingExtension> predicateToMatch)
         {
-            return building.getColony().getBuildingManager().getBuildingExtensions(field -> field.hasModule(IPlantationModule.class) && predicateToMatch.test(field));
+            return building.getColony().getServerBuildingManager().getBuildingExtensions(field -> field.hasModule(IPlantationModule.class) && predicateToMatch.test(field));
         }
 
         @Override
@@ -331,7 +331,7 @@ public class BuildingPlantation extends AbstractBuilding
         @Override
         protected List<IBuildingExtension> getFieldsInColony()
         {
-            return getColony().getBuildingExtensions(field -> field.hasModule(IPlantationModule.class));
+            return getColony().getClientBuildingManager().getBuildingExtensions(field -> field.hasModule(IPlantationModule.class));
         }
 
         @Override

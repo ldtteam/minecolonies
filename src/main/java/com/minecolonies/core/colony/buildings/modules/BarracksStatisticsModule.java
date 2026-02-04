@@ -28,7 +28,7 @@ public class BarracksStatisticsModule extends BuildingStatisticsModule
 
         for (final BlockPos towerPos : towers)
         {
-            IBuilding tower = building.getColony().getBuildingManager().getBuilding(towerPos);
+            IBuilding tower = building.getColony().getServerBuildingManager().getBuilding(towerPos);
             if (tower != null)
             {
                 BuildingStatisticsModule towerStats = tower.getModule(STATS_MODULE);

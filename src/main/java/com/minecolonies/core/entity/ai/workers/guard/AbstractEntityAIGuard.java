@@ -498,7 +498,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
      */
     protected BlockPos randomPatrolPoint()
     {
-        return buildingGuards.getColony().getBuildingManager().getRandomBuilding(b -> true);
+        return buildingGuards.getColony().getServerBuildingManager().getRandomBuilding(b -> true);
     }
 
     /**
@@ -553,7 +553,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
         }
         if (currentPatrolPoint == null || walkToSafePos(currentPatrolPoint))
         {
-            final IBuilding building = buildingGuards.getColony().getBuildingManager().getBuilding(buildingGuards.getMinePos());
+            final IBuilding building = buildingGuards.getColony().getServerBuildingManager().getBuilding(buildingGuards.getMinePos());
             if (building != null)
             {
                 if (building instanceof BuildingMiner)

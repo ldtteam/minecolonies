@@ -167,7 +167,7 @@ public class ItemScrollGuardHelp extends AbstractItemScroll
         final BlockEntity te = ctx.getLevel().getBlockEntity(ctx.getClickedPos());
         if (te instanceof TileEntityColonyBuilding && ctx.getPlayer() != null)
         {
-            final IBuilding building = ((TileEntityColonyBuilding) te).getColony().getBuildingManager().getBuilding(ctx.getClickedPos());
+            final IBuilding building = ((TileEntityColonyBuilding) te).getColony().getServerBuildingManager().getBuilding(ctx.getClickedPos());
             if (!(building instanceof AbstractBuildingGuards))
             {
                 MessageUtils.format(TOOL_GUARD_SCROLL_NO_GUARD_BUILDING).sendTo(ctx.getPlayer());

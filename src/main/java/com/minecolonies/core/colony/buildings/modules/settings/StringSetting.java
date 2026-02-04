@@ -4,6 +4,8 @@ import com.ldtteam.blockui.Pane;
 import com.ldtteam.blockui.PaneBuilders;
 import com.ldtteam.blockui.controls.ButtonImage;
 import com.ldtteam.blockui.views.BOWindow;
+import com.minecolonies.api.colony.buildings.modules.ICommonSettingsModule;
+import com.minecolonies.api.colony.buildings.modules.ISettingsModule;
 import com.minecolonies.api.colony.buildings.modules.settings.ISetting;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingsModuleView;
@@ -99,7 +101,7 @@ public class StringSetting implements IStringSetting<String>
     public void setupHandler(
       final ISettingKey<?> key,
       final Pane pane,
-      final ISettingsModuleView settingsModuleView,
+      final ICommonSettingsModule settingsModuleView,
       final IBuildingView building, final BOWindow window)
     {
         pane.findPaneOfTypeByID("trigger", ButtonImage.class).setHandler(button -> settingsModuleView.trigger(key));
@@ -109,14 +111,14 @@ public class StringSetting implements IStringSetting<String>
     public void render(
       final ISettingKey<?> key,
       final Pane pane,
-      final ISettingsModuleView settingsModuleView,
+      final ICommonSettingsModule settingsModuleView,
       final IBuildingView building,
       final BOWindow window)
     {
-        int buttonWidth = MathUtils.clamp(getButtonWidth(settingsModuleView), 0, MAX_BUTTON_WIDTH);
+        int buttonWidth = MathUtils.clamp(getButtonWidth((ISettingsModuleView) settingsModuleView), 0, MAX_BUTTON_WIDTH);
         ButtonImage triggerButton = pane.findPaneOfTypeByID("trigger", ButtonImage.class);
         triggerButton.setSize(buttonWidth, triggerButton.getHeight());
-        triggerButton.setEnabled(isActive(settingsModuleView));
+        triggerButton.setEnabled(isActive((ISettingsModuleView) settingsModuleView));
         triggerButton.setText(getDisplayText());
         setHoverPane(key, triggerButton, settingsModuleView);
     }

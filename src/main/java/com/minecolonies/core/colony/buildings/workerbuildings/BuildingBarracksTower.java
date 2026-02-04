@@ -68,7 +68,7 @@ public class BuildingBarracksTower extends AbstractBuildingGuards
     public void requestUpgrade(final Player player, final BlockPos builder)
     {
         final int buildingLevel = getBuildingLevel();
-        final IBuilding building = getColony().getBuildingManager().getBuilding(barracks);
+        final IBuilding building = getColony().getServerBuildingManager().getBuilding(barracks);
 
         if (building != null && buildingLevel < getMaxBuildingLevel() && buildingLevel < building.getBuildingLevel())
         {
@@ -103,7 +103,7 @@ public class BuildingBarracksTower extends AbstractBuildingGuards
     public void onUpgradeComplete(final int newLevel)
     {
         super.onUpgradeComplete(newLevel);
-        final IBuilding barrack = colony.getBuildingManager().getBuilding(barracks);
+        final IBuilding barrack = colony.getServerBuildingManager().getBuilding(barracks);
         if (barrack == null)
         {
             return;
@@ -114,7 +114,7 @@ public class BuildingBarracksTower extends AbstractBuildingGuards
             boolean allUpgraded = true;
             for (BlockPos tower : ((BuildingBarracks) barrack).getTowers())
             {
-                if (colony.getBuildingManager().getBuilding(tower).getBuildingLevel() != barrack.getMaxBuildingLevel())
+                if (colony.getServerBuildingManager().getBuilding(tower).getBuildingLevel() != barrack.getMaxBuildingLevel())
                 {
                     allUpgraded = false;
                 }

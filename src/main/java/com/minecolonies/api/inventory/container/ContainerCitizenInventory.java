@@ -113,7 +113,7 @@ public class ContainerCitizenInventory extends AbstractContainerMenu
             workBuilding = data.getWorkBuilding();
             if (workBuilding != null)
             {
-                workBuildingLevel = ((IColonyView) colony).getBuilding(workBuilding).getBuildingLevel();
+                workBuildingLevel = colony.getCommonBuildingManager().getBuilding(workBuilding).getBuildingLevel();
             }
         }
         else
@@ -174,7 +174,7 @@ public class ContainerCitizenInventory extends AbstractContainerMenu
                           {
                               if (workBuilding != null && !playerInventory.player.level().isClientSide && !ItemStackUtils.isEmpty(stack))
                               {
-                                  final IBuilding building = colony.getBuildingManager().getBuilding(workBuilding);
+                                  final IBuilding building = colony.getServerBuildingManager().getBuilding(workBuilding);
                                   final ICitizenData citizenData = colony.getCitizenManager().getCivilian(citizenId);
 
                                   building.overruleNextOpenRequestOfCitizenWithStack(citizenData, stack);
@@ -202,8 +202,8 @@ public class ContainerCitizenInventory extends AbstractContainerMenu
                       {
                           if (workBuilding != null && !playerInventory.player.level().isClientSide && !ItemStackUtils.isEmpty(stack))
                           {
-                              final IBuilding building = colony.getBuildingManager().getBuilding(workBuilding);
-                              final ICitizenData citizenData = colony.getCitizenManager().getCivilian(citizenId);
+                                  final IBuilding building = colony.getServerBuildingManager().getBuilding(workBuilding);
+                                  final ICitizenData citizenData = colony.getCitizenManager().getCivilian(citizenId);
 
                               building.overruleNextOpenRequestOfCitizenWithStack(citizenData, stack);
                           }

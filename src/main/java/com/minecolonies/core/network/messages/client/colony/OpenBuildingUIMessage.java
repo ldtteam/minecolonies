@@ -67,7 +67,7 @@ public class OpenBuildingUIMessage extends AbstractClientPlayMessage
     @Override
     protected void onExecute(final IPayloadContext ctxIn, final Player player)
     {
-        if (IColonyManager.getInstance().getColonyView(colonyId, dimension) instanceof ColonyView colonyView && colonyView.getBuilding(buildingId) instanceof AbstractBuildingView buildingView)
+        if (IColonyManager.getInstance().getColonyView(colonyId, dimension) instanceof ColonyView colonyView && colonyView.getClientBuildingManager().getBuilding(buildingId) instanceof AbstractBuildingView buildingView)
         {
             buildingView.openGui(false);
         }

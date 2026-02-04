@@ -159,7 +159,7 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
      */
     public boolean canBeUpgraded()
     {
-        final IBuildingView parentBuilding = building.getColony().getBuilding(building.getParent());
+        final IBuildingView parentBuilding = building.getColony().getClientBuildingManager().getBuilding(building.getParent());
         return building.getBuildingLevel() < building.getBuildingMaxLevel() && (parentBuilding == null || building.getBuildingLevel() < parentBuilding.getBuildingLevel() || parentBuilding.getBuildingLevel() >= parentBuilding.getBuildingMaxLevel());
     }
 
@@ -226,7 +226,7 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
     {
         builders.clear();
         builders.add(new Tuple<>(Component.translatableEscape(ModJobs.builder.get().getTranslationKey()).getString() + ":", BlockPos.ZERO));
-        builders.addAll(building.getColony().getBuildings().stream()
+        builders.addAll(building.getColony().getClientBuildingManager().getBuildings().values().stream()
                           .filter(build -> build instanceof AbstractBuildingBuilderView && !((AbstractBuildingBuilderView) build).getWorkerName().isEmpty()
                                              && build.getBuildingType() != ModBuildings.miner.get())
                           .map(build -> new Tuple<>(((AbstractBuildingBuilderView) build).getWorkerName(), build.getPosition()))
@@ -241,10 +241,10 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
      */
     private void updateStyles()
     {
-        if (!building.getParent().equals(BlockPos.ZERO) && building.getColony().getBuilding(building.getParent()) != null)
+        if (!building.getParent().equals(BlockPos.ZERO) && building.getColony().getClientBuildingManager().getBuilding(building.getParent()) != null)
         {
             styles = new ArrayList<>();
-            styles.add(building.getColony().getBuilding(building.getParent()).getStructurePack());
+            styles.add(building.getColony().getClientBuildingManager().getBuilding(building.getParent()).getStructurePack());
             if (!styles.isEmpty())
             {
                 stylesDropDownList.setSelectedIndex(0);

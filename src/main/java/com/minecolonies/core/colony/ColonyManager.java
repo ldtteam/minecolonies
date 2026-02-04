@@ -185,7 +185,7 @@ public final class ColonyManager implements IColonyManager
             }
 
             Log.getLogger().info("Removing buildings for " + id);
-            for (final IBuilding building : new ArrayList<>(colony.getBuildingManager().getBuildings().values()))
+            for (final IBuilding building : new ArrayList<>(colony.getServerBuildingManager().getBuildings().values()))
             {
                 try
                 {
@@ -289,7 +289,7 @@ public final class ColonyManager implements IColonyManager
         @Nullable final IColony colony = getColonyByPosFromWorld(w, pos);
         if (colony != null)
         {
-            final IBuilding building = colony.getBuildingManager().getBuilding(pos);
+            final IBuilding building = colony.getServerBuildingManager().getBuilding(pos);
             if (building != null)
             {
                 return building;
@@ -300,7 +300,7 @@ public final class ColonyManager implements IColonyManager
         //  Fallback - there might be a AbstractBuilding for this block, but it's outside of it's owning colony's radius.
         for (@NotNull final IColony otherColony : getColonies(w))
         {
-            final IBuilding building = otherColony.getBuildingManager().getBuilding(pos);
+            final IBuilding building = otherColony.getServerBuildingManager().getBuilding(pos);
             if (building != null)
             {
                 return building;
@@ -408,7 +408,7 @@ public final class ColonyManager implements IColonyManager
             //  On client we will just check all known views
             for (@NotNull final IColonyView colony : colonyViews.get(dimension))
             {
-                final IBuildingView building = colony.getBuilding(pos);
+                final IBuildingView building = colony.getClientBuildingManager().getBuilding(pos);
                 if (building != null)
                 {
                     return building;
@@ -804,7 +804,7 @@ public final class ColonyManager implements IColonyManager
         final IColonyView view = getColonyView(colonyId, dim);
         if (view != null)
         {
-            view.handleColonyBuildingViewMessage(buildingId, buf);
+            view.getClientBuildingManager().handleColonyBuildingViewMessage(buildingId, buf);
         }
         else
         {
@@ -820,7 +820,7 @@ public final class ColonyManager implements IColonyManager
         {
             //  Can legitimately be NULL, because (to keep the code simple and fast), it is
             //  possible to receive a 'remove' notice before receiving the View.
-            view.handleColonyViewRemoveBuildingMessage(buildingId);
+            view.getClientBuildingManager().handleColonyViewRemoveBuildingMessage(buildingId);
         }
     }
 
@@ -894,6 +894,7 @@ public final class ColonyManager implements IColonyManager
     public void resetColonyViews()
     {
         colonyViews.clear();
+        chunkClaimData.clear();
     }
 
     @Override

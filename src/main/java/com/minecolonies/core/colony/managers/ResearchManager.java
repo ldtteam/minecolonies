@@ -154,7 +154,7 @@ public class ResearchManager implements IResearchManager
             if(IGlobalResearchTree.getInstance().getBranchData(research.getBranch()).getType() != ResearchBranchType.UNLOCKABLES)
             {
                 int level = 0;
-                Map<BlockPos, IBuilding> buildings = colony.getBuildingManager().getBuildings();
+                Map<BlockPos, IBuilding> buildings = colony.getServerBuildingManager().getBuildings();
                 for (Map.Entry<BlockPos, IBuilding> building : buildings.entrySet())
                 {
                     if (building.getValue().getBuildingType() == ModBuildings.university.get())
