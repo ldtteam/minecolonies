@@ -210,9 +210,9 @@ public class CitizenDiseaseHandler implements ICitizenDiseaseHandler
         if (citizenData.isAsleep() && citizenData.getEntity().isPresent())
         {
             citizenData.getEntity().get().stopSleeping();
-            final BlockPos hospitalPos = citizenData.getColony().getBuildingManager().getBestBuilding(citizenData.getEntity().get(), BuildingCook.class);
+            final BlockPos hospitalPos = citizenData.getColony().getServerBuildingManager().getBestBuilding(citizenData.getEntity().get(), BuildingCook.class);
             final IColony colony = citizenData.getColony();
-            final IBuilding hospital = colony.getBuildingManager().getBuilding(hospitalPos);
+            final IBuilding hospital = colony.getServerBuildingManager().getBuilding(hospitalPos);
             if (hospital != null)
             {
                 hospital.onWakeUp();

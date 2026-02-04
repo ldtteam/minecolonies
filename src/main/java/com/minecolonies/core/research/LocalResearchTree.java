@@ -10,6 +10,7 @@ import com.minecolonies.api.research.IResearchEffect;
 import com.minecolonies.api.research.IResearchEffectManager;
 import com.minecolonies.api.research.util.ResearchState;
 import com.minecolonies.api.util.*;
+import com.minecolonies.core.colony.buildings.workerbuildings.BuildingUniversity;
 import com.minecolonies.core.event.QuestObjectiveEventHandler;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
@@ -18,12 +19,12 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.common.crafting.SizedIngredient;
 import net.neoforged.neoforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
-
 import static com.minecolonies.api.research.util.ResearchConstants.MAX_DEPTH;
 import static com.minecolonies.api.research.util.ResearchConstants.TAG_RESEARCH_TREE;
 import static com.minecolonies.api.util.constant.TranslationConstants.MESSAGE_RESEARCH_STARTED;
@@ -139,8 +140,15 @@ public class LocalResearchTree implements ILocalResearchTree
         QuestObjectiveEventHandler.onResearchComplete(colony, id);
     }
 
+    /**
+     * Attempt to begin a research.
+     * @param player     the player(s) making the request (and to apply costs toward)
+     * @param colony     the colony doing the research
+     * @param building   the university building that the player is standing in (or null if not in a university)
+     * @param research   the research.
+     */
     @Override
-    public void attemptBeginResearch(final Player player, final IColony colony, final IGlobalResearch research)
+    public void attemptBeginResearch(final Player player, final IColony colony, final BuildingUniversity building, final IGlobalResearch research)
     {
         if (colony.getResearchManager().getResearchTree().getResearch(research.getBranch(), research.getId()) == null)
         {
@@ -159,8 +167,8 @@ public class LocalResearchTree implements ILocalResearchTree
                 colony.getResearchManager().markDirty();
                 return;
             }
-            final InvWrapper playerInv = new InvWrapper(player.getInventory());
-            if (!research.hasEnoughResources(playerInv))
+
+            if (!research.hasEnoughResources(player, building.getPosition()))
             {
                 MessageUtils.format("com.minecolonies.coremod.research.costnotavailable", MutableComponent.create(research.getName())).sendTo(player);
                 SoundUtils.playErrorSound(player, player.blockPosition());
@@ -178,20 +186,18 @@ public class LocalResearchTree implements ILocalResearchTree
                     }
                 }
             }
-            // We know the player has the items, so now we can remove them safely.
+
+            // We know the university or player has the items, so now we can remove them safely.
             for (final SizedIngredient cost : research.getCostList())
             {
-                int toRemoveLeft = cost.count();
-                final List<Integer> slotsWithMaterial = InventoryUtils.findAllSlotsInItemHandlerWith(playerInv, cost.ingredient());
-                for (Integer slotNum : slotsWithMaterial)
+                for (ItemStack researchCostStack : cost.getItems())
                 {
-                    toRemoveLeft = toRemoveLeft - playerInv.extractItem(slotNum, toRemoveLeft, false).getCount();
-                    if (toRemoveLeft <= 0)
-                    {
-                        break;
-                    }
+                    ItemStorage itemsToTake = new ItemStorage(researchCostStack);
+                    InventoryUtils.reduceBuildingThenPlayerInventory(building,  player, itemsToTake, stack -> IGlobalResearch.isUniversityResearchMatch(stack, researchCostStack.getItem()), stack -> IGlobalResearch.isPlayerResearchMatch(stack, researchCostStack.getItem()));
                 }
+
             }
+
             MessageUtils.format(MESSAGE_RESEARCH_STARTED, MutableComponent.create(research.getName())).sendTo(player);
             research.startResearch(colony.getResearchManager().getResearchTree());
             colony.getResearchManager().markDirty();

@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.blocks.AbstractBlockHut;
+import com.minecolonies.api.colony.IAnimalData;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.*;
@@ -347,16 +348,6 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
     }
 
     @Override
-    public IBuilding getBuilding(final BlockPos buildingId)
-    {
-        if (buildingId != null)
-        {
-            return buildings.get(buildingId);
-        }
-        return null;
-    }
-
-    @Override
     public List<BlockPos> getLeisureSites()
     {
         return leisureSites;
@@ -414,20 +405,6 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
         }
 
         return leisureSites.isEmpty() ? null : leisureSites.get(RANDOM.nextInt(leisureSites.size()));
-    }
-
-    @Nullable
-    @Override
-    public IBuilding getFirstBuildingMatching(final Predicate<IBuilding> predicate)
-    {
-        for (final IBuilding building : buildings.values())
-        {
-            if (predicate.test(building))
-            {
-                return building;
-            }
-        }
-        return null;
     }
 
     @Override
@@ -554,20 +531,6 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
     }
 
     @Override
-    public <B extends IBuilding> B getBuilding(final BlockPos buildingId, @NotNull final Class<B> type)
-    {
-        try
-        {
-            return type.cast(buildings.get(buildingId));
-        }
-        catch (final ClassCastException e)
-        {
-            Log.getLogger().warn("getBuilding called with wrong type: ", e);
-            return null;
-        }
-    }
-
-    @Override
     public IBuilding addNewBuilding(@NotNull final AbstractTileEntityColonyBuilding tileEntity, final Level world)
     {
         tileEntity.setColony(colony);
@@ -668,73 +631,18 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
             building.cancelAllRequestsOfCitizenOrBuilding(citizen);
         }
 
+        //Allow Animals to fix up any data that wasn't fixed up by the AbstractBuilding's own onDestroyed
+        for (@NotNull final IAnimalData animal : colony.getAnimalManager().getAnimals())
+        {
+            animal.onRemoveBuilding(building);
+        }
+
         colony.getRequestManager().onProviderRemovedFromColony(building);
         colony.getRequestManager().onRequesterRemovedFromColony(building.getRequester());
 
         colony.getCitizenManager().calculateMaxCitizens();
 
         IMinecoloniesAPI.getInstance().getEventBus().post(new BuildingRemovedModEvent(building));
-    }
-
-    @Override
-    public BlockPos getBestBuilding(final AbstractEntityCitizen citizen, final Class<? extends IBuilding> building)
-    {
-        return getBestBuilding(citizen.blockPosition(), building);
-    }
-
-    @Override
-    public <T extends IBuilding> BlockPos getBestBuilding(final AbstractEntityCitizen citizen, final Class<T> building, @NotNull final Predicate<T> filter)
-    {
-        return getBestBuilding(citizen.blockPosition(), building, filter);
-    }
-
-    @Override
-    public BlockPos getBestBuilding(final BlockPos pos, final Class<? extends IBuilding> building)
-    {
-        return getBestBuilding(pos, building, b -> true);
-    }
-
-    @Override
-    public <T extends IBuilding> BlockPos getBestBuilding(final BlockPos pos, final Class<T> building, @NotNull final Predicate<T> filter)
-    {
-        double distance = Double.MAX_VALUE;
-        BlockPos goodFit = null;
-        for (final IBuilding currentBuilding : buildings.values())
-        {
-            if (building.isInstance(currentBuilding)
-                && currentBuilding.getBuildingLevel() > 0
-                && WorldUtil.isBlockLoaded(colony.getWorld(), currentBuilding.getPosition())
-                && filter.test((T) currentBuilding))
-            {
-                final double localDistance = currentBuilding.getPosition().distSqr(pos);
-                if (localDistance < distance)
-                {
-                    distance = localDistance;
-                    goodFit = currentBuilding.getPosition();
-                }
-            }
-        }
-        return goodFit;
-    }
-
-    @Override
-    public BlockPos getRandomBuilding(Predicate<IBuilding> filterPredicate)
-    {
-        final List<IBuilding> allowedBuildings = new ArrayList<>();
-        for (final IBuilding building : buildings.values())
-        {
-            if (filterPredicate.test(building))
-            {
-                allowedBuildings.add(building);
-            }
-        }
-
-        if (allowedBuildings.isEmpty())
-        {
-            return null;
-        }
-
-        return allowedBuildings.get(RANDOM.nextInt(allowedBuildings.size())).getPosition();
     }
 
     /**
@@ -958,5 +866,11 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
     public IBuildingExtension getMatchingBuildingExtension(final IBuildingExtension.ExtensionId extensionId)
     {
         return buildingExtensions.get(extensionId);
+    }
+
+    @Override
+    public Colony getColony()
+    {
+        return colony;
     }
 }

@@ -293,7 +293,7 @@ public class VisitorManager implements IVisitorManager
     @Override
     public void onColonyTick(final IColony colony)
     {
-        if (colony.hasTownHall())
+        if (colony.getServerBuildingManager().hasTownHall())
         {
             for (final IVisitorData data : visitorMap.values())
             {

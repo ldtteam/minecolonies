@@ -126,7 +126,7 @@ public class EntityMercenaryAI extends Goal
             return false;
         }
 
-        patrolPoints.addAll(entity.getColony().getBuildingManager().getBuildings().keySet());
+        patrolPoints.addAll(entity.getColony().getServerBuildingManager().getBuildings().keySet());
         return true;
     }
 
@@ -158,7 +158,7 @@ public class EntityMercenaryAI extends Goal
             if (currentPatrolPos != null && movingToBuilding)
             {
                 // Attempt to steal!
-                final IBuilding building = entity.getColony().getBuildingManager().getBuilding(currentPatrolPos);
+                final IBuilding building = entity.getColony().getServerBuildingManager().getBuilding(currentPatrolPos);
 
                 if (building != null)
                 {

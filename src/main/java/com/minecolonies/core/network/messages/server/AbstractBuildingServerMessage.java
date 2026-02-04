@@ -61,7 +61,7 @@ public abstract class AbstractBuildingServerMessage<T extends IBuilding> extends
     @SuppressWarnings("unchecked")
     protected final void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony)
     {
-        final IBuilding building = colony.getBuildingManager().getBuilding(buildingId);
+        final IBuilding building = colony.getServerBuildingManager().getBuilding(buildingId);
         if (building == null)
         {
             return;

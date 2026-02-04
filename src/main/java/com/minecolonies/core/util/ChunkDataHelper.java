@@ -193,7 +193,7 @@ public final class ChunkDataHelper
 
         if (add && range > 0)
         {
-            final IBuilding building = colony.getBuildingManager().getBuilding(center);
+            final IBuilding building = colony.getServerBuildingManager().getBuilding(center);
             MessageUtils.format(COLONY_SIZE_CHANGE, range, building.getSchematicName()).sendTo(colony).forManagers();
         }
     }

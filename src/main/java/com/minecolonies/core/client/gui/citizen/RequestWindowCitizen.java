@@ -101,7 +101,7 @@ public class RequestWindowCitizen extends AbstractWindowCitizen
         {
             super(parent, citizenDataView.getColony());
             this.citizenDataView = citizenDataView;
-            this.buildingView = citizenDataView.getColony().getBuilding(citizenDataView.getWorkBuilding());
+            this.buildingView = citizenDataView.getColony().getClientBuildingManager().getBuilding(citizenDataView.getWorkBuilding());
             this.isCreative = Minecraft.getInstance().player.isCreative();
             this.inventory = Minecraft.getInstance().player.getInventory();
         }
@@ -194,7 +194,7 @@ public class RequestWindowCitizen extends AbstractWindowCitizen
 
             if (citizenDataView.getWorkBuilding() != null)
             {
-                colony.getBuilding(citizenDataView.getWorkBuilding()).onRequestedRequestComplete(colony.getRequestManager(), request);
+                colony.getClientBuildingManager().getBuilding(citizenDataView.getWorkBuilding()).onRequestedRequestComplete(colony.getRequestManager(), request);
             }
             new TransferItemsToCitizenRequestMessage(colony, citizenDataView, itemStack, isCreative ? amount : Math.min(amount, count)).sendToServer();
 

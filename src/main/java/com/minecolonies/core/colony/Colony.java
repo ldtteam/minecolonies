@@ -159,6 +159,11 @@ public class Colony implements IColony
     private final IVisitorManager visitorManager;
 
     /**
+     * Animal manager of the colony.
+     */
+    private final IAnimalManager animalManager = new AnimalManager(this);
+
+    /**
      * Barbarian manager of the colony.
      */
     private final IRaiderManager raidManager;
@@ -399,7 +404,10 @@ public class Colony implements IColony
             citizenManager.tickCitizenData(TICKS_SECOND * 3);
             return false;
         }, () -> ACTIVE, TICKS_SECOND * 3));
-
+        colonyStateMachine.addTransition(new TickingTransition<>(ACTIVE, () -> {
+            animalManager.tickAnimalData(TICKS_SECOND * 3);
+            return false;
+        }, () -> ACTIVE, TICKS_SECOND * 3));
         colonyStateMachine.addTransition(new TickingTransition<>(ACTIVE, this::updateSubscribers, () -> ACTIVE, UPDATE_SUBSCRIBERS_INTERVAL));
         colonyStateMachine.addTransition(new TickingTransition<>(ACTIVE, this::tickRequests, () -> ACTIVE, UPDATE_RS_INTERVAL));
         colonyStateMachine.addTransition(new TickingTransition<>(ACTIVE, this::tickTravellers, () -> ACTIVE, UPDATE_TRAVELING_INTERVAL));
@@ -484,6 +492,7 @@ public class Colony implements IColony
         buildingManager.cleanUpBuildings(this);
         citizenManager.onColonyTick(this);
         visitorManager.onColonyTick(this);
+        animalManager.onColonyTick(this);
         updateAttackingPlayers();
         eventManager.onColonyTick(this);
         buildingManager.onColonyTick(this);
@@ -747,6 +756,7 @@ public class Colony implements IColony
 
         citizenManager.read(provider, compound.getCompound(TAG_CITIZEN_MANAGER));
         visitorManager.read(provider, compound);
+        animalManager.read(provider, compound);
         buildingManager.read(provider, compound.getCompound(TAG_BUILDING_MANAGER));
 
         // Recalculate max after citizens and buildings are loaded.
@@ -923,6 +933,8 @@ public class Colony implements IColony
         compound.put(TAG_CITIZEN_MANAGER, citizenCompound);
 
         visitorManager.write(provider, compound);
+        
+        animalManager.write(provider, compound);
 
         final CompoundTag graveCompound = new CompoundTag();
         graveManager.write(graveCompound);
@@ -1314,12 +1326,6 @@ public class Colony implements IColony
         return BlockPosUtil.getDistanceSquared2D(center, pos);
     }
 
-    @Override
-    public boolean hasTownHall()
-    {
-        return buildingManager.hasTownHall();
-    }
-
     /**
      * Returns the ID of the colony.
      *
@@ -1329,40 +1335,6 @@ public class Colony implements IColony
     public int getID()
     {
         return id;
-    }
-
-    @Override
-    public boolean hasWarehouse()
-    {
-        return buildingManager.hasWarehouse();
-    }
-
-    @Override
-    public boolean hasBuilding(final ResourceLocation name, final int level, boolean singleBuilding)
-    {
-        int sum = 0;
-        for (final IBuilding building : this.getBuildingManager().getBuildings().values())
-        {
-            if (building.getBuildingType().getRegistryName().equals(name))
-            {
-                if (singleBuilding)
-                {
-                    if (building.getBuildingLevel() >= level)
-                    {
-                        return true;
-                    }
-                }
-                else
-                {
-                    sum += building.getBuildingLevel();
-                    if (sum >= level)
-                    {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
     }
 
     @Override
@@ -1446,36 +1418,6 @@ public class Colony implements IColony
             }
         }
         return new ArrayList<>(playerList);
-    }
-
-    /**
-     * Getter which checks if jobs should be manually allocated.
-     *
-     * @return true of false.
-     */
-    public boolean isManualHiring()
-    {
-        return !settingsModule.getSetting(BuildingTownHall.AUTO_HIRING_MODE).getValue();
-    }
-
-    /**
-     * Getter which checks if houses should be manually allocated.
-     *
-     * @return true of false.
-     */
-    public boolean isManualHousing()
-    {
-        return !settingsModule.getSetting(BuildingTownHall.AUTO_HOUSING_MODE).getValue();
-    }
-
-    /**
-     * Getter which checks if houses should be manually allocated.
-     *
-     * @return true of false.
-     */
-    public boolean canMoveIn()
-    {
-        return settingsModule.getSetting(BuildingTownHall.MOVE_IN).getValue();
     }
 
     /**
@@ -1573,8 +1515,15 @@ public class Colony implements IColony
      * @return the buildingManager.
      */
     @Override
-    public IRegisteredStructureManager getBuildingManager()
+    public IRegisteredStructureManager getServerBuildingManager()
     {
+        return buildingManager;
+    }
+
+    @Override
+    public ICommonRegisteredStructureManager getCommonBuildingManager()
+    {
+        //todo merge with above.
         return buildingManager;
     }
 
@@ -1609,6 +1558,17 @@ public class Colony implements IColony
     public IVisitorManager getVisitorManager()
     {
         return visitorManager;
+    }
+
+    /**
+     * Get the animal manager of the colony.
+     *
+     * @return the animal manager.
+     */
+    @Override
+    public IAnimalManager getAnimalManager()
+    {
+        return animalManager;
     }
 
     /**
@@ -2031,11 +1991,7 @@ public class Colony implements IColony
         return citizenManager.getCivilian(id);
     }
 
-    /**
-     * Gets the colonies settings
-     *
-     * @return
-     */
+    @Override
     public ISettingsModule getSettings()
     {
         return settingsModule;

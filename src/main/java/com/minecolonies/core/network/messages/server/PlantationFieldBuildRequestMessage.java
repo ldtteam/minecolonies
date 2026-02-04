@@ -177,7 +177,7 @@ public class PlantationFieldBuildRequestMessage extends AbstractServerPlayMessag
 
               if (!builder.equals(BlockPos.ZERO))
               {
-                  final IBuilding building = colony.getBuildingManager().getBuilding(builder);
+                  final IBuilding building = colony.getServerBuildingManager().getBuilding(builder);
                   if (building instanceof AbstractBuildingStructureBuilder)
                   {
                       order.setClaimedBy(builder);

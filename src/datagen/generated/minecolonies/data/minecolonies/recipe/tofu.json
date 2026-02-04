@@ -4,10 +4,13 @@
   "ingredients": [
     {
       "item": "minecolonies:soybean"
+    },
+    {
+      "item": "minecolonies:soybean"
     }
   ],
   "result": {
-    "count": 1,
+    "count": 2,
     "id": "minecolonies:tofu"
   }
 }

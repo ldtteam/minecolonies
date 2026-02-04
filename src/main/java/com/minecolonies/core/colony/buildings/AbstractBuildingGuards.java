@@ -437,7 +437,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuilding implements
             }
             else
             {
-                pos = colony.getBuildingManager().getRandomBuilding(b -> b.getBuildingLevel() >= 1);
+                pos = colony.getServerBuildingManager().getRandomBuilding(b -> b.getBuildingLevel() >= 1);
             }
 
             if (pos != null)
@@ -501,7 +501,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuilding implements
         {
             this.minePos = null;
         }
-        else if (colony.getBuildingManager().getBuilding(pos) instanceof BuildingMiner)
+        else if (colony.getServerBuildingManager().getBuilding(pos) instanceof BuildingMiner)
         {
             this.minePos = pos;
         }

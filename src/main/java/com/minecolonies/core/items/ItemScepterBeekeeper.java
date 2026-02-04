@@ -83,13 +83,13 @@ public class ItemScepterBeekeeper extends AbstractItemMinecolonies implements IB
                 if (positions.size() >= building.getMaximumHives())
                 {
                     MessageUtils.format(TOOL_BEEHIVE_SCEPTER_MAX_HIVES).sendTo(useContext.getPlayer());
-                    player.getInventory().removeItemNoUpdate(player.getInventory().selected);
+                    player.getInventory().removeItem(scepter);
                 }
             }
         }
         else
         {
-            player.getInventory().removeItemNoUpdate(player.getInventory().selected);
+            player.getInventory().removeItem(scepter);
         }
 
         return super.useOn(useContext);

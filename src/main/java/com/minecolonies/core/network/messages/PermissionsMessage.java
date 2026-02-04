@@ -281,7 +281,7 @@ public class PermissionsMessage
         protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony)
         {
             colony.getPermissions().addPlayer(id, playerName, colony.getPermissions().getRank(IPermissions.NEUTRAL_RANK_ID));
-            Optional.ofNullable(colony.getBuildingManager().getTownHall()).ifPresent(th -> th.removePermissionEvents(id));
+            Optional.ofNullable(colony.getServerBuildingManager().getTownHall()).ifPresent(th -> th.removePermissionEvents(id));
             SoundUtils.playSuccessSound(player, player.blockPosition());
         }
 

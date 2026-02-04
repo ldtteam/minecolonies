@@ -140,7 +140,7 @@ public class CommandPruneWorld implements IMCOPCommand
     {
         for (final IColony colony : colonies)
         {
-            for (final BlockPos buildingPos : colony.getBuildingManager().getBuildings().keySet())
+            for (final BlockPos buildingPos : colony.getServerBuildingManager().getBuildings().keySet())
             {
                 // Calculate region corners for the building pos + additionally protected radius
                 final int maxX = (buildingPos.getX() + blockRadius) >> 9;

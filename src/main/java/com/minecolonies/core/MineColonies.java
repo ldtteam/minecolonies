@@ -89,7 +89,7 @@ import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 import net.neoforged.neoforge.registries.NewRegistryEvent;
 import org.jetbrains.annotations.NotNull;
-
+import net.minecraft.world.entity.animal.horse.Horse;
 import java.util.function.Consumer;
 
 import static com.minecolonies.api.util.constant.SchematicTagConstants.*;
@@ -276,6 +276,7 @@ public class MineColonies
         event.put(ModEntities.CAMP_DROWNED_PIRATE, AbstractEntityMinecoloniesRaider.getDefaultAttributes().build());
         event.put(ModEntities.CAMP_DROWNED_ARCHERPIRATE, AbstractEntityMinecoloniesRaider.getDefaultAttributes().build());
         event.put(ModEntities.CAMP_DROWNED_CHIEFPIRATE, AbstractEntityMinecoloniesRaider.getDefaultAttributes().build());
+        event.put(ModEntities.CAVALRY_HORSE, Horse.createBaseHorseAttributes().build());
     }
 
     /**
@@ -421,6 +422,7 @@ public class MineColonies
         PlayAudioMessage.TYPE.register(registry);
         PlayMusicAtPosMessage.TYPE.register(registry);
         ColonyVisitorViewDataMessage.TYPE.register(registry);
+        ColonyViewAnimalViewDataMessage.TYPE.register(registry);
         SyncPathMessage.TYPE.register(registry);
         SyncPathReachedMessage.TYPE.register(registry);
         ReactivateBuildingMessage.TYPE.register(registry);

@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.buildings.ICommonBuilding;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.equipment.registry.EquipmentTypeEntry;
 import com.minecolonies.core.tileentities.TileEntityColonyBuilding;
@@ -25,9 +26,10 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.neoforged.neoforge.capabilities.ICapabilityProvider;
 import net.neoforged.neoforge.items.IItemHandler;
+import net.neoforged.neoforge.items.wrapper.InvWrapper;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -754,7 +756,7 @@ public class InventoryUtils
      * @param stack    the stack to check.
      * @return Amount of occurrences of stacks that match the given predicate.
      */
-    public static int hasBuildingEnoughElseCount(@NotNull final IBuilding provider, @NotNull final ItemStorage stack, final int count)
+    public static int hasBuildingEnoughElseCount(@NotNull final ICommonBuilding provider, @NotNull final ItemStorage stack, final int count)
     {
         int totalCount = 0;
         final Level world = provider.getColony().getWorld();
@@ -786,7 +788,7 @@ public class InventoryUtils
      * @param stack    the stack to check.
      * @return Amount of occurrences of stacks that match the given predicate.
      */
-    public static int hasBuildingEnoughElseCount(@NotNull final IBuilding provider, @NotNull final Predicate<ItemStack> stack, final int count)
+    public static int hasBuildingEnoughElseCount(@NotNull final ICommonBuilding provider, @NotNull final Predicate<ItemStack> stack, final int count)
     {
         int totalCount = 0;
         final Level world = provider.getColony().getWorld();
@@ -2014,6 +2016,14 @@ public class InventoryUtils
         return transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandlerWithResult(sourceProvider, itemStackSelectionPredicate, amount, targetHandler) == 0;
     }
 
+    /**
+     * Transfer items over and return the leftover that couldn't be transfered (0 if full amount was transfered).
+     * @param sourceProvider
+     * @param itemStackSelectionPredicate
+     * @param amount
+     * @param targetHandler
+     * @return missing reminder compared to amount.
+     */
     public static int transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandlerWithResult(
       @NotNull final IItemHandlerCapProvider sourceProvider,
       @NotNull final Predicate<ItemStack> itemStackSelectionPredicate,
@@ -3328,5 +3338,63 @@ public class InventoryUtils
         }
 
         return null;
+    }
+
+    /**
+     * This method will first try to remove items from the building inventory, then from the player inventory.
+     * If the building inventory has enough items, then the player inventory will not be touched.
+     *
+     * @param building the building to take items from.
+     * @param player the player to take items from.
+     * @param itemsToTake the items to take from the building and player inventory.
+     * @return a ItemStorage (item and amount) which could not be satisfied from the building and player inventory. For successful complete removal, the amount will be 0.
+     */
+    public static ItemStorage reduceBuildingThenPlayerInventory(final IBuilding building, final Player player, final ItemStorage itemsToTake, final Predicate<ItemStack> buildingPredicate, final Predicate<ItemStack> playerPredicate)
+    {
+        final InvWrapper playerInv = new InvWrapper(player.getInventory());
+
+        int toRemoveLeft = itemsToTake.getAmount();
+        Item item = itemsToTake.getItemStack().getItem();
+
+        if (building != null)
+        {
+            final Map<IItemHandler,List<Integer>> buildingSlotsWithMaterial = InventoryUtils.findAllSlotsInProviderWith(building, buildingPredicate);
+            if (!buildingSlotsWithMaterial.isEmpty())
+            {
+                for (Map.Entry<IItemHandler, List<Integer>> entry : buildingSlotsWithMaterial.entrySet())
+                {
+                    final IItemHandler univInventory = entry.getKey();
+                    for (Integer slotNum : entry.getValue())
+                    {
+                        toRemoveLeft = toRemoveLeft - univInventory.extractItem(slotNum, toRemoveLeft, false).getCount();
+                        if (toRemoveLeft <= 0)
+                        {
+                            break;
+                        }
+                    }
+                    if (toRemoveLeft <= 0)
+                    {
+                        break;
+                    }
+                }
+            }
+        }
+
+        if (toRemoveLeft > 0)
+        {
+            final List<Integer> playerSlotsWithMaterial = InventoryUtils.findAllSlotsInItemHandlerWith(playerInv, playerPredicate);
+            for (Integer slotNum : playerSlotsWithMaterial)
+            {
+                toRemoveLeft = toRemoveLeft - playerInv.extractItem(slotNum, toRemoveLeft, false).getCount();
+                if (toRemoveLeft <= 0)
+                {
+                    break;
+                }
+            }
+        }
+
+        final ItemStorage unsatisfiedItems = new ItemStorage(item, toRemoveLeft);
+
+        return unsatisfiedItems;
     }
 }

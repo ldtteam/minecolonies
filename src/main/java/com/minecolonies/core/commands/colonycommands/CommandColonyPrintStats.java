@@ -73,12 +73,12 @@ public class CommandColonyPrintStats implements IMCOPCommand
             context.getSource().sendSuccess(() -> literalAndRemember(last.toString()), false);
         }
 
-        if (!colony.getBuildingManager().getBuildings().isEmpty())
+        if (!colony.getServerBuildingManager().getBuildings().isEmpty())
         {
             int count = 0;
             int levels = 0;
 
-            for (final IBuilding building : colony.getBuildingManager().getBuildings().values())
+            for (final IBuilding building : colony.getServerBuildingManager().getBuildings().values())
             {
                 if (building.getBuildingLevel() != 0)
                 {
@@ -90,9 +90,9 @@ public class CommandColonyPrintStats implements IMCOPCommand
             final double average = (double) levels / count;
 
             context.getSource()
-                .sendSuccess(() -> literalAndRemember("Buildings:" + colony.getBuildingManager().getBuildings().size() + " average level:" + average), false);
+                .sendSuccess(() -> literalAndRemember("Buildings:" + colony.getServerBuildingManager().getBuildings().size() + " average level:" + average), false);
             context.getSource()
-              .sendSuccess(() -> literalAndRemember(colony.getBuildingManager()
+              .sendSuccess(() -> literalAndRemember(colony.getServerBuildingManager()
                 .getBuildings()
                 .values()
                 .stream()

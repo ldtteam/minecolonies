@@ -195,10 +195,10 @@ public class TavernBuildingModule extends AbstractBuildingModule implements IDef
         newCitizen.setRecruitCosts(recruitCostItem);
 
         BlockPos spawnPos;
-        final BlockPos gatePos = building.getColony().getBuildingManager().getRandomBuilding(b -> b.getBuildingType() == ModBuildings.gateHouse.get());
+        final BlockPos gatePos = building.getColony().getServerBuildingManager().getRandomBuilding(b -> b.getBuildingType() == ModBuildings.gateHouse.get());
         if (gatePos != null)
         {
-            final IBuilding gateHouseBuilding = building.getColony().getBuildingManager().getBuilding(gatePos);
+            final IBuilding gateHouseBuilding = building.getColony().getServerBuildingManager().getBuilding(gatePos);
             if (gateHouseBuilding != null)
             {
                 final List<BlockPos> gatePositions = gateHouseBuilding.getLocationsFromTag(TAG_GATE);
