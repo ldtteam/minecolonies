@@ -272,5 +272,5 @@ public interface IRegisteredStructureManager extends ICommonRegisteredStructureM
      * @param buildingExtensionEntry the entry to create the extension from.
      * @param pos the pos it's at.
      */
-    void addBuildingExtensionIfMissing(BuildingExtensionRegistries.BuildingExtensionEntry buildingExtensionEntry, BlockPos pos, final Player player));
+    void addBuildingExtensionIfMissing(BuildingExtensionRegistries.BuildingExtensionEntry buildingExtensionEntry, BlockPos pos, final Player player);
 }

@@ -873,7 +873,7 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
     public void addBuildingExtensionIfMissing(final BuildingExtensionRegistries.BuildingExtensionEntry buildingExtensionEntry, final BlockPos pos, final Player player)
     {
         buildingExtensions.computeIfAbsent(new IBuildingExtension.ExtensionId(pos, buildingExtensionEntry), (id) -> {
-            new ColonyViewBuildingExtensionsUpdateMessage(colony, buildingExtensions.values()).sendToPlayer(player);
+            new ColonyViewBuildingExtensionsUpdateMessage(colony, buildingExtensions.values()).sendToPlayer((ServerPlayer) player);
             markBuildingExtensionsDirty();
             return buildingExtensionEntry.produceExtension(pos);
         });
