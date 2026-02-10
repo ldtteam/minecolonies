@@ -64,6 +64,7 @@ import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.predicates.LootItemRandomChanceCondition;
 import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
 import net.neoforged.neoforge.event.EventHooks;
 import net.neoforged.neoforge.event.LootTableLoadEvent;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
@@ -682,11 +683,13 @@ public class EventHandler
         {
             IColonyManager.getInstance().onWorldUnload((Level) event.getLevel());
         }
-        if (event.getLevel().isClientSide())
-        {
-            IColonyManager.getInstance().resetColonyViews();
-            Log.getLogger().info("Removed all colony views");
-        }
+    }
+
+    @SubscribeEvent
+    public static void onPlayerLogout(@NotNull final ClientPlayerNetworkEvent.LoggingOut event)
+    {
+        IColonyManager.getInstance().resetColonyViews();
+        Log.getLogger().info("Removed all colony views");
     }
 
     /**

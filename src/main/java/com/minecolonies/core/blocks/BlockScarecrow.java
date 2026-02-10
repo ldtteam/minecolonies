@@ -99,6 +99,11 @@ public class BlockScarecrow extends AbstractBlockMinecoloniesDefault<BlockScarec
             }
         }
 
+        final IColony iColony = IColonyManager.getInstance().getIColony(worldIn, pos);
+        if (iColony != null)
+        {
+            iColony.getServerBuildingManager().addBuildingExtensionIfMissing(BuildingExtensionRegistries.farmField.get(), pos, player);
+        }
         // This must succeed in Remote to stop more right click interactions like placing blocks
         return ItemInteractionResult.SUCCESS;
     }
