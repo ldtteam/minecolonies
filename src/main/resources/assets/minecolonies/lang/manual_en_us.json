@@ -3025,6 +3025,9 @@
   "com.ldtteam.tag.tooltip.knight": "Position for knights to guard the Gate",
   "com.ldtteam.tag.tooltip.archer": "Positions for archers to guard the gate",
   "com.ldtteam.tag.tooltip.gate": "Position where the gate transitions from inside to outside",
+  "com.ldtteam.tag.tooltip.cobble": "For Miner Building. Set on cobble behind bottom most ladder in shaft",
+  "com.ldtteam.tag.tooltip.ladder": "For Miner Building. Set on bottom most ladder in shaft",
+  "com.ldtteam.tag.tooltip.leisure": "Set on Decoration Controller. Indicates Deco as Leisure Site",
 
   "com.minecolonies.coremod.gui.chat.mosochi": "Before I came here, I used to own a small village myself. Let me tell ya something, I'd rather not have another colony fall under my watch!",
   "com.minecolonies.coremod.gui.chat.missanilka": "Bring me in and your commons rise fast without crowns, hands work lighter, songs get louder, people stay free!",

@@ -83,11 +83,6 @@ public final class BuildingConstants
     public static final String DEACTIVATED = "deactivated";
 
     /**
-     * String tag to identify a leisure decoration.
-     */
-    public static final String LEISURE = "leisure";
-
-    /**
      * Crafting module type.
      */
     public static final String MODULE_CRAFTING = "crafting";
