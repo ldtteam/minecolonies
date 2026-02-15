@@ -8,9 +8,11 @@ import com.minecolonies.api.util.constant.translation.CommandTranslationConstant
 import com.minecolonies.core.commands.commandTypes.IMCCommand;
 import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.core.BlockPos;
+
+import java.text.DecimalFormat;
 
 public class CommandWhereAmI implements IMCCommand
 {
@@ -33,19 +35,19 @@ public class CommandWhereAmI implements IMCCommand
             return 0;
         }
         final BlockPos center = colony.getCenter();
-        final double distance = BlockPosUtil.getDistance2D(center, new BlockPos(playerPos.getX(), center.getY(), playerPos.getZ()));
-
-        if (!IColonyManager.getInstance().isCoordinateInAnyColony(sender.getCommandSenderWorld(), playerPos))
-        {
-            MessageUtils.format(CommandTranslationConstants.COMMAND_WHERE_AM_I_COLONY_CLOSE, distance).sendTo((Player) sender);
-            return 0;
-        }
-
+        final double distance = BlockPosUtil.getDistance(center, new BlockPos(playerPos.getX(), center.getY(), playerPos.getZ()));
         final String colonyName = colony.getName();
         final String id = Integer.toString(colony.getID());
+        final String distanceText = new DecimalFormat("0.##").format(distance);
 
-        MessageUtils.format(CommandTranslationConstants.COMMAND_WHERE_AM_I_IN_COLONY, colonyName, id, distance).sendTo((Player) sender);
-
+        if (IColonyManager.getInstance().isCoordinateInAnyColony(sender.getCommandSenderWorld(), playerPos))
+        {
+            MessageUtils.format(CommandTranslationConstants.COMMAND_WHERE_AM_I_IN_COLONY, colonyName, id, distanceText).sendTo((Player) sender);
+        }
+        else
+        {
+            MessageUtils.format(CommandTranslationConstants.COMMAND_WHERE_AM_I_COLONY_CLOSE, colonyName, id, distanceText).sendTo((Player) sender);
+        }
         return 0;
     }
 

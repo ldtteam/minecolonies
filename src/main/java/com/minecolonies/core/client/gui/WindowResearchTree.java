@@ -10,7 +10,6 @@ import com.minecolonies.api.colony.buildings.registry.IBuildingRegistry;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.research.*;
-import com.minecolonies.api.research.IResearchEffect;
 import com.minecolonies.api.research.requirements.BuildingAlternatesResearchRequirement;
 import com.minecolonies.api.research.requirements.BuildingResearchRequirement;
 import com.minecolonies.api.research.util.ResearchState;

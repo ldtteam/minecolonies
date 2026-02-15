@@ -4,7 +4,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.common.crafting.SizedIngredient;
 import org.jetbrains.annotations.NotNull;
@@ -203,9 +202,9 @@ public interface IGlobalResearch
      * - It has the same Item
      * - It does NOT carry enchantments, custom names, etc.
      */
-    public static boolean isPlayerResearchMatch(ItemStack stack, Item cost)
+    public static boolean isPlayerResearchMatch(ItemStack stack, final SizedIngredient sizedIngredient)
     {
-        if (stack.isEmpty() || stack.getItem() != cost)
+        if (stack.isEmpty() || !sizedIngredient.ingredient().test(stack))
         {
             return false;
         }
@@ -223,13 +222,8 @@ public interface IGlobalResearch
      * A stack "matches" a research ingredient if:
      * - It has the same Item (even if they are enchanted or have a custom name)
      */
-    public static boolean isUniversityResearchMatch(ItemStack stack, Item cost)
+    public static boolean isUniversityResearchMatch(ItemStack stack, final SizedIngredient sizedIngredient)
     {
-        if (stack.isEmpty() || stack.getItem() != cost)
-        {
-            return false;
-        }
-
-        return true;
+        return !stack.isEmpty() && sizedIngredient.ingredient().test(stack);
     }
 }

@@ -6,8 +6,6 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.research.*;
-import com.minecolonies.api.research.IResearchEffect;
-import com.minecolonies.api.research.IResearchEffectManager;
 import com.minecolonies.api.research.util.ResearchState;
 import com.minecolonies.api.util.*;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingUniversity;
@@ -190,12 +188,32 @@ public class LocalResearchTree implements ILocalResearchTree
             // We know the university or player has the items, so now we can remove them safely.
             for (final SizedIngredient cost : research.getCostList())
             {
-                for (ItemStack researchCostStack : cost.getItems())
+                final int required = cost.count();
+                if (required <= 0)
                 {
-                    ItemStorage itemsToTake = new ItemStorage(researchCostStack);
-                    InventoryUtils.reduceBuildingThenPlayerInventory(building,  player, itemsToTake, stack -> IGlobalResearch.isUniversityResearchMatch(stack, researchCostStack.getItem()), stack -> IGlobalResearch.isPlayerResearchMatch(stack, researchCostStack.getItem()));
+                    continue;
                 }
 
+                // ItemStorage needs an ItemStack; for tag-based ingredients we just pick any representative
+                // and set the count to the total required. Predicates will enforce the actual match.
+                final ItemStack[] candidates = cost.getItems();
+                if (candidates == null || candidates.length == 0)
+                {
+                    continue;
+                }
+
+                final ItemStack representative = candidates[0].copy();
+                representative.setCount(required);
+
+                final ItemStorage itemsToTake = new ItemStorage(representative);
+
+                InventoryUtils.reduceBuildingThenPlayerInventory(
+                    building,
+                    player,
+                    itemsToTake,
+                    stack -> IGlobalResearch.isUniversityResearchMatch(stack, cost),
+                    stack -> IGlobalResearch.isPlayerResearchMatch(stack, cost)
+                );
             }
 
             MessageUtils.format(MESSAGE_RESEARCH_STARTED, MutableComponent.create(research.getName())).sendTo(player);
