@@ -82,10 +82,10 @@ public final class CreativeBuildingStructureHandler extends CreativeStructureHan
      */
     private void setupBuilding()
     {
-        final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld(getWorld(), getWorldPos());
+        final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld(getWorld(), getCenterPos());
         if (colony != null)
         {
-            this.building = colony.getServerBuildingManager().getBuilding(getWorldPos());
+            this.building = colony.getServerBuildingManager().getBuilding(getCenterPos());
         }
     }
 

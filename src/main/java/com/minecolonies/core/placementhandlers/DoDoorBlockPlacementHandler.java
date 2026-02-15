@@ -7,10 +7,12 @@ import com.ldtteam.domumornamentum.block.vanilla.DoorBlock;
 import com.ldtteam.domumornamentum.util.BlockUtils;
 import com.ldtteam.structurize.api.RotationMirror;
 import com.ldtteam.structurize.api.constants.Constants;
+import com.ldtteam.structurize.placement.IPlacementContext;
 import com.ldtteam.structurize.placement.handlers.placement.IPlacementHandler;
 import com.minecolonies.api.util.Log;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.util.Tuple;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -25,6 +27,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static com.ldtteam.structurize.api.constants.Constants.UPDATE_FLAG;
+import static com.ldtteam.structurize.placement.handlers.placement.DoBlockPlacementHandler.compareBEData;
 import static com.ldtteam.structurize.placement.handlers.placement.PlacementHandlers.handleTileEntityPlacement;
 
 public class DoDoorBlockPlacementHandler implements IPlacementHandler
@@ -41,9 +44,7 @@ public class DoDoorBlockPlacementHandler implements IPlacementHandler
       @NotNull final BlockPos pos,
       @NotNull final BlockState blockState,
       @Nullable final CompoundTag tileEntityData,
-      final boolean complete,
-      final BlockPos centerPos,
-      final RotationMirror settings)
+      @NotNull final IPlacementContext placementContext)
     {
         if (blockState.getValue(net.minecraft.world.level.block.DoorBlock.HALF).equals(DoubleBlockHalf.LOWER))
         {
@@ -51,34 +52,17 @@ public class DoDoorBlockPlacementHandler implements IPlacementHandler
             {
                 world.removeBlock(pos, false);
                 world.removeBlock(pos.above(), false);
-                world.setBlock(pos, blockState, Constants.UPDATE_FLAG);
-                world.setBlock(pos.above(), blockState.setValue(net.minecraft.world.level.block.DoorBlock.HALF, DoubleBlockHalf.UPPER), UPDATE_FLAG);
-                if (tileEntityData != null)
-                {
-                    try
-                    {
-                        handleTileEntityPlacement(tileEntityData, world, pos, settings);
-                        handleTileEntityPlacement(tileEntityData, world, pos.above(), settings);
-                    }
-                    catch (final Exception ex)
-                    {
-                        Log.getLogger().warn("Unable to place TileEntity");
-                    }
-                }
-                return ActionProcessingResult.PASS;
             }
-            else
-            {
-                world.setBlock(pos, blockState.setValue(net.minecraft.world.level.block.DoorBlock.HALF, DoubleBlockHalf.LOWER), UPDATE_FLAG);
-                world.setBlock(pos.above(), blockState.setValue(net.minecraft.world.level.block.DoorBlock.HALF, DoubleBlockHalf.UPPER), UPDATE_FLAG);
-            }
+
+            world.setBlock(pos, blockState.setValue(net.minecraft.world.level.block.DoorBlock.HALF, DoubleBlockHalf.LOWER), UPDATE_FLAG);
+            world.setBlock(pos.above(), blockState.setValue(net.minecraft.world.level.block.DoorBlock.HALF, DoubleBlockHalf.UPPER), UPDATE_FLAG);
 
             if (tileEntityData != null)
             {
                 try
                 {
-                    handleTileEntityPlacement(tileEntityData, world, pos, settings);
-                    handleTileEntityPlacement(tileEntityData, world, pos.above(), settings);
+                    handleTileEntityPlacement(tileEntityData, world, pos, placementContext.getRotationMirror());
+                    handleTileEntityPlacement(tileEntityData, world, pos.above(), placementContext.getRotationMirror());
                 }
                 catch (final Exception ex)
                 {
@@ -95,7 +79,7 @@ public class DoDoorBlockPlacementHandler implements IPlacementHandler
       @NotNull final BlockPos pos,
       @NotNull final BlockState blockState,
       @Nullable final CompoundTag tileEntityData,
-      final boolean complete)
+      @NotNull final IPlacementContext placementContext)
     {
         final List<ItemStack> itemList = new ArrayList<>();
         if (tileEntityData != null && blockState.getValue(net.minecraft.world.level.block.DoorBlock.HALF).equals(DoubleBlockHalf.LOWER))
@@ -123,5 +107,39 @@ public class DoDoorBlockPlacementHandler implements IPlacementHandler
             itemList.add(property == null ? BlockUtils.getMaterializedItemStack(tileEntity, world.registryAccess()) : BlockUtils.getMaterializedItemStack(tileEntity, world.registryAccess(), property));
         }
         return itemList;
+    }
+
+    @Override
+    public boolean doesWorldStateMatchBlueprintState(
+        final BlockState worldState,
+        final BlockState blueprintState,
+        final Tuple<BlockEntity, CompoundTag> blockEntityData,
+        final @NotNull IPlacementContext structureHandler)
+    {
+        if (worldState.getBlock() == blueprintState.getBlock())
+        {
+            if (structureHandler.fancyPlacement())
+            {
+                for (Property<?> property : worldState.getProperties())
+                {
+                    // Compare properties, but if just open or powered don't match, ignore.
+                    if (!blueprintState.hasProperty(property) ||
+                        (blueprintState.getValue(property) != worldState.getValue(property)
+                            && property != net.minecraft.world.level.block.DoorBlock.OPEN)
+                            && property != net.minecraft.world.level.block.DoorBlock.POWERED)
+                    {
+                        return false;
+                    }
+                }
+            }
+            else
+            {
+                if (!worldState.equals(blueprintState))
+                {
+                    return false;
+                }
+            }
+        }
+        return compareBEData(blockEntityData);
     }
 }

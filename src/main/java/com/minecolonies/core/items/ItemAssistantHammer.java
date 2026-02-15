@@ -1,6 +1,7 @@
 package com.minecolonies.core.items;
 
 import com.ldtteam.structurize.blocks.ModBlocks;
+import com.ldtteam.structurize.placement.SimplePlacementContext;
 import com.ldtteam.structurize.placement.handlers.placement.IPlacementHandler;
 import com.ldtteam.structurize.placement.handlers.placement.PlacementHandlers;
 import com.ldtteam.structurize.util.BlockInfo;
@@ -258,7 +259,7 @@ public class ItemAssistantHammer extends AbstractItemMinecolonies
                         {
                             if (handler.canHandle(player.level(), BlockPos.ZERO, blockInfo.getState()))
                             {
-                                final List<ItemStack> itemList = handler.getRequiredItems(player.level(), workPos, blockInfo.getState(), blockInfo.getTileEntityData(), false);
+                                final List<ItemStack> itemList = handler.getRequiredItems(player.level(), workPos, blockInfo.getState(), blockInfo.getTileEntityData(), new SimplePlacementContext(true, workOrder.getRotationMirror()));
                                 requiredItem.addAll(itemList);
 
                                 foundHandler = handler;
@@ -310,9 +311,7 @@ public class ItemAssistantHammer extends AbstractItemMinecolonies
                             workPos,
                             blockInfo.getState(),
                             blockInfo.getTileEntityData(),
-                            false,
-                            workOrder.getLocation(),
-                            workOrder.getRotationMirror());
+                            new SimplePlacementContext(false, workOrder.getRotationMirror()));
 
                         if (result == IPlacementHandler.ActionProcessingResult.DENY)
                         {

@@ -1,18 +1,20 @@
 package com.minecolonies.core.placementhandlers;
 
-import com.ldtteam.structurize.api.RotationMirror;
 import com.ldtteam.structurize.blocks.ModBlocks;
 import com.ldtteam.structurize.blocks.schematic.BlockSolidSubstitution;
-import com.ldtteam.structurize.blueprints.v1.Blueprint;
+import com.ldtteam.structurize.placement.IPlacementContext;
 import com.ldtteam.structurize.placement.handlers.placement.IPlacementHandler;
 import com.ldtteam.structurize.placement.handlers.placement.PlacementHandlers;
 import com.ldtteam.structurize.util.BlockUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.util.Tuple;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -76,19 +78,19 @@ public class SolidPlaceholderPlacementHandler implements IPlacementHandler
         BlockPos pos,
         BlockState blockState,
         @Nullable CompoundTag tileEntityData,
-        boolean complete)
+        @NotNull final IPlacementContext placementContext)
     {
         searchHandler(world, pos);
         List<ItemStack> items = new ArrayList<>();
 
-        if (complete)
+        if (!placementContext.fancyPlacement())
         {
             // for scan tool, show the actual placeholder block
             items.add(new ItemStack(blockState.getBlock()));
         }
         else
         {
-            return replacementHandler.getRequiredItems(world, pos, replacement, tileEntityData, complete);
+            return replacementHandler.getRequiredItems(world, pos, replacement, tileEntityData, placementContext);
         }
 
         return items;
@@ -96,25 +98,34 @@ public class SolidPlaceholderPlacementHandler implements IPlacementHandler
 
     @Override
     public ActionProcessingResult handle(
-        final Blueprint blueprint,
         final Level world,
         final BlockPos pos,
         final BlockState blockState,
         @Nullable final CompoundTag tileEntityData,
-        final boolean complete, final BlockPos centerPos, final RotationMirror settings)
+        @NotNull final IPlacementContext placementContext)
     {
-        if (complete)
+        if (!placementContext.fancyPlacement())
         {
             world.setBlock(pos, ModBlocks.blockSubstitution.get().defaultBlockState(), UPDATE_FLAG);
-            return ActionProcessingResult.PASS;
+            return ActionProcessingResult.SUCCESS;
         }
 
         if (BlockUtils.isAnySolid(world.getBlockState(pos)))
         {
-            return ActionProcessingResult.DENY;
+            return ActionProcessingResult.PASS;
         }
 
         searchHandler(world, pos);
-        return replacementHandler.handle(world, pos, replacement, tileEntityData, complete, centerPos, settings);
+        return replacementHandler.handle(world, pos, replacement, tileEntityData, placementContext);
+    }
+
+    @Override
+    public boolean doesWorldStateMatchBlueprintState(
+        final BlockState worldState,
+        final BlockState blueprintState,
+        final Tuple<BlockEntity, CompoundTag> blockEntityData,
+        @NotNull final IPlacementContext placementContext)
+    {
+        return worldState.equals(blueprintState) || BlockUtils.isGoodFloorBlock(worldState);
     }
 }
