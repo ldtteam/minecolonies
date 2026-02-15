@@ -250,6 +250,11 @@ public class VisitorManager implements IVisitorManager
 
         for (final BlockPos spawnLocation : spawnPositions)
         {
+            if (spawnLocation == null || spawnLocation.equals(BlockPos.ZERO))
+            {
+                continue;
+            }
+
             if (WorldUtil.isEntityBlockLoaded(world, spawnLocation))
             {
                 BlockPos calculatedSpawn = EntityUtils.getSpawnPoint(world, spawnLocation);
