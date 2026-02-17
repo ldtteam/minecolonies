@@ -551,7 +551,7 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
                 }
                 if(duplicateFound == null)
                 {
-                    addRecipeToList(recipeToken, true);
+                    addRecipeToList(recipeToken, false);
                     building.getColony().getRequestManager().onColonyUpdate(request -> request.getRequest() instanceof IDeliverable iDeliverable && iDeliverable.matches(recipeStorage.getPrimaryOutput()));
                     markDirty();
                 }
