@@ -126,6 +126,6 @@ public class SolidPlaceholderPlacementHandler implements IPlacementHandler
         final Tuple<BlockEntity, CompoundTag> blockEntityData,
         @NotNull final IPlacementContext placementContext)
     {
-        return worldState.equals(blueprintState) || BlockUtils.isGoodFloorBlock(worldState);
+        return worldState.equals(blueprintState) || (placementContext.fancyPlacement() && BlockUtils.isGoodFloorBlock(worldState));
     }
 }
