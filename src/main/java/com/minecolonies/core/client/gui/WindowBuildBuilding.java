@@ -308,7 +308,7 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
             }
 
             blueprint.setRotationMirror(building.getRotationMirror(), Minecraft.getInstance().level);
-            StructurePlacer placer = new StructurePlacer(new LoadOnlyStructureHandler(Minecraft.getInstance().level, building.getPosition(), blueprint, RotationMirror.NONE, true));
+            StructurePlacer placer = new StructurePlacer(new LoadOnlyStructureHandler(Minecraft.getInstance().level, building.getPosition(), blueprint, RotationMirror.NONE));
             StructurePhasePlacementResult result;
             BlockPos progressPos = NULL_POS;
 

@@ -230,7 +230,6 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
           structurePlacer.getB().getCenterPos(),
           structurePlacer.getB().getBluePrint(),
           RotationMirror.NONE,
-          true,
           this);
 
         if (building.getWorkOrder().getIteratorType().isEmpty())

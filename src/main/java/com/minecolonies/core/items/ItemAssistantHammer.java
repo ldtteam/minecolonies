@@ -311,7 +311,7 @@ public class ItemAssistantHammer extends AbstractItemMinecolonies
                             workPos,
                             blockInfo.getState(),
                             blockInfo.getTileEntityData(),
-                            new SimplePlacementContext(false, workOrder.getRotationMirror()));
+                            new SimplePlacementContext(true, workOrder.getRotationMirror()));
 
                         if (result == IPlacementHandler.ActionProcessingResult.DENY)
                         {
