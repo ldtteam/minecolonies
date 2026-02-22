@@ -478,7 +478,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
             {
                 return null;
             }
-            ring = (int) Math.floor((Math.sqrt(building.getCell() + 1D) + 1) / 2.0);
+            ring = Math.max(1, (int) Math.floor((Math.sqrt(building.getCell() + 1D) + 1) / 2.0));
             ringCell = building.getCell() - (int) (4 * Math.pow(ring - 1D, 2) + 4 * (ring - 1));
             facing = Direction.from2DDataValue(Math.floorDiv(ringCell, 2 * ring));
 
