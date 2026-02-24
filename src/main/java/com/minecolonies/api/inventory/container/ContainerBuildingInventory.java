@@ -8,6 +8,7 @@ import com.minecolonies.core.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.ItemStackUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -172,7 +173,34 @@ public class ContainerBuildingInventory extends AbstractContainerMenu
             slot.set(stackCopy);
         }
 
+        if (playerIn instanceof ServerPlayer)
+        {
+            this.updateRacks(stackCopy);
+        }
+
         return stackCopy;
+    }
+
+    @Override
+    protected boolean moveItemStackTo(final ItemStack stack, final int startIndex, final int endIndex, final boolean reverseDirection)
+    {
+        final ItemStack before = stack.copy();
+        final boolean merge =  super.moveItemStackTo(stack, startIndex, endIndex, reverseDirection);
+        if (merge)
+        {
+            this.updateRacks(before);
+        }
+        return merge;
+    }
+
+    /**
+     * Update the racks (combined inv and warehouse).
+     * @param stack the stack to set.
+     */
+    private void updateRacks(final ItemStack stack)
+    {
+        tileEntityColonyBuilding.updateItemStorage();
+        tileEntityColonyBuilding.updateWarehouseIfAvailable(stack);
     }
 
     /**
