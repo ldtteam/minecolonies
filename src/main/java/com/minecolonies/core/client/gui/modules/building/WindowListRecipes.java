@@ -275,9 +275,7 @@ public class WindowListRecipes extends AbstractModuleWindow<CraftingModuleView>
      */
     private ItemStack getStackWithCount(final ItemStorage storage)
     {
-        final ItemStack displayItem = storage.getItemStack();
-        displayItem.setCount(storage.getAmount());
-        return displayItem;
+    	return storage.getItemStack().copyWithCount(storage.getAmount());
     }
 
     @Override
