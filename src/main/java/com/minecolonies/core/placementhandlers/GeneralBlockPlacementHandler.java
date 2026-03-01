@@ -84,7 +84,7 @@ public class GeneralBlockPlacementHandler implements IPlacementHandler
             {
                 Log.getLogger()
                     .warn("Schematic with invalid blockentity data for block:" + blockState + " in pack:" + context.getBluePrint().getPackName() + " schematic:"
-                        + context.getBluePrint().getName() + " blokentitydata:" + tileEntityData);
+                        + context.getBluePrint().getName() + " blockentitydata:" + tileEntityData);
                 return ActionProcessingResult.PASS;
             }
 
