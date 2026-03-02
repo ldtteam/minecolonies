@@ -170,7 +170,7 @@ public class MineColonies
              TagManager.registerSpecificTagOption(TAG_KNIGHT, b -> b instanceof BlockHutGateHouse);
              TagManager.registerSpecificTagOption(TAG_ARCHER, b -> b instanceof BlockHutGateHouse);
 
-            TagManager.registerSpecificTagOption(TAG_COBBLE, b -> b instanceof BlockHutMiner);
+            TagManager.registerSpecificTagOption(TAG_LADDER_BACK, b -> b instanceof BlockHutMiner);
             TagManager.registerSpecificTagOption(TAG_LADDER, b -> b instanceof BlockHutMiner);
 
             TagManager.registerSpecificTagOption(TAG_LEISURE, b -> b instanceof BlockDecorationController);

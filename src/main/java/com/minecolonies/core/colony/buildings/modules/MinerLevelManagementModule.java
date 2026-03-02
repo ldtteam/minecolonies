@@ -269,7 +269,7 @@ public class MinerLevelManagementModule extends AbstractBuildingModule implement
         if (building instanceof BuildingMiner)
         {
             final BlockPos ladderPos = ((BuildingMiner) building).getLadderLocation();
-            final BlockPos vector = ladderPos.subtract(((BuildingMiner) building).getCobbleLocation());
+            final BlockPos vector = ladderPos.subtract(((BuildingMiner) building).getLadderBackLocation());
             final int xOffset = SHAFT_RADIUS * vector.getX();
             final int zOffset = SHAFT_RADIUS * vector.getZ();
 
