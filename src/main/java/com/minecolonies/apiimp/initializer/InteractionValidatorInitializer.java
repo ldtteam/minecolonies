@@ -106,7 +106,7 @@ public class InteractionValidatorInitializer
           citizen -> citizen.getWorkBuilding() instanceof BuildingFarmer && citizen.getWorkBuilding().getModule(BuildingModules.FARMER_FIELDS).hasNoExtensions());
 
         InteractionValidatorRegistry.registerStandardPredicate(Component.translatableEscape(INVALID_MINESHAFT),
-          citizen -> citizen.getWorkBuilding() instanceof BuildingMiner && citizen.getJob() instanceof JobMiner && (((BuildingMiner) citizen.getWorkBuilding()).getCobbleLocation() == null || ((BuildingMiner) citizen.getWorkBuilding()).getLadderLocation() == null));
+          citizen -> citizen.getWorkBuilding() instanceof BuildingMiner && citizen.getJob() instanceof JobMiner && (((BuildingMiner) citizen.getWorkBuilding()).getLadderBackLocation() == null || ((BuildingMiner) citizen.getWorkBuilding()).getLadderLocation() == null));
 
         InteractionValidatorRegistry.registerStandardPredicate(Component.translatableEscape(COM_MINECOLONIES_COREMOD_ENTITY_WORKER_INVENTORYFULLCHEST),
           citizen -> citizen.getWorkBuilding() != null && InventoryUtils.isBuildingFull(citizen.getWorkBuilding()));
