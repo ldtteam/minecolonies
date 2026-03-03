@@ -39,7 +39,7 @@ public class SchematicTagConstants
     /**
      * Miner tags
      */
-    public static final String TAG_LADDER_BACK = "ladder_back";
+    public static final String TAG_LADDER_BACK = "cobble";
     public static final String TAG_LADDER = "ladder";
 
     /**
