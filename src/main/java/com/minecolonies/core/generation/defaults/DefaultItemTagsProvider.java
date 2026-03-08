@@ -546,10 +546,10 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
           .add(Items.PRISMARINE, Items.PRISMARINE_BRICKS, Items.DARK_PRISMARINE)
           .add(Items.END_STONE_BRICKS);
 
-        tag(ModTags.crafterIngredient.get(TagConstants.CRAFTING_STONE_SMELTERY), "Stonesmelter Crafting Ingredients")
+        tag(ModTags.crafterIngredient.get(TagConstants.CRAFTING_STONE_SMELTERY), "Brickmaker Crafting Ingredients")
           .addTag(ModTags.crafterProduct.get(TagConstants.CRAFTING_STONEMASON));
-        tag(ModTags.crafterIngredientExclusions.get(TagConstants.CRAFTING_STONE_SMELTERY), "Stonesmelter Crafting Excluded Ingredients");
-        tag(ModTags.crafterProduct.get(TagConstants.CRAFTING_STONE_SMELTERY), "Stonesmelter Crafting Products")
+        tag(ModTags.crafterIngredientExclusions.get(TagConstants.CRAFTING_STONE_SMELTERY), "Brickmaker Crafting Excluded Ingredients");
+        tag(ModTags.crafterProduct.get(TagConstants.CRAFTING_STONE_SMELTERY), "Brickmaker Crafting Products")
           .add(Items.BRICK)
           .add(Items.SMOOTH_BASALT)
           .add(Items.SMOOTH_QUARTZ)
@@ -566,7 +566,7 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
           .addTags(ItemTags.TERRACOTTA, glazedTerracotta)
           .addTag(ItemTags.STONE_BRICKS);
 
-        tag(ModTags.crafterProductExclusions.get(TagConstants.CRAFTING_STONE_SMELTERY), "Stonesmelter Crafting Excluded Products");
+        tag(ModTags.crafterProductExclusions.get(TagConstants.CRAFTING_STONE_SMELTERY), "Brickmaker Crafting Excluded Products");
 
         tag(ModTags.crafterIngredient.get(TagConstants.CRAFTING_REDUCEABLE), "Reduceable Ingredients")
 

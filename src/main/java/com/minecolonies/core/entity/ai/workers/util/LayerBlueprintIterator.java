@@ -248,11 +248,11 @@ public class LayerBlueprintIterator extends AbstractBlueprintIteratorWrapper
         }
 
         @Override
-        public BlockPos getWorldPos()
+        public BlockPos getCenterPos()
         {
-            return delegate.getWorldPos()
-                     .subtract(delegate.getBluePrint().getPrimaryBlockOffset())
-                     .offset(layerBlueprint.getPrimaryBlockOffset().atY(getLayer()));
+            return delegate.getCenterPos()
+                .subtract(delegate.getBluePrint().getPrimaryBlockOffset())
+                .offset(layerBlueprint.getPrimaryBlockOffset().atY(getLayer()));
         }
 
         @Override

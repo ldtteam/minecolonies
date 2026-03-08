@@ -12,7 +12,7 @@
       "item": "minecolonies:durum"
     },
     {
-      "item": "minecraft:salmon"
+      "tag": "c:foods/raw_fish"
     },
     {
       "item": "minecraft:potato"

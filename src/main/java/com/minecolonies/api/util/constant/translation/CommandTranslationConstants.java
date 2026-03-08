@@ -142,7 +142,7 @@ public class CommandTranslationConstants
     @NonNls
     public static final String COMMAND_WHERE_AM_I_NO_COLONY                  = "com.minecolonies.command.whereami.nocolony";
     @NonNls
-    public static final String COMMAND_WHERE_AM_I_COLONY_CLOSE               = "com.minecolonies.command.whereami.colonyclose";
+    public static final String COMMAND_WHERE_AM_I_COLONY_CLOSE               = "com.minecolonies.command.whereami.closecolony";
     @NonNls
     public static final String COMMAND_WHERE_AM_I_IN_COLONY                  = "com.minecolonies.command.whereami.incolony";
     @NonNls

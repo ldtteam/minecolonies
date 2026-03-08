@@ -7,6 +7,7 @@ import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.IAnimalData;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.buildingextensions.registry.BuildingExtensionRegistries;
 import com.minecolonies.api.colony.buildings.*;
 import com.minecolonies.api.colony.buildings.registry.IBuildingDataManager;
 import com.minecolonies.api.colony.buildings.workerbuildings.ITownHall;
@@ -866,6 +867,16 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
     public IBuildingExtension getMatchingBuildingExtension(final IBuildingExtension.ExtensionId extensionId)
     {
         return buildingExtensions.get(extensionId);
+    }
+
+    @Override
+    public void addBuildingExtensionIfMissing(final BuildingExtensionRegistries.BuildingExtensionEntry buildingExtensionEntry, final BlockPos pos, final Player player)
+    {
+        buildingExtensions.computeIfAbsent(new IBuildingExtension.ExtensionId(pos, buildingExtensionEntry), (id) -> {
+            new ColonyViewBuildingExtensionsUpdateMessage(colony, buildingExtensions.values()).sendToPlayer((ServerPlayer) player);
+            markBuildingExtensionsDirty();
+            return buildingExtensionEntry.produceExtension(pos);
+        });
     }
 
     @Override

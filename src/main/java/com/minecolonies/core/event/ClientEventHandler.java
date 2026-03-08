@@ -21,6 +21,7 @@ import com.minecolonies.api.research.IGlobalResearch;
 import com.minecolonies.api.util.FoodUtils;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.ColonyConstants;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.TranslationConstants;
@@ -106,6 +107,8 @@ public class ClientEventHandler
     {
         ColonyBorderRenderer.cleanup();
         WindowBuildingBrowser.clearCache();
+        IColonyManager.getInstance().resetColonyViews();
+        Log.getLogger().info("Removed all colony views");
     }
 
     @SubscribeEvent(priority = EventPriority.HIGH)
@@ -145,7 +148,6 @@ public class ClientEventHandler
             return;
         }
         IColony colony = IMinecoloniesAPI.getInstance().getColonyManager().getIColony(event.getEntity().level(), event.getEntity().blockPosition());
-
         final ItemStack stack = event.getItemStack();
 
         if (extraItemTooltips.containsKey(stack.getItem()))
@@ -157,6 +159,12 @@ public class ClientEventHandler
         {
             colony = IMinecoloniesAPI.getInstance().getColonyManager().getIColonyByOwner(event.getEntity().level(), event.getEntity());
         }
+
+        if (colony == null)
+        {
+            return;
+        }
+
         handleCrafterRecipeTooltips(colony, event.getToolTip(), stack.getItem());
         if (stack.getItem() instanceof BlockItem)
         {

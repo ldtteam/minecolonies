@@ -682,11 +682,6 @@ public class EventHandler
         {
             IColonyManager.getInstance().onWorldUnload((Level) event.getLevel());
         }
-        if (event.getLevel().isClientSide())
-        {
-            IColonyManager.getInstance().resetColonyViews();
-            Log.getLogger().info("Removed all colony views");
-        }
     }
 
     /**

@@ -227,10 +227,9 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
     {
         StructurePhasePlacementResult result;
         final WorkerLoadOnlyStructureHandler<J, B> structure = new WorkerLoadOnlyStructureHandler<>(world,
-          structurePlacer.getB().getWorldPos(),
+          structurePlacer.getB().getCenterPos(),
           structurePlacer.getB().getBluePrint(),
           RotationMirror.NONE,
-          true,
           this);
 
         if (building.getWorkOrder().getIteratorType().isEmpty())

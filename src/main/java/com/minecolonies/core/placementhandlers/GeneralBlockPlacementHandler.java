@@ -2,8 +2,8 @@ package com.minecolonies.core.placementhandlers;
 
 import com.ldtteam.domumornamentum.block.decorative.PillarBlock;
 import com.ldtteam.structurize.api.ItemStackUtils;
-import com.ldtteam.structurize.api.RotationMirror;
 import com.ldtteam.structurize.api.constants.Constants;
+import com.ldtteam.structurize.placement.IPlacementContext;
 import com.ldtteam.structurize.placement.handlers.placement.IPlacementHandler;
 import com.ldtteam.structurize.util.BlockUtils;
 import com.minecolonies.api.compatibility.candb.ChiselAndBitsCheck;
@@ -12,13 +12,16 @@ import com.minecolonies.api.util.WorldUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.util.Tuple;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.FenceBlock;
+import net.minecraft.world.level.block.FenceGateBlock;
 import net.minecraft.world.level.block.IronBarsBlock;
 import net.minecraft.world.level.block.WallBlock;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
@@ -44,9 +47,7 @@ public class GeneralBlockPlacementHandler implements IPlacementHandler
       @NotNull final BlockPos pos,
       @NotNull final BlockState blockState,
       @Nullable final CompoundTag tileEntityData,
-      final boolean complete,
-      final BlockPos centerPos,
-      final RotationMirror settings)
+      @NotNull final IPlacementContext context)
     {
         BlockState placementState = blockState;
         if (blockState.getBlock() instanceof WallBlock || blockState.getBlock() instanceof FenceBlock || blockState.getBlock() instanceof PillarBlock || blockState.getBlock() instanceof IronBarsBlock)
@@ -81,8 +82,8 @@ public class GeneralBlockPlacementHandler implements IPlacementHandler
         {
             try
             {
-                handleTileEntityPlacement(tileEntityData, world, pos, settings);
-                placementState.getBlock().setPlacedBy(world, pos, placementState, null, BlockUtils.getItemStackFromBlockState(placementState));
+                handleTileEntityPlacement(tileEntityData, world, pos, context.getRotationMirror());
+                blockState.getBlock().setPlacedBy(world, pos, blockState, null, BlockUtils.getItemStackFromBlockState(blockState));
             }
             catch (final Exception ex)
             {
@@ -99,7 +100,7 @@ public class GeneralBlockPlacementHandler implements IPlacementHandler
       @NotNull final BlockPos pos,
       @NotNull final BlockState blockState,
       @Nullable final CompoundTag tileEntityData,
-      final boolean complete)
+      @NotNull final IPlacementContext placementContext)
     {
         final List<ItemStack> itemList = new ArrayList<>();
         if (!ChiselAndBitsCheck.isChiselAndBitsBlock(blockState))
@@ -116,15 +117,20 @@ public class GeneralBlockPlacementHandler implements IPlacementHandler
     }
 
     @Override
-    public ActionProcessingResult handle(
-        final Level world,
-        final BlockPos pos,
-        final BlockState blockState,
-        @Nullable final CompoundTag tileEntityData,
-        final boolean complete, final BlockPos centerPos)
+    public boolean doesWorldStateMatchBlueprintState(
+        final BlockState blueprintState,
+        final BlockState worldState,
+        final Tuple<BlockEntity, CompoundTag> tuple,
+        @NotNull final IPlacementContext iPlacementContext)
     {
-        Log.getLogger().warn("Using nonimplemented general placemant handling! Only with context", new Exception());
-        return ActionProcessingResult.PASS;
+        if (worldState.equals(blueprintState))
+        {
+            return true;
+        }
+        return blueprintState.getBlock() == worldState.getBlock()
+            && (blueprintState.getBlock() instanceof WallBlock
+            || blueprintState.getBlock() instanceof FenceBlock
+            || blueprintState.getBlock() instanceof IronBarsBlock
+            || blueprintState.getBlock() instanceof FenceGateBlock);
     }
-
 }

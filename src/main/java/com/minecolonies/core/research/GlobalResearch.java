@@ -6,16 +6,12 @@ import com.minecolonies.api.colony.buildings.ICommonBuilding;
 import com.minecolonies.api.research.*;
 import com.minecolonies.api.research.util.ResearchState;
 import com.minecolonies.api.util.InventoryUtils;
-import com.minecolonies.api.util.Log;
 import com.minecolonies.core.util.BuildingUtils;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.common.crafting.SizedIngredient;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.wrapper.InvWrapper;
@@ -197,29 +193,40 @@ public class GlobalResearch implements IGlobalResearch
 
         for (final SizedIngredient ingredient : costList)
         {
-            int totalCount = 0;
-            for (final ItemStack cost : ingredient.getItems())
+            final int required = ingredient.count();
+            if (required <= 0)
             {
-                Item costItem = cost.getItem();
+                continue;
+            }
 
-                if (buildingInv != null)
-                {
-                    final int count = InventoryUtils.hasBuildingEnoughElseCount(buildingInv, stack -> IGlobalResearch.isUniversityResearchMatch(stack, costItem), cost.getCount());
-                    totalCount += count;
-                }
+            int buildingCount = 0;
+            int playerCount = 0;
 
-                if (totalCount < cost.getCount())
-                {
-                    final int count = InventoryUtils.getItemCountInItemHandler(playerInventory, stack -> IGlobalResearch.isPlayerResearchMatch(stack, costItem));
-                    totalCount += count;
-                }
+            // 1) Count from university/building inventory (allows enchanted/custom named)
+            if (buildingInv != null)
+            {
+                buildingCount += InventoryUtils.hasBuildingEnoughElseCount(
+                    buildingInv,
+                    stack -> IGlobalResearch.isUniversityResearchMatch(stack, ingredient),
+                    required
+                );
+            }
 
-                if (totalCount < cost.getCount())
-                {
-                    return false;
-                }
+            // 2) If still short, count from player inventory (reject enchanted/custom named)
+            if (buildingCount < required)
+            {
+                playerCount = InventoryUtils.getItemCountInItemHandler(
+                    playerInventory,
+                    stack -> IGlobalResearch.isPlayerResearchMatch(stack, ingredient)
+                );
+            }
+
+            if ((buildingCount + playerCount) < required)
+            {
+                return false;
             }
         }
+
         return true;
     }
 

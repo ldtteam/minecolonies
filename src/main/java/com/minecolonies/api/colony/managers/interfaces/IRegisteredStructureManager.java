@@ -1,6 +1,7 @@
 package com.minecolonies.api.colony.managers.interfaces;
 
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.buildingextensions.registry.BuildingExtensionRegistries;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IMysticalSite;
 import com.minecolonies.api.colony.buildings.workerbuildings.ITownHall;
@@ -265,4 +266,11 @@ public interface IRegisteredStructureManager extends ICommonRegisteredStructureM
      * @return the building extension or null.
      */
     @Nullable IBuildingExtension getMatchingBuildingExtension(IBuildingExtension.ExtensionId extensionId);
+
+    /**
+     * Add a building extension if it's missing.
+     * @param buildingExtensionEntry the entry to create the extension from.
+     * @param pos the pos it's at.
+     */
+    void addBuildingExtensionIfMissing(BuildingExtensionRegistries.BuildingExtensionEntry buildingExtensionEntry, BlockPos pos, final Player player);
 }

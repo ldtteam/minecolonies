@@ -58,6 +58,11 @@ public class CraftingModuleView extends AbstractBuildingModuleView
     protected final List<IRecipeStorage> disabledRecipes = new ArrayList<>();
 
     /**
+     * The active recipes.
+     */
+    private int activeRecipes;
+
+    /**
      * The max recipes.
      */
     private int maxRecipes;
@@ -116,7 +121,8 @@ public class CraftingModuleView extends AbstractBuildingModuleView
             }
         }
 
-        this.maxRecipes = buf.readInt();
+        this.activeRecipes = buf.readVarInt();
+        this.maxRecipes = buf.readVarInt();
         this.id = buf.readUtf(32767);
         this.isVisible = buf.readBoolean();
     }
@@ -209,7 +215,11 @@ public class CraftingModuleView extends AbstractBuildingModuleView
      */
     public void removeRecipe(int index)
     {
-        recipes.remove(index);
+        final IRecipeStorage doomed = recipes.remove(index);
+        if (doomed.getRecipeSource() == null && !disabledRecipes.contains(doomed))
+        {
+            --activeRecipes;
+        }
     }
 
     /**
@@ -240,7 +250,7 @@ public class CraftingModuleView extends AbstractBuildingModuleView
 
     public int getActiveRecipes()
     {
-        return Math.max(0, recipes.size() - disabledRecipes.size());
+        return activeRecipes;
     }
 
     public int getMaxRecipes()
@@ -265,10 +275,18 @@ public class CraftingModuleView extends AbstractBuildingModuleView
         if (disabledRecipes.contains(storage))
         {
             disabledRecipes.remove(storage);
+            if (storage.getRecipeSource() == null)
+            {
+                ++activeRecipes;
+            }
         }
         else
         {
             disabledRecipes.add(storage);
+            if (storage.getRecipeSource() == null)
+            {
+                --activeRecipes;
+            }
         }
     }
 

@@ -28,11 +28,10 @@ public class LoadOnlyStructureHandler extends CreativeStructureHandler
      * @param pos            the pos it is placed at.
      * @param blueprintFuture  the future of the structure.
      * @param rotMir       the placement settings.
-     * @param fancyPlacement if fancy or complete.
      */
-    public LoadOnlyStructureHandler(final Level world, final BlockPos pos, final Future<Blueprint> blueprintFuture, final RotationMirror rotMir, final boolean fancyPlacement)
+    public LoadOnlyStructureHandler(final Level world, final BlockPos pos, final Future<Blueprint> blueprintFuture, final RotationMirror rotMir)
     {
-        super(world, pos, blueprintFuture, rotMir, fancyPlacement);
+        super(world, pos, blueprintFuture, rotMir, true);
     }
 
     /**
@@ -42,11 +41,10 @@ public class LoadOnlyStructureHandler extends CreativeStructureHandler
      * @param pos            the pos it is placed at.
      * @param blueprint      the blueprint.
      * @param rotMir       the placement settings.
-     * @param fancyPlacement if fancy or complete.
      */
-    public LoadOnlyStructureHandler(final Level world, final BlockPos pos, final Blueprint blueprint, final RotationMirror rotMir, final boolean fancyPlacement)
+    public LoadOnlyStructureHandler(final Level world, final BlockPos pos, final Blueprint blueprint, final RotationMirror rotMir)
     {
-        super(world, pos, blueprint, rotMir, fancyPlacement);
+        super(world, pos, blueprint, rotMir, true);
     }
 
     @Override

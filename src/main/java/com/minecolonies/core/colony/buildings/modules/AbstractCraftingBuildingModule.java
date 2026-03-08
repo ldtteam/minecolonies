@@ -156,7 +156,15 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
      */
     private int getActiveRecipes()
     {
-        return Math.max(0, recipes.size() - disabledRecipes.size());
+        // count up only active recipes that are *not* automatic
+        final HashSet<IToken<?>> activeRecipes = new HashSet<>(recipes);
+        disabledRecipes.forEach(activeRecipes::remove);
+        activeRecipes.removeIf(token ->
+        {
+            final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
+            return (storage == null || storage.getRecipeSource() != null);
+        });
+        return activeRecipes.size();
     }
 
     /**
@@ -322,7 +330,8 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
 
         recipesDirty = false;
 
-        buf.writeInt(getMaxRecipes());
+        buf.writeVarInt(getActiveRecipes());
+        buf.writeVarInt(getMaxRecipes());
         buf.writeUtf(getId());
         buf.writeBoolean(isVisible());
     }
@@ -551,7 +560,7 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
                 }
                 if(duplicateFound == null)
                 {
-                    addRecipeToList(recipeToken, true);
+                    addRecipeToList(recipeToken, false);
                     building.getColony().getRequestManager().onColonyUpdate(request -> request.getRequest() instanceof IDeliverable iDeliverable && iDeliverable.matches(recipeStorage.getPrimaryOutput()));
                     markDirty();
                 }
