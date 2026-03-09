@@ -17,6 +17,7 @@ public class ClientConfiguration extends AbstractConfiguration
     public final IntValue buildgogglerange;
     public final BooleanValue colonyteamborders;
     public final BooleanValue holidayFeatures;
+    public final BooleanValue showdyetooltips;
 
     /**
      * Builds client configuration.
@@ -34,6 +35,7 @@ public class ClientConfiguration extends AbstractConfiguration
         buildgogglerange = defineInteger("buildgogglerange", 50, 1, 250);
         colonyteamborders = defineBoolean("colonyteamborders", true);
         holidayFeatures = defineBoolean("holidayfeatures", true);
+        showdyetooltips = defineBoolean("showdyetooltips", true);
 
         swapToCategory("pathfinding");
 

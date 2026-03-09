@@ -39,6 +39,9 @@
   "minecolonies.config.colonyteamborders": "Show Colony Borders in Team Colors",
   "minecolonies.config.colonyteamborders.comment": "When true, the colony borders shown when holding the build tool will be in the colony's team color. When false, the colony you're inside will be white and any other colony will be red.",
 
+  "minecolonies.config.showdyetooltips": "Show Dye Color tooltips for Leather Items",
+  "minecolonies.config.showdyetooltips.comment": "When true, dyed leather items will show a tooltip so that you know what color to use.",
+
   "minecolonies.config.diseasemodifier": "Disease Modifier",
   "minecolonies.config.diseasemodifier.comment": "How common diseases are. 1 = Very common, 100 = extremely rare.",
   "minecolonies.config.diseases": "Diseases",
