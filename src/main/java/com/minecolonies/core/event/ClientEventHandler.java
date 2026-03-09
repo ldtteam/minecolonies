@@ -158,8 +158,9 @@ public class ClientEventHandler
             {
                 event.getToolTip().removeIf(line -> line.getContents() instanceof TranslatableContents t && t.getKey().equals("item.dyed"));
                 event.getToolTip().add(1, Component.translatable("%s: %s",
-                    Component.translatable("item.dyed").withStyle(Style.EMPTY.withColor(ChatFormatting.GRAY).withItalic(true)),
-                    Component.translatable("color.minecraft." + c.getName()).withStyle(Style.EMPTY.withColor(c.getTextColor()))));
+                    Component.translatable("item.dyed"),
+                    Component.translatable("color.minecraft." + c.getName()).withStyle(Style.EMPTY.withColor(c.getTextColor()).withItalic(false)))
+                    .withStyle(Style.EMPTY.withColor(ChatFormatting.GRAY).withItalic(true)));
             });
         }
 
