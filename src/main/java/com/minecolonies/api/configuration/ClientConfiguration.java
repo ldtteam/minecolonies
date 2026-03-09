@@ -13,6 +13,7 @@ public class ClientConfiguration extends AbstractConfiguration
     public final ForgeConfigSpec.IntValue buildgogglerange;
     public final ForgeConfigSpec.BooleanValue colonyteamborders;
     public final ForgeConfigSpec.BooleanValue holidayFeatures;
+    public final ForgeConfigSpec.BooleanValue showdyetooltips;
 
     /**
      * Builds client configuration.
@@ -28,6 +29,7 @@ public class ClientConfiguration extends AbstractConfiguration
         buildgogglerange = defineInteger(builder, "buildgogglerange", 50, 1, 250);
         colonyteamborders = defineBoolean(builder, "colonyteamborders", true);
         holidayFeatures = defineBoolean(builder, "holidayfeatures", true);
+        showdyetooltips = defineBoolean(builder, "showdyetooltips", true);
 
         swapToCategory(builder, "pathfinding");
 
