@@ -30,9 +30,9 @@ public class LoadOnlyStructureHandler extends CreativeStructureHandler
      * @param settings       the placement settings.
      * @param fancyPlacement if fancy or complete.
      */
-    public LoadOnlyStructureHandler(final Level world, final BlockPos pos, final Future<Blueprint> blueprintFuture, final PlacementSettings settings, final boolean fancyPlacement)
+    public LoadOnlyStructureHandler(final Level world, final BlockPos pos, final Future<Blueprint> blueprintFuture, final PlacementSettings settings)
     {
-        super(world, pos, blueprintFuture, settings, fancyPlacement);
+        super(world, pos, blueprintFuture, settings, true);
     }
 
     /**
@@ -44,9 +44,9 @@ public class LoadOnlyStructureHandler extends CreativeStructureHandler
      * @param settings       the placement settings.
      * @param fancyPlacement if fancy or complete.
      */
-    public LoadOnlyStructureHandler(final Level world, final BlockPos pos, final Blueprint blueprint, final PlacementSettings settings, final boolean fancyPlacement)
+    public LoadOnlyStructureHandler(final Level world, final BlockPos pos, final Blueprint blueprint, final PlacementSettings settings)
     {
-        super(world, pos, blueprint, settings, fancyPlacement);
+        super(world, pos, blueprint, settings, true);
     }
 
     @Override

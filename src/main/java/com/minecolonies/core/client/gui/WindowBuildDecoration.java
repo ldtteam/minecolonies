@@ -230,8 +230,7 @@ public class WindowBuildDecoration extends AbstractWindowSkeleton
               world,
               structurePos,
               blueprintFuture.get(),
-              new PlacementSettings(),
-              true);
+              new PlacementSettings());
             structure.getBluePrint().setRotationMirror(RotationMirror.of(rotation, mirror ? Mirror.FRONT_BACK : Mirror.NONE), Minecraft.getInstance().level);
 
             StructurePlacer placer = new StructurePlacer(structure);

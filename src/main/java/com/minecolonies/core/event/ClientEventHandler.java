@@ -158,6 +158,12 @@ public class ClientEventHandler
         {
             colony = IMinecoloniesAPI.getInstance().getColonyManager().getIColonyByOwner(event.getEntity().level, event.getEntity());
         }
+
+        if (colony == null)
+        {
+            return;
+        }
+
         handleCrafterRecipeTooltips(colony, event.getToolTip(), stack.getItem());
         if (stack.getItem() instanceof BlockItem)
         {

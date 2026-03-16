@@ -1,11 +1,15 @@
 package com.minecolonies.core.placementhandlers;
 
+import com.ldtteam.structurize.api.util.constant.Constants;
+import com.ldtteam.structurize.placement.IPlacementContext;
 import com.ldtteam.structurize.placement.handlers.placement.IPlacementHandler;
 import com.ldtteam.structurize.util.BlockUtils;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.WorldUtil;
+import net.minecraft.util.Tuple;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
@@ -36,7 +40,7 @@ public class BarracksTowerHandler implements IPlacementHandler
       @NotNull final BlockPos pos,
       @NotNull final BlockState blockState,
       @Nullable final CompoundTag tileEntityData,
-      final boolean complete)
+      @NotNull final IPlacementContext placementContext)
     {
         return Collections.emptyList();
     }
@@ -47,16 +51,9 @@ public class BarracksTowerHandler implements IPlacementHandler
       @NotNull final BlockPos pos,
       @NotNull final BlockState blockState,
       @Nullable final CompoundTag tileEntityData,
-      boolean complete,
-      final BlockPos centerPos,
-      final PlacementSettings settings)
+      @NotNull final IPlacementContext placementContext)
     {
-        if (world.getBlockState(pos).equals(blockState))
-        {
-            return ActionProcessingResult.PASS;
-        }
-
-        if (!WorldUtil.setBlockState(world, pos, blockState, com.ldtteam.structurize.api.util.constant.Constants.UPDATE_FLAG))
+        if (!WorldUtil.setBlockState(world, pos, blockState, Constants.UPDATE_FLAG))
         {
             return ActionProcessingResult.PASS;
         }
@@ -65,7 +62,7 @@ public class BarracksTowerHandler implements IPlacementHandler
         {
             try
             {
-                handleTileEntityPlacement(tileEntityData, world, pos, settings);
+                handleTileEntityPlacement(tileEntityData, world, pos, placementContext.getRotationMirror());
                 blockState.getBlock().setPlacedBy(world, pos, blockState, null, BlockUtils.getItemStackFromBlockState(blockState));
             }
             catch (final Exception ex)
@@ -75,5 +72,15 @@ public class BarracksTowerHandler implements IPlacementHandler
         }
 
         return ActionProcessingResult.SUCCESS;
+    }
+
+    @Override
+    public boolean doesWorldStateMatchBlueprintState(
+        final BlockState blueprintState,
+        final BlockState worldState,
+        final Tuple<BlockEntity, CompoundTag> tuple,
+        @NotNull final IPlacementContext iPlacementContext)
+    {
+        return blueprintState.equals(worldState);
     }
 }

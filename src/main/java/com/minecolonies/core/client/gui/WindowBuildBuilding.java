@@ -68,7 +68,7 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
 
         return worldState.getBlock() instanceof IBuilderUndestroyable
                  || worldState.getBlock() == Blocks.BEDROCK
-                 || (info.getBlockInfo().getState().getBlock() instanceof AbstractBlockHut && handler.getWorldPos().equals(worldPos));
+                 || (info.getBlockInfo().getState().getBlock() instanceof AbstractBlockHut && handler.getCenterPos().equals(worldPos));
     };
 
     /**
@@ -312,7 +312,7 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
 
             blueprint.setRotationMirror(RotationMirror.of(BlockPosUtil.getRotationFromRotations(building.getRotation()), building.isMirrored() ? Mirror.FRONT_BACK : Mirror.NONE),
                 world);
-            StructurePlacer placer = new StructurePlacer(new LoadOnlyStructureHandler(Minecraft.getInstance().level, building.getPosition(), blueprint, new PlacementSettings(), true));
+            StructurePlacer placer = new StructurePlacer(new LoadOnlyStructureHandler(Minecraft.getInstance().level, building.getPosition(), blueprint, new PlacementSettings()));
             StructurePhasePlacementResult result;
             BlockPos progressPos = NULL_POS;
 
