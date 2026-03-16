@@ -307,6 +307,7 @@ public class QuestManager implements IQuestManager
         if (isDirty || hasNewSubscribers)
         {
             buf.writeNbt(serializeNBT());
+            isDirty = false;
         }
     }
 

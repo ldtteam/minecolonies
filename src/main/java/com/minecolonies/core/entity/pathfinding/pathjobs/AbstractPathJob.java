@@ -1161,13 +1161,8 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
 
             final BlockPos pos = new BlockPos(node.x, node.y, node.z);
 
-            if (node.isSwimming())
-            {
-                //  Not truly necessary but helps prevent them spinning in place at swimming nodes
-                pos.offset(BLOCKPOS_DOWN);
-            }
-
-            final PathPointExtended p = new PathPointExtended(pos);
+            //  Not truly necessary but helps prevent them spinning in place at swimming nodes
+            final PathPointExtended p = new PathPointExtended(node.isSwimming() ? pos.offset(BLOCKPOS_DOWN) : pos);
             if (railsLength >= MineColonies.getConfig().getServer().minimumRailsToPath.get())
             {
                 p.setOnRails(node.isOnRails());

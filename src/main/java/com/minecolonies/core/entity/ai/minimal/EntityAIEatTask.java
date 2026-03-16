@@ -357,13 +357,13 @@ public class EntityAIEatTask implements IStateAI
         }
 
         restaurant = colony.getServerBuildingManager().getBuilding(restaurantPos);
-        if (!restaurant.isInBuilding(citizen.blockPosition()))
+        if (restaurant == null || !restaurant.isInBuilding(citizen.blockPosition()))
         {
             return GO_TO_RESTAURANT;
         }
 
         eatPos = findPlaceToEat();
-        if (restaurant != null)
+        if (eatPos != null)
         {
             return GO_TO_EAT_POS;
         }
