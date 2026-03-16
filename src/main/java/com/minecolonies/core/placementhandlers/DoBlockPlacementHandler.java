@@ -193,19 +193,19 @@ public class DoBlockPlacementHandler implements IPlacementHandler
         final BlockItemStateProperties properties = item.getOrDefault(DataComponents.BLOCK_STATE, BlockItemStateProperties.EMPTY);
         if (blockState.getBlock() instanceof TrapdoorBlock)
         {
-            properties.with(TrapdoorBlock.TYPE, complete ? blockState.getValue(TrapdoorBlock.TYPE) : TrapdoorType.FULL);
+            item.update(DataComponents.BLOCK_STATE, BlockItemStateProperties.EMPTY, props -> props.with(TrapdoorBlock.TYPE, complete ? blockState.getValue(TrapdoorBlock.TYPE) : TrapdoorType.FULL));
         }
         else if (blockState.getBlock() instanceof FancyTrapdoorBlock)
         {
-            properties.with(FancyTrapdoorBlock.TYPE, complete ? blockState.getValue(FancyTrapdoorBlock.TYPE) : FancyTrapdoorType.FULL);
+            item.update(DataComponents.BLOCK_STATE, BlockItemStateProperties.EMPTY, props -> props.with(FancyTrapdoorBlock.TYPE, complete ? blockState.getValue(FancyTrapdoorBlock.TYPE) : FancyTrapdoorType.FULL));
         }
         else if (blockState.getBlock() instanceof PanelBlock)
         {
-            properties.with(PanelBlock.TYPE, complete ? blockState.getValue(PanelBlock.TYPE) : TrapdoorType.FULL);
+            item.update(DataComponents.BLOCK_STATE, BlockItemStateProperties.EMPTY, props -> props.with(PanelBlock.TYPE, complete ? blockState.getValue(PanelBlock.TYPE) : TrapdoorType.FULL));
         }
         else if (blockState.getBlock() instanceof AbstractPostBlock<?>)
         {
-            properties.with(PostBlock.TYPE, complete ? blockState.getValue(PostBlock.TYPE) : PostType.PLAIN);
+            item.update(DataComponents.BLOCK_STATE, BlockItemStateProperties.EMPTY, props -> props.with(PostBlock.TYPE, complete ? blockState.getValue(PostBlock.TYPE) : PostType.PLAIN));
         }
         else if (blockState.getBlock() instanceof TimberFrameBlock || blockState.getBlock() instanceof DynamicTimberFrameBlock)
         {
