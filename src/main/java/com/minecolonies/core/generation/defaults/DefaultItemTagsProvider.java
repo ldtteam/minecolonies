@@ -567,6 +567,7 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
           .add(ModItems.cookieDough)
           .add(ModItems.rawPumpkinPie)
           .add(ModItems.cakeBatter)
+          .add(Items.BOOKSHELF)
           .addTags(Tags.Items.STONE, Tags.Items.COBBLESTONE)
           .addTags(Tags.Items.GRAVEL, Tags.Items.SAND)
           .addTags(Tags.Items.INGOTS, storageBlocks);

@@ -91,7 +91,7 @@ public class WindowHireWorker extends AbstractWindowSkeleton
     {
         super(new ResourceLocation(Constants.MOD_ID, "gui/windowhireworker.xml"));
         this.colony = c;
-        building = (AbstractBuildingView) colony.getBuilding(buildingId);
+        building = (AbstractBuildingView) colony.getClientBuildingManager().getBuilding(buildingId);
 
         citizenList = findPaneOfTypeByID(CITIZEN_LIST_UNEMP, ScrollingList.class);
 
@@ -142,7 +142,7 @@ public class WindowHireWorker extends AbstractWindowSkeleton
      */
     private void cancelClicked(@NotNull final Button button)
     {
-        if (button.getID().equals(BUTTON_CANCEL) && colony.getTownHall() != null)
+        if (button.getID().equals(BUTTON_CANCEL) && colony.getClientBuildingManager().getTownHall() != null)
         {
             building.openGui(false);
         }
@@ -246,7 +246,7 @@ public class WindowHireWorker extends AbstractWindowSkeleton
         // Fire citizen if they already have a job
         if (citizen.getWorkBuilding() != null && selectedModule instanceof WorkerBuildingModuleView)
         {
-            IBuildingView oldJob = colony.getBuilding(citizen.getWorkBuilding());
+            IBuildingView oldJob = colony.getClientBuildingManager().getBuilding(citizen.getWorkBuilding());
             oldJob.getModuleViewMatching(IAssignmentModuleView.class,
                     m -> m.getJobEntry() == citizen.getJobView().getEntry())
                 .removeCitizen(citizen);

@@ -41,19 +41,27 @@ public class EntityAIStudy extends AbstractEntityAISkill<JobStudent, BuildingLib
     /**
      * Render the book.
      */
-    public static final  String   RENDER_META_STUDYING = "study";
+    public static final String RENDER_META_STUDYING = "study";
+
     /**
      * One in X chance to gain experience
      */
-    public static final  int      ONE_IN_X_CHANCE      = 8;
+    public static final int ONE_IN_X_CHANCE = 8;
+
     /**
      * Delay for each subject study.
      */
-    private static final int      STUDY_DELAY          = 20 * 60;
+    private static final int STUDY_DELAY = 20 * 60;
+
     /**
      * The current pos to study at.
      */
-    private              BlockPos studyPos             = null;
+    private BlockPos studyPos = null;
+
+    /**
+     * How long they tried walking to a given study pos.
+     */
+    public int walkDelay = 0;
 
     /**
      * Constructor for the student. Defines the tasks the student executes.
@@ -66,7 +74,7 @@ public class EntityAIStudy extends AbstractEntityAISkill<JobStudent, BuildingLib
         super.registerTargets(
           new AITarget(IDLE, START_WORKING, 1),
           new AITarget(START_WORKING, this::startWorkingAtOwnBuilding, TICKS_SECOND),
-          new AITarget(STUDY, this::study, STANDARD_DELAY)
+          new AITarget(STUDY, this::study, TICKS_SECOND)
         );
         worker.setCanPickUpLoot(true);
     }
@@ -106,11 +114,12 @@ public class EntityAIStudy extends AbstractEntityAISkill<JobStudent, BuildingLib
             studyPos = building.getRandomBookShelf();
         }
 
-        if (!walkToWorkPos(studyPos))
+        if (!walkToSafePos(studyPos) && walkDelay < STUDY_DELAY)
         {
-            setDelay(WALK_DELAY);
+            walkDelay += TICKS_SECOND;
             return getState();
         }
+        walkDelay = 0;
 
         final Collection<StudyItem> studyItems = StudyItemListener.getAllStudyItems().values();
 

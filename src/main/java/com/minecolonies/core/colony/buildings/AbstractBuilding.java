@@ -49,7 +49,6 @@ import com.minecolonies.core.colony.jobs.AbstractJobCrafter;
 import com.minecolonies.core.colony.requestsystem.management.IStandardRequestManager;
 import com.minecolonies.core.colony.requestsystem.requesters.BuildingBasedRequester;
 import com.minecolonies.core.colony.requestsystem.requests.StandardRequests;
-import com.minecolonies.core.colony.requestsystem.resolvers.BuildingRequestResolver;
 import com.minecolonies.core.colony.workorders.WorkOrderBuilding;
 import com.minecolonies.core.entity.ai.workers.service.EntityAIWorkDeliveryman;
 import com.minecolonies.core.entity.ai.workers.util.ConstructionTapeHelper;
@@ -399,12 +398,12 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     public void destroy()
     {
         onDestroyed();
-        colony.getBuildingManager().removeBuilding(this, colony.getPackageManager().getCloseSubscribers());
+        colony.getServerBuildingManager().removeBuilding(this, colony.getPackageManager().getCloseSubscribers());
         colony.getRequestManager().getDataStoreManager().remove(this.rsDataStoreToken);
 
         for (final BlockPos childpos : getChildren())
         {
-            final IBuilding building = colony.getBuildingManager().getBuilding(childpos);
+            final IBuilding building = colony.getServerBuildingManager().getBuilding(childpos);
             if (building != null)
             {
                 building.destroy();
@@ -469,21 +468,22 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
             return;
         }
 
+        final int min = colony.getWorld().getMinBuildHeight();
         final int max = colony.getWorld().getMaxBuildHeight();
         if (getCorners().getA().getY() >= max || getCorners().getB().getY() >= max)
         {
-            MessageUtils.format(BUILDER_BUILDING_TOO_HIGH).sendTo(colony).forAllPlayers();
+            MessageUtils.format(BUILDER_BUILDING_TOO_HIGH, max).sendTo(colony).forAllPlayers();
             return;
         }
-        else if (getPosition().getY() <= colony.getWorld().getMinBuildHeight())
+        else if (getPosition().getY() <= min)
         {
-            MessageUtils.format(BUILDER_BUILDING_TOO_LOW).sendTo(colony).forAllPlayers();
+            MessageUtils.format(BUILDER_BUILDING_TOO_LOW, min).sendTo(colony).forAllPlayers();
             return;
         }
 
         if (!builder.equals(BlockPos.ZERO))
         {
-            final IBuilding building = colony.getBuildingManager().getBuilding(builder);
+            final IBuilding building = colony.getServerBuildingManager().getBuilding(builder);
             if (building instanceof AbstractBuildingStructureBuilder &&
                   (building.getBuildingLevel() >= workOrder.getTargetLevel() || canBeBuiltByBuilder(workOrder.getTargetLevel())))
             {
@@ -539,7 +539,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
         dirty = true;
         if (colony != null)
         {
-            colony.getBuildingManager().markBuildingsDirty();
+            colony.getServerBuildingManager().markBuildingsDirty();
         }
     }
 
@@ -614,7 +614,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
                 markDirty();
 
                 final BlockPos buildingPos = o.getClaimedBy();
-                final IBuilding building = colony.getBuildingManager().getBuilding(buildingPos);
+                final IBuilding building = colony.getServerBuildingManager().getBuilding(buildingPos);
                 if (building != null)
                 {
                     for (final AbstractAssignedCitizenModule module : building.getModulesByType(AbstractAssignedCitizenModule.class))
@@ -749,7 +749,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
           .map(m -> (WorkOrderBuilding) m)
           .filter(f -> f.getLocation().equals(this.getID()) || this.getChildren().contains(f.getLocation()))
           .forEach(f -> {
-              IBuilding building = this.colony.getBuildingManager().getBuilding(f.getLocation());
+              IBuilding building = this.colony.getServerBuildingManager().getBuilding(f.getLocation());
               if (building != null)
               {
                   f.setCustomName(building);
@@ -793,7 +793,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
             return;
         }
 
-        final IBuilding parentBuilding = colony.getBuildingManager().getBuilding(getParent());
+        final IBuilding parentBuilding = colony.getServerBuildingManager().getBuilding(getParent());
 
         if (getBuildingLevel() == 0 && (parentBuilding == null || parentBuilding.getBuildingLevel() > 0))
         {
@@ -962,7 +962,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
 
         getModulesByType(IBuildingEventsModule.class).forEach(module -> module.onUpgradeComplete(newLevel));
         colony.getResearchManager().checkAutoStartResearch();
-        colony.getBuildingManager().onBuildingUpgradeComplete(this, newLevel);
+        colony.getServerBuildingManager().onBuildingUpgradeComplete(this, newLevel);
         cachedStandingPosition = null;
     }
 
@@ -1008,7 +1008,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     {
         if (recheckGuardBuildingNear)
         {
-            guardBuildingNear = colony.getBuildingManager().hasGuardBuildingNear(this);
+            guardBuildingNear = colony.getServerBuildingManager().hasGuardBuildingNear(this);
             recheckGuardBuildingNear = false;
         }
         return guardBuildingNear;

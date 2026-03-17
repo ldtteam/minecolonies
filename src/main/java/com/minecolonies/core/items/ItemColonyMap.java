@@ -114,9 +114,9 @@ public class ItemColonyMap extends AbstractItemMinecolonies
         if (compound.contains(TAG_COLONY))
         {
             final IColonyView colonyView = IColonyManager.getInstance().getColonyView(compound.getInt(TAG_COLONY), world.dimension());
-            if (colonyView != null && colonyView.getTownHall() != null)
+            if (colonyView != null && colonyView.getClientBuildingManager().getTownHall() != null)
             {
-                new WindowColonyMap(false, colonyView.getTownHall()).open();
+                new WindowColonyMap(false, colonyView.getClientBuildingManager().getTownHall()).open();
             }
         }
         else

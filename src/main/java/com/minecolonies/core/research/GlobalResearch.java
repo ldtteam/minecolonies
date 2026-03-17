@@ -1,15 +1,23 @@
 package com.minecolonies.core.research;
 
 import com.google.common.collect.ImmutableList;
+import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.buildings.ICommonBuilding;
 import com.minecolonies.api.research.*;
-import com.minecolonies.api.research.IResearchCost;
-import com.minecolonies.api.research.IResearchEffect;
 import com.minecolonies.api.research.util.ResearchState;
 import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.api.util.Log;
+import com.minecolonies.core.util.BuildingUtils;
+
+import net.minecraft.client.Minecraft;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.wrapper.InvWrapper;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -147,8 +155,9 @@ public class GlobalResearch implements IGlobalResearch
     }
 
     @Override
-    public boolean canResearch(final int uni_level, @NotNull final ILocalResearchTree localTree)
+    public boolean canResearch(@NotNull IBuilding building, @NotNull final ILocalResearchTree localTree)
     {
+        final int uni_level = building.getBuildingLevel() == building.getMaxBuildingLevel() ? Integer.MAX_VALUE : building.getBuildingLevel();
         final IGlobalResearch parentResearch = parent == null ? null : IGlobalResearchTree.getInstance().getResearch(branch, parent);
         final ILocalResearch localParentResearch = parent == null ? null : localTree.getResearch(branch, parent);
         final ILocalResearch localResearch = localTree.getResearch(this.getBranch(), this.getId());
@@ -164,21 +173,43 @@ public class GlobalResearch implements IGlobalResearch
         return uni_level >= depth;
     }
 
+    /**
+     * Checks if there are enough resources between the player inventory 
+     * and the university's inventory to start this research.
+     *
+     * @param player the player to check.
+     * @param universityPos the position of the university to check.
+     * @return true if the player has enough resources.
+     */
     @Override
-    public boolean hasEnoughResources(final IItemHandler inventory)
+    public boolean hasEnoughResources(final @NotNull Player player, final @NotNull BlockPos universityPos)
     {
         if (costList.isEmpty())
         {
             return true;
         }
 
+        final IItemHandler playerInventory = new InvWrapper(player.getInventory());
+
+        ICommonBuilding buildingInv = BuildingUtils.commonBuildingFromPosition(player.level(), universityPos);
+
         for (final IResearchCost ingredient : costList)
         {
             int totalCount = 0;
             for (final Item cost : ingredient.getItems())
             {
-                final int count = InventoryUtils.getItemCountInItemHandler(inventory, stack -> stack.getItem().equals(cost));
-                totalCount += count;
+
+                if (buildingInv != null)
+                {
+                    final int count = InventoryUtils.hasBuildingEnoughElseCount(buildingInv, stack -> IGlobalResearch.isUniversityResearchMatch(stack, cost), ingredient.getCount());
+                    totalCount += count;
+                }
+
+                if (totalCount < ingredient.getCount())
+                {
+                    final int count = InventoryUtils.getItemCountInItemHandler(playerInventory, stack -> IGlobalResearch.isPlayerResearchMatch(stack, cost));
+                    totalCount += count;
+                }
             }
             if (totalCount < ingredient.getCount())
             {

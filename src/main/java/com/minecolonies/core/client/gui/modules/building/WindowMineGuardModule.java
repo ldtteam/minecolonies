@@ -54,7 +54,7 @@ public class WindowMineGuardModule  extends AbstractModuleWindow<MinerGuardAssig
         final ICitizenDataView guard = guardsInfo.get(guardRow);
         if (guard != null)
         {
-            final AbstractBuildingGuards.View guardbuilding = (AbstractBuildingGuards.View) buildingView.getColony().getBuilding(guard.getWorkBuilding());
+            final AbstractBuildingGuards.View guardbuilding = (AbstractBuildingGuards.View) buildingView.getColony().getClientBuildingManager().getBuilding(guard.getWorkBuilding());
             if (guardbuilding.getMinePos() == null)
             {
                 if (assignedGuards < getMaxGuards())
@@ -81,11 +81,11 @@ public class WindowMineGuardModule  extends AbstractModuleWindow<MinerGuardAssig
      */
     private void pullGuardsFromHut()
     {
-        if (buildingView.getColony().getBuilding(buildingView.getID()) != null)
+        if (buildingView.getColony().getClientBuildingManager().getBuilding(buildingView.getID()) != null)
         {
             guardsInfo.clear();
             assignedGuards = 0;
-            final List<IBuildingView> buildings = buildingView.getColony().getBuildings().stream().filter(entry -> entry instanceof AbstractBuildingGuards.View && entry.getModuleViewByType(
+            final List<IBuildingView> buildings = buildingView.getColony().getClientBuildingManager().getBuildings().values().stream().filter(entry -> entry instanceof AbstractBuildingGuards.View && entry.getModuleViewByType(
               SettingsModuleView.class).getSetting(AbstractBuildingGuards.GUARD_TASK).getValue().equals(
               GuardTaskSetting.PATROL_MINE)).collect(Collectors.toList());
             for (final IBuildingView building : buildings)
@@ -153,7 +153,7 @@ public class WindowMineGuardModule  extends AbstractModuleWindow<MinerGuardAssig
                 final ICitizenDataView citizen = guardsInfo.get(i);
                 if (citizen != null)
                 {
-                    final IBuildingView building = buildingView.getColony().getBuilding(citizen.getWorkBuilding());
+                    final IBuildingView building = buildingView.getColony().getClientBuildingManager().getBuilding(citizen.getWorkBuilding());
                     if (building instanceof AbstractBuildingGuards.View)
                     {
                         pane.findPaneOfTypeByID("guardName", Text.class).setText(Component.literal(citizen.getName()));

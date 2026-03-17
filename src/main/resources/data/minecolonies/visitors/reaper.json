@@ -1,0 +1,12 @@
+{
+  "texture": "6e7863b5-2b9d-4516-ade3-a92779f077bf",
+  "citizensuffix": "_w",
+  "name": "Reaper Iru",
+  "chance": 0.001,
+  "storylangkey": "com.minecolonies.coremod.gui.chat.reaper",
+  "recruitcost": "minecraft:sculk_shrieker",
+  "recruitcostcount": 1,
+  "gender": "male",
+  "primaryskill": "Strength",
+  "secondaryskill": "Mana"
+}

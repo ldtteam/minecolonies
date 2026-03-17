@@ -5,28 +5,35 @@ import com.ldtteam.blockui.controls.Button;
 import com.ldtteam.blockui.controls.ButtonImage;
 import com.ldtteam.blockui.controls.ItemIcon;
 import com.ldtteam.blockui.controls.Text;
+import com.ldtteam.structurize.client.gui.WindowSelectRes;
 import com.minecolonies.api.colony.ICitizen;
+import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
-import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.buildingextensions.IBuildingExtension;
 import com.minecolonies.api.colony.buildingextensions.registry.BuildingExtensionRegistries;
-import com.minecolonies.core.items.ItemCrop;
+import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.core.Network;
 import com.minecolonies.core.client.gui.AbstractWindowSkeleton;
-import com.minecolonies.core.client.gui.WindowSelectRes;
 import com.minecolonies.core.colony.buildingextensions.FarmField;
+import com.minecolonies.core.items.ItemCrop;
 import com.minecolonies.core.network.messages.server.colony.building.fields.FarmFieldPlotResizeMessage;
 import com.minecolonies.core.network.messages.server.colony.building.fields.FarmFieldUpdateSeedMessage;
 import com.minecolonies.core.tileentities.TileEntityScarecrow;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.language.I18n;
 import net.minecraft.core.Direction;
+import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.CropBlock;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -34,10 +41,12 @@ import net.minecraftforge.common.Tags;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Arrays;
 import java.util.Optional;
 
+import static com.minecolonies.api.items.ModTags.cropBiomeTags;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.api.util.constant.translation.GuiTranslationConstants.FIELD_GUI_ASSIGNED_FARMER;
 import static com.minecolonies.api.util.constant.translation.GuiTranslationConstants.FIELD_GUI_NO_ASSIGNED_FARMER;
@@ -112,6 +121,27 @@ public class WindowField extends AbstractWindowSkeleton
             registerButton(DIRECTIONAL_BUTTON_ID_PREFIX + dir.getName(), this::onDirectionalButtonClick);
         }
 
+        final Holder<Biome> biomeHolder = Minecraft.getInstance().level.getBiome(tileEntityScarecrow.getBlockPos());
+        final ResourceLocation biomeID = biomeHolder.unwrapKey().get().location();
+        final String biomeLangKey = "biome." + biomeID.getNamespace() + "." + biomeID.getPath();
+        this.findPaneOfTypeByID("biome", Text.class)
+            .setText(Component.translatable("com.minecolonies.core.biome")
+                .append(I18n.exists(biomeLangKey) ? Component.translatable(biomeLangKey) : Component.literal(biomeID.getPath())));
+
+        MutableComponent biomecategory = Component.literal("");
+        for (final TagKey<Biome> preferredBiome : cropBiomeTags)
+        {
+            if (biomeHolder.is(preferredBiome))
+            {
+                if (!biomecategory.getSiblings().isEmpty())
+                {
+                    biomecategory.append(Component.literal(","));
+                }
+                biomecategory.append(Component.translatable(TranslationConstants.CROP_CLIMATE + "." + preferredBiome.location().getPath()));
+            }
+        }
+        this.findPaneOfTypeByID("climate", Text.class).setText(biomecategory);
+
         updateAll();
     }
 
@@ -120,13 +150,15 @@ public class WindowField extends AbstractWindowSkeleton
      */
     private void selectSeed()
     {
+        final Holder<Biome> biomeHolder = Minecraft.getInstance().level.getBiome(tileEntityScarecrow.getBlockPos());
         new WindowSelectRes(
-          this,
-          stack -> stack.is(Tags.Items.SEEDS)
-                     || (stack.getItem() instanceof BlockItem item && item.getBlock() instanceof CropBlock)
-                     || (stack.getItem() instanceof ItemCrop itemCrop && itemCrop.canBePlantedIn(Minecraft.getInstance().level.getBiome(tileEntityScarecrow.getBlockPos()))),
-          (stack, qty) -> setSeed(stack),
-          false).open();
+            this,
+            Component.translatable("com.minecolonies.coremod.gui.field.selectseed"),
+            farmField.getSeed(),
+            IColonyManager.getInstance().getCompatibilityManager().getListOfMatchingItems(stack -> stack.is(Tags.Items.SEEDS)
+                || (stack.getItem() instanceof BlockItem item && item.getBlock() instanceof CropBlock)
+                || (stack.getItem() instanceof ItemCrop itemCrop && itemCrop.canBePlantedIn(biomeHolder))),
+            (stack, qty) -> setSeed(stack)).open();
     }
 
     /**
@@ -202,9 +234,10 @@ public class WindowField extends AbstractWindowSkeleton
             return;
         }
 
-        final IBuildingExtension field = colonyView.getBuildingExtension(otherField -> otherField.getBuildingExtensionType().equals(BuildingExtensionRegistries.farmField.get()) && otherField.getPosition()
-                                                                                                                                      .equals(tileEntityScarecrow.getBlockPos()));
-        if (field instanceof FarmField farmFieldFound)
+        final @NotNull List<IBuildingExtension> fields = colonyView.getClientBuildingManager()
+            .getBuildingExtensions(otherField -> otherField.getBuildingExtensionType().equals(BuildingExtensionRegistries.farmField.get()) && otherField.getPosition()
+                .equals(tileEntityScarecrow.getBlockPos()));
+        if (!fields.isEmpty() && fields.get(0) instanceof FarmField farmFieldFound)
         {
             farmField = farmFieldFound;
         }
@@ -236,7 +269,7 @@ public class WindowField extends AbstractWindowSkeleton
             return;
         }
 
-        final IBuildingView building = colonyView.getBuilding(farmField.getBuildingId());
+        final IBuildingView building = colonyView.getClientBuildingManager().getBuilding(farmField.getBuildingId());
         if (building == null)
         {
             return;

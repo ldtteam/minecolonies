@@ -166,7 +166,7 @@ public class AnimalData implements IAnimalData
 
         if (!homePos.equals(BlockPos.ZERO))
         {
-            homeBuilding = colony.getBuildingManager().getBuilding(homePos);
+            homeBuilding = colony.getServerBuildingManager().getBuilding(homePos);
         }
 
         maxHealth = nbtTagCompound.contains(NbtTagConstants.TAG_MAX_HEALTH) ? nbtTagCompound.getFloat(NbtTagConstants.TAG_MAX_HEALTH) : 0.0f;

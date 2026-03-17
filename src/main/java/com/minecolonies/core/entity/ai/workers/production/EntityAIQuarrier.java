@@ -358,8 +358,8 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
     public boolean requestMaterials()
     {
         StructurePhasePlacementResult result;
-        final WorkerLoadOnlyStructureHandler structure =
-          new WorkerLoadOnlyStructureHandler(world, structurePlacer.getB().getWorldPos(), structurePlacer.getB().getBluePrint(), new PlacementSettings(), true, this);
+        final WorkerLoadOnlyStructureHandler<JobQuarrier, BuildingMiner> structure =
+          new WorkerLoadOnlyStructureHandler<>(world, structurePlacer.getB().getCenterPos(), structurePlacer.getB().getBluePrint(), new PlacementSettings(), this);
         building.getWorkOrder().setIteratorType("default");
 
         final LayerBlueprintIterator iterator = new LayerBlueprintIterator(building.getWorkOrder().getIteratorType(), structure);

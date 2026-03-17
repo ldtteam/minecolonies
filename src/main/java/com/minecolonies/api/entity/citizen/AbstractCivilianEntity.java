@@ -9,9 +9,7 @@ import com.minecolonies.core.entity.other.cavalry.CavalryHorseEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.PathfinderMob;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.npc.Npc;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -143,6 +141,12 @@ public abstract class AbstractCivilianEntity extends AbstractFastMinecoloniesEnt
         final String id = data == null ? "none" : "" + data.getId();
         final String colony = data == null ? "none" : "" + data.getColony().getName();
         return "Enity: " + getDisplayName().getString() + " Type: [" + getClass().getSimpleName() + "] at pos: " + blockPosition() + " civilian id: " + id + " colony: " + colony;
+    }
+
+    @Override
+    protected float getStandingEyeHeight(Pose pose, EntityDimensions dim)
+    {
+        return dim.height * 0.95f;
     }
 
     /**

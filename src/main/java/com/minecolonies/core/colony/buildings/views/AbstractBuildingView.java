@@ -342,7 +342,7 @@ public abstract class AbstractBuildingView implements IBuildingView
      * Returns the Container List
      */
     @Override
-    public List<BlockPos> getContainerList()
+    public List<BlockPos> getContainers()
     {
         return new ArrayList<>(containerlist);
     }
@@ -424,6 +424,7 @@ public abstract class AbstractBuildingView implements IBuildingView
             requesterId = StandardFactoryController.getInstance().deserialize(compound);
         }
         containerlist.clear();
+        containerlist.add(getPosition());
         final int racks = buf.readInt();
         for (int i = 0; i < racks; i++)
         {

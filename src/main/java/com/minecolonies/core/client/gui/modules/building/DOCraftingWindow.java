@@ -11,6 +11,8 @@ import com.ldtteam.domumornamentum.block.MateriallyTexturedBlockManager;
 import com.ldtteam.domumornamentum.client.model.data.MaterialTextureData;
 import com.ldtteam.domumornamentum.recipe.ModRecipeTypes;
 import com.ldtteam.domumornamentum.recipe.architectscutter.ArchitectsCutterRecipe;
+import com.ldtteam.structurize.client.gui.WindowSelectRes;
+import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.crafting.ItemStorage;
@@ -20,7 +22,6 @@ import com.minecolonies.api.util.OptionalPredicate;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.Network;
 import com.minecolonies.core.client.gui.AbstractModuleWindow;
-import com.minecolonies.core.client.gui.WindowSelectRes;
 import com.minecolonies.core.colony.buildings.moduleviews.DOCraftingModuleView;
 import com.minecolonies.core.network.messages.server.colony.building.worker.AddRemoveRecipeMessage;
 import com.minecolonies.core.util.DomumOrnamentumUtils;
@@ -94,11 +95,15 @@ public class DOCraftingWindow extends AbstractModuleWindow<DOCraftingModuleView>
 
         rowPane.findPaneOfTypeByID(RESOURCE_ADD, Button.class).setHandler(btn ->
         {
-            new WindowSelectRes(this, (stack) -> MateriallyTexturedBlockManager.getInstance().doesItemStackContainsMaterialForSlot(index, stack), (stack, qty) -> {
-                inputInventory.setItem(index, stack);
-                icon.setItem(stack);
-                updateStockList();
-            }, false).open();
+            new WindowSelectRes(this, Component.empty(), icon.getItem(),
+                IColonyManager.getInstance()
+                    .getCompatibilityManager()
+                    .getListOfMatchingItems(stack -> MateriallyTexturedBlockManager.getInstance().doesItemStackContainsMaterialForSlot(index, stack)),
+                (stack, qty) -> {
+                    inputInventory.setItem(index, stack);
+                    icon.setItem(stack);
+                    updateStockList();
+                }).open();
         });
     }
 

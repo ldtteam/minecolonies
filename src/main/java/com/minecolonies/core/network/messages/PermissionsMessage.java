@@ -403,7 +403,7 @@ public class PermissionsMessage
             if (colony != null && colony.getPermissions().hasPermission(ctxIn.getSender(), Action.EDIT_PERMISSIONS) && colony.getWorld() != null)
             {
                 colony.getPermissions().addPlayer(id, playerName, colony.getPermissions().getRank(colony.getPermissions().NEUTRAL_RANK_ID));
-                Optional.ofNullable(colony.getBuildingManager().getTownHall()).ifPresent(th -> th.removePermissionEvents(id));
+                Optional.ofNullable(colony.getServerBuildingManager().getTownHall()).ifPresent(th -> th.removePermissionEvents(id));
                 SoundUtils.playSuccessSound(ctxIn.getSender(), ctxIn.getSender().blockPosition());
             }
             else

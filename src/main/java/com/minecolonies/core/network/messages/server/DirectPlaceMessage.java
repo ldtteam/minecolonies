@@ -141,7 +141,7 @@ public class DirectPlaceMessage implements IMessage
 
                     if (compound != null && compound.contains(TAG_OTHER_LEVEL))
                     {
-                        final IBuilding building = colony.getBuildingManager().getBuilding(pos);
+                        final IBuilding building = colony.getServerBuildingManager().getBuilding(pos);
                         if (building != null)
                         {
                             building.setBuildingLevel(compound.getInt(TAG_OTHER_LEVEL));

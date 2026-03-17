@@ -1,9 +1,7 @@
 package com.minecolonies.api.colony;
 
-import com.minecolonies.api.colony.buildings.views.IBuildingView;
-import com.minecolonies.api.colony.buildings.workerbuildings.ITownHallView;
 import com.minecolonies.api.colony.managers.interfaces.IAnimalDataView;
-import com.minecolonies.api.colony.buildingextensions.IBuildingExtension;
+import com.minecolonies.api.colony.managers.interfaces.views.IRegisteredStructureManagerView;
 import com.minecolonies.api.colony.permissions.ColonyPlayer;
 import com.minecolonies.api.colony.permissions.IPermissions;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
@@ -21,7 +19,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
-import java.util.function.Predicate;
 
 public interface IColonyView extends IColony
 {
@@ -73,53 +70,6 @@ public interface IColonyView extends IColony
      * @return dimension ID of the view.
      */
     ResourceKey<Level> getDimension();
-
-    /**
-     * Getter for the manual hiring or not.
-     *
-     * @return the boolean true or false.
-     */
-    boolean isManualHiring();
-
-    /**
-     * Getter for the manual housing or not.
-     *
-     * @return the boolean true or false.
-     */
-    boolean isManualHousing();
-
-    /**
-     * Getter for letting citizens move in or not.
-     *
-     * @return the boolean true or false.
-     */
-    boolean canMoveIn();
-
-    /**
-     * Get the town hall View for this ColonyView.
-     *
-     * @return {@link ITownHallView} of the colony.
-     */
-    @Nullable
-    ITownHallView getTownHall();
-
-    /**
-     * Get a AbstractBuilding.View for a given building (by coordinate-id) using raw x,y,z.
-     *
-     * @param x x-coordinate.
-     * @param y y-coordinate.
-     * @param z z-coordinate.
-     * @return {@link IBuildingView} of a AbstractBuilding for the given Coordinates/ID, or null.
-     */
-    IBuildingView getBuilding(int x, int y, int z);
-
-    /**
-     * Get a AbstractBuilding.View for a given building (by coordinate-id) using ChunkCoordinates.
-     *
-     * @param buildingId Coordinates/ID of the AbstractBuilding.
-     * @return {@link IBuildingView} of a AbstractBuilding for the given Coordinates/ID, or null.
-     */
-    IBuildingView getBuilding(BlockPos buildingId);
 
     /**
      * Returns a map of players in the colony. Key is the UUID, value is {@link Player}
@@ -236,15 +186,6 @@ public interface IColonyView extends IColony
     IMessage handleColonyViewRemoveCitizenMessage(int citizen);
 
     /**
-     * Remove a building from the ColonyView.
-     *
-     * @param buildingId location of the building.
-     * @return null == no response.
-     */
-    @Nullable
-    IMessage handleColonyViewRemoveBuildingMessage(BlockPos buildingId);
-
-    /**
      * Remove a workOrder from the ColonyView.
      *
      * @param workOrderId id of the workOrder.
@@ -254,43 +195,10 @@ public interface IColonyView extends IColony
     IMessage handleColonyViewRemoveWorkOrderMessage(int workOrderId);
 
     /**
-     * Update a ColonyView's buildings given a network data ColonyView update packet. This uses a full-replacement - buildings do not get updated and are instead overwritten.
-     *
-     * @param buildingId location of the building.
-     * @param buf        buffer containing ColonyBuilding information.
-     * @return null == no response.
-     */
-    @Nullable
-    IMessage handleColonyBuildingViewMessage(BlockPos buildingId, @NotNull FriendlyByteBuf buf);
-
-    /**
      * Handle the colony view research manager updating.
      * @param compoundTag the tag to update the research manager with.
      */
     void handleColonyViewResearchManagerUpdate(CompoundTag compoundTag);
-
-    /**
-     * Update all building extension instances in the colony view.
-     *
-     * @param extensions the list of building extensions.
-     */
-    void handleColonyBuildingExtensionViewUpdateMessage(Set<IBuildingExtension> extensions);
-
-    /**
-     * Get all building extensions.
-     *
-     * @param matcher the building extension matcher predicate.
-     * @return a collection of building extensions.
-     */
-    @NotNull List<IBuildingExtension> getBuildingExtensions(Predicate<IBuildingExtension> matcher);
-
-    /**
-     * Get a specific building extension.
-     *
-     * @param matcher the building extension matcher predicate.
-     * @return a building extension instance, or null.
-     */
-    @Nullable IBuildingExtension getBuildingExtension(Predicate<IBuildingExtension> matcher);
 
     /**
      * Update a players permissions.
@@ -336,9 +244,6 @@ public interface IColonyView extends IColony
     @Override
     long getDistanceSquared(@NotNull BlockPos pos);
 
-    @Override
-    boolean hasTownHall();
-
     /**
      * Returns the ID of the view.
      *
@@ -346,9 +251,6 @@ public interface IColonyView extends IColony
      */
     @Override
     int getID();
-
-    @Override
-    boolean hasWarehouse();
 
     @Override
     int getLastContactInHours();
@@ -387,13 +289,6 @@ public interface IColonyView extends IColony
     boolean isRemote();
 
     /**
-     * Get a list of all buildings.
-     *
-     * @return a list of their views.
-     */
-    List<IBuildingView> getBuildings();
-
-    /**
      * Get the style of the colony.
      *
      * @return the current default style.
@@ -430,4 +325,10 @@ public interface IColonyView extends IColony
      * @return the list of options.
      */
     List<String> getNameFileIds();
+
+    /**
+     * Client side building manager.
+     * @return the client side building manager
+     */
+    IRegisteredStructureManagerView getClientBuildingManager();
 }

@@ -19,8 +19,6 @@ import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayDeque;
-import java.util.HashMap;
-import java.util.Map;
 
 import static com.minecolonies.api.util.constant.ColonyConstants.MAX_COLONY_EVENTS;
 import static com.minecolonies.api.util.constant.Constants.MOD_ID;
@@ -60,9 +58,9 @@ public class EventDescriptionManager implements IEventDescriptionManager
         }
         colonyEventDescription.setDay(colony.getDay());
         eventDescs.add(colonyEventDescription);
-        if (colony.getBuildingManager().getTownHall() != null)
+        if (colony.getServerBuildingManager().getTownHall() != null)
         {
-            colony.getBuildingManager().getTownHall().markDirty();
+            colony.getServerBuildingManager().getTownHall().markDirty();
         }
         else
         {

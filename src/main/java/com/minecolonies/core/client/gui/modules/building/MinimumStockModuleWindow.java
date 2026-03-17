@@ -6,19 +6,22 @@ import com.ldtteam.blockui.controls.ButtonImage;
 import com.ldtteam.blockui.controls.ItemIcon;
 import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.blockui.views.ScrollingList;
+import com.ldtteam.structurize.client.gui.WindowSelectRes;
 import com.minecolonies.api.colony.buildings.modules.IMinimumStockModuleView;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.Network;
 import com.minecolonies.core.client.gui.AbstractModuleWindow;
-import com.minecolonies.core.client.gui.WindowSelectRes;
 import com.minecolonies.core.network.messages.server.colony.building.AddMinimumStockToBuildingModuleMessage;
 import com.minecolonies.core.network.messages.server.colony.building.RemoveMinimumStockFromBuildingModuleMessage;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
 
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 
@@ -91,7 +94,13 @@ public class MinimumStockModuleWindow extends AbstractModuleWindow<IMinimumStock
     {
         if (!moduleView.hasReachedLimit())
         {
-            new WindowSelectRes(this, (stack) -> true, (stack, qty) -> Network.getNetwork().sendToServer(new AddMinimumStockToBuildingModuleMessage(buildingView, stack, qty)), true).open();
+            new WindowSelectRes(this,
+                Component.empty(),
+                null,
+                new ArrayList<>(ItemStackUtils.allItemsPlusInventory(mc.player)),
+                (stack, qty) -> Network.getNetwork().sendToServer(new AddMinimumStockToBuildingModuleMessage(buildingView, stack, qty)),
+                true,
+                Component.translatable("com.minecolonies.coremod.gui.scan.select.stack")).open();
         }
     }
 

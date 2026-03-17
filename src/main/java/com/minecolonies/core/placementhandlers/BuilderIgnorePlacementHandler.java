@@ -1,16 +1,18 @@
 package com.minecolonies.core.placementhandlers;
 
+import com.ldtteam.structurize.placement.IPlacementContext;
 import com.ldtteam.structurize.placement.handlers.placement.IPlacementHandler;
 import com.ldtteam.structurize.util.BlockUtils;
-import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.WorldUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.util.Tuple;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.StructureBlock;
 import net.minecraft.world.level.block.StructureVoidBlock;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -37,18 +39,16 @@ public class BuilderIgnorePlacementHandler implements IPlacementHandler
       @NotNull final BlockPos pos,
       @NotNull final BlockState blockState,
       @Nullable final CompoundTag tileEntityData,
-      final boolean complete,
-      final BlockPos centerPos,
-      final PlacementSettings settings)
+      @NotNull final IPlacementContext placementContext)
     {
-        if (complete)
+        if (!placementContext.fancyPlacement())
         {
             WorldUtil.setBlockState(world, pos, blockState, com.ldtteam.structurize.api.util.constant.Constants.UPDATE_FLAG);
             if (tileEntityData != null)
             {
                 try
                 {
-                    handleTileEntityPlacement(tileEntityData, world, pos, settings);
+                    handleTileEntityPlacement(tileEntityData, world, pos, placementContext.getRotationMirror());
                     blockState.getBlock().setPlacedBy(world, pos, blockState, null, BlockUtils.getItemStackFromBlockState(blockState));
                 }
                 catch (final Exception ex)
@@ -68,8 +68,22 @@ public class BuilderIgnorePlacementHandler implements IPlacementHandler
       @NotNull final BlockPos pos,
       @NotNull final BlockState blockState,
       @Nullable final CompoundTag tileEntityData,
-      final boolean complete)
+      @NotNull final IPlacementContext placementContext)
     {
+        if (!placementContext.fancyPlacement())
+        {
+            return Collections.singletonList(new ItemStack(blockState.getBlock()));
+        }
         return Collections.emptyList();
+    }
+
+    @Override
+    public boolean doesWorldStateMatchBlueprintState(
+        final BlockState blueprintState,
+        final BlockState worldState,
+        final Tuple<BlockEntity, CompoundTag> tuple,
+        @NotNull final IPlacementContext iPlacementContext)
+    {
+        return blueprintState.equals(worldState);
     }
 }
