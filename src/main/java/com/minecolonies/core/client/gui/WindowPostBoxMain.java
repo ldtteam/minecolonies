@@ -5,7 +5,10 @@ import com.ldtteam.blockui.controls.Button;
 import com.ldtteam.blockui.controls.ItemIcon;
 import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.blockui.controls.TextField;
+import com.ldtteam.blockui.views.Box;
 import com.ldtteam.blockui.views.ScrollingList;
+import com.ldtteam.blockui.views.ScrollingListContainer;
+import com.ldtteam.structurize.client.gui.util.InputFilters;
 import com.minecolonies.api.colony.buildings.modules.IBuildingModuleView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
@@ -111,6 +114,19 @@ public class WindowPostBoxMain extends AbstractWindowSkeleton
             {
                 filter = newFilter;
                 this.tick = 10;
+                for (final Pane child : ((ScrollingListContainer) findPaneOfTypeByID(LIST_RESOURCES, ScrollingList.class).getChildren().get(0)).getChildren())
+                {
+                    if (child instanceof Box box)
+                    {
+                        for (final Pane boxChild : box.getChildren())
+                        {
+                            if (boxChild.getID().equals(INPUT_QTY))
+                            {
+                                ((TextField) boxChild).setText("");
+                            }
+                        }
+                    }
+                }
             }
         });
 
@@ -130,6 +146,7 @@ public class WindowPostBoxMain extends AbstractWindowSkeleton
                 final Text resourceLabel = rowPane.findPaneOfTypeByID(RESOURCE_NAME, Text.class);
                 resourceLabel.setText(resource.getHoverName());
                 rowPane.findPaneOfTypeByID(RESOURCE_ICON, ItemIcon.class).setItem(resource);
+                rowPane.findPaneOfTypeByID(INPUT_QTY, TextField.class).setFilter(InputFilters.ONLY_POSITIVE_NUMBERS_MAX1k);
             }
         });
     }
