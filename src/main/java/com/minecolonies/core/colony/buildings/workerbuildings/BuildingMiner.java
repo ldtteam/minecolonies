@@ -33,10 +33,12 @@ import java.util.Map;
 import java.util.Set;
 
 import static com.minecolonies.api.util.constant.BuildingConstants.TAG_LBLOCATION;
+import static com.minecolonies.api.util.constant.BuildingConstants.TAG_CLOCATION;
 import static com.minecolonies.api.util.constant.BuildingConstants.TAG_LLOCATION;
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 import static com.minecolonies.api.util.constant.EquipmentLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
-import static com.minecolonies.api.util.constant.SchematicTagConstants.*;
+import static com.minecolonies.api.util.constant.SchematicTagConstants.TAG_LADDER;
+import static com.minecolonies.api.util.constant.SchematicTagConstants.TAG_LADDER_BACK;
 
 /**
  * The miners building.
@@ -145,6 +147,11 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
 
         ladderLocation = BlockPosUtil.readOrNull(compound, TAG_LLOCATION);
         ladderBackLocation = BlockPosUtil.readOrNull(compound, TAG_LBLOCATION);
+        if (ladderBackLocation == null) {
+            // check old tag, if new tag did not exist
+            // needed for backwards compatibility
+            ladderBackLocation = BlockPosUtil.readOrNull(compound, TAG_CLOCATION);
+        }
     }
 
     @Override

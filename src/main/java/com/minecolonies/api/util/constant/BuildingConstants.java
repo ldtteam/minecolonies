@@ -63,6 +63,12 @@ public final class BuildingConstants
     public static final String TAG_SN = "StartingNode";
 
     /**
+     * The NBT Tag to store the location of the cobblestone at the shaft.
+     */
+    // deprecated, only needed for backwards compatibility
+    public static final String TAG_CLOCATION = "cobblelocation";
+
+    /**
      * The NBT Tag to store the location of the ladder.
      */
     public static final String TAG_LLOCATION = "ladderlocation";
