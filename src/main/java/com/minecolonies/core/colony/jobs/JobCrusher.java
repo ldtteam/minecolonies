@@ -60,7 +60,6 @@ public class JobCrusher extends AbstractJobCrafter<EntityAIWorkCrusher, JobCrush
     @Override
     public void playSound(final BlockPos blockPos, final EntityCitizen worker)
     {
-        worker.queueSound(SoundEvents.SAND_BREAK, blockPos, 1, 4);
-        worker.queueSound(SoundEvents.SAND_BREAK, blockPos, 1, 1, 1.0f, 0.5f);
+        worker.queueSound(SoundEvents.GRINDSTONE_USE, blockPos, 1, 20);
     }
 }
