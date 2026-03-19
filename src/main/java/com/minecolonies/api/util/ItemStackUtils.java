@@ -5,6 +5,7 @@ import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.compatibility.Compatibility;
+import com.minecolonies.api.crafting.CompareStorage;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.happiness.ExpirationBasedHappinessModifier;
@@ -883,7 +884,7 @@ public final class ItemStackUtils
      * @param player The player whose inventory to check.
      * @return The set of items.
      */
-    public static Set<ItemStack> allItemsPlusInventory(@NotNull final Player player)
+    public static List<ItemStack> allItemsPlusInventory(@NotNull final Player player)
     {
         // get all known items first
         final Set<ItemStorage> allItems = new HashSet<>(IColonyManager.getInstance().getCompatibilityManager().getSetOfAllItems());
@@ -892,6 +893,11 @@ public final class ItemStackUtils
         for (final ItemStack stack : player.getInventory().items)
         {
             if (stack.isEmpty())
+            {
+                continue;
+            }
+
+            if (allItems.contains(CompareStorage.of(stack, true, false)))
             {
                 continue;
             }
@@ -906,7 +912,13 @@ public final class ItemStackUtils
             allItems.add(new ItemStorage(pristine, true));
         }
 
-        return allItems.stream().map(ItemStorage::getItemStack).collect(Collectors.toSet());
+        final List<ItemStack> stacks = new ArrayList<>(allItems.size());
+        for (ItemStorage allItem : allItems)
+        {
+            ItemStack itemStack = allItem.getItemStack();
+            stacks.add(itemStack);
+        }
+        return stacks;
     }
 
     /**

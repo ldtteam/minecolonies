@@ -57,7 +57,7 @@ public class WindowPostBoxMain extends AbstractWindowSkeleton
     /**
      * List of all item stacks in the game.
      */
-    private final List<ItemStack> allItems = new ArrayList<>();
+    private List<ItemStack> allItems = new ArrayList<>();
 
     /**
      * Resource scrolling list.
@@ -121,12 +121,6 @@ public class WindowPostBoxMain extends AbstractWindowSkeleton
             public int getElementCount()
             {
                 return allItems.size();
-            }
-
-            @Override
-            public boolean shouldUpdate()
-            {
-                return false;
             }
 
             @Override
@@ -250,8 +244,7 @@ public class WindowPostBoxMain extends AbstractWindowSkeleton
             .sorted(Comparator.comparingInt(s1 -> StringUtils.getLevenshteinDistance(s1.getHoverName().getString(), filter)))
             .toList();
 
-        this.allItems.clear();
-        this.allItems.addAll(allItems);
+        this.allItems = allItems;
         this.stackList.refreshElementPanes(true);
     }
 

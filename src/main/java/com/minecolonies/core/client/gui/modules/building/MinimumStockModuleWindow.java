@@ -21,8 +21,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 
 /**
@@ -97,7 +95,7 @@ public class MinimumStockModuleWindow extends AbstractModuleWindow<IMinimumStock
             new WindowSelectRes(this,
                 Component.empty(),
                 null,
-                new ArrayList<>(ItemStackUtils.allItemsPlusInventory(mc.player)),
+                ItemStackUtils.allItemsPlusInventory(mc.player),
                 (stack, qty) -> Network.getNetwork().sendToServer(new AddMinimumStockToBuildingModuleMessage(buildingView, stack, qty)),
                 true,
                 Component.translatable("com.minecolonies.coremod.gui.scan.select.stack")).open();
