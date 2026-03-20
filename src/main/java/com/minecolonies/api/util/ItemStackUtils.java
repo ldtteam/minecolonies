@@ -5,7 +5,6 @@ import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.compatibility.Compatibility;
-import com.minecolonies.api.crafting.CompareStorage;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.happiness.ExpirationBasedHappinessModifier;
@@ -897,7 +896,7 @@ public final class ItemStackUtils
                 continue;
             }
 
-            if (allItems.contains(CompareStorage.of(stack, true, false)))
+            if (allItems.contains(new ItemStorage(stack, true, false)))
             {
                 continue;
             }
