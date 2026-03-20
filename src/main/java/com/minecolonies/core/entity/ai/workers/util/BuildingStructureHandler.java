@@ -350,6 +350,6 @@ public class BuildingStructureHandler<J extends AbstractJobStructure<?, J>, B ex
     @Override
     public boolean shouldBlocksBeConsideredEqual(final BlockState state1, final BlockState state2)
     {
-        return BlockStateUtils.areBlockStatesEqual(state1, state2);
+        return false;
     }
 }

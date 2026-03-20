@@ -46,7 +46,6 @@ public class ModTags
 
     public static final TagKey<Block> colonyProtectionException = BlockTags.create(TagConstants.COLONYPROTECTIONEXCEPTION);
     public static final TagKey<Block> indestructible            = BlockTags.create(TagConstants.INDESTRUCTIBLE);
-    public static final TagKey<Block> builderIgnoreStateDif     = BlockTags.create(TagConstants.BUILDER_IGNORE_STATE_DIF);
 
     public static final TagKey<Block> oreChanceBlocks = BlockTags.create(TagConstants.ORECHANCEBLOCKS);
 

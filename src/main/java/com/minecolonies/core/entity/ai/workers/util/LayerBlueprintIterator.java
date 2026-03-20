@@ -346,7 +346,7 @@ public class LayerBlueprintIterator extends AbstractBlueprintIteratorWrapper
         @Override
         public boolean shouldBlocksBeConsideredEqual(final BlockState blockState, final BlockState blockState1)
         {
-            return delegate.shouldBlocksBeConsideredEqual(blockState, blockState1);
+            return false;
         }
 
         @Override

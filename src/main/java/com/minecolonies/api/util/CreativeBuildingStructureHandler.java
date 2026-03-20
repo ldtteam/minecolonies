@@ -129,17 +129,6 @@ public final class CreativeBuildingStructureHandler extends CreativeStructureHan
     }
 
     @Override
-    public boolean shouldBlocksBeConsideredEqual(final BlockState state1, final BlockState state2)
-    {
-        if (BlockStateUtils.areBlockStatesEqual(state1, state2))
-        {
-            return true;
-        }
-
-        return super.shouldBlocksBeConsideredEqual(state1, state2);
-    }
-
-    @Override
     public boolean isStackFree(@Nullable final ItemStack itemStack)
     {
         return itemStack == null

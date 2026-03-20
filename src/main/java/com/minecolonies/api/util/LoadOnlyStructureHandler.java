@@ -56,12 +56,6 @@ public class LoadOnlyStructureHandler extends CreativeStructureHandler
     }
 
     @Override
-    public boolean shouldBlocksBeConsideredEqual(final BlockState state1, final BlockState state2)
-    {
-        return BlockStateUtils.areBlockStatesEqual(state1, state2);
-    }
-
-    @Override
     public boolean isCreative()
     {
         return false;
