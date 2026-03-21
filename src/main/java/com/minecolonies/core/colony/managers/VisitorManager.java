@@ -8,9 +8,12 @@ import com.minecolonies.api.colony.managers.interfaces.IVisitorManager;
 import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.entity.citizen.AbstractCivilianEntity;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.util.EntityUtils;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.core.colony.VisitorData;
+import com.minecolonies.core.colony.buildings.workerbuildings.BuildingTownHall;
 import com.minecolonies.core.entity.visitor.VisitorCitizen;
 import com.minecolonies.core.network.messages.client.colony.ColonyVisitorViewDataMessage;
 import net.minecraft.core.BlockPos;
@@ -27,6 +30,7 @@ import java.util.*;
 
 import static com.minecolonies.api.util.constant.Constants.SLIGHTLY_UP;
 import static com.minecolonies.api.util.constant.PathingConstants.HALF_A_BLOCK;
+import static com.minecolonies.api.util.constant.TranslationConstants.WARNING_COLONY_NO_ARRIVAL_SPACE;
 
 /**
  * Manages all visiting entities to the colony
@@ -225,37 +229,60 @@ public class VisitorManager implements IVisitorManager
     }
 
     @Override
-    public IVisitorData spawnOrCreateCivilian(ICivilianData data, final Level world, final BlockPos spawnPos, final boolean force)
+    public <T extends ICivilianData> T spawnOrCreateCivilian(T data, final Level world, List<BlockPos> spawnPositions, final boolean force)
     {
-        if (!WorldUtil.isEntityBlockLoaded(world, spawnPos))
+        if (!colony.getServerBuildingManager().hasTownHall() || (!colony.getSettings().getSetting(BuildingTownHall.MOVE_IN).getValue() && !force))
         {
-            return (IVisitorData) data;
+            return data;
         }
 
-        if (data == null)
+        if (colony.getServerBuildingManager().hasTownHall())
         {
-            data = createAndRegisterCivilianData();
+            spawnPositions = new ArrayList<>(spawnPositions);
+            spawnPositions.add(colony.getServerBuildingManager().getTownHall().getPosition());
         }
 
-        VisitorCitizen citizenEntity = (VisitorCitizen) ModEntities.VISITOR.create(colony.getWorld());
-
-        if (citizenEntity == null)
+        for (final BlockPos spawnLocation : spawnPositions)
         {
-            return (IVisitorData) data;
+            if (spawnLocation == null || spawnLocation.equals(BlockPos.ZERO))
+            {
+                continue;
+            }
+
+            if (WorldUtil.isEntityBlockLoaded(world, spawnLocation))
+            {
+                BlockPos calculatedSpawn = EntityUtils.getSpawnPoint(world, spawnLocation);
+                if (calculatedSpawn != null)
+                {
+                    VisitorCitizen citizenEntity = (VisitorCitizen) ModEntities.VISITOR.create(colony.getWorld());
+
+                    if (citizenEntity == null)
+                    {
+                        return data;
+                    }
+
+                    citizenEntity.setUUID(data.getUUID());
+                    citizenEntity.setPos(spawnLocation.getX() + HALF_A_BLOCK, spawnLocation.getY() + SLIGHTLY_UP, spawnLocation.getZ() + HALF_A_BLOCK);
+                    world.addFreshEntity(citizenEntity);
+
+                    citizenEntity.setCitizenId(data.getId());
+                    citizenEntity.getCitizenColonyHandler().setColonyId(colony.getID());
+                    if (citizenEntity.isAddedToLevel())
+                    {
+                        citizenEntity.getCitizenColonyHandler().registerWithColony(data.getColony().getID(), data.getId());
+                    }
+
+                    return data;
+                }
+            }
         }
 
-        citizenEntity.setUUID(data.getUUID());
-        citizenEntity.setPos(spawnPos.getX() + HALF_A_BLOCK, spawnPos.getY() + SLIGHTLY_UP, spawnPos.getZ() + HALF_A_BLOCK);
-        world.addFreshEntity(citizenEntity);
-
-        citizenEntity.setCitizenId(data.getId());
-        citizenEntity.getCitizenColonyHandler().setColonyId(colony.getID());
-        if (citizenEntity.isAddedToLevel())
+        if (colony.getServerBuildingManager().hasTownHall() && WorldUtil.isEntityBlockLoaded(world, colony.getServerBuildingManager().getTownHall().getPosition()))
         {
-            citizenEntity.getCitizenColonyHandler().registerWithColony(data.getColony().getID(), data.getId());
+            final BlockPos townhallPos = colony.getServerBuildingManager().getTownHall().getPosition();
+            MessageUtils.format(WARNING_COLONY_NO_ARRIVAL_SPACE, townhallPos.getX(), townhallPos.getY(), townhallPos.getZ()).sendTo(colony).forAllPlayers();
         }
-
-        return (IVisitorData) data;
+        return data;
     }
 
     @Override

@@ -10,6 +10,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -77,11 +78,11 @@ public interface IEntityManager
      *
      * @param data     Data to use when spawn, null when new generation.
      * @param world    THe world.
-     * @param spawnPos the pos to spawn it at.
+     * @param spawnPositions the positions to spawn it at, tried in order.
      * @param force    True to skip max civilian test, false when not.
      * @return the new civilian.
      */
-    <T extends ICivilianData> T spawnOrCreateCivilian(T data, Level world, BlockPos spawnPos, boolean force);
+    <T extends ICivilianData> T spawnOrCreateCivilian(T data, Level world, List<BlockPos> spawnPositions, boolean force);
 
     /**
      * Creates Civilian Data for a new civilian

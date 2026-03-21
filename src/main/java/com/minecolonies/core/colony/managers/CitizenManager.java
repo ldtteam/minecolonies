@@ -222,42 +222,42 @@ public class CitizenManager implements ICitizenManager
     }
 
     @Override
-    public ICitizenData spawnOrCreateCivilian(@Nullable final ICivilianData data, final Level world, final BlockPos spawnPos, final boolean force)
+    public <T extends ICivilianData> T spawnOrCreateCivilian(final T data, final Level world, List<BlockPos> spawnPositions, final boolean force)
     {
         if (!colony.getServerBuildingManager().hasTownHall() || (!colony.getSettings().getSetting(BuildingTownHall.MOVE_IN).getValue() && !force))
         {
-            return (ICitizenData) data;
+            return data;
         }
 
-        BlockPos spawnLocation = spawnPos;
-        if (colony.getServerBuildingManager().hasTownHall() && (spawnLocation == null || spawnLocation.equals(BlockPos.ZERO)))
+        if (colony.getServerBuildingManager().hasTownHall())
         {
-            spawnLocation = colony.getServerBuildingManager().getTownHall().getPosition();
+            spawnPositions = new ArrayList<>(spawnPositions);
+            spawnPositions.add(colony.getServerBuildingManager().getTownHall().getPosition());
         }
 
-        if (WorldUtil.isEntityBlockLoaded(world, spawnLocation))
+        for (final BlockPos spawnLocation : spawnPositions)
         {
-            BlockPos calculatedSpawn = EntityUtils.getSpawnPoint(world, spawnLocation);
-            if (calculatedSpawn != null)
+            if (spawnLocation == null || spawnLocation.equals(BlockPos.ZERO))
             {
-                return spawnCitizenOnPosition((ICitizenData) data, world, force, calculatedSpawn);
+                continue;
             }
-            else
+
+            if (WorldUtil.isEntityBlockLoaded(world, spawnLocation))
             {
-                if (colony.getServerBuildingManager().hasTownHall())
+                BlockPos calculatedSpawn = EntityUtils.getSpawnPoint(world, spawnLocation);
+                if (calculatedSpawn != null)
                 {
-                    calculatedSpawn = EntityUtils.getSpawnPoint(world, colony.getServerBuildingManager().getTownHall().getID());
-                    if (calculatedSpawn != null)
-                    {
-                        return spawnCitizenOnPosition((ICitizenData) data, world, force, calculatedSpawn);
-                    }
+                    return (T) spawnCitizenOnPosition((ICitizenData) data, world, force, calculatedSpawn);
                 }
-
-                MessageUtils.format(WARNING_COLONY_NO_ARRIVAL_SPACE, spawnLocation.getX(), spawnLocation.getY(), spawnLocation.getZ()).sendTo(colony).forAllPlayers();
             }
         }
 
-        return (ICitizenData) data;
+        if (colony.getServerBuildingManager().hasTownHall() && WorldUtil.isEntityBlockLoaded(world, colony.getServerBuildingManager().getTownHall().getPosition()))
+        {
+            final BlockPos townhallPos = colony.getServerBuildingManager().getTownHall().getPosition();
+            MessageUtils.format(WARNING_COLONY_NO_ARRIVAL_SPACE, townhallPos.getX(), townhallPos.getY(), townhallPos.getZ()).sendTo(colony).forAllPlayers();
+        }
+        return data;
     }
 
     @NotNull
@@ -616,7 +616,7 @@ public class CitizenManager implements ICitizenManager
                     newCitizen.setGenderAndGenerateName(false);
                 }
 
-                spawnOrCreateCivilian(newCitizen, colony.getWorld(), null, true);
+                spawnOrCreateCivilian(newCitizen, colony.getWorld(), List.of(colony.getServerBuildingManager().getTownHall().getPosition()), true);
 
                 IMinecoloniesAPI.getInstance().getEventBus().post(new CitizenAddedModEvent(newCitizen, CitizenAddedModEvent.CitizenAddedSource.INITIAL));
                 colony.getEventDescriptionManager().addEventDescription(new CitizenSpawnedEvent(colony.getServerBuildingManager().getTownHall().getPosition(),
