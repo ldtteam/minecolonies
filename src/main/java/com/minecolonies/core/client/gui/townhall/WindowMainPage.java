@@ -9,7 +9,9 @@ import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.blockui.views.DropDownList;
 import com.ldtteam.structurize.client.gui.WindowSwitchPack;
 import com.ldtteam.structurize.storage.StructurePacks;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.core.Network;
+import com.minecolonies.core.client.auth.UnlockToken;
 import com.minecolonies.core.client.gui.WindowBannerPicker;
 import com.minecolonies.core.client.gui.map.WindowColonyMap;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingTownHall;
@@ -35,10 +37,13 @@ import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.minecolonies.api.util.constant.Constants.TICKS_FOURTY_MIN;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
+import static com.minecolonies.core.client.auth.UnlockToken.SKIN;
+import static com.minecolonies.core.client.auth.UnlockToken.UNLOCK_MINUTES;
 import static com.minecolonies.core.event.TextureReloadListener.TEXTURE_PACKS;
 
 /**
@@ -317,12 +322,12 @@ public class WindowMainPage extends AbstractWindowTownHall
         {
             return;
         }
-        final String player = Minecraft.getInstance().player.getStringUUID();
+        final UUID playerUuid = Minecraft.getInstance().player.getUUID();
         new Thread(() -> {
             try
             {
                 final SSLSocketFactory sslsocketfactory = HttpsURLConnection.getDefaultSSLSocketFactory();
-                final URL url = new URL("https://auth.minecolonies.com/api/minecraft/" + player + "/features");
+                final URL url = new URL("https://auth.minecolonies.com/api/minecraft/" + playerUuid.toString() + "/features");
                 final HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
 
                 conn.setSSLSocketFactory(sslsocketfactory);
@@ -339,10 +344,23 @@ public class WindowMainPage extends AbstractWindowTownHall
                 }
                 reader.close();
                 isFeatureUnlocked.set(Boolean.parseBoolean(response.toString()));
+                if (isFeatureUnlocked.get())
+                {
+                    final String token = UnlockToken.create(playerUuid, SKIN, UNLOCK_MINUTES);
+                    UnlockToken.save(token);
+                }
+
+                // Checks the token file incase the api returned false, to buffer auth issues until the token runs out
+                isFeatureUnlocked.set(isFeatureUnlocked.get() || UnlockToken.isFeatureEnabledFor(playerUuid, SKIN));
             }
             catch (IOException e)
             {
-                e.printStackTrace();
+                // Checks the token file when the api has issues
+                isFeatureUnlocked.set(UnlockToken.isFeatureEnabledFor(playerUuid, SKIN));
+                if (isFeatureUnlocked.get())
+                {
+                    Log.getLogger().info("Auth failure: ", e);
+                }
             }
         }).start();
     }
