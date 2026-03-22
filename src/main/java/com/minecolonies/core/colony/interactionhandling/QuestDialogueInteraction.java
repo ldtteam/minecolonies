@@ -201,6 +201,7 @@ public class QuestDialogueInteraction extends StandardInteraction
             for (final int participant : this.colonyQuest.getParticipants())
             {
                 localText = localText.replace("$" + index, citizen.getColony().getCitizen(participant).getName());
+                index++;
             }
         }
         if (localText.contains("$d") && colonyQuest != null && colonyQuest.getCurrentObjectiveInstance() != null)
