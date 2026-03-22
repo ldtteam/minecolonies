@@ -363,7 +363,7 @@ public class EntityAIEatTask implements IStateAI
         }
 
         eatPos = findPlaceToEat();
-        if (restaurant != null)
+        if (eatPos != null)
         {
             return GO_TO_EAT_POS;
         }
