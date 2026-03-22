@@ -1,6 +1,6 @@
 package com.minecolonies.core.client.render.worldevent;
 
-import com.ldtteam.structurize.util.WorldRenderMacros;
+import com.ldtteam.structurize.client.rendertask.util.WorldRenderMacros;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.renderer.MultiBufferSource;
