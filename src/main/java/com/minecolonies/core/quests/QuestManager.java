@@ -308,6 +308,7 @@ public class QuestManager implements IQuestManager
         {
             buf.writeNbt(serializeNBT());
         }
+        isDirty = false;
     }
 
     @Override
