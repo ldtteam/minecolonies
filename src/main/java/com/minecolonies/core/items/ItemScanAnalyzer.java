@@ -3,9 +3,10 @@ package com.minecolonies.core.items;
 import com.ldtteam.structurize.Structurize;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.blueprints.v1.BlueprintUtil;
+import com.ldtteam.structurize.client.rendertask.RenderTaskManager;
+import com.ldtteam.structurize.client.rendertask.tasks.BoxPreviewData;
+import com.ldtteam.structurize.client.rendertask.tasks.BoxPreviewRenderTask;
 import com.ldtteam.structurize.items.AbstractItemWithPosSelector;
-import com.ldtteam.structurize.storage.rendering.RenderingCache;
-import com.ldtteam.structurize.storage.rendering.types.BoxPreviewData;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.core.client.gui.WindowSchematicAnalyzer;
 import net.minecraft.core.BlockPos;
@@ -159,8 +160,8 @@ public class ItemScanAnalyzer extends AbstractItemWithPosSelector
         {
             final BlockPos start = NbtUtils.readBlockPos(tag.getCompound(FIRST_POS_STRING));
             final BlockPos end = NbtUtils.readBlockPos(tag.getCompound(SECOND_POS_STRING));
-            RenderingCache.queue("analyzer",
-              new BoxPreviewData(start, end, Optional.empty()));
+            RenderTaskManager.addRenderTask("analyzer", new BoxPreviewRenderTask("analyzer",
+                new BoxPreviewData(start, end, Optional.empty()), 10 * 60));
         }
     }
 
