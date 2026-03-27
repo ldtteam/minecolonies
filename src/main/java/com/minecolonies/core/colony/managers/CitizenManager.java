@@ -224,7 +224,7 @@ public class CitizenManager implements ICitizenManager
     @Override
     public <T extends ICivilianData> T spawnOrCreateCivilian(final T data, final Level world, List<BlockPos> spawnPositions, final boolean force)
     {
-        if (!colony.getServerBuildingManager().hasTownHall() || (!colony.getSettings().getSetting(BuildingTownHall.MOVE_IN).getValue() && !force))
+        if (!colony.getSettings().getSetting(BuildingTownHall.MOVE_IN).getValue() && !force)
         {
             return data;
         }
