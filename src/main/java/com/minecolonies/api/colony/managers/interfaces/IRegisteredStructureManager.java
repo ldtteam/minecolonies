@@ -278,4 +278,10 @@ public interface IRegisteredStructureManager extends ICommonRegisteredStructureM
      * @param building the building it happened for.
      */
     void clearPendingPrestigeCalc(IBuilding building);
+
+    /**
+     * Get the colony prestige.
+     * @return the prestige.
+     */
+    int getColonyPrestige();
 }

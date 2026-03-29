@@ -62,7 +62,7 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
     /**
      * Buildings that need to be recalculated for prestige value.
      */
-    private Queue<IBuilding> pendingPrestigeCalc = new ArrayDeque<>();
+    private List<IBuilding> pendingPrestigeCalc = new ArrayList<>();
 
     /**
      * List of building extensions of the colony.
@@ -187,19 +187,6 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
             leisureSites = ImmutableList.copyOf(leisureSitesList);
         }
 
-        if (compound.contains(TAG_PRESTIGE))
-        {
-            final ListTag prestigeTagList = compound.getList(TAG_PRESTIGE, Tag.TAG_COMPOUND);
-            for (int i = 0; i < prestigeTagList.size(); ++i)
-            {
-                final BlockPos pos = BlockPosUtil.read(prestigeTagList.getCompound(i), TAG_POS);
-                if (buildings.containsKey(pos))
-                {
-                    pendingPrestigeCalc.add(buildings.get(pos));
-                }
-            }
-        }
-
         // Ensure building extensions are still tied to an appropriate building
         for (final IBuildingExtension extension : buildingExtensions.values())
         {
@@ -280,16 +267,6 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
             leisureTagList.add(leisureCompound);
         }
         compound.put(TAG_LEISURE, leisureTagList);
-
-        // Prestige sites
-        @NotNull final ListTag prestigeCalcQueue = new ListTag();
-        for (@NotNull final IBuilding building : pendingPrestigeCalc)
-        {
-            @NotNull final CompoundTag leisureCompound = new CompoundTag();
-            BlockPosUtil.write(leisureCompound, TAG_POS, building.getPosition());
-            leisureTagList.add(leisureCompound);
-        }
-        compound.put(TAG_PRESTIGE, prestigeCalcQueue);
     }
 
     @Override
@@ -324,10 +301,11 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
         if (pendingPrestigeCalc.isEmpty())
         {
             pendingPrestigeCalc.addAll(buildings.values());
+            Collections.shuffle(pendingPrestigeCalc);
         }
         else
         {
-            pendingPrestigeCalc.peek().asyncPrestigeRecalc();
+            pendingPrestigeCalc.getLast().asyncPrestigeRecalc();
         }
     }
 
@@ -335,6 +313,17 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
     public void clearPendingPrestigeCalc(final IBuilding building)
     {
         pendingPrestigeCalc.remove(building);
+    }
+
+    @Override
+    public int getColonyPrestige()
+    {
+        int total = 0;
+        for (IBuilding building : buildings.values())
+        {
+            total += building.getPrestige();
+        }
+        return total;
     }
 
     @Override

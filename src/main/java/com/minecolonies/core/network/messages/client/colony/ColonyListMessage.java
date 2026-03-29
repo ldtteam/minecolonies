@@ -68,7 +68,7 @@ public class ColonyListMessage extends AbstractPlayMessage
             b.writeUtf(colony.getName());
             b.writeInt(colony.getCitizenManager().getCurrentCitizenCount());
             b.writeUtf(colony.getPermissions().getOwnerName());
-            b.writeInt(colony.getPrestige());
+            b.writeInt(colony.getServerBuildingManager().getColonyPrestige());
         });
     }
 

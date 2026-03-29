@@ -487,15 +487,4 @@ public interface IColony
     {
         new ColonyId(getID(), getDimension()).writeToItemStack(itemStack);
     }
-
-    /**
-     * Recalculate prestige from buildings.
-     */
-    void updatePrestige();
-
-    /**
-     * Get the colonies prestige level.
-     * @return the prestige.
-     */
-    int getPrestige();
 }

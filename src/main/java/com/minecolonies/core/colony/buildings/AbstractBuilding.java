@@ -996,7 +996,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
         {
             prestige = new_prestige;
             colony.getServerBuildingManager().clearPendingPrestigeCalc(this);
-            colony.updatePrestige();
+            markDirty();
         }
     }
 
