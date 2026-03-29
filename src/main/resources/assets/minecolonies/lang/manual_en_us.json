@@ -3039,5 +3039,7 @@
 
   "com.minecolonies.coremod.stablemaster.needed.readyitems": "Cavalry readiness items.",
   "com.minecolonies.coremod.stablemaster.needed.feeditems": "Cavalry feed items.",
-  "entity.minecolonies.cavalry_horse": "Cavalry Horse"
+  "entity.minecolonies.cavalry_horse": "Cavalry Horse",
+
+  "com.minecolonies.coremod.gui.townhall.prestige": "Colony Ranking"
 }

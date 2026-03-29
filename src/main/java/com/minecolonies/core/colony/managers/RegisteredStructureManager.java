@@ -14,14 +14,11 @@ import com.minecolonies.api.colony.buildings.workerbuildings.ITownHall;
 import com.minecolonies.api.colony.buildings.workerbuildings.IWareHouse;
 import com.minecolonies.api.colony.buildingextensions.IBuildingExtension;
 import com.minecolonies.api.colony.managers.interfaces.IRegisteredStructureManager;
-import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.eventbus.events.colony.buildings.BuildingAddedModEvent;
 import com.minecolonies.api.eventbus.events.colony.buildings.BuildingRemovedModEvent;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.util.*;
 import com.minecolonies.core.MineColonies;
-import com.minecolonies.core.blocks.huts.BlockHutTavern;
-import com.minecolonies.core.blocks.huts.BlockHutTownHall;
 import com.minecolonies.core.colony.Colony;
 import com.minecolonies.core.colony.buildings.BuildingMysticalSite;
 import com.minecolonies.core.colony.buildings.modules.BuildingModules;
@@ -29,7 +26,6 @@ import com.minecolonies.core.colony.buildings.modules.BuildingExtensionsModule;
 import com.minecolonies.core.colony.buildings.modules.LivingBuildingModule;
 import com.minecolonies.core.colony.buildings.workerbuildings.*;
 import com.minecolonies.core.colony.buildingextensions.registry.BuildingExtensionDataManager;
-import com.minecolonies.core.entity.ai.workers.util.ConstructionTapeHelper;
 import com.minecolonies.core.event.QuestObjectiveEventHandler;
 import com.minecolonies.core.network.messages.client.colony.ColonyViewBuildingViewMessage;
 import com.minecolonies.core.network.messages.client.colony.ColonyViewBuildingExtensionsUpdateMessage;
@@ -54,8 +50,6 @@ import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.MathUtils.RANDOM;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
-import static com.minecolonies.api.util.constant.TranslationConstants.WARNING_DUPLICATE_TAVERN;
-import static com.minecolonies.api.util.constant.TranslationConstants.WARNING_DUPLICATE_TOWN_HALL;
 
 public class RegisteredStructureManager implements IRegisteredStructureManager
 {
@@ -64,6 +58,11 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
      */
     @NotNull
     private ImmutableMap<BlockPos, IBuilding> buildings = ImmutableMap.of();
+
+    /**
+     * Buildings that need to be recalculated for prestige value.
+     */
+    private Queue<IBuilding> pendingPrestigeCalc = new ArrayDeque<>();
 
     /**
      * List of building extensions of the colony.
@@ -188,6 +187,19 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
             leisureSites = ImmutableList.copyOf(leisureSitesList);
         }
 
+        if (compound.contains(TAG_PRESTIGE))
+        {
+            final ListTag prestigeTagList = compound.getList(TAG_PRESTIGE, Tag.TAG_COMPOUND);
+            for (int i = 0; i < prestigeTagList.size(); ++i)
+            {
+                final BlockPos pos = BlockPosUtil.read(prestigeTagList.getCompound(i), TAG_POS);
+                if (buildings.containsKey(pos))
+                {
+                    pendingPrestigeCalc.add(buildings.get(pos));
+                }
+            }
+        }
+
         // Ensure building extensions are still tied to an appropriate building
         for (final IBuildingExtension extension : buildingExtensions.values())
         {
@@ -268,6 +280,16 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
             leisureTagList.add(leisureCompound);
         }
         compound.put(TAG_LEISURE, leisureTagList);
+
+        // Prestige sites
+        @NotNull final ListTag prestigeCalcQueue = new ListTag();
+        for (@NotNull final IBuilding building : pendingPrestigeCalc)
+        {
+            @NotNull final CompoundTag leisureCompound = new CompoundTag();
+            BlockPosUtil.write(leisureCompound, TAG_POS, building.getPosition());
+            leisureTagList.add(leisureCompound);
+        }
+        compound.put(TAG_PRESTIGE, prestigeCalcQueue);
     }
 
     @Override
@@ -298,6 +320,21 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
                 building.onColonyTick(colony);
             }
         }
+
+        if (pendingPrestigeCalc.isEmpty())
+        {
+            pendingPrestigeCalc.addAll(buildings.values());
+        }
+        else
+        {
+            pendingPrestigeCalc.peek().asyncPrestigeRecalc();
+        }
+    }
+
+    @Override
+    public void clearPendingPrestigeCalc(final IBuilding building)
+    {
+        pendingPrestigeCalc.remove(building);
     }
 
     @Override

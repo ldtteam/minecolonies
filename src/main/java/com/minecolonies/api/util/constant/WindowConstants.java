@@ -557,6 +557,10 @@ public final class WindowConstants
     public static final String BUTTON_NEXTPAGE     = "nextPage";
     public static final String LABEL_NO_UPGRADE    = "infotextnoupgrade";
     public static final String UNI_INV_RESEARCH    = "invresearch";
+    public static final String BUTTON_PRESTIGE     = "prestige";
+    public static final String BUTTON_PRESTIGE_ICON= "prestigeicon";
+    public static final String BUTTON_MAP          = "map";
+    public static final String BUTTON_MAP_ICON     = "mapicon";
 
     /**
      * The GuardTower GUI file.

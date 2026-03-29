@@ -56,6 +56,7 @@ import com.minecolonies.core.entity.ai.workers.service.EntityAIWorkDeliveryman;
 import com.minecolonies.core.entity.ai.workers.util.ConstructionTapeHelper;
 import com.minecolonies.core.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.core.util.ChunkDataHelper;
+import com.minecolonies.core.util.SchemAnalyzerUtil;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
@@ -161,6 +162,11 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
      * Cached position for citizen standing position next to hut block.
      */
     private BlockPos cachedStandingPosition;
+
+    /**
+     * Prestige value of this building (dominated by schematic complexity).
+     */
+    private int prestige;
 
     /**
      * Constructor for a AbstractBuilding.
@@ -343,6 +349,10 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
         {
             this.customName = compound.getString(TAG_CUSTOM_NAME);
         }
+        if (compound.contains(TAG_PRESTIGE))
+        {
+            this.prestige = compound.getInt(TAG_PRESTIGE);
+        }
 
         if (compound.contains(TAG_BUILDING_MODULES))
         {
@@ -378,6 +388,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
         writeRequestSystemToNBT(provider, compound);
         compound.putBoolean(TAG_IS_BUILT, isBuilt);
         compound.putString(TAG_CUSTOM_NAME, customName);
+        compound.putInt(TAG_PRESTIGE, prestige);
 
         CompoundTag modules = new CompoundTag();
         for (IPersistentModule module : getModulesByType(IPersistentModule.class))
@@ -681,6 +692,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
         buf.writeUtf(getBlueprintPath());
         buf.writeBlockPos(getParent());
         buf.writeUtf(this.customName);
+        buf.writeInt(this.prestige);
 
         if (getRotationMirror() == null)
         {
@@ -738,6 +750,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     public void onColonyTick(final IColony colony)
     {
         getModulesByType(ITickingModule.class).forEach(module -> module.onColonyTick(colony));
+        super.onColonyTick(colony);
     }
 
     /**
@@ -937,7 +950,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     }
 
     @Override
-    public void onUpgradeComplete(final int newLevel)
+    public void onUpgradeComplete(@Nullable final Blueprint blueprint, final int newLevel)
     {
         if (!hasParent())
         {
@@ -968,6 +981,23 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
         colony.getResearchManager().checkAutoStartResearch();
         colony.getServerBuildingManager().onBuildingUpgradeComplete(this, newLevel);
         cachedStandingPosition = null;
+
+        if (blueprint != null)
+        {
+           calculatePrestige(blueprint);
+        }
+    }
+
+    @Override
+    public void calculatePrestige(final Blueprint blueprint)
+    {
+        final int new_prestige = SchemAnalyzerUtil.analyzeSchematic(blueprint).costScore;
+        if (new_prestige != prestige)
+        {
+            prestige = new_prestige;
+            colony.getServerBuildingManager().clearPendingPrestigeCalc(this);
+            colony.updatePrestige();
+        }
     }
 
     @Override
@@ -1121,6 +1151,12 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
 
         getModulesByType(IAltersRequiredItems.class).forEach(module -> module.alterItemsToBeKept((stack, qty, inv) -> toKeep.put(stack, new Tuple<>(qty, inv))));
         return toKeep;
+    }
+
+    @Override
+    public int getPrestige()
+    {
+        return prestige;
     }
 
     @Override

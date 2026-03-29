@@ -355,6 +355,11 @@ public class Colony implements IColony
     private final SettingsModule settingsModule = (SettingsModule) BuildingEntry.produceModuleWithoutBuilding(BuildingModules.TOWNHALL_SETTINGS.key);
 
     /**
+     * Colony prestige level.
+     */
+    private int prestige;
+
+    /**
      * Base constructor.
      *
      * @param id     The current id for the colony.
@@ -888,6 +893,11 @@ public class Colony implements IColony
         {
             this.connectionManager.deserializeNBT(provider, compound.getCompound(NbtTagConstants.TAG_CONNECTION_MANAGER));
         }
+
+        if (compound.contains(TAG_PRESTIGE))
+        {
+            this.prestige = compound.getInt(TAG_PRESTIGE);
+        }
     }
 
     /**
@@ -1012,6 +1022,7 @@ public class Colony implements IColony
             claimTagList.add(chunkCompound);
         }
         compound.put(TAG_CLAIM_DATA, claimTagList);
+        compound.putInt(TAG_PRESTIGE, prestige);
 
         this.colonyTag = compound;
 
@@ -2023,5 +2034,23 @@ public class Colony implements IColony
     public void setDimensionId(final ResourceKey<Level> dimensionId)
     {
         this.dimensionId = dimensionId;
+    }
+
+    @Override
+    public void updatePrestige()
+    {
+        int localPrestige = 0;
+        for (IBuilding building : buildingManager.getBuildings().values())
+        {
+            localPrestige += building.getPrestige();
+        }
+        this.prestige = localPrestige;
+        markDirty();
+    }
+
+    @Override
+    public int getPrestige()
+    {
+        return prestige;
     }
 }

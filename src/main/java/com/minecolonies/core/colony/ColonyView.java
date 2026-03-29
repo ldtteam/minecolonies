@@ -242,6 +242,11 @@ public final class ColonyView implements IColonyView
     private int day;
 
     /**
+     * Client side colony prestige level.
+     */
+    private int prestige;
+
+    /**
      * Colony level settings manager.
      */
     private final ISettingsModuleView settingsModule = (ISettingsModuleView) BuildingEntry.produceViewWithoutBuilding(BuildingModules.TOWNHALL_SETTINGS.key, this);
@@ -393,6 +398,7 @@ public final class ColonyView implements IColonyView
         buf.writeNbt(colony.getTravellingManager().serializeNBT(buf.registryAccess()));
         colony.getConnectionManager().serializeToView(buf);
         colony.getSettings().serializeToView(buf);
+        buf.writeInt(colony.getPrestige());
     }
 
     /**
@@ -776,6 +782,7 @@ public final class ColonyView implements IColonyView
         this.connectionManager.deserializeFromView(buf);
         this.registeredStructureManagerView.deserializeFromView(isNewSubscription, buf);
         this.settingsModule.deserialize(buf);
+        this.prestige = buf.readInt();
     }
 
     /**
@@ -1409,5 +1416,17 @@ public final class ColonyView implements IColonyView
     public ICommonSettingsModule getSettings()
     {
         return settingsModule;
+    }
+
+    @Override
+    public void updatePrestige()
+    {
+        // Noop, not necessary.
+    }
+
+    @Override
+    public int getPrestige()
+    {
+        return prestige;
     }
 }

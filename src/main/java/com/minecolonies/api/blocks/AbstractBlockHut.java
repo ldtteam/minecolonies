@@ -291,7 +291,7 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
             }
 
             building.setRotationMirror(rotationMirror);
-            building.onUpgradeComplete(building.getBuildingLevel());
+            building.onUpgradeComplete(blueprint, building.getBuildingLevel());
         }
         return true;
     }

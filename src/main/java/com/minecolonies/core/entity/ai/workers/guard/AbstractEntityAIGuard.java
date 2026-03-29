@@ -269,7 +269,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
      */
     private boolean shouldSleep()
     {
-        if (worker.getLastHurtByMob() != null || target != null || fighttimer > 0)
+        if (worker.getLastHurtByMob() != null || target != null || fighttimer > 0 || job.getCitizen().getCitizenDiseaseHandler().isSick())
         {
             return false;
         }

@@ -3,6 +3,7 @@ package com.minecolonies.api.colony.buildings;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.google.common.reflect.TypeToken;
+import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.modules.settings.ISetting;
@@ -213,7 +214,7 @@ public interface IBuilding extends IBuildingContainer, IBuildingModuleContainer,
      *
      * @param newLevel The new level.
      */
-    void onUpgradeComplete(int newLevel);
+    void onUpgradeComplete(@Nullable final Blueprint blueprint, int newLevel);
 
     /**
      * Whether this building has a guard building nearby
@@ -545,4 +546,15 @@ public interface IBuilding extends IBuildingContainer, IBuildingModuleContainer,
     {
         SortingUtils.sort(provider, inventoryHandler);
     }
+
+    /**
+     * Recalculate prestige for building.
+     * @param blueprint the blueprint as a basis.
+     */
+    void calculatePrestige(final Blueprint blueprint);
+
+    /**
+     * Trigger for async prestige recalculation.
+     */
+    void asyncPrestigeRecalc();
 }
