@@ -8,6 +8,10 @@
             label="" tooltip="$(item.minecolonies.colonymap)"/>
     <image source="minecolonies:textures/gui/builderhut/builder_paper_wide_structure.png" pos="11 7" size="378 237"/>
     <text id="title" size="280 13" pos="60 15" color="black" label="$(com.minecolonies.coremod.gui.townhall.prestige)" textalign="MIDDLE"/>
+    <button size="15 15" pos="260 12" color="black"
+            source="minecolonies:textures/gui/red_wax_information.png"
+            label="" tooltip="$(com.minecolonies.coremod.gui.townhall.prestige.tooltip)"/>
+
     <list id="colonies" size="280 180" pos="60 30">
         <text id="desc" size="280 13" pos="0 0" color="black"/>
     </list>

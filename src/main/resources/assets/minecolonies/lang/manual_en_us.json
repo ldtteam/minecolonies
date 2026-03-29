@@ -3041,5 +3041,6 @@
   "com.minecolonies.coremod.stablemaster.needed.feeditems": "Cavalry feed items.",
   "entity.minecolonies.cavalry_horse": "Cavalry Horse",
 
-  "com.minecolonies.coremod.gui.townhall.prestige": "Colony Ranking"
+  "com.minecolonies.coremod.gui.townhall.prestige": "Colony Ranking",
+  "com.minecolonies.coremod.gui.townhall.prestige.tooltip": "Score reflects the total construction value of your colony, calculated by summing the cost factor of each building."
 }
