@@ -229,7 +229,7 @@ public class CraftingTagAuditor
             writer.write(',');
             final int tier = Math.max(0, Math.min(6, SchemAnalyzerUtil.getBlockTier(entry.getValue())));
             writer.write(",".repeat(tier));
-            writer.write("*".repeat(tier));
+            writer.write(tier == 0 ? "-" : "*".repeat(tier));
             writer.newLine();
         }
     }
