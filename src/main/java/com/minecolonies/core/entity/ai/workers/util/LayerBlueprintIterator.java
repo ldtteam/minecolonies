@@ -115,6 +115,17 @@ public class LayerBlueprintIterator extends AbstractBlueprintIteratorWrapper
     }
 
     @Override
+    public BlockPos getPrevProgressPos()
+    {
+        final BlockPos prevProgressPos = delegate.getPrevProgressPos();
+        if (prevProgressPos.equals(NULL_POS))
+        {
+            return NULL_POS;
+        }
+        return prevProgressPos.atY(layer);
+    }
+
+    @Override
     public BlueprintPositionInfo getBluePrintPositionInfo(final BlockPos localPos)
     {
         // localPos is relative to the original blueprint, so we need to use the original blueprint to retrieve the information
