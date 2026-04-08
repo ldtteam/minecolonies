@@ -51,7 +51,7 @@ public class WindowClipBoard extends AbstractWindowSkeleton
     {
         super(new ResourceLocation(Constants.MOD_ID, "gui/windowclipboard.xml"));
         this.showImportant = showImportant;
-        this.requestTreeWindowModule = registerLayoutModule(ClipboardRequestTreeWindowModule::new, new ClipboardRequestTreeWindowModule.Options(colony, () -> this.showImportant), 16, 44);
+        this.requestTreeWindowModule = registerModule(ClipboardRequestTreeWindowModule::new, new ClipboardRequestTreeWindowModule.Options(colony, () -> this.showImportant));
 
         registerButton(CLIPBOARD_TOGGLE, this::toggleImportant);
         paintButtonState();

@@ -4,5 +4,6 @@
 
     <text size="158 11" pos="16 28" textalign="MIDDLE" color="black"
            label="$(com.minecolonies.coremod.gui.citizen.requests)"/>
+    <layout source="minecolonies:gui/layouthuts/layoutrequeststree.xml" pos="16 44"/>
     <button id="important" size="14 15" pos="150 23" color="red" label="!" tooltip="$(com.minecolonies.coremod.gui.request.hideshow)" source="minecolonies:textures/gui/builderhut/builder_button_mini.png"/>
 </window>

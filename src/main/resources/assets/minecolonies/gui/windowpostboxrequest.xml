@@ -19,6 +19,7 @@
 
     <text size="158 11" pos="246 28" textalign="MIDDLE" color="black"
            label="$(com.minecolonies.coremod.gui.citizen.requests)"/>
+    <layout source="minecolonies:gui/layouthuts/layoutrequeststree.xml" pos="261 44"/>
 
     <button id="deliverAvailable" pos="52 195" size="40 15"/>
     <text id="test" pos="100 195" size="158 11" color="black" label="Deliver what's available"/>

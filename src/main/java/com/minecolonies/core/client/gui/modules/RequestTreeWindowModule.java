@@ -12,7 +12,6 @@ import com.minecolonies.api.colony.requestsystem.requestable.IStackBasedTask;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.Log;
-import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.client.gui.AbstractWindowSkeleton;
 import com.minecolonies.core.client.gui.WindowRequestDetail;
 import com.minecolonies.core.colony.requestsystem.requests.StandardRequests;
@@ -21,7 +20,6 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.items.wrapper.InvWrapper;
@@ -35,7 +33,7 @@ import static com.minecolonies.api.util.constant.TranslationConstants.DETAILS;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 import static com.minecolonies.core.colony.requestsystem.requests.AbstractRequest.MISSING;
 
-public abstract class RequestTreeWindowModule implements IWindowWithLayoutModule
+public abstract class RequestTreeWindowModule implements IWindowModule
 {
     private static final int AUTO_REFRESH_TICKS = 100;
 
@@ -94,13 +92,13 @@ public abstract class RequestTreeWindowModule implements IWindowWithLayoutModule
     }
 
     @Override
-    public void onLayoutMounted(final Pane rootPane)
+    public void onOpened()
     {
         parent.registerButton(REQUEST_DETAIL, this::detailedClicked);
         parent.registerButton(REQUEST_CANCEL, this::cancel);
         parent.registerButton(REQUEST_FULFILL, this::onFulfill);
 
-        resourceList = rootPane.findPaneOfTypeByID(WINDOW_ID_LIST_REQUESTS, ScrollingList.class);
+        resourceList = parent.findPaneOfTypeByID(WINDOW_ID_LIST_REQUESTS, ScrollingList.class);
         resourceList.setDataProvider(new ScrollingList.DataProvider()
         {
             @Override
@@ -176,13 +174,6 @@ public abstract class RequestTreeWindowModule implements IWindowWithLayoutModule
                 fulfillButton.enable();
             }
         });
-    }
-
-    @Override
-    @NotNull
-    public final ResourceLocation getLayout()
-    {
-        return new ResourceLocation(Constants.MOD_ID, "gui/layouthuts/layoutrequeststree.xml");
     }
 
     @Override

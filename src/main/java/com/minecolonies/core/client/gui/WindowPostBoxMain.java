@@ -102,7 +102,7 @@ public class WindowPostBoxMain extends AbstractWindowSkeleton
     {
         super(new ResourceLocation(Constants.MOD_ID, "gui/windowpostboxrequest.xml"));
         this.postBoxView = postBoxView;
-        this.requestTreeWindowModule = registerLayoutModule(PostBoxRequestTreeWindowModule::new, postBoxView, 261, 44);
+        this.requestTreeWindowModule = registerModule(PostBoxRequestTreeWindowModule::new, postBoxView);
         registerPostboxTabs(this, postBoxView);
 
         registerButton(BUTTON_INVENTORY, this::inventoryClicked);
