@@ -66,7 +66,7 @@ public class GuardSetMinePosMessage extends AbstractBuildingServerMessage<Abstra
     @Override
     protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final AbstractBuildingGuards building)
     {
-        final IBuilding miner = building.getColony().getBuildingManager().getBuilding(minePos == null ? building.getMinePos() : minePos);
+        final IBuilding miner = building.getColony().getServerBuildingManager().getBuilding(minePos == null ? building.getMinePos() : minePos);
         if (miner instanceof BuildingMiner)
         {
             building.setMinePos(this.minePos);

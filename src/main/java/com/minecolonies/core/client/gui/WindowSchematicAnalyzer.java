@@ -78,7 +78,7 @@ public class WindowSchematicAnalyzer extends AbstractWindowSkeleton
                 1,
                 (window, blueprint) -> {
                     Minecraft.getInstance().setScreen(this.getScreen());
-                    final SchemAnalyzerUtil.SchematicAnalyzationResult result = analyzationResults.computeIfAbsent(blueprint, SchemAnalyzerUtil::analyzeSchematic);
+                    final SchemAnalyzerUtil.SchematicAnalyzationResult result = analyzationResults.computeIfAbsent(blueprint, bl -> SchemAnalyzerUtil.analyzeSchematic(bl, mc.level.registryAccess()));
                     sortAnalyzationResults();
                     switchSelectionTo(getBoxForSide(b), result);
                 },
@@ -98,7 +98,7 @@ public class WindowSchematicAnalyzer extends AbstractWindowSkeleton
         if (ItemScanAnalyzer.blueprint != null)
         {
             analyzationResults.keySet().removeIf(blueprint -> blueprint.getName().equals(TEMP_SCAN));
-            analyzationResults.put(ItemScanAnalyzer.blueprint, SchemAnalyzerUtil.analyzeSchematic(ItemScanAnalyzer.blueprint));
+            analyzationResults.put(ItemScanAnalyzer.blueprint, SchemAnalyzerUtil.analyzeSchematic(ItemScanAnalyzer.blueprint, mc.level.registryAccess()));
         }
 
         sortAnalyzationResults();

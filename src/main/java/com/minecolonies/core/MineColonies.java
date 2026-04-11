@@ -28,8 +28,10 @@ import com.minecolonies.api.util.constant.SchematicTagConstants;
 import com.minecolonies.apiimp.ClientMinecoloniesAPIImpl;
 import com.minecolonies.apiimp.CommonMinecoloniesAPIImpl;
 import com.minecolonies.apiimp.initializer.*;
+import com.minecolonies.core.blocks.BlockDecorationController;
 import com.minecolonies.core.blocks.BlockPlantationField;
 import com.minecolonies.core.blocks.huts.BlockHutGateHouse;
+import com.minecolonies.core.blocks.huts.BlockHutMiner;
 import com.minecolonies.core.client.render.SpearItemTileEntityRenderer;
 import com.minecolonies.core.colony.crafting.CustomRecipeManagerMessage;
 import com.minecolonies.core.colony.requestsystem.init.RequestSystemInitializer;
@@ -89,7 +91,7 @@ import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 import net.neoforged.neoforge.registries.NewRegistryEvent;
 import org.jetbrains.annotations.NotNull;
-
+import net.minecraft.world.entity.animal.horse.Horse;
 import java.util.function.Consumer;
 
 import static com.minecolonies.api.util.constant.SchematicTagConstants.*;
@@ -167,6 +169,11 @@ public class MineColonies
              TagManager.registerSpecificTagOption(TAG_GATE, b -> b instanceof BlockHutGateHouse);
              TagManager.registerSpecificTagOption(TAG_KNIGHT, b -> b instanceof BlockHutGateHouse);
              TagManager.registerSpecificTagOption(TAG_ARCHER, b -> b instanceof BlockHutGateHouse);
+
+            TagManager.registerSpecificTagOption(TAG_COBBLE, b -> b instanceof BlockHutMiner);
+            TagManager.registerSpecificTagOption(TAG_LADDER, b -> b instanceof BlockHutMiner);
+
+            TagManager.registerSpecificTagOption(TAG_LEISURE, b -> b instanceof BlockDecorationController);
 
              for (final String fieldTag : SchematicTagConstants.getPlantationTags())
              {
@@ -276,6 +283,7 @@ public class MineColonies
         event.put(ModEntities.CAMP_DROWNED_PIRATE, AbstractEntityMinecoloniesRaider.getDefaultAttributes().build());
         event.put(ModEntities.CAMP_DROWNED_ARCHERPIRATE, AbstractEntityMinecoloniesRaider.getDefaultAttributes().build());
         event.put(ModEntities.CAMP_DROWNED_CHIEFPIRATE, AbstractEntityMinecoloniesRaider.getDefaultAttributes().build());
+        event.put(ModEntities.CAVALRY_HORSE, Horse.createBaseHorseAttributes().build());
     }
 
     /**
@@ -421,6 +429,7 @@ public class MineColonies
         PlayAudioMessage.TYPE.register(registry);
         PlayMusicAtPosMessage.TYPE.register(registry);
         ColonyVisitorViewDataMessage.TYPE.register(registry);
+        ColonyViewAnimalViewDataMessage.TYPE.register(registry);
         SyncPathMessage.TYPE.register(registry);
         SyncPathReachedMessage.TYPE.register(registry);
         ReactivateBuildingMessage.TYPE.register(registry);

@@ -35,6 +35,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.research.util.ResearchConstants.MIN_ORDER;
+import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 
 /**
  * Minimum stock module.
@@ -158,7 +159,7 @@ public class RestaurantMenuModule extends AbstractBuildingModule implements IPer
                 {
                     if (request == null)
                     {
-                        final int qty = Math.min(16, Math.min(requestStack.getMaxStackSize(), delta));
+                        final int qty = Math.min(STACKSIZE, Math.min(requestStack.getMaxStackSize(), delta));
                         final MinimumStack stack = new MinimumStack(requestStack, false, true, ItemStackUtils.EMPTY, qty, 1);
 
                         stack.setCanBeResolvedByBuilding(false);

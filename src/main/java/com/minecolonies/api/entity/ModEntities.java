@@ -16,6 +16,8 @@ import com.minecolonies.api.entity.mobs.vikings.AbstractEntityNorsemen;
 import com.minecolonies.api.entity.mobs.vikings.AbstractEntityNorsemenRaider;
 import com.minecolonies.api.entity.other.MinecoloniesMinecart;
 import com.minecolonies.core.entity.other.NewBobberEntity;
+import com.minecolonies.core.entity.other.cavalry.CavalryHorseEntity;
+
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.PathfinderMob;
@@ -66,6 +68,8 @@ public class ModEntities
     public static EntityType<? extends AbstractEntityAmazonRaider> AMAZONCHIEF;
 
     public static EntityType<MinecoloniesMinecart> MINECART;
+
+    public static EntityType<CavalryHorseEntity> CAVALRY_HORSE;
 
     public static EntityType<? extends AbstractArrow> FIREARROW;
 

@@ -272,7 +272,7 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
         {
             // Note: getCurrentServer().getWorld() must be used here because MineColonies.proxy.getWorld() fails on single player worlds
             // We are sure we are on the server-side in this function though, so it's fine.
-            final IBuilding building = getColony(banner, worldIn).getBuildingManager().getBuilding(guardTowerLocation);
+            final IBuilding building = getColony(banner, worldIn).getServerBuildingManager().getBuilding(guardTowerLocation);
 
             // If the building is null, it means that guardtower has been moved/destroyed since being added.
             // Safely ignore this case, the player must remove the tower from the rallying list manually.

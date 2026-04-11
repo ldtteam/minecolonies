@@ -126,7 +126,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
 
             if (wo instanceof WorkOrderBuilding)
             {
-                final IBuilding building = job.getColony().getBuildingManager().getBuilding(wo.getLocation());
+                final IBuilding building = job.getColony().getServerBuildingManager().getBuilding(wo.getLocation());
                 if (building == null)
                 {
                     Log.getLogger().error(
@@ -176,7 +176,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
         }
 
         final BlockPos pos = workOrder.getLocation();
-        if (workOrder instanceof WorkOrderBuilding && worker.getCitizenColonyHandler().getColonyOrRegister().getBuildingManager().getBuilding(pos) == null)
+        if (workOrder instanceof WorkOrderBuilding && worker.getCitizenColonyHandler().getColonyOrRegister().getServerBuildingManager().getBuilding(pos) == null)
         {
             Log.getLogger().warn("AbstractBuilding does not exist - removing build request");
             worker.getCitizenColonyHandler().getColonyOrRegister().getWorkManager().removeWorkOrder(workOrder);
@@ -227,10 +227,9 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
     {
         StructurePhasePlacementResult result;
         final WorkerLoadOnlyStructureHandler<J, B> structure = new WorkerLoadOnlyStructureHandler<>(world,
-          structurePlacer.getB().getWorldPos(),
+          structurePlacer.getB().getCenterPos(),
           structurePlacer.getB().getBluePrint(),
           RotationMirror.NONE,
-          true,
           this);
 
         if (building.getWorkOrder().getIteratorType().isEmpty())
@@ -423,7 +422,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
 
             if (wo instanceof WorkOrderBuilding workOrderBuilding)
             {
-                final IBuilding building = colony.getBuildingManager().getBuilding(wo.getLocation());
+                final IBuilding building = colony.getServerBuildingManager().getBuilding(wo.getLocation());
                 if (building == null)
                 {
                     Log.getLogger().error(String.format("Builder (%d:%d) ERROR - Finished, but missing building(%s)",
@@ -442,7 +441,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
                             final BlockEntity te = worker.level().getBlockEntity(building.getID());
                             if (te instanceof AbstractTileEntityColonyBuilding && ((IBlueprintDataProviderBE) te).getSchematicName().isEmpty())
                             {
-                                building.onUpgradeComplete(wo.getTargetLevel());
+                                building.onUpgradeComplete(wo.getBlueprint(), wo.getTargetLevel());
                                 building.setBuildingLevel(wo.getTargetLevel());
                             }
                             break;

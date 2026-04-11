@@ -65,7 +65,7 @@ public class JobQuarrier extends AbstractJobStructure<EntityAIQuarrier, JobQuarr
      */
     public IBuilding findQuarry()
     {
-        for (final IBuilding building : getColony().getBuildingManager().getBuildings().values())
+        for (final IBuilding building : getColony().getServerBuildingManager().getBuildings().values())
         {
             if (building.getBuildingType().getRegistryName().getPath().contains("quarry") && building.getFirstModuleOccurance(QuarryModule.class).hasAssignedCitizen(getCitizen()))
             {

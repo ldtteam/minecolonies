@@ -7,7 +7,6 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.entity.ai.workers.util.IBuilderUndestroyable;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.core.MineColonies;
 import com.minecolonies.core.client.gui.WindowDecorationController;
 import com.minecolonies.core.tileentities.TileEntityDecorationController;
 import com.mojang.serialization.MapCodec;
@@ -46,7 +45,7 @@ import java.util.ArrayList;
 import static com.ldtteam.structurize.blockentities.interfaces.IBlueprintDataProviderBE.TAG_BLUEPRINTDATA;
 import static com.ldtteam.structurize.blockentities.interfaces.IBlueprintDataProviderBE.TAG_SCHEMATIC_NAME;
 import static com.minecolonies.api.blocks.decorative.AbstractBlockMinecoloniesConstructionTape.WATERLOGGED;
-import static com.minecolonies.api.util.constant.BuildingConstants.LEISURE;
+import static com.minecolonies.api.util.constant.SchematicTagConstants.TAG_LEISURE;
 
 /**
  * Creates a decoration controller block.
@@ -207,12 +206,12 @@ public class BlockDecorationController extends AbstractBlockMinecoloniesDirectio
         }
 
         final BlockEntity tileEntity = worldIn.getBlockEntity(pos);
-        if (tileEntity instanceof TileEntityDecorationController && ((TileEntityDecorationController) tileEntity).getPositionedTags().getOrDefault(BlockPos.ZERO, new ArrayList<>()).contains(LEISURE))
+        if (tileEntity instanceof TileEntityDecorationController && ((TileEntityDecorationController) tileEntity).getPositionedTags().getOrDefault(BlockPos.ZERO, new ArrayList<>()).contains(TAG_LEISURE))
         {
             @Nullable final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld(worldIn, pos);
             if (colony != null)
             {
-                colony.getBuildingManager().addLeisureSite(pos);
+                colony.getServerBuildingManager().addLeisureSite(pos);
             }
         }
     }

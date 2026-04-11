@@ -323,6 +323,7 @@ public final class ModBuildingsInitializer
           .addBuildingModuleProducer(ITEMLIST_FUEL)
           .addBuildingModuleProducer(ITEMLIST_ORE)
           .addBuildingModuleProducer(MIN_STOCK)
+          .addBuildingModuleProducer(SMELTER_SETTINGS)
           .addBuildingModuleProducer(STATS_MODULE)
           .createBuildingEntry());
 

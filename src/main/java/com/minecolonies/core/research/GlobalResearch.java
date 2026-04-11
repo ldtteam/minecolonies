@@ -1,14 +1,21 @@
 package com.minecolonies.core.research;
 
 import com.google.common.collect.ImmutableList;
+import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.buildings.ICommonBuilding;
 import com.minecolonies.api.research.*;
-import com.minecolonies.api.research.IResearchEffect;
 import com.minecolonies.api.research.util.ResearchState;
 import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.core.util.BuildingUtils;
+
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.common.crafting.SizedIngredient;
 import net.neoforged.neoforge.items.IItemHandler;
+import net.neoforged.neoforge.items.wrapper.InvWrapper;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -146,8 +153,9 @@ public class GlobalResearch implements IGlobalResearch
     }
 
     @Override
-    public boolean canResearch(final int uni_level, @NotNull final ILocalResearchTree localTree)
+    public boolean canResearch(@NotNull IBuilding building, @NotNull final ILocalResearchTree localTree)
     {
+        final int uni_level = building.getBuildingLevel() == building.getMaxBuildingLevel() ? Integer.MAX_VALUE : building.getBuildingLevel();
         final IGlobalResearch parentResearch = parent == null ? null : IGlobalResearchTree.getInstance().getResearch(branch, parent);
         final ILocalResearch localParentResearch = parent == null ? null : localTree.getResearch(branch, parent);
         final ILocalResearch localResearch = localTree.getResearch(this.getBranch(), this.getId());
@@ -163,28 +171,62 @@ public class GlobalResearch implements IGlobalResearch
         return uni_level >= depth;
     }
 
+    /**
+     * Checks if there are enough resources between the player inventory 
+     * and the university's inventory to start this research.
+     *
+     * @param player the player to check.
+     * @param universityPos the position of the university to check.
+     * @return true if the player has enough resources.
+     */
     @Override
-    public boolean hasEnoughResources(final IItemHandler inventory)
+    public boolean hasEnoughResources(final @NotNull Player player, final @NotNull BlockPos universityPos)
     {
         if (costList.isEmpty())
         {
             return true;
         }
 
+        final IItemHandler playerInventory = new InvWrapper(player.getInventory());
+
+        ICommonBuilding buildingInv = BuildingUtils.commonBuildingFromPosition(player.level(), universityPos);
+
         for (final SizedIngredient ingredient : costList)
         {
-            if (ingredient.ingredient().hasNoItems())
+            final int required = ingredient.count();
+            if (required <= 0)
             {
-                return false;
+                continue;
             }
 
-            final int requiredCount = ingredient.count();
-            final int totalCount = InventoryUtils.getItemCountInItemHandler(inventory, ingredient.ingredient());
-            if (totalCount < requiredCount)
+            int buildingCount = 0;
+            int playerCount = 0;
+
+            // 1) Count from university/building inventory (allows enchanted/custom named)
+            if (buildingInv != null)
+            {
+                buildingCount += InventoryUtils.hasBuildingEnoughElseCount(
+                    buildingInv,
+                    stack -> IGlobalResearch.isUniversityResearchMatch(stack, ingredient),
+                    required
+                );
+            }
+
+            // 2) If still short, count from player inventory (reject enchanted/custom named)
+            if (buildingCount < required)
+            {
+                playerCount = InventoryUtils.getItemCountInItemHandler(
+                    playerInventory,
+                    stack -> IGlobalResearch.isPlayerResearchMatch(stack, ingredient)
+                );
+            }
+
+            if ((buildingCount + playerCount) < required)
             {
                 return false;
             }
         }
+
         return true;
     }
 

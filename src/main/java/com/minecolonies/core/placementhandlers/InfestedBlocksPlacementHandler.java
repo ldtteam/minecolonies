@@ -1,14 +1,17 @@
 package com.minecolonies.core.placementhandlers;
 
-import com.ldtteam.structurize.api.RotationMirror;
+import com.ldtteam.structurize.placement.IPlacementContext;
 import com.ldtteam.structurize.placement.handlers.placement.IPlacementHandler;
 import com.ldtteam.structurize.util.BlockUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.util.Tuple;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.InfestedBlock;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -32,11 +35,9 @@ public class InfestedBlocksPlacementHandler implements IPlacementHandler
       final BlockPos pos,
       final BlockState blockState,
       @Nullable final CompoundTag tileEntityData,
-      final boolean complete,
-      final BlockPos centerPos,
-      final RotationMirror settings)
+      @NotNull final IPlacementContext placementContext)
     {
-        final BlockState expectedBlockState = getExpectedBlockState(blockState, complete);
+        final BlockState expectedBlockState = getExpectedBlockState(blockState, !placementContext.fancyPlacement());
         if (expectedBlockState == null)
         {
             return ActionProcessingResult.PASS;
@@ -81,9 +82,23 @@ public class InfestedBlocksPlacementHandler implements IPlacementHandler
     }
 
     @Override
-    public List<ItemStack> getRequiredItems(final Level world, final BlockPos pos, final BlockState blockState, @Nullable final CompoundTag tileEntityData, final boolean complete)
+    public List<ItemStack> getRequiredItems(final Level world,
+        final BlockPos pos,
+        final BlockState blockState,
+        @Nullable final CompoundTag tileEntityData,
+        @NotNull final IPlacementContext placementContext)
     {
-        final BlockState expectedBlockState = getExpectedBlockState(blockState, complete);
+        final BlockState expectedBlockState = getExpectedBlockState(blockState, !placementContext.fancyPlacement());
         return expectedBlockState != null ? List.of(BlockUtils.getItemStackFromBlockState(expectedBlockState)) : List.of();
+    }
+
+    @Override
+    public boolean doesWorldStateMatchBlueprintState(
+        final BlockState worldState,
+        final BlockState blueprintState,
+        final Tuple<BlockEntity, CompoundTag> blockEntityData,
+        @NotNull final IPlacementContext structureHandler)
+    {
+        return worldState.equals(blueprintState);
     }
 }

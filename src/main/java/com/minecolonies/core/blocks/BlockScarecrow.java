@@ -99,6 +99,11 @@ public class BlockScarecrow extends AbstractBlockMinecoloniesDefault<BlockScarec
             }
         }
 
+        final IColony iColony = IColonyManager.getInstance().getIColony(worldIn, pos);
+        if (iColony != null)
+        {
+            iColony.getServerBuildingManager().addBuildingExtensionIfMissing(BuildingExtensionRegistries.farmField.get(), pos, player);
+        }
         // This must succeed in Remote to stop more right click interactions like placing blocks
         return ItemInteractionResult.SUCCESS;
     }
@@ -178,7 +183,7 @@ public class BlockScarecrow extends AbstractBlockMinecoloniesDefault<BlockScarec
         final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld(worldIn, pos);
         if (colony != null)
         {
-            colony.getBuildingManager().addBuildingExtension(FarmField.create(pos, worldIn));
+            colony.getServerBuildingManager().addBuildingExtension(FarmField.create(pos, worldIn));
         }
     }
 
@@ -219,7 +224,7 @@ public class BlockScarecrow extends AbstractBlockMinecoloniesDefault<BlockScarec
             final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld(worldIn, pos);
             if (colony != null)
             {
-                colony.getBuildingManager().removeBuildingExtension(field -> field.getBuildingExtensionType().equals(BuildingExtensionRegistries.farmField.get()) && field.getPosition().equals(pos));
+                colony.getServerBuildingManager().removeBuildingExtension(field -> field.getBuildingExtensionType().equals(BuildingExtensionRegistries.farmField.get()) && field.getPosition().equals(pos));
             }
         }
     }

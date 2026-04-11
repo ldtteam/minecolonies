@@ -141,7 +141,7 @@ public abstract class AbstractTileEntityRack extends BlockEntity implements Menu
                     }
                     else
                     {
-                        final IBuilding building = colony.getBuildingManager().getBuilding(buildingPos);
+                        final IBuilding building = colony.getServerBuildingManager().getBuilding(buildingPos);
                         if (building != null)
                         {
                             building.overruleNextOpenRequestWithStack(stack);

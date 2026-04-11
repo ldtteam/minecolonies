@@ -10,6 +10,7 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.core.colony.buildings.modules.AnimalHerdingModule;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
@@ -114,6 +115,8 @@ public final class RecipeAnalyzer
         {
             if (entityType.getCategory() != MobCategory.CREATURE) { continue; }
 
+            final ResourceLocation id = EntityType.getKey(entityType);
+
             try
             {
                 // sadly there doesn't seem to be a better way to discover the actual classes for each type, because Java
@@ -123,9 +126,9 @@ public final class RecipeAnalyzer
                     animals.add(animal);
                 }
             }
-            catch (final Exception ex)
+            catch (final LinkageError | Exception ex) 
             {
-                Log.getLogger().error("Couldnt analyze animal", ex);
+                Log.getLogger().error("Couldnt analyze animal: {}. Please report this to the author of {}." , id, id.getNamespace(), ex);
             }
         }
 

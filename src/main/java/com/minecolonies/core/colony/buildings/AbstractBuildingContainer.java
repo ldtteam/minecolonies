@@ -159,8 +159,7 @@ public abstract class AbstractBuildingContainer extends AbstractSchematicProvide
             if (entity instanceof TileEntityColonyBuilding buildingEntity)
             {
                 buildingEntity.setStructurePack(StructurePacks.getStructurePack(getStructurePack()));
-               
-                final IBuilding building = colony.getBuildingManager().getBuilding(pos);
+                final IBuilding building = colony.getServerBuildingManager().getBuilding(pos);
                 if (building != null)
                 {
                     building.setStructurePack(getStructurePack());

@@ -16,6 +16,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ArrayDeque;
 
 import static com.minecolonies.api.util.constant.ColonyConstants.MAX_COLONY_EVENTS;
 import static com.minecolonies.api.util.constant.Constants.MOD_ID;
@@ -54,9 +55,9 @@ public class EventDescriptionManager implements IEventDescriptionManager
             eventDescs.removeFirst();
         }
         eventDescs.add(colonyEventDescription);
-        if (colony.getBuildingManager().getTownHall() != null)
+        if (colony.getServerBuildingManager().getTownHall() != null)
         {
-            colony.getBuildingManager().getTownHall().markDirty();
+            colony.getServerBuildingManager().getTownHall().markDirty();
         }
         else
         {

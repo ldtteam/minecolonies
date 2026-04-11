@@ -12,7 +12,6 @@ import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.client.ModKeyMappings;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.IColonyView;
-import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.workorders.IWorkOrderView;
 import com.minecolonies.api.colony.workorders.WorkOrderType;
@@ -416,7 +415,7 @@ public class ColonyBlueprintRenderer
             final AABB blueprintAABB = AABB.encapsulatingFullBlocks(zeroPos, zeroPos.offset(blueprint.getSizeX() - 1, blueprint.getSizeY() - 1, blueprint.getSizeZ() - 1))
                     .inflate(2 + MinecoloniesAPIProxy.getInstance().getConfig().getClient().neighborbuildingrange.get());
 
-            for (final IBuildingView buildingView : ctx.nearestColony.getBuildings())
+            for (final IBuildingView buildingView : ctx.nearestColony.getClientBuildingManager().getBuildings().values())
             {
                 final BlockPos currentPosition = buildingView.getPosition();
                 if (ctx.clientLevel.getBlockEntity(currentPosition) instanceof final TileEntityColonyBuilding tileEntityColonyBuilding)
@@ -483,7 +482,7 @@ public class ColonyBlueprintRenderer
             }
 
             // and also just the anchor pos for unbuilt non-work-orders, to help find lost huts
-            for (final IBuildingView building : ctx.nearestColony.getBuildings())
+            for (final IBuildingView building : ctx.nearestColony.getClientBuildingManager().getBuildings().values())
             {
                 if (!desired.containsKey(building.getPosition()) &&
                     building.getBuildingLevel() == 0 &&
@@ -510,7 +509,7 @@ public class ColonyBlueprintRenderer
         {
             if (builderPos != null && !builderPos.equals(BlockPos.ZERO))
             {
-                final IBuildingView builderView = colony.getBuilding(builderPos);
+                final IBuildingView builderView = colony.getClientBuildingManager().getBuilding(builderPos);
                 if (builderView != null)
                 {
                     final Set<Integer> builders = builderView.getAllAssignedCitizens();
@@ -577,7 +576,7 @@ public class ColonyBlueprintRenderer
         final BlockPos workerPos = workOrder.getClaimedBy();
         if (!workerPos.equals(BlockPos.ZERO))
         {
-            final IBuildingView building = ctx.nearestColony.getBuilding(workerPos);
+            final IBuildingView building = ctx.nearestColony.getClientBuildingManager().getBuilding(workerPos);
             if (building != null && building.getModuleView(BuildingModules.BUILDER_SETTINGS) != null)
             {
                 blueprintPreviewData.setSolidSubstitutionOverride(building.getModuleView(BuildingModules.BUILDER_SETTINGS).getSetting(

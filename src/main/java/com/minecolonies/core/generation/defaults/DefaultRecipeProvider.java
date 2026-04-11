@@ -743,8 +743,8 @@ public class DefaultRecipeProvider extends RecipeProvider
           .unlockedBy("has_soy_milk", has(ModItems.large_soy_milk_bottle))
           .save(consumer, new ResourceLocation(MOD_ID, "soy_cream_cheese"));
 
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.tofu)
-          .requires(ModBlocks.blockSoyBean)
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.tofu, 2)
+          .requires(ModBlocks.blockSoyBean, 2)
           .unlockedBy("has_soy", has(ModBlocks.blockSoyBean))
           .save(consumer, new ResourceLocation(MOD_ID, "tofu"));
 
@@ -999,7 +999,7 @@ public class DefaultRecipeProvider extends RecipeProvider
           .requires(ModBlocks.blockGarlic)
           .requires(ModBlocks.blockOnion)
           .requires(ModBlocks.blockDurum)
-          .requires(Items.SALMON)
+          .requires(Tags.Items.FOODS_RAW_FISH)
           .requires(Items.POTATO)
           .unlockedBy("has_durum", has(ModBlocks.blockDurum))
           .save(consumer, new ResourceLocation(MOD_ID, "fish_n_chips"));

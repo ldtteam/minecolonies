@@ -66,7 +66,7 @@ public abstract class AbstractWindowCitizen extends AbstractWindowSkeleton
             PaneBuilders.singleLineTooltip(Component.translatable("com.minecolonies.coremod.debug.gui.tabicon"), findPaneByID("debugIcon"));
         }
 
-        final IBuildingView building = citizen.getColony().getBuilding(citizen.getWorkBuilding());
+        final IBuildingView building = citizen.getColony().getClientBuildingManager().getBuilding(citizen.getWorkBuilding());
 
         if (building instanceof AbstractBuildingView && building.getBuildingType() != ModBuildings.library.get())
         {

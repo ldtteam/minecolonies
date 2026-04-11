@@ -521,7 +521,7 @@ public class EntityMercenary extends AbstractFastMinecoloniesEntity implements N
      */
     private static BlockPos findMercenarySpawnPos(final IColony colony, final int amountOfMercenaries)
     {
-        final Tuple<BlockPos, BlockPos> buildingArea = colony.getBuildingManager().getTownHall().getCorners();
+        final Tuple<BlockPos, BlockPos> buildingArea = colony.getServerBuildingManager().getTownHall().getCorners();
         BlockPos spawn = new BlockPos((buildingArea.getB().getX() + buildingArea.getA().getX()) / 2, 0, buildingArea.getA().getZ());
         int height = colony.getWorld().getHeight(Heightmap.Types.WORLD_SURFACE, spawn.getX(), spawn.getZ());
         if (height > buildingArea.getB().getY())

@@ -48,7 +48,7 @@ public class ItemScepterGuard extends AbstractItemMinecolonies
         final PatrolTarget lastPosComp = PatrolTarget.readFromItemStack(scepter);
         if (lastPosComp.pos().equals(ctx.getClickedPos()))
         {
-            ctx.getPlayer().getInventory().removeItemNoUpdate(ctx.getPlayer().getInventory().selected);
+            ctx.getPlayer().getInventory().removeItem(scepter);
             MessageUtils.format(TOOL_GUARD_SCEPTER_ADD_PATROL_TARGETS_FINISHED).sendTo(ctx.getPlayer());
             return InteractionResult.FAIL;
         }
@@ -82,7 +82,7 @@ public class ItemScepterGuard extends AbstractItemMinecolonies
         {
             MessageUtils.format(TOOL_GUARD_SCEPTER_ADD_GUARD_TARGET, pos.toShortString()).sendTo(playerIn);
             tower.setGuardPos(pos);
-            playerIn.getInventory().removeItemNoUpdate(playerIn.getInventory().selected);
+            playerIn.getInventory().removeItem(stack);
         }
         else
         {

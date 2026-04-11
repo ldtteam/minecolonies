@@ -126,7 +126,7 @@ public class DirectPlaceMessage extends AbstractServerPlayMessage
                     final HutBlockData hutComponent = HutBlockData.readFromItemStack(stack);
                     if (hutComponent != null)
                     {
-                        final IBuilding building = colony.getBuildingManager().getBuilding(pos);
+                        final IBuilding building = colony.getServerBuildingManager().getBuilding(pos);
                         if (building != null)
                         {
                             building.setBuildingLevel(hutComponent.level());

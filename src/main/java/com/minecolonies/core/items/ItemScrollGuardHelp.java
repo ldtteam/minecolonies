@@ -102,10 +102,10 @@ public class ItemScrollGuardHelp extends AbstractItemScroll
                         continue;
                     }
 
-                    citizenData.getEntity().get().remove(Entity.RemovalReason.DISCARDED);
+                    citizenData.getEntity().get().discard();
                 }
 
-                colony.getCitizenManager().spawnOrCreateCivilian(citizenData, world, player.blockPosition(), true);
+                colony.getCitizenManager().spawnOrCreateCivilian(citizenData, world, List.of(player.blockPosition()), true);
                 citizenData.setNextRespawnPosition(building.getID());
 
                 building.getSetting(AbstractBuildingGuards.GUARD_TASK).set(GuardTaskSetting.FOLLOW);
@@ -167,7 +167,7 @@ public class ItemScrollGuardHelp extends AbstractItemScroll
         final BlockEntity te = ctx.getLevel().getBlockEntity(ctx.getClickedPos());
         if (te instanceof TileEntityColonyBuilding && ctx.getPlayer() != null)
         {
-            final IBuilding building = ((TileEntityColonyBuilding) te).getColony().getBuildingManager().getBuilding(ctx.getClickedPos());
+            final IBuilding building = ((TileEntityColonyBuilding) te).getColony().getServerBuildingManager().getBuilding(ctx.getClickedPos());
             if (!(building instanceof AbstractBuildingGuards))
             {
                 MessageUtils.format(TOOL_GUARD_SCROLL_NO_GUARD_BUILDING).sendTo(ctx.getPlayer());

@@ -5,7 +5,10 @@ import com.ldtteam.blockui.controls.Button;
 import com.ldtteam.blockui.controls.ItemIcon;
 import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.blockui.controls.TextField;
+import com.ldtteam.blockui.views.Box;
 import com.ldtteam.blockui.views.ScrollingList;
+import com.ldtteam.blockui.views.ScrollingListContainer;
+import com.ldtteam.structurize.client.gui.util.InputFilters;
 import com.minecolonies.api.colony.buildings.modules.IBuildingModuleView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
@@ -58,7 +61,7 @@ public class WindowPostBoxMain extends AbstractWindowSkeleton
     /**
      * List of all item stacks in the game.
      */
-    private final List<ItemStack> allItems = new ArrayList<>();
+    private List<ItemStack> allItems = new ArrayList<>();
 
     /**
      * Resource scrolling list.
@@ -112,6 +115,19 @@ public class WindowPostBoxMain extends AbstractWindowSkeleton
             {
                 filter = newFilter;
                 this.tick = 10;
+                for (final Pane child : ((ScrollingListContainer) findPaneOfTypeByID(LIST_RESOURCES, ScrollingList.class).getChildren().get(0)).getChildren())
+                {
+                    if (child instanceof Box box)
+                    {
+                        for (final Pane boxChild : box.getChildren())
+                        {
+                            if (boxChild.getID().equals(INPUT_QTY))
+                            {
+                                ((TextField) boxChild).setText("");
+                            }
+                        }
+                    }
+                }
             }
         });
 
@@ -125,18 +141,13 @@ public class WindowPostBoxMain extends AbstractWindowSkeleton
             }
 
             @Override
-            public boolean shouldUpdate()
-            {
-                return false;
-            }
-
-            @Override
             public void updateElement(final int index, @NotNull final Pane rowPane)
             {
                 final ItemStack resource = allItems.get(index);
                 final Text resourceLabel = rowPane.findPaneOfTypeByID(RESOURCE_NAME, Text.class);
                 resourceLabel.setText(resource.getHoverName());
                 rowPane.findPaneOfTypeByID(RESOURCE_ICON, ItemIcon.class).setItem(resource);
+                rowPane.findPaneOfTypeByID(INPUT_QTY, TextField.class).setFilter(InputFilters.ONLY_POSITIVE_NUMBERS_MAX1k);
             }
         });
     }
@@ -261,7 +272,7 @@ public class WindowPostBoxMain extends AbstractWindowSkeleton
      */
     private Collection<? extends ItemStack> getBlockList(final Predicate<ItemStack> filterPredicate)
     {
-        final Set<ItemStack> allItems = ItemStackUtils.allItemsPlusInventory(Minecraft.getInstance().player);
+        final List<ItemStack> allItems = ItemStackUtils.allItemsPlusInventory(Minecraft.getInstance().player);
 
         if (filter.isEmpty())
         {
@@ -277,7 +288,7 @@ public class WindowPostBoxMain extends AbstractWindowSkeleton
     {
         stackList.enable();
         stackList.show();
-        final List<ItemStack> tempRes = new ArrayList<>(allItems);
+        final List<ItemStack> tempRes = allItems;
 
         //Creates a dataProvider for the unemployed stackList.
         stackList.setDataProvider(new ScrollingList.DataProvider()

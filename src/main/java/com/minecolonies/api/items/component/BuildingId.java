@@ -52,7 +52,7 @@ public record BuildingId(BlockPos id)
     {
         final IColony colony = ColonyId.readColonyFromItemStack(itemStack);
         final BuildingId buildingId = readFromItemStack(itemStack);
-        return colony == null || buildingId == EMPTY ? null : colony.getBuildingManager().getBuilding(buildingId.id);
+        return colony == null || buildingId == EMPTY ? null : colony.getServerBuildingManager().getBuilding(buildingId.id);
     }
 
     @Nullable
@@ -60,6 +60,6 @@ public record BuildingId(BlockPos id)
     {
         final IColonyView colony = ColonyId.readColonyViewFromItemStack(itemStack);
         final BuildingId buildingId = readFromItemStack(itemStack);
-        return colony == null || buildingId == EMPTY ? null : colony.getBuilding(buildingId.id);
+        return colony == null || buildingId == EMPTY ? null : colony.getClientBuildingManager().getBuilding(buildingId.id);
     }
 }

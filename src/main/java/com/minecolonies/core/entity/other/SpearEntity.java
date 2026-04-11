@@ -43,7 +43,7 @@ public class SpearEntity extends ThrownTrident implements ICustomAttackSound
     /**
      * The spears base damage before any modifications.
      */
-    public static final int BASE_DAMAGE = 8;
+    public static final int BASE_DAMAGE = 4;
 
     /**
      * The NBT key for the spear ItemStack.

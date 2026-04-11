@@ -847,7 +847,7 @@ public final class ItemStackUtils
      * @param player The player whose inventory to check.
      * @return The set of items.
      */
-    public static Set<ItemStack> allItemsPlusInventory(@NotNull final Player player)
+    public static List<ItemStack> allItemsPlusInventory(@NotNull final Player player)
     {
         // get all known items first
         final Set<ItemStorage> allItems = new HashSet<>(IColonyManager.getInstance().getCompatibilityManager().getSetOfAllItems());
@@ -856,6 +856,11 @@ public final class ItemStackUtils
         for (final ItemStack stack : player.getInventory().items)
         {
             if (stack.isEmpty())
+            {
+                continue;
+            }
+
+            if (allItems.contains(new ItemStorage(stack, true, false)))
             {
                 continue;
             }
@@ -870,7 +875,13 @@ public final class ItemStackUtils
             allItems.add(new ItemStorage(pristine, true));
         }
 
-        return allItems.stream().map(ItemStorage::getItemStack).collect(Collectors.toSet());
+        final List<ItemStack> stacks = new ArrayList<>(allItems.size());
+        for (ItemStorage allItem : allItems)
+        {
+            ItemStack itemStack = allItem.getItemStack();
+            stacks.add(itemStack);
+        }
+        return stacks;
     }
 
     /**

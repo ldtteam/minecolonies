@@ -123,19 +123,6 @@ public class BuildingTownHall extends AbstractBuilding implements ITownHall
     }
 
     @Override
-    public void registerModule(@NotNull final IBuildingModule module)
-    {
-        if (module.getProducer() == BuildingModules.TOWNHALL_SETTINGS)
-        {
-            super.registerModule(((Colony)colony).getSettings());
-        }
-        else
-        {
-            super.registerModule(module);
-        }
-    }
-
-    @Override
     public void removePermissionEvents(@NotNull final UUID id)
     {
         if (permissionEvents.removeIf(e -> id.equals(e.getId())))

@@ -18,11 +18,13 @@ import com.minecolonies.api.util.constant.NbtTagConstants;
 import com.minecolonies.core.colony.crafting.CustomRecipeManager;
 import com.minecolonies.core.colony.crafting.LootTableAnalyzer;
 import com.minecolonies.core.util.FurnaceRecipes;
+import it.unimi.dsi.fastutil.ints.*;
 import it.unimi.dsi.fastutil.objects.Object2IntLinkedOpenHashMap;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.Registry;
 import net.minecraft.core.component.DataComponentType;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -37,6 +39,7 @@ import net.minecraft.tags.ItemTags;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.item.*;
+import net.minecraft.world.item.component.DyedItemColor;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.level.Level;
@@ -139,6 +142,11 @@ public class CompatibilityManager implements ICompatibilityManager
      * Furnace recipes storage
      */
     private final FurnaceRecipes furnaceRecipes = new FurnaceRecipes();
+
+    /**
+     * Cached mapping of items and colors to dyes.
+     */
+    private final Int2ObjectMap<Int2IntMap> dyeColorMap = new Int2ObjectOpenHashMap<>();
 
     /**
      * Instantiates the compatibilityManager.
@@ -837,5 +845,37 @@ public class CompatibilityManager implements ICompatibilityManager
     public int getNumberOfSaplings()
     {
         return saplings.size();
+    }
+
+    @Override
+    public Optional<DyeColor> getDyeColor(final ItemStack stack)
+    {
+        if (stack.is(ItemTags.DYEABLE))
+        {
+            final int color = DyedItemColor.getOrDefault(stack, -1);
+            if (color != -1)
+            {
+                final ItemStack undyedStack = stack.copy();
+                undyedStack.remove(DataComponents.DYED_COLOR);
+
+                final int dyeId = dyeColorMap.computeIfAbsent(Item.getId(undyedStack.getItem()), id ->
+                {
+                    final Int2IntMap map = new Int2IntOpenHashMap();
+                    for (final DyeColor dye : DyeColor.values())
+                    {
+                        final ItemStack dyed = DyedItemColor.applyDyes(undyedStack, List.of(DyeItem.byColor(dye)));
+                        if (!dyed.isEmpty())
+                        {
+                            map.put(DyedItemColor.getOrDefault(dyed, -1), dye.getId());
+                        }
+                    }
+                    return map;
+                }).getOrDefault(color, -1);
+
+                return dyeId < 0 ? Optional.empty() : Optional.of(DyeColor.byId(dyeId));
+            }
+        }
+
+        return Optional.empty();
     }
 }
