@@ -1,18 +1,18 @@
 package com.minecolonies.core.colony.buildings.workerbuildings;
 
+import com.ldtteam.domumornamentum.block.decorative.FloatingCarpetBlock;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.constant.NbtTagConstants;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.Tag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.WoolCarpetBlock;
-
+import net.minecraft.world.level.block.CarpetBlock;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -81,7 +81,7 @@ public class BuildingSchool extends AbstractBuilding
     public void registerBlockPosition(@NotNull final Block block, @NotNull final BlockPos pos, @NotNull final Level world)
     {
         super.registerBlockPosition(block, pos, world);
-        if (block instanceof WoolCarpetBlock)
+        if (isCarpet(block))
         {
             carpet.add(pos);
         }
@@ -135,11 +135,21 @@ public class BuildingSchool extends AbstractBuilding
             return null;
         }
         final BlockPos returnPos = carpet.get(random.nextInt(carpet.size()));
-        if (colony.getWorld().getBlockState(returnPos).getBlock() instanceof WoolCarpetBlock)
+        if (isCarpet(colony.getWorld().getBlockState(returnPos).getBlock()))
         {
             return returnPos;
         }
         carpet.remove(returnPos);
         return null;
+    }
+
+    /**
+     * Check whether a given block is a valid carpet block.
+     * @param block the input block.
+     * @return true if so.
+     */
+    private boolean isCarpet(final Block block)
+    {
+        return block instanceof CarpetBlock || block instanceof FloatingCarpetBlock;
     }
 }
