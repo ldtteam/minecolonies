@@ -201,7 +201,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
             final IGlobalResearch research = IGlobalResearchTree.getInstance().getResearch(branch, new ResourceLocation(button.getID()));
             final ILocalResearch localResearch = building.getColony().getResearchManager().getResearchTree().getResearch(branch, research.getId());
             if (localResearch == null && building.getBuildingLevel() > building.getColony().getResearchManager().getResearchTree().getResearchInProgress().size() &&
-                  (research.hasEnoughResources(Minecraft.getInstance().player, building.getPosition())) || (mc.player.isCreative()))
+                  (research.hasEnoughResources(Minecraft.getInstance().player, building.getPosition()) || mc.player.isCreative()))
             {
                 // This side won't actually start research; it'll be overridden the next colony update from the server.
                 // It will, however, update for the next WindowResearchTree if the colony update is slow to come back.
@@ -781,7 +781,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
             final ItemStorage is = costList.get(i);
             undoCostIcons[i] = new ItemIcon();
             if (InventoryUtils.getItemCountInItemHandler(new InvWrapper(Minecraft.getInstance().player.getInventory()),
-              stack -> !ItemStackUtils.isEmpty(stack) && ItemStack.isSameItem(stack, is.getItemStack())) < is.getAmount())
+              stack -> !ItemStackUtils.isEmpty(stack) && ItemStack.isSameItem(stack, is.getItemStack())) < is.getAmount() && !Minecraft.getInstance().player.isCreative())
             {
                 missingItems.add(is);
             }

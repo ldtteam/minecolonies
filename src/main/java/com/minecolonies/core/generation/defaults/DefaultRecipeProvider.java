@@ -990,6 +990,7 @@ public class DefaultRecipeProvider extends RecipeProvider
           .requires(Items.EGG)
           .requires(Items.EGG)
           .requires(Items.CHICKEN)
+          .requires(Items.BOWL)
           .unlockedBy("has_onion", has(ModBlocks.blockOnion))
           .save(consumer, new ResourceLocation(MOD_ID, "eggdrop_soup"));
 
