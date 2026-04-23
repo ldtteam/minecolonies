@@ -362,19 +362,16 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
         int oldIndex = this.isDone() ? 0 : this.getPath().getNextNodeIndex();
 
         this.ourEntity.setYya(0);
-        if (handleLadders(oldIndex))
-        {
-            followThePath();
-            return;
-        }
 
-        if (isSneaking)
+        final boolean handledLadders = handleLadders(oldIndex);
+
+        if (!handledLadders && isSneaking)
         {
             isSneaking = false;
             mob.setShiftKeyDown(false);
         }
 
-        if (handleRails())
+        if (!handledLadders && handleRails())
         {
             return;
         }
