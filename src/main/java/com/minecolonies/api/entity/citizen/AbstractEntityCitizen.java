@@ -421,7 +421,6 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
         updateSwingTime();
         if (collisionCounter > 0)
         {
-            Log.getLogger().warn("collision counter reduced to:" + collisionCounter + " citizen:" + this);
             collisionCounter--;
         }
     }
