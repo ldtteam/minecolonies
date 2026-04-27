@@ -1,6 +1,7 @@
 package com.minecolonies.core.entity.ai.workers.service;
 
 import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.buildings.ICommonBuilding;
 import com.minecolonies.api.colony.buildings.workerbuildings.IWareHouse;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
@@ -8,6 +9,9 @@ import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
 import com.minecolonies.api.colony.requestsystem.requestable.deliveryman.Delivery;
 import com.minecolonies.api.colony.requestsystem.requestable.deliveryman.IDeliverymanRequestable;
+import com.minecolonies.core.colony.buildings.workerbuildings.BuildingCook;
+import com.minecolonies.api.colony.requestsystem.requester.IRequester;
+import com.minecolonies.core.colony.requestsystem.requests.AbstractRequest;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
@@ -15,6 +19,7 @@ import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.core.util.BuildingUtils;
 import com.minecolonies.api.util.StatsUtil;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
@@ -35,6 +40,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
@@ -102,6 +109,8 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
      */
     private List<ItemStorage> alreadyKept = new ArrayList<>();
 
+    private @NotNull JobDeliveryman deliveryman;
+
     /**
      * Initialize the deliveryman and add all his tasks.
      *
@@ -110,6 +119,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
     public EntityAIWorkDeliveryman(@NotNull final JobDeliveryman deliveryman)
     {
         super(deliveryman);
+        this.deliveryman = deliveryman;
         super.registerTargets(
           /*
            * Check if tasks should be executed.
@@ -175,7 +185,11 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             return PICKUP;
         }
 
-        if (pickupFromBuilding(pickupBuilding))
+        Level level = this.deliveryman.getColony().getWorld();
+
+        final ICommonBuilding pickupTargetBuilding = BuildingUtils.commonBuildingFromPosition(level, pickupTarget);
+
+        if (pickupFromBuilding(pickupBuilding, pickupTargetBuilding))
         {
             this.alreadyKept = new ArrayList<>();
             this.currentSlot = 0;
@@ -212,7 +226,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
      * @param building building to gather it from.
      * @return true when finished.
      */
-    private boolean pickupFromBuilding(@NotNull final IBuilding targetBuilding)
+    private boolean pickupFromBuilding(@NotNull final IBuilding targetBuilding, ICommonBuilding building)
     {
         if (cannotHoldMoreItems() || InventoryUtils.openSlotCount(worker.getInventoryCitizen()) <= 0)
         {
@@ -252,9 +266,11 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         {
             return false;
         }
+
         final ItemStack activeStack;
 
-        if (targetBuilding.getBuildingDisplayName().equalsIgnoreCase("restaurant")) {
+        if (building.getBuildingType() != null && 
+            building.getBuildingType().getRegistryName().equals(new ResourceLocation("minecolonies", "restaurant"))) {
             if (ItemStackUtils.ISFOOD.test(handler.
                 getStackInSlot(currentSlot))) {
                 return false;
