@@ -370,7 +370,7 @@ public class PathingStuckHandler<NAV extends PathNavigation & IMinecoloniesNavig
         {
             if (navigator.getPath() != null)
             {
-                moveAwayStartPos = navigator.getPath().getNodePos(navigator.getPath().getNextNodeIndex());
+                moveAwayStartPos = navigator.getPath().getNodePos(navigator.getPath().getNextNodeIndex() - 1);
             }
             else
             {
