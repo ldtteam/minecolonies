@@ -396,7 +396,7 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
         else
         {
             // guards push the player out of their way
-            push(player);
+            player.push(this);
         }
     }
 
