@@ -254,7 +254,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         }
         final ItemStack activeStack;
 
-        if (targetBuilding.getBuildingDisplayName().equalsIgnoreCase("Townhall")) {
+        if (targetBuilding.getBuildingDisplayName().equalsIgnoreCase("restaurant")) {
             if (ItemStackUtils.ISFOOD.test(handler.
                 getStackInSlot(currentSlot))) {
                 return false;
@@ -264,7 +264,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         } else {
             activeStack = handler.extractItem(currentSlot, amount, false);
         }
-        
+
         InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(activeStack, worker.getInventoryCitizen());
         targetBuilding.markDirty();
         CitizenItemUtils.setHeldItem(worker, InteractionHand.MAIN_HAND, SLOT_HAND);
