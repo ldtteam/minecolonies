@@ -30,9 +30,9 @@ import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*
 import static com.minecolonies.api.research.util.ResearchConstants.TEACHING;
 import static com.minecolonies.api.util.constant.Constants.DEFAULT_SPEED;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
-import static com.minecolonies.api.util.constant.TranslationConstants.PUPIL_NO_CARPET;
-import static com.minecolonies.api.util.constant.StatisticsConstants.LEVELS_GAINED;
 import static com.minecolonies.api.util.constant.StatisticsConstants.ITEM_USED;
+import static com.minecolonies.api.util.constant.StatisticsConstants.LEVELS_GAINED;
+import static com.minecolonies.api.util.constant.TranslationConstants.PUPIL_NO_CARPET;
 
 public class EntityAIWorkPupil extends AbstractEntityAIInteract<JobPupil, BuildingSchool>
 {
@@ -92,7 +92,7 @@ public class EntityAIWorkPupil extends AbstractEntityAIInteract<JobPupil, Buildi
         }
 
         final BuildingSchool school = building;
-        final BlockPos pos = school.getRandomPlaceToSit();
+        final BlockPos pos = school.getRandomPlaceToSit(worker.getRandom());
         if (pos == null)
         {
             worker.getCitizenData().triggerInteraction(new StandardInteraction(Component.translatable(PUPIL_NO_CARPET), ChatPriority.BLOCKING));

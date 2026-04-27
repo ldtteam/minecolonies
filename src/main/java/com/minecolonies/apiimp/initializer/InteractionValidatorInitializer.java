@@ -37,9 +37,10 @@ import static com.minecolonies.api.util.constant.translation.RequestSystemTransl
 import static com.minecolonies.api.util.constant.translation.RequestSystemTranslationConstants.REQUEST_SYSTEM_BUILDING_LEVEL_TOO_LOW;
 import static com.minecolonies.core.colony.buildings.modules.BuildingModules.RESTAURANT_MENU;
 import static com.minecolonies.core.entity.ai.workers.crafting.EntityAIWorkSmelter.ORE_LIST;
+import static com.minecolonies.core.entity.ai.workers.production.agriculture.EntityAIWorkFisherman.SUBOPTIMAL_POND_COMPLAINT_DISTANCE;
 import static com.minecolonies.core.util.WorkerUtil.getLastLadder;
 import static com.minecolonies.core.util.WorkerUtil.isThereCompostedLand;
-import static com.minecolonies.core.entity.ai.workers.production.agriculture.EntityAIWorkFisherman.SUBOPTIMAL_POND_COMPLAINT_DISTANCE;
+
 /**
  * Class containing initializer for all the validator predicates.
  */
@@ -164,7 +165,7 @@ public class InteractionValidatorInitializer
 
         InteractionValidatorRegistry.registerStandardPredicate(Component.translatable(PUPIL_NO_CARPET),
           citizen -> citizen.getEntity().isPresent() && citizen.isChild() && citizen.getWorkBuilding() instanceof BuildingSchool
-                       && ((BuildingSchool) citizen.getWorkBuilding()).getRandomPlaceToSit() == null);
+                       && ((BuildingSchool) citizen.getWorkBuilding()).getRandomPlaceToSit(citizen.getEntity().get().getRandom()) == null);
 
         InteractionValidatorRegistry.registerStandardPredicate(Component.translatable(WATER_TOO_FAR),
           citizen -> citizen.getJob() instanceof JobFisherman && ((JobFisherman) citizen.getJob()).getPonds().isEmpty());
