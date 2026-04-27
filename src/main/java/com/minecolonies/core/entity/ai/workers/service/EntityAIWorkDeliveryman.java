@@ -252,8 +252,19 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         {
             return false;
         }
+        final ItemStack activeStack;
 
-        final ItemStack activeStack = handler.extractItem(currentSlot, amount, false);
+        if (targetBuilding.getBuildingDisplayName().equalsIgnoreCase("Townhall")) {
+            if (ItemStackUtils.ISFOOD.test(handler.
+                getStackInSlot(currentSlot))) {
+                return false;
+            } else {
+                activeStack = handler.extractItem(currentSlot, amount, false);
+            }
+        } else {
+            activeStack = handler.extractItem(currentSlot, amount, false);
+        }
+        
         InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(activeStack, worker.getInventoryCitizen());
         targetBuilding.markDirty();
         CitizenItemUtils.setHeldItem(worker, InteractionHand.MAIN_HAND, SLOT_HAND);
