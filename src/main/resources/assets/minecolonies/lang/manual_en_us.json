@@ -585,7 +585,7 @@
 
   "com.minecolonies.coremod.gui.townhall.allies": "Allies:",
   "com.minecolonies.coremod.gui.townhall.feuds": "Feuds:",
-  "com.minecolonies.coremod.gui.townhall.tp": "Do you really want to teleport to %s? [YES]",
+  "com.minecolonies.coremod.gui.townhall.tp": "Do you really want to teleport to %s?",
 
   "com.minecolonies.coremod.workorderadded": "Build request created for %s at colony %s! The hut block is at %s %s %s.",
   "com.minecolonies.coremod.decoorderadded": "Decoration request created for colony %s!",
@@ -2995,7 +2995,7 @@
   "com.minecolonies.core.gui.colonylist.set_neutral": "Set Neutral",
   "com.minecolonies.core.gui.colonylist.travel": "Travel",
   "com.minecolonies.core.gui.colonylist.travel.tooltip": "Only possible for Allied colonies",
-  "com.minecolonies.core.gui.colonylist.travel.really": "Do you really want to travel to %s? [YES]",
+  "com.minecolonies.core.gui.colonylist.travel.really": "Do you really want to travel to %s?",
   "com.minecolonies.core.gui.connectioneventlist.desc": "Connection Event List",
   "com.minecolonies.core.gui.connectioneventlist.accept_ally": "Accept Alliance",
   "com.minecolonies.core.gui.connectioneventlist.howto": "How to build an Alliance: \n\n - Build a Gatehouse in your colony.\n\n- Ensure the target colony also has a Gatehouse.\n\n- Place colony signs between the two Gatehouses to create a connection.",
@@ -3036,5 +3036,13 @@
   "entity.minecolonies.cavalry_horse": "Cavalry Horse",
 
   "com.minecolonies.coremod.gui.townhall.prestige": "Colony Ranking",
-  "com.minecolonies.coremod.gui.townhall.prestige.tooltip": "Score reflects the total construction value of your colony, calculated by summing the cost factor of each building."
+  "com.minecolonies.coremod.gui.townhall.prestige.tooltip": "Score reflects the total construction value of your colony, calculated by summing the cost factor of each building.",
+
+  "com.minecolonies.core.gui.residence.warning.2": "Warning: No food production detected. Build a Farm or Fisher's Hut before adding more residents.",
+  "com.minecolonies.core.gui.residence.warning.3": "Warning: Higher-level residents expect regular meals. Build a Dining Hall and setup Minecolonies Food on the menu before upgrading.",
+  "com.minecolonies.core.gui.residence.warning.4": "Warning: Higher-level residents demand varied, cooked meals. Ensure you have a chef alongside your dining hall and a full menu before upgrading.",
+  "com.minecolonies.core.gui.residence.warning.5": "Warning: Your colony may struggle to feed residents at this level. Consider expanding food production and your Dining Hall menu first.",
+
+  "com.minecolonies.core.gui.build.confirm.title": "Are you sure you want to upgrade the building?",
+  "com.minecolonies.core.gui.teleport.confirm.title": "Are you sure you want to teleport now?"
 }
