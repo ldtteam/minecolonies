@@ -7,7 +7,6 @@ import com.minecolonies.api.colony.buildings.IMysticalSite;
 import com.minecolonies.api.colony.buildings.workerbuildings.ITownHall;
 import com.minecolonies.api.colony.buildings.workerbuildings.IWareHouse;
 import com.minecolonies.api.colony.buildingextensions.IBuildingExtension;
-import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
@@ -273,4 +272,16 @@ public interface IRegisteredStructureManager extends ICommonRegisteredStructureM
      * @param pos the pos it's at.
      */
     void addBuildingExtensionIfMissing(BuildingExtensionRegistries.BuildingExtensionEntry buildingExtensionEntry, BlockPos pos, final Player player);
+
+    /**
+     * Indicate to building manager that prestige just has been calculated.
+     * @param building the building it happened for.
+     */
+    void clearPendingPrestigeCalc(IBuilding building);
+
+    /**
+     * Get the colony prestige.
+     * @return the prestige.
+     */
+    int getColonyPrestige();
 }

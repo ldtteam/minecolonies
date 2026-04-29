@@ -8,6 +8,7 @@ import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenFoodHandler;
 import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.api.items.IMinecoloniesFoodItem;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingCook;
+import com.minecolonies.core.items.ItemCrop;
 import com.minecolonies.core.tileentities.TileEntityRack;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.food.FoodProperties;
@@ -60,6 +61,11 @@ public class FoodUtils
      */
     public static boolean canEatLevel(final ItemStack stack, final int buildingLevel)
     {
+        if (stack.getItem() instanceof ItemCrop)
+        {
+            return false;
+        }
+
         if (buildingLevel < 3)
         {
             return stack.getItem().getFoodProperties(stack, null) != null;

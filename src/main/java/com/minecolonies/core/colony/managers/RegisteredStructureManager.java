@@ -14,14 +14,11 @@ import com.minecolonies.api.colony.buildings.workerbuildings.ITownHall;
 import com.minecolonies.api.colony.buildings.workerbuildings.IWareHouse;
 import com.minecolonies.api.colony.buildingextensions.IBuildingExtension;
 import com.minecolonies.api.colony.managers.interfaces.IRegisteredStructureManager;
-import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.eventbus.events.colony.buildings.BuildingAddedModEvent;
 import com.minecolonies.api.eventbus.events.colony.buildings.BuildingRemovedModEvent;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.util.*;
 import com.minecolonies.core.MineColonies;
-import com.minecolonies.core.blocks.huts.BlockHutTavern;
-import com.minecolonies.core.blocks.huts.BlockHutTownHall;
 import com.minecolonies.core.colony.Colony;
 import com.minecolonies.core.colony.buildings.BuildingMysticalSite;
 import com.minecolonies.core.colony.buildings.modules.BuildingModules;
@@ -29,7 +26,6 @@ import com.minecolonies.core.colony.buildings.modules.BuildingExtensionsModule;
 import com.minecolonies.core.colony.buildings.modules.LivingBuildingModule;
 import com.minecolonies.core.colony.buildings.workerbuildings.*;
 import com.minecolonies.core.colony.buildingextensions.registry.BuildingExtensionDataManager;
-import com.minecolonies.core.entity.ai.workers.util.ConstructionTapeHelper;
 import com.minecolonies.core.event.QuestObjectiveEventHandler;
 import com.minecolonies.core.network.messages.client.colony.ColonyViewBuildingViewMessage;
 import com.minecolonies.core.network.messages.client.colony.ColonyViewBuildingExtensionsUpdateMessage;
@@ -54,8 +50,6 @@ import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.MathUtils.RANDOM;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
-import static com.minecolonies.api.util.constant.TranslationConstants.WARNING_DUPLICATE_TAVERN;
-import static com.minecolonies.api.util.constant.TranslationConstants.WARNING_DUPLICATE_TOWN_HALL;
 
 public class RegisteredStructureManager implements IRegisteredStructureManager
 {
@@ -64,6 +58,11 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
      */
     @NotNull
     private ImmutableMap<BlockPos, IBuilding> buildings = ImmutableMap.of();
+
+    /**
+     * Buildings that need to be recalculated for prestige value.
+     */
+    private List<IBuilding> pendingPrestigeCalc = new ArrayList<>();
 
     /**
      * List of building extensions of the colony.
@@ -298,6 +297,33 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
                 building.onColonyTick(colony);
             }
         }
+
+        if (pendingPrestigeCalc.isEmpty())
+        {
+            pendingPrestigeCalc.addAll(buildings.values());
+            Collections.shuffle(pendingPrestigeCalc);
+        }
+        else
+        {
+            pendingPrestigeCalc.getLast().asyncPrestigeRecalc();
+        }
+    }
+
+    @Override
+    public void clearPendingPrestigeCalc(final IBuilding building)
+    {
+        pendingPrestigeCalc.remove(building);
+    }
+
+    @Override
+    public int getColonyPrestige()
+    {
+        int total = 0;
+        for (IBuilding building : buildings.values())
+        {
+            total += building.getPrestige();
+        }
+        return total;
     }
 
     @Override

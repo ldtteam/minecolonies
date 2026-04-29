@@ -1,5 +1,6 @@
 package com.minecolonies.core.colony.buildings;
 
+import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
@@ -194,7 +195,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuilding implements
      * @param newLevel The new level.
      */
     @Override
-    public void onUpgradeComplete(final int newLevel)
+    public void onUpgradeComplete(@Nullable final Blueprint blueprint, final int newLevel)
     {
         if (getAllAssignedCitizen() != null)
         {
@@ -208,7 +209,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuilding implements
             }
         }
 
-        super.onUpgradeComplete(newLevel);
+        super.onUpgradeComplete(blueprint, newLevel);
     }
 
     //// ---- NBT Overrides ---- \\\\

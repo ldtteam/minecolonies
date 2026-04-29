@@ -68,7 +68,7 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger, AbstractBui
     {
         if (worker.getRandom().nextInt(30) < 1)
         {
-            walkToSafePos(buildingGuards.getGuardPos(worker));
+            walkToUnSafePos(buildingGuards.getGuardPos(worker), 5);
             return;
         }
 

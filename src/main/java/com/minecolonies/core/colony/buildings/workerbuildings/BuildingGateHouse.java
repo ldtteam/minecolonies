@@ -1,5 +1,6 @@
 package com.minecolonies.core.colony.buildings.workerbuildings;
 
+import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.jobs.ModJobs;
@@ -10,6 +11,7 @@ import com.minecolonies.core.colony.buildings.modules.GuardBuildingModule;
 import com.minecolonies.core.colony.buildings.modules.settings.GuardTaskSetting;
 import net.minecraft.core.BlockPos;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import static com.minecolonies.api.util.constant.EquipmentLevelConstants.BASIC_TOOL_LEVEL;
 import static com.minecolonies.api.util.constant.EquipmentLevelConstants.TOOL_LEVEL_MAXIMUM;
@@ -157,9 +159,9 @@ public class BuildingGateHouse extends AbstractBuildingGuards
     }
 
     @Override
-    public void onUpgradeComplete(final int newLevel)
+    public void onUpgradeComplete(@Nullable final Blueprint blueprint, final int newLevel)
     {
-        super.onUpgradeComplete(newLevel);
+        super.onUpgradeComplete(blueprint, newLevel);
         colony.getServerBuildingManager().guardBuildingChangedAt(this, newLevel);
     }
 

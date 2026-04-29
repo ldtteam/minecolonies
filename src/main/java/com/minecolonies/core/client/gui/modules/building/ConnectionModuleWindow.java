@@ -14,6 +14,7 @@ import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.client.gui.AbstractBuildingWindow;
+import com.minecolonies.core.client.gui.WindowConfirm;
 import com.minecolonies.core.commands.ClickEventWithExecutable;
 import com.minecolonies.core.network.messages.server.colony.TeleportToColonyMessage;
 import net.minecraft.client.Minecraft;
@@ -108,11 +109,13 @@ public class ConnectionModuleWindow extends AbstractBuildingWindow<IBuildingView
         final int dist = (int) BlockPosUtil.dist(connectedColonyData.pos, buildingView.getPosition());
         final int itemCount = externalPlayer ? dist/125 : 0;
 
-        MessageUtils.format("com.minecolonies.core.gui.colonylist.travel.really", connectedColonyData.name)
-            .withPriority(MessageUtils.MessagePriority.IMPORTANT)
-            .withClickEvent(new ClickEventWithExecutable(() -> new TeleportToColonyMessage(mc.level.dimension(), connectedColonyData.id, connectedColonyData.pos, buildingView.getColony().getID(), itemCount).sendToServer()))
-            .sendTo(Minecraft.getInstance().player);
-        this.close();
+        new WindowConfirm(this,
+            () ->
+            {
+                new TeleportToColonyMessage(mc.level.dimension(), connectedColonyData.id, connectedColonyData.pos, buildingView.getColony().getID(), itemCount).sendToServer();
+                close();
+            },
+        Component.translatable("com.minecolonies.coremod.gui.townhall.tp", connectedColonyData.name).getString(), "").open();
     }
 
     /**
@@ -134,7 +137,7 @@ public class ConnectionModuleWindow extends AbstractBuildingWindow<IBuildingView
 
             /**
              * Inserts the elements into each row.
-             * @param index the index of the row/list element.
+         * @param index the index of the row/list element.
              * @param rowPane the parent Pane for the row, containing the elements to update.
              */
             @Override
@@ -148,7 +151,7 @@ public class ConnectionModuleWindow extends AbstractBuildingWindow<IBuildingView
                 final int dist = (int) BlockPosUtil.dist(colonyData.pos, buildingView.getPosition());
                 final int itemCount = dist/125;
                 final ItemIcon itemIcon = rowPane.findPaneOfTypeByID("icon", ItemIcon.class);
-                if (externalPlayer)
+                    if (externalPlayer)
                 {
                     itemIcon.setItem(new ItemStack(Items.GOLD_NUGGET, itemCount));
                     itemIcon.show();

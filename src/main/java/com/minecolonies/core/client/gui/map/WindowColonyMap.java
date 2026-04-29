@@ -144,7 +144,7 @@ public class WindowColonyMap extends AbstractWindowSkeleton
     /**
      * List of known colonies
      */
-    private static List<ColonyListMessage.ColonyInfo> colonies = new ArrayList<>();
+    public static List<ColonyListMessage.ColonyInfo> colonies = new ArrayList<>();
 
     /**
      * The position of the looker
@@ -252,6 +252,8 @@ public class WindowColonyMap extends AbstractWindowSkeleton
             registerButton(BUTTON_EXIT, this::close);
         }
         registerButton(BUTTON_INVENTORY, this::inventoryClicked);
+        registerButton(BUTTON_PRESTIGE, () ->  new WindowColonyPrestigeRanking(atTownHall, building).open());
+        registerButton(BUTTON_PRESTIGE_ICON, () ->  new WindowColonyPrestigeRanking(atTownHall, building).open());
 
         new ColonyListMessage().sendToServer();
     }

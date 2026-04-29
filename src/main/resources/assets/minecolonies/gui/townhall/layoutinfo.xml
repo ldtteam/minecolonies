@@ -7,9 +7,9 @@
 
     <list id="eventsList" size="148 140" pos="106 80">
         <box size="100% 36" linewidth="1">
-            <text id="action" size="135 12" pos="1 1" color="black"/>
-            <text id="name" size="135 12" pos="1 12" color="blue"/>
-            <text id="pos" size="70 12" pos="1 24" color="black"/>
+            <text id="action" size="135 12" pos="2 1" color="black"/>
+            <text id="name" size="135 12" pos="2 12" color="blue"/>
+            <text id="pos" size="110 12" pos="2 24" color="black"/>
             <button id="addfakeplayer" size="35 14" label="$(com.minecolonies.coremod.gui.townhall.add)" pos="105 10"/>
         </box>
     </list>

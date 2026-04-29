@@ -9,9 +9,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.*;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.level.Level;
@@ -22,6 +20,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
 
@@ -249,4 +248,11 @@ public interface ICompatibilityManager
      * @return the number of saplings.
      */
     int getNumberOfSaplings();
+
+    /**
+     * Try to work out what dye needs to be used to produce the given color.
+     * @param stack the already-dyed stack.
+     * @return      the dye color required, or empty if there is no such dye.
+     */
+    Optional<DyeColor> getDyeColor(ItemStack stack);
 }

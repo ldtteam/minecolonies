@@ -56,4 +56,10 @@ public interface ICommonBuilding
      * @return the colony it belongs to.
      */
     IColony getColony();
+
+    /**
+     * Get the prestige value of the building.
+     * @return the prestige value.
+     */
+    int getPrestige();
 }

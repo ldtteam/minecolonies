@@ -262,7 +262,7 @@ public class VisitorManager implements IVisitorManager
                     }
 
                     citizenEntity.setUUID(data.getUUID());
-                    citizenEntity.setPos(spawnLocation.getX() + HALF_A_BLOCK, spawnLocation.getY() + SLIGHTLY_UP, spawnLocation.getZ() + HALF_A_BLOCK);
+                    citizenEntity.setPos(calculatedSpawn.getX() + HALF_A_BLOCK, calculatedSpawn.getY() + SLIGHTLY_UP, calculatedSpawn.getZ() + HALF_A_BLOCK);
                     world.addFreshEntity(citizenEntity);
 
                     citizenEntity.setCitizenId(data.getId());
