@@ -147,6 +147,7 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
 
         ladderLocation = BlockPosUtil.readOrNull(compound, TAG_LLOCATION);
         ladderBackLocation = BlockPosUtil.readOrNull(compound, TAG_LBLOCATION);
+        // TODO Remove check in next major version
         if (ladderBackLocation == null) {
             // check old tag, if new tag did not exist
             // needed for backwards compatibility
