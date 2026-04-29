@@ -32,6 +32,7 @@ import com.minecolonies.core.blocks.BlockDecorationController;
 import com.minecolonies.core.blocks.BlockPlantationField;
 import com.minecolonies.core.blocks.huts.BlockHutGateHouse;
 import com.minecolonies.core.blocks.huts.BlockHutMiner;
+import com.minecolonies.core.blocks.huts.BlockHutSchool;
 import com.minecolonies.core.client.render.SpearItemTileEntityRenderer;
 import com.minecolonies.core.colony.crafting.CustomRecipeManagerMessage;
 import com.minecolonies.core.colony.requestsystem.init.RequestSystemInitializer;
@@ -71,6 +72,7 @@ import com.minecolonies.core.placementhandlers.main.SurvivalHandler;
 import com.minecolonies.core.research.GlobalResearchTreeMessage;
 import com.minecolonies.core.structures.MineColoniesStructures;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
+import net.minecraft.world.entity.animal.horse.Horse;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.IEventBus;
@@ -91,7 +93,7 @@ import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 import net.neoforged.neoforge.registries.NewRegistryEvent;
 import org.jetbrains.annotations.NotNull;
-import net.minecraft.world.entity.animal.horse.Horse;
+
 import java.util.function.Consumer;
 
 import static com.minecolonies.api.util.constant.SchematicTagConstants.*;
@@ -152,7 +154,7 @@ public class MineColonies
         forgeBus.register(EventHandler.class);
         forgeBus.register(FMLEventHandler.class);
         forgeBus.register(DataPackSyncEventHandler.ServerEvents.class);
-        if (dist.isClient()) 
+        if (dist.isClient())
         {
             forgeBus.register(ClientEventHandler.class);
             forgeBus.register(DataPackSyncEventHandler.ClientEvents.class);
@@ -174,6 +176,8 @@ public class MineColonies
             TagManager.registerSpecificTagOption(TAG_LADDER, b -> b instanceof BlockHutMiner);
 
             TagManager.registerSpecificTagOption(TAG_LEISURE, b -> b instanceof BlockDecorationController);
+
+            TagManager.registerSpecificTagOption(TAG_SITTING, b -> b instanceof BlockHutSchool);
 
              for (final String fieldTag : SchematicTagConstants.getPlantationTags())
              {
@@ -313,7 +317,7 @@ public class MineColonies
     {
         final String modVersion = ModList.get().getModContainerById(Constants.MOD_ID).get().getModInfo().getVersion().toString();
         final PayloadRegistrar registry = event.registrar(Constants.MOD_ID).versioned(modVersion);
-        
+
         //  ColonyView messages
         ColonyViewMessage.TYPE.register(registry);
         ColonyViewCitizenViewMessage.TYPE.register(registry);

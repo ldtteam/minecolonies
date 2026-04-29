@@ -44,8 +44,6 @@ public class ModTags
     public static final TagKey<Block> concretePowderBlocks = BlockTags.create(TagConstants.CONCRETE_POWDER);
     public static final TagKey<Item>  concretePowderItems  = ItemTags.create(TagConstants.CONCRETE_POWDER);
 
-    public static final TagKey<Block> carpetBlocks = BlockTags.create(TagConstants.CARPET_BLOCK);
-
     public static final TagKey<Block> colonyProtectionException = BlockTags.create(TagConstants.COLONYPROTECTIONEXCEPTION);
     public static final TagKey<Block> indestructible            = BlockTags.create(TagConstants.INDESTRUCTIBLE);
 

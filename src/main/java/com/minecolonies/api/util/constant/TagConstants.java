@@ -13,7 +13,6 @@ public final class TagConstants
     public static final ResourceLocation DECORATION_ITEMS          = new ResourceLocation(MOD_ID, "decoblocks");
     public static final ResourceLocation CONCRETE_POWDER           = new ResourceLocation(MOD_ID, "concrete_powder");
     public static final ResourceLocation CONCRETE_BLOCK            = new ResourceLocation(MOD_ID, "concrete");
-    public static final ResourceLocation CARPET_BLOCK              = new ResourceLocation(MOD_ID, "carpet");
     public static final ResourceLocation PATHING_BLOCKS            = new ResourceLocation(MOD_ID, "pathblocks");
     public static final ResourceLocation DANGEROUS_BLOCKS          = new ResourceLocation(MOD_ID, "dangerousblocks");
     public static final ResourceLocation FREE_CLIMB_BLOCKS         = new ResourceLocation(MOD_ID, "freeclimbblocks");
