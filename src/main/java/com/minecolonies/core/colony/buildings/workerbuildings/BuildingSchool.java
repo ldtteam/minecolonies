@@ -1,8 +1,6 @@
 package com.minecolonies.core.colony.buildings.workerbuildings;
 
-import com.ldtteam.domumornamentum.block.decorative.FloatingCarpetBlock;
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.constant.NbtTagConstants;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
@@ -12,7 +10,7 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.CarpetBlock;
+import net.minecraft.world.level.block.WoolCarpetBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -153,8 +151,6 @@ public class BuildingSchool extends AbstractBuilding
      */
     private boolean isCarpet(final BlockState blockState)
     {
-        return blockState.getBlock() instanceof CarpetBlock
-            || blockState.getBlock() instanceof FloatingCarpetBlock
-            || blockState.is(ModTags.carpetBlocks);
+        return blockState.getBlock() instanceof WoolCarpetBlock;
     }
 }
