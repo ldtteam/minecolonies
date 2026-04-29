@@ -165,6 +165,8 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
      */
     private ICitizenInventoryHandler  citizenInventoryHandler;
 
+    private LazyOptional<IItemHandler> itemHandlerOptional = LazyOptional.empty();
+
     /**
      * The citizen colony handler.
      */
@@ -998,8 +1000,10 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     {
         if (data != null)
         {
+            itemHandlerOptional.invalidate();
             this.citizenData = (ICitizenData) data;
             data.initEntityValues();
+            itemHandlerOptional = LazyOptional.of(this.citizenData::getInventory);
         }
     }
 
@@ -1309,7 +1313,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
             }
 
             final IColony attackerColony = ((EntityCitizen) sourceEntity).citizenColonyHandler.getColonyOrRegister();
-            if (attackerColony != null && citizenColonyHandler.getColonyOrRegister() != null && MineColonies.getConfig().getServer().pvp_mode.get())
+            if (!level.isClientSide && attackerColony != null && citizenColonyHandler.getColonyOrRegister() != null && MineColonies.getConfig().getServer().pvp_mode.get())
             {
                 final IPermissions permission = attackerColony.getPermissions();
                 citizenColonyHandler.getColonyOrRegister().getPermissions().addPlayer(permission.getOwner(), permission.getOwnerName(), permission.getRank(permission.HOSTILE_RANK_ID));
@@ -1464,6 +1468,8 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
 
         callForHelpCooldown = CALL_HELP_CD;
 
+        final BlockPos selfPos = blockPosition();
+
         List<AbstractEntityCitizen> possibleGuards = new ArrayList<>();
 
         for (final ICitizenData entry : getCitizenColonyHandler().getColonyOrRegister().getCitizenManager().getCitizens())
@@ -1472,7 +1478,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
             {
                 // Checking for guard nearby
                 if (entry.getJob() instanceof AbstractJobGuard && entry.getId() != citizenData.getId()
-                      && BlockPosUtil.getDistanceSquared(entry.getEntity().get().blockPosition(), blockPosition()) < guardHelpRange && entry.getJob().getWorkerAI() != null)
+                    && BlockPosUtil.getDistanceSquared(entry.getEntity().get().blockPosition(), selfPos) < guardHelpRange && entry.getJob().getWorkerAI() != null)
                 {
                     final ThreatTable table = ((EntityCitizen) entry.getEntity().get()).getThreatTable();
                     table.addThreat((LivingEntity) attacker, 0);
@@ -1484,7 +1490,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
             }
         }
 
-        Collections.sort(possibleGuards, Comparator.comparingInt(guard -> (int) blockPosition().distSqr(guard.blockPosition())));
+        possibleGuards.sort(Comparator.comparingInt(guard -> (int) selfPos.distSqr(guard.blockPosition())));
 
         for (int i = 0; i < possibleGuards.size() && i <= CALL_TO_HELP_AMOUNT; i++)
         {
@@ -1723,14 +1729,10 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     {
         if (capability == ForgeCapabilities.ITEM_HANDLER)
         {
-            final ICitizenData data = getCitizenData();
-            if (data == null)
+            if (itemHandlerOptional.isPresent()) 
             {
-                return super.getCapability(capability, facing);
+                return itemHandlerOptional.cast();
             }
-            final InventoryCitizen inv = data.getInventory();
-
-            return LazyOptional.of(() -> (T) inv);
         }
 
         return super.getCapability(capability, facing);
@@ -1760,6 +1762,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     @Override
     public void setRemoved(final RemovalReason reason)
     {
+        itemHandlerOptional.invalidate();
         citizenColonyHandler.onCitizenRemoved();
         super.setRemoved(reason);
     }

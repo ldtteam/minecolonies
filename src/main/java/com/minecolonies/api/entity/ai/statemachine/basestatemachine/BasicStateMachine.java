@@ -67,7 +67,7 @@ public class BasicStateMachine<T extends IStateMachineTransition<S>, S extends I
     private int         historyIndex   = -1;
     private Component[] stateHistory   = new Component[20];
 
-    DateTimeFormatter SIMPLE_TIME = new DateTimeFormatterBuilder()
+    private static final DateTimeFormatter SIMPLE_TIME = new DateTimeFormatterBuilder()
         .appendValue(HOUR_OF_DAY, 2)
         .appendLiteral(':')
         .appendValue(MINUTE_OF_HOUR, 2)

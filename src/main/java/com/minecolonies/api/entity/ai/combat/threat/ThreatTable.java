@@ -65,6 +65,12 @@ public class ThreatTable<T extends LivingEntity & IThreatTableEntity>
         {
             return;
         }
+
+        final ThreatTableEntry currentTarget = (currentTargetIndex >= 0 && currentTargetIndex < threatList.size())
+            ? threatList.get(currentTargetIndex) : null;
+        threatList.removeIf(entry -> !entry.getEntity().isAlive());
+        currentTargetIndex = currentTarget != null ? Math.max(0, threatList.indexOf(currentTarget)) : 0;
+
         ThreatTableEntry threatTableEntry = null;
         int index = threatList.size();
 
