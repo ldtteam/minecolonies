@@ -213,7 +213,9 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
             return IDLE;
         }
 
-        if (structurePlacer.getB().getStage() == null || structurePlacer.getB().getStage() == BuildingProgressStage.CLEAR)
+        if (structurePlacer.getB().getStage() == null
+              || structurePlacer.getB().getStage() == BuildingProgressStage.CLEAR
+              || structurePlacer.getB().getStage() == BuildingProgressStage.CLEAR_BOTTOM_UP)
         {
             pickUpCount = 0;
             return START_WORKING;
@@ -294,6 +296,16 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
     public IAIState afterStructureLoading()
     {
         return START_BUILDING;
+    }
+
+    /**
+     * Check whether a new structure should start with a bottom-up clearing pass.
+     *
+     * @return true when the structure should clear bottom-up before the normal top-down pass.
+     */
+    protected boolean shouldUseBottomUpClearing()
+    {
+        return false;
     }
 
     /**
@@ -420,6 +432,14 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
                 result = placer.executeStructureStep(world, null, progress, StructurePlacer.Operation.BLOCK_REMOVAL,
                   () -> placer.getIterator().decrement(this::skipRemoval), true);
                 break;
+                        case CLEAR_BOTTOM_UP:
+                                result = placer.executeStructureStep(world,
+                                    null,
+                                    progress,
+                                    StructurePlacer.Operation.BLOCK_REMOVAL,
+                                    () -> placer.getIterator().increment(this::skipClearing),
+                                    false);
+                                break;
             case CLEAR:
             default:
                 result =
@@ -708,10 +728,12 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
             }
             else
             {
-                structure = new BuildingStructureHandler<>(world,
-                    workOrder,
-                    this, new BuildingProgressStage[] {CLEAR, BUILD_SOLID, WEAK_SOLID, CLEAR_WATER, CLEAR_NON_SOLIDS, DECORATE, SPAWN});
-                building.setTotalStages(6);
+                                final boolean useBottomUpClearing = shouldUseBottomUpClearing();
+                                final BuildingProgressStage[] stages = useBottomUpClearing
+                                    ? new BuildingProgressStage[] {CLEAR_BOTTOM_UP, CLEAR, BUILD_SOLID, WEAK_SOLID, CLEAR_WATER, CLEAR_NON_SOLIDS, DECORATE, SPAWN}
+                                    : new BuildingProgressStage[] {CLEAR, BUILD_SOLID, WEAK_SOLID, CLEAR_WATER, CLEAR_NON_SOLIDS, DECORATE, SPAWN};
+                                structure = new BuildingStructureHandler<>(world, workOrder, this, stages);
+                                building.setTotalStages(useBottomUpClearing ? 7 : 6);
             }
 
             setStructurePlacer(structure);

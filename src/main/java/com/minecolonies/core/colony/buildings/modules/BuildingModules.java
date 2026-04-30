@@ -414,6 +414,7 @@ public class BuildingModules
         .with(BuildingBuilder.MODE, new StringSetting(BuildingBuilder.AUTO_SETTING, BuildingBuilder.MANUAL_SETTING))
         .with(AbstractCraftingBuildingModule.RECIPE_MODE, new CrafterRecipeSetting())
         .with(BuildingBuilder.BUILDING_MODE, new BuilderModeSetting())
+        .with(BuildingBuilder.CLEAR_MODE, new StringSetting(BuildingBuilder.CLEAR_TOP_DOWN_SETTING, BuildingBuilder.CLEAR_BOTTOM_UP_SETTING))
         .with(AbstractBuilding.USE_SHEARS, new BoolSetting(false))
         .with(BuildingMiner.FILL_BLOCK, new BlockSetting((BlockItem) Items.DIRT)), () -> SettingsModuleView::new);
     public static final BuildingEntry.ModuleProducer<SimpleCraftingModule,CraftingModuleView> BUILDER_CRAFT                   =

@@ -151,7 +151,7 @@ public class ItemAssistantHammer extends AbstractItemMinecolonies
         if (workOrder.isClaimed())
         {
             final BuildingProgressStage stage = workOrder.getStage();
-            if (stage == BuildingProgressStage.CLEAR || stage == BuildingProgressStage.CLEAR_NON_SOLIDS)
+            if (stage == BuildingProgressStage.CLEAR || stage == BuildingProgressStage.CLEAR_BOTTOM_UP || stage == BuildingProgressStage.CLEAR_NON_SOLIDS)
             {
                 player.displayClientMessage(Component.translatable("item.minecolonies.assistanthammer.notcleared"), true);
                 player.inventoryMenu.broadcastFullState();
