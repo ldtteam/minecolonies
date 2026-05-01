@@ -42,12 +42,12 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.*;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.phys.HitResult;
 import net.neoforged.api.distmarker.Dist;
@@ -153,6 +153,18 @@ public class ClientEventHandler
         if (extraItemTooltips.containsKey(stack.getItem()))
         {
             event.getToolTip().add(extraItemTooltips.get(stack.getItem()));
+        }
+
+        if (stack.is(ItemTags.DYEABLE) && IMinecoloniesAPI.getInstance().getConfig().getClient().showdyetooltips.get())
+        {
+            IMinecoloniesAPI.getInstance().getColonyManager().getCompatibilityManager().getDyeColor(stack).ifPresent(c ->
+            {
+                event.getToolTip().removeIf(line -> line.getContents() instanceof TranslatableContents t && t.getKey().equals("item.dyed"));
+                event.getToolTip().add(1, Component.translatable("%s: %s",
+                    Component.translatable("item.dyed"),
+                    Component.translatable("color.minecraft." + c.getName()).withStyle(Style.EMPTY.withColor(c.getTextColor()).withItalic(false)))
+                    .withStyle(Style.EMPTY.withColor(ChatFormatting.GRAY).withItalic(true)));
+            });
         }
 
         if (colony == null)

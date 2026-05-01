@@ -18,6 +18,7 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.core.colony.buildings.modules.AnimalHerdingModule;
 import com.minecolonies.core.colony.buildings.modules.SimpleCraftingModule;
 import com.minecolonies.core.colony.crafting.*;
+import com.minecolonies.core.util.SchemAnalyzerUtil;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
@@ -68,6 +69,7 @@ public class CraftingTagAuditor
         createFile("item tag audit", server, "tag_item_audit.csv", writer -> doItemTagAudit(writer, server));
         createFile("block tag audit", server, "tag_block_audit.csv", writer -> doBlockTagAudit(writer, server));
         createFile("path block audit", server, "tag_path_audit.csv", writer -> doPathBlockTagAudit(writer, server));
+        createFile("block tier audit", server, "tag_tier_audit.csv", writer -> doBlockTagTierAudit(writer, server));
         createFile("biome tag audit", server, "tag_biome_audit.csv", writer -> doBiomeTagAudit(writer, server));
         createFile("recipe audit", server, "recipe_audit.csv", writer -> doRecipeAudit(writer, server, customRecipeManager));
         createFile("domum audit", server, "domum_audit.csv", writer -> doDomumAudit(writer, server));
@@ -204,6 +206,30 @@ public class CraftingTagAuditor
             {
                 writer.write("danger");
             }
+            writer.newLine();
+        }
+    }
+
+    private static void doBlockTagTierAudit(@NotNull final BufferedWriter writer,
+        @NotNull final MinecraftServer server) throws IOException
+    {
+        writer.write("block,name,score,tier0,tier1,tier2,tier3,tier4,tier5,tier6");
+        writer.newLine();
+
+        for (final Map.Entry<ResourceKey<Block>, Block> entry : server.registryAccess().registryOrThrow(Registries.BLOCK).entrySet()
+            .stream().sorted(Comparator.comparing(e -> e.getKey().location().toString())).toList())
+        {
+            writer.write(entry.getKey().location().toString());
+            writer.write(',');
+            writer.write('"');
+            writer.write(Component.translatable(entry.getValue().getDescriptionId()).getString().replace("\"", "\"\""));
+            writer.write('"');
+            writer.write(',');
+            writer.write(String.valueOf(SchemAnalyzerUtil.getScoreFor(entry.getValue())));
+            writer.write(',');
+            final int tier = Math.max(0, Math.min(6, SchemAnalyzerUtil.getBlockTier(entry.getValue())));
+            writer.write(",".repeat(tier));
+            writer.write(tier == 0 ? "-" : "*".repeat(tier));
             writer.newLine();
         }
     }

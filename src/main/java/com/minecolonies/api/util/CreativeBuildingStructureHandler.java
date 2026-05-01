@@ -127,26 +127,6 @@ public final class CreativeBuildingStructureHandler extends CreativeStructureHan
     }
 
     @Override
-    public boolean shouldBlocksBeConsideredEqual(final BlockState state1, final BlockState state2)
-    {
-        final Block block1 = state1.getBlock();
-        final Block block2 = state2.getBlock();
-
-        if (block1 == Blocks.FLOWER_POT || block2 == Blocks.FLOWER_POT)
-        {
-            return block1 == block2;
-        }
-
-        if (block1 == Blocks.GRASS_BLOCK && block2 == Blocks.DIRT || block2 == Blocks.GRASS_BLOCK && block1 == Blocks.DIRT)
-        {
-            return true;
-        }
-
-
-        return super.shouldBlocksBeConsideredEqual(state1, state2);
-    }
-
-    @Override
     public boolean isStackFree(@Nullable final ItemStack itemStack)
     {
         return itemStack == null

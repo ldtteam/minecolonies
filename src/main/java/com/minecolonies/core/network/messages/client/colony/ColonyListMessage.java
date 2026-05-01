@@ -54,6 +54,7 @@ public class ColonyListMessage extends AbstractPlayMessage
             info.name = b.readUtf(32767);
             info.citizencount = b.readInt();
             info.owner = b.readUtf(32767);
+            info.prestige = b.readInt();
             return info;
         });
     }
@@ -67,6 +68,7 @@ public class ColonyListMessage extends AbstractPlayMessage
             b.writeUtf(colony.getName());
             b.writeInt(colony.getCitizenManager().getCurrentCitizenCount());
             b.writeUtf(colony.getPermissions().getOwnerName());
+            b.writeInt(colony.getServerBuildingManager().getColonyPrestige());
         });
     }
 
@@ -89,6 +91,7 @@ public class ColonyListMessage extends AbstractPlayMessage
         private       String   name;
         private       int      citizencount;
         private       String   owner;
+        private       int      prestige;
 
         public ColonyInfo(final int id)
         {
@@ -118,6 +121,10 @@ public class ColonyListMessage extends AbstractPlayMessage
         public String getOwner()
         {
             return owner;
+        }
+
+        public int getPrestige() {
+            return prestige;
         }
     }
 }

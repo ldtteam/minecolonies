@@ -102,7 +102,7 @@ public class BlockScarecrow extends AbstractBlockMinecoloniesDefault<BlockScarec
         final IColony iColony = IColonyManager.getInstance().getIColony(worldIn, pos);
         if (iColony != null)
         {
-            iColony.getServerBuildingManager().addBuildingExtensionIfMissing(BuildingExtensionRegistries.farmField.get(), pos, player);
+            iColony.getServerBuildingManager().addBuildingExtensionIfMissing(BuildingExtensionRegistries.farmField.get(), getFieldBasePos(state, pos), player);
         }
         // This must succeed in Remote to stop more right click interactions like placing blocks
         return ItemInteractionResult.SUCCESS;
@@ -221,11 +221,24 @@ public class BlockScarecrow extends AbstractBlockMinecoloniesDefault<BlockScarec
     {
         if (!worldIn.isClientSide())
         {
-            final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld(worldIn, pos);
+            final BlockPos fieldBasePos = getFieldBasePos(worldIn.getBlockState(pos), pos);
+            final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld(worldIn, fieldBasePos);
             if (colony != null)
             {
-                colony.getServerBuildingManager().removeBuildingExtension(field -> field.getBuildingExtensionType().equals(BuildingExtensionRegistries.farmField.get()) && field.getPosition().equals(pos));
+                colony.getServerBuildingManager().removeBuildingExtension(field -> field.getBuildingExtensionType().equals(BuildingExtensionRegistries.farmField.get()) && field.getPosition().equals(fieldBasePos));
             }
         }
+    }
+
+    /**
+     * Resolve a scarecrow block position to the lower-half block that owns the field data.
+     *
+     * @param state the currently interacted scarecrow state.
+     * @param pos the currently interacted block position.
+     * @return the lower-half block position.
+     */
+    private static BlockPos getFieldBasePos(final BlockState state, final BlockPos pos)
+    {
+        return state.getValue(HALF) == DoubleBlockHalf.UPPER ? pos.below() : pos;
     }
 }

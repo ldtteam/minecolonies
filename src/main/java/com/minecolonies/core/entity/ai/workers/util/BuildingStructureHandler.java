@@ -9,9 +9,8 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.workorders.IBuilderWorkOrder;
 import com.minecolonies.api.colony.workorders.IWorkOrder;
 import com.minecolonies.api.equipment.ModEquipmentTypes;
-import com.minecolonies.api.util.InventoryUtils;
-import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.StatsUtil;
+import com.minecolonies.api.util.*;
+import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.colony.buildings.AbstractBuildingStructureBuilder;
 import com.minecolonies.core.colony.jobs.AbstractJobStructure;
@@ -332,16 +331,6 @@ public class BuildingStructureHandler<J extends AbstractJobStructure<?, J>, B ex
     @Override
     public boolean shouldBlocksBeConsideredEqual(final BlockState state1, final BlockState state2)
     {
-        final Block block1 = state1.getBlock();
-        final Block block2 = state2.getBlock();
-
-        if (block1 == Blocks.FLOWER_POT || block2 == Blocks.FLOWER_POT)
-        {
-            return block1 == block2;
-        }
-
-        return (block1 == Blocks.GRASS_BLOCK && block2 == Blocks.DIRT)
-                 || (block2 == Blocks.GRASS_BLOCK && block1 == Blocks.DIRT)
-                 || (block1 == ModBlocks.blockRack && block2 == ModBlocks.blockRack);
+        return false;
     }
 }

@@ -1,6 +1,7 @@
 package com.minecolonies.core.colony.buildings.workerbuildings;
 
 import com.ldtteam.blockui.views.BOWindow;
+import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildingextensions.IBuildingExtension;
 import com.minecolonies.api.colony.buildingextensions.plantation.IPlantationModule;
@@ -139,9 +140,9 @@ public class BuildingPlantation extends AbstractBuilding
     }
 
     @Override
-    public void onUpgradeComplete(final int newLevel)
+    public void onUpgradeComplete(@Nullable final Blueprint blueprint, final int newLevel)
     {
-        super.onUpgradeComplete(newLevel);
+        super.onUpgradeComplete(blueprint, newLevel);
         updateFields();
     }
 

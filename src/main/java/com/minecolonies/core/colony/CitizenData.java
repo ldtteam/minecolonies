@@ -69,9 +69,9 @@ import static com.minecolonies.api.util.constant.CitizenConstants.*;
 import static com.minecolonies.api.util.constant.ColonyConstants.UPDATE_SUBSCRIBERS_INTERVAL;
 import static com.minecolonies.api.util.constant.Constants.TAG_STRING;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
-import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_ID;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_NAME;
+import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 
 /**
@@ -412,9 +412,14 @@ public class CitizenData implements ICitizenData
     @Override
     public void setEntity(@Nullable final AbstractCivilianEntity citizen)
     {
-        if (entity.get() != null)
+        final Entity old = entity.get();
+        if (old != null)
         {
             entity.clear();
+            if (old.isAlive())
+            {
+                old.discard();
+            }
         }
 
         if (citizen != null)
@@ -936,6 +941,8 @@ public class CitizenData implements ICitizenData
             {
                 return;
             }
+
+            setEntity(null);
         }
 
         //Check if we are traveling, we don't spawn an entity if we are traveling.
@@ -960,23 +967,34 @@ public class CitizenData implements ICitizenData
             spawnVisible = true;
         }
 
+        List<BlockPos> spawnPositions = new ArrayList<>();
         if (nextRespawnPos != null)
         {
-            ICitizenData data = colony.getCitizenManager().spawnOrCreateCivilian(this, colony.getWorld(), nextRespawnPos, true);
-            data.getEntity().ifPresent(entity -> {
-                entity.getCitizenJobHandler().setModelDependingOnJob(data.getJob());
+            spawnPositions.add(nextRespawnPos);
+        }
+        spawnPositions.add(lastPosition);
+        if (getWorkBuilding() != null)
+        {
+            spawnPositions.add(getWorkBuilding().getPosition());
+        }
+        if (getHomeBuilding() != null)
+        {
+            spawnPositions.add(getHomeBuilding().getPosition());
+        }
+
+        colony.getCitizenManager().spawnOrCreateCivilian(this, colony.getWorld(), spawnPositions, true);
+
+        if (nextRespawnPos != null)
+        {
+            getEntity().ifPresent(entity -> {
+                entity.getCitizenJobHandler().setModelDependingOnJob(getJob());
                 if (!spawnVisible)
                 {
                     entity.setInvisible(true);
                     entity.setPos(nextRespawnPos.getX(), nextRespawnPos.getY(), nextRespawnPos.getZ());
                 }
+                nextRespawnPos = null;
             });
-
-            nextRespawnPos = null;
-        }
-        else
-        {
-            colony.getCitizenManager().spawnOrCreateCivilian(this, colony.getWorld(), lastPosition, true);
         }
     }
 

@@ -2,6 +2,7 @@ package com.minecolonies.core.client.gui;
 
 import com.ldtteam.blockui.Color;
 import com.ldtteam.blockui.Pane;
+import com.ldtteam.blockui.PaneBuilders;
 import com.ldtteam.blockui.controls.Button;
 import com.ldtteam.blockui.controls.ItemIcon;
 import com.ldtteam.blockui.controls.Text;
@@ -122,6 +123,9 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
         this.building = building;
 
         initStyleNavigation();
+
+        PaneBuilders.singleLineTooltip(Component.translatable(building.getHoverWarningForLevel()), findPaneOfTypeByID(BUTTON_BUILD, Button.class));
+
         registerButton(BUTTON_BUILD, this::confirmClicked);
         registerButton(BUTTON_CANCEL, this::cancelClicked);
         registerButton(BUTTON_REPAIR, this::repairClicked);
@@ -197,6 +201,20 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
     {
         final BlockPos builder = buildersDropDownList.getSelectedIndex() == 0 ? BlockPos.ZERO : builders.get(buildersDropDownList.getSelectedIndex()).getB();
 
+        if (!building.getHoverWarningForLevel().isEmpty())
+        {
+            new WindowConfirm(this, () -> triggerConfirmAction(builder), "com.minecolonies.core.gui.build.confirm.title", building.getHoverWarningForLevel()).open();
+            return;
+        }
+        triggerConfirmAction(builder);
+    }
+
+    /**
+     * Trigger confirm action.
+     * @param builder the position of the builder that was selected.
+     */
+    private void triggerConfirmAction(final BlockPos builder)
+    {
         new BuildingSetStyleMessage(building, styles.get(stylesDropDownList.getSelectedIndex())).sendToServer();
         if (building.getBuildingLevel() == building.getBuildingMaxLevel())
         {

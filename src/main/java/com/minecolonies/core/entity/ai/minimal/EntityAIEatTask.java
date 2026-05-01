@@ -394,11 +394,15 @@ public class EntityAIEatTask implements IStateAI
             return GO_TO_HUT;
         }
 
-        final int slot;
+        int slot = -1;
         if (buildingWorker instanceof BuildingCook buildingCook)
         {
             restaurant = buildingCook;
             slot = FoodUtils.getBestFoodForCitizen(citizen.getInventoryCitizen(), citizen.getCitizenData(), buildingCook.getModule(RESTAURANT_MENU).getMenu());
+            if (slot == -1)
+            {
+                slot = FoodUtils.getBestFoodForCitizen(citizen.getInventoryCitizen(), citizen.getCitizenData(), null);
+            }
         }
         else
         {

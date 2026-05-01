@@ -80,6 +80,14 @@ public class GeneralBlockPlacementHandler implements IPlacementHandler
 
         if (tileEntityData != null)
         {
+            if (!blockState.hasBlockEntity())
+            {
+                Log.getLogger()
+                    .warn("Schematic with invalid blockentity data for block:" + blockState + " in pack:" + context.getBluePrint().getPackName() + " schematic:"
+                        + context.getBluePrint().getName() + " blockentitydata:" + tileEntityData);
+                return ActionProcessingResult.PASS;
+            }
+
             try
             {
                 handleTileEntityPlacement(tileEntityData, world, pos, context.getRotationMirror());

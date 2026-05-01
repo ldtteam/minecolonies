@@ -443,7 +443,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
                             final BlockEntity te = worker.level().getBlockEntity(building.getID());
                             if (te instanceof AbstractTileEntityColonyBuilding && ((IBlueprintDataProviderBE) te).getSchematicName().isEmpty())
                             {
-                                building.onUpgradeComplete(wo.getTargetLevel());
+                                building.onUpgradeComplete(wo.getBlueprint(), wo.getTargetLevel());
                                 building.setBuildingLevel(wo.getTargetLevel());
                             }
                             break;

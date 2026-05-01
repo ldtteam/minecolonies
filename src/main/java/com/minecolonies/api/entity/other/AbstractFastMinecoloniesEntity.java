@@ -9,10 +9,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.PathfinderMob;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.entity.EntityTypeTest;
@@ -170,7 +167,7 @@ public abstract class AbstractFastMinecoloniesEntity extends PathfinderMob imple
         {
             if (this.tickCount % 10 == randomVariance % 10)
             {
-                entityPushCache = level().getEntitiesOfClass(LivingEntity.class, getBoundingBox());
+                entityPushCache = level().getEntitiesOfClass(LivingEntity.class, getBoundingBox(), EntitySelector.pushableBy(this));
             }
 
             if (!entityPushCache.isEmpty())
@@ -178,7 +175,7 @@ public abstract class AbstractFastMinecoloniesEntity extends PathfinderMob imple
                 for (int i = 0, entityPushCacheSize = entityPushCache.size(); i < entityPushCacheSize; i++)
                 {
                     final Entity entity = entityPushCache.get(i);
-                    if (getBoundingBox().contains(entity.position()))
+                    if (entity != this && getBoundingBox().contains(entity.position()))
                     {
                         this.doPush(entity);
                     }
