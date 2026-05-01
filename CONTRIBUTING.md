@@ -7,6 +7,20 @@ Thank you for your interest in contributing! Please read this page before submit
 - Please create a GitHub issue before submitting a pull request.
 - All pull request authors must sign our CLA: https://cla-assistant.io/Minecolonies/minecolonies
 
+## Reporting bugs
+
+Not a developer, or not confident enough to submit a fix yourself? A detailed, reproducible bug report is one of the most valuable contributions you can make. It saves developers the time they'd otherwise spend tracking the problem down, and makes it far more likely the bug actually gets fixed.
+
+A good bug report includes:
+
+- **A clear description of the problem** — what you expected to happen and what actually happened.
+- **Exact reproduction steps** — the minimal sequence of actions that reliably triggers the bug.
+- **Your environment** — MineColonies version, Minecraft version, mod loader, and any other relevant mods.
+- **Logs** — attach the full latest.log or crash report from your `.minecraft/logs` folder.
+- **A minimal reproduction** — if possible, a save or modpack that isolates the issue. The simpler, the better.
+
+Please search the [existing issues](https://github.com/ldtteam/minecolonies/issues) before opening a new one to avoid duplicates.
+
 ## Submitting a PR
 
 Found a bug in our code? Think you can make it more efficient? Want to help in general? Great!
