@@ -123,6 +123,11 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
     private long finishTime = Long.MAX_VALUE;
 
     /**
+     * The last path index used for wanted position calculations
+     */
+    private int lastWantedPathIndex = -1;
+
+    /**
      * Instantiates the navigation of an ourEntity.
      *
      * @param entity the ourEntity.
@@ -362,16 +367,19 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
         int oldIndex = this.isDone() ? 0 : this.getPath().getNextNodeIndex();
 
         this.ourEntity.setYya(0);
+        if (handleLadders(oldIndex))
+        {
+            followThePath();
+            return;
+        }
 
-        final boolean handledLadders = handleLadders(oldIndex);
-
-        if (!handledLadders && isSneaking)
+        if (isSneaking)
         {
             isSneaking = false;
             mob.setShiftKeyDown(false);
         }
 
-        if (!handledLadders && handleRails())
+        if (handleRails())
         {
             return;
         }
@@ -386,13 +394,13 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
         // The moveHelper won't move up if standing in a block with an empty bounding box (put grass, 1 layer snow, mushroom in front of a solid block and have them try jump up).
         if (!this.isDone())
         {
-            final int currentPathIndex = path.getNextNodeIndex();
             this.followThePath();
 
             if (this.path != null && !this.path.isDone())
             {
-                if ((wantedPosition.empty() || currentPathIndex != path.getNextNodeIndex() && path.getNextNodeIndex() < path.getNodeCount()))
+                if ((wantedPosition.empty() || lastWantedPathIndex != path.getNextNodeIndex() && path.getNextNodeIndex() < path.getNodeCount()))
                 {
+                    lastWantedPathIndex = path.getNextNodeIndex();
                     Vec3 vector3d2 = path.getNextEntityPos(mob);
                     tempPos.set(Mth.floor(vector3d2.x), Mth.floor(vector3d2.y), Mth.floor(vector3d2.z));
                     if (wantedPosition.empty() || ChunkPos.asLong(tempPos) == mob.chunkPosition().toLong() || WorldUtil.isEntityBlockLoaded(level, tempPos))

@@ -39,6 +39,11 @@ public class MovementHandler extends MoveControl
      */
     private float speedValue;
 
+    /**
+     * Tick timer for jumping to not get stuck in jumping
+     */
+    private int jumpingticks = 0;
+
     public MovementHandler(Mob mob)
     {
         super(mob);
@@ -126,18 +131,20 @@ public class MovementHandler extends MoveControl
 
             final Block block = blockstate.getBlock();
             final VoxelShape voxelshape = blockstate.getCollisionShape(this.mob.level, blockpos);
-            if ((yDif > (double) stepHeight && xDif * xDif + zDif * zDif < (double) Math.max(1.0F, this.mob.getBbWidth()))
+            if (((yDif > (double) stepHeight || yDif > 0 && !mob.onGround()) && xDif * xDif + zDif * zDif < (double) Math.max(1.0F, this.mob.getBbWidth()))
                   || (!ShapeUtil.isEmpty(voxelshape) && this.mob.getY() < ShapeUtil.max(voxelshape, Direction.Axis.Y) + (double) blockpos.getY() && !blockstate.is(BlockTags.DOORS)
                         && !blockstate.is(
               BlockTags.FENCES) && !blockstate.is(BlockTags.FENCE_GATES))
                        && !block.isLadder(blockstate, this.mob.level, blockpos, this.mob))
             {
+                jumpingticks = 0;
                 this.mob.getJumpControl().jump();
                 this.operation = net.minecraft.world.entity.ai.control.MoveControl.Operation.JUMPING;
             }
         }
         else if (this.operation == net.minecraft.world.entity.ai.control.MoveControl.Operation.JUMPING)
         {
+            jumpingticks++;
             this.mob.setSpeed((float) (this.speedModifier * speedValue));
 
             // Avoid beeing stuck in jumping while in liquids
@@ -158,7 +165,7 @@ public class MovementHandler extends MoveControl
     public void setWantedPosition(double x, double y, double z, double speedIn)
     {
         super.setWantedPosition(x, y, z, speedIn);
-        if (this.operation != MoveControl.Operation.JUMPING || (wantedX != x || wantedY != y || wantedZ != z))
+        if (this.operation != MoveControl.Operation.JUMPING || (wantedX != x || wantedY != y || wantedZ != z) || jumpingticks > 20)
         {
             this.operation = MoveControl.Operation.MOVE_TO;
         }
