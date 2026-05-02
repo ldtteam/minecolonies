@@ -1,0 +1,254 @@
+{
+  "name": "Where's the Builder?",
+  "parents": [],
+  "max-occurrences": 1,
+  "triggers": [
+    {
+      "type": "minecolonies:random",
+      "rarity": 1000000
+    },
+    {
+      "type": "minecolonies:state",
+      "state": {
+        "path": "buildingManager/buildings",
+        "match": {
+          "type": "minecolonies:enchanter",
+          "level": 3
+        }
+      }
+    },
+    {
+      "type": "minecolonies:citizen",
+      "state": {
+        "match": {
+          "job": {
+            "type": "minecolonies:enchanter"
+          }
+        }
+      }
+    },
+    {
+      "type": "minecolonies:citizen",
+      "state": {
+        "match": {
+          "job": {
+            "type": "minecolonies:builder"
+          }
+        }
+      }
+    }
+  ],
+  "objectives": [
+    {
+      "type": "minecolonies:dialogue",
+      "target": 0,
+      "text": "Oh, come in, come in! I could not help but overhear the tavernkeeper going on again - apparently the builder has gone missing mid-job and the tavern awning still needs patching. I feel terrible for both of them, honestly. I thought I might help by crafting a Worker-Where-Are-You Scroll - it would highlight the builder so we could find them in no time! Would you be able to gather the ingredients for me?",
+      "options": [
+        {
+          "answer": "Happy to help! What do you need?",
+          "result": {
+            "type": "minecolonies:dialogue",
+            "text": "Wonderful! I will need three Teleport Scrolls, six Glowstone Dust, and two sheets of Paper. A bit involved, but worth it to settle this whole business once and for all, I think!",
+            "options": [
+              {
+                "answer": "I will get those gathered up!",
+                "result": {
+                  "type": "minecolonies:advanceobjective",
+                  "go-to": 1
+                }
+              }
+            ]
+          }
+        },
+        {
+          "answer": "I think this is between them, I am staying out of it.",
+          "result": {
+            "type": "minecolonies:cancel"
+          }
+        }
+      ]
+    },
+    {
+      "type": "minecolonies:delivery",
+      "details": {
+        "target": 0,
+        "item": {
+          "id": "minecolonies:scroll_tp",
+          "count": 3
+        },
+        "next-objective": 2
+      }
+    },
+    {
+      "type": "minecolonies:delivery",
+      "details": {
+        "target": 0,
+        "item": {
+          "id": "minecraft:glowstone_dust",
+          "count": 6
+        },
+        "next-objective": 3
+      }
+    },
+    {
+      "type": "minecolonies:delivery",
+      "details": {
+        "target": 0,
+        "item": {
+          "id": "minecraft:paper",
+          "count": 2
+        },
+        "next-objective": 4
+      }
+    },
+    {
+      "type": "minecolonies:dialogue",
+      "target": 0,
+      "text": "Excellent! I am working on the scroll now - these things take a little time to get right. Come check in with me when you are ready and I will have it finished!",
+      "options": [
+        {
+          "answer": "Take your time, I will check back soon!",
+          "result": {
+            "type": "minecolonies:return"
+          }
+        },
+        {
+          "answer": "I am back - is the scroll ready?",
+          "result": {
+            "type": "minecolonies:advanceobjective",
+            "go-to": 5
+          }
+        }
+      ]
+    },
+    {
+      "type": "minecolonies:dialogue",
+      "target": 0,
+      "text": "Ah, perfect timing! The scroll is done. Let me just... [holds up the scroll and closes their eyes] ...there! It is done. Your builder should have a subtle glow about them now - they will not even notice. Go find them and see what they are up to. I will be here when you get back!",
+      "options": [
+        {
+          "answer": "On it! I will report back.",
+          "result": {
+            "type": "minecolonies:advanceobjective",
+            "go-to": 6
+          }
+        }
+      ]
+    },
+    {
+      "type": "minecolonies:dialogue",
+      "target": 1,
+      "text": "Oh! Oh no. You found me. Please, please - you have to keep this quiet! I have been sneaking down to the warehouse basement between tasks. It is the only place in the entire colony where I can get five minutes of peace without someone nagging me about something. I KNOW about the tavernkeeper's awning, I have not forgotten, I promise. I just needed a moment to breathe. You understand, yes? Please give my thanks to the enchanter - they are very kind. But keep this between us, would you?",
+      "options": [
+        {
+          "answer": "Your secret is safe with me. Get some rest!",
+          "result": {
+            "type": "minecolonies:advanceobjective",
+            "go-to": 7
+          }
+        },
+        {
+          "answer": "I completely understand. I will not say a word.",
+          "result": {
+            "type": "minecolonies:dialogue",
+            "text": "Bless you! I will get to the awning first thing tomorrow, I swear it. Now if you do not mind, I still have about ten minutes left in my nap. Thank you, truly.",
+            "options": [
+              {
+                "answer": "Sweet dreams. You have earned it!",
+                "result": {
+                  "type": "minecolonies:advanceobjective",
+                  "go-to": 7
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "unlocks-rewards": [0, 1, 2, 3, 4, 5],
+      "type": "minecolonies:dialogue",
+      "target": 0,
+      "text": "Ha! Hiding in the warehouse basement! That is... honestly, I cannot even blame them. The tavernkeeper has been relentless this week. Well, we found them, and I am sure the awning will get sorted out eventually. Here - take these scrolls and your materials back. You did a good deed today, even if it was mostly for everyone's sanity!",
+      "options": [
+        {
+          "answer": "I think we have all needed a quiet corner at some point.",
+          "result": {
+            "type": "minecolonies:advanceobjective",
+            "go-to": 8
+          }
+        },
+        {
+          "answer": "Let us hope the tavernkeeper does not find the basement.",
+          "result": {
+            "type": "minecolonies:dialogue",
+            "text": "Ha! Oh they will eventually. But that is a problem for another day. Take your reward - you have earned it. And thank you for keeping this between us!",
+            "options": [
+              {
+                "answer": "Always. Thanks!",
+                "result": {
+                  "type": "minecolonies:advanceobjective",
+                  "go-to": 8
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "rewards": [
+    {
+      "type": "minecolonies:item",
+      "details": {
+        "item": {
+          "id": "minecolonies:scroll_highlight",
+          "count": 5
+        }
+      }
+    },
+    {
+      "type": "minecolonies:item",
+      "details": {
+        "item": {
+          "id": "minecolonies:scroll_tp",
+          "count": 3
+        }
+      }
+    },
+    {
+      "type": "minecolonies:item",
+      "details": {
+        "item": {
+          "id": "minecraft:glowstone_dust",
+          "count": 6
+        }
+      }
+    },
+    {
+      "type": "minecolonies:item",
+      "details": {
+        "item": {
+          "id": "minecraft:paper",
+          "count": 2
+        }
+      }
+    },
+    {
+      "type": "minecolonies:happiness",
+      "details": {
+        "target": 0,
+        "qty": 1,
+        "days": 7
+      }
+    },
+    {
+      "type": "minecolonies:happiness",
+      "details": {
+        "target": 1,
+        "qty": 1,
+        "days": 7
+      }
+    }
+  ]
+}
