@@ -15,7 +15,10 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BiFunction;
+import java.util.function.Predicate;
 
 /**
  * This class is to store the methods that call the methods to check for miscellaneous compatibility problems.
@@ -26,6 +29,63 @@ public final class Compatibility
     private Compatibility()
     {
         throw new IllegalAccessError("Utility class");
+    }
+
+    private static final List<BiFunction<ItemStack, EquipmentTypeEntry, Integer>> customLevelProviders = new ArrayList<>();
+    private static final List<Predicate<ItemStack>> customWeaponRecognizers = new ArrayList<>();
+
+    /**
+     * Register a custom equipment level provider. The function should return the
+     * equipment level (0–N) for a recognised stack, or -1 to pass through to the
+     * next provider. Called before the vanilla getAttackDamageBonus() fallback.
+     *
+     * @param provider the level provider to register.
+     */
+    public static void registerEquipmentLevelProvider(final BiFunction<ItemStack, EquipmentTypeEntry, Integer> provider)
+    {
+        customLevelProviders.add(provider);
+    }
+
+    /**
+     * Register a custom weapon recognizer. The predicate should return true if the stack
+     * is a weapon that should be treated as a sword by colonists (e.g. maces, javelins).
+     *
+     * @param recognizer the predicate to register.
+     */
+    public static void registerWeaponRecognizer(final Predicate<ItemStack> recognizer)
+    {
+        customWeaponRecognizers.add(recognizer);
+    }
+
+    /**
+     * Query all registered weapon recognizers.
+     *
+     * @param stack the item stack.
+     * @return true if any recognizer claims the stack as a weapon.
+     */
+    public static boolean isCustomWeapon(final ItemStack stack)
+    {
+        for (final Predicate<ItemStack> recognizer : customWeaponRecognizers)
+        {
+            if (recognizer.test(stack))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static int getCustomEquipmentLevel(final ItemStack stack, final EquipmentTypeEntry equipmentType)
+    {
+        for (final BiFunction<ItemStack, EquipmentTypeEntry, Integer> provider : customLevelProviders)
+        {
+            final int level = provider.apply(stack, equipmentType);
+            if (level >= 0)
+            {
+                return level;
+            }
+        }
+        return -1;
     }
 
     public static IJeiProxy jeiProxy = new IJeiProxy() {};

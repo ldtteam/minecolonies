@@ -84,20 +84,10 @@ public class ModEquipmentTypes
 
         sword = register("sword",
           builder -> builder.setDisplayName(Component.translatable(ToolTranslationConstants.TOOL_TYPE_SWORD))
-                       .setIsEquipment((itemStack, equipmentType) -> canPerformDefaultActions(itemStack, ItemAbilities.DEFAULT_SWORD_ACTIONS) || Compatibility.isTinkersWeapon(
-                         itemStack))
-                       .setEquipmentLevel((itemStack, equipmentType) -> {
-                      if (Compatibility.isTinkersWeapon(itemStack))
-                      {
-                          return Compatibility.getToolLevel(itemStack);
-                      }
-                      else if (itemStack.getItem() instanceof final TieredItem tieredItem)
-                      {
-                          // todo: Think about sth smarter in the future
-                          return (int) tieredItem.getTier().getAttackDamageBonus();
-                      }
-                      return -1;
-                  })
+                       .setIsEquipment((itemStack, equipmentType) -> canPerformDefaultActions(itemStack, ItemAbilities.DEFAULT_SWORD_ACTIONS)
+                                                                     || Compatibility.isTinkersWeapon(itemStack)
+                                                                     || Compatibility.isCustomWeapon(itemStack))
+                       .setEquipmentLevel(ModEquipmentTypes::vanillaToolLevel)
                   .build());
 
         bow = register("bow",
@@ -199,7 +189,13 @@ public class ModEquipmentTypes
         {
             return Compatibility.getToolLevel(itemStack);
         }
-        else if (itemStack.getItem() instanceof final TieredItem tieredItem)  // most tools
+        final int customLevel = Compatibility.getCustomEquipmentLevel(itemStack, equipmentType);
+        // for mods that use getAttackDamageBonus in differen ranges like tfc
+        if (customLevel >= 0)
+        {
+            return customLevel;
+        }
+        if (itemStack.getItem() instanceof final TieredItem tieredItem)  // most tools
         {
             // todo: Think about sth smarter in the future
             return (int) tieredItem.getTier().getAttackDamageBonus();
