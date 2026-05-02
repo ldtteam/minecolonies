@@ -20,6 +20,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.world.Clearable;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -40,7 +41,7 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_DECAY_TIMER
 /**
  * Tile entity for the graves.
  */
-public class TileEntityGrave extends AbstractTileEntityGrave
+public class TileEntityGrave extends AbstractTileEntityGrave implements Clearable
 {
     /**
      * The content of the chest.
@@ -250,5 +251,14 @@ public class TileEntityGrave extends AbstractTileEntityGrave
         }
 
         return true;
+    }
+
+    @Override
+    public void clearContent()
+    {
+        for (int i = 0; i < this.getInventory().getSlots(); i++)
+        {
+            this.getInventory().setStackInSlot(i, ItemStack.EMPTY);
+        }
     }
 }
