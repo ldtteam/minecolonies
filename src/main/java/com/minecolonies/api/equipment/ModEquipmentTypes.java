@@ -185,7 +185,7 @@ public class ModEquipmentTypes
      */
     public static int vanillaToolLevel(final ItemStack itemStack, final EquipmentTypeEntry equipmentType)
     {
-        if (Compatibility.isTinkersTool(itemStack, equipmentType))
+        if (Compatibility.isTinkersTool(itemStack, equipmentType) || Compatibility.isTinkersWeapon(itemStack))
         {
             return Compatibility.getToolLevel(itemStack);
         }

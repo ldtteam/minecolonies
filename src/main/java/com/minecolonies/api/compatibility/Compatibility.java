@@ -16,9 +16,12 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.function.BiFunction;
+import java.util.Map;
 import java.util.function.Predicate;
+import java.util.function.ToIntBiFunction;
+import net.minecraft.world.item.Item;
 
 /**
  * This class is to store the methods that call the methods to check for miscellaneous compatibility problems.
@@ -31,19 +34,21 @@ public final class Compatibility
         throw new IllegalAccessError("Utility class");
     }
 
-    private static final List<BiFunction<ItemStack, EquipmentTypeEntry, Integer>> customLevelProviders = new ArrayList<>();
+    private static final Map<Item, ToIntBiFunction<ItemStack, EquipmentTypeEntry>> customLevelProviders = new HashMap<>();
     private static final List<Predicate<ItemStack>> customWeaponRecognizers = new ArrayList<>();
 
     /**
      * Register a custom equipment level provider. The function should return the
-     * equipment level (0–N) for a recognised stack, or -1 to pass through to the
-     * next provider. Called before the vanilla getAttackDamageBonus() fallback.
+     * equipment level (0–N) for a recognised stack. Only items where the vanialla
+     * behaviour is not intended need to be registered.
+     * Called before the vanilla getAttackDamageBonus() fallback.
      *
      * @param provider the level provider to register.
      */
-    public static void registerEquipmentLevelProvider(final BiFunction<ItemStack, EquipmentTypeEntry, Integer> provider)
+    public static void registerEquipmentLevelProvider(final Item item,
+        final ToIntBiFunction<ItemStack, EquipmentTypeEntry> provider)
     {
-        customLevelProviders.add(provider);
+        customLevelProviders.put(item, provider);
     }
 
     /**
@@ -77,15 +82,8 @@ public final class Compatibility
 
     public static int getCustomEquipmentLevel(final ItemStack stack, final EquipmentTypeEntry equipmentType)
     {
-        for (final BiFunction<ItemStack, EquipmentTypeEntry, Integer> provider : customLevelProviders)
-        {
-            final int level = provider.apply(stack, equipmentType);
-            if (level >= 0)
-            {
-                return level;
-            }
-        }
-        return -1;
+        final ToIntBiFunction<ItemStack, EquipmentTypeEntry> provider = customLevelProviders.get(stack.getItem());
+        return provider != null ? provider.applyAsInt(stack, equipmentType) : -1;
     }
 
     public static IJeiProxy jeiProxy = new IJeiProxy() {};
