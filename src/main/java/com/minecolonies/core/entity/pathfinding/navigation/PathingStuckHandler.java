@@ -368,7 +368,7 @@ public class PathingStuckHandler<NAV extends PathNavigation & IMinecoloniesNavig
         if (rand.nextDouble() < chanceToByPassMovingAway ||
             (lastStuckLevel == 1 || ((lastStuckLevel >= 3 && lastStuckLevel <= 8) && !(canBreakBlocks || canBuildLeafBridges || canPlaceLadders) && rand.nextBoolean())))
         {
-            if (navigator.getPath() != null)
+            if (navigator.getPath() != null && navigator.getPath().getNextNodeIndex() > 0)
             {
                 moveAwayStartPos = navigator.getPath().getNodePos(navigator.getPath().getNextNodeIndex() - 1);
             }
