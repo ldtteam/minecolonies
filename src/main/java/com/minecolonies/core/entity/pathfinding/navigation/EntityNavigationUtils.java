@@ -190,6 +190,22 @@ public class EntityNavigationUtils
      */
     public static boolean walkAwayFrom(final AbstractFastMinecoloniesEntity entity, final BlockPos avoid, final int distance, final double speed)
     {
+        return walkAwayFrom(entity, avoid, distance, speed, false);
+    }
+
+    /**
+     * Walks away from a given position.
+     *
+     * @param safeDestination whether the resulting retreat target must be path-safe.
+     * @return true when arrived.
+     */
+    public static boolean walkAwayFrom(
+        final AbstractFastMinecoloniesEntity entity,
+        final BlockPos avoid,
+        final int distance,
+        final double speed,
+        final boolean safeDestination)
+    {
         final MinecoloniesAdvancedPathNavigate nav = ((MinecoloniesAdvancedPathNavigate) entity.getNavigation());
         boolean isOnRightTask = (nav.getPathResult() != null && PathJobMoveAwayFromLocation.isJobFor(nav.getPathResult().getJob(), distance, avoid));
 
@@ -205,7 +221,7 @@ public class EntityNavigationUtils
                 }
             }
 
-            nav.walkAwayFrom(avoid, distance, speed, false);
+            nav.walkAwayFrom(avoid, distance, speed, safeDestination);
         }
 
         return false;

@@ -354,6 +354,35 @@ public class PathfindingUtils
     }
 
     /**
+     * Check whether lava is within one block of the given position, including directly above or below.
+     * This is used as a safety buffer so pathing keeps a gap instead of only avoiding lava blocks themselves.
+     *
+     * @param world the world.
+     * @param pos   the center position of the entity space to validate.
+     * @return true when lava is at or immediately around the given position.
+     */
+    public static boolean isLavaNearby(@NotNull final BlockGetter world, @NotNull final BlockPos pos)
+    {
+        final BlockPos.MutableBlockPos cursor = new BlockPos.MutableBlockPos();
+        for (int dy = -1; dy <= 1; dy++)
+        {
+            for (int dx = -1; dx <= 1; dx++)
+            {
+                for (int dz = -1; dz <= 1; dz++)
+                {
+                    cursor.set(pos.getX() + dx, pos.getY() + dy, pos.getZ() + dz);
+                    if (isLava(world, cursor, null, null))
+                    {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * Checks if the given state is a ladder, or if pathing options allow a different type of climbable
      *
      * @param blockState
@@ -445,6 +474,7 @@ public class PathfindingUtils
         final Block block = blockState.getBlock();
 
         return blockState.is(ModTags.dangerousBlocks) ||
+            block == Blocks.LAVA ||
             block instanceof FireBlock ||
             block instanceof CampfireBlock ||
             block instanceof MagmaBlock ||

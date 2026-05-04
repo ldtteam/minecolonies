@@ -93,6 +93,11 @@ public enum SurfaceType
             return SurfaceType.NOT_PASSABLE;
         }
 
+        if ((pathingOptions == null || !pathingOptions.canPassDanger()) && PathfindingUtils.isLavaNearby(world, pos.above()))
+        {
+            return SurfaceType.NOT_PASSABLE;
+        }
+
         if ((block instanceof PanelBlock || block instanceof TrapdoorBlock) && !blockState.getValue(TrapdoorBlock.OPEN))
         {
             return SurfaceType.WALKABLE;
