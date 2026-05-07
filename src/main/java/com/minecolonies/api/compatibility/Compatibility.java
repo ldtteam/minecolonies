@@ -4,10 +4,14 @@ import com.minecolonies.api.compatibility.dynamictrees.DynamicTreeProxy;
 import com.minecolonies.api.compatibility.resourcefulbees.IBeehiveCompat;
 import com.minecolonies.api.compatibility.tinkers.SlimeTreeProxy;
 import com.minecolonies.api.compatibility.tinkers.TinkersToolProxy;
+import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.equipment.registry.EquipmentTypeEntry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Tier;
+import net.minecraft.world.item.Tiers;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
@@ -20,8 +24,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
-import java.util.function.ToIntBiFunction;
-import net.minecraft.world.item.Item;
 
 /**
  * This class is to store the methods that call the methods to check for miscellaneous compatibility problems.
@@ -34,21 +36,100 @@ public final class Compatibility
         throw new IllegalAccessError("Utility class");
     }
 
-    private static final Map<Item, ToIntBiFunction<ItemStack, EquipmentTypeEntry>> customLevelProviders = new HashMap<>();
+    private record TierEntry(@NotNull Tier tier, int level) {}
+
+    private static final Map<ItemStorage, TierEntry> itemTierRegistry = new HashMap<>();
     private static final List<Predicate<ItemStack>> customWeaponRecognizers = new ArrayList<>();
 
-    /**
-     * Register a custom equipment level provider. The function should return the
-     * equipment level (0–N) for a recognised stack. Only items where the vanialla
-     * behaviour is not intended need to be registered.
-     * Called before the vanilla getAttackDamageBonus() fallback.
-     *
-     * @param provider the level provider to register.
-     */
-    public static void registerEquipmentLevelProvider(final Item item,
-        final ToIntBiFunction<ItemStack, EquipmentTypeEntry> provider)
+    // Ordered by level 0–5. Level 5 maps to Netherite (the highest vanilla Tier).
+    private static final Tiers[] LEVEL_TO_TIER = {
+        Tiers.WOOD, Tiers.STONE, Tiers.IRON, Tiers.DIAMOND, Tiers.NETHERITE, Tiers.NETHERITE
+    };
+
+    private static Tiers tierForLevel(final int level)
     {
-        customLevelProviders.put(item, provider);
+        return LEVEL_TO_TIER[Math.min(Math.max(level, 0), LEVEL_TO_TIER.length - 1)];
+    }
+
+    /**
+     * Register an item with an explicit Tier object and pre-computed level.
+     * Always overwrites any existing entry — intended for mod compat hooks.
+     *
+     * @param item  the item to register.
+     * @param tier  the Tier object to associate.
+     * @param level the equipment level integer.
+     */
+    public static void registerItemTier(@NotNull final Item item, @NotNull final Tier tier, final int level)
+    {
+        itemTierRegistry.put(new ItemStorage(new ItemStack(item), true, true), new TierEntry(tier, level));
+    }
+
+    /**
+     * Register an item by level only.
+     * The closest matching vanilla {@link Tiers} instance is stored so that
+     * {@link #getItemTier} never returns null for a registered item.
+     * Always overwrites any existing entry — intended for mod compat hooks.
+     *
+     * @param item  the item to register.
+     * @param level the equipment level integer.
+     */
+    public static void registerItemTier(@NotNull final Item item, final int level)
+    {
+        itemTierRegistry.put(new ItemStorage(new ItemStack(item), true, true), new TierEntry(tierForLevel(level), level));
+    }
+
+    /**
+     * Register an item with an explicit Tier and level only if not already registered.
+     * Used by auto-population so explicit mod registrations are never overwritten.
+     *
+     * @param item  the item to register.
+     * @param tier  the Tier object to associate.
+     * @param level the equipment level integer.
+     */
+    public static void registerItemTierIfAbsent(@NotNull final Item item, @NotNull final Tier tier, final int level)
+    {
+        itemTierRegistry.putIfAbsent(new ItemStorage(new ItemStack(item), true, true), new TierEntry(tier, level));
+    }
+
+    /**
+     * Register an item by level only if not already registered.
+     * The closest matching vanilla {@link Tiers} instance is stored.
+     * Used by auto-population so explicit mod registrations are never overwritten.
+     *
+     * @param item  the item to register.
+     * @param level the equipment level integer.
+     */
+    public static void registerItemTierIfAbsent(@NotNull final Item item, final int level)
+    {
+        itemTierRegistry.putIfAbsent(new ItemStorage(new ItemStack(item), true, true), new TierEntry(tierForLevel(level), level));
+    }
+
+    /**
+     * Return the Tier associated with this stack.
+     * Returns {@code null} only when the item has not been registered.
+     * Items registered without a real Tier (armor, bow, etc.) return the closest
+     * matching vanilla {@link Tiers} instance.
+     *
+     * @param stack the item stack.
+     * @return the registered Tier, or null if not registered.
+     */
+    @Nullable
+    public static Tier getItemTier(final ItemStack stack)
+    {
+        final TierEntry entry = itemTierRegistry.get(new ItemStorage(stack, true, true));
+        return entry != null ? entry.tier() : null;
+    }
+
+    /**
+     * Return the pre-computed equipment level for this stack, or -1 if not registered.
+     *
+     * @param stack the item stack.
+     * @return the equipment level, or -1.
+     */
+    public static int getItemLevel(final ItemStack stack)
+    {
+        final TierEntry entry = itemTierRegistry.get(new ItemStorage(stack, true, true));
+        return entry != null ? entry.level() : -1;
     }
 
     /**
@@ -78,12 +159,6 @@ public final class Compatibility
             }
         }
         return false;
-    }
-
-    public static int getCustomEquipmentLevel(final ItemStack stack, final EquipmentTypeEntry equipmentType)
-    {
-        final ToIntBiFunction<ItemStack, EquipmentTypeEntry> provider = customLevelProviders.get(stack.getItem());
-        return provider != null ? provider.applyAsInt(stack, equipmentType) : -1;
     }
 
     public static IJeiProxy jeiProxy = new IJeiProxy() {};
