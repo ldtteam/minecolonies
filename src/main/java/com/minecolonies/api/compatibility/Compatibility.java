@@ -116,7 +116,7 @@ public final class Compatibility
     @Nullable
     public static Tier getItemTier(final ItemStack stack)
     {
-        final TierEntry entry = itemTierRegistry.get(new ItemStorage(stack, true, true));
+        final TierEntry entry = itemTierRegistry.get(new ItemStorage(stack, true));
         return entry != null ? entry.tier() : null;
     }
 
@@ -128,7 +128,7 @@ public final class Compatibility
      */
     public static int getItemLevel(final ItemStack stack)
     {
-        final TierEntry entry = itemTierRegistry.get(new ItemStorage(stack, true, true));
+        final TierEntry entry = itemTierRegistry.get(new ItemStorage(stack, true));
         return entry != null ? entry.level() : -1;
     }
 
