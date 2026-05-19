@@ -35,11 +35,20 @@ jobs:
               body,
             });
 
-            await github.rest.repos.createCommitStatus({
+            const statuses = await github.rest.repos.listCommitStatusesForRef({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              sha: context.payload.pull_request.head.sha,
-              state: 'success',
-              context: 'Testing',
-              description: 'No source changes detected',
+              ref: context.payload.pull_request.head.sha,
             });
+
+            const alreadySet = statuses.data.some(s => s.context === 'Testing');
+            if (!alreadySet) {
+              await github.rest.repos.createCommitStatus({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                sha: context.payload.pull_request.head.sha,
+                state: 'success',
+                context: 'Testing',
+                description: 'No source changes detected',
+              });
+            }
