@@ -9,10 +9,9 @@ jobs:
   setup-pr:
     runs-on: ubuntu-latest
     steps:
-      - name: Add initial pull request comment
+      - name: Post setup comment and set pending status
         uses: actions/github-script@v8
         env:
-          REQUIRED_LABEL: 'Untested'
           IS_FIRST_TIME: ${{ github.event.pull_request.author_association == 'FIRST_TIME_CONTRIBUTOR' || github.event.pull_request.author_association == 'FIRST_TIMER' }}
         with:
           result-encoding: string
@@ -22,11 +21,20 @@ jobs:
             if (process.env.IS_FIRST_TIME == 'true') {
               body += "# Thanks for your first contribution to MineColonies!\n\n";
             }
-            body += `### In order for this pull request to be merged, make sure you test whether your changes work.\nIf the changes are working as intended, remove the https://github.com/${context.repo.owner}/${context.repo.repo}/labels/${process.env.REQUIRED_LABEL} label from the pull request.\nAs long as this label is on the pull request, it will not be merged.\nIf your pull request made no changes to the source code, the label will not be automatically added to the pull request.\n\n**Contributors, please review this pull request!**`
-            
-            github.rest.issues.createComment({
+            body += `### In order for this pull request to be merged, make sure you test whether your changes work.\nOnce you have tested your changes, post a comment on this pull request with exactly: \`I confirm my changes are tested\`\nAs long as the testing check is pending, this pull request will not be merged.\nIf your pull request made no changes to the source code, the check will not be automatically added to the pull request.\n\n**Contributors, please review this pull request!**`
+
+            await github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: context.issue.number,
               body,
-            })
+            });
+
+            await github.rest.repos.createCommitStatus({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              sha: context.payload.pull_request.head.sha,
+              state: 'pending',
+              context: 'Testing',
+              description: "Post `I confirm my changes are tested` as a comment to clear this",
+            });
