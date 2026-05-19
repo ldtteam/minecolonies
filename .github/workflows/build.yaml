@@ -18,7 +18,7 @@ permissions:
   packages: write
 
 env:
-  PRE_RELEASE_LABEL_NAME: 'PR: Pre-release'
+  PRE_RELEASE_LABEL_NAME: 'PR: Pre-release HI'
 
 jobs:
   build:
