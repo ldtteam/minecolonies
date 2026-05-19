@@ -6,6 +6,7 @@ on:
       - synchronize
     paths:
       - src/**
+      - '!src/main/resources/blueprints/**'
 
 permissions:
   statuses: write
