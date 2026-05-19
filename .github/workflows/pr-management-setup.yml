@@ -12,6 +12,7 @@ jobs:
       - name: Add initial pull request comment
         uses: actions/github-script@v8
         env:
+          REQUIRED_LABEL: 'Untested'
           IS_FIRST_TIME: ${{ github.event.pull_request.author_association == 'FIRST_TIME_CONTRIBUTOR' || github.event.pull_request.author_association == 'FIRST_TIMER' }}
         with:
           result-encoding: string
