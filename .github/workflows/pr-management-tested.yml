@@ -5,6 +5,10 @@ on:
     types:
       - created
 
+permissions:
+  statuses: write
+  pull-requests: read
+
 jobs:
   mark-as-tested:
     runs-on: ubuntu-latest

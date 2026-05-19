@@ -5,6 +5,11 @@ on:
     types:
       - opened
 
+permissions:
+  statuses: write
+  issues: write
+  pull-requests: write
+
 jobs:
   setup-pr:
     runs-on: ubuntu-latest
