@@ -214,7 +214,7 @@ public class ModEquipmentTypes
      * Called once during FMLCommonSetupEvent via MineColonies.preInit.
      */
     @SuppressWarnings("null")
-    public static void initVanillaEquipmentTiers()
+    public static void initRegisterEquipmentTiers()
     {
         final int bowRef    = new ItemStack(Items.BOW).getMaxDamage();
         final int rodRef    = new ItemStack(Items.FISHING_ROD).getMaxDamage();
