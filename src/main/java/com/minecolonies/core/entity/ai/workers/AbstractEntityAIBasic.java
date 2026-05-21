@@ -377,7 +377,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
 
             // fix for printing the actual exception
             e.printStackTrace();
-            Log.getLogger().warn("AI history for citizen error:{}", getStateAI().getHistory());
+            Log.getLogger().warn("AI history for citizen error:{}", getStateAI().getHistory().getString());
         }
         catch (final RuntimeException exp)
         {
