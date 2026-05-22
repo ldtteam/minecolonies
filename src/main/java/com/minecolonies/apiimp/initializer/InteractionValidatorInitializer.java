@@ -164,7 +164,7 @@ public class InteractionValidatorInitializer
 
         InteractionValidatorRegistry.registerStandardPredicate(Component.translatableEscape(PUPIL_NO_CARPET),
           citizen -> citizen.getEntity().isPresent() && citizen.isChild() && citizen.getWorkBuilding() instanceof BuildingSchool
-                       && ((BuildingSchool) citizen.getWorkBuilding()).getRandomPlaceToSit(citizen.getEntity().get().getRandom()) == null);
+                       && ((BuildingSchool) citizen.getWorkBuilding()).getRandomPlaceToSit() == null);
 
         InteractionValidatorRegistry.registerStandardPredicate(Component.translatableEscape(WATER_TOO_FAR),
           citizen -> citizen.getJob() instanceof JobFisherman && ((JobFisherman) citizen.getJob()).getPonds().isEmpty());

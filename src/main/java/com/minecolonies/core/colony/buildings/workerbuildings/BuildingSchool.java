@@ -2,6 +2,7 @@ package com.minecolonies.core.colony.buildings.workerbuildings;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.constant.ColonyConstants;
 import com.minecolonies.api.util.constant.NbtTagConstants;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
 import net.minecraft.core.BlockPos;
@@ -9,7 +10,6 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.WoolCarpetBlock;
 import net.minecraft.world.level.block.state.BlockState;
@@ -120,11 +120,10 @@ public class BuildingSchool extends AbstractBuilding
     /**
      * Get a random place to sit from the school.
      *
-     * @param random the random obj.
      * @return the place to sit.
      */
     @Nullable
-    public BlockPos getRandomPlaceToSit(final RandomSource random)
+    public BlockPos getRandomPlaceToSit()
     {
         final List<BlockPos> validSitLocations = getLocationsFromTag(TAG_SITTING);
         if (!validSitLocations.isEmpty())
@@ -136,7 +135,7 @@ public class BuildingSchool extends AbstractBuilding
         {
             return null;
         }
-        final BlockPos returnPos = carpet.get(random.nextInt(carpet.size()));
+        final BlockPos returnPos = carpet.get(ColonyConstants.rand.nextInt(carpet.size()));
         if (isCarpet(colony.getWorld().getBlockState(returnPos)))
         {
             return returnPos;

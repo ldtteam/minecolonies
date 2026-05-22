@@ -91,7 +91,7 @@ public class EntityAIWorkPupil extends AbstractEntityAIInteract<JobPupil, Buildi
         }
 
         final BuildingSchool school = building;
-        final BlockPos pos = school.getRandomPlaceToSit(worker.getRandom());
+        final BlockPos pos = school.getRandomPlaceToSit();
         if (pos == null)
         {
             worker.getCitizenData().triggerInteraction(new StandardInteraction(Component.translatableEscape(PUPIL_NO_CARPET), ChatPriority.BLOCKING));
