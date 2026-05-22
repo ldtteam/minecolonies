@@ -7,9 +7,9 @@ import com.ldtteam.blockui.controls.ItemIcon;
 import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.blockui.views.ScrollingList;
 import com.ldtteam.structurize.client.gui.WindowSelectRes;
-import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.modules.IMinimumStockModuleView;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.client.gui.AbstractModuleWindow;
@@ -94,7 +94,7 @@ public class MinimumStockModuleWindow extends AbstractModuleWindow<IMinimumStock
             new WindowSelectRes(this,
                 Component.empty(),
                 null,
-                IColonyManager.getInstance().getCompatibilityManager().getListOfAllItems(),
+                ItemStackUtils.allItemsPlusInventory(mc.player),
                 (stack, qty) -> new AddMinimumStockToBuildingModuleMessage(buildingView, stack, qty).sendToServer(),
                 true,
                 Component.translatable("com.minecolonies.coremod.gui.scan.select.stack")).open();

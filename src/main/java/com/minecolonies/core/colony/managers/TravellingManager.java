@@ -19,7 +19,6 @@ import net.minecraft.nbt.Tag;
 import net.neoforged.neoforge.common.util.INBTSerializable;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -80,7 +79,7 @@ public class TravellingManager implements ITravellingManager, INBTSerializable<C
             }
             else
             {
-                spawnHutPos = colony.getBuildingManager().getTownHall().getPosition();
+                spawnHutPos = colony.getServerBuildingManager().getTownHall().getPosition();
             }
 
             Optional<AbstractEntityCitizen> optionalEntityCitizen = citizenData.getEntity();

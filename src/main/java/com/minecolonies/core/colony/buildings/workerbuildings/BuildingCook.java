@@ -1,5 +1,6 @@
 package com.minecolonies.core.colony.buildings.workerbuildings;
 
+import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.crafting.ItemStorage;
@@ -11,6 +12,7 @@ import com.minecolonies.core.entity.other.SittingEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.function.Predicate;
@@ -50,12 +52,6 @@ public class BuildingCook extends AbstractBuilding
     public BuildingCook(final IColony c, final BlockPos l)
     {
         super(c, l);
-    }
-
-    @Override
-    public void onUpgradeComplete(final int newLevel)
-    {
-        super.onUpgradeComplete(newLevel);
     }
 
     @Override

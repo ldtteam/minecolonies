@@ -10,9 +10,11 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.client.gui.modules.building.SettingsModuleWindow;
 import com.minecolonies.core.colony.buildings.modules.settings.SettingKey;
 import com.minecolonies.core.network.messages.server.colony.building.TriggerSettingMessage;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
@@ -31,7 +33,7 @@ public class SettingsModuleView extends AbstractBuildingModuleView implements IS
     /**
      * Map of setting id (string) to generic setting.
      */
-    final Map<ISettingKey<? extends ISetting>, ISetting> settings = new LinkedHashMap<>();
+    final Map<ISettingKey<?>, ISetting<?>> settings = new LinkedHashMap<>();
 
     @Override
     public void deserialize(@NotNull final RegistryFriendlyByteBuf buf)
@@ -50,7 +52,7 @@ public class SettingsModuleView extends AbstractBuildingModuleView implements IS
             }
         }
 
-        for (final Map.Entry<ISettingKey<? extends ISetting>, ISetting> entry : new ArrayList<>(settings.entrySet()))
+        for (final Map.Entry<ISettingKey<?>, ISetting<?>> entry : new ArrayList<>(settings.entrySet()))
         {
             final ISetting syncSetting = tempSettings.get(entry.getKey());
             if (syncSetting == null)
@@ -70,14 +72,14 @@ public class SettingsModuleView extends AbstractBuildingModuleView implements IS
      *
      * @return the list of string key and ISetting value.
      */
-    public List<ISettingKey<? extends ISetting>> getSettingsToShow()
+    public List<ISettingKey<? extends ISetting<?>>> getSettingsToShow()
     {
-        List<ISettingKey<? extends ISetting>> filteredSettings = new ArrayList<>();
-        for (Map.Entry<ISettingKey<? extends ISetting>, ISetting> setting : settings.entrySet())
+        final List<ISettingKey<? extends ISetting<?>>> filteredSettings = new ArrayList<>();
+        for (Map.Entry<ISettingKey<?>, ISetting<?>> setting : settings.entrySet())
         {
             if (setting.getValue().isActive(this) || !setting.getValue().shouldHideWhenInactive())
             {
-                filteredSettings.add(setting.getKey());
+                filteredSettings.add((ISettingKey<? extends ISetting<?>>) setting.getKey());
             }
         }
         return filteredSettings;
@@ -86,7 +88,7 @@ public class SettingsModuleView extends AbstractBuildingModuleView implements IS
     @Override
     @Nullable
     @SuppressWarnings("unchecked")
-    public <T extends ISetting> T getSetting(final ISettingKey<T> key)
+    public <T extends ISetting<?>> T getSetting(final ISettingKey<T> key)
     {
         return (T) settings.getOrDefault(key, null);
     }
@@ -117,7 +119,16 @@ public class SettingsModuleView extends AbstractBuildingModuleView implements IS
         if (setting.isActive(this))
         {
             setting.trigger();
-            new TriggerSettingMessage(buildingView, key, setting, getProducer().getRuntimeID()).sendToServer();
+            new TriggerSettingMessage(getColony(), key, setting, getProducer().getRuntimeID(), buildingView == null ? BlockPos.ZERO : buildingView.getPosition()).sendToServer();
+        }
+    }
+
+    @Override
+    public void updateSetting(final ISettingKey<?> settingKey, final ISetting<?> value, final ServerPlayer sender)
+    {
+        if (settings.containsKey(settingKey))
+        {
+            settings.put(settingKey, value);
         }
     }
 }

@@ -93,7 +93,7 @@ public class ColonyViewBuildingExtensionsUpdateMessage extends AbstractClientPla
         if (view != null)
         {
             final Set<IBuildingExtension> updatedExtensions = new HashSet<>();
-            view.getBuildingExtensions(extension -> true).forEach(existingExtension -> {
+            view.getClientBuildingManager().getBuildingExtensions(extension -> true).forEach(existingExtension -> {
                 if (this.extensions.containsKey(existingExtension))
                 {
                     final RegistryFriendlyByteBuf copyBuffer = new RegistryFriendlyByteBuf(Unpooled.buffer(), player.level().registryAccess());
@@ -104,7 +104,7 @@ public class ColonyViewBuildingExtensionsUpdateMessage extends AbstractClientPla
             });
             updatedExtensions.addAll(this.extensions.keySet());
 
-            view.handleColonyBuildingExtensionsViewUpdateMessage(updatedExtensions);
+            view.getClientBuildingManager().handleColonyBuildingExtensionViewUpdateMessage(updatedExtensions);
         }
         else
         {

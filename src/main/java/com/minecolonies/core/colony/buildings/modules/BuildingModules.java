@@ -1,6 +1,7 @@
 package com.minecolonies.core.colony.buildings.modules;
 
 import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.buildings.ICommonBuilding;
 import com.minecolonies.api.colony.buildings.ISchematicProvider;
 import com.minecolonies.api.colony.buildings.modules.IBuildingModule;
 import com.minecolonies.api.colony.buildings.modules.IBuildingModuleView;
@@ -79,7 +80,7 @@ public class BuildingModules
           (buildingView) -> IColonyManager.getInstance().getCompatibilityManager().getCompostInputs()));
 
     public static final BuildingEntry.ModuleProducer<RestaurantMenuModule, RestaurantMenuModuleView> RESTAURANT_MENU =
-      new BuildingEntry.ModuleProducer<>("restaurant_menu", () -> new RestaurantMenuModule(true, ISchematicProvider::getBuildingLevel), () -> RestaurantMenuModuleView::new);
+      new BuildingEntry.ModuleProducer<>("restaurant_menu", () -> new RestaurantMenuModule(true, ICommonBuilding::getBuildingLevel), () -> RestaurantMenuModuleView::new);
 
     public static final BuildingEntry.ModuleProducer<RestaurantMenuModule, RestaurantMenuModuleView> NETHERMINER_MENU =
       new BuildingEntry.ModuleProducer<>("netherminer_menu", () -> new RestaurantMenuModule(false, building -> 1), () -> RestaurantMenuModuleView::new);
@@ -338,6 +339,8 @@ public class BuildingModules
       new BuildingEntry.ModuleProducer<>("smelter_smelting", () -> new BuildingSmeltery.SmeltingModule(ModJobs.smelter.get()), () -> CraftingModuleView::new);
     public static final BuildingEntry.ModuleProducer<BuildingSmeltery.OreBreakingModule,CraftingModuleView> SMELTER_OREBREAK      =
       new BuildingEntry.ModuleProducer<>("smelter_orebreak", () -> new BuildingSmeltery.OreBreakingModule(ModJobs.smelter.get()), () -> CraftingModuleView::new);
+    public static final BuildingEntry.ModuleProducer<SettingsModule,SettingsModuleView> SMELTER_SETTINGS              =
+      new BuildingEntry.ModuleProducer<>("smelter_settings", () -> new SettingsModule().with(BuildingSmeltery.MIN, new IntSetting(16)), () -> SettingsModuleView::new);
 
     public static final BuildingEntry.ModuleProducer<CraftingWorkerBuildingModule,WorkerBuildingModuleView> STONEMASON_WORK       =
       new BuildingEntry.ModuleProducer<>("stonemason_work", () -> new CraftingWorkerBuildingModule(ModJobs.stoneMason.get(), Skill.Creativity, Skill.Dexterity, false, (b) -> 1),
@@ -394,7 +397,7 @@ public class BuildingModules
 
     public static final BuildingEntry.ModuleProducer<WorkerBuildingModule,WorkerBuildingModuleView> UNIVERSITY_WORK       =
       new BuildingEntry.ModuleProducer<>("university_work",
-        () -> new WorkerBuildingModule(ModJobs.researcher.get(), Skill.Knowledge, Skill.Mana, true, ISchematicProvider::getBuildingLevel),
+        () -> new WorkerBuildingModule(ModJobs.researcher.get(), Skill.Knowledge, Skill.Mana, true, ICommonBuilding::getBuildingLevel),
         () -> WorkerBuildingModuleView::new);
     public static final BuildingEntry.ModuleProducer<IBuildingModule,UniversityResearchModuleView> UNIVERSITY_RESEARCH   =
       new BuildingEntry.ModuleProducer<>("university_research", null, () -> UniversityResearchModuleView::new);
@@ -508,7 +511,7 @@ public class BuildingModules
      */
 
     public static final BuildingEntry.ModuleProducer<WorkAtHomeBuildingModule,ArcherSquireModuleView> ARCHERY_WORK_HOME               = new BuildingEntry.ModuleProducer<>(
-      "archery_work", () -> new WorkAtHomeBuildingModule(ModJobs.archerInTraining.get(), Skill.Agility, Skill.Adaptability, false, ISchematicProvider::getBuildingLevel),
+      "archery_work", () -> new WorkAtHomeBuildingModule(ModJobs.archerInTraining.get(), Skill.Agility, Skill.Adaptability, false, ICommonBuilding::getBuildingLevel),
       () -> ArcherSquireModuleView::new);
 
     public static final BuildingEntry.ModuleProducer<WorkAtHomeBuildingModule,KnightSquireBuildingModuleView> KNIGHT_TRAINING                 =
@@ -516,16 +519,16 @@ public class BuildingModules
         Skill.Adaptability,
         Skill.Stamina,
         false,
-        ISchematicProvider::getBuildingLevel), () -> KnightSquireBuildingModuleView::new);
+          ICommonBuilding::getBuildingLevel), () -> KnightSquireBuildingModuleView::new);
 
     public static final BuildingEntry.ModuleProducer<GuardBuildingModule,CombinedHiringLimitModuleView> KNIGHT_BARRACKS_WORK = new BuildingEntry.ModuleProducer<>(
-      "knight_barracks_work", () -> new GuardBuildingModule(ModGuardTypes.knight.get(), true, ISchematicProvider::getBuildingLevel),
+      "knight_barracks_work", () -> new GuardBuildingModule(ModGuardTypes.knight.get(), true, ICommonBuilding::getBuildingLevel),
       () -> CombinedHiringLimitModuleView::new);
     public static final BuildingEntry.ModuleProducer<GuardBuildingModule,CombinedHiringLimitModuleView> RANGER_BARRACKS_WORK = new BuildingEntry.ModuleProducer<>(
-      "ranger_barracks_work", () -> new GuardBuildingModule(ModGuardTypes.ranger.get(), true, ISchematicProvider::getBuildingLevel),
+      "ranger_barracks_work", () -> new GuardBuildingModule(ModGuardTypes.ranger.get(), true, ICommonBuilding::getBuildingLevel),
       () -> CombinedHiringLimitModuleView::new);
     public static final BuildingEntry.ModuleProducer<GuardBuildingModule,CombinedHiringLimitModuleView> DRUID_BARRACKS_WORK  = new BuildingEntry.ModuleProducer<>(
-      "druid_barracks_work", () -> new GuardBuildingModule(ModGuardTypes.druid.get(), true, ISchematicProvider::getBuildingLevel),
+      "druid_barracks_work", () -> new GuardBuildingModule(ModGuardTypes.druid.get(), true, ICommonBuilding::getBuildingLevel),
       () -> CombinedHiringLimitModuleView::new);
 
     public static final BuildingEntry.ModuleProducer<GuardBuildingModule,CombinedHiringLimitModuleView> KNIGHT_TOWER_WORK =

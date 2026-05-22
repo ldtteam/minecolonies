@@ -23,6 +23,7 @@ import com.minecolonies.core.entity.citizen.EntityCitizen;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.BlockTags;
@@ -40,11 +41,13 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.AirBlock;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.neoforged.bus.api.Event;
 import net.neoforged.bus.api.ICancellableEvent;
 import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.common.util.FakePlayer;
 import net.neoforged.neoforge.common.util.TriState;
 import net.neoforged.neoforge.event.VanillaGameEvent;
@@ -188,16 +191,16 @@ public class ColonyPermissionEventHandler
 
         if (entity == null)
         {
-            if (colony.hasTownHall())
+            if (colony.getServerBuildingManager().hasTownHall())
             {
-                colony.getBuildingManager().getTownHall().addPermissionEvent(new PermissionEvent(null, "-", action, pos));
+                colony.getServerBuildingManager().getTownHall().addPermissionEvent(new PermissionEvent(entity.getUUID(), entity.getName().getString(), action, pos));
             }
             return;
         }
 
-        if (colony.hasTownHall())
+        if (colony.getCommonBuildingManager().hasTownHall())
         {
-            colony.getBuildingManager().getTownHall().addPermissionEvent(new PermissionEvent(entity.getUUID(), entity.getName().getString(), action, pos));
+            colony.getServerBuildingManager().getTownHall().addPermissionEvent(new PermissionEvent(entity.getUUID(), entity.getName().getString(), action, pos));
         }
 
         if (entity instanceof FakePlayer)
@@ -282,7 +285,7 @@ public class ColonyPermissionEventHandler
             {
                 return;
             }
-            colony.getBuildingManager().removeLeisureSite(event.getPos());
+            colony.getServerBuildingManager().removeLeisureSite(event.getPos());
         }
         else
         {
@@ -391,13 +394,27 @@ public class ColonyPermissionEventHandler
                     return;
                 }
 
-                if (ContainerPlacementHandler.CONTAINERS.contains(block) && !perms.hasPermission(event.getEntity(), Action.OPEN_CONTAINER))
+                final BlockEntity blockEntity = event.getLevel().getBlockEntity(event.getPos());
+                boolean isContainer = event.getLevel().getCapability(Capabilities.ItemHandler.BLOCK, event.getPos(), state, blockEntity, null) != null;
+                if (!isContainer)
+                {
+                    for (Direction direction : Direction.values())
+                    {
+                        if (event.getLevel().getCapability(Capabilities.ItemHandler.BLOCK, event.getPos(), state, blockEntity, direction) != null)
+                        {
+                            isContainer = true;
+                            break;
+                        }
+                    }
+                }
+
+                if (isContainer && !perms.hasPermission(event.getEntity(), Action.OPEN_CONTAINER))
                 {
                     cancelEvent(event, event.getEntity(), colony, Action.OPEN_CONTAINER, event.getPos());
                     return;
                 }
 
-                if (event.getLevel().getBlockEntity(event.getPos()) != null && !perms.hasPermission(event.getEntity(), Action.RIGHTCLICK_ENTITY))
+                if (blockEntity != null && !perms.hasPermission(event.getEntity(), Action.RIGHTCLICK_ENTITY))
                 {
                     checkEventCancellation(Action.RIGHTCLICK_ENTITY, event.getEntity(), event.getLevel(), event, event.getPos());
                     return;
@@ -547,6 +564,12 @@ public class ColonyPermissionEventHandler
         {
             return;
         }
+
+        if (event.getEntity().getType().is(ModTags.freeToInteractWith))
+        {
+            return;
+        }
+
         checkEventCancellation(Action.RIGHTCLICK_ENTITY, event.getEntity(), event.getLevel(), event, event.getPos());
     }
 

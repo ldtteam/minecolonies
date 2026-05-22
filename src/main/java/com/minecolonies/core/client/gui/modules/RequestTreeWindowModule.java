@@ -173,6 +173,7 @@ public abstract class RequestTreeWindowModule implements IWindowWithLayoutModule
 
                 final Button fulfillButton = rowPane.findPaneOfTypeByID(REQUEST_FULFILL, ButtonImage.class);
                 fulfillButton.setVisible(isFulfillable(request));
+                fulfillButton.enable();
             }
         });
     }

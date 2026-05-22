@@ -10,12 +10,13 @@ import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.Utils;
-import net.minecraft.client.Minecraft;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.common.Tags;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -126,7 +127,7 @@ public class SchemAnalyzerUtil
      * @param blueprint
      * @return
      */
-    public static SchematicAnalyzationResult analyzeSchematic(final Blueprint blueprint)
+    public static SchematicAnalyzationResult analyzeSchematic(final Blueprint blueprint, @NotNull final HolderLookup.Provider provider)
     {
         double complexityScore = 0;
         int containedBuildings = 0;
@@ -145,7 +146,7 @@ public class SchemAnalyzerUtil
 
             if (DomumOrnamentumUtils.isDoBlock(block) && blockInfo.hasTileEntityData())
             {
-                final MaterialTextureData textureData = Utils.deserializeCodecMess(MaterialTextureData.CODEC, Minecraft.getInstance().level.registryAccess(), blockInfo.getTileEntityData().getCompound(Constants.BLOCK_ENTITY_TEXTURE_DATA));
+                final MaterialTextureData textureData = Utils.deserializeCodecMess(MaterialTextureData.CODEC, provider, blockInfo.getTileEntityData().getCompound(Constants.BLOCK_ENTITY_TEXTURE_DATA));
                 final ItemStack result = new ItemStack(block);
                 if (!textureData.isEmpty())
                 {

@@ -271,7 +271,7 @@ public abstract class AbstractColonyBlock<B extends AbstractColonyBlock<B>> exte
 
             if (colony != null)
             {
-                colony.getBuildingManager().addNewBuilding(hut, worldIn);
+                colony.getServerBuildingManager().addNewBuilding(hut, worldIn);
             }
         }
     }

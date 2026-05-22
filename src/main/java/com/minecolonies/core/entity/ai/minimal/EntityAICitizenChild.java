@@ -223,11 +223,11 @@ public class EntityAICitizenChild implements IStateAI
                 actionTimer = 3 * 60 * 20;
             }
 
-            int index = child.getCitizenColonyHandler().getColonyOrRegister().getBuildingManager().getBuildings().size();
+            int index = child.getCitizenColonyHandler().getColonyOrRegister().getServerBuildingManager().getBuildings().size();
 
             index = rand.nextInt(index);
 
-            final List<IBuilding> buildings = new ArrayList<>(child.getCitizenColonyHandler().getColonyOrRegister().getBuildingManager().getBuildings().values());
+            final List<IBuilding> buildings = new ArrayList<>(child.getCitizenColonyHandler().getColonyOrRegister().getServerBuildingManager().getBuildings().values());
             visitingHut = buildings.get(index);
 
             EntityNavigationUtils.walkToBuilding(child, visitingHut);

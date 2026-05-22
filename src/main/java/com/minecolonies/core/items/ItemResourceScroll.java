@@ -158,7 +158,7 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
       final String hash,
       final Player player)
     {
-        final IBuildingView warehouse = buildingView.getColony().getBuilding(warehouseBlockPos);
+        final IBuildingView warehouse = buildingView.getColony().getClientBuildingManager().getBuilding(warehouseBlockPos);
 
         if (warehouse == null)
         {
@@ -174,7 +174,7 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
         final BuildingResourcesModuleView resourcesModule = buildingView.getModuleViewByType(BuildingResourcesModuleView.class);
 
         final Map<String, Integer> items = new HashMap<>();
-        for (final BlockPos container : warehouse.getContainerList())
+        for (final BlockPos container : warehouse.getContainers())
         {
             final BlockEntity blockEntity = warehouse.getColony().getWorld().getBlockEntity(container);
             if (blockEntity instanceof TileEntityRack rack)

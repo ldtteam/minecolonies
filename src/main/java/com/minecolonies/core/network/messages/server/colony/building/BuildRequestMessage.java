@@ -91,7 +91,7 @@ public class BuildRequestMessage extends AbstractBuildingServerMessage<IBuilding
                     building.requestRemoval(player, builder);
                     for (final BlockPos childPos : building.getChildren())
                     {
-                        final IBuilding childBuilding = colony.getBuildingManager().getBuilding(childPos);
+                        final IBuilding childBuilding = colony.getServerBuildingManager().getBuilding(childPos);
                         if (childBuilding != null)
                         {
                             childBuilding.requestRemoval(player, builder);

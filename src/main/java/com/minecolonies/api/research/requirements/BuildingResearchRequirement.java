@@ -139,7 +139,7 @@ public class BuildingResearchRequirement implements IResearchRequirement
     @Override
     public boolean isFulfilled(final IColony colony)
     {
-        return colony.hasBuilding(building, buildingLevel, singleBuilding);
+        return colony.getCommonBuildingManager().hasBuilding(building, buildingLevel, singleBuilding);
     }
 
     @Override

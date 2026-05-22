@@ -68,19 +68,19 @@ public class ReactivateBuildingMessage extends AbstractServerPlayMessage
         final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld(world, pos);
         if (colony != null && colony.getPermissions().hasPermission(player, Action.MANAGE_HUTS))
         {
-            final AbstractBuilding building = (AbstractBuilding) colony.getBuildingManager().getBuilding(pos);
+            AbstractBuilding building = (AbstractBuilding) colony.getServerBuildingManager().getBuilding(pos);
             if (building == null)
             {
                 final BlockEntity tileEntity = world.getBlockEntity(pos);
                 if (tileEntity instanceof final TileEntityColonyBuilding hut)
                 {
-                    if (!colony.getBuildingManager().canPlaceAt(tileEntity.getBlockState().getBlock(), pos, player))
+                    if (!colony.getServerBuildingManager().canPlaceAt(tileEntity.getBlockState().getBlock(), pos, player))
                     {
                         return;
                     }
 
                     hut.reactivate();
-                    colony.getBuildingManager().addNewBuilding(hut, world);
+                    colony.getServerBuildingManager().addNewBuilding(hut, world);
                 }
             }
         }

@@ -9,6 +9,7 @@ import com.minecolonies.api.entity.pathfinding.IDynamicHeuristicNavigator;
 import com.minecolonies.api.entity.pathfinding.IMinecoloniesNavigator;
 import com.minecolonies.api.entity.pathfinding.IStuckHandler;
 import com.minecolonies.api.util.*;
+import com.minecolonies.core.entity.other.cavalry.CavalryHorseEntity;
 import com.minecolonies.core.entity.pathfinding.PathFindingStatus;
 import com.minecolonies.core.entity.pathfinding.PathPointExtended;
 import com.minecolonies.core.entity.pathfinding.Pathfinding;
@@ -120,6 +121,11 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
      * Time at which a path finished
      */
     private long finishTime = Long.MAX_VALUE;
+
+    /**
+     * The last path index used for wanted position calculations
+     */
+    private int lastWantedPathIndex = -1;
 
     /**
      * Instantiates the navigation of an ourEntity.
@@ -388,13 +394,13 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
         // The moveHelper won't move up if standing in a block with an empty bounding box (put grass, 1 layer snow, mushroom in front of a solid block and have them try jump up).
         if (!this.isDone())
         {
-            final int currentPathIndex = path.getNextNodeIndex();
             this.followThePath();
 
             if (this.path != null && !this.path.isDone())
             {
-                if ((wantedPosition.empty() || currentPathIndex != path.getNextNodeIndex() && path.getNextNodeIndex() < path.getNodeCount()))
+                if ((wantedPosition.empty() || lastWantedPathIndex != path.getNextNodeIndex() && path.getNextNodeIndex() < path.getNodeCount()))
                 {
+                    lastWantedPathIndex = path.getNextNodeIndex();
                     Vec3 vector3d2 = path.getNextEntityPos(mob);
                     tempPos.set(Mth.floor(vector3d2.x), Mth.floor(vector3d2.y), Mth.floor(vector3d2.z));
                     if (wantedPosition.empty() || ChunkPos.asLong(tempPos) == mob.chunkPosition().toLong() || WorldUtil.isEntityBlockLoaded(level, tempPos))
@@ -406,7 +412,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
                 }
             }
 
-            if (wantedPosition != null)
+            if (!wantedPosition.empty())
             {
                 mob.getMoveControl().setWantedPosition(wantedPosition.getX(), wantedPosition.getY(), wantedPosition.getZ(), speedModifier);
             }
@@ -953,7 +959,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
                  return;
             }
 
-            if (!pEx.isOnRails() && ourEntity.getVehicle() != null)
+            if (!pEx.isOnRails() && ourEntity.getVehicle() != null && !(ourEntity.getVehicle() instanceof CavalryHorseEntity))
             {
                 final Entity entity = ourEntity.getVehicle();
                 ourEntity.stopRiding();
@@ -1077,7 +1083,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
             pathResult.cancel();
             pathResult.setStatus(PathFindingStatus.CANCELLED);
             pathResult = null;
-            if (ourEntity.getVehicle() != null)
+            if ((ourEntity.getVehicle() != null) && !(ourEntity.getVehicle() instanceof CavalryHorseEntity))
             {
                 final Entity entity = ourEntity.getVehicle();
                 ourEntity.stopRiding();

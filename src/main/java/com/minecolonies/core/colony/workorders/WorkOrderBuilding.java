@@ -121,7 +121,7 @@ public class WorkOrderBuilding extends AbstractWorkOrder
 
         if (building.hasParent())
         {
-            final IBuilding parentBuilding = building.getColony().getBuildingManager().getBuilding(building.getParent());
+            final IBuilding parentBuilding = building.getColony().getServerBuildingManager().getBuilding(building.getParent());
             if (parentBuilding != null)
             {
                 this.customParentName = parentBuilding.getCustomName();
@@ -182,7 +182,7 @@ public class WorkOrderBuilding extends AbstractWorkOrder
     @Override
     public boolean tooFarFromAnyBuilder(final IColony colony, final int level)
     {
-        return colony.getBuildingManager()
+        return colony.getServerBuildingManager()
           .getBuildings()
           .values()
           .stream()
@@ -199,7 +199,7 @@ public class WorkOrderBuilding extends AbstractWorkOrder
     @Override
     public boolean isValid(@NotNull final IColony colony)
     {
-        return super.isValid(colony) && colony.getBuildingManager().getBuilding(getLocation()) != null;
+        return super.isValid(colony) && colony.getServerBuildingManager().getBuilding(getLocation()) != null;
     }
 
     /**
@@ -247,7 +247,7 @@ public class WorkOrderBuilding extends AbstractWorkOrder
 
         if (getWorkOrderType() != WorkOrderType.REMOVE)
         {
-            final IBuilding building = colony.getBuildingManager().getBuilding(getLocation());
+            final IBuilding building = colony.getServerBuildingManager().getBuilding(getLocation());
             if (building != null)
             {
                 AdvancementUtils.TriggerAdvancementPlayersForColony(colony,
@@ -261,7 +261,7 @@ public class WorkOrderBuilding extends AbstractWorkOrder
     {
         if (!readingFromNbt && colony != null && colony.getWorld() != null)
         {
-            final IBuilding building = colony.getBuildingManager().getBuilding(getLocation());
+            final IBuilding building = colony.getServerBuildingManager().getBuilding(getLocation());
             if (building != null)
             {
                 ConstructionTapeHelper.placeConstructionTape(building.getCorners(), colony);
@@ -272,7 +272,7 @@ public class WorkOrderBuilding extends AbstractWorkOrder
     @Override
     public void onRemoved(final IColony colony)
     {
-        final IBuilding building = colony.getBuildingManager().getBuilding(getLocation());
+        final IBuilding building = colony.getServerBuildingManager().getBuilding(getLocation());
         if (building != null)
         {
             building.markDirty();

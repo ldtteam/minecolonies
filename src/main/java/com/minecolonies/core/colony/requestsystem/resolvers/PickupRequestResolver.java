@@ -38,7 +38,7 @@ public class PickupRequestResolver extends DeliverymenRequestResolver<Pickup>
     @Override
     public boolean canResolveRequest(@NotNull final IRequestManager manager, final IRequest<? extends Pickup> requestToCheck)
     {
-        final IWareHouse wareHouse = manager.getColony().getBuildingManager().getBuilding(getLocation().getInDimensionLocation(), IWareHouse.class);
+        final IWareHouse wareHouse = manager.getColony().getServerBuildingManager().getBuilding(getLocation().getInDimensionLocation(), IWareHouse.class);
         if (wareHouse == null)
         {
             return false;

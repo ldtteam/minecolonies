@@ -222,9 +222,9 @@ public class BlockHutTownHall extends AbstractBlockHut<BlockHutTownHall>
     {
         IColony colony = IColonyManager.getInstance().getIColony(player.level(), pos);
         
-        if (colony.hasTownHall())
+        if (colony.getCommonBuildingManager().hasTownHall())
         {
-            IBuilding townHall = colony.getBuildingManager().getTownHall();
+            IBuilding townHall = colony.getServerBuildingManager().getTownHall();
             
             if (colony.getWorld() != null && !colony.getWorld().isClientSide)
             {

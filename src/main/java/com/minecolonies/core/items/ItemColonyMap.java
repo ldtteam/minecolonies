@@ -94,9 +94,9 @@ public class ItemColonyMap extends AbstractItemMinecolonies
     private static void openWindow(ItemStack stack, Level world, Player player)
     {
         final IColonyView colonyView = ColonyId.readColonyViewFromItemStack(stack);
-        if (colonyView != null && colonyView.getTownHall() != null)
+        if (colonyView != null && colonyView.getCommonBuildingManager().getTownHall() != null)
         {
-            new WindowColonyMap(false, colonyView.getTownHall()).open();
+            new WindowColonyMap(false, colonyView.getClientBuildingManager().getTownHall()).open();
         }
         else
         {

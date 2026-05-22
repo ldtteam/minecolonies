@@ -37,6 +37,17 @@ public class SchematicTagConstants
     public static final String BOSS_RAIDER   = "boss";
 
     /**
+     * Miner tags
+     */
+    public static final String TAG_COBBLE = "cobble";
+    public static final String TAG_LADDER = "ladder";
+
+    /**
+     * Leisure tag.
+     */
+    public static final String TAG_LEISURE = "leisure";
+
+    /**
      * Plantation field tags.
      */
     public static final String SUGAR_FIELD       = "sugar_field";

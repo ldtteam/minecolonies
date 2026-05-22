@@ -1,11 +1,13 @@
 package com.minecolonies.core.placementhandlers;
 
 import com.ldtteam.structurize.api.RotationMirror;
+import com.ldtteam.structurize.placement.IPlacementContext;
 import com.ldtteam.structurize.placement.handlers.placement.IPlacementHandler;
 import com.ldtteam.structurize.placement.handlers.placement.PlacementHandlers;
 import com.ldtteam.structurize.util.BlockUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.util.Tuple;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
@@ -35,7 +37,7 @@ public class LecternPlacementHandler implements IPlacementHandler
                                             @NotNull final BlockPos pos,
                                             @NotNull final BlockState blockState,
                                             @Nullable final CompoundTag tileEntityData,
-                                            final boolean complete)
+                                            @NotNull final IPlacementContext placementContext)
     {
         final List<ItemStack> itemList = new ArrayList<>();
         itemList.add(BlockUtils.getItemStackFromBlockState(blockState));
@@ -54,9 +56,7 @@ public class LecternPlacementHandler implements IPlacementHandler
                                          @NotNull final BlockPos pos,
                                          @NotNull final BlockState blockState,
                                          @Nullable CompoundTag tileEntityData,
-                                         final boolean complete,
-                                         final BlockPos centerPos,
-                                         final RotationMirror rotMir)
+                                         @NotNull final IPlacementContext placementContext)
     {
         if (!world.setBlock(pos, blockState, Block.UPDATE_ALL))
         {
@@ -65,7 +65,7 @@ public class LecternPlacementHandler implements IPlacementHandler
 
         if (tileEntityData != null)
         {
-            PlacementHandlers.handleTileEntityPlacement(tileEntityData, world, pos, rotMir);
+            PlacementHandlers.handleTileEntityPlacement(tileEntityData, world, pos, placementContext.getRotationMirror());
         }
 
         return ActionProcessingResult.SUCCESS;
@@ -85,5 +85,15 @@ public class LecternPlacementHandler implements IPlacementHandler
             }
         }
         return null;
+    }
+
+    @Override
+    public boolean doesWorldStateMatchBlueprintState(
+        final BlockState worldState,
+        final BlockState blueprintState,
+        final Tuple<BlockEntity, CompoundTag> blockEntityData,
+        @NotNull final IPlacementContext structureHandler)
+    {
+        return worldState.equals(blueprintState);
     }
 }

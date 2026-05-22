@@ -173,9 +173,9 @@ public class EntityAISickTask implements IStateAI
             }
         }
 
-        final BlockPos hospitalPos = citizen.getCitizenColonyHandler().getColonyOrRegister().getBuildingManager().getBestBuilding(citizen, BuildingHospital.class);
+        final BlockPos hospitalPos = citizen.getCitizenColonyHandler().getColonyOrRegister().getServerBuildingManager().getBestBuilding(citizen, BuildingHospital.class);
         final IColony colony = citizen.getCitizenColonyHandler().getColonyOrRegister();
-        final IBuilding hospital = colony.getBuildingManager().getBuilding(hospitalPos);
+        final IBuilding hospital = colony.getServerBuildingManager().getBuilding(hospitalPos);
 
         if (hospital instanceof BuildingHospital)
         {
@@ -288,9 +288,9 @@ public class EntityAISickTask implements IStateAI
 
         if (usedBed != null)
         {
-            final BlockPos hospitalPos = citizen.getCitizenColonyHandler().getColonyOrRegister().getBuildingManager().getBestBuilding(citizen, BuildingHospital.class);
+            final BlockPos hospitalPos = citizen.getCitizenColonyHandler().getColonyOrRegister().getServerBuildingManager().getBestBuilding(citizen, BuildingHospital.class);
             final IColony colony = citizen.getCitizenColonyHandler().getColonyOrRegister();
-            final IBuilding hospital = colony.getBuildingManager().getBuilding(hospitalPos);
+            final IBuilding hospital = colony.getServerBuildingManager().getBuilding(hospitalPos);
             ((BuildingHospital) hospital).registerPatient(usedBed, 0);
             usedBed = null;
             citizen.getCitizenData().setBedPos(BlockPos.ZERO);
@@ -309,7 +309,7 @@ public class EntityAISickTask implements IStateAI
     private IState waitForCure()
     {
         final IColony colony = citizenData.getColony();
-        bestHospital = colony.getBuildingManager().getBestBuilding(citizen, BuildingHospital.class);
+        bestHospital = colony.getServerBuildingManager().getBestBuilding(citizen, BuildingHospital.class);
 
         if (bestHospital == null)
         {
@@ -335,10 +335,10 @@ public class EntityAISickTask implements IStateAI
 
         if (citizen.getCitizenSleepHandler().isAsleep())
         {
-            final BlockPos hospital = colony.getBuildingManager().getBestBuilding(citizen, BuildingHospital.class);
+            final BlockPos hospital = colony.getServerBuildingManager().getBestBuilding(citizen, BuildingHospital.class);
             if (hospital != null)
             {
-                final IBuilding building = colony.getBuildingManager().getBuilding(hospital);
+                final IBuilding building = colony.getServerBuildingManager().getBuilding(hospital);
                 if (building instanceof BuildingHospital && !((BuildingHospital) building).getBedList().contains(citizen.getCitizenSleepHandler().getBedLocation()))
                 {
                     citizen.getCitizenSleepHandler().onWakeUp();
@@ -410,7 +410,7 @@ public class EntityAISickTask implements IStateAI
     {
         final IColony colony = citizenData.getColony();
         final Disease disease = citizen.getCitizenData().getCitizenDiseaseHandler().getDisease();
-        bestHospital = colony.getBuildingManager().getBestBuilding(citizen, BuildingHospital.class);
+        bestHospital = colony.getServerBuildingManager().getBestBuilding(citizen, BuildingHospital.class);
 
         if (bestHospital == null)
         {

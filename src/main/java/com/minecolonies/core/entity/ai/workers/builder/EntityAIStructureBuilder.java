@@ -112,7 +112,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
             return false;
         }
 
-        final IBuilding building = job.getColony().getBuildingManager().getBuilding(wo.getLocation());
+        final IBuilding building = job.getColony().getServerBuildingManager().getBuilding(wo.getLocation());
         if (building == null && wo instanceof WorkOrderBuilding && wo.getWorkOrderType() != WorkOrderType.REMOVE)
         {
             this.building.complete(worker.getCitizenData());
@@ -168,7 +168,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
         if (building.getBuildingLevel() >= LEVEL_TO_PURGE_MOBS && building.getWorkOrder() != null && building.getWorkOrder().getWorkOrderType() == WorkOrderType.BUILD)
         {
             final BlockPos buildingPos = building.getWorkOrder().getLocation();
-            final IBuilding building = worker.getCitizenColonyHandler().getColonyOrRegister().getBuildingManager().getBuilding(buildingPos);
+            final IBuilding building = worker.getCitizenColonyHandler().getColonyOrRegister().getServerBuildingManager().getBuilding(buildingPos);
             if (building != null)
             {
                 WorldUtil.getEntitiesWithinBuilding(world, Monster.class, building, null).forEach(e -> e.remove(Entity.RemovalReason.DISCARDED));

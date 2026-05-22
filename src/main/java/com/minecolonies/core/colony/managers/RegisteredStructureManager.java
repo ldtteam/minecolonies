@@ -4,22 +4,21 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.blocks.AbstractBlockHut;
+import com.minecolonies.api.colony.IAnimalData;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.buildingextensions.registry.BuildingExtensionRegistries;
 import com.minecolonies.api.colony.buildings.*;
 import com.minecolonies.api.colony.buildings.registry.IBuildingDataManager;
 import com.minecolonies.api.colony.buildings.workerbuildings.ITownHall;
 import com.minecolonies.api.colony.buildings.workerbuildings.IWareHouse;
 import com.minecolonies.api.colony.buildingextensions.IBuildingExtension;
 import com.minecolonies.api.colony.managers.interfaces.IRegisteredStructureManager;
-import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.eventbus.events.colony.buildings.BuildingAddedModEvent;
 import com.minecolonies.api.eventbus.events.colony.buildings.BuildingRemovedModEvent;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.util.*;
 import com.minecolonies.core.MineColonies;
-import com.minecolonies.core.blocks.huts.BlockHutTavern;
-import com.minecolonies.core.blocks.huts.BlockHutTownHall;
 import com.minecolonies.core.colony.Colony;
 import com.minecolonies.core.colony.buildings.BuildingMysticalSite;
 import com.minecolonies.core.colony.buildings.modules.BuildingModules;
@@ -27,7 +26,6 @@ import com.minecolonies.core.colony.buildings.modules.BuildingExtensionsModule;
 import com.minecolonies.core.colony.buildings.modules.LivingBuildingModule;
 import com.minecolonies.core.colony.buildings.workerbuildings.*;
 import com.minecolonies.core.colony.buildingextensions.registry.BuildingExtensionDataManager;
-import com.minecolonies.core.entity.ai.workers.util.ConstructionTapeHelper;
 import com.minecolonies.core.event.QuestObjectiveEventHandler;
 import com.minecolonies.core.network.messages.client.colony.ColonyViewBuildingViewMessage;
 import com.minecolonies.core.network.messages.client.colony.ColonyViewBuildingExtensionsUpdateMessage;
@@ -52,8 +50,6 @@ import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.MathUtils.RANDOM;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
-import static com.minecolonies.api.util.constant.TranslationConstants.WARNING_DUPLICATE_TAVERN;
-import static com.minecolonies.api.util.constant.TranslationConstants.WARNING_DUPLICATE_TOWN_HALL;
 
 public class RegisteredStructureManager implements IRegisteredStructureManager
 {
@@ -62,6 +58,11 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
      */
     @NotNull
     private ImmutableMap<BlockPos, IBuilding> buildings = ImmutableMap.of();
+
+    /**
+     * Buildings that need to be recalculated for prestige value.
+     */
+    private List<IBuilding> pendingPrestigeCalc = new ArrayList<>();
 
     /**
      * List of building extensions of the colony.
@@ -296,6 +297,33 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
                 building.onColonyTick(colony);
             }
         }
+
+        if (pendingPrestigeCalc.isEmpty())
+        {
+            pendingPrestigeCalc.addAll(buildings.values());
+            Collections.shuffle(pendingPrestigeCalc);
+        }
+        else
+        {
+            pendingPrestigeCalc.getLast().asyncPrestigeRecalc();
+        }
+    }
+
+    @Override
+    public void clearPendingPrestigeCalc(final IBuilding building)
+    {
+        pendingPrestigeCalc.remove(building);
+    }
+
+    @Override
+    public int getColonyPrestige()
+    {
+        int total = 0;
+        for (IBuilding building : buildings.values())
+        {
+            total += building.getPrestige();
+        }
+        return total;
     }
 
     @Override
@@ -344,16 +372,6 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
         }
 
         removedBuildings.forEach(IBuilding::destroy);
-    }
-
-    @Override
-    public IBuilding getBuilding(final BlockPos buildingId)
-    {
-        if (buildingId != null)
-        {
-            return buildings.get(buildingId);
-        }
-        return null;
     }
 
     @Override
@@ -414,20 +432,6 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
         }
 
         return leisureSites.isEmpty() ? null : leisureSites.get(RANDOM.nextInt(leisureSites.size()));
-    }
-
-    @Nullable
-    @Override
-    public IBuilding getFirstBuildingMatching(final Predicate<IBuilding> predicate)
-    {
-        for (final IBuilding building : buildings.values())
-        {
-            if (predicate.test(building))
-            {
-                return building;
-            }
-        }
-        return null;
     }
 
     @Override
@@ -554,20 +558,6 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
     }
 
     @Override
-    public <B extends IBuilding> B getBuilding(final BlockPos buildingId, @NotNull final Class<B> type)
-    {
-        try
-        {
-            return type.cast(buildings.get(buildingId));
-        }
-        catch (final ClassCastException e)
-        {
-            Log.getLogger().warn("getBuilding called with wrong type: ", e);
-            return null;
-        }
-    }
-
-    @Override
     public IBuilding addNewBuilding(@NotNull final AbstractTileEntityColonyBuilding tileEntity, final Level world)
     {
         tileEntity.setColony(colony);
@@ -668,73 +658,18 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
             building.cancelAllRequestsOfCitizenOrBuilding(citizen);
         }
 
+        //Allow Animals to fix up any data that wasn't fixed up by the AbstractBuilding's own onDestroyed
+        for (@NotNull final IAnimalData animal : colony.getAnimalManager().getAnimals())
+        {
+            animal.onRemoveBuilding(building);
+        }
+
         colony.getRequestManager().onProviderRemovedFromColony(building);
         colony.getRequestManager().onRequesterRemovedFromColony(building.getRequester());
 
         colony.getCitizenManager().calculateMaxCitizens();
 
         IMinecoloniesAPI.getInstance().getEventBus().post(new BuildingRemovedModEvent(building));
-    }
-
-    @Override
-    public BlockPos getBestBuilding(final AbstractEntityCitizen citizen, final Class<? extends IBuilding> building)
-    {
-        return getBestBuilding(citizen.blockPosition(), building);
-    }
-
-    @Override
-    public <T extends IBuilding> BlockPos getBestBuilding(final AbstractEntityCitizen citizen, final Class<T> building, @NotNull final Predicate<T> filter)
-    {
-        return getBestBuilding(citizen.blockPosition(), building, filter);
-    }
-
-    @Override
-    public BlockPos getBestBuilding(final BlockPos pos, final Class<? extends IBuilding> building)
-    {
-        return getBestBuilding(pos, building, b -> true);
-    }
-
-    @Override
-    public <T extends IBuilding> BlockPos getBestBuilding(final BlockPos pos, final Class<T> building, @NotNull final Predicate<T> filter)
-    {
-        double distance = Double.MAX_VALUE;
-        BlockPos goodFit = null;
-        for (final IBuilding currentBuilding : buildings.values())
-        {
-            if (building.isInstance(currentBuilding)
-                && currentBuilding.getBuildingLevel() > 0
-                && WorldUtil.isBlockLoaded(colony.getWorld(), currentBuilding.getPosition())
-                && filter.test((T) currentBuilding))
-            {
-                final double localDistance = currentBuilding.getPosition().distSqr(pos);
-                if (localDistance < distance)
-                {
-                    distance = localDistance;
-                    goodFit = currentBuilding.getPosition();
-                }
-            }
-        }
-        return goodFit;
-    }
-
-    @Override
-    public BlockPos getRandomBuilding(Predicate<IBuilding> filterPredicate)
-    {
-        final List<IBuilding> allowedBuildings = new ArrayList<>();
-        for (final IBuilding building : buildings.values())
-        {
-            if (filterPredicate.test(building))
-            {
-                allowedBuildings.add(building);
-            }
-        }
-
-        if (allowedBuildings.isEmpty())
-        {
-            return null;
-        }
-
-        return allowedBuildings.get(RANDOM.nextInt(allowedBuildings.size())).getPosition();
     }
 
     /**
@@ -958,5 +893,21 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
     public IBuildingExtension getMatchingBuildingExtension(final IBuildingExtension.ExtensionId extensionId)
     {
         return buildingExtensions.get(extensionId);
+    }
+
+    @Override
+    public void addBuildingExtensionIfMissing(final BuildingExtensionRegistries.BuildingExtensionEntry buildingExtensionEntry, final BlockPos pos, final Player player)
+    {
+        buildingExtensions.computeIfAbsent(new IBuildingExtension.ExtensionId(pos, buildingExtensionEntry), (id) -> {
+            new ColonyViewBuildingExtensionsUpdateMessage(colony, buildingExtensions.values()).sendToPlayer((ServerPlayer) player);
+            markBuildingExtensionsDirty();
+            return buildingExtensionEntry.produceExtension(pos);
+        });
+    }
+
+    @Override
+    public Colony getColony()
+    {
+        return colony;
     }
 }

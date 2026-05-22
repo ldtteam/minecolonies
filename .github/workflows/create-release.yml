@@ -1,0 +1,22 @@
+name: Create Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        type: string
+        required: true
+        description: 'Provide the version branch identifier you want to release. For version/1.21 that would be 1.21.'
+
+permissions:
+  contents: write
+  statuses: write
+  actions: write
+
+jobs:
+  release:
+    uses: ldtteam/operapublicacreator/.github/workflows/branch.sync.yaml@main
+    with:
+      version: ${{ inputs.version }}
+      workflow_file: 'release.yaml'
+    secrets: inherit

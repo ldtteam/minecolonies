@@ -4,6 +4,7 @@ import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
+import com.minecolonies.api.colony.requestsystem.requestable.INonExhaustiveDeliverable;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.ReflectionUtils;
 import com.minecolonies.api.util.Utils;
@@ -21,7 +22,7 @@ import java.util.stream.Collectors;
 /**
  * Smeltable requestable. Delivers a stack of a smeltable ore.
  */
-public class SmeltableOre implements IDeliverable
+public class SmeltableOre implements INonExhaustiveDeliverable
 {
     /**
      * Set of type tokens belonging to this class.
@@ -35,18 +36,26 @@ public class SmeltableOre implements IDeliverable
     ////// --------------------------- NBTConstants --------------------------- \\\\\\
 
     private final int count;
-
+    private final int leftOver;
     private ItemStack result;
 
     public SmeltableOre(final int count)
     {
         this.count = count;
+        this.leftOver = 0;
+    }
+
+    public SmeltableOre(final int count, final int leftOver)
+    {
+        this.count = count;
+        this.leftOver = leftOver;
     }
 
     public SmeltableOre(final int count, final ItemStack result)
     {
         this.count = count;
         this.result = result;
+        this.leftOver = 0;
     }
 
     public static CompoundTag serialize(@NotNull final HolderLookup.Provider provider, final IFactoryController controller, final SmeltableOre ore)
@@ -144,5 +153,15 @@ public class SmeltableOre implements IDeliverable
     public Set<TypeToken<?>> getSuperClasses()
     {
         return TYPE_TOKENS;
+    }
+
+    /**
+     * Get the amount of items left over after delivery.
+     * @return the amount of items left over.
+     */
+    @Override
+    public int getLeftOver()
+    {
+        return leftOver;
     }
 }

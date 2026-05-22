@@ -155,14 +155,14 @@ public class BuildingDyer extends AbstractBuilding
             {
                 final HashMap<ItemStorage, Integer> inventoryCounts = new HashMap<>();
 
-                if (!building.getColony().getBuildingManager().hasWarehouse())
+                if (!building.getColony().getServerBuildingManager().hasWarehouse())
                 {
                     return null;
                 }
 
                 for(ItemStorage color : getWoolItems())
                 {
-                    for(IBuilding wareHouse: building.getColony().getBuildingManager().getWareHouses())
+                    for(IBuilding wareHouse: building.getColony().getServerBuildingManager().getWareHouses())
                     {
                         final int colorCount = InventoryUtils.getCountFromBuilding(wareHouse, color);
                         inventoryCounts.put(color, inventoryCounts.getOrDefault(color, 0) + colorCount);

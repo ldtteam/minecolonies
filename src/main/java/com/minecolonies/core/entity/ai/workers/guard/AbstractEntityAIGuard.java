@@ -19,6 +19,7 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.DamageSourceKeys;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.LookHandler;
+import com.minecolonies.api.util.constant.ColonyConstants;
 import com.minecolonies.core.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.core.colony.buildings.modules.BuildingModules;
 import com.minecolonies.core.colony.buildings.modules.EntityListModule;
@@ -269,7 +270,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
      */
     private boolean shouldSleep()
     {
-        if (worker.getLastHurtByMob() != null || target != null || fighttimer > 0)
+        if (worker.getLastHurtByMob() != null || target != null || fighttimer > 0 || job.getCitizen().getCitizenDiseaseHandler().isSick())
         {
             return false;
         }
@@ -426,7 +427,10 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
      */
     public void guardMovement()
     {
-        walkToSafePos(buildingGuards.getGuardPos(worker));
+        if (ColonyConstants.rand.nextInt(10) == 0)
+        {
+            walkToUnSafePos(buildingGuards.getGuardPos(worker), 5);
+        }
     }
 
     /**
@@ -498,7 +502,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
      */
     protected BlockPos randomPatrolPoint()
     {
-        return buildingGuards.getColony().getBuildingManager().getRandomBuilding(b -> true);
+        return buildingGuards.getColony().getServerBuildingManager().getRandomBuilding(b -> true);
     }
 
     /**
@@ -553,7 +557,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
         }
         if (currentPatrolPoint == null || walkToSafePos(currentPatrolPoint))
         {
-            final IBuilding building = buildingGuards.getColony().getBuildingManager().getBuilding(buildingGuards.getMinePos());
+            final IBuilding building = buildingGuards.getColony().getServerBuildingManager().getBuilding(buildingGuards.getMinePos());
             if (building != null)
             {
                 if (building instanceof BuildingMiner)

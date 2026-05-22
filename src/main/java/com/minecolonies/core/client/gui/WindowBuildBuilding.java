@@ -2,6 +2,7 @@ package com.minecolonies.core.client.gui;
 
 import com.ldtteam.blockui.Color;
 import com.ldtteam.blockui.Pane;
+import com.ldtteam.blockui.PaneBuilders;
 import com.ldtteam.blockui.controls.Button;
 import com.ldtteam.blockui.controls.ItemIcon;
 import com.ldtteam.blockui.controls.Text;
@@ -65,7 +66,7 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
 
         return worldState.getBlock() instanceof IBuilderUndestroyable
                  || worldState.getBlock() == Blocks.BEDROCK
-                 || (info.getBlockInfo().getState().getBlock() instanceof AbstractBlockHut && handler.getWorldPos().equals(worldPos));
+                 || (info.getBlockInfo().getState().getBlock() instanceof AbstractBlockHut && handler.getCenterPos().equals(worldPos));
     };
 
     /**
@@ -122,6 +123,9 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
         this.building = building;
 
         initStyleNavigation();
+
+        PaneBuilders.singleLineTooltip(Component.translatable(building.getHoverWarningForLevel()), findPaneOfTypeByID(BUTTON_BUILD, Button.class));
+
         registerButton(BUTTON_BUILD, this::confirmClicked);
         registerButton(BUTTON_CANCEL, this::cancelClicked);
         registerButton(BUTTON_REPAIR, this::repairClicked);
@@ -159,7 +163,7 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
      */
     public boolean canBeUpgraded()
     {
-        final IBuildingView parentBuilding = building.getColony().getBuilding(building.getParent());
+        final IBuildingView parentBuilding = building.getColony().getClientBuildingManager().getBuilding(building.getParent());
         return building.getBuildingLevel() < building.getBuildingMaxLevel() && (parentBuilding == null || building.getBuildingLevel() < parentBuilding.getBuildingLevel() || parentBuilding.getBuildingLevel() >= parentBuilding.getBuildingMaxLevel());
     }
 
@@ -197,6 +201,20 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
     {
         final BlockPos builder = buildersDropDownList.getSelectedIndex() == 0 ? BlockPos.ZERO : builders.get(buildersDropDownList.getSelectedIndex()).getB();
 
+        if (!building.getHoverWarningForLevel().isEmpty())
+        {
+            new WindowConfirm(this, () -> triggerConfirmAction(builder), "com.minecolonies.core.gui.build.confirm.title", building.getHoverWarningForLevel()).open();
+            return;
+        }
+        triggerConfirmAction(builder);
+    }
+
+    /**
+     * Trigger confirm action.
+     * @param builder the position of the builder that was selected.
+     */
+    private void triggerConfirmAction(final BlockPos builder)
+    {
         new BuildingSetStyleMessage(building, styles.get(stylesDropDownList.getSelectedIndex())).sendToServer();
         if (building.getBuildingLevel() == building.getBuildingMaxLevel())
         {
@@ -226,7 +244,7 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
     {
         builders.clear();
         builders.add(new Tuple<>(Component.translatableEscape(ModJobs.builder.get().getTranslationKey()).getString() + ":", BlockPos.ZERO));
-        builders.addAll(building.getColony().getBuildings().stream()
+        builders.addAll(building.getColony().getClientBuildingManager().getBuildings().values().stream()
                           .filter(build -> build instanceof AbstractBuildingBuilderView && !((AbstractBuildingBuilderView) build).getWorkerName().isEmpty()
                                              && build.getBuildingType() != ModBuildings.miner.get())
                           .map(build -> new Tuple<>(((AbstractBuildingBuilderView) build).getWorkerName(), build.getPosition()))
@@ -241,10 +259,10 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
      */
     private void updateStyles()
     {
-        if (!building.getParent().equals(BlockPos.ZERO) && building.getColony().getBuilding(building.getParent()) != null)
+        if (!building.getParent().equals(BlockPos.ZERO) && building.getColony().getClientBuildingManager().getBuilding(building.getParent()) != null)
         {
             styles = new ArrayList<>();
-            styles.add(building.getColony().getBuilding(building.getParent()).getStructurePack());
+            styles.add(building.getColony().getClientBuildingManager().getBuilding(building.getParent()).getStructurePack());
             if (!styles.isEmpty())
             {
                 stylesDropDownList.setSelectedIndex(0);
@@ -308,7 +326,7 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
             }
 
             blueprint.setRotationMirror(building.getRotationMirror(), Minecraft.getInstance().level);
-            StructurePlacer placer = new StructurePlacer(new LoadOnlyStructureHandler(Minecraft.getInstance().level, building.getPosition(), blueprint, RotationMirror.NONE, true));
+            StructurePlacer placer = new StructurePlacer(new LoadOnlyStructureHandler(Minecraft.getInstance().level, building.getPosition(), blueprint, RotationMirror.NONE));
             StructurePhasePlacementResult result;
             BlockPos progressPos = NULL_POS;
 

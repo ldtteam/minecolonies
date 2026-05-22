@@ -154,7 +154,7 @@ public class CreateColonyMessage extends AbstractServerPlayMessage
         if (ownedColony == null)
         {
             final IColony createdColony = IColonyManager.getInstance().createColony(world, townHall, sender, colonyName, pack);
-            final IBuilding building = createdColony.getBuildingManager().addNewBuilding((TileEntityColonyBuilding) tileEntity, world);
+            final IBuilding building = createdColony.getServerBuildingManager().addNewBuilding((TileEntityColonyBuilding) tileEntity, world);
 
             if (reactivate)
             {

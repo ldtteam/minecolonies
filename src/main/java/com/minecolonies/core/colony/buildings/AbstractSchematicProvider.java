@@ -100,6 +100,11 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
     private String            blueprintFuturePack = "";
     private String            blueprintFutureName = "";
 
+    /**
+     * If prestige should be recalculated.
+     */
+    private boolean recalcPrestige;
+
     public AbstractSchematicProvider(final BlockPos pos, final IColony colony)
     {
         if (pos.equals(BlockPos.ZERO))
@@ -299,14 +304,14 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
 
     private boolean isParentValid(BlockPos position)
     {
-        final IBuilding building = colony.getBuildingManager().getBuilding(position);
+        final IBuilding building = colony.getServerBuildingManager().getBuilding(position);
         return building != null && !building.getID().equals(getID()) && !building.hasParent();
     }
 
     @Override
     public Set<BlockPos> getChildren()
     {
-        return colony.getBuildingManager().getBuildings().values().stream()
+        return colony.getServerBuildingManager().getBuildings().values().stream()
           .filter(f -> f.getParent().equals(getID()))
           .map(ISchematicProvider::getID)
           .collect(Collectors.toUnmodifiableSet());
@@ -356,17 +361,17 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
                 blueprint = blueprintFuture.get();
                 if (blueprint != null)
                 {
-                    blueprint.setRotationMirror(getRotationMirror(), colony.getWorld());
-                    final BlockInfo info = blueprint.getBlockInfoAsMap().getOrDefault(blueprint.getPrimaryBlockOffset(), null);
-                    if (info.getTileEntityData() != null)
+                    blueprintFuture = null;
+                    if (recalcPrestige)
                     {
-                        final CompoundTag teCompound = info.getTileEntityData().copy();
-                        teCompound.putString(TAG_PACK, blueprint.getPackName());
-                        final String location = StructurePacks.getStructurePack(blueprint.getPackName()).getSubPath(blueprint.getFilePath().resolve(blueprint.getFileName()));
-                        teCompound.putString(TAG_NAME, location);
-
-                        getTileEntity().readSchematicDataFromNBT(teCompound);
+                        calculatePrestige(blueprint);
+                        recalcPrestige = false;
                     }
+                }
+                else
+                {
+                    recalcPrestige = false;
+                    colony.getServerBuildingManager().clearPendingPrestigeCalc(this);
                 }
             }
             catch (Exception e)
@@ -374,6 +379,23 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
                 Log.getLogger().info("Failed to load blueprintfuture for: pack:" + blueprintFuturePack + " name:" + blueprintFutureName, e);
                 blueprintFuture = null;
             }
+        }
+    }
+
+    @Override
+    public void asyncPrestigeRecalc()
+    {
+        // No need to calculate prestige for buildings at level 0.
+        if (buildingLevel == 0)
+        {
+            colony.getServerBuildingManager().clearPendingPrestigeCalc(this);
+            return;
+        }
+
+        if (!recalcPrestige)
+        {
+            recalcPrestige = true;
+            blueprintFuture = StructurePacks.getBlueprintFuture(this.getStructurePack(), this.getBlueprintPath(), colony.getWorld().registryAccess());
         }
     }
 
@@ -407,7 +429,7 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
         final BlockPos parent = getParent();
         if (parent != BlockPos.ZERO)
         {
-            final IBuilding building = colony.getBuildingManager().getBuilding(parent);
+            final IBuilding building = colony.getServerBuildingManager().getBuilding(parent);
             if (building != null)
             {
                 return building.getStructurePack();
@@ -514,7 +536,7 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
                 }
 
                 setBuildingLevel(level);
-                onUpgradeComplete(level);
+                onUpgradeComplete(null, level);
                 isDeconstructed = false;
             }
         }

@@ -10,21 +10,17 @@ import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.BlockStateUtils;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.MineColonies;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
-import net.minecraft.tags.TagKey;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -710,7 +706,7 @@ public class Tree
 
         if (colony != null)
         {
-            for (final IBuilding building : colony.getBuildingManager().getBuildings().values())
+            for (final IBuilding building : colony.getServerBuildingManager().getBuildings().values())
             {
                 if (building.isInBuilding(log))
                 {
@@ -1058,7 +1054,7 @@ public class Tree
             return true;
         }
 
-        for (final IBuilding building : colony.getBuildingManager().getBuildings().values())
+        for (final IBuilding building : colony.getServerBuildingManager().getBuildings().values())
         {
             if (building.isInBuilding(pos))
             {

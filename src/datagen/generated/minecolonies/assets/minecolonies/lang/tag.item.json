@@ -66,9 +66,9 @@
   "tag.item.minecolonies.stonemason_ingredient_excluded": "Stonemason Crafting Excluded Ingredients",
   "tag.item.minecolonies.stonemason_product": "Stonemason Crafting Products",
   "tag.item.minecolonies.stonemason_product_excluded": "Stonemason Crafting Excluded Products",
-  "tag.item.minecolonies.stonesmeltery_ingredient": "Stonesmelter Crafting Ingredients",
-  "tag.item.minecolonies.stonesmeltery_ingredient_excluded": "Stonesmelter Crafting Excluded Ingredients",
-  "tag.item.minecolonies.stonesmeltery_product": "Stonesmelter Crafting Products",
-  "tag.item.minecolonies.stonesmeltery_product_excluded": "Stonesmelter Crafting Excluded Products",
+  "tag.item.minecolonies.stonesmeltery_ingredient": "Brickmaker Crafting Ingredients",
+  "tag.item.minecolonies.stonesmeltery_ingredient_excluded": "Brickmaker Crafting Excluded Ingredients",
+  "tag.item.minecolonies.stonesmeltery_product": "Brickmaker Crafting Products",
+  "tag.item.minecolonies.stonesmeltery_product_excluded": "Brickmaker Crafting Excluded Products",
   "tag.item.minecolonies.storage_blocks": "Storage Blocks"
 }
