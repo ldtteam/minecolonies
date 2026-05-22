@@ -20,6 +20,7 @@ import com.minecolonies.api.research.IGlobalResearch;
 import com.minecolonies.api.util.FoodUtils;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.ColonyConstants;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.TranslationConstants;
@@ -39,12 +40,11 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.*;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.phys.HitResult;
 import net.minecraftforge.api.distmarker.Dist;
@@ -104,6 +104,8 @@ public class ClientEventHandler
     {
         ColonyBorderRenderer.cleanup();
         WindowBuildingBrowser.clearCache();
+        IColonyManager.getInstance().resetColonyViews();
+        Log.getLogger().info("Removed all colony views");
     }
 
     @SubscribeEvent(priority = EventPriority.HIGH)
@@ -150,11 +152,29 @@ public class ClientEventHandler
             event.getToolTip().add(extraItemTooltips.get(stack.getItem()));
         }
 
+        if (stack.getItem() instanceof DyeableLeatherItem && IMinecoloniesAPI.getInstance().getConfig().getClient().showdyetooltips.get())
+        {
+            IMinecoloniesAPI.getInstance().getColonyManager().getCompatibilityManager().getDyeColor(stack).ifPresent(c ->
+            {
+                event.getToolTip().removeIf(line -> line.getContents() instanceof TranslatableContents t && t.getKey().equals("item.dyed"));
+                event.getToolTip().add(1, Component.translatable("%s: %s",
+                    Component.translatable("item.dyed"),
+                    Component.translatable("color.minecraft." + c.getName()).withStyle(Style.EMPTY.withColor(c.getTextColor()).withItalic(false)))
+                    .withStyle(Style.EMPTY.withColor(ChatFormatting.GRAY).withItalic(true)));
+            });
+        }
+
         IColony colony = IMinecoloniesAPI.getInstance().getColonyManager().getIColony(event.getEntity().level, event.getEntity().blockPosition());
         if (colony == null)
         {
             colony = IMinecoloniesAPI.getInstance().getColonyManager().getIColonyByOwner(event.getEntity().level, event.getEntity());
         }
+
+        if (colony == null)
+        {
+            return;
+        }
+
         handleCrafterRecipeTooltips(colony, event.getToolTip(), stack.getItem());
         if (stack.getItem() instanceof BlockItem)
         {
@@ -195,7 +215,7 @@ public class ClientEventHandler
             final IColonyView colonyView = (IColonyView) citizenData.getColony();
 
             IBuildingView cookBuilding = null;
-            for (final IBuildingView buildingView : colonyView.getBuildings())
+            for (final IBuildingView buildingView : colonyView.getClientBuildingManager().getBuildings().values())
             {
                 if (buildingView.getBuildingType() == ModBuildings.cook.get())
                 {
@@ -207,7 +227,7 @@ public class ClientEventHandler
             }
 
             final int homeBuildingLevel =
-                colonyView.getBuilding(citizenData.getHomeBuilding()) == null ? 0 : colonyView.getBuilding(citizenData.getHomeBuilding()).getBuildingLevel();
+                colonyView.getClientBuildingManager().getBuilding(citizenData.getHomeBuilding()) == null ? 0 : colonyView.getClientBuildingManager().getBuilding(citizenData.getHomeBuilding()).getBuildingLevel();
             if (FoodUtils.canEatLevel(event.getItemStack(), homeBuildingLevel))
             {
                 event.getToolTip().add(Component.translatable(TranslationConstants.TIER_TOOLTIP + foodTier).withStyle(ChatFormatting.GRAY));
@@ -303,7 +323,7 @@ public class ClientEventHandler
                 // unless we can change how colony.hasBuilding uses its parameter...
 
                 final MutableComponent reqLevelText = Component.translatable(COM_MINECOLONIES_COREMOD_ITEM_BUILDLEVEL_TOOLTIP_GUI, craftingBuildingName, minimumLevel);
-                if (colony != null && colony.hasBuilding(schematicName, minimumLevel, true))
+                if (colony != null && colony.getCommonBuildingManager().hasBuilding(schematicName, minimumLevel, true))
                 {
                     reqLevelText.setStyle(Style.EMPTY.withColor(ChatFormatting.AQUA));
                 }

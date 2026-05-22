@@ -276,7 +276,7 @@ public final class StandardRequests
             final String requester = getRequester().getRequesterDisplayName(colony.getRequestManager(), this).getString();
 
             int posInList = -1;
-            for (IBuildingView view : colony.getBuildings())
+            for (IBuildingView view : colony.getClientBuildingManager().getBuildings().values())
             {
                 if (view.getBuildingType() == ModBuildings.deliveryman.get())
                 {
@@ -363,7 +363,7 @@ public final class StandardRequests
             final String requester = getRequester().getRequesterDisplayName(colony.getRequestManager(), this).getString();
 
             int posInList = -1;
-            for (IBuildingView view : colony.getBuildings())
+            for (IBuildingView view : colony.getClientBuildingManager().getBuildings().values())
             {
                 if (view.getBuildingType() == ModBuildings.deliveryman.get())
                 {
@@ -457,7 +457,7 @@ public final class StandardRequests
             try
             {
                 final BlockPos resolver = colony.getRequestManager().getResolverForRequest(getId()).getLocation().getInDimensionLocation();
-                final IBuildingView view = colony.getBuilding(resolver);
+                final IBuildingView view = colony.getClientBuildingManager().getBuilding(resolver);
 
                 int posInList = getPosInList(colony, view, getId());
                 if (posInList >= 0)

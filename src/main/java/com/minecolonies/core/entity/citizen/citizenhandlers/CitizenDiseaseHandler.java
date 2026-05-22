@@ -7,7 +7,7 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenDiseaseHandler;
 import com.minecolonies.core.MineColonies;
-import com.minecolonies.core.colony.buildings.workerbuildings.BuildingCook;
+import com.minecolonies.core.colony.buildings.workerbuildings.BuildingHospital;
 import com.minecolonies.core.colony.jobs.AbstractJobGuard;
 import com.minecolonies.core.colony.jobs.JobHealer;
 import com.minecolonies.core.datalistener.model.Disease;
@@ -210,9 +210,9 @@ public class CitizenDiseaseHandler implements ICitizenDiseaseHandler
         if (citizenData.isAsleep() && citizenData.getEntity().isPresent())
         {
             citizenData.getEntity().get().stopSleeping();
-            final BlockPos hospitalPos = citizenData.getColony().getBuildingManager().getBestBuilding(citizenData.getEntity().get(), BuildingCook.class);
+            final BlockPos hospitalPos = citizenData.getColony().getServerBuildingManager().getBestBuilding(citizenData.getEntity().get(), BuildingHospital.class);
             final IColony colony = citizenData.getColony();
-            final IBuilding hospital = colony.getBuildingManager().getBuilding(hospitalPos);
+            final IBuilding hospital = colony.getServerBuildingManager().getBuilding(hospitalPos);
             if (hospital != null)
             {
                 hospital.onWakeUp();

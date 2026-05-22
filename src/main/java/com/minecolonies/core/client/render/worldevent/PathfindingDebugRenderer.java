@@ -1,6 +1,6 @@
 package com.minecolonies.core.client.render.worldevent;
 
-import com.ldtteam.structurize.util.WorldRenderMacros;
+import com.ldtteam.structurize.client.rendertask.util.WorldRenderMacros;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.core.entity.pathfinding.MNode;
@@ -74,11 +74,11 @@ public class PathfindingDebugRenderer
             {
                 if (n.isReachedByWorker())
                 {
-                    debugDrawNode(n, 0xffffff00, ctx);
+                    debugDrawNode(n, 0xffff8800, ctx);
                 }
                 else
                 {
-                    debugDrawNode(n, 0xff00ff00, ctx);
+                    debugDrawNode(n, 0xffffff00, ctx);
                 }
             }
         }

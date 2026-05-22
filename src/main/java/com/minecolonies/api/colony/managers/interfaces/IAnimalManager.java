@@ -4,8 +4,12 @@ import java.util.List;
 import java.util.Set;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.minecolonies.api.colony.IAnimalData;
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.buildings.IBuilding;
+
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.animal.Animal;
@@ -40,6 +44,12 @@ public interface IAnimalManager
      * Get all managed animals.
      */
     public List<IAnimalData> getAnimals();
+
+    /**
+     * Get all managed animals of a certain class, with
+     * the specified home (or if home is null, all animals of that class).
+     */
+    public List<IAnimalData> getAnimalsOfClassByHome(final Class<? extends Animal> animalClass, @Nullable final IBuilding home);
 
     /**
      * The colony this manager belongs to.

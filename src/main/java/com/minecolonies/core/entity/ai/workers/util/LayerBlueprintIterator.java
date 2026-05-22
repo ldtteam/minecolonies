@@ -115,6 +115,17 @@ public class LayerBlueprintIterator extends AbstractBlueprintIteratorWrapper
     }
 
     @Override
+    public BlockPos getPrevProgressPos()
+    {
+        final BlockPos prevProgressPos = delegate.getPrevProgressPos();
+        if (prevProgressPos.equals(NULL_POS))
+        {
+            return NULL_POS;
+        }
+        return prevProgressPos.atY(layer);
+    }
+
+    @Override
     public BlueprintPositionInfo getBluePrintPositionInfo(final BlockPos localPos)
     {
         // localPos is relative to the original blueprint, so we need to use the original blueprint to retrieve the information
@@ -138,7 +149,8 @@ public class LayerBlueprintIterator extends AbstractBlueprintIteratorWrapper
     /**
      * A wrapper for an IStructureHandler, to return information about a blueprint of a single layer
      */
-    private static class StructureHandlerWrapper implements IStructureHandler {
+    private static class StructureHandlerWrapper implements IStructureHandler
+    {
         /**
          * The original IStructureHandler, which this is based on
          */
@@ -251,17 +263,23 @@ public class LayerBlueprintIterator extends AbstractBlueprintIteratorWrapper
         }
 
         @Override
-        public BlockPos getWorldPos()
+        public BlockPos getCenterPos()
         {
-            return delegate.getWorldPos()
-                     .subtract(delegate.getBluePrint().getPrimaryBlockOffset())
-                     .offset(layerBlueprint.getPrimaryBlockOffset().atY(getLayer()));
+            return delegate.getCenterPos()
+                .subtract(delegate.getBluePrint().getPrimaryBlockOffset())
+                .offset(layerBlueprint.getPrimaryBlockOffset().atY(getLayer()));
         }
 
         @Override
         public PlacementSettings getSettings()
         {
             return delegate.getSettings();
+        }
+
+        @Override
+        public PlacementSettings getRotationMirror()
+        {
+            return delegate.getRotationMirror();
         }
 
         @Override
@@ -339,7 +357,7 @@ public class LayerBlueprintIterator extends AbstractBlueprintIteratorWrapper
         @Override
         public boolean shouldBlocksBeConsideredEqual(final BlockState blockState, final BlockState blockState1)
         {
-            return delegate.shouldBlocksBeConsideredEqual(blockState, blockState1);
+            return false;
         }
 
         @Override

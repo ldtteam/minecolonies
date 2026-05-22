@@ -145,6 +145,10 @@ public abstract class AbstractBuildingExtensionModule implements IBuildingExtens
         {
             buildingId = BlockPosUtil.read(compound, TAG_OWNER);
         }
+        else
+        {
+            buildingId = null;
+        }
     }
 
     @Override
@@ -163,6 +167,10 @@ public abstract class AbstractBuildingExtensionModule implements IBuildingExtens
         if (buf.readBoolean())
         {
             buildingId = buf.readBlockPos();
+        }
+        else
+        {
+            buildingId = null;
         }
     }
 

@@ -4,6 +4,7 @@ import com.ldtteam.domumornamentum.block.decorative.FloatingCarpetBlock;
 import com.ldtteam.domumornamentum.block.decorative.PanelBlock;
 import com.ldtteam.domumornamentum.block.decorative.ShingleBlock;
 import com.ldtteam.domumornamentum.block.decorative.ShingleSlabBlock;
+import com.minecolonies.api.blocks.decorative.AbstractBlockGate;
 import com.minecolonies.api.blocks.decorative.AbstractBlockMinecoloniesConstructionTape;
 import com.minecolonies.api.entity.pathfinding.IDynamicHeuristicNavigator;
 import com.minecolonies.api.entity.pathfinding.IPathJob;
@@ -45,7 +46,6 @@ import java.util.concurrent.Callable;
 
 import static com.minecolonies.api.util.constant.PathingConstants.*;
 import static com.minecolonies.core.entity.pathfinding.PathingOptions.MAX_COST;
-
 /**
  * Abstract class for Jobs that run in the multithreaded path finder.
  */
@@ -370,7 +370,7 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
             if (!reachesDestination && isAtDestination(node))
             {
                 bestNode = node;
-                bestNodeEndScore = getEndNodeScore(node);
+                bestNodeEndScore = getEndNodeScoreWithExtraCost(node);
                 result.setPathReachesDestination(true);
                 handleDebugPathReach(bestNode);
 
@@ -398,7 +398,7 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
             if (!node.isCornerNode())
             {
                 // Calculates a score for a possible end node, defaults to heuristic(closest)
-                final double nodeEndSCore = getEndNodeScore(node);
+                final double nodeEndSCore = getEndNodeScoreWithExtraCost(node);
                 if (nodeEndSCore < bestNodeEndScore)
                 {
                     if (!reachesDestination || isAtDestination(node))
@@ -471,7 +471,7 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
 
                     handleDebugExtraNode(node);
 
-                    final double nodeEndSCore = getEndNodeScore(node);
+                    final double nodeEndSCore = getEndNodeScoreWithExtraCost(node);
                     if (nodeEndSCore < bestNodeEndScore && (!reachesDestination || isAtDestination(node)))
                     {
                         bestNode = node;
@@ -491,6 +491,7 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
             }
         }
 
+        RecentTargetCache.add(new BlockPos(bestNode.x, bestNode.y, bestNode.z), 50);
         return finalizePath(bestNode);
     }
 
@@ -877,6 +878,7 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
             }
 
             nextCost = computeCost(costFrom, dX, dY, dZ, isSwimming, onRoad, isDiving, onRails, railsExit, swimStart, ladder, state, belowState, nextX, nextY, nextZ);
+            nextCost += computeTurnPenalty(costFrom, nextX, nextZ, pathingOptions.getTurnPenalty());
             nextCost = modifyCost(nextCost, costFrom, swimStart, isSwimming, nextX, nextY, nextZ, state, belowState);
 
             if (nextCost > maxCost)
@@ -973,11 +975,23 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
     protected abstract boolean isAtDestination(MNode n);
 
     /**
+     * Calculates the end node score to compare end nodes additionally to heuristic/cost
+     *
+     * @param n
+     * @return end node score, lower is better
+     */
+    private double getEndNodeScoreWithExtraCost(MNode n)
+    {
+        tempWorldPos.set(n.x, n.y, n.z);
+        return getEndNodeScore(n) + RecentTargetCache.getExtraCost(tempWorldPos);
+    }
+
+    /**
      * Calculates a score for potential points where the path may end given no destination
      * By default the heuristic for the closest node is used
      *
      * @param n Node to test.
-     * @return score for the node.
+     * @return score for the node, lower is better
      */
     protected double getEndNodeScore(MNode n)
     {
@@ -1160,13 +1174,6 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
             --pathLength;
 
             final BlockPos pos = new BlockPos(node.x, node.y, node.z);
-
-            if (node.isSwimming())
-            {
-                //  Not truly necessary but helps prevent them spinning in place at swimming nodes
-                pos.offset(BLOCKPOS_DOWN);
-            }
-
             final PathPointExtended p = new PathPointExtended(pos);
             if (railsLength >= MineColonies.getConfig().getServer().minimumRailsToPath.get())
             {
@@ -1392,6 +1399,7 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
                 {
                     return (pathingOptions.canEnterDoors() && block.getBlock() instanceof DoorBlock)
                              || (pathingOptions.canEnterGates() && block.getBlock() instanceof FenceGateBlock)
+                             || (pathingOptions.canEnterGates() && block.getBlock() instanceof AbstractBlockGate)
                              || block.getBlock() instanceof AbstractBlockMinecoloniesConstructionTape
                              || block.getBlock() instanceof PressurePlateBlock
                              || block.getBlock() instanceof BlockDecorationController
@@ -1692,6 +1700,65 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
         return PathfindingUtils.isWater(cachedBlockLookup, null, below, null)
                  || PathfindingUtils.isWater(cachedBlockLookup, null, state, null)
                  || PathfindingUtils.isWater(cachedBlockLookup, null, above, null);
+    }
+
+    /**
+     * Calculate the turn penalty for the given move.
+     *
+     * @param from the node we are moving from.
+     * @param toX the x coordinate of the node we are moving to.
+     * @param toZ the z coordinate of the node we are moving to.
+     * @param turnPenalty the base turn penalty to use.
+     *
+     * This function calculates the turn penalty for a move from one node to another. The penalty is based on the angle of the turn, 
+     * with smaller angles having smaller penalties. The base turn penalty is also used to scale the penalty.
+     *
+     * @return the calculated turn penalty.
+     */
+    private double computeTurnPenalty(@NotNull final MNode from, final int toX, final int toZ, float turnPenalty)
+    {
+        if (entity == null || turnPenalty == 0.0f)
+        {
+            return 0.0;
+        }
+
+        final MNode prev = from.parent;
+        if (prev == null)
+        {
+            return 0.0;
+        }
+
+        // Determine directional vectors of movement.
+        int dxPrev = Integer.signum(from.x - prev.x);
+        int dzPrev = Integer.signum(from.z - prev.z);
+
+        int dxNow = Integer.signum(toX - from.x);
+        int dzNow = Integer.signum(toZ - from.z);
+
+        // ignore 'no horizontal move' cases
+        if ((dxPrev == 0 && dzPrev == 0) || (dxNow == 0 && dzNow == 0))
+        {
+            return 0.0;
+        }
+
+        // Straight
+        if (dxPrev == dxNow && dzPrev == dzNow)
+        {
+            return 0.0;
+        }
+
+        final int dot = dxPrev * dxNow + dzPrev * dzNow; // -2..2
+
+        final double P = turnPenalty;
+
+        // slight (diag<->cardinal)
+        if (dot == 1) return P * 0.5;
+
+        // 90 degrees
+        if (dot == 0) return P;        
+
+        // harsh / U-turn
+        return P * 2.0;                
     }
 
     /**

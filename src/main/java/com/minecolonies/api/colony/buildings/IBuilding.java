@@ -3,6 +3,7 @@ package com.minecolonies.api.colony.buildings;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.google.common.reflect.TypeToken;
+import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.modules.settings.ISetting;
@@ -22,7 +23,6 @@ import com.minecolonies.api.inventory.api.CombinedItemHandler;
 import com.minecolonies.core.util.SortingUtils;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.entity.player.Player;
@@ -36,13 +36,11 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.function.Predicate;
 
-import javax.annotation.Nonnull;
-
 import static com.minecolonies.api.util.constant.EquipmentLevelConstants.BASIC_TOOL_LEVEL;
 import static com.minecolonies.api.util.constant.EquipmentLevelConstants.TOOL_LEVEL_MAXIMUM;
 import static com.minecolonies.api.util.constant.Suppression.GENERIC_WILDCARD;
 
-public interface IBuilding extends IBuildingContainer, IBuildingModuleContainer, IRequestResolverProvider, IRequester, ISchematicProvider
+public interface IBuilding extends IBuildingContainer, IBuildingModuleContainer, IRequestResolverProvider, IRequester, ICommonBuilding
 {
     /**
      * Minimal level to ask for wood tools. (WOOD_HUT_LEVEL + 1 == stone)
@@ -118,12 +116,6 @@ public interface IBuilding extends IBuildingContainer, IBuildingModuleContainer,
     void destroy();
 
     void onDestroyed();
-
-    /**
-     * Get the colony from a building.
-     * @return the colony it belongs to.
-     */
-    IColony getColony();
 
     /**
      * Method to define if a builder can build this although the builder is not level 1 yet.
@@ -220,7 +212,7 @@ public interface IBuilding extends IBuildingContainer, IBuildingModuleContainer,
      *
      * @param newLevel The new level.
      */
-    void onUpgradeComplete(int newLevel);
+    void onUpgradeComplete(@Nullable final Blueprint blueprint, int newLevel);
 
     /**
      * Whether this building has a guard building nearby
@@ -427,13 +419,6 @@ public interface IBuilding extends IBuildingContainer, IBuildingModuleContainer,
     void pickUp(final Player player);
 
     /**
-     * Get the Building type
-     *
-     * @return building type
-     */
-    BuildingEntry getBuildingType();
-
-    /**
      * Set the building type
      *
      * @param buildingType
@@ -547,4 +532,15 @@ public interface IBuilding extends IBuildingContainer, IBuildingModuleContainer,
     {
         SortingUtils.sort(inventoryHandler);
     }
+
+    /**
+     * Recalculate prestige for building.
+     * @param blueprint the blueprint as a basis.
+     */
+    void calculatePrestige(final Blueprint blueprint);
+
+    /**
+     * Trigger for async prestige recalculation.
+     */
+    void asyncPrestigeRecalc();
 }

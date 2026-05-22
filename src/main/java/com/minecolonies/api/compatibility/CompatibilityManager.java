@@ -18,6 +18,7 @@ import com.minecolonies.api.util.*;
 import com.minecolonies.core.colony.crafting.CustomRecipeManager;
 import com.minecolonies.core.colony.crafting.LootTableAnalyzer;
 import com.minecolonies.core.generation.ItemNbtCalculator;
+import it.unimi.dsi.fastutil.ints.*;
 import it.unimi.dsi.fastutil.objects.Object2IntLinkedOpenHashMap;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -140,6 +141,11 @@ public class CompatibilityManager implements ICompatibilityManager
      * Mapping of itemstorage to creativemodetab.
      */
     private final Map<ItemStorage, CreativeModeTab> creativeModeTabMap = new HashMap<>();
+
+    /**
+     * Cached mapping of items and colors to dyes.
+     */
+    private final Int2ObjectMap<Int2IntMap> dyeColorMap = new Int2ObjectOpenHashMap<>();
 
     /**
      * Instantiates the compatibilityManager.
@@ -831,5 +837,37 @@ public class CompatibilityManager implements ICompatibilityManager
     public int getNumberOfSaplings()
     {
         return saplings.size();
+    }
+
+    @Override
+    public Optional<DyeColor> getDyeColor(final ItemStack stack)
+    {
+        if (stack.getItem() instanceof final DyeableLeatherItem dyeable)
+        {
+            final int color = dyeable.getColor(stack);
+            if (color != DyeableLeatherItem.DEFAULT_LEATHER_COLOR)
+            {
+                final ItemStack undyedStack = stack.copy();
+                dyeable.clearColor(undyedStack);
+
+                final int dyeId = dyeColorMap.computeIfAbsent(Item.getId(undyedStack.getItem()), id ->
+                {
+                    final Int2IntMap map = new Int2IntOpenHashMap();
+                    for (final DyeColor dye : DyeColor.values())
+                    {
+                        final ItemStack dyed = DyeableLeatherItem.dyeArmor(undyedStack, List.of(DyeItem.byColor(dye)));
+                        if (!dyed.isEmpty())
+                        {
+                            map.put(dyeable.getColor(dyed), dye.getId());
+                        }
+                    }
+                    return map;
+                }).getOrDefault(color, -1);
+
+                return dyeId < 0 ? Optional.empty() : Optional.of(DyeColor.byId(dyeId));
+            }
+        }
+
+        return Optional.empty();
     }
 }

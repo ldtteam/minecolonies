@@ -168,7 +168,7 @@ public class WindowBuildDecoration extends AbstractWindowSkeleton
 
         builders.clear();
         builders.add(new Tuple<>(Component.translatable(ModJobs.builder.get().getTranslationKey()).getString() + ":", BlockPos.ZERO));
-        builders.addAll(colony.getBuildings().stream()
+        builders.addAll(colony.getClientBuildingManager().getBuildings().values().stream()
                           .filter(build -> build instanceof AbstractBuildingBuilderView && !((AbstractBuildingBuilderView) build).getWorkerName().isEmpty()
                                              && build.getBuildingType() != ModBuildings.miner.get()
                                              && build.getBuildingLevel() > 0)
@@ -230,8 +230,7 @@ public class WindowBuildDecoration extends AbstractWindowSkeleton
               world,
               structurePos,
               blueprintFuture.get(),
-              new PlacementSettings(),
-              true);
+              new PlacementSettings());
             structure.getBluePrint().setRotationMirror(RotationMirror.of(rotation, mirror ? Mirror.FRONT_BACK : Mirror.NONE), Minecraft.getInstance().level);
 
             StructurePlacer placer = new StructurePlacer(structure);

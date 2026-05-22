@@ -100,7 +100,7 @@ public class CourierAssignmentModuleView extends AbstractBuildingModuleView impl
     @Override
     public boolean canAssign(ICitizenDataView data)
     {
-        for (final IBuildingView bView : buildingView.getColony().getBuildings())
+        for (final IBuildingView bView : buildingView.getColony().getClientBuildingManager().getBuildings().values())
         {
             final CourierAssignmentModuleView view = bView.getModuleViewMatching(CourierAssignmentModuleView.class, m-> !m.buildingView.getId().equals(buildingView.getId()));
             if (view != null && view.getAssignedCitizens().contains(data.getId()))

@@ -1,0 +1,12 @@
+{
+  "texture": "8a462d03-b094-4c3c-9a7a-a5ff33ec3d28",
+  "citizensuffix": "_d",
+  "name": "GeneraBlack",
+  "chance": 0.001,
+  "storylangkey": "com.minecolonies.coremod.gui.chat.generablack",
+  "recruitcost": "minecraft:redstone",
+  "recruitcostcount": 64,
+  "gender": "male",
+  "primaryskill": "Knowledge",
+  "secondaryskill": "Creativity"
+}

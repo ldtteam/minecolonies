@@ -16,6 +16,9 @@
     },
     {
       "item": "minecraft:chicken"
+    },
+    {
+      "item": "minecraft:bowl"
     }
   ],
   "result": {

@@ -117,7 +117,7 @@ public class WindowHutAllInventory extends AbstractWindowSkeleton
     {
         final int row = stackList.getListElementIndexByPane(button);
         final ItemStorage storage = allItems.get(row);
-        final Set<BlockPos> containerList = new HashSet<>(building.getContainerList());
+        final Set<BlockPos> containerList = new HashSet<>(building.getContainers());
         containerList.add(building.getID());
         HighlightManager.clearHighlightsForKey("inventoryHighlight");
 
@@ -194,7 +194,7 @@ public class WindowHutAllInventory extends AbstractWindowSkeleton
      */
     private void updateResources()
     {
-        final Set<BlockPos> containerList = new HashSet<>(building.getContainerList());
+        final Set<BlockPos> containerList = new HashSet<>(building.getContainers());
 
         final Map<ItemStorage, Integer> storedItems = new HashMap<>();
         final Level world = building.getColony().getWorld();

@@ -40,6 +40,8 @@ public class ToolTranslationConstants
     public static final String TOOL_TYPE_LIGHTER     = "com.minecolonies.coremod.tooltype.lighter";
     @NonNls
     public static final String TOOL_TYPE_LEAD        = "com.minecolonies.coremod.tooltype.lead";
+    @NonNls
+    public static final String TOOL_TYPE_SPEAR       = "com.minecolonies.coremod.tooltype.spear";
 
     @NonNls
     public static final String TOOL_RALLY_BANNER_ACTIVATED   = "item.minecolonies.banner_rally_guards.activated";

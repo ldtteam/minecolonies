@@ -156,6 +156,11 @@ public abstract class AbstractBuildingView implements IBuildingView
     private BuildingEntry buildingType;
 
     /**
+     * Prestige value of this building.
+     */
+    private int prestige;
+
+    /**
      * Creates a building view.
      *
      * @param c ColonyView the building is in.
@@ -342,7 +347,7 @@ public abstract class AbstractBuildingView implements IBuildingView
      * Returns the Container List
      */
     @Override
-    public List<BlockPos> getContainerList()
+    public List<BlockPos> getContainers()
     {
         return new ArrayList<>(containerlist);
     }
@@ -401,6 +406,7 @@ public abstract class AbstractBuildingView implements IBuildingView
         path = buf.readUtf(32767);
         parent = buf.readBlockPos();
         customName = buf.readUtf(32767);
+        prestige = buf.readInt();
 
         rotation = buf.readInt();
         isBuildingMirrored = buf.readBoolean();
@@ -424,6 +430,7 @@ public abstract class AbstractBuildingView implements IBuildingView
             requesterId = StandardFactoryController.getInstance().deserialize(compound);
         }
         containerlist.clear();
+        containerlist.add(getPosition());
         final int racks = buf.readInt();
         for (int i = 0; i < racks; i++)
         {
@@ -446,6 +453,12 @@ public abstract class AbstractBuildingView implements IBuildingView
 
             moduleView.deserialize(buf);
         }
+    }
+
+    @Override
+    public int getPrestige()
+    {
+        return prestige;
     }
 
     private void loadRequestSystemFromNBT(final CompoundTag compound)

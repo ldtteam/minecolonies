@@ -1,6 +1,8 @@
 package com.minecolonies.api.research;
 
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.core.colony.buildings.workerbuildings.BuildingUniversity;
+
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
@@ -65,7 +67,7 @@ public interface ILocalResearchTree
      * @param colony     the colony doing the research
      * @param research   the research.
      */
-    void attemptBeginResearch(final Player player, final IColony colony, final IGlobalResearch research);
+    void attemptBeginResearch(final Player player, final IColony colony, final BuildingUniversity building,final IGlobalResearch research);
 
     /**
      * Reset a research, and optionally undo its effects.  If the research is begun but incomplete, cancel it.

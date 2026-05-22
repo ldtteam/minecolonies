@@ -142,9 +142,9 @@ public final class TeleportHelper
         BlockPos position = pos;
         if (pos == null)
         {
-            if (colony.getBuildingManager().getTownHall() != null)
+            if (colony.getServerBuildingManager().getTownHall() != null)
             {
-                position = colony.getBuildingManager().getTownHall().getPosition();
+                position = colony.getServerBuildingManager().getTownHall().getPosition();
             }
             else
             {

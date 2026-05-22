@@ -1,6 +1,6 @@
 package com.minecolonies.core.client.render.worldevent.highlightmanager;
 
-import com.ldtteam.structurize.util.WorldRenderMacros;
+import com.ldtteam.structurize.client.rendertask.util.WorldRenderMacros;
 import com.minecolonies.core.client.render.worldevent.ColonyWorldRenderMacros;
 import com.minecolonies.core.client.render.worldevent.WorldEventContext;
 import net.minecraft.client.Minecraft;

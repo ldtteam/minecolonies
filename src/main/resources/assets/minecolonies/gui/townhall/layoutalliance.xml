@@ -1,15 +1,14 @@
 <window size="524 243" >
     <layout source="minecolonies:gui/townhall/windowtownhall.xml"/>
 
-    <view id="missingconnections">
-        <text id="howto" size="160 140" pos="100 60" label="$(com.minecolonies.core.gui.connectioneventlist.howto)" color="black"/>
-        <text id="howto" size="125 175" pos="290 25" label="$(com.minecolonies.core.gui.connectioneventlist.noconnections)" color="black"/>
-
+    <view id="missingconnections" size="374 243" pos="100 0">
+        <text id="howto" size="160 140" pos="0 60" label="$(com.minecolonies.core.gui.connectioneventlist.howto)" color="black"/>
+        <text id="howto" size="125 175" pos="190 25" label="$(com.minecolonies.core.gui.connectioneventlist.noconnections)" color="black"/>
     </view>
 
-    <view id ="activeconnections">
-        <text id="desc" size="170 10" textalign="MIDDLE" pos="95 60" color="black" textscale="1.0" label="$(com.minecolonies.core.gui.connectioneventlist.desc)"/>
-        <list id="connectioneventlist" size="160 140" pos="98 70">
+    <view id ="activeconnections" size="374 243" pos="75 0">
+        <text id="desc" size="170 10" textalign="MIDDLE" pos="25 60" color="black" textscale="1.0" label="$(com.minecolonies.core.gui.connectioneventlist.desc)"/>
+        <list id="connectioneventlist" size="160 140" pos="28 70">
             <box size="100% 40" linewidth="1">
                 <text id="name" size="140 12" pos="2 1" color="black"/>
                 <text id="desc" size="140 12" pos="2 10" color="black"/>
@@ -20,8 +19,8 @@
         </list>
 
 
-        <text id="desc" size="170 10" textalign="MIDDLE" pos="260 25" color="black" textscale="1.0" label="$(com.minecolonies.core.gui.colonylist.direct.desc)"/>
-        <list id="directcolonylist" size="170 80" pos="263 35">
+        <text id="desc" size="170 10" textalign="MIDDLE" pos="195 25" color="black" textscale="1.0" label="$(com.minecolonies.core.gui.colonylist.direct.desc)"/>
+        <list id="directcolonylist" size="170 80" pos="188 35">
             <box size="100% 40" linewidth="1">
                 <text id="name" size="140 12" pos="2 1" color="black"/>
                 <text id="distance" size="80 12" pos="70 10" color="black"/>
@@ -36,8 +35,8 @@
                         source="minecolonies:textures/gui/builderhut/builder_button_medium.png" color="black" visible="false" textscale="0.8"/>
             </box>
         </list>
-        <text id="desc" size="170 10" textalign="MIDDLE"  pos="260 120" color="black" textscale="1.0" label="$(com.minecolonies.core.gui.colonylist.indirect.desc)"/>
-        <list id="indirectcolonylist" size="164 80" pos="263 135">
+        <text id="desc" size="170 10" textalign="MIDDLE"  pos="195 120" color="black" textscale="1.0" label="$(com.minecolonies.core.gui.colonylist.indirect.desc)"/>
+        <list id="indirectcolonylist" size="164 80" pos="188 135">
             <box size="100% 40" linewidth="1">
                 <text id="name" size="140 12" pos="2 1" color="black"/>
                 <text id="distance" size="80 12" pos="70 10" color="black"/>

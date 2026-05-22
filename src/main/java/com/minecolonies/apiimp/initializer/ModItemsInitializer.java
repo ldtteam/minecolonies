@@ -174,7 +174,7 @@ public final class ModItemsInitializer
         ModItems.fish_n_chips = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(7).saturationMod(1.0F).build()), 2);
         ModItems.pierogi = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(7).saturationMod(1.0F).build()), 2);
         ModItems.veggie_soup = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(7).saturationMod(1.0F).build()), 2);
-        ModItems.yogurt_with_berries = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(7).saturationMod(1.0F).build()), 2);
+        ModItems.yogurt_with_berries = new ItemBowlFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(7).saturationMod(1.0F).build()), 2);
 
         // Tier 3 Food items
         ModItems.hand_pie = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(9).saturationMod(1.2F).build()), 3);

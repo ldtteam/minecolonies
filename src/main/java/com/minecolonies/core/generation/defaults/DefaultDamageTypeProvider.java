@@ -93,6 +93,6 @@ public class DefaultDamageTypeProvider extends JsonCodecProvider<DamageType>
     @NotNull
     private static DamageType damage(@NotNull final String msgId)
     {
-        return new DamageType(msgId, DamageScaling.ALWAYS, 0.1F);
+        return new DamageType(msgId, DamageScaling.NEVER, 0.1F);
     }
 }

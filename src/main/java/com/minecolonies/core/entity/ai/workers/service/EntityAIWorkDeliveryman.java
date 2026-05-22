@@ -163,7 +163,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         worker.getCitizenData().setVisibleStatus(DELIVERING);
 
         final BlockPos pickupTarget = currentTask.getRequester().getLocation().getInDimensionLocation();
-        final IBuilding pickupBuilding = building.getColony().getBuildingManager().getBuilding(pickupTarget);
+        final IBuilding pickupBuilding = building.getColony().getServerBuildingManager().getBuilding(pickupTarget);
         if (pickupBuilding == null)
         {
             job.finishRequest(false);
@@ -349,7 +349,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             return START_WORKING;
         }
 
-        final IBuilding targetBuilding = worker.getCitizenColonyHandler().getColony().getBuildingManager().getBuilding(targetBuildingLocation.getInDimensionLocation());
+        final IBuilding targetBuilding = worker.getCitizenColonyHandler().getColony().getServerBuildingManager().getBuilding(targetBuildingLocation.getInDimensionLocation());
         if (targetBuilding == null)
         {
             job.finishRequest(true);

@@ -310,7 +310,7 @@ public class EntityAIWorkEnchanter extends AbstractEntityAICrafting<JobEnchanter
             return IDLE;
         }
 
-        final IBuilding buildingWorker = building.getColony().getBuildingManager().getBuilding(job.getPosToDrainFrom());
+        final IBuilding buildingWorker = building.getColony().getServerBuildingManager().getBuilding(job.getPosToDrainFrom());
         if (!walkToBuilding(buildingWorker))
         {
             return getState();

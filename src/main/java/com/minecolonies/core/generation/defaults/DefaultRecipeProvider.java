@@ -112,6 +112,8 @@ public class DefaultRecipeProvider extends RecipeProvider
         registerHutRecipe1(consumer, ModBlocks.blockHutNetherWorker, Items.OBSIDIAN);
         registerHutRecipe1(consumer, ModBlocks.blockHutAlchemist, Items.BREWING_STAND);
         registerHutRecipe1(consumer, ModBlocks.blockHutKitchen, Items.SMOKER);
+        // TODO: Cavalry 4 of 4 - replace stable recipe.
+        // registerHutRecipe1(consumer, ModBlocks.blockHutStable, Items.GOLDEN_APPLE);
 
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.blockHutCrusher)
                 .pattern("XTX")
@@ -600,6 +602,16 @@ public class DefaultRecipeProvider extends RecipeProvider
                 .unlockedBy("has_iron", has(Items.IRON_INGOT))
                 .save(consumer, new ResourceLocation(MOD_ID, "chainmailboots"));
 
+        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, ModItems.spear)
+                .pattern("  I")
+                .pattern(" B ")
+                .pattern("S  ")
+                .define('I', Items.IRON_INGOT)
+                .define('S', Items.STICK)
+                .define('B', buildTool.get())
+                .unlockedBy("has_stick", has(Items.STICK))
+                .save(consumer, new ResourceLocation(MOD_ID, "spear"));
+
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC,ModItems.clipboard)
                 .pattern("XTX")
                 .pattern("XPX")
@@ -741,8 +753,8 @@ public class DefaultRecipeProvider extends RecipeProvider
           .unlockedBy("has_soy_milk", has(ModItems.large_soy_milk_bottle))
           .save(consumer, new ResourceLocation(MOD_ID, "soy_cream_cheese"));
 
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.tofu)
-          .requires(ModBlocks.blockSoyBean)
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.tofu, 2)
+          .requires(ModBlocks.blockSoyBean, 2)
           .unlockedBy("has_soy", has(ModBlocks.blockSoyBean))
           .save(consumer, new ResourceLocation(MOD_ID, "tofu"));
 
@@ -990,6 +1002,7 @@ public class DefaultRecipeProvider extends RecipeProvider
           .requires(Items.EGG)
           .requires(Items.EGG)
           .requires(Items.CHICKEN)
+          .requires(Items.BOWL)
           .unlockedBy("has_onion", has(ModBlocks.blockOnion))
           .save(consumer, new ResourceLocation(MOD_ID, "eggdrop_soup"));
 
@@ -997,7 +1010,7 @@ public class DefaultRecipeProvider extends RecipeProvider
           .requires(ModBlocks.blockGarlic)
           .requires(ModBlocks.blockOnion)
           .requires(ModBlocks.blockDurum)
-          .requires(Items.SALMON)
+          .requires(ItemTags.FISHES)
           .requires(Items.POTATO)
           .unlockedBy("has_durum", has(ModBlocks.blockDurum))
           .save(consumer, new ResourceLocation(MOD_ID, "fish_n_chips"));

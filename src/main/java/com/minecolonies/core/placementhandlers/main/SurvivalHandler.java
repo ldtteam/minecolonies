@@ -257,7 +257,7 @@ public class SurvivalHandler implements ISurvivalBlueprintHandler
 
                     if (finishedUpgrade)
                     {
-                        building.onUpgradeComplete(building.getBuildingLevel());
+                        building.onUpgradeComplete(blueprint, building.getBuildingLevel());
                     }
                 }
             }

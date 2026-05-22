@@ -505,7 +505,7 @@ public class StandardRequestManager implements IStandardRequestManager
         for (Iterator<IRequest<?>> it = getRequestIdentitiesDataStore().getIdentities().values().iterator(); it.hasNext(); )
         {
             final IRequest<?> request = it.next();
-            if (getRequestResolverRequestAssignmentDataStore().getAssignmentForValue(request.getId()) == null)
+            if (request == null || getRequestResolverRequestAssignmentDataStore().getAssignmentForValue(request.getId()) == null)
             {
                 it.remove();
                 wrongRequest++;

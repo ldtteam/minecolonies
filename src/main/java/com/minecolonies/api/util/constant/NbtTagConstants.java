@@ -102,6 +102,7 @@ public final class NbtTagConstants
     public static final String TAG_CONNECTION_EVENTS = "connectionevents";
     public static final String TAG_PENDING         = "pending";
     public static final String TAG_CONNECTION_TYPE = "connectiontype";
+    public static final String TAG_PRESTIGE       = "prestige";
 
     public static final String TAG_PARENT_A = "parentA";
     public static final String TAG_PARENT_B = "parentB";

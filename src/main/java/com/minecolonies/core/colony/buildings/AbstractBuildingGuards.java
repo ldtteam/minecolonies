@@ -1,5 +1,6 @@
 package com.minecolonies.core.colony.buildings;
 
+import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
@@ -14,6 +15,8 @@ import com.minecolonies.api.equipment.ModEquipmentTypes;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.MessageUtils;
+import com.minecolonies.api.util.StatsUtil;
+import com.minecolonies.api.util.constant.StatisticsConstants;
 import com.minecolonies.core.colony.buildings.modules.BuildingModules;
 import com.minecolonies.core.colony.buildings.modules.settings.*;
 import com.minecolonies.core.colony.buildings.views.AbstractBuildingView;
@@ -192,7 +195,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuilding implements
      * @param newLevel The new level.
      */
     @Override
-    public void onUpgradeComplete(final int newLevel)
+    public void onUpgradeComplete(@Nullable final Blueprint blueprint, final int newLevel)
     {
         if (getAllAssignedCitizen() != null)
         {
@@ -206,7 +209,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuilding implements
             }
         }
 
-        super.onUpgradeComplete(newLevel);
+        super.onUpgradeComplete(blueprint, newLevel);
     }
 
     //// ---- NBT Overrides ---- \\\\
@@ -386,6 +389,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuilding implements
      */
     public void startPatrolNext()
     {
+        StatsUtil.trackStat(this, StatisticsConstants.PATROLS_STARTED, 1);
         getNextPatrolTarget(true);
         patrolTimer = 5;
         arrivedAtPatrol.clear();
@@ -435,7 +439,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuilding implements
             }
             else
             {
-                pos = colony.getBuildingManager().getRandomBuilding(b -> b.getBuildingLevel() >= 1);
+                pos = getRandomPatrolTarget();
             }
 
             if (pos != null)
@@ -464,6 +468,17 @@ public abstract class AbstractBuildingGuards extends AbstractBuilding implements
         }
         lastPatrolPoint = patrolTargets.get(0);
         return lastPatrolPoint;
+    }
+
+    /**
+     * Gets a random automatic patrol target for this guard building.
+     *
+     * @return the next random patrol target.
+     */
+    @Nullable
+    protected BlockPos getRandomPatrolTarget()
+    {
+        return colony.getServerBuildingManager().getRandomBuilding(b -> b.getBuildingLevel() >= 1);
     }
 
     @Override
@@ -499,7 +514,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuilding implements
         {
             this.minePos = null;
         }
-        else if (colony.getBuildingManager().getBuilding(pos) instanceof BuildingMiner)
+        else if (colony.getServerBuildingManager().getBuilding(pos) instanceof BuildingMiner)
         {
             this.minePos = pos;
         }
