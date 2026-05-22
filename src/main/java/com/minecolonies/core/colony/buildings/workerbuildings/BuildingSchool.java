@@ -127,7 +127,7 @@ public class BuildingSchool extends AbstractBuilding
         final List<BlockPos> validSitLocations = getLocationsFromTag(TAG_SITTING);
         if (!validSitLocations.isEmpty())
         {
-            return validSitLocations.get(random.nextInt(validSitLocations.size()));
+            return validSitLocations.get(ColonyConstants.rand.nextInt(validSitLocations.size()));
         }
 
         if (carpet.isEmpty())
