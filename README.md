@@ -166,20 +166,20 @@ Please read our [Contributing Guidelines](CONTRIBUTING.md) before submitting a p
 
 ### License and Forking
 
-This project uses the GNU General Public License v3.0 following the majority of the codebase. There are however a few exceptions that are All Rights Reserved:
+This project uses the GNU General Public License v3.0 following the majority of the codebase. There are, however, a few exceptions that are hosted under different licenses:
 
 - `src/main/resources/assets/minecolonies`
-- `src/main/resources/blueprints/minecolonies`
+- `src/main/resources/blueprints/minecolonies` (changes per style pack)
 
 What does this mean? You may create a fork (new version) of Minecolonies under the following rules:
 
 **Not intended for distribution (fair use):**
 
-- No rules apply, even the above-mentioned All Rights Reserved folders
+- No rules apply, even to folders that are All Rights Reserved
 
 **Intended for distribution:**
 
 - New versions **may** copy the entire codebase
-- New versions **may not** copy over the above-mentioned All Rights Reserved folders
+- New versions **may not** copy over folders if the license of said folder does not permit it
 - New versions **must not** use the name "Minecolonies" directly in their version name; they must be released under a different name
 - New versions **must** provide their own support and clearly state so. Minecolonies will not be responsible for your version
