@@ -5,6 +5,7 @@ import com.minecolonies.api.colony.guardtype.registry.ModGuardTypes;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.core.colony.jobs.JobCavalry;
 import com.minecolonies.core.colony.jobs.JobDruid;
 import com.minecolonies.core.colony.jobs.JobKnight;
 import com.minecolonies.core.colony.jobs.JobRanger;
@@ -56,5 +57,17 @@ public final class ModGuardTypesInitializer
           .setRegistryName(ModGuardTypes.DRUID_ID)
           .setClazz(JobDruid.class)
           .createGuardType());
+
+        ModGuardTypes.cavalry = DEFERRED_REGISTER.register(ModGuardTypes.CAVALRY_ID.getPath(), () -> new GuardType.Builder()
+                                 .setJobTranslationKey(JOB_CAVALRY)
+                                 .setButtonTranslationKey(JOB_CAVALRY_BUTTON)
+                                 .setPrimarySkill(Skill.Adaptability)
+                                 .setSecondarySkill(Skill.Stamina)
+                                 .setWorkerSoundName("archer")
+                                 .setJobEntry(() -> ModJobs.cavalry.get())
+                                 .setRegistryName(ModGuardTypes.CAVALRY_ID)
+                                 .setClazz(JobCavalry.class)
+                                 .createGuardType());
+
     }
 }

@@ -585,7 +585,7 @@
 
   "com.minecolonies.coremod.gui.townhall.allies": "Allies:",
   "com.minecolonies.coremod.gui.townhall.feuds": "Feuds:",
-  "com.minecolonies.coremod.gui.townhall.tp": "Do you really want to teleport to %s? [YES]",
+  "com.minecolonies.coremod.gui.townhall.tp": "Do you really want to teleport to %s?",
 
   "com.minecolonies.coremod.workorderadded": "Build request created for %s at colony %s! The hut block is at %s %s %s.",
   "com.minecolonies.coremod.decoorderadded": "Decoration request created for colony %s!",
@@ -902,6 +902,7 @@
   "com.minecolonies.coremod.tooltype.boots": "Boots",
   "com.minecolonies.coremod.tooltype.lighter": "Flint and Steel",
   "com.minecolonies.coremod.tooltype.lead": "Lead",
+  "com.minecolonies.coremod.tooltype.spear": "Spear",
 
   "com.minecolonies.coremod.armorlevel.0": "Leather",
   "com.minecolonies.coremod.armorlevel.1": "Gold",
@@ -2196,6 +2197,7 @@
   "com.minecolonies.coremod.setting.minecolonies:hiretrainee": "Hire Trainee:",
   "com.minecolonies.coremod.setting.tooltip.minecolonies:hiretrainee": "This setting only works when any of the jobs can be hired automatically.",
   "com.minecolonies.coremod.setting.minecolonies:patrolmode": "Patrol Mode:",
+  "com.minecolonies.coremod.setting.minecolonies:patrolinterval": "Patrol Interval (minutes):",
   "com.minecolonies.coremod.setting.minecolonies:followmode": "Follow Mode:",
   "com.minecolonies.coremod.setting.minecolonies:guardtask": "Task:",
   "com.minecolonies.coremod.setting.minecolonies:guardjob": "Job:",
@@ -2260,6 +2262,7 @@
   "com.minecolonies.coremod.gui.chat.duran": "Hi! I'm not sure how I got here.....BUT HECC YOU IM STAYIN!",
   "com.minecolonies.coremod.gui.chat.sheizen": "Hi there! I'm an explorer who goes by the name Reizar. There is something interesting about this place, and I'd like to be a part of it.",
   "com.minecolonies.coremod.gui.chat.andromeda": "We have come on our journey to visit all the corners of the universe. However, this seems like a nice place to rest for a couple moments. Prepared to provide research related services in payment for exotic minerals.",
+  "com.minecolonies.coremod.gui.chat.generablack": "I travel from tavern to tavern, maybe here is one to stay and help to build.",
   "com.minecolonies.job.builder": "Builder",
   "com.minecolonies.job.deliveryman": "Courier",
   "com.minecolonies.job.miner": "Miner",
@@ -2399,6 +2402,7 @@
   "minecolonies:chickenherder.job.desc": "Gathers eggs, feathers, and other chicken products.",
   "minecolonies:ranger.job.desc": "Distance fighter, deals high damage, but has low survival chance in close combat.",
   "minecolonies:knight.job.desc": "Close-quarter fighter. High resilience, low damage output.",
+  "minecolonies:cavalry.job.desc": "Mounted fighter. Fast and tough; vulnerable to ranged attacks.",
   "minecolonies:composter.job.desc": "Composts a lot of the colony waste products",
   "minecolonies:student.job.desc": "Reads books to increase their intelligence. High intelligence allows learning other skills faster.",
   "minecolonies:archertraining.job.desc": "Archer Trainee. Practices distance fighting.",
@@ -2427,6 +2431,7 @@
   "minecolonies:druid.job.desc": "Support type unit. Buffs friendlies and nerfs enemies.",
   "minecolonies:netherworker.job.desc": "Wanders into the Nether to gather a wide range of materials. A very dangerous job!.",
   "minecolonies:alchemist.job.desc": "Brews Potions, plants Netherwart and harvests Mistletoes",
+  "minecolonies:stablemaster.job.desc": "Raises horses and trains and prepares them for combat use.",
 
   "minecolonies:builder.skills.desc": "Affects placement and breaking speed.",
   "minecolonies:deliveryman.skills.desc": "Affects walking speed and concurrent request fulfillment capacity.",
@@ -2473,6 +2478,8 @@
   "minecolonies:druid.skills.desc": "Affects accuracy and potion quality.",
   "minecolonies:netherworker.skills.desc": "Affects the survival chances and loot.",
   "minecolonies:alchemist.skills.desc": "Affects recipe improvement chance and working speed.",
+  "minecolonies:cavalry.skills.desc": "Affects health, resilience, and attack speed.",
+  "minecolonies:stablemaster.skills.desc": "Affects effectiveness of combat readiness preparations.",
   "minecolonies:chef.skills.desc": "Affects recipe improvement chance and working speed.",
 
   "com.minecolonies.coremod.grave.lava": "Could not spawn a grave because all remains already burned.",
@@ -2605,6 +2612,7 @@
   "com.minecolonies.coremod.gui.townhall.stats.research_completed": "Research Completed: %d",  
   "com.minecolonies.coremod.gui.townhall.stats.horses_trained": "Horses Trained: %d",  
   "com.minecolonies.coremod.gui.townhall.stats.mounts_readied": "Mounts Readied: %d", 
+  "com.minecolonies.coremod.gui.townhall.stats.patrols_started": "Patrol Stops: %d", 
   "com.minecolonies.coremod.gui.townhall.stats.roundups_completed": "Roundups Completed: %d",  
   "com.minecolonies.coremod.gui.interval.yesterday": "Since Yesterday",
   "com.minecolonies.coremod.gui.interval.lastweek": "Last Week",
@@ -2995,7 +3003,7 @@
   "com.minecolonies.core.gui.colonylist.set_neutral": "Set Neutral",
   "com.minecolonies.core.gui.colonylist.travel": "Travel",
   "com.minecolonies.core.gui.colonylist.travel.tooltip": "Only possible for Allied colonies",
-  "com.minecolonies.core.gui.colonylist.travel.really": "Do you really want to travel to %s? [YES]",
+  "com.minecolonies.core.gui.colonylist.travel.really": "Do you really want to travel to %s?",
   "com.minecolonies.core.gui.connectioneventlist.desc": "Connection Event List",
   "com.minecolonies.core.gui.connectioneventlist.accept_ally": "Accept Alliance",
   "com.minecolonies.core.gui.connectioneventlist.howto": "How to build an Alliance: \n\n - Build a Gatehouse in your colony.\n\n- Ensure the target colony also has a Gatehouse.\n\n- Place colony signs between the two Gatehouses to create a connection.",
@@ -3036,5 +3044,13 @@
   "entity.minecolonies.cavalry_horse": "Cavalry Horse",
 
   "com.minecolonies.coremod.gui.townhall.prestige": "Colony Ranking",
-  "com.minecolonies.coremod.gui.townhall.prestige.tooltip": "Score reflects the total construction value of your colony, calculated by summing the cost factor of each building."
+  "com.minecolonies.coremod.gui.townhall.prestige.tooltip": "Score reflects the total construction value of your colony, calculated by summing the cost factor of each building.",
+
+  "com.minecolonies.core.gui.residence.warning.2": "Warning: No food production detected. Build a Farm or Fisher's Hut before adding more residents.",
+  "com.minecolonies.core.gui.residence.warning.3": "Warning: Higher-level residents expect regular meals. Build a Dining Hall and setup Minecolonies Food on the menu before upgrading.",
+  "com.minecolonies.core.gui.residence.warning.4": "Warning: Higher-level residents demand varied, cooked meals. Ensure you have a chef alongside your dining hall and a full menu before upgrading.",
+  "com.minecolonies.core.gui.residence.warning.5": "Warning: Your colony may struggle to feed residents at this level. Consider expanding food production and your Dining Hall menu first.",
+
+  "com.minecolonies.core.gui.build.confirm.title": "Are you sure you want to upgrade the building?",
+  "com.minecolonies.core.gui.teleport.confirm.title": "Are you sure you want to teleport now?"
 }

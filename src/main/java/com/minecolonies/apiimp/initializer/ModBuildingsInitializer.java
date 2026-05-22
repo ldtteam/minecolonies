@@ -162,6 +162,20 @@ public final class ModBuildingsInitializer
           .addBuildingModuleProducer(STATS_MODULE)
           .createBuildingEntry());
 
+        ModBuildings.stable = DEFERRED_REGISTER.register(ModBuildings.STABLE_ID, () -> new BuildingEntry.Builder()
+          .setBuildingBlock(ModBlocks.blockHutStable)
+          .setBuildingProducer(BuildingStable::new)
+          .setBuildingViewProducer(() -> EmptyView::new)
+          .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.STABLE_ID))
+          .addBuildingModuleProducer(CAVALRY_STABLE_WORK)
+          .addBuildingModuleProducer(STABLEMASTER_WORK)
+          .addBuildingModuleProducer(STABLEMASTER_HERDING)
+          .addBuildingModuleProducer(GUARD_ENTITY_LIST)
+          .addBuildingModuleProducer(STABLE_SETTINGS)
+          .addBuildingModuleProducer(MIN_STOCK)
+          .addBuildingModuleProducer(STATS_MODULE)
+          .createBuildingEntry());
+
         ModBuildings.crusher = DEFERRED_REGISTER.register(ModBuildings.CRUSHER_ID, () -> new BuildingEntry.Builder()
           .setBuildingBlock(ModBlocks.blockHutCrusher)
           .setBuildingProducer(BuildingCrusher::new)

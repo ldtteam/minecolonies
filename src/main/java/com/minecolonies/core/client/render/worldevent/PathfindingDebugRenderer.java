@@ -74,11 +74,11 @@ public class PathfindingDebugRenderer
             {
                 if (n.isReachedByWorker())
                 {
-                    debugDrawNode(n, 0xffffff00, ctx);
+                    debugDrawNode(n, 0xffff8800, ctx);
                 }
                 else
                 {
-                    debugDrawNode(n, 0xff00ff00, ctx);
+                    debugDrawNode(n, 0xffffff00, ctx);
                 }
             }
         }

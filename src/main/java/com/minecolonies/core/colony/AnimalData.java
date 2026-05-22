@@ -50,6 +50,11 @@ public class AnimalData implements IAnimalData
     private float combatCooldown = 0;
 
     /**
+     * The owner of the animal.
+     */
+    private UUID owner;
+
+    /**
      * The maximum health of the animal.
      */
     private float maxHealth = 0;
@@ -149,6 +154,11 @@ public class AnimalData implements IAnimalData
         compoundNBT.putFloat(NbtTagConstants.TAG_COMBAT_COOLDOWN, getCombatCooldown());
         compoundNBT.putUUID(NbtTagConstants.TAG_UUID, uuid != null ? uuid : UUID.randomUUID());
 
+        if (owner != null)
+        {
+            compoundNBT.putUUID(NbtTagConstants.TAG_OWNER, owner);
+        }
+
         return compoundNBT;
     }
 
@@ -172,7 +182,7 @@ public class AnimalData implements IAnimalData
         maxHealth = nbtTagCompound.contains(NbtTagConstants.TAG_MAX_HEALTH) ? nbtTagCompound.getFloat(NbtTagConstants.TAG_MAX_HEALTH) : 0.0f;
         setCombatCooldown(nbtTagCompound.contains(NbtTagConstants.TAG_COMBAT_COOLDOWN) ? nbtTagCompound.getFloat(NbtTagConstants.TAG_COMBAT_COOLDOWN) : 0.0f);
         uuid = nbtTagCompound.contains(NbtTagConstants.TAG_UUID) ? nbtTagCompound.getUUID(NbtTagConstants.TAG_UUID) : UUID.randomUUID();
-
+        owner = nbtTagCompound.contains(NbtTagConstants.TAG_OWNER) ? nbtTagCompound.getUUID(NbtTagConstants.TAG_OWNER) : null;
     }
 
     /**
@@ -193,6 +203,7 @@ public class AnimalData implements IAnimalData
             buf.writeBlockPos(homeBuilding.getID());
         }
         buf.writeFloat(this.combatCooldown);
+        buf.writeBlockPos(getLastPosition());
     }
 
     /**
@@ -215,6 +226,28 @@ public class AnimalData implements IAnimalData
     public UUID getUUID()
     {
         return uuid;
+    }
+
+    /**
+     * Gets the owner of the animal.
+     * 
+     * @return the owner of the animal, or null if the animal has no owner.
+     */
+    @Override
+    public UUID getOwner()
+    {
+        return owner;
+    }
+
+    /**
+     * Sets the owner of the animal.
+     *
+     * @param owner the new owner of the animal
+     */
+    @Override
+    public void setOwner(final UUID owner)
+    {
+        this.owner = owner;
     }
 
     /**
@@ -347,9 +380,9 @@ public class AnimalData implements IAnimalData
      * @return the last position of the animal.
      */
     @Override
-    public BlockPos getLastPosition()
+    public @NotNull BlockPos getLastPosition()
     {
-        return lastPosition;
+        return getManagedAnimal().isPresent() ? getManagedAnimal().get().getEntity().blockPosition() : lastPosition;
     }
 
     /**

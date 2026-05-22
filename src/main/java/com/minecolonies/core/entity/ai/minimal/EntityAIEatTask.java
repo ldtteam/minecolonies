@@ -18,6 +18,7 @@ import com.minecolonies.core.colony.buildings.modules.BuildingModules;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingCook;
 import com.minecolonies.core.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.core.colony.jobs.AbstractJobGuard;
+import com.minecolonies.core.colony.jobs.JobCavalry;
 import com.minecolonies.core.colony.jobs.JobCook;
 import com.minecolonies.core.entity.citizen.EntityCitizen;
 import com.minecolonies.core.entity.other.SittingEntity;
@@ -448,6 +449,12 @@ public class EntityAIEatTask implements IStateAI
     {
         if (restaurantPos != null)
         {
+            // Prevent riding the horse into the restaurant.
+            if (citizen.getCitizenData().getJob() instanceof JobCavalry && citizen.getVehicle() != null && BlockPosUtil.distManhattan(restaurantPos, citizen.blockPosition()) < JobCavalry.DININGHALL_HORSE_PARKING_RANGE)
+            {   
+                citizen.stopRiding();
+            }
+
             final IBuilding building = citizen.getCitizenColonyHandler().getColonyOrRegister().getServerBuildingManager().getBuilding(restaurantPos);
             if (building != null)
             {

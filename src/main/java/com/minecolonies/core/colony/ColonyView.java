@@ -865,8 +865,6 @@ public final class ColonyView implements IColonyView
     {
         final Map<Integer, IAnimalDataView> animalCache = new HashMap<>(animals);
 
-        Log.getLogger().info("ColonyView.handleColonyViewAnimalMessage");
-
         if (refresh)
         {
             animals.clear();

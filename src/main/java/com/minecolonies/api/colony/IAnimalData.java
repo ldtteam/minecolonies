@@ -116,20 +116,35 @@ public interface IAnimalData extends INBTSerializable<CompoundTag>
      * 
      * @return the last position of the animal.
      */
-    public BlockPos getLastPosition();
+    public @NotNull BlockPos getLastPosition();
 
     /**
-     * Returns the current combat cooldown of the horse. 
-     * A higher value means the horse is currently less ready for combat.
+     * Returns the current combat cooldown of the animal. 
+     * A higher value means the animal is currently less ready for combat.
      * 
-     * @return the current combat cooldown of the horse
+     * @return the current combat cooldown of the animal
      */
     public float getCombatCooldown();
 
     /**
-     * Sets the combat cooldown of the horse.
+     * Sets the combat cooldown of the animal.
      * 
-     * @param newCooldown the new combat cooldown of the horse
+     * @param newCooldown the new combat cooldown of the animal
      */
     public void setCombatCooldown(float newCooldown);
+
+    /**
+     * Gets the owner of the animal.
+     * 
+     * @return the owner of the animal
+     */
+    public UUID getOwner();
+
+
+    /**
+     * Sets the owner of the animal.
+     * 
+     * @param owner the new owner of the animal
+     */
+    public void setOwner(UUID owner);
 }

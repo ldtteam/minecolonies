@@ -14,6 +14,8 @@ public class JobTranslationConstants
     public static final String JOB_RANGER = "com.minecolonies.job.ranger";
     @NonNls
     public static final String JOB_DRUID  = "com.minecolonies.job.druid";
+    @NonNls
+    public static final String JOB_CAVALRY = "com.minecolonies.job.cavalry";
 
     @NonNls
     public static final String JOB_KNIGHT_BUTTON = "com.minecolonies.coremod.gui.workerhuts.knight";
@@ -21,6 +23,7 @@ public class JobTranslationConstants
     public static final String JOB_RANGER_BUTTON = "com.minecolonies.coremod.gui.workerhuts.ranger";
     @NonNls
     public static final String JOB_DRUID_BUTTON  = "com.minecolonies.coremod.gui.workerhuts.druid";
-
+    @NonNls
+    public static final String JOB_CAVALRY_BUTTON = "com.minecolonies.coremod.gui.workerhuts.cavalry";
     // Worker types
 }

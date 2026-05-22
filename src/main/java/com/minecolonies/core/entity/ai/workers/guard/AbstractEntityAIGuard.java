@@ -19,6 +19,7 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.DamageSourceKeys;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.LookHandler;
+import com.minecolonies.api.util.constant.ColonyConstants;
 import com.minecolonies.core.Network;
 import com.minecolonies.core.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.core.colony.buildings.modules.BuildingModules;
@@ -336,7 +337,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
     /**
      * Stops the guard from sleeping
      */
-    private void stopSleeping()
+    protected void stopSleeping()
     {
         if (getState() == GUARD_SLEEP)
         {
@@ -426,7 +427,10 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
      */
     public void guardMovement()
     {
-        walkToSafePos(buildingGuards.getGuardPos(worker));
+        if (ColonyConstants.rand.nextInt(10) == 0)
+        {
+            walkToUnSafePos(buildingGuards.getGuardPos(worker), 5);
+        }
     }
 
     /**
@@ -753,7 +757,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
      *
      * @return the block distance at which a guard should chase his target
      */
-    private int getPersecutionDistance()
+    protected int getPersecutionDistance()
     {
         if (buildingGuards.getRallyLocation() != null)
         {

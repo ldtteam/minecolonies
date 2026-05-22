@@ -2,6 +2,10 @@ package com.minecolonies.core.entity.other.cavalry;
 
 import java.util.UUID;
 import javax.annotation.Nonnull;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.minecolonies.api.colony.IAnimalData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
@@ -13,22 +17,27 @@ import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.DamageSourceKeys;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.LookHandler;
 import com.minecolonies.api.util.constant.CitizenConstants;
 import com.minecolonies.api.util.constant.NbtTagConstants;
-import com.minecolonies.core.MineColonies;
+import com.minecolonies.core.colony.buildings.workerbuildings.BuildingStable;
+import com.minecolonies.core.colony.jobs.JobCavalry;
+import com.minecolonies.core.entity.ai.cavalry.CavalryStrollGoal;
+import com.minecolonies.core.entity.ai.cavalry.ReturnToStableGoal;
 import com.minecolonies.core.entity.citizen.EntityCitizen;
 import com.minecolonies.core.entity.mobs.AnimalColonyHandler;
 import com.minecolonies.core.entity.mobs.IAnimalColonyHandler;
-import com.minecolonies.core.entity.pathfinding.navigation.AbstractAdvancedPathNavigate;
+import com.minecolonies.core.entity.pathfinding.PathPointExtended;
 import com.minecolonies.core.entity.pathfinding.navigation.MinecoloniesAdvancedPathNavigate;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.tags.DamageTypeTags;
+import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityDimensions;
@@ -43,6 +52,7 @@ import net.minecraft.world.entity.animal.horse.Variant;
 import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.LadderBlock;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -53,10 +63,10 @@ import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.RandomStandGoal;
-import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.WrappedGoal;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
-
+import net.minecraft.world.level.pathfinder.Path;
+import net.minecraft.world.level.pathfinder.Node;
 /**
  * Cavalry Horse Entity class for Minecolonies.
  * Extends the vanilla Horse entity with custom behavior for cavalry units.
@@ -65,12 +75,6 @@ public class CavalryHorseEntity extends Horse implements IManagedAnimal<CavalryH
 {
     public static final EntityDataAccessor<Integer>  DATA_COLONY_ID         = SynchedEntityData.defineId(CavalryHorseEntity.class, EntityDataSerializers.INT);
     public static final EntityDataAccessor<Integer>  DATA_MANAGED_ANIMAL_ID = SynchedEntityData.defineId(CavalryHorseEntity.class, EntityDataSerializers.INT);
-
-    /**
-     * The key used to store whether the horse is reserved for cavalry.
-     */
-    private static final String RESERVE_KEY = "horse_reserved_for_cavalry";
-
 
     /** 
      * The base width and height of the horse entity. 
@@ -120,6 +124,18 @@ public class CavalryHorseEntity extends Horse implements IManagedAnimal<CavalryH
     private long lastHorizontalCollision = 0;
 
     /**
+     * The timepoint at which a rider last dismounted.
+     */
+    private long lastDismountTime = -1;
+
+    /**
+     * The number of nodes to look ahead when checking for ladder climbing.
+     */
+    private static final int CLIMB_LOOKAHEAD_NODES = 8;
+    private static final double LOOK_AT_HORIZONTAL_EPSILON = 0.04D;
+    private static final float RIDER_ALIGN_MAX_STEP_DEGREES = 12.0F;
+
+    /**
      * Constructor for CavalryHorseEntity.
      *
      * @param type  The entity type
@@ -144,9 +160,8 @@ public class CavalryHorseEntity extends Horse implements IManagedAnimal<CavalryH
         this.goalSelector.addGoal(0, new FloatGoal(this));
         this.goalSelector.addGoal(3, new FollowParentGoal(this, 1.0D));
         this.goalSelector.addGoal(4, new BreedGoal(this, 1.0D));
-        // this.goalSelector.addGoal(5, new ValidateStableGoal(this));
-        // this.goalSelector.addGoal(6, new ReturnToStableGoal(this, 1.15, 20.0));
-        this.goalSelector.addGoal(7, new WaterAvoidingRandomStrollGoal(this, 0.7D));
+        this.goalSelector.addGoal(6, new ReturnToStableGoal(this, .80D, 20.0));
+        this.goalSelector.addGoal(7, new CavalryStrollGoal(this, 0.7D));
         this.goalSelector.addGoal(8, new LookAtPlayerGoal(this, Player.class, 6.0F));
         this.goalSelector.addGoal(9, new RandomLookAroundGoal(this));
 
@@ -186,7 +201,7 @@ public class CavalryHorseEntity extends Horse implements IManagedAnimal<CavalryH
         // if the entity is summoned into the world with an ops command rather than created by the stablemaster, this "autoregisters" the entity as a managed animal to the closest colony.
         if (colonyId == 0 && !CompatibilityUtils.getWorldFromEntity(this).isClientSide)
         {
-            IColony colony = IColonyManager.getInstance().getClosestColony(level, this.getOnPos());
+            IColony colony = IColonyManager.getInstance().getClosestColony(level, this.blockPosition());
 
             if (colony == null)
             {
@@ -220,7 +235,6 @@ public class CavalryHorseEntity extends Horse implements IManagedAnimal<CavalryH
             animalColonyHandler.registerWithColony(colonyId, getManagedAnimalId());
         }
     }
-    
 
     /**
      * Defines the synced data for this entity.
@@ -300,13 +314,14 @@ public class CavalryHorseEntity extends Horse implements IManagedAnimal<CavalryH
         {
             return false;
         }
+
         Entity rider = this.getFirstPassenger();
-        if (!(rider instanceof EntityCitizen guard) || guard.getCitizenJobHandler() == null)
+
+        if (rider instanceof EntityCitizen guard && guard.getCitizenJobHandler().getColonyJob() instanceof JobCavalry)
         {
-            return false;
+            return true;
         }
 
-        /* Implementation will be finalized in Cavalry PR 4 of 4 */
         return false;
     }
 
@@ -343,8 +358,7 @@ public class CavalryHorseEntity extends Horse implements IManagedAnimal<CavalryH
     }
     
     /**
-     * Adds a passenger to the horse, dropping the leash and setting the navigation options of any citizen passenger
-     * to not enter or open doors.
+     * Adds a passenger to the horse, dropping the leash and clearing the recent dismount cooldown.
      *
      * @param passenger the passenger to add
      */
@@ -353,37 +367,19 @@ public class CavalryHorseEntity extends Horse implements IManagedAnimal<CavalryH
     {
         super.addPassenger(passenger);
         dropLeash(true, false);
-        
-        if (passenger instanceof EntityCitizen guard) 
-        {
-            AbstractAdvancedPathNavigate nav = guard.getNavigation();
-
-            if (nav instanceof MinecoloniesAdvancedPathNavigate mcnav) 
-            {
-                mcnav.getPathingOptions().setEnterDoors(false);
-                mcnav.getPathingOptions().setCanOpenDoors(false);
-            }
-        }
+        lastDismountTime = -1;
     }
 
     /**
      * Called when a passenger is removed from this horse.
-     * 
+     *
      * @param passenger the passenger being removed
      */
     @Override
     protected void removePassenger(@Nonnull Entity passenger)
     {
         super.removePassenger(passenger);
-
-        if (passenger instanceof EntityCitizen guard) {
-            AbstractAdvancedPathNavigate nav = guard.getNavigation();
-
-            if (nav instanceof MinecoloniesAdvancedPathNavigate mcnav) {
-                mcnav.getPathingOptions().setEnterDoors(true);
-                mcnav.getPathingOptions().setCanOpenDoors(true);
-            }
-        }
+        lastDismountTime = this.level().getGameTime();
     }
 
     /**
@@ -427,6 +423,16 @@ public class CavalryHorseEntity extends Horse implements IManagedAnimal<CavalryH
     }
 
     /**
+     * Gets the last time this horse was dismounted from, in game ticks.
+     * 
+     * @return the last time this horse was dismounted from, in game ticks
+     */
+    public long getLastDismountTime()
+    {
+        return lastDismountTime;
+    }
+
+    /**
      * Creates a new PathNavigation for this horse entity, overriding the default vanilla horse navigation. This allows the horse to
      * navigate the world in a way that is more suitable for guards.
      * 
@@ -438,12 +444,13 @@ public class CavalryHorseEntity extends Horse implements IManagedAnimal<CavalryH
     {
         MinecoloniesAdvancedPathNavigate pathNavigation = new MinecoloniesAdvancedPathNavigate(this, level);
         pathNavigation.getPathingOptions().setEnterDoors(false);
-        pathNavigation.getPathingOptions().setEnterGates(true);
+        pathNavigation.getPathingOptions().setEnterGates(false);
         pathNavigation.getPathingOptions().setCanOpenDoors(false);
         pathNavigation.getPathingOptions().withDropCost(1D);
         pathNavigation.getPathingOptions().withJumpCost(1D);
         pathNavigation.getPathingOptions().setPassDanger(false);
         pathNavigation.getPathingOptions().setCanSwim(true);
+        pathNavigation.getPathingOptions().setCanClimbAdvanced(false);
         pathNavigation.setCanFloat(true);
 
         return pathNavigation;
@@ -477,40 +484,108 @@ public class CavalryHorseEntity extends Horse implements IManagedAnimal<CavalryH
     {
         super.tick();
 
-        if (!level().isClientSide)
+        if (level().isClientSide) return;
+
+        if (hasReservation())
         {
-
-            if (hasReservation())
+            if (reservationExpiration > RESERVATION_EXPIRATION_LIMIT) 
             {
-                if (reservationExpiration > RESERVATION_EXPIRATION_LIMIT) 
+                clearReservation(); 
+                reservationExpiration = 0;
+            } 
+            else
+            {
+                reservationExpiration++;
+            }
+        }
+
+        if (!isReadyForCombat())
+        {
+            this.getPassengers().forEach(Entity::stopRiding);
+        }
+
+        Entity rider = this.getControllingPassenger();
+        if (rider instanceof EntityCitizen cavunit)
+        {
+            final float horseYaw = this.getYRot();
+            final float alignedYaw = approachYaw(cavunit.getYRot(), horseYaw, RIDER_ALIGN_MAX_STEP_DEGREES);
+            cavunit.setYRot(alignedYaw);
+            cavunit.setYBodyRot(alignedYaw);
+
+            MinecoloniesAdvancedPathNavigate nav = (MinecoloniesAdvancedPathNavigate) this.getNavigation();
+
+            Path path = nav.getPath();
+
+            if (path != null && !path.isDone())
+            {
+                BlockPos next = path.getNextNodePos();
+                if (next != null)
                 {
-                    clearReservation(); 
-                    reservationExpiration = 0;
-                } 
-                else
-                {
-                    reservationExpiration++;
+                    final double targetX = next.getX() + 0.5D;
+                    final double targetZ = next.getZ() + 0.5D;
+                    final double dx = targetX - cavunit.getX();
+                    final double dz = targetZ - cavunit.getZ();
+
+                    // Ignore near-vertical node transitions to avoid yaw jitter/spin while climbing/descending.
+                    if ((dx * dx + dz * dz) > LOOK_AT_HORIZONTAL_EPSILON)
+                    {
+                        final BlockPos lookAt = next.above();
+                        final LookHandler lookHandler = (LookHandler) cavunit.getLookControl();
+                        lookHandler.setLookAt(lookAt.getX(), lookAt.getY(), lookAt.getZ());
+                        lookHandler.setLookAtCooldown(40);
+                    }
                 }
-            }
 
-            if (!isReadyForCombat())
-            {
-                this.getPassengers().forEach(Entity::stopRiding);
-            }
-
-            Entity rider = this.getControllingPassenger();
-            if (rider instanceof EntityCitizen cavunit)
-            {
-                MinecoloniesAdvancedPathNavigate nav = (MinecoloniesAdvancedPathNavigate) this.getNavigation();
-
-                // Try to keep our rider looking where the horse is heading...
-                if (nav.getPath() != null && !nav.getPath().isDone())
+                // If our upcoming path includes a ladder, force a dismount
+                if (upcomingPathRequiresClimbing(path))
                 {
-                    BlockPos next = nav.getPath().getNextNodePos();
-                    cavunit.getLookControl().setLookAt(next.getX() + 0.5, next.getY(), next.getZ() + 0.5, 30.0F, 30.0F);
+                    cavunit.stopRiding();
+                    nav.stop();
+                    return;
                 }
             }
         }
+    }
+
+    /**
+     * Smoothly approaches a target yaw, clamping each update step.
+     */
+    private static float approachYaw(final float currentYaw, final float targetYaw, final float maxStep)
+    {
+        final float delta = Mth.wrapDegrees(targetYaw - currentYaw);
+        return currentYaw + Mth.clamp(delta, -maxStep, maxStep);
+    }
+
+    /**
+     * Returns true if the upcoming path includes ladder climbing.
+     */
+    private boolean upcomingPathRequiresClimbing(@Nullable final Path path)
+    {
+        if (path == null || path.isDone())
+        {
+            return false;
+        }
+
+        final int start = path.getNextNodeIndex();
+        final int end = Math.min(path.getNodeCount() - 1, start + CLIMB_LOOKAHEAD_NODES);
+
+        for (int i = start; i <= end; i++)
+        {
+            final Node node = path.getNode(i);
+
+            if (node instanceof PathPointExtended extended && extended.isOnLadder())
+            {
+                return true;
+            }
+
+            // Fallback for non-extended nodes.
+            if (level().getBlockState(new BlockPos(node.x, node.y, node.z)).getBlock() instanceof LadderBlock)
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -648,7 +723,7 @@ public class CavalryHorseEntity extends Horse implements IManagedAnimal<CavalryH
 
     /**
      * Whether this entity should be saved to disk.
-     * <p>As CavelryHorse entities are always saved to disk, this method always returns true.
+     * <p>As CavalryHorse entities are always saved to disk, this method always returns true.
      */
     @Override
     public boolean shouldBeSaved()
@@ -711,7 +786,6 @@ public class CavalryHorseEntity extends Horse implements IManagedAnimal<CavalryH
         }
     }
 
-
     /**
      * Reads additional data from the given CompoundTag that is specific to this entity type.
      * <p>
@@ -758,6 +832,8 @@ public class CavalryHorseEntity extends Horse implements IManagedAnimal<CavalryH
      */
     public void prepareForCombat(float combatReadiness)
     {
+        if (animalData == null) return;
+
         animalData.setCombatCooldown(animalData.getCombatCooldown() - Math.abs(combatReadiness));
     }
 
@@ -772,6 +848,19 @@ public class CavalryHorseEntity extends Horse implements IManagedAnimal<CavalryH
         if (animalData == null) return false;
 
         return animalData.getCombatCooldown() <= (this.getMaxHealth() * COMBAT_READINESS_THRESHOLD);
+    }
+
+    /**
+     * Returns the current combat cooldown of the horse. This is the amount of time until the horse is ready for combat.
+     * A higher value means the horse is currently less ready for combat.
+     * 
+     * @return the current combat cooldown of the horse
+     */
+    public float getCombatCooldown()
+    {
+        if (animalData == null) return 0.0f;
+
+        return animalData.getCombatCooldown();
     }
 
     /**
@@ -805,11 +894,18 @@ public class CavalryHorseEntity extends Horse implements IManagedAnimal<CavalryH
      *
      * @param reserver the entity to reserve the horse for
      */
-    public void reserve(Entity reserver) 
+    public void reserve(@NotNull final Entity reserver) 
     { 
-        CompoundTag data = this.getPersistentData();
-        data.putUUID(RESERVE_KEY, reserver.getUUID());
-        reservationExpiration = 0;
+        if (animalData != null)
+        {
+            animalData.setOwner(reserver.getUUID());
+            reservationExpiration = 0;
+        }
+        else   
+        {
+            Log.getLogger().warn("Missing animalData on cavalry horse while attempting to make a reservation! ");
+        }
+
     }
 
     /**
@@ -818,7 +914,15 @@ public class CavalryHorseEntity extends Horse implements IManagedAnimal<CavalryH
      */
     public void clearReservation()
     {
-        this.getPersistentData().remove(RESERVE_KEY);
+        if (animalData != null)
+        {
+            animalData.setOwner(null);
+            reservationExpiration = 0;
+        }
+        else   
+        {
+            Log.getLogger().warn("Missing animalData on cavalry horse while attempting to clear a reservation! ");
+        }
     }
 
     /**
@@ -827,17 +931,15 @@ public class CavalryHorseEntity extends Horse implements IManagedAnimal<CavalryH
      * @param reserver the entity to check against
      * @return true if the reservation was cleared, false otherwise
      */
-    public boolean clearFor(Entity reserver)
+    public boolean clearFor(@NotNull final Entity reserver)
     {
-        CompoundTag data = this.getPersistentData();
-        if (data.contains(RESERVE_KEY, Tag.TAG_INT_ARRAY))
+        if (animalData == null) return false;
+
+        UUID who = animalData.getOwner();
+        if (reserver.getUUID().equals(who))
         {
-            UUID who = data.getUUID(RESERVE_KEY);
-            if (reserver.getUUID().equals(who))
-            {
-                clearReservation();
-                return true;
-            }
+            clearReservation();
+            return true;
         }
 
         return false;
@@ -848,10 +950,11 @@ public class CavalryHorseEntity extends Horse implements IManagedAnimal<CavalryH
      * @param horse the horse to query
      * @return the UUID of the reserver, or null if no one has reserved it
      */
-    public UUID reservedBy()
+    public @Nullable UUID reservedBy()
     {
-        CompoundTag data = this.getPersistentData();
-        return data.contains(RESERVE_KEY, Tag.TAG_INT_ARRAY) ? data.getUUID(RESERVE_KEY) : null;
+        if (animalData == null) return null;
+
+        return animalData.getOwner();
     }
 
     /**
@@ -892,9 +995,10 @@ public class CavalryHorseEntity extends Horse implements IManagedAnimal<CavalryH
     public boolean isInStable()
     {
         IBuilding stable = getStableBuilding();
-        if (stable == null) return false;
+        if (!(stable instanceof BuildingStable)) return false;
         
-        if (stable.isInBuilding(this.getOnPos())) {
+        if (stable.isInBuilding(this.blockPosition())) 
+        {
             return true;
         }
 
