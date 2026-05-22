@@ -24,7 +24,6 @@ import com.minecolonies.core.util.WorkerUtil;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.items.IItemHandler;
-
 import java.util.List;
 
 import static com.minecolonies.api.util.ItemStackUtils.*;
@@ -36,10 +35,9 @@ import static com.minecolonies.api.util.constant.translation.RequestSystemTransl
 import static com.minecolonies.api.util.constant.translation.RequestSystemTranslationConstants.REQUEST_SYSTEM_BUILDING_LEVEL_TOO_LOW;
 import static com.minecolonies.core.colony.buildings.modules.BuildingModules.RESTAURANT_MENU;
 import static com.minecolonies.core.entity.ai.workers.crafting.EntityAIWorkSmelter.ORE_LIST;
-import static com.minecolonies.core.entity.ai.workers.production.agriculture.EntityAIWorkFisherman.SUBOPTIMAL_POND_COMPLAINT_DISTANCE;
 import static com.minecolonies.core.util.WorkerUtil.getLastLadder;
 import static com.minecolonies.core.util.WorkerUtil.isThereCompostedLand;
-
+import static com.minecolonies.core.entity.ai.workers.production.agriculture.EntityAIWorkFisherman.SUBOPTIMAL_POND_COMPLAINT_DISTANCE;
 /**
  * Class containing initializer for all the validator predicates.
  */
