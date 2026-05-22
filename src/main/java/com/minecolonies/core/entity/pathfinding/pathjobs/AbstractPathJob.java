@@ -369,7 +369,7 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
             if (!reachesDestination && isAtDestination(node))
             {
                 bestNode = node;
-                bestNodeEndScore = getEndNodeScore(node);
+                bestNodeEndScore = getEndNodeScoreWithExtraCost(node);
                 result.setPathReachesDestination(true);
                 handleDebugPathReach(bestNode);
 
@@ -397,7 +397,7 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
             if (!node.isCornerNode())
             {
                 // Calculates a score for a possible end node, defaults to heuristic(closest)
-                final double nodeEndSCore = getEndNodeScore(node);
+                final double nodeEndSCore = getEndNodeScoreWithExtraCost(node);
                 if (nodeEndSCore < bestNodeEndScore)
                 {
                     if (!reachesDestination || isAtDestination(node))
@@ -470,7 +470,7 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
 
                     handleDebugExtraNode(node);
 
-                    final double nodeEndSCore = getEndNodeScore(node);
+                    final double nodeEndSCore = getEndNodeScoreWithExtraCost(node);
                     if (nodeEndSCore < bestNodeEndScore && (!reachesDestination || isAtDestination(node)))
                     {
                         bestNode = node;
@@ -490,6 +490,7 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
             }
         }
 
+        RecentTargetCache.add(new BlockPos(bestNode.x, bestNode.y, bestNode.z), 50);
         return finalizePath(bestNode);
     }
 
@@ -972,11 +973,23 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
     protected abstract boolean isAtDestination(MNode n);
 
     /**
+     * Calculates the end node score to compare end nodes additionally to heuristic/cost
+     *
+     * @param n
+     * @return end node score, lower is better
+     */
+    private double getEndNodeScoreWithExtraCost(MNode n)
+    {
+        tempWorldPos.set(n.x, n.y, n.z);
+        return getEndNodeScore(n) + RecentTargetCache.getExtraCost(tempWorldPos);
+    }
+
+    /**
      * Calculates a score for potential points where the path may end given no destination
      * By default the heuristic for the closest node is used
      *
      * @param n Node to test.
-     * @return score for the node.
+     * @return score for the node, lower is better
      */
     protected double getEndNodeScore(MNode n)
     {

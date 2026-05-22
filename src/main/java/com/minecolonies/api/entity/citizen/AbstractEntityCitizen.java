@@ -18,6 +18,7 @@ import com.minecolonies.api.entity.pathfinding.registry.IPathNavigateRegistry;
 import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.api.sounds.EventType;
 import com.minecolonies.api.util.*;
+import com.minecolonies.api.util.constant.ColonyConstants;
 import com.minecolonies.core.entity.pathfinding.navigation.AbstractAdvancedPathNavigate;
 import com.minecolonies.core.entity.pathfinding.navigation.PathingStuckHandler;
 import com.mojang.datafixers.util.Pair;
@@ -119,12 +120,12 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
     /**
      * Counts entity collisions
      */
-    private int collisionCounter = 0;
+    private int collisionCounter = ColonyConstants.rand.nextInt(100);
 
     /**
      * The collision threshold
      */
-    private final static int COLL_THRESHOLD = 50;
+    private final static int COLL_THRESHOLD = 100;
 
     /**
      * Flag to check if the equipment is dirty.
@@ -358,20 +359,6 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
     }
 
     /**
-     * Don't push if we're ignoring being pushed
-     */
-    @Override
-    public void pushEntities()
-    {
-        if (collisionCounter > COLL_THRESHOLD)
-        {
-            return;
-        }
-
-        super.pushEntities();
-    }
-
-    /**
      * Ignores entity collisions are colliding for a while, solves stuck e.g. for many trying to take the same door
      *
      * @param entityIn entity to collide with
@@ -413,7 +400,7 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
         else
         {
             // guards push the player out of their way
-            push(player);
+            player.push(this);
         }
     }
 

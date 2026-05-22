@@ -473,9 +473,14 @@ public final class WindowConstants
     public static final String BUTTON_NEXT_COLOR_ID = "nextColor";
 
     /**
-     * This button will remove the currently rendered structure.
+     * Generic cancel button.
      */
     public static final String BUTTON_CANCEL = "cancel";
+
+    /**
+     * Generic confirm button.
+     */
+    public static final String BUTTON_CONFIRM = "confirm";
 
     /**
      * Move the structure preview forward.
@@ -1027,6 +1032,11 @@ public final class WindowConstants
      * Title label.
      */
     public static final String TITLE_LABEL = "title";
+
+    /**
+     * Warning label.
+     */
+    public static final String WARNING_LABEL = "warning";
 
     /**
      * Crafting switch-output button.
