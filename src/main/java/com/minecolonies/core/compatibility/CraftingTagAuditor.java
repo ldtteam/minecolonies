@@ -43,6 +43,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.CitizenConstants.FULL_SATURATION;
 import static com.minecolonies.api.util.constant.Constants.MOD_ID;
@@ -58,6 +59,8 @@ import static com.minecolonies.api.util.constant.Constants.MOD_ID;
  */
 public class CraftingTagAuditor
 {
+    private static Map<ItemStorage, List<IGenericRecipe>> cachedFoodRecipes = new HashMap<>();
+
     /**
      * Run the auditor to generate the output file.
      * @param server the current Minecraft server
@@ -320,6 +323,7 @@ public class CraftingTagAuditor
         }
         writer.newLine();
 
+        cachedFoodRecipes.clear();
         for (final ItemStack item : getAllItems())
         {
             writeItemData(writer, item);
@@ -337,6 +341,16 @@ public class CraftingTagAuditor
                 writeCrafterValue(writer, crafterMap, herder);
             }
             writer.newLine();
+
+            if (ItemStackUtils.ISFOOD.test(item))
+            {
+                cachedFoodRecipes.put(new ItemStorage(item), crafterMap.values().stream()
+                    .flatMap(List::stream)
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toCollection(() -> Collections.newSetFromMap(new IdentityHashMap<>())))
+                    .stream()
+                    .toList());
+            }
         }
     }
 
@@ -431,7 +445,7 @@ public class CraftingTagAuditor
                                     @NotNull final MinecraftServer server) throws IOException
     {
         writeItemHeaders(writer);
-        writer.write(",nutrition,maxlevel,tier,foodvalue,fullhealth");
+        writer.write(",nutrition,maxlevel,tier,foodvalue,fullhealth,ingredients");
         writer.newLine();
 
         for (final ItemStack item : getAllItems())
@@ -456,6 +470,14 @@ public class CraftingTagAuditor
             writer.write(Double.toString(FoodUtils.getFoodValue(item, properties, 0)));
             writer.write(',');
             writer.write(Double.toString(FULL_SATURATION / FoodUtils.getFoodValue(item, properties, 0)));
+            writer.write(',');
+            writer.write('"' + cachedFoodRecipes.getOrDefault(new ItemStorage(item), List.of())
+                .stream().map(r -> r.getInputs().stream()
+                    .map(List::getFirst)
+                    .sorted(Comparator.comparingInt(ItemStack::getCount).reversed())
+                    .map(s -> s.getCount() + "x " + s.getDisplayName().getString())
+                    .collect(Collectors.joining(",")))
+                .collect(Collectors.joining(" OR ")) + '"');
             writer.newLine();
         }
     }
