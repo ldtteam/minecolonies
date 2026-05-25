@@ -1,11 +1,7 @@
 {
   "type": "recipe",
-  "count": 2,
   "crafter": "baker_crafting",
   "inputs": [
-    {
-      "item": "minecolonies:durum"
-    },
     {
       "item": "minecolonies:durum"
     },
@@ -14,6 +10,9 @@
     },
     {
       "item": "minecraft:sugar"
+    },
+    {
+      "item": "minecraft:egg"
     },
     {
       "item": "minecraft:sweet_berries"
