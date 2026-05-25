@@ -445,7 +445,7 @@ public class CraftingTagAuditor
                                     @NotNull final MinecraftServer server) throws IOException
     {
         writeItemHeaders(writer);
-        writer.write(",nutrition,maxlevel,tier,foodvalue,fullhealth,ingredients");
+        writer.write(",nutrition,maxlevel,tier,foodvalue,fullhealth,tags,output,ingredients");
         writer.newLine();
 
         for (final ItemStack item : getAllItems())
@@ -470,6 +470,14 @@ public class CraftingTagAuditor
             writer.write(Double.toString(FoodUtils.getFoodValue(item, properties, 0)));
             writer.write(',');
             writer.write(Double.toString(FULL_SATURATION / FoodUtils.getFoodValue(item, properties, 0)));
+            writer.write(',');
+            writer.write('"' + item.getTags()
+                .map(t -> t.location().toString())
+                .sorted()
+                .collect(Collectors.joining(",")) + '"');
+            writer.write(',');
+            writer.write(Integer.toString(cachedFoodRecipes.getOrDefault(new ItemStorage(item), List.of())
+                    .stream().mapToInt(r -> r.getPrimaryOutput().getCount()).max().orElse(0)));
             writer.write(',');
             writer.write('"' + cachedFoodRecipes.getOrDefault(new ItemStorage(item), List.of())
                 .stream().map(r -> r.getInputs().stream()
