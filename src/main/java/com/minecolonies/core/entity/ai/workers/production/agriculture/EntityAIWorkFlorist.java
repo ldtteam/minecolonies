@@ -21,6 +21,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -397,11 +398,11 @@ public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist, Bu
      * @param pos the position to check for flower drops.
      * @return an Optional containing the registry name of the flower drop, or an empty Optional if no flower is found.
      */
-    protected List<String> getFlowerDropAtPos(ServerLevel world, BlockPos pos)
+    protected List<String> getFlowerDropAtPos(Level world, BlockPos pos)
     {
         List<String> flowerDrops = new ArrayList<>();
         BlockState state = world.getBlockState(pos);
-        List<ItemStack> drops = Block.getDrops(state, world, pos, null, worker, worker.getMainHandItem());
+        List<ItemStack> drops = Block.getDrops(state, (ServerLevel) world, pos, null, worker, worker.getMainHandItem());
         for (ItemStack drop : drops)
         {
             if (drop.is(ItemTags.FLOWERS))
