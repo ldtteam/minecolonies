@@ -132,7 +132,7 @@ public final class CitizenConstants
     /**
      * Big multiplier in extreme saturation situations.
      */
-    public static final double BIG_SATURATION_FACTOR      = 0.05;
+    public static final double BIG_SATURATION_FACTOR      = 0.2;
     /**
      * Decrease by this * buildingLevel each new night.
      */

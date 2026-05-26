@@ -95,6 +95,8 @@ public class FoodUtils
             return 0;
         }
 
+        // At 40 saturation, if we do a x2 minecolonies bonus, we get 1 top food filling up the full food bar!
+
         final double saturationBonus = foodStack.getItem() instanceof IMinecoloniesFoodItem ? 2.0 : 1.0;
         return itemFood.getNutrition() * saturationBonus * (1.0 + researchBonus);
     }
