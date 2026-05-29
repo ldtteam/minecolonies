@@ -7,14 +7,17 @@ import com.minecolonies.api.entity.ai.workers.util.GuardGearBuilder;
 import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.api.inventory.ModContainers;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ItemStack;
@@ -264,6 +267,20 @@ public class ContainerCitizenInventory extends AbstractContainerMenu
                     return false;
                 }
                 return false;
+            }
+
+            @Override
+            public Pair<ResourceLocation, ResourceLocation> getNoItemIcon()
+            {
+                final ResourceLocation icon = switch (equipmentSlot)
+                {
+                    case HEAD -> InventoryMenu.EMPTY_ARMOR_SLOT_HELMET;
+                    case CHEST -> InventoryMenu.EMPTY_ARMOR_SLOT_CHESTPLATE;
+                    case LEGS -> InventoryMenu.EMPTY_ARMOR_SLOT_LEGGINGS;
+                    case FEET -> InventoryMenu.EMPTY_ARMOR_SLOT_BOOTS;
+                    default -> null;
+                };
+                return icon == null ? null : Pair.of(InventoryMenu.BLOCK_ATLAS, icon);
             }
         });
     }
