@@ -5,6 +5,7 @@ import com.minecolonies.api.blocks.interfaces.IBuildingBrowsableBlock;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildingextensions.registry.BuildingExtensionRegistries;
+import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.client.gui.containers.WindowField;
 import com.minecolonies.core.colony.buildingextensions.FarmField;
@@ -12,11 +13,13 @@ import com.minecolonies.core.tileentities.TileEntityScarecrow;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Explosion;
@@ -27,15 +30,20 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.material.MapColor;
+import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 /**
  * The net.minecraft.core.Directions, placement and activation.
@@ -45,19 +53,27 @@ public class BlockScarecrow extends AbstractBlockMinecoloniesDefault<BlockScarec
 {
     public static final EnumProperty<DoubleBlockHalf> HALF = BlockStateProperties.DOUBLE_BLOCK_HALF;
 
+    public static final BooleanProperty LANTERN = BooleanProperty.create("lantern");
+
     /**
      * Constructor called on block placement.
      */
     public BlockScarecrow()
     {
         super(Properties.of().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(HARDNESS, RESISTANCE));
-        this.registerDefaultState(this.defaultBlockState().setValue(FACING, Direction.NORTH).setValue(HALF, DoubleBlockHalf.LOWER));
+        this.registerDefaultState(this.defaultBlockState().setValue(FACING, Direction.NORTH).setValue(HALF, DoubleBlockHalf.LOWER).setValue(LANTERN, false));
     }
 
     @Override
     public ResourceLocation getRegistryName()
     {
         return new ResourceLocation(Constants.MOD_ID, REGISTRY_NAME);
+    }
+
+    @Override
+    public int getLightEmission(final BlockState state, final BlockGetter level, final BlockPos pos)
+    {
+        return state.getValue(LANTERN) ? Blocks.LANTERN.defaultBlockState().getLightEmission(level, pos) : 0;
     }
 
     @Nullable
@@ -72,14 +88,16 @@ public class BlockScarecrow extends AbstractBlockMinecoloniesDefault<BlockScarec
     }
 
     @Override
-    public InteractionResult use(
-      final BlockState state,
-      final Level worldIn,
-      final BlockPos pos,
-      final Player player,
-      final InteractionHand hand,
-      final BlockHitResult ray)
+    public InteractionResult use(final BlockState state, final Level worldIn, final BlockPos pos, final Player player, final InteractionHand hand, final BlockHitResult ray)
     {
+        if (player.getItemInHand(hand).is(Items.LANTERN) && !state.getValue(LANTERN))
+        {
+            worldIn.setBlock(pos, state.setValue(LANTERN, true), 3);
+            worldIn.playSound(player, pos, Blocks.LANTERN.getSoundType(Blocks.LANTERN.defaultBlockState()).getPlaceSound(), SoundSource.BLOCKS, 1.0f, 1.0f);
+            InventoryUtils.reduceStackInItemHandler(new InvWrapper(player.getInventory()), player.getItemInHand(hand));
+            return InteractionResult.CONSUME;
+        }
+
         // If the world is client, open the inventory of the field.
         if (worldIn.isClientSide)
         {
@@ -146,6 +164,34 @@ public class BlockScarecrow extends AbstractBlockMinecoloniesDefault<BlockScarec
     }
 
     @Override
+    public void neighborChanged(final BlockState state, final Level worldIn, final BlockPos pos, final Block block, final BlockPos fromPos, final boolean isMoving)
+    {
+        super.neighborChanged(state, worldIn, pos, block, fromPos, isMoving);
+        final DoubleBlockHalf half = state.getValue(HALF);
+        final BlockPos otherPos = half == DoubleBlockHalf.LOWER ? pos.above() : pos.below();
+        if (!fromPos.equals(otherPos))
+        {
+            return;
+        }
+        final BlockState otherState = worldIn.getBlockState(otherPos);
+        if (otherState.getBlock() == this && otherState.getValue(HALF) != half && otherState.getValue(LANTERN) != state.getValue(LANTERN))
+        {
+            worldIn.setBlock(pos, state.setValue(LANTERN, otherState.getValue(LANTERN)), UPDATE_ALL);
+        }
+    }
+
+    @Override
+    public List<ItemStack> getDrops(final BlockState state, final LootParams.Builder params)
+    {
+        final List<ItemStack> drops = super.getDrops(state, params);
+        if (state.getValue(HALF) == DoubleBlockHalf.LOWER && state.getValue(LANTERN))
+        {
+            drops.add(new ItemStack(Items.LANTERN));
+        }
+        return drops;
+    }
+
+    @Override
     public void wasExploded(final Level worldIn, final BlockPos pos, final Explosion explosionIn)
     {
         notifyColonyAboutDestruction(worldIn, pos);
@@ -207,7 +253,7 @@ public class BlockScarecrow extends AbstractBlockMinecoloniesDefault<BlockScarec
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder)
     {
-        builder.add(HALF, FACING);
+        builder.add(HALF, FACING, LANTERN);
     }
 
     /**
