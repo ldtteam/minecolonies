@@ -144,9 +144,6 @@ public class TileEntityScarecrowRenderer implements BlockEntityRenderer<Abstract
         matrixStack.popPose();
     }
 
-    // Pixel-to-block scale used by the model
-    private static final float PX = 1f / 16f;
-
     private static void renderLantern(final PoseStack matrixStack, final MultiBufferSource buffer, final BlockPos pos, final net.minecraft.world.level.Level level)
     {
         matrixStack.pushPose();
