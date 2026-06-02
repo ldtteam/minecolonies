@@ -7,6 +7,7 @@ import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.translation.ToolTranslationConstants;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -86,73 +87,64 @@ public class ModEquipmentTypes
 
         sword = register("sword",
           builder -> builder.setDisplayName(Component.translatable(ToolTranslationConstants.TOOL_TYPE_SWORD))
-                       .setIsEquipment((itemStack, equipmentType) -> canPerformDefaultActions(itemStack, ToolActions.DEFAULT_SWORD_ACTIONS) || Compatibility.isTinkersWeapon(
-                         itemStack))
-                       .setEquipmentLevel((itemStack, equipmentType) -> {
-                      if (Compatibility.isTinkersWeapon(itemStack))
-                      {
-                          return Compatibility.getToolLevel(itemStack);
-                      }
-                      else if (itemStack.getItem() instanceof final TieredItem tieredItem)
-                      {
-                          return tieredItem.getTier().getLevel();
-                      }
-                      return -1;
-                  })
+                       .setIsEquipment((itemStack, equipmentType) -> canPerformDefaultActions(itemStack, ToolActions.DEFAULT_SWORD_ACTIONS)
+                                                                     || Compatibility.isTinkersWeapon(itemStack)
+                                                                     || Compatibility.isCustomWeapon(itemStack))
+                       .setEquipmentLevel(ModEquipmentTypes::vanillaToolLevel)
                   .build());
 
         bow = register("bow",
           builder -> builder.setDisplayName(Component.translatable(ToolTranslationConstants.TOOL_TYPE_BOW))
                        .setIsEquipment((itemStack, equipmentType) -> itemStack.getItem() instanceof BowItem)
-                       .setEquipmentLevel((itemStack, equipmentType) -> durabilityBasedLevel(itemStack, Items.BOW.getMaxDamage()))
+                       .setEquipmentLevel((itemStack, equipmentType) -> Compatibility.getItemLevel(itemStack))
                   .build());
 
         fishing_rod = register("rod",
           builder -> builder.setDisplayName(Component.translatable(ToolTranslationConstants.TOOL_TYPE_FISHING_ROD))
                        .setIsEquipment((itemStack, equipmentType) -> canPerformDefaultActions(itemStack, ToolActions.DEFAULT_FISHING_ROD_ACTIONS))
-                       .setEquipmentLevel((itemStack, equipmentType) -> durabilityBasedLevel(itemStack, Items.FISHING_ROD.getMaxDamage()))
+                       .setEquipmentLevel((itemStack, equipmentType) -> Compatibility.getItemLevel(itemStack))
                   .build());
 
         shears = register("shears",
           builder -> builder.setDisplayName(Component.translatable(ToolTranslationConstants.TOOL_TYPE_SHEARS))
                        .setIsEquipment((itemStack, equipmentType) -> canPerformDefaultActions(itemStack, ToolActions.DEFAULT_SHEARS_ACTIONS))
-                       .setEquipmentLevel((itemStack, equipmentType) -> durabilityBasedLevel(itemStack, Items.SHEARS.getMaxDamage()))
+                       .setEquipmentLevel((itemStack, equipmentType) -> Compatibility.getItemLevel(itemStack))
                   .build());
 
         shield = register("shield",
           builder -> builder.setDisplayName(Component.translatable(ToolTranslationConstants.TOOL_TYPE_SHIELD))
                        .setIsEquipment((itemStack, equipmentType) -> canPerformDefaultActions(itemStack, ToolActions.DEFAULT_SHIELD_ACTIONS))
-                       .setEquipmentLevel((itemStack, equipmentType) -> durabilityBasedLevel(itemStack, Items.SHIELD.getMaxDamage()))
+                       .setEquipmentLevel((itemStack, equipmentType) -> Compatibility.getItemLevel(itemStack))
                   .build());
 
         helmet = register("helmet",
           builder -> builder.setDisplayName(Component.translatable(ToolTranslationConstants.TOOL_TYPE_HELMET))
                        .setIsEquipment((itemStack, equipmentType) -> itemStack.getItem() instanceof ArmorItem armor && EquipmentSlot.HEAD.equals(armor.getEquipmentSlot()))
-                       .setEquipmentLevel((itemStack, equipmentType) -> ItemStackUtils.getArmorLevel(itemStack))
+                       .setEquipmentLevel((itemStack, equipmentType) -> Compatibility.getItemLevel(itemStack))
                   .build());
 
         leggings = register("leggings",
           builder -> builder.setDisplayName(Component.translatable(ToolTranslationConstants.TOOL_TYPE_LEGGINGS))
                        .setIsEquipment((itemStack, equipmentType) -> itemStack.getItem() instanceof ArmorItem armor && EquipmentSlot.LEGS.equals(armor.getEquipmentSlot()))
-                       .setEquipmentLevel((itemStack, equipmentType) -> ItemStackUtils.getArmorLevel(itemStack))
+                       .setEquipmentLevel((itemStack, equipmentType) -> Compatibility.getItemLevel(itemStack))
                   .build());
 
         chestplate = register("chestplate",
           builder -> builder.setDisplayName(Component.translatable(ToolTranslationConstants.TOOL_TYPE_CHEST_PLATE))
                        .setIsEquipment((itemStack, equipmentType) -> itemStack.getItem() instanceof ArmorItem armor && EquipmentSlot.CHEST.equals(armor.getEquipmentSlot()))
-                       .setEquipmentLevel((itemStack, equipmentType) -> ItemStackUtils.getArmorLevel(itemStack))
+                       .setEquipmentLevel((itemStack, equipmentType) -> Compatibility.getItemLevel(itemStack))
                   .build());
 
         boots = register("boots",
           builder -> builder.setDisplayName(Component.translatable(ToolTranslationConstants.TOOL_TYPE_BOOTS))
                        .setIsEquipment((itemStack, equipmentType) -> itemStack.getItem() instanceof ArmorItem armor && EquipmentSlot.FEET.equals(armor.getEquipmentSlot()))
-                       .setEquipmentLevel((itemStack, equipmentType) ->ItemStackUtils.getArmorLevel(itemStack))
+                       .setEquipmentLevel((itemStack, equipmentType) -> Compatibility.getItemLevel(itemStack))
                   .build());
 
         flint_and_steel = register("flintandsteel",
           builder -> builder.setDisplayName(Component.translatable(ToolTranslationConstants.TOOL_TYPE_LIGHTER))
                        .setIsEquipment((itemStack, equipmentType) -> itemStack.getItem() instanceof FlintAndSteelItem)
-                       .setEquipmentLevel((itemStack, equipmentType) -> durabilityBasedLevel(itemStack, Items.FLINT_AND_STEEL.getMaxDamage()))
+                       .setEquipmentLevel((itemStack, equipmentType) -> Compatibility.getItemLevel(itemStack))
                   .build());
 
         lead = register("lead",
@@ -164,9 +156,8 @@ public class ModEquipmentTypes
         spear = register("spear",
           builder -> builder.setDisplayName(Component.translatable(ToolTranslationConstants.TOOL_TYPE_SPEAR))
                       .setIsEquipment((itemStack, equipmentType) -> itemStack.is(ModItems.spear))
-                      .setEquipmentLevel((itemStack, equipmentType) -> durabilityBasedLevel(itemStack, ModItems.spear.getMaxDamage()))
+                      .setEquipmentLevel((itemStack, equipmentType) -> Compatibility.getItemLevel(itemStack))
                   .build());
-
     }
 
     /**
@@ -203,15 +194,11 @@ public class ModEquipmentTypes
      */
     public static int vanillaToolLevel(final ItemStack itemStack, final EquipmentTypeEntry equipmentType)
     {
-        if (Compatibility.isTinkersTool(itemStack, equipmentType))
+        if (Compatibility.isTinkersTool(itemStack, equipmentType) || Compatibility.isTinkersWeapon(itemStack))
         {
             return Compatibility.getToolLevel(itemStack);
         }
-        else if (itemStack.getItem() instanceof final TieredItem tieredItem)  // most tools
-        {
-            return tieredItem.getTier().getLevel();
-        }
-        return -1;
+        return Compatibility.getItemLevel(itemStack);
     }
 
     /**
@@ -228,6 +215,63 @@ public class ModEquipmentTypes
         }
 
         return Math.min(itemStack.getMaxDamage() / vanillaItemDurability, 5);
+    }
+
+    /**
+     * Populate the tier registry with every item currently in the game.
+     * Called once during FMLCommonSetupEvent via MineColonies.preInit.
+     */
+    @SuppressWarnings("null")
+    public static void initRegisterEquipmentTiers()
+    {
+        final int bowRef     = new ItemStack(Items.BOW).getMaxDamage();
+        final int rodRef     = new ItemStack(Items.FISHING_ROD).getMaxDamage();
+        final int shearsRef  = new ItemStack(Items.SHEARS).getMaxDamage();
+        final int shieldRef  = new ItemStack(Items.SHIELD).getMaxDamage();
+        final int flintRef   = new ItemStack(Items.FLINT_AND_STEEL).getMaxDamage();
+        final int tridentRef = new ItemStack(Items.TRIDENT).getMaxDamage();
+
+        for (final Item item : BuiltInRegistries.ITEM)
+        {
+            final ItemStack dummy = new ItemStack(item);
+
+            if (item instanceof final TieredItem tiered)
+            {
+                Compatibility.registerItemTierIfAbsent(item, tiered.getTier(), (int) tiered.getTier().getAttackDamageBonus());
+            }
+            else if (item instanceof ArmorItem)
+            {
+                final int level = ItemStackUtils.getArmorLevel(dummy);
+                if (level > 0)
+                {
+                    Compatibility.registerItemTierIfAbsent(item, level);
+                }
+            }
+            else if (item instanceof BowItem)
+            {
+                Compatibility.registerItemTierIfAbsent(item, durabilityBasedLevel(dummy, bowRef));
+            }
+            else if (canPerformDefaultActions(dummy, ToolActions.DEFAULT_FISHING_ROD_ACTIONS))
+            {
+                Compatibility.registerItemTierIfAbsent(item, durabilityBasedLevel(dummy, rodRef));
+            }
+            else if (canPerformDefaultActions(dummy, ToolActions.DEFAULT_SHEARS_ACTIONS))
+            {
+                Compatibility.registerItemTierIfAbsent(item, durabilityBasedLevel(dummy, shearsRef));
+            }
+            else if (canPerformDefaultActions(dummy, ToolActions.DEFAULT_SHIELD_ACTIONS))
+            {
+                Compatibility.registerItemTierIfAbsent(item, durabilityBasedLevel(dummy, shieldRef));
+            }
+            else if (item instanceof FlintAndSteelItem)
+            {
+                Compatibility.registerItemTierIfAbsent(item, durabilityBasedLevel(dummy, flintRef));
+            }
+            else if (item instanceof TridentItem)
+            {
+                Compatibility.registerItemTierIfAbsent(item, durabilityBasedLevel(dummy, tridentRef));
+            }
+        }
     }
 
     /**
