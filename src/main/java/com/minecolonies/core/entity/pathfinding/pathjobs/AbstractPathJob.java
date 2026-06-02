@@ -44,8 +44,10 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.concurrent.Callable;
 
-import static com.minecolonies.api.util.constant.PathingConstants.*;
+import static com.minecolonies.api.util.constant.PathingConstants.HALF_A_BLOCK;
+import static com.minecolonies.api.util.constant.PathingConstants.MAX_JUMP_HEIGHT;
 import static com.minecolonies.core.entity.pathfinding.PathingOptions.MAX_COST;
+
 /**
  * Abstract class for Jobs that run in the multithreaded path finder.
  */
@@ -54,7 +56,7 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
     /**
      * Maximium amount of nodes explored
      */
-    public static final int MAX_NODES = 5000;
+    public static final int MAX_NODES = 8000;
 
     /**
      * Start position to path from.
@@ -202,6 +204,8 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
         {
             heuristicMod = 1 + navigator.getAvgHeuristicModifier();
         }
+
+        this.maxNodes = (int) (maxNodes * MineColonies.getConfig().getServer().pathNodeLimitMultiplier.get());
     }
 
     /**
@@ -232,6 +236,8 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
         {
             heuristicMod = 1 + navigator.getAvgHeuristicModifier();
         }
+
+        this.maxNodes = (int) (maxNodes * MineColonies.getConfig().getServer().pathNodeLimitMultiplier.get());
     }
 
     /**
@@ -255,12 +261,15 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
 
         // Max nodes in relation to the box area
         final int xDiff = Math.max(1, Math.abs(start.getX() - end.getX()));
-        // Higher limit for Y changes, as Y is more difficult to traverse(jump/drop costs)
-        final int yDiff = Math.max(1, Math.abs((start.getY() - end.getY()))) * 5;
+        final int yDiff = Math.max(1, Math.abs((start.getY() - end.getY())));
         final int zDiff = Math.max(1, Math.abs((start.getZ() - end.getZ())));
 
-        this.maxNodes =
-          Math.min(MAX_NODES, 300 + Math.max(Math.max(Math.max(2, xDiff / 10) * yDiff * zDiff, xDiff * Math.max(2, yDiff / 10) * zDiff), xDiff * yDiff * Math.max(2, zDiff / 10)));
+        final int directDistance = xDiff + yDiff + zDiff;
+        final int corridorRadius = Math.min(20, 3 + directDistance / 20);
+        final int corridorVolume = directDistance * corridorRadius * corridorRadius;
+        final int estimate = 300 + directDistance * 16 + corridorVolume * 2;
+        this.maxNodes = Math.min(MAX_NODES, estimate);
+
         nodesToVisit = new PriorityQueue<>(maxNodes / 4);
         this.start = new BlockPos(start);
 
@@ -274,6 +283,8 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
         {
             heuristicMod = 1 + navigator.getAvgHeuristicModifier();
         }
+
+        this.maxNodes = (int) (maxNodes * MineColonies.getConfig().getServer().pathNodeLimitMultiplier.get());
     }
 
     /**
@@ -591,14 +602,8 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
             return false;
         }
 
-        // When reaching and never having done a heuristic rebalance and we did explore a high cost assume that we found a possibly too expensive path
-        if (reaches && maxCost > 20 && visitedLevel == 1 && totalNodesVisited < maxNodes * 0.5)
-        {
-            costPerEstimation *= 0.7;
-        }
-
         // Detect an overstimating heuristic(not guranteed, but can check the found path)
-        if (costPerEstimation < 0.9 || (costPerEstimation > 1.2 && !reaches))
+        if (costPerEstimation < 0.9 || (costPerEstimation > 1.2 && !reaches) || visitedLevel == 1)
         {
             // Overshoot a bit
             costPerEstimation *= costPerEstimation < 1 ? 0.9 : 1.1;
@@ -1215,8 +1220,6 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
             node = node.parent;
         }
 
-        doDebugPrinting(points);
-
         if (points.length > 1)
         {
             result.costPerDist = targetNode.getCost() / BlockPosUtil.distManhattan(start, targetNode.x, targetNode.y, targetNode.z);
@@ -1788,12 +1791,6 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
         if (debugDrawEnabled)
         {
             addNodeToDebug(node);
-
-            if (MineColonies.getConfig().getServer().pathfindingDebugVerbosity.get() == DEBUG_VERBOSITY_FULL)
-            {
-                Log.getLogger().info(String.format("Examining node [%d,%d,%d] ; c=%f ; h=%f",
-                    node.x, node.y, node.z, node.getCost(), node.getHeuristic()));
-            }
         }
     }
 
@@ -1827,29 +1824,6 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
             {
                 currentNode = currentNode.parent;
                 debugNodesOrgPath.add(currentNode);
-            }
-        }
-    }
-
-    /**
-     * Turns on debug printing.
-     *
-     * @param points the points to print.
-     */
-    private void doDebugPrinting(@NotNull final Node[] points)
-    {
-        if (debugDrawEnabled)
-        {
-            if (MineColonies.getConfig().getServer().pathfindingDebugVerbosity.get() > DEBUG_VERBOSITY_NONE)
-            {
-                Log.getLogger().info("Path found:");
-
-                for (@NotNull final Node p : points)
-                {
-                    Log.getLogger().info(String.format("Step: [%d,%d,%d]", p.x, p.y, p.z));
-                }
-
-                Log.getLogger().info(String.format("Total Nodes Visited %d / %d", totalNodesVisited, totalNodesAdded));
             }
         }
     }

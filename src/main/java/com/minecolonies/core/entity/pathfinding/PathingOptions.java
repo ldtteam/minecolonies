@@ -40,7 +40,7 @@ public class PathingOptions
     /**
      * Additional cost of swimming - base 1.
      */
-    public double swimCost = 2D;
+    public double swimCost = 4D;
 
     /**
      * Additional cost of cave air.
