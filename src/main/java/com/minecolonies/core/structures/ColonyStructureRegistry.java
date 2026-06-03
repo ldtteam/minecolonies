@@ -75,7 +75,7 @@ public class ColonyStructureRegistry
     /**
      * Registers a synthetic in-memory datapack that serves the merged {@code minecolonies:empty_colony}
      * structure set JSON, combining all built-in and addon structures into a single placement grid.
-     * The pack is placed at {@link Pack.Position#TOP} to override any other pack that may provide the same file.
+     * The pack is placed at {@link Pack.Position#BOTTOM} so the pack can still be overridden by other datapacks if so desired.
      */
     @SubscribeEvent
     public static void onAddPackFinders(final AddPackFindersEvent event)
@@ -98,7 +98,7 @@ public class ColonyStructureRegistry
                 true,
                 id -> new InjectionPackResources(),
                 PackType.SERVER_DATA,
-                Pack.Position.TOP,
+                Pack.Position.BOTTOM,
                 PackSource.BUILT_IN);
             if (pack != null)
             {
