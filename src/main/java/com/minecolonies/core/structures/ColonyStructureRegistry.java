@@ -4,20 +4,20 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.minecolonies.api.util.Log;
-import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.MineColonies;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.PackLocationInfo;
 import net.minecraft.server.packs.PackResources;
+import net.minecraft.server.packs.PackSelectionConfig;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.metadata.MetadataSectionSerializer;
 import net.minecraft.server.packs.metadata.pack.PackMetadataSection;
 import net.minecraft.server.packs.repository.Pack;
 import net.minecraft.server.packs.repository.PackSource;
 import net.minecraft.server.packs.resources.IoSupplier;
-import net.minecraftforge.event.AddPackFindersEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.neoforge.event.AddPackFindersEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -46,7 +46,6 @@ import java.util.Set;
  * ColonyStructureRegistry.register(new ResourceLocation("myaddon", "my_colony"));
  * }</pre>
  */
-@Mod.EventBusSubscriber(modid = Constants.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class ColonyStructureRegistry
 {
     private static final List<ResourceLocation> ADDON_STRUCTURES = new ArrayList<>();
@@ -75,7 +74,7 @@ public class ColonyStructureRegistry
     /**
      * Registers a synthetic in-memory datapack that serves the merged {@code minecolonies:empty_colony}
      * structure set JSON, combining all built-in and addon structures into a single placement grid.
-     * The pack is placed at {@link Pack.Position#TOP} to override any other pack that may provide the same file.
+     * The pack is placed at {@link Pack.Position#BOTTOM} so the pack can still be overridden by other datapacks if so desired.
      */
     @SubscribeEvent
     public static void onAddPackFinders(final AddPackFindersEvent event)
@@ -92,14 +91,28 @@ public class ColonyStructureRegistry
 
         Log.getLogger().info("Registering abandoned colony worldgen structures.");
 
+        final PackLocationInfo locationInfo = new PackLocationInfo("minecolonies_structure_set_injection",
+            Component.literal("Minecolonies Structure Set Injection"),
+            PackSource.BUILT_IN,
+            java.util.Optional.empty());
+
         event.addRepositorySource(infoConsumer -> {
-            final Pack pack = Pack.readMetaAndCreate("minecolonies_structure_set_injection",
-                Component.literal("Minecolonies Structure Set Injection"),
-                true,
-                id -> new InjectionPackResources(),
-                PackType.SERVER_DATA,
-                Pack.Position.TOP,
-                PackSource.BUILT_IN);
+            final Pack pack = Pack.readMetaAndCreate(locationInfo, new Pack.ResourcesSupplier()
+            {
+                @Override
+                @NotNull
+                public PackResources openPrimary(final @NotNull PackLocationInfo loc)
+                {
+                    return new InjectionPackResources(loc);
+                }
+
+                @Override
+                @NotNull
+                public PackResources openFull(final @NotNull PackLocationInfo loc, final @NotNull Pack.Metadata meta)
+                {
+                    return new InjectionPackResources(loc);
+                }
+            }, PackType.SERVER_DATA, new PackSelectionConfig(true, Pack.Position.BOTTOM, false));
             if (pack != null)
             {
                 infoConsumer.accept(pack);
@@ -116,7 +129,7 @@ public class ColonyStructureRegistry
      * from being picked up by the {@code minecraft:worldgen/structure} registry loader, whose prefix
      * ({@code "worldgen/structure"}) is a plain string prefix of {@code "worldgen/structure_set"}.</p>
      */
-    private static class InjectionPackResources implements PackResources
+    private record InjectionPackResources(PackLocationInfo locationInfo) implements PackResources
     {
         private static final String PACK_META = "{\"pack\":{\"description\":\"Minecolonies structure set injection\",\"pack_format\":15}}";
 
@@ -184,9 +197,7 @@ public class ColonyStructureRegistry
         @Override
         public void listResources(@NotNull final PackType type, @NotNull final String namespace, @NotNull final String prefix, @NotNull final ResourceOutput output)
         {
-            if (type == PackType.SERVER_DATA
-                && namespace.equals("minecolonies")
-                && "worldgen/structure_set/empty_colony.json".startsWith(prefix + "/"))
+            if (type == PackType.SERVER_DATA && namespace.equals("minecolonies") && "worldgen/structure_set/empty_colony.json".startsWith(prefix + "/"))
             {
                 output.accept(new ResourceLocation("minecolonies", "worldgen/structure_set/empty_colony.json"), this::buildStructureSet);
             }
@@ -208,6 +219,13 @@ public class ColonyStructureRegistry
                 return deserializer.fromJson(JsonParser.parseString(PACK_META).getAsJsonObject().getAsJsonObject("pack"));
             }
             return null;
+        }
+
+        @NotNull
+        @Override
+        public PackLocationInfo location()
+        {
+            return locationInfo;
         }
 
         @NotNull
