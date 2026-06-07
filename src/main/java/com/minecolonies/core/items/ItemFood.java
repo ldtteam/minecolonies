@@ -45,6 +45,12 @@ public class ItemFood extends Item implements IMinecoloniesFoodItem
     }
 
     @Override
+    public int getUseDuration(ItemStack stack)
+    {
+        return super.getUseDuration(stack) * tier;
+    }
+
+    @Override
     public int getTier()
     {
         return this.tier;
