@@ -20,10 +20,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * This class is to store the methods that call the methods to check for miscellaneous compatibility problems.
@@ -42,8 +39,8 @@ public final class Compatibility
     public static TinkersToolProxy tinkersCompat      = new TinkersToolProxy();
     public static DynamicTreeProxy dynamicTreesCompat = new DynamicTreeProxy();
 
-    private static final Map<ResourceLocation, Map<ItemStorage, Integer>> customEquipmentTypeLevels    = new HashMap<>();
-    private static final List<CustomEquipmentTypeFunction>                customEquipmentTypeFunctions = new ArrayList<>();
+    private static final Map<ResourceLocation, Map<ItemStorage, Integer>>         customEquipmentTypeLevels    = new HashMap<>();
+    private static final Map<ResourceLocation, List<CustomEquipmentTypeFunction>> customEquipmentTypeFunctions = new HashMap<>();
 
     /**
      * This method checks if block is slime block.
@@ -113,6 +110,7 @@ public final class Compatibility
 
     /**
      * Check if a certain item stack is a tinkers tool of the given tool type.
+     *
      * @param stack    the stack to check for.
      * @param toolType the tool type.
      * @return true if so.
@@ -294,20 +292,15 @@ public final class Compatibility
     @Nullable
     public static Integer getCustomEquipmentLevel(final ResourceLocation equipmentType, final ItemStack stack)
     {
-        if (!customEquipmentTypeLevels.containsKey(equipmentType))
-        {
-            return null;
-        }
-
-        final Integer customLevel = customEquipmentTypeLevels.get(equipmentType).get(new ItemStorage(stack));
+        final Integer customLevel = customEquipmentTypeLevels.getOrDefault(equipmentType, Collections.emptyMap()).get(new ItemStorage(stack));
         if (customLevel != null)
         {
             return customLevel;
         }
 
-        for (final CustomEquipmentTypeFunction function : customEquipmentTypeFunctions)
+        for (final CustomEquipmentTypeFunction function : customEquipmentTypeFunctions.getOrDefault(equipmentType, Collections.emptyList()))
         {
-            final Integer functionCustomLevel = function.function.getLevel(stack);
+            final Integer functionCustomLevel = function.getLevel(stack);
             if (functionCustomLevel != null)
             {
                 return functionCustomLevel;
@@ -340,29 +333,43 @@ public final class Compatibility
 
     /**
      * Register a function that dynamically determines the equipment level for items of the given equipment type.
-     * The function receives an item stack and returns its level, or throws if not applicable.
+     * The function receives an item stack and returns its level, or null if not applicable.
      * Always appends — intended for mod compat hooks.
      *
      * @param equipmentType the equipment type to register the function under.
      * @param function      a function mapping an item stack to its equipment level.
      */
     @SuppressWarnings("unused") // Mod compat API
-    public static void registerCustomEquipmentLevel(
-        @NotNull final ResourceLocation equipmentType,
-        @NotNull final CustomEquipmentTypeLevelFunction function)
+    public static void registerCustomEquipmentLevel(@NotNull final ResourceLocation equipmentType, @NotNull final CustomEquipmentTypeFunction function)
     {
-        customEquipmentTypeFunctions.add(new CustomEquipmentTypeFunction(equipmentType, function));
+        customEquipmentTypeFunctions.compute(equipmentType, (key, value) -> {
+            if (value == null)
+            {
+                value = new ArrayList<>();
+            }
+            value.add(function);
+            return value;
+        });
     }
 
+    /**
+     * A function that determines the equipment level of an item stack for a specific equipment type.
+     *
+     * <p>Implementations are responsible for verifying that the given item stack is actually
+     * applicable — i.e., that it is the correct item and is capable of performing the relevant
+     * action. If the item stack is not applicable, return {@code null}.
+     *
+     * <p>The returned level must be in the range {@code [0, 5]}, where {@code 0} is the lowest
+     * and {@code 5} is the highest equipment tier.
+     */
     @FunctionalInterface
-    public interface CustomEquipmentTypeLevelFunction
+    public interface CustomEquipmentTypeFunction
     {
+        /**
+         * @param item the item stack to evaluate.
+         * @return the equipment level in the range [0, 5], or null if the item stack is not applicable.
+         */
         @Nullable
         Integer getLevel(ItemStack item);
     }
-
-    private record CustomEquipmentTypeFunction(
-        @NotNull ResourceLocation equipmentTypeId,
-        @NotNull CustomEquipmentTypeLevelFunction function)
-    {}
 }

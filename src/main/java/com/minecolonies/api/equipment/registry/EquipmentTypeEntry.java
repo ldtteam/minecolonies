@@ -130,10 +130,10 @@ public final class EquipmentTypeEntry
         final Integer customEquipmentLevel = Compatibility.getCustomEquipmentLevel(this.registryName, itemStack);
         if (customEquipmentLevel != null)
         {
-            return Mth.clamp(customEquipmentLevel, -1, 5);
+            return Mth.clamp(customEquipmentLevel, 0, 5);
         }
 
-        return isEquipment.test(itemStack, this) ? Mth.clamp(itemLevel.apply(itemStack, this), -1, 5) : -1;
+        return isEquipment.test(itemStack, this) ? Mth.clamp(itemLevel.apply(itemStack, this), 0, 5) : -1;
     }
 
     /**
