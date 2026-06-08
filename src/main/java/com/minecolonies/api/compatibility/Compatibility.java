@@ -13,7 +13,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Tiers;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
@@ -21,6 +20,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -42,7 +42,8 @@ public final class Compatibility
     public static TinkersToolProxy tinkersCompat      = new TinkersToolProxy();
     public static DynamicTreeProxy dynamicTreesCompat = new DynamicTreeProxy();
 
-    private static final Map<ResourceLocation, Map<ItemStorage, Integer>> customEquipmentTypeLevels = new HashMap<>();
+    private static final Map<ResourceLocation, Map<ItemStorage, Integer>> customEquipmentTypeLevels    = new HashMap<>();
+    private static final List<CustomEquipmentTypeFunction>                customEquipmentTypeFunctions = new ArrayList<>();
 
     /**
      * This method checks if block is slime block.
@@ -284,8 +285,11 @@ public final class Compatibility
     }
 
     /**
-     * Get a custom equipment level from the compatibility manager if exists.
-     * @param stack
+     * Get a custom equipment level for the given equipment type and item stack.
+     *
+     * @param equipmentType the equipment type to look up.
+     * @param stack         the item stack to check.
+     * @return the registered level, or null if no custom level exists for this combination.
      */
     @Nullable
     public static Integer getCustomEquipmentLevel(final ResourceLocation equipmentType, final ItemStack stack)
@@ -294,17 +298,34 @@ public final class Compatibility
         {
             return null;
         }
-        return customEquipmentTypeLevels.get(equipmentType).get(new ItemStorage(stack));
+
+        final Integer customLevel = customEquipmentTypeLevels.get(equipmentType).get(new ItemStorage(stack));
+        if (customLevel != null)
+        {
+            return customLevel;
+        }
+
+        for (final CustomEquipmentTypeFunction function : customEquipmentTypeFunctions)
+        {
+            final Integer functionCustomLevel = function.function.getLevel(stack);
+            if (functionCustomLevel != null)
+            {
+                return functionCustomLevel;
+            }
+        }
+
+        return null;
     }
 
     /**
-     * Register an item by level only.
-     * The closest matching vanilla {@link Tiers} instance is stored so that
+     * Register a specific item with a fixed equipment level for the given equipment type.
      * Always overwrites any existing entry — intended for mod compat hooks.
      *
-     * @param item  the item to register.
-     * @param level the equipment level integer.
+     * @param equipmentType the equipment type to register the item under.
+     * @param item          the item to register.
+     * @param level         the equipment level to assign.
      */
+    @SuppressWarnings("unused") // Mod compat API
     public static void registerCustomEquipmentLevel(@NotNull final ResourceLocation equipmentType, @NotNull final Item item, final int level)
     {
         customEquipmentTypeLevels.compute(equipmentType, (key, value) -> {
@@ -317,9 +338,31 @@ public final class Compatibility
         });
     }
 
-    public record CustomEquipmentTypeLevel(
-        ResourceLocation equipmentType,
-        int level)
+    /**
+     * Register a function that dynamically determines the equipment level for items of the given equipment type.
+     * The function receives an item stack and returns its level, or throws if not applicable.
+     * Always appends — intended for mod compat hooks.
+     *
+     * @param equipmentType the equipment type to register the function under.
+     * @param function      a function mapping an item stack to its equipment level.
+     */
+    @SuppressWarnings("unused") // Mod compat API
+    public static void registerCustomEquipmentLevel(
+        @NotNull final ResourceLocation equipmentType,
+        @NotNull final CustomEquipmentTypeLevelFunction function)
     {
+        customEquipmentTypeFunctions.add(new CustomEquipmentTypeFunction(equipmentType, function));
     }
+
+    @FunctionalInterface
+    public interface CustomEquipmentTypeLevelFunction
+    {
+        @Nullable
+        Integer getLevel(ItemStack item);
+    }
+
+    private record CustomEquipmentTypeFunction(
+        @NotNull ResourceLocation equipmentTypeId,
+        @NotNull CustomEquipmentTypeLevelFunction function)
+    {}
 }
