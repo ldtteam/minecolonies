@@ -1,5 +1,6 @@
 package com.minecolonies.api.equipment.registry;
 
+import com.minecolonies.api.compatibility.Compatibility;
 import com.minecolonies.api.equipment.ModEquipmentTypes;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.network.chat.Component;
@@ -125,7 +126,13 @@ public final class EquipmentTypeEntry
      */
     public int getMiningLevel(ItemStack itemStack)
     {
-        return isEquipment.test(itemStack, this) ? itemLevel.apply(itemStack, this) : -1;
+        if (!isEquipment.test(itemStack, this))
+        {
+            return -1;
+        }
+
+        final Integer customEquipmentLevel = Compatibility.getCustomEquipmentLevel(this.registryName, itemStack);
+        return customEquipmentLevel == null ? itemLevel.apply(itemStack, this) : -1;
     }
 
     /**
