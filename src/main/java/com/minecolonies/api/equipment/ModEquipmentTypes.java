@@ -1,6 +1,7 @@
 package com.minecolonies.api.equipment;
 
 import com.minecolonies.api.IMinecoloniesAPI;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.compatibility.Compatibility;
 import com.minecolonies.api.equipment.registry.EquipmentTypeEntry;
 import com.minecolonies.api.items.ModItems;
@@ -225,47 +226,69 @@ public class ModEquipmentTypes
     @SuppressWarnings("null")
     public static void initRegisterEquipmentTiers()
     {
-        final int bowRef    = new ItemStack(Items.BOW).getMaxDamage();
-        final int rodRef    = new ItemStack(Items.FISHING_ROD).getMaxDamage();
-        final int shearsRef = new ItemStack(Items.SHEARS).getMaxDamage();
-        final int shieldRef = new ItemStack(Items.SHIELD).getMaxDamage();
-        final int flintRef  = new ItemStack(Items.FLINT_AND_STEEL).getMaxDamage();
+        int bowRef    = 0;
+        int rodRef    = 0;
+        int shearsRef = 0;
+        int shieldRef = 0;
+        int flintRef  = 0;
+        try
+        {
+            bowRef    = new ItemStack(Items.BOW).getMaxDamage();
+            rodRef    = new ItemStack(Items.FISHING_ROD).getMaxDamage();
+            shearsRef = new ItemStack(Items.SHEARS).getMaxDamage();
+            shieldRef = new ItemStack(Items.SHIELD).getMaxDamage();
+            flintRef  = new ItemStack(Items.FLINT_AND_STEEL).getMaxDamage();
+        }
+        catch (Exception e)
+        {
+            // In case something goes wrong with fetching durability references, we can still continue and just won't have durability based tiers for those items.
+            Log.getLogger().error("Failed to fetch getMaxDamage references for equipment tier registration, durability based tiers for certain items will not be registered.", e);
+            return;
+        }
+        
 
         for (final Item item : BuiltInRegistries.ITEM)
         {
-            final ItemStack dummy = new ItemStack(item);
+            try
+            {
+                final ItemStack dummy = new ItemStack(item);
 
-            if (item instanceof final TieredItem tiered)
-            {
-                Compatibility.registerItemTierIfAbsent(item, tiered.getTier(), (int) tiered.getTier().getAttackDamageBonus());
-            }
-            else if (item instanceof ArmorItem)
-            {
-                final int level = ItemStackUtils.getArmorLevel(dummy);
-                if (level > 0)
+                if (item instanceof final TieredItem tiered)
                 {
-                    Compatibility.registerItemTierIfAbsent(item, level);
+                    Compatibility.registerItemTierIfAbsent(item, tiered.getTier(), (int) tiered.getTier().getAttackDamageBonus());
+                }
+                else if (item instanceof ArmorItem)
+                {
+                    final int level = ItemStackUtils.getArmorLevel(dummy);
+                    if (level > 0)
+                    {
+                        Compatibility.registerItemTierIfAbsent(item, level);
+                    }
+                }
+                else if (item instanceof BowItem)
+                {
+                    Compatibility.registerItemTierIfAbsent(item, durabilityBasedLevel(dummy, bowRef));
+                }
+                else if (canPerformDefaultActions(dummy, ItemAbilities.DEFAULT_FISHING_ROD_ACTIONS))
+                {
+                    Compatibility.registerItemTierIfAbsent(item, durabilityBasedLevel(dummy, rodRef));
+                }
+                else if (canPerformDefaultActions(dummy, ItemAbilities.DEFAULT_SHEARS_ACTIONS))
+                {
+                    Compatibility.registerItemTierIfAbsent(item, durabilityBasedLevel(dummy, shearsRef));
+                }
+                else if (canPerformDefaultActions(dummy, ItemAbilities.DEFAULT_SHIELD_ACTIONS))
+                {
+                    Compatibility.registerItemTierIfAbsent(item, durabilityBasedLevel(dummy, shieldRef));
+                }
+                else if (item instanceof FlintAndSteelItem)
+                {
+                    Compatibility.registerItemTierIfAbsent(item, durabilityBasedLevel(dummy, flintRef));
                 }
             }
-            else if (item instanceof BowItem)
+            catch (Exception e)
             {
-                Compatibility.registerItemTierIfAbsent(item, durabilityBasedLevel(dummy, bowRef));
-            }
-            else if (canPerformDefaultActions(dummy, ItemAbilities.DEFAULT_FISHING_ROD_ACTIONS))
-            {
-                Compatibility.registerItemTierIfAbsent(item, durabilityBasedLevel(dummy, rodRef));
-            }
-            else if (canPerformDefaultActions(dummy, ItemAbilities.DEFAULT_SHEARS_ACTIONS))
-            {
-                Compatibility.registerItemTierIfAbsent(item, durabilityBasedLevel(dummy, shearsRef));
-            }
-            else if (canPerformDefaultActions(dummy, ItemAbilities.DEFAULT_SHIELD_ACTIONS))
-            {
-                Compatibility.registerItemTierIfAbsent(item, durabilityBasedLevel(dummy, shieldRef));
-            }
-            else if (item instanceof FlintAndSteelItem)
-            {
-                Compatibility.registerItemTierIfAbsent(item, durabilityBasedLevel(dummy, flintRef));
+                Log.getLogger().error("Failed to register equipment tiers for item: " + BuiltInRegistries.ITEM.getKey(item), e);
             }
         }
     }
