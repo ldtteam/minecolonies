@@ -3,6 +3,7 @@ package com.minecolonies.api.colony.managers.interfaces;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildingextensions.IBuildingExtension;
 import com.minecolonies.api.colony.buildings.ICommonBuilding;
+import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.WorldUtil;
@@ -162,7 +163,7 @@ public interface ICommonRegisteredStructureManager<B extends ICommonBuilding,T>
         final List<B> allowedBuildings = new ArrayList<>();
         for (final B building : getBuildings().values())
         {
-            if (filterPredicate.test(building))
+            if (building.getBuildingType() != ModBuildings.stash.get() && building.getBuildingType() != ModBuildings.postBox.get() && filterPredicate.test(building))
             {
                 allowedBuildings.add(building);
             }
