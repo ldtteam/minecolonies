@@ -673,6 +673,8 @@ public final class TranslationConstants
     @NonNls
     public static final String FOOD_QUALITY_TOOLTIP                               = "com.minecolonies.core.gui.restaurant.foodquality";
     @NonNls
+    public static final String FOOD_CONSUMPTION_TOOLTIP                           = "com.minecolonies.core.gui.restaurant.foodconsumption";
+    @NonNls
     public static final String COM_MINECOLONIES_MAP_NEED_COLONY                   = "com.minecolonies.core.item.colonymap.needcolony";
     @NonNls
     public static final String COM_MINECOLONIES_MAP_COLONY_SET                    = "com.minecolonies.core.item.colonymap.registered";

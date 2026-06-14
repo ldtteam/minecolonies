@@ -4,6 +4,7 @@ import com.ldtteam.blockui.Pane;
 import com.ldtteam.blockui.PaneBuilders;
 import com.ldtteam.blockui.controls.*;
 import com.ldtteam.blockui.views.ScrollingList;
+import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.items.IMinecoloniesFoodItem;
@@ -12,19 +13,31 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.Network;
 import com.minecolonies.core.client.gui.AbstractModuleWindow;
 import com.minecolonies.core.colony.buildings.moduleviews.RestaurantMenuModuleView;
+import com.minecolonies.core.colony.buildings.workerbuildings.BuildingCook;
+import com.minecolonies.core.colony.crafting.CustomRecipe;
+import com.minecolonies.core.colony.crafting.CustomRecipeManager;
+import com.minecolonies.core.items.ItemLargeBottle;
 import com.minecolonies.core.network.messages.server.colony.building.AlterRestaurantMenuItemMessage;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.food.FoodProperties;
+import net.minecraft.world.item.BottleItem;
+import net.minecraft.world.item.HoneyBottleItem;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.Recipe;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 import java.util.function.Predicate;
 
-import static com.minecolonies.api.util.constant.TranslationConstants.FOOD_QUALITY_TOOLTIP;
-import static com.minecolonies.api.util.constant.TranslationConstants.VANILLA_FOOD_QUALITY_TOOLTIP;
+import static com.minecolonies.api.research.util.ResearchConstants.SATURATION;
+import static com.minecolonies.api.util.FoodUtils.computeSaturationConsumptionFactor;
+import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 import static org.jline.utils.AttributedStyle.WHITE;
 
@@ -74,6 +87,12 @@ public class RestaurantMenuModuleWindow extends AbstractModuleWindow<RestaurantM
     private List<ItemStorage> menu;
 
     /**
+     * Data about the module consumers.
+     */
+    private double avgCustomerConsumption = 0;
+    private int    numerOfCustomers      = 0;
+
+    /**
      * Constructor for the minimum stock window view.
      *
      * @param moduleView the module view.
@@ -99,6 +118,24 @@ public class RestaurantMenuModuleWindow extends AbstractModuleWindow<RestaurantM
                 this.tick = 10;
             }
         });
+
+
+        if (moduleView.getBuildingView() instanceof BuildingCook.View buildingCookView)
+        {
+            double sum = 0;
+            for (final int i : buildingCookView.getCustomers())
+            {
+                final ICitizenDataView citizenDataView = buildingCookView.getColony().getCitizen(i);
+                if (citizenDataView != null)
+                {
+                    final int buildingLevel = citizenDataView.getHomeBuilding() == null ? 0 :  buildingCookView.getColony().getClientBuildingManager().getBuilding(citizenDataView.getHomeBuilding()).getBuildingLevelEquivalent();
+                    sum += computeSaturationConsumptionFactor(buildingLevel);
+                }
+            }
+            this.avgCustomerConsumption = sum/buildingCookView.getCustomers().size();
+            this.numerOfCustomers = buildingCookView.getCustomers().size();
+        }
+
     }
 
     /**
@@ -256,6 +293,92 @@ public class RestaurantMenuModuleWindow extends AbstractModuleWindow<RestaurantM
                 }
             }
         });
+
+        final Object2IntMap<ItemStorage> ingredients = new Object2IntOpenHashMap<>();
+        int saturationSum = 0;
+        final int researchBonus = (int) buildingView.getColony().getResearchManager().getResearchEffects().getEffectStrength(SATURATION);
+        for (final ItemStorage dish : menu)
+        {
+            processRecipe(dish, ingredients, 0);
+            final FoodProperties foodProperty = dish.getItem().getFoodProperties(dish.getItemStack(), null);
+            saturationSum += FoodUtils.getFoodValue(dish.getItemStack(), foodProperty, researchBonus);
+        }
+        final double consumption = (avgCustomerConsumption * 10 * numerOfCustomers) / saturationSum;
+
+        final ArrayList<Map.Entry<ItemStorage, Integer>> ingredientList = new ArrayList<>(ingredients.entrySet());
+
+        //Creates a dataProvider for the unemployed resourceList.
+        this.window.findPaneOfTypeByID("ingredientslist", ScrollingList.class).setDataProvider(new ScrollingList.DataProvider()
+        {
+            /**
+             * The number of rows of the list.
+             * @return the number.
+             */
+            @Override
+            public int getElementCount()
+            {
+                return ingredientList.size();
+            }
+
+            /**
+             * Inserts the elements into each row.
+             * @param index the index of the row/list element.
+             * @param rowPane the parent Pane for the row, containing the elements to update.
+             */
+            @Override
+            public void updateElement(final int index, @NotNull final Pane rowPane)
+            {
+                final Map.Entry<ItemStorage, Integer> resource = ingredientList.get(index);
+                final ItemStack ingredient = resource.getKey().getItemStack().copy();
+                ingredient.setCount(resource.getValue());
+                rowPane.findPaneOfTypeByID(RESOURCE_NAME, Text.class).setText(ingredient.getHoverName());
+                final ItemIcon itemIcon = rowPane.findPaneOfTypeByID(RESOURCE_ICON, ItemIcon.class);
+                itemIcon.setItem(ingredient);
+                PaneBuilders.tooltipBuilder()
+                    .hoverPane(itemIcon)
+                        .append(Component.translatable(FOOD_CONSUMPTION_TOOLTIP, (int) consumption*resource.getValue(), (int) consumption*resource.getValue()*1.5))
+                        .build();
+            }
+        });
+    }
+
+    private boolean processRecipe(final ItemStorage dish, final Object2IntMap<ItemStorage> ingredients, final int depth)
+    {
+        if (depth > 10)
+        {
+            return false;
+        }
+        for (final CustomRecipe recipe : CustomRecipeManager.getInstance().getRecipeByOutput(dish))
+        {
+            for (final ItemStorage input : recipe.getInputs())
+            {
+                if (input.getItem() == Items.BOWL || input.getItem() instanceof ItemLargeBottle || input.getItem() instanceof BottleItem || input.getItem() instanceof HoneyBottleItem ||  !processRecipe(input, ingredients, depth + 1))
+                {
+                    ingredients.mergeInt(input, input.getAmount(), Integer::sum);
+                }
+            }
+            // For now we're only interested in the first alternative.
+            return true;
+        }
+
+        final Optional<? extends Recipe<?>> recipe = mc.level.getRecipeManager().byKey(BuiltInRegistries.ITEM.getKey(dish.getItem()));
+        if (recipe.isPresent())
+        {
+            for (final Ingredient ingredient : recipe.get().getIngredients())
+            {
+                final ItemStack[] inputs = ingredient.getItems();
+                if (inputs.length >= 1)
+                {
+                    final ItemStorage input = new ItemStorage(inputs[0]);
+                    if (input.getItem() == Items.BOWL || input.getItem() instanceof ItemLargeBottle || input.getItem() instanceof BottleItem || input.getItem() instanceof HoneyBottleItem || !processRecipe(input, ingredients, depth + 1))
+                    {
+                        ingredients.mergeInt(input, 1, Integer::sum);
+                    }
+                }
+            }
+            return true;
+        }
+        return false;
     }
 
     /**

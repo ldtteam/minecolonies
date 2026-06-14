@@ -141,7 +141,7 @@ public final class ModBuildingsInitializer
         ModBuildings.cook = DEFERRED_REGISTER.register(ModBuildings.COOK_ID, () -> new BuildingEntry.Builder()
           .setBuildingBlock(ModBlocks.blockHutCook)
           .setBuildingProducer(BuildingCook::new)
-          .setBuildingViewProducer(() -> EmptyView::new)
+          .setBuildingViewProducer(() ->  BuildingCook.View::new)
           .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.COOK_ID))
           .addBuildingModuleProducer(COOK_WORK)
           .addBuildingModuleProducer(FURNACE)

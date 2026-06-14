@@ -186,7 +186,7 @@ public class CustomRecipeManager
     public List<CustomRecipe> getRecipeByOutput(final ItemStack itemStack)
     {
         List<CustomRecipe> returnList = new ArrayList<>();
-        for (CustomRecipe recipe : recipeOutputMap.get(itemStack.getItem()))
+        for (CustomRecipe recipe : recipeOutputMap.getOrDefault(itemStack.getItem(), Collections.emptyList()))
         {
             // ItemStacks don't override equals, so have to use the static methods.
             if (ItemStack.matches(recipe.getPrimaryOutput(), itemStack))
@@ -212,7 +212,7 @@ public class CustomRecipeManager
     public List<CustomRecipe> getRecipeByOutput(final ItemStorage itemStorage)
     {
         List<CustomRecipe> returnList = new ArrayList<>();
-        for (CustomRecipe recipe : recipeOutputMap.get(itemStorage.getItem()))
+        for (CustomRecipe recipe : recipeOutputMap.getOrDefault(itemStorage.getItem(), Collections.emptyList()))
         {
             // ItemStorage#equals does the actual comparison work for us, here.
             if (new ItemStorage(recipe.getPrimaryOutput()).equals(itemStorage))

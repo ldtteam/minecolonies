@@ -36,7 +36,6 @@ import java.util.List;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.ItemStackUtils.*;
-import static com.minecolonies.api.util.constant.BuildingConstants.FUEL_LIST;
 import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.BAKER_HAS_NO_FURNACES_MESSAGE;
 import static com.minecolonies.api.util.constant.TranslationConstants.FURNACE_USER_NO_FUEL;
@@ -269,7 +268,7 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob<?, J>, B
     private List<ItemStack> getAllowedFuel()
     {
         final List<ItemStack> list = new ArrayList<>();
-        for (final ItemStorage storage : building.getModuleMatching(ItemListModule.class, m -> m.getId().equals(FUEL_LIST)).getList())
+        for (final ItemStorage storage : building.getModule(ITEMLIST_FUEL).getList())
         {
             final ItemStack stack = storage.getItemStack().copy();
             stack.setCount(stack.getMaxStackSize());
@@ -486,7 +485,7 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob<?, J>, B
                   new InvWrapper(furnace), SMELTABLE_SLOT);
             }
 
-            final ItemListModule module = building.getModuleMatching(ItemListModule.class, m -> m.getId().equals(FUEL_LIST));
+            final ItemListModule module = building.getModule(ITEMLIST_FUEL);
             if (InventoryUtils.hasItemInItemHandler((worker.getInventoryCitizen()), stack -> module.isItemInList(new ItemStorage(stack)))
                   && (hasSmeltableInFurnaceAndNoFuel(furnace) || hasNeitherFuelNorSmeltAble(furnace)))
             {

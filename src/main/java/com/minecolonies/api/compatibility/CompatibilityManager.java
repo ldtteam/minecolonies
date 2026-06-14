@@ -665,6 +665,13 @@ public class CompatibilityManager implements ICompatibilityManager
             }
         });
 
+        final Map<ItemStorage, List<ItemStorage>> ingredientsMap = new HashMap<>();
+
+        for (final ItemStorage edible : edibles)
+        {
+
+        }
+
         discoverFungi();
 
         beekeeperflowers = ImmutableSet.copyOf(tempFlowers);

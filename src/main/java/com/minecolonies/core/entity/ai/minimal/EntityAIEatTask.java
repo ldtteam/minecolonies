@@ -349,12 +349,12 @@ public class EntityAIEatTask implements IStateAI
     {
         final ICitizenData citizenData = citizen.getCitizenData();
         final IColony colony = citizenData.getColony();
-        restaurantPos = colony.getServerBuildingManager().getBestBuilding(citizen, BuildingCook.class);
-
+        restaurantPos = colony.getServerBuildingManager().getBestBuilding(citizenData.getWorkBuilding() != null ? citizenData.getWorkBuilding().getPosition() : citizen.blockPosition(), BuildingCook.class);
         if (restaurantPos == null)
         {
             return SEARCH_RESTAURANT;
         }
+        colony.getServerBuildingManager().getBuilding(restaurantPos, BuildingCook.class).storeCustomer(citizenData);
 
         restaurant = colony.getServerBuildingManager().getBuilding(restaurantPos);
         if (!restaurant.isInBuilding(citizen.blockPosition()))

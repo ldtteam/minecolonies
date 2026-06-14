@@ -381,4 +381,22 @@ public class FoodUtils
     {
         return buildingLevel;
     }
+
+    /**
+     * Compute the saturation consumption factor.
+     * @param buildingLevel the housing level it's based on.
+     * @return the value.
+     */
+    public static double computeSaturationConsumptionFactor(final int buildingLevel)
+    {
+        return switch (buildingLevel)
+        {
+            case 1 -> 0.8;
+            case 2 -> 1.0;
+            case 3 -> 1.4;
+            case 4 -> 1.6;
+            case 5 -> 2.0;
+            default -> 0.4;
+        };
+    }
 }
