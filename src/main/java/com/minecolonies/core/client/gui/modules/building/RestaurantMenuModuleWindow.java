@@ -306,6 +306,7 @@ public class RestaurantMenuModuleWindow extends AbstractModuleWindow<RestaurantM
         final double consumption = (avgCustomerConsumption * 10 * numerOfCustomers) / saturationSum;
 
         final ArrayList<Map.Entry<ItemStorage, Integer>> ingredientList = new ArrayList<>(ingredients.entrySet());
+        ingredientList.sort(Comparator.comparingInt(i -> -i.getValue()));
 
         //Creates a dataProvider for the unemployed resourceList.
         this.window.findPaneOfTypeByID("ingredientslist", ScrollingList.class).setDataProvider(new ScrollingList.DataProvider()

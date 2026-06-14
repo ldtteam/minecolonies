@@ -15,6 +15,10 @@ import com.minecolonies.core.entity.other.SittingEntity;
 import it.unimi.dsi.fastutil.ints.IntArraySet;
 import it.unimi.dsi.fastutil.ints.IntSet;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.IntTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -24,6 +28,7 @@ import java.util.List;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_CUSTOMER;
 import static com.minecolonies.api.util.constant.SchematicTagConstants.*;
 import static com.minecolonies.api.util.constant.Suppression.OVERRIDE_EQUALS;
 import static com.minecolonies.core.colony.buildings.modules.BuildingModules.ITEMLIST_FUEL;
@@ -69,7 +74,7 @@ public class BuildingCook extends AbstractBuilding
     /**
      * List of customers.
      */
-    private IntSet customerList = new IntArraySet();
+    private IntSet customers = new IntArraySet();
 
     /**
      * Gets the next sitting position to use for eating, just keeps iterating the aviable positions, so we do not have to keep track of who is where.
@@ -164,10 +169,35 @@ public class BuildingCook extends AbstractBuilding
     public void serializeToView(final @NotNull FriendlyByteBuf buf, final boolean fullSync)
     {
         super.serializeToView(buf, fullSync);
-        buf.writeInt(customerList.size());
-        for (int i : customerList)
+        buf.writeInt(customers.size());
+        for (int i : customers)
         {
             buf.writeInt(i);
+        }
+    }
+
+    @Override
+    public CompoundTag serializeNBT()
+    {
+        final CompoundTag compoundTag = super.serializeNBT();
+        @NotNull final ListTag customerListTag = new ListTag();
+        for (int value : customers)
+        {
+            customerListTag.add(IntTag.valueOf(value));
+        }
+        compoundTag.put(TAG_CUSTOMER, customerListTag);
+        return compoundTag;
+    }
+
+    @Override
+    public void deserializeNBT(final CompoundTag compound)
+    {
+        super.deserializeNBT(compound);
+        customers.clear();
+        ListTag listTag = compound.getList(TAG_CUSTOMER, Tag.TAG_INT);
+        for (int i = 0; i < listTag.size(); i++)
+        {
+            customers.add(listTag.getInt(i));
         }
     }
 
@@ -178,7 +208,7 @@ public class BuildingCook extends AbstractBuilding
     public void storeCustomer(final ICitizenData citizenData)
     {
         // TODO: Remove in the future, backwards compat.
-        if (customerList.isEmpty())
+        if (customers.isEmpty())
         {
             final List<BuildingCook> restaurants = new ArrayList<>();
             for (IBuilding building: colony.getServerBuildingManager().getBuildings().values())
@@ -207,7 +237,7 @@ public class BuildingCook extends AbstractBuilding
 
                     for (ICitizenData cit : building.getModule(WorkerBuildingModule.class).getAssignedCitizen())
                     {
-                        closestRestaurant.customerList.add(cit.getId());
+                        closestRestaurant.customers.add(cit.getId());
                     }
                 }
             }
@@ -216,10 +246,11 @@ public class BuildingCook extends AbstractBuilding
         {
             if (building instanceof BuildingCook buildingCook && buildingCook != this)
             {
-                buildingCook.customerList.remove(citizenData.getId());
+                buildingCook.customers.remove(citizenData.getId());
             }
         }
-        customerList.add(citizenData.getId());
+        customers.add(citizenData.getId());
+        markDirty();
     }
 
     /**
