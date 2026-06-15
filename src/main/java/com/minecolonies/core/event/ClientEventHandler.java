@@ -208,11 +208,10 @@ public class ClientEventHandler
                 return;
             }
 
-            double foodValue = FoodUtils.getFoodValue(stack, stack.getItem().getFoodProperties(), colony.getResearchManager().getResearchEffects().getEffectStrength(SATURATION));
-            final int foodTier = FoodUtils.getFoodTier(foodValue);
+            final int foodTier = FoodUtils.getFoodTier(stack);
 
             final ICitizenDataView citizenData = (ICitizenDataView) WindowCitizenInventory.activeCitizenInventory.getCitizenData();
-            final IColonyView colonyView = (IColonyView) citizenData.getColony();
+            final IColonyView colonyView = citizenData.getColony();
 
             IBuildingView cookBuilding = null;
             for (final IBuildingView buildingView : colonyView.getClientBuildingManager().getBuildings().values())
