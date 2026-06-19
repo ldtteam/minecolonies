@@ -126,6 +126,15 @@
       }
     },
     {
+      "type": "minecolonies:item",
+      "details": {
+        "item": {
+          "id": "minecraft:blue_orchid",
+          "count": 3
+        }
+      }
+    },
+    {
       "type": "minecolonies:happiness",
       "details": {
         "target": 0,
