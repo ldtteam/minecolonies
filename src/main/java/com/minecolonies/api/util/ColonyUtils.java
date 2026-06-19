@@ -1,13 +1,16 @@
 package com.minecolonies.api.util;
 
 import com.ldtteam.structurize.api.RotationMirror;
+import com.ldtteam.structurize.blocks.ModBlocks;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.storage.ClientFutureProcessor;
 import com.ldtteam.structurize.storage.ServerFutureProcessor;
 import com.ldtteam.structurize.storage.StructurePacks;
+import com.ldtteam.structurize.util.BlockInfo;
 import com.ldtteam.structurize.util.IOPool;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.claim.IChunkClaimData;
+import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.level.Level;
@@ -102,6 +105,105 @@ public final class ColonyUtils
 
             return future;
         }
+    }
+
+    /**
+     * Queues a blueprint load to the right side
+     *
+     * @param world
+     * @param structurePack
+     * @param structurePath
+     * @param currentLevel
+     * @param targetLevel
+     * @param afterLoad
+     */
+    public static CompletableFuture<Blueprint> queueBlueprintLoad(
+        final Level world,
+        final String structurePack,
+        final String structurePath,
+        final int currentLevel,
+        final int targetLevel,
+        final Consumer<Blueprint> afterLoad,
+        final Consumer<String> errorHandler)
+    {
+        // just load the single level required in the normal case
+        if (currentLevel == targetLevel - 1 || currentLevel == targetLevel || (currentLevel == 1 && targetLevel == 0))
+        {
+            return queueBlueprintLoad(world, structurePack, structurePath, afterLoad, errorHandler);
+        }
+
+        // when building, load max(1, currentLevel) up to targetLevel; when removing, load 1 up to currentLevel.
+        final int firstLevel = currentLevel > targetLevel ? 1 : Math.max(1, currentLevel);
+        final int lastLevel = Math.max(currentLevel, targetLevel);
+        final List<CompletableFuture<Blueprint>> blueprintFutures = new ArrayList<>();
+        final List<String> errors = Collections.synchronizedList(new ArrayList<>());
+        for (int level = firstLevel; level <= lastLevel; ++level)
+        {
+            String schemPath = structurePath.replace(".blueprint", "");
+            schemPath = schemPath.substring(0, schemPath.length() - 1) + level + ".blueprint";
+
+            blueprintFutures.add(queueBlueprintLoad(world, structurePack, schemPath, b -> {}, errors::add));
+        }
+
+        return CompletableFuture.allOf(blueprintFutures.toArray(new CompletableFuture[0]))
+            .thenApply(v -> blueprintFutures.stream().map(CompletableFuture::join).filter(Objects::nonNull).toList())
+            .thenApplyAsync(ColonyUtils::composeBlueprints, Util.backgroundExecutor())
+            .thenApplyAsync(blueprint ->
+            {
+                if (blueprint != null)
+                {
+                    afterLoad.accept(blueprint);
+                    return blueprint;
+                }
+
+                errorHandler.accept(String.join("\n", errors));
+                return null;
+            }, WorldUtil.getMainThread(world));
+    }
+
+    /**
+     * Creates a new blueprint in memory from multiple existing blueprints, in a last-wins kind of way.
+     * @param blueprints the blueprints, in order from lowest to highest priority.
+     * @return the composed blueprint.
+     * @implNote Ideally move this to Structurize at some point, so it's easier to keep in sync.
+     */
+    @Nullable
+    private static Blueprint composeBlueprints(@NotNull final List<Blueprint> blueprints)
+    {
+        if (blueprints.isEmpty())
+        {
+            return null;
+        }
+
+        final Blueprint last = blueprints.getLast();
+
+        final Blueprint combined = new Blueprint((short) last.getSizeX(), (short) last.getSizeY(), (short) last.getSizeZ(), last.getRegistryAccess());
+        combined.setPackName(last.getPackName());
+        combined.setName(last.getName());
+        combined.setFileName(last.getFileName());
+        combined.setFilePath(last.getFilePath());
+        combined.setCachePrimaryOffset(last.getPrimaryBlockOffset());
+        combined.setArchitects(last.getArchitects());
+        combined.setEntities(last.getEntities());   // todo something smarter?
+
+        for (final BlockPos pos : BlockPos.betweenClosed(BlockPos.ZERO, new BlockPos(last.getSizeX() - 1, last.getSizeY() - 1, last.getSizeZ() - 1)))
+        {
+            int blueprintIndex = blueprints.size() - 1;
+            BlockInfo block = last.getBlockInfoAsMap().get(pos);
+            while (block.getState().is(ModBlocks.blockSubstitution) && blueprintIndex > 0)
+            {
+                --blueprintIndex;
+                block = blueprints.get(blueprintIndex).getBlockInfoAsMap().get(pos);
+            }
+
+            combined.addBlockState(pos, block.getState());
+            if (block.hasTileEntityData())
+            {
+                combined.getTileEntities()[pos.getY()][pos.getZ()][pos.getX()] = block.getTileEntityData();
+            }
+        }
+
+        return combined;
     }
 
     /**

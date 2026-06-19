@@ -15,6 +15,7 @@ import com.minecolonies.api.equipment.registry.EquipmentTypeEntry;
 import com.minecolonies.api.items.IMinecoloniesFoodItem;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.items.ModTags;
+import com.minecolonies.core.items.ItemSpear;
 import com.minecolonies.core.util.AdvancementUtils;
 import com.mojang.datafixers.util.Pair;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
@@ -391,7 +392,7 @@ public final class ItemStackUtils
      */
     public static boolean doesItemServeAsWeapon(@NotNull final ItemStack stack)
     {
-        return stack.getItem() instanceof SwordItem || stack.getItem() instanceof DiggerItem || Compatibility.isTinkersWeapon(stack);
+        return stack.getItem() instanceof SwordItem || stack.getItem() instanceof DiggerItem || Compatibility.isTinkersWeapon(stack) || stack.getItem() instanceof ItemSpear;
     }
 
     /**

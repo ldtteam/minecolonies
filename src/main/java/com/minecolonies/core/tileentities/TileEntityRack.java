@@ -31,6 +31,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.datafix.fixes.References;
+import net.minecraft.world.Clearable;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -58,7 +59,7 @@ import static com.minecolonies.api.util.constant.TranslationConstants.RACK;
 /**
  * Tile entity for the warehouse shelves.
  */
-public class TileEntityRack extends AbstractTileEntityRack implements IMateriallyTexturedBlockEntity
+public class TileEntityRack extends AbstractTileEntityRack implements IMateriallyTexturedBlockEntity, Clearable
 {
     /**
      * All Racks current version id
@@ -749,5 +750,14 @@ public class TileEntityRack extends AbstractTileEntityRack implements IMateriall
     public @NotNull MaterialTextureData getTextureData()
     {
         return textureDataCache;
+    }
+
+    @Override
+    public void clearContent()
+    {
+        for (int i = 0; i < this.getInventory().getSlots(); i++)
+        {
+            this.getInventory().setStackInSlot(i, ItemStack.EMPTY);
+        }
     }
 }

@@ -66,9 +66,8 @@ public class StatsUtil
      */
     public static void trackStatByStack(IBuilding building, String statIdentifier, ItemStack stack, int count) 
     {
-        if (stack == null) 
+        if (stack == null || stack.isEmpty()) 
         {
-            Log.getLogger().warn("Attempted to track stat '{}' with null stack: ", statIdentifier);
             return;
         }
 

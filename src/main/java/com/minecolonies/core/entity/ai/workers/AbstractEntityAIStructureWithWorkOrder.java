@@ -259,8 +259,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
                   () -> placer.getIterator()
                           .increment(DONT_TOUCH_PREDICATE.or((info, pos, handler) -> !BlockUtils.canBlockFloatInAir(info.getBlockInfo().getState())
                                                                                        || isDecoItem(info.getBlockInfo()
-                                                                                                       .getState()
-                                                                                                       .getBlock()))),
+                                                                                                       .getState()))),
                   false);
                 requestProgress = result.getIteratorPos();
 
@@ -302,8 +301,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
                   StructurePlacer.Operation.GET_RES_REQUIREMENTS,
                   () -> placer.getIterator()
                           .increment(DONT_TOUCH_PREDICATE.or((info, pos, handler) -> BlockUtils.isAnySolid(info.getBlockInfo().getState()) && !isDecoItem(info.getBlockInfo()
-                                                                                                                                                            .getState()
-                                                                                                                                                            .getBlock()))),
+                                                                                                                                                            .getState()))),
                   false);
                 requestProgress = result.getIteratorPos();
 

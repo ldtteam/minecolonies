@@ -74,6 +74,7 @@ public final class ModBlocks
     public static AbstractBlockHut<? extends AbstractBlockHut<?>> blockHutAlchemist;
     public static AbstractBlockHut<? extends AbstractBlockHut<?>> blockHutKitchen;
     public static AbstractBlockHut<? extends AbstractBlockHut<?>> blockHutGateHouse;
+    public static AbstractBlockHut<? extends AbstractBlockHut<?>> blockHutStable;
 
     /**
      * Utility blocks.
@@ -154,6 +155,7 @@ public final class ModBlocks
           blockHutSifter,
           blockHutShepherd,
           blockHutSmeltery,
+          blockHutStable,
           blockHutSwineHerder,
           blockHutUniversity,
           blockHutHospital,

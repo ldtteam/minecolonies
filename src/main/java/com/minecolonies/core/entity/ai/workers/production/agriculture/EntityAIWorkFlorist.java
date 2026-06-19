@@ -6,11 +6,7 @@ import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.equipment.ModEquipmentTypes;
 import com.minecolonies.api.items.ModItems;
-import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.api.util.InventoryUtils;
-import com.minecolonies.api.util.StatsUtil;
-import com.minecolonies.api.util.Tuple;
-import com.minecolonies.api.util.WorldUtil;
+import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingFlorist;
 import com.minecolonies.core.colony.interactionhandling.StandardInteraction;
@@ -25,24 +21,22 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.ItemStackUtils.IS_COMPOST;
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
+import static com.minecolonies.api.util.constant.StatisticsConstants.FLOWERS_PICKED;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.core.util.WorkerUtil.isThereCompostedLand;
-import static com.minecolonies.api.util.constant.StatisticsConstants.FLOWERS_PICKED;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Florist AI class.
@@ -403,11 +397,11 @@ public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist, Bu
      * @param pos the position to check for flower drops.
      * @return an Optional containing the registry name of the flower drop, or an empty Optional if no flower is found.
      */
-    protected static List<String> getFlowerDropAtPos(Level world, BlockPos pos) 
+    protected List<String> getFlowerDropAtPos(ServerLevel world, BlockPos pos)
     {
         List<String> flowerDrops = new ArrayList<>();
         BlockState state = world.getBlockState(pos);
-        List<ItemStack> drops = Block.getDrops(state, (ServerLevel) world, pos, null);
+        List<ItemStack> drops = Block.getDrops(state, world, pos, null, worker, worker.getMainHandItem());
         for (ItemStack drop : drops) 
         {
             if (drop.is(ItemTags.FLOWERS)) 

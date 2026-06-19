@@ -202,22 +202,26 @@ public abstract class AbstractWorkOrderView implements IWorkOrderView
     @Override
     public void loadBlueprint(final Level world, final Consumer<Blueprint> afterLoad)
     {
+        loadBlueprintFuture(world).thenAccept(afterLoad);
+    }
+
+    @Override
+    public CompletableFuture<Blueprint> loadBlueprintFuture(final Level world)
+    {
         if (blueprint != null)
         {
-            afterLoad.accept(blueprint);
+            return CompletableFuture.completedFuture(blueprint);
         }
         else if (future == null || future.isDone())
         {
-            future = ColonyUtils.queueBlueprintLoad(world, getStructurePack(), getStructurePath(), blueprint ->
-                {
-                    setBlueprint(blueprint, world);
-                    afterLoad.accept(blueprint);
-                },
-                e -> afterLoad.accept(null));
+            future = ColonyUtils.queueBlueprintLoad(world, getStructurePack(), getStructurePath(), getCurrentLevel(), getTargetLevel(),
+                blueprint -> setBlueprint(blueprint, world),
+                e -> {});
+            return future;
         }
         else
         {
-            afterLoad.accept(null);
+            return future;
         }
     }
 

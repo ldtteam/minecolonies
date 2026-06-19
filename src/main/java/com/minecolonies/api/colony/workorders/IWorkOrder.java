@@ -11,6 +11,7 @@ import net.minecraft.world.phys.AABB;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
 public interface IWorkOrder
@@ -63,6 +64,13 @@ public interface IWorkOrder
      * @param afterLoad consumes the loaded blueprint or null
      */
     void loadBlueprint(final Level world, final Consumer<Blueprint> afterLoad);
+
+    /**
+     * Loads the blueprint if necessary
+     * @param world world to use
+     * @return a future completed with the loaded blueprint or null
+     */
+    CompletableFuture<Blueprint> loadBlueprintFuture(final Level world);
 
     /**
      * Get the current level of the structure of the work order.

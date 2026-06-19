@@ -1,5 +1,7 @@
 package com.minecolonies.core.colony;
 
+import java.util.UUID;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -33,6 +35,11 @@ public class AnimalDataView implements IAnimalDataView
     private float combatCooldown;
 
     /**
+     * The last known position of the animal.
+     */
+    private BlockPos lastPosition;
+
+    /**
      * Constructor
      * 
      * @param id
@@ -54,6 +61,7 @@ public class AnimalDataView implements IAnimalDataView
     {
         homeBuilding = buf.readBoolean() ? buf.readBlockPos() : null;
         combatCooldown = buf.readFloat();
+        lastPosition = buf.readBlockPos();
     }
 
     /**

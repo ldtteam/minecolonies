@@ -11,10 +11,12 @@ public final class ModGuardTypes
     public static final ResourceLocation KNIGHT_ID = new ResourceLocation(Constants.MOD_ID, "knight");
     public static final ResourceLocation RANGER_ID = new ResourceLocation(Constants.MOD_ID, "ranger");
     public static final ResourceLocation DRUID_ID  = new ResourceLocation(Constants.MOD_ID, "druid");
+    public static final ResourceLocation CAVALRY_ID = new ResourceLocation(Constants.MOD_ID, "cavalry");
 
     public static DeferredHolder<GuardType, GuardType> knight;
     public static DeferredHolder<GuardType, GuardType> ranger;
     public static DeferredHolder<GuardType, GuardType> druid;
+    public static DeferredHolder<GuardType, GuardType> cavalry;
 
     private ModGuardTypes()
     {

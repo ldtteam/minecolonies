@@ -2,25 +2,25 @@ package com.minecolonies.core.colony.buildings.workerbuildings;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.constant.ColonyConstants;
 import com.minecolonies.api.util.constant.NbtTagConstants;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.Tag;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.WoolCarpetBlock;
-
+import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_POS;
+import static com.minecolonies.api.util.constant.SchematicTagConstants.TAG_SITTING;
 
 /**
  * Creates a new building for the school.
@@ -40,18 +40,13 @@ public class BuildingSchool extends AbstractBuilding
     /**
      * NBT value to store the carpet pos.
      */
-    private static final String TAG_CARPET = "carpet";
+    private static final String NBT_CARPET = "carpet";
 
     /**
      * List of carpets to sit on.
      */
     @NotNull
     private final List<BlockPos> carpet = new ArrayList<>();
-
-    /**
-     * Random obj for random calc.
-     */
-    private final Random random = new Random();
 
     /**
      * Instantiates the building.
@@ -78,10 +73,10 @@ public class BuildingSchool extends AbstractBuilding
     }
 
     @Override
-    public void registerBlockPosition(@NotNull final Block block, @NotNull final BlockPos pos, @NotNull final Level world)
+    public void registerBlockPosition(@NotNull final BlockState blockState, @NotNull final BlockPos pos, @NotNull final Level world)
     {
-        super.registerBlockPosition(block, pos, world);
-        if (block instanceof WoolCarpetBlock)
+        super.registerBlockPosition(blockState, pos, world);
+        if (isCarpet(blockState))
         {
             carpet.add(pos);
         }
@@ -91,7 +86,7 @@ public class BuildingSchool extends AbstractBuilding
     public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound)
     {
         super.deserializeNBT(provider, compound);
-        final ListTag carpetTagList = compound.getList(TAG_CARPET, Tag.TAG_COMPOUND);
+        final ListTag carpetTagList = compound.getList(NBT_CARPET, Tag.TAG_COMPOUND);
         for (int i = 0; i < carpetTagList.size(); ++i)
         {
             final CompoundTag bedCompound = carpetTagList.getCompound(i);
@@ -116,7 +111,7 @@ public class BuildingSchool extends AbstractBuilding
                 BlockPosUtil.write(carpetCompound, NbtTagConstants.TAG_POS, pos);
                 carpetTagList.add(carpetCompound);
             }
-            compound.put(TAG_CARPET, carpetTagList);
+            compound.put(NBT_CARPET, carpetTagList);
         }
 
         return compound;
@@ -130,16 +125,32 @@ public class BuildingSchool extends AbstractBuilding
     @Nullable
     public BlockPos getRandomPlaceToSit()
     {
+        final List<BlockPos> validSitLocations = getLocationsFromTag(TAG_SITTING);
+        if (!validSitLocations.isEmpty())
+        {
+            return validSitLocations.get(ColonyConstants.rand.nextInt(validSitLocations.size()));
+        }
+
         if (carpet.isEmpty())
         {
             return null;
         }
-        final BlockPos returnPos = carpet.get(random.nextInt(carpet.size()));
-        if (colony.getWorld().getBlockState(returnPos).getBlock() instanceof WoolCarpetBlock)
+        final BlockPos returnPos = carpet.get(ColonyConstants.rand.nextInt(carpet.size()));
+        if (isCarpet(colony.getWorld().getBlockState(returnPos)))
         {
             return returnPos;
         }
         carpet.remove(returnPos);
         return null;
+    }
+
+    /**
+     * Check whether a given block is a valid carpet block.
+     * @param blockState the input block.
+     * @return true if so.
+     */
+    private boolean isCarpet(final BlockState blockState)
+    {
+        return blockState.getBlock() instanceof WoolCarpetBlock;
     }
 }

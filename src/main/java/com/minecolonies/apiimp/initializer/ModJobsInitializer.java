@@ -96,6 +96,12 @@ public final class ModJobsInitializer
           .setRegistryName(ModJobs.COWBOY_ID)
           .createJobEntry());
 
+        ModJobs.stablemaster = register(DEFERRED_REGISTER, ModJobs.STABLEMASTER_ID.getPath(), () -> new JobEntry.Builder()
+          .setJobProducer(JobStablemaster::new)
+          .setJobViewProducer(() -> DefaultJobView::new)
+          .setRegistryName(ModJobs.STABLEMASTER_ID)
+          .createJobEntry());
+
         ModJobs.swineHerder = register(DEFERRED_REGISTER, ModJobs.SWINE_HERDER_ID.getPath(), () -> new JobEntry.Builder()
           .setJobProducer(JobSwineHerder::new)
           .setJobViewProducer(() -> DefaultJobView::new)
@@ -124,6 +130,12 @@ public final class ModJobsInitializer
           .setJobProducer(JobKnight::new)
           .setJobViewProducer(() -> DefaultJobView::new)
           .setRegistryName(ModJobs.KNIGHT_ID)
+          .createJobEntry());
+
+        ModJobs.cavalry = register(DEFERRED_REGISTER, ModJobs.CAVALRY_ID.getPath(), () -> new JobEntry.Builder()
+          .setJobProducer(JobCavalry::new)
+          .setJobViewProducer(() -> DefaultJobView::new)
+          .setRegistryName(ModJobs.CAVALRY_ID)
           .createJobEntry());
 
         ModJobs.composter = register(DEFERRED_REGISTER, ModJobs.COMPOSTER_ID.getPath(), () -> new JobEntry.Builder()
