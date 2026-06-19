@@ -393,12 +393,12 @@ public class FoodUtils
     {
         return switch (buildingLevel)
         {
-            case 1 -> 0.8;
-            case 2 -> 1.0;
-            case 3 -> 1.4;
-            case 4 -> 1.6;
-            case 5 -> 2.0;
-            default -> 0.4;
+            case 1 -> 0.6;
+            case 2 -> 0.725;
+            case 3 -> 1.0;
+            case 4 -> 1.2;
+            case 5 -> 1.5;
+            default -> 0.3;
         };
     }
 }
