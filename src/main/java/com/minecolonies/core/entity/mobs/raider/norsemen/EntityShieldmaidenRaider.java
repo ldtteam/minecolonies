@@ -3,6 +3,7 @@ package com.minecolonies.core.entity.mobs.raider.norsemen;
 import com.minecolonies.api.entity.mobs.vikings.AbstractEntityNorsemenRaider;
 import com.minecolonies.api.entity.mobs.vikings.IMeleeNorsemenEntity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.level.Level;
 
 /**
@@ -20,5 +21,13 @@ public class EntityShieldmaidenRaider extends AbstractEntityNorsemenRaider imple
     public EntityShieldmaidenRaider(final EntityType<? extends EntityShieldmaidenRaider> type, final Level worldIn)
     {
         super(type, worldIn);
+    }
+
+    @Override
+    public void initStatsFor(final double baseHealth, final double difficulty, final double baseDamage)
+    {
+        super.initStatsFor(baseHealth, difficulty, baseDamage);
+        final double chiefArmor = difficulty * 2.0;
+        this.getAttribute(Attributes.ARMOR).setBaseValue(chiefArmor);
     }
 }
