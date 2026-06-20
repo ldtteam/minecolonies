@@ -260,7 +260,7 @@ public class CitizenWindowUtils
 
 
         //Max saturation (Black food items).
-        for (int i = 0; i < ICitizenData.MAX_SATURATION / 8; i++)
+        for (int i = 0; i < ICitizenData.MAX_SATURATION / 6.0; i++)
         {
             @NotNull final Image saturation = new Image();
             saturation.setImage(SATURATION_ICON_EMPTY, false);
@@ -270,10 +270,10 @@ public class CitizenWindowUtils
             view.findPaneOfTypeByID(WINDOW_ID_SATURATION_BAR, View.class).addChild(saturation);
         }
 
-        final int brokenDownSaturation = (int) (curSaturation / 8.0);
+        final int brokenDownSaturation = (int) (curSaturation / 6.0);
         //Current saturation (Full food hearts).
         int saturationPos;
-        for (saturationPos = 0; saturationPos < brokenDownSaturation; saturationPos++)
+        for (saturationPos = 9; saturationPos >= 10 - brokenDownSaturation; saturationPos--)
         {
             @NotNull final Image saturation = new Image();
             saturation.setImage(SATURATION_ICON_FULL, false);
@@ -283,7 +283,7 @@ public class CitizenWindowUtils
         }
 
         //Half food items.
-        if (curSaturation / 8.0 % 1 > 0)
+        if (curSaturation / 6.0 % 1 > 0)
         {
             @NotNull final Image saturation = new Image();
             saturation.setImage(SATURATION_ICON_HALF, false);
