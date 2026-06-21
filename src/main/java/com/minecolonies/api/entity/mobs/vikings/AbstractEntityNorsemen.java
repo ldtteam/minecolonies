@@ -37,7 +37,7 @@ public abstract class AbstractEntityNorsemen extends AbstractEntityMinecoloniesM
     public AbstractEntityNorsemen(final EntityType<? extends AbstractEntityNorsemen> type, final Level world)
     {
         super(type, world, NORSEMEN_TEXTURES);
-        initStatsFor(BARBARIAN_BASE_HEALTH*(world.getDifficulty().getId() + 0.1), world.getDifficulty().getId() + 0.1, ATTACK_DAMAGE * world.getDifficulty().getId());
+        initStatsFor(BARBARIAN_BASE_HEALTH * (world.getDifficulty().getId() + 0.1), world.getDifficulty().getId() + 0.1, ATTACK_DAMAGE * world.getDifficulty().getId());
     }
 
     @Override

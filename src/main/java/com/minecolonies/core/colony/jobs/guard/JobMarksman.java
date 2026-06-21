@@ -5,7 +5,7 @@ import com.minecolonies.api.equipment.ModEquipmentTypes;
 import com.minecolonies.api.equipment.registry.EquipmentTypeEntry;
 
 /**
- * The Ranger's Job class
+ * The Markman's Job class
  *
  * @author Asherslab
  */

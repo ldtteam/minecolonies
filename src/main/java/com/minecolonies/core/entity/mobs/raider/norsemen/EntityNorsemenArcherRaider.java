@@ -27,6 +27,6 @@ public class EntityNorsemenArcherRaider extends AbstractEntityNorsemenRaider imp
     @Override
     public void initStatsFor(final double baseHealth, final double difficulty, final double baseDamage)
     {
-        super.initStatsFor(baseHealth/NORSE_HEALTH_REDUCTION_FACTOR, difficulty, baseDamage);
+        super.initStatsFor(baseHealth / NORSE_HEALTH_REDUCTION_FACTOR, difficulty, baseDamage);
     }
 }

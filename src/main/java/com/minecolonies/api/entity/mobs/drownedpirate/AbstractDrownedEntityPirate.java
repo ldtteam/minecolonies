@@ -41,7 +41,7 @@ public abstract class AbstractDrownedEntityPirate extends AbstractEntityMinecolo
     public AbstractDrownedEntityPirate(final EntityType<? extends AbstractDrownedEntityPirate> type, final Level world)
     {
         super(type, world, PIRATE_TEXTURES);
-        initStatsFor(BARBARIAN_BASE_HEALTH*(world.getDifficulty().getId() + 0.1), world.getDifficulty().getId() + 0.1, ATTACK_DAMAGE * world.getDifficulty().getId());
+        initStatsFor(BARBARIAN_BASE_HEALTH * (world.getDifficulty().getId() + 0.1), world.getDifficulty().getId() + 0.1, ATTACK_DAMAGE * world.getDifficulty().getId());
     }
 
     @Override

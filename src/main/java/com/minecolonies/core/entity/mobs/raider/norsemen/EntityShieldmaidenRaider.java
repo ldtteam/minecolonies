@@ -28,7 +28,7 @@ public class EntityShieldmaidenRaider extends AbstractEntityNorsemenRaider imple
     @Override
     public void initStatsFor(final double baseHealth, final double difficulty, final double baseDamage)
     {
-        super.initStatsFor(baseHealth/NORSE_HEALTH_REDUCTION_FACTOR, difficulty, baseDamage);
+        super.initStatsFor(baseHealth / NORSE_HEALTH_REDUCTION_FACTOR, difficulty, baseDamage);
         this.getAttribute(Attributes.ARMOR).setBaseValue(BASE_NORSE_ARMOR);
     }
 }
