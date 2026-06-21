@@ -1,5 +1,6 @@
 package com.minecolonies.core.entity.ai.workers.guard;
 
+import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.compatibility.tinkers.TinkersToolHelper;
 import com.minecolonies.api.entity.ai.combat.CombatAIStates;
 import com.minecolonies.api.entity.ai.combat.threat.IThreatTableEntity;
@@ -18,6 +19,7 @@ import com.minecolonies.api.util.constant.ColonyConstants;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.MineColonies;
 import com.minecolonies.core.colony.jobs.AbstractJobGuard;
+import com.minecolonies.core.colony.jobs.guard.JobHuscarl;
 import com.minecolonies.core.colony.jobs.guard.JobKnight;
 import com.minecolonies.core.entity.ai.combat.AttackMoveAI;
 import com.minecolonies.core.entity.ai.combat.CombatUtils;
@@ -122,7 +124,7 @@ public class KnightCombatAI extends AttackMoveAI<EntityCitizen>
     protected IAIState attackProtect()
     {
         final int shieldSlot = InventoryUtils.findFirstSlotInItemHandlerWith(user.getInventoryCitizen(), Items.SHIELD);
-        if (parentAI.getJob() instanceof JobKnight && shieldSlot != -1 && target != null && target.isAlive() && nextAttackTime - user.level.getGameTime() >= MIN_TIME_TO_ATTACK &&
+        if (!isHuscarl() && shieldSlot != -1 && target != null && target.isAlive() && nextAttackTime - user.level.getGameTime() >= MIN_TIME_TO_ATTACK &&
               user.getCitizenColonyHandler().getColonyOrRegister().getResearchManager().getResearchEffects().getEffectStrength(SHIELD_USAGE) > 0)
         {
             CitizenItemUtils.setHeldItem(user, InteractionHand.OFF_HAND, shieldSlot);
@@ -140,6 +142,15 @@ public class KnightCombatAI extends AttackMoveAI<EntityCitizen>
         }
 
         return null;
+    }
+
+    /**
+     * Check if is a huscarl instance.
+     * @return true if so.
+     */
+    public boolean isHuscarl()
+    {
+        return parentAI.getJob().getJobRegistryEntry() == ModJobs.huscarl.get();
     }
 
     /**
@@ -174,13 +185,13 @@ public class KnightCombatAI extends AttackMoveAI<EntityCitizen>
      */
     public EquipmentTypeEntry getWeaponType()
     {
-        if (parentAI.getJob() instanceof JobKnight)
+        if (isHuscarl())
         {
-            return ModEquipmentTypes.sword.get();
+            return ModEquipmentTypes.axe.get();
         }
         else
         {
-            return ModEquipmentTypes.axe.get();
+            return ModEquipmentTypes.sword.get();
         }
     }
 
@@ -213,15 +224,15 @@ public class KnightCombatAI extends AttackMoveAI<EntityCitizen>
             doAoeAttack(source, damageToBeDealt);
         }
 
-        if (parentAI.getJob() instanceof JobKnight)
-        {
-            target.hurt(source, (float) damageToBeDealt);
-        }
-        else
+        if (isHuscarl())
         {
             double share = (50 + user.getCitizenData().getCitizenSkillHandler().getLevel(Skill.Adaptability) / 2.0) / 100.0;
             target.hurt(target.level.damageSources().source(DamageSourceKeys.PIERCE, user), (float) damageToBeDealt * (float) share);
             target.hurt(source, (float) damageToBeDealt * (float) (1.0 - share));
+        }
+        else
+        {
+            target.hurt(source, (float) damageToBeDealt);
         }
 
         target.setLastHurtByMob(user);
@@ -356,7 +367,7 @@ public class KnightCombatAI extends AttackMoveAI<EntityCitizen>
     protected int getAttackDelay()
     {
         // TODO: Not sure if we should make knights attack faster, they are intended to not scale in dmg, but health
-        final int reload = KNIGHT_ATTACK_DELAY_BASE - user.getCitizenData().getCitizenSkillHandler().getLevel(Skill.Adaptability) / (parentAI.getJob() instanceof JobKnight ? 3 : 2);
+        final int reload = KNIGHT_ATTACK_DELAY_BASE - user.getCitizenData().getCitizenSkillHandler().getLevel(Skill.Adaptability) / (isHuscarl() ? 2 : 3);
         return Math.max(reload, KNIGHT_ATTACK_DELAY_MIN);
     }
 

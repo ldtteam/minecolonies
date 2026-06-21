@@ -81,11 +81,12 @@ public class CombatUtils
     {
         final double xVector = target.getX() - arrow.getX();
         final double yVector = target.getBoundingBox().minY + target.getBbHeight() / AIM_HEIGHT - arrow.getY();
-        //todo fine tune
+
         final double zVector = target.getZ() - arrow.getZ();
         final double distance = Mth.sqrt((float) (xVector * xVector + zVector * zVector));
         final double dist3d = Mth.sqrt((float) (yVector * yVector + xVector * xVector + zVector * zVector));
-        arrow.shoot(xVector, yVector + distance * AIM_SLIGHTLY_HIGHER_MULTIPLIER, zVector, (float) (ARROW_SPEED * 1 + (dist3d / SPEED_FOR_DIST)), (float) hitChance);
+        final double distanceMultiplier = arrow.shotFromCrossbow() ? 0.05 : AIM_SLIGHTLY_HIGHER_MULTIPLIER;
+        arrow.shoot(xVector, yVector + distance * distanceMultiplier, zVector, (float) (ARROW_SPEED * 1 + (dist3d / SPEED_FOR_DIST)), (float) hitChance);
         if (arrow.shotFromCrossbow())
         {
             target.playSound(SoundEvents.CROSSBOW_SHOOT, 1.0F, 1.0F / (target.level.getRandom().nextFloat() * 0.4F + 0.8F));

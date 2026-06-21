@@ -91,6 +91,7 @@ public class WorkerBuildingModule extends AbstractAssignedCitizenModule
         this.secondary = secondary;
         this.canWorkingDuringRain = canWorkingDuringRain;
         this.sizeLimit = sizeLimit;
+        this.researchRequirement = researchRequirement;
     }
 
 

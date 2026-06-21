@@ -1,5 +1,6 @@
 package com.minecolonies.core.entity.ai.workers.guard;
 
+import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.entity.ai.combat.CombatAIStates;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.ITickRateStateMachine;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickingTransition;
@@ -14,8 +15,6 @@ import com.minecolonies.core.MineColonies;
 import com.minecolonies.core.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.core.colony.buildings.modules.settings.GuardTaskSetting;
 import com.minecolonies.core.colony.jobs.AbstractJobGuard;
-import com.minecolonies.core.colony.jobs.guard.JobKnight;
-import com.minecolonies.core.colony.jobs.guard.JobMarksman;
 import com.minecolonies.core.colony.jobs.guard.JobRanger;
 import com.minecolonies.core.entity.ai.combat.AttackMoveAI;
 import com.minecolonies.core.entity.ai.combat.CombatUtils;
@@ -212,7 +211,7 @@ public class RangerCombatAI extends AttackMoveAI<EntityCitizen>
             }
 
             double damage = calculateDamage(arrow);
-            if (parentAI.getJob() instanceof JobMarksman)
+            if (isMarksman())
             {
                 arrow.setShotFromCrossbow(true);
             }
@@ -261,7 +260,7 @@ public class RangerCombatAI extends AttackMoveAI<EntityCitizen>
     @Override
     protected int getAttackDelay()
     {
-        return RANGED_ATTACK_DELAY_BASE;
+        return (int) (RANGED_ATTACK_DELAY_BASE * (isMarksman() ? 0.67 : 1));
     }
 
     /**
@@ -297,10 +296,10 @@ public class RangerCombatAI extends AttackMoveAI<EntityCitizen>
                                 user.getInventoryCitizen().extractItem(arrowSlot, 1, false);
                             }
 
-                            if (parentAI.getJob() instanceof JobMarksman)
+                            if (isMarksman())
                             {
-                                double share = (50 + user.getCitizenData().getCitizenSkillHandler().getLevel(Skill.Adaptability) / 2.0) / 100.0;
-                                entityRayTraceResult.getEntity().hurt(target.level.damageSources().source(DamageSourceKeys.PIERCE, user), (float) arrow.getBaseDamage() * (float) share);
+                                // Calculate true damage from reduced arrow damage.
+                                entityRayTraceResult.getEntity().hurt(target.level.damageSources().source(DamageSourceKeys.PIERCE, user), (float) arrow.getBaseDamage() * (float) marksManTrueDamageShare() * 10);
                             }
 
                             return true;
@@ -320,7 +319,21 @@ public class RangerCombatAI extends AttackMoveAI<EntityCitizen>
             damage *= 1.5;
         }
 
-        return (RANGER_BASE_DMG + damage) * MineColonies.getConfig().getServer().guardDamageMultiplier.get();
+        return (RANGER_BASE_DMG + damage) * MineColonies.getConfig().getServer().guardDamageMultiplier.get() * (1-(isMarksman() ? marksManTrueDamageShare() : 1));
+    }
+
+    /**
+     * Check if is a marksman instance.
+     * @return true if so.
+     */
+    public boolean isMarksman()
+    {
+        return parentAI.getJob().getJobRegistryEntry() == ModJobs.marksman.get();
+    }
+
+    public double marksManTrueDamageShare()
+    {
+        return (50 + user.getCitizenData().getCitizenSkillHandler().getLevel(Skill.Adaptability) / 2.0) / 100.0;
     }
 
     @Override

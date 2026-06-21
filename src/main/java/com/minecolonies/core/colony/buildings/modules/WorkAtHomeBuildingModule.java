@@ -38,7 +38,7 @@ public class WorkAtHomeBuildingModule extends WorkerBuildingModule implements IA
         final Function<IBuilding, Integer> sizeLimit,
         final ResourceLocation researchRequirement)
     {
-        super(entry, primary, secondary, canWorkingDuringRain, sizeLimit, resourceLocation);
+        super(entry, primary, secondary, canWorkingDuringRain, sizeLimit, researchRequirement);
     }
 
     @Override
