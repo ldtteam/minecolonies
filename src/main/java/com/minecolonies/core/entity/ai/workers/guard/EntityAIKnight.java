@@ -4,6 +4,7 @@ import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.ai.workers.util.GuardGear;
 import com.minecolonies.api.equipment.ModEquipmentTypes;
 import com.minecolonies.core.colony.buildings.AbstractBuildingGuards;
+import com.minecolonies.core.colony.jobs.guard.JobHuscarl;
 import com.minecolonies.core.colony.jobs.guard.JobKnight;
 import com.minecolonies.core.entity.citizen.EntityCitizen;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -30,7 +31,14 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight, AbstractBui
         super(job);
         super.registerTargets();
 
-        toolsNeeded.add(ModEquipmentTypes.sword.get());
+        if (job instanceof JobHuscarl)
+        {
+            toolsNeeded.add(ModEquipmentTypes.axe.get());
+        }
+        else
+        {
+            toolsNeeded.add(ModEquipmentTypes.sword.get());
+        }
 
         for (final List<GuardGear> list : itemsNeeded)
         {
