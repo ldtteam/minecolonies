@@ -387,12 +387,14 @@ public class RestaurantMenuModuleWindow extends AbstractModuleWindow<RestaurantM
             }
             for (final ItemStorage input : recipe.getInputs())
             {
-                if (input.getItem() == Items.BOWL
-                    || input.getItem() instanceof ItemLargeBottle
-                    || input.getItem() instanceof BottleItem
+                if (input.getItem() == Items.BOWL || input.getItem() instanceof BottleItem)
+                {
+                    continue;
+                }
+                else if (input.getItem() instanceof ItemLargeBottle
                     || input.getItem() instanceof HoneyBottleItem
                     || input.getItem() == Items.DRIED_KELP
-                    ||  !processRecipe(input, ingredients, depth + 1, level))
+                    || !processRecipe(input, ingredients, depth + 1, level))
                 {
                     ingredients.add(input);
                 }
@@ -414,9 +416,11 @@ public class RestaurantMenuModuleWindow extends AbstractModuleWindow<RestaurantM
                 if (inputs.length >= 1)
                 {
                     final ItemStorage input = new ItemStorage(inputs[0]);
-                    if (input.getItem() == Items.BOWL
-                        || input.getItem() instanceof ItemLargeBottle
-                        || input.getItem() instanceof BottleItem
+                    if (input.getItem() == Items.BOWL || input.getItem() instanceof BottleItem)
+                    {
+                        continue;
+                    }
+                    if (input.getItem() instanceof ItemLargeBottle
                         || input.getItem() instanceof HoneyBottleItem
                         || input.getItem() == Items.DRIED_KELP
                         || !processRecipe(input, ingredients, depth + 1, level))
