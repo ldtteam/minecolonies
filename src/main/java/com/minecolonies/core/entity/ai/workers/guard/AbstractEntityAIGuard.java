@@ -848,4 +848,14 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
 
         return false;
     }
+
+    /**
+     * Getter for the job.
+     * @return the job.
+     */
+    @NotNull
+    public J getJob()
+    {
+        return job;
+    }
 }

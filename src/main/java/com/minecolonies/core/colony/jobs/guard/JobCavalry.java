@@ -1,5 +1,6 @@
-package com.minecolonies.core.colony.jobs;
+package com.minecolonies.core.colony.jobs.guard;
 
+import com.minecolonies.core.colony.jobs.AbstractJobGuard;
 import com.minecolonies.core.util.citizenutils.CitizenItemUtils;
 import net.minecraft.resources.ResourceLocation;
 import com.minecolonies.api.client.render.modeltype.ModModelTypes;

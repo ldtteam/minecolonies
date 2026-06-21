@@ -4,7 +4,7 @@ import com.minecolonies.api.equipment.ModEquipmentTypes;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.core.colony.buildings.AbstractBuildingGuards;
-import com.minecolonies.core.colony.jobs.JobRanger;
+import com.minecolonies.core.colony.jobs.guard.JobRanger;
 import com.minecolonies.core.entity.citizen.EntityCitizen;
 import com.minecolonies.core.entity.pathfinding.navigation.MinecoloniesAdvancedPathNavigate;
 import com.minecolonies.core.entity.pathfinding.pathjobs.PathJobWalkRandomEdge;
@@ -28,7 +28,7 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger, AbstractBui
     public EntityAIRanger(@NotNull final JobRanger job)
     {
         super(job);
-        toolsNeeded.add(ModEquipmentTypes.bow.get());
+        toolsNeeded.add(job.getEquipmentType());
         new RangerCombatAI((EntityCitizen) worker, getStateAI(), this);
     }
 

@@ -23,6 +23,8 @@ import net.minecraft.world.entity.animal.Rabbit;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Items;
 
+import static com.minecolonies.api.research.util.ResearchConstants.HUSCARL;
+import static com.minecolonies.api.research.util.ResearchConstants.MARKSMAN;
 import static com.minecolonies.api.util.constant.BuildingConstants.BUILDING_FLOWER_LIST;
 import static com.minecolonies.api.util.constant.BuildingConstants.FUEL_LIST;
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_HOSTILES;
@@ -547,6 +549,13 @@ public class BuildingModules
     public static final BuildingEntry.ModuleProducer<GuardBuildingModule,CombinedHiringLimitModuleView> DRUID_BARRACKS_WORK  = new BuildingEntry.ModuleProducer<>(
       "druid_barracks_work", () -> new GuardBuildingModule(ModGuardTypes.druid.get(), true, ICommonBuilding::getBuildingLevel),
       () -> CombinedHiringLimitModuleView::new);
+    public static final BuildingEntry.ModuleProducer<GuardBuildingModule,CombinedHiringLimitModuleView> MARKSMAN_BARRACKS_WORK = new BuildingEntry.ModuleProducer<>(
+        "marksman_barracks_work", () -> new GuardBuildingModule(ModGuardTypes.marksman.get(), true, ICommonBuilding::getBuildingLevel, MARKSMAN),
+        () -> CombinedHiringLimitModuleView::new);
+    public static final BuildingEntry.ModuleProducer<GuardBuildingModule,CombinedHiringLimitModuleView> HUSCARL_BARRACKS_WORK  = new BuildingEntry.ModuleProducer<>(
+        "huscarl_barracks_work", () -> new GuardBuildingModule(ModGuardTypes.huscarl.get(), true, ICommonBuilding::getBuildingLevel, HUSCARL),
+        () -> CombinedHiringLimitModuleView::new);
+
     public static final BuildingEntry.ModuleProducer<StableCavalryBuildingModule,WorkerBuildingModuleView> CAVALRY_STABLE_WORK = new BuildingEntry.ModuleProducer<>(
       "cavalry_stable_work", () -> new StableCavalryBuildingModule(ModGuardTypes.cavalry.get(), true, ICommonBuilding::getBuildingLevel),
       () -> WorkerBuildingModuleView::new);
@@ -557,6 +566,10 @@ public class BuildingModules
       new BuildingEntry.ModuleProducer<>("ranger_tower_work", () -> new GuardBuildingModule(ModGuardTypes.ranger.get(), true, (b) -> 1), () -> CombinedHiringLimitModuleView::new);
     public static final BuildingEntry.ModuleProducer<GuardBuildingModule,CombinedHiringLimitModuleView> DRUID_TOWER_WORK  =
       new BuildingEntry.ModuleProducer<>("druid_tower_work", () -> new GuardBuildingModule(ModGuardTypes.druid.get(), true, (b) -> 1), () -> CombinedHiringLimitModuleView::new);
+    public static final BuildingEntry.ModuleProducer<GuardBuildingModule,CombinedHiringLimitModuleView> MARKSMAN_TOWER_WORK =
+        new BuildingEntry.ModuleProducer<>("marksman_tower_work", () -> new GuardBuildingModule(ModGuardTypes.marksman.get(), true, (b) -> 1, MARKSMAN), () -> CombinedHiringLimitModuleView::new);
+    public static final BuildingEntry.ModuleProducer<GuardBuildingModule,CombinedHiringLimitModuleView> HUSCARL_TOWER_WORK =
+        new BuildingEntry.ModuleProducer<>("huscarl_tower_work", () -> new GuardBuildingModule(ModGuardTypes.huscarl.get(), true, (b) -> 1, HUSCARL), () -> CombinedHiringLimitModuleView::new);
 
     public static final BuildingEntry.ModuleProducer<GuardBuildingModule,CombinedHiringLimitModuleView> KNIGHT_GATE_WORK = new BuildingEntry.ModuleProducer<>(
         "knight_gate_work", () -> new GuardBuildingModule(ModGuardTypes.knight.get(), true, (b) -> 2),

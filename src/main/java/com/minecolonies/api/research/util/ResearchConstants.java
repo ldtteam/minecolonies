@@ -175,6 +175,8 @@ public final class ResearchConstants
     public static final ResourceLocation MIN_ORDER         = new ResourceLocation(Constants.MOD_ID, "effects/min_order");
     public static final ResourceLocation GREEN_REVOLUTION  = new ResourceLocation(Constants.MOD_ID, "effects/greenrevolution");
     public static final ResourceLocation BUILDERS_ASSISTANT_HAMMER = new ResourceLocation(Constants.MOD_ID, "effects/assistanthammerunlock");
+    public static final ResourceLocation MARKSMAN          = new ResourceLocation(Constants.MOD_ID, "effects/marksman");
+    public static final ResourceLocation HUSCARL           = new ResourceLocation(Constants.MOD_ID, "effects/huscarl");
 
     //Recipe unlocks
     public static final ResourceLocation THE_END           = new ResourceLocation(Constants.MOD_ID, "effects/knowledgeoftheendunlock");

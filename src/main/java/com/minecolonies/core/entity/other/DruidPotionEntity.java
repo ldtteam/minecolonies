@@ -2,7 +2,7 @@ package com.minecolonies.core.entity.other;
 
 import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-import com.minecolonies.core.colony.jobs.JobDruid;
+import com.minecolonies.core.colony.jobs.guard.JobDruid;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.sounds.SoundEvents;

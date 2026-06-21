@@ -145,6 +145,8 @@ public class DefaultResearchProvider extends AbstractResearchProvider
         effects.add(new ResearchEffect(MORE_AIR).setTranslatedName("Citizens can stay longer underwater"));
         effects.add(new ResearchEffect(MIN_ORDER).setTranslatedName("Buildings wait a bit longer before placing orders"));
         effects.add(new ResearchEffect(GREEN_REVOLUTION).setTranslatedName("Crops grow outward in offshoots"));
+        effects.add(new ResearchEffect(MARKSMAN).setTranslatedName("Unlocks Marksman as a new Guard Type (Crossbow)."));
+        effects.add(new ResearchEffect(HUSCARL).setTranslatedName("Unlocks Huscarl as a new Guard Type (Axe)."));
 
         // Building-focused unlocks are derived from the block hut name.  Do not manually add ResourceLocations as a string, as some building blocks have surprising names.
         effects.add(new ResearchEffect(ModBuildings.archery.get().getBuildingBlock()).setTranslatedName("Unlocks Archery").setLevels(new double[] {5}));
@@ -898,6 +900,14 @@ public class DefaultResearchProvider extends AbstractResearchProvider
           .addEffect(BLOCK_ATTACKS, 4)
           .addToList(r);
 
+        new Research(new ResourceLocation(Constants.MOD_ID, "combat/slicedanddecided"), COMBAT).setParentResearch(improvedSwords)
+            .setTranslatedName("Sliced and Diced!")
+            .setIcon(Items.DIAMOND_AXE)
+            .addBuildingRequirement(new ResourceLocation(Constants.MOD_ID, ModBuildings.COMBAT_ACADEMY_ID), 3)
+            .addItemCost(Items.DIAMOND_AXE, 1)
+            .addEffect(HUSCARL, 1)
+            .addToList(r);
+
         final Research improvedBows = new Research(new ResourceLocation(Constants.MOD_ID, "combat/improvedbows"), COMBAT).setParentResearch(tacticTraining)
                                         .setTranslatedName("Improved Bows")
                                         .setTranslatedSubtitle("How far back can this bend before snapping?")
@@ -936,6 +946,14 @@ public class DefaultResearchProvider extends AbstractResearchProvider
           .addItemCost(Items.BOW, 27)
           .addEffect(DOUBLE_ARROWS, 4)
           .addToList(r);
+
+        new Research(new ResourceLocation(Constants.MOD_ID, "combat/thathitthemark"), COMBAT).setParentResearch(improvedBows)
+            .setTranslatedName("That hit the mark!")
+            .setIcon(Items.CROSSBOW)
+            .addBuildingRequirement(new ResourceLocation(Constants.MOD_ID, ModBuildings.ARCHERY_ID), 3)
+            .addItemCost(Items.CROSSBOW, 5)
+            .addEffect(MARKSMAN, 1)
+            .addToList(r);
 
         final Research coffee = new Research(new ResourceLocation(Constants.MOD_ID, "combat/coffee"), COMBAT).setParentResearch(tacticTraining)
                                   .setTranslatedName("Coffee")

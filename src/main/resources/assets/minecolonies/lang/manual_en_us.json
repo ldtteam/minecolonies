@@ -889,6 +889,7 @@
   "com.minecolonies.coremod.tooltype.hoe": "Hoe",
   "com.minecolonies.coremod.tooltype.sword": "Sword",
   "com.minecolonies.coremod.tooltype.bow": "Bow",
+  "com.minecolonies.coremod.tooltype.crossbow": "Crossbow",
   "com.minecolonies.coremod.tooltype.fishingrod": "Fishing Rod",
   "com.minecolonies.coremod.tooltype.shears": "Shears",
   "com.minecolonies.coremod.tooltype.shield": "Shield",
@@ -1904,6 +1905,7 @@
   "death.attack.entity.minecolonies.training": "%s got killed during training",
   "death.attack.entity.minecolonies.guard": "%s was defeated by a Guard",
   "death.attack.entity.minecolonies.guardpvp": "%s was skewered by a Guard",
+  "death.attack.entity.minecolonies.pierce": "%s armor got pierced!",
 
   "item.minecolonies.shieldmaidenegg": "Shieldmaiden Spawn Egg",
   "item.minecolonies.norsemenarcheregg": "Archer Norseman Spawn Egg",
@@ -2304,6 +2306,9 @@
   "com.minecolonies.job.beekeeper": "Beekeeper",
   "com.minecolonies.job.smelter": "Smelter",
   "com.minecolonies.job.druid": "Druid",
+  "com.minecolonies.job.huscarl": "Huscarl",
+  "com.minecolonies.job.marksman": "Marksman",
+
   "com.minecolonies.job.alchemist": "Alchemist",
 
   "com.minecolonies.building.miner": "Mine",
@@ -2379,6 +2384,9 @@
   "com.minecolonies.building.largequarry": "Large Quarry",
   "com.minecolonies.coremod.gui.quarry.desc": "To start the Quarry construct a Mine, hire a Quarrier and assign the Quarrier to the Quarry",
   "com.minecolonies.coremod.gui.workerhuts.druid": "Druid",
+  "com.minecolonies.coremod.gui.workerhuts.huscarl": "Huscarl",
+  "com.minecolonies.coremod.gui.workerhuts.marksman": "Marksman",
+
   "item.minecolonies.mistletoe": "Mistletoe",
   "item.minecolonies.magicpotion": "Magic Potion",
 
@@ -2428,6 +2436,8 @@
   "minecolonies:netherworker.job.desc": "Wanders into the Nether to gather a wide range of materials. A very dangerous job!.",
   "minecolonies:alchemist.job.desc": "Brews Potions, plants Netherwart and harvests Mistletoes",
   "minecolonies:stablemaster.job.desc": "Raises horses and trains and prepares them for combat use.",
+  "minecolonies:huscarl.job.desc": "Cuts through armor with every strike. Fragile up close. Hits hard, but can't equip a shield.",
+  "minecolonies:marksman.job.desc": "Pierces armor from a distance. Deadly in the open, but at a lower speed than archers.",
 
   "minecolonies:builder.skills.desc": "Affects placement and breaking speed.",
   "minecolonies:deliveryman.skills.desc": "Affects walking speed and concurrent request fulfillment capacity.",

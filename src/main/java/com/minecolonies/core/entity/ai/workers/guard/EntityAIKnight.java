@@ -4,7 +4,7 @@ import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.ai.workers.util.GuardGear;
 import com.minecolonies.api.equipment.ModEquipmentTypes;
 import com.minecolonies.core.colony.buildings.AbstractBuildingGuards;
-import com.minecolonies.core.colony.jobs.JobKnight;
+import com.minecolonies.core.colony.jobs.guard.JobKnight;
 import com.minecolonies.core.entity.citizen.EntityCitizen;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;

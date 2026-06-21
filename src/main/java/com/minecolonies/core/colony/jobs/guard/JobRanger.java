@@ -1,5 +1,8 @@
-package com.minecolonies.core.colony.jobs;
+package com.minecolonies.core.colony.jobs.guard;
 
+import com.minecolonies.api.equipment.ModEquipmentTypes;
+import com.minecolonies.api.equipment.registry.EquipmentTypeEntry;
+import com.minecolonies.core.colony.jobs.AbstractJobGuard;
 import net.minecraft.resources.ResourceLocation;
 import com.minecolonies.api.client.render.modeltype.ModModelTypes;
 import com.minecolonies.api.colony.ICitizenData;
@@ -12,12 +15,6 @@ import com.minecolonies.core.entity.ai.workers.guard.EntityAIRanger;
  */
 public class JobRanger extends AbstractJobGuard<JobRanger>
 {
-
-    /**
-     * The name associated with the job.
-     */
-    public static final String DESC = "com.minecolonies.coremod.job.Ranger";
-
     /**
      * Initialize citizen data.
      *
@@ -38,5 +35,15 @@ public class JobRanger extends AbstractJobGuard<JobRanger>
     public ResourceLocation getModel()
     {
         return ModModelTypes.ARCHER_GUARD_ID;
+    }
+
+    /**
+     * Equipment type of this guard.
+     * @return the type.
+     */
+    public EquipmentTypeEntry getEquipmentType()
+    {
+        // Default bow.
+        return ModEquipmentTypes.bow.get();
     }
 }

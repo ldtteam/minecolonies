@@ -19,6 +19,7 @@ import com.minecolonies.core.colony.buildings.modules.ItemListModule;
 import com.minecolonies.core.colony.buildings.modules.QuarryModule;
 import com.minecolonies.core.colony.buildings.workerbuildings.*;
 import com.minecolonies.core.colony.jobs.*;
+import com.minecolonies.core.colony.jobs.guard.JobCavalry;
 import com.minecolonies.core.entity.ai.workers.AbstractEntityAIBasic;
 import com.minecolonies.core.util.WorkerUtil;
 import net.minecraft.network.chat.Component;

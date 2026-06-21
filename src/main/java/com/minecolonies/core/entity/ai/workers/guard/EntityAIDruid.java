@@ -4,7 +4,7 @@ import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.core.colony.buildings.AbstractBuildingGuards;
-import com.minecolonies.core.colony.jobs.JobDruid;
+import com.minecolonies.core.colony.jobs.guard.JobDruid;
 import com.minecolonies.core.entity.citizen.EntityCitizen;
 import com.minecolonies.core.entity.pathfinding.navigation.MinecoloniesAdvancedPathNavigate;
 import com.minecolonies.core.entity.pathfinding.pathjobs.PathJobWalkRandomEdge;

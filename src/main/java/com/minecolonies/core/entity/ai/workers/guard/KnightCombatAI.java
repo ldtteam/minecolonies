@@ -18,6 +18,7 @@ import com.minecolonies.api.util.constant.ColonyConstants;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.MineColonies;
 import com.minecolonies.core.colony.jobs.AbstractJobGuard;
+import com.minecolonies.core.colony.jobs.guard.JobKnight;
 import com.minecolonies.core.entity.ai.combat.AttackMoveAI;
 import com.minecolonies.core.entity.ai.combat.CombatUtils;
 import com.minecolonies.core.entity.citizen.EntityCitizen;
@@ -35,19 +36,24 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.DamageSources;
+import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.AxeItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.SwordItem;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
+import vectorwing.farmersdelight.common.registry.ModDamageTypes;
 
 import java.util.List;
 import java.util.Objects;
 
+import static com.minecolonies.api.entity.citizen.Skill.Stamina;
 import static com.minecolonies.api.research.util.ResearchConstants.*;
 import static com.minecolonies.api.util.constant.GuardConstants.*;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_BANNER_PATTERNS;
@@ -116,7 +122,7 @@ public class KnightCombatAI extends AttackMoveAI<EntityCitizen>
     protected IAIState attackProtect()
     {
         final int shieldSlot = InventoryUtils.findFirstSlotInItemHandlerWith(user.getInventoryCitizen(), Items.SHIELD);
-        if (shieldSlot != -1 && target != null && target.isAlive() && nextAttackTime - user.level.getGameTime() >= MIN_TIME_TO_ATTACK &&
+        if (parentAI.getJob() instanceof JobKnight && shieldSlot != -1 && target != null && target.isAlive() && nextAttackTime - user.level.getGameTime() >= MIN_TIME_TO_ATTACK &&
               user.getCitizenColonyHandler().getColonyOrRegister().getResearchManager().getResearchEffects().getEffectStrength(SHIELD_USAGE) > 0)
         {
             CitizenItemUtils.setHeldItem(user, InteractionHand.OFF_HAND, shieldSlot);
@@ -168,7 +174,14 @@ public class KnightCombatAI extends AttackMoveAI<EntityCitizen>
      */
     public EquipmentTypeEntry getWeaponType()
     {
-        return ModEquipmentTypes.sword.get();
+        if (parentAI.getJob() instanceof JobKnight)
+        {
+            return ModEquipmentTypes.sword.get();
+        }
+        else
+        {
+            return ModEquipmentTypes.axe.get();
+        }
     }
 
     @Override
@@ -200,7 +213,17 @@ public class KnightCombatAI extends AttackMoveAI<EntityCitizen>
             doAoeAttack(source, damageToBeDealt);
         }
 
-        target.hurt(source, (float) damageToBeDealt);
+        if (parentAI.getJob() instanceof JobKnight)
+        {
+            target.hurt(source, (float) damageToBeDealt);
+        }
+        else
+        {
+            double share = (50 + user.getCitizenData().getCitizenSkillHandler().getLevel(Skill.Adaptability) / 2.0) / 100.0;
+            target.hurt(target.level.damageSources().source(DamageSourceKeys.PIERCE, user), (float) damageToBeDealt * (float) share);
+            target.hurt(source, (float) damageToBeDealt * (float) (1.0 - share));
+        }
+
         target.setLastHurtByMob(user);
 
         if (target instanceof Mob && user.getCitizenColonyHandler().getColonyOrRegister().getResearchManager().getResearchEffects().getEffectStrength(KNIGHT_TAUNT) > 0)
@@ -295,6 +318,10 @@ public class KnightCombatAI extends AttackMoveAI<EntityCitizen>
             {
                 addDmg += ((ItemSpear) heldItem.getItem()).getDamage() + BASE_PHYSICAL_DAMAGE;
             }
+            else if (heldItem.getItem() instanceof AxeItem)
+            {
+                addDmg += heldItem.getItem().getDamage(heldItem) + BASE_PHYSICAL_DAMAGE;
+            }
             else
             {
                 addDmg += TinkersToolHelper.getDamage(heldItem);
@@ -329,7 +356,7 @@ public class KnightCombatAI extends AttackMoveAI<EntityCitizen>
     protected int getAttackDelay()
     {
         // TODO: Not sure if we should make knights attack faster, they are intended to not scale in dmg, but health
-        final int reload = KNIGHT_ATTACK_DELAY_BASE - user.getCitizenData().getCitizenSkillHandler().getLevel(Skill.Adaptability) / 3;
+        final int reload = KNIGHT_ATTACK_DELAY_BASE - user.getCitizenData().getCitizenSkillHandler().getLevel(Skill.Adaptability) / (parentAI.getJob() instanceof JobKnight ? 3 : 2);
         return Math.max(reload, KNIGHT_ATTACK_DELAY_MIN);
     }
 

@@ -27,7 +27,8 @@ public class DefaultDamageTagsProvider extends TagsProvider<DamageType>
     @Override
     protected void addTags(final HolderLookup.Provider lookup)
     {
-        tag(DamageTypeTags.BYPASSES_ARMOR).add(DamageSourceKeys.WAKEY, DamageSourceKeys.GUARD_PVP);
-        tag(DamageTypeTags.IS_PROJECTILE).add(DamageSourceKeys.SPEAR);
+        tag(DamageTypeTags.BYPASSES_ARMOR).add(DamageSourceKeys.WAKEY, DamageSourceKeys.GUARD_PVP, DamageSourceKeys.PIERCE);
+        tag(DamageTypeTags.IS_PROJECTILE).add(DamageSourceKeys.SPEAR, DamageSourceKeys.PIERCE);
+        tag(DamageTypeTags.BYPASSES_SHIELD).add(DamageSourceKeys.PIERCE);
     }
 }

@@ -6,12 +6,14 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.level.Level;
 
+import static com.minecolonies.core.entity.mobs.raider.norsemen.EntityNorsemenChiefRaider.BASE_NORSE_ARMOR;
+import static com.minecolonies.core.entity.mobs.raider.norsemen.EntityNorsemenChiefRaider.NORSE_HEALTH_REDUCTION_FACTOR;
+
 /**
  * Class for the Norsemen Shieldmaiden entity.
  */
 public class EntityShieldmaidenRaider extends AbstractEntityNorsemenRaider implements IMeleeNorsemenEntity
 {
-
     /**
      * Constructor of the entity.
      *
@@ -26,8 +28,7 @@ public class EntityShieldmaidenRaider extends AbstractEntityNorsemenRaider imple
     @Override
     public void initStatsFor(final double baseHealth, final double difficulty, final double baseDamage)
     {
-        super.initStatsFor(baseHealth, difficulty, baseDamage);
-        final double chiefArmor = difficulty * 2.0;
-        this.getAttribute(Attributes.ARMOR).setBaseValue(chiefArmor);
+        super.initStatsFor(baseHealth/NORSE_HEALTH_REDUCTION_FACTOR, difficulty, baseDamage);
+        this.getAttribute(Attributes.ARMOR).setBaseValue(BASE_NORSE_ARMOR);
     }
 }
