@@ -91,7 +91,7 @@
           "answer": "Tell me more about what you found!",
           "result": {
             "type": "minecolonies:dialogue",
-            "text": "Oh where to even begin! There was a cluster of torchflower growing right alongside a patch of orchid, which I have never seen before. The scholars were absolutely buzzing. I could talk about it all day, but you should take your reward first! We must do this again sometime.",
+            "text": "Oh where to even begin! There was a cluster of torchflower growing right alongside a patch of orchids, which I have never seen before. The scholars were absolutely buzzing. I could talk about it all day, but you should take your reward first! We must do this again sometime.",
             "options": [
               {
                 "answer": "That sounds incredible. Thank you!",
