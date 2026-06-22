@@ -8,7 +8,6 @@ import com.minecolonies.core.colony.jobs.guard.JobHuscarl;
 import com.minecolonies.core.colony.jobs.guard.JobKnight;
 import com.minecolonies.core.entity.citizen.EntityCitizen;
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.NotNull;
 
@@ -24,9 +23,9 @@ import static com.minecolonies.api.util.constant.GuardConstants.SHIELD_LEVEL_RAN
  * Knight AI, which deals with gear specifics
  */
 @SuppressWarnings("squid:MaximumInheritanceDepth")
-public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight, AbstractBuildingGuards>
+public class EntityAIMelee extends AbstractEntityAIGuard<JobKnight, AbstractBuildingGuards>
 {
-    public EntityAIKnight(@NotNull final JobKnight job)
+    public EntityAIMelee(@NotNull final JobKnight job)
     {
         super(job);
         super.registerTargets();
@@ -50,7 +49,7 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight, AbstractBui
               SHIELD_BUILDING_LEVEL_RANGE));
         }
 
-        new KnightCombatAI((EntityCitizen) worker, getStateAI(), this);
+        new MeleeCombatAI((EntityCitizen) worker, getStateAI(), this);
     }
 
     @NotNull

@@ -11,7 +11,7 @@ import net.minecraft.resources.ResourceLocation;
 import static com.minecolonies.api.util.constant.GuardConstants.CAVALRY_DAMAGE_MULTIPLIER;
 import static com.minecolonies.api.util.constant.GuardConstants.CAVALRY_RANGE_MULTIPLIER;
 
-public class CavalryCombatAI extends KnightCombatAI
+public class CavalryCombatAI extends MeleeCombatAI
 {
     /**
      * Combat icon

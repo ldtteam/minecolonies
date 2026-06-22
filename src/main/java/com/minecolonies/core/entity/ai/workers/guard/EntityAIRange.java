@@ -1,6 +1,5 @@
 package com.minecolonies.core.entity.ai.workers.guard;
 
-import com.minecolonies.api.equipment.ModEquipmentTypes;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.core.colony.buildings.AbstractBuildingGuards;
@@ -21,15 +20,15 @@ import static com.minecolonies.api.research.util.ResearchConstants.ARCHER_USE_AR
  * Ranger AI class, which deals with equipment and movement specifics
  */
 @SuppressWarnings("squid:MaximumInheritanceDepth")
-public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger, AbstractBuildingGuards>
+public class EntityAIRange extends AbstractEntityAIGuard<JobRanger, AbstractBuildingGuards>
 {
     public static final String RENDER_META_ARROW = "arrow";
 
-    public EntityAIRanger(@NotNull final JobRanger job)
+    public EntityAIRange(@NotNull final JobRanger job)
     {
         super(job);
         toolsNeeded.add(job.getEquipmentType());
-        new RangerCombatAI((EntityCitizen) worker, getStateAI(), this);
+        new RangeCombatAI((EntityCitizen) worker, getStateAI(), this);
     }
 
     @Override

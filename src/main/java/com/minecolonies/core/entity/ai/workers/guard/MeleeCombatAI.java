@@ -19,8 +19,6 @@ import com.minecolonies.api.util.constant.ColonyConstants;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.MineColonies;
 import com.minecolonies.core.colony.jobs.AbstractJobGuard;
-import com.minecolonies.core.colony.jobs.guard.JobHuscarl;
-import com.minecolonies.core.colony.jobs.guard.JobKnight;
 import com.minecolonies.core.entity.ai.combat.AttackMoveAI;
 import com.minecolonies.core.entity.ai.combat.CombatUtils;
 import com.minecolonies.core.entity.citizen.EntityCitizen;
@@ -38,8 +36,6 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.damagesource.DamageSources;
-import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.decoration.ArmorStand;
@@ -55,7 +51,6 @@ import vectorwing.farmersdelight.common.registry.ModDamageTypes;
 import java.util.List;
 import java.util.Objects;
 
-import static com.minecolonies.api.entity.citizen.Skill.Stamina;
 import static com.minecolonies.api.research.util.ResearchConstants.*;
 import static com.minecolonies.api.util.constant.GuardConstants.*;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_BANNER_PATTERNS;
@@ -69,7 +64,7 @@ import static com.minecolonies.core.entity.ai.workers.guard.AbstractEntityAIGuar
 /**
  * Knight combat AI
  */
-public class KnightCombatAI extends AttackMoveAI<EntityCitizen>
+public class MeleeCombatAI extends AttackMoveAI<EntityCitizen>
 {
     /**
      * Combat icon
@@ -103,7 +98,7 @@ public class KnightCombatAI extends AttackMoveAI<EntityCitizen>
      */
     private static final double COMBAT_SPEED = 1.0;
 
-    public KnightCombatAI(
+    public MeleeCombatAI(
       final EntityCitizen owner,
       final ITickRateStateMachine stateMachine,
       final AbstractEntityAIGuard parentAI)

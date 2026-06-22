@@ -6,7 +6,7 @@ import com.minecolonies.core.colony.jobs.AbstractJobGuard;
 import net.minecraft.resources.ResourceLocation;
 import com.minecolonies.api.client.render.modeltype.ModModelTypes;
 import com.minecolonies.api.colony.ICitizenData;
-import com.minecolonies.core.entity.ai.workers.guard.EntityAIRanger;
+import com.minecolonies.core.entity.ai.workers.guard.EntityAIRange;
 
 /**
  * The Ranger's Job class
@@ -26,9 +26,9 @@ public class JobRanger extends AbstractJobGuard<JobRanger>
     }
 
     @Override
-    public EntityAIRanger generateGuardAI()
+    public EntityAIRange generateGuardAI()
     {
-        return new EntityAIRanger(this);
+        return new EntityAIRange(this);
     }
 
     @Override

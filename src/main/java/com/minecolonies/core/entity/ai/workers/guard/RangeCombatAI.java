@@ -53,7 +53,7 @@ import static com.minecolonies.core.entity.ai.workers.guard.AbstractEntityAIGuar
 /**
  * Knight combat AI
  */
-public class RangerCombatAI extends AttackMoveAI<EntityCitizen>
+public class RangeCombatAI extends AttackMoveAI<EntityCitizen>
 {
     /**
      * Visible combat icon
@@ -90,7 +90,7 @@ public class RangerCombatAI extends AttackMoveAI<EntityCitizen>
 
     private final PathingOptions combatPathingOptions;
 
-    public RangerCombatAI(
+    public RangeCombatAI(
       final EntityCitizen owner,
       final ITickRateStateMachine stateMachine,
       final AbstractEntityAIGuard parentAI)
