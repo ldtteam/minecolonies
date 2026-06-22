@@ -1197,7 +1197,7 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
                 }
             }
 
-            if (node.isLadder())
+            if (node.isLadder() || (node.parent != null && node.parent.isLadder() && node.isCornerNode()))
             {
                 p.setOnLadder(true);
                 // TODO: Check working, logic is a bit odd
