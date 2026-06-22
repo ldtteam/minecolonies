@@ -9,7 +9,12 @@ import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickingT
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.equipment.ModEquipmentTypes;
-import com.minecolonies.api.util.*;
+import com.minecolonies.api.equipment.registry.EquipmentTypeEntry;
+import com.minecolonies.api.util.DamageSourceKeys;
+import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.SoundUtils;
+import com.minecolonies.api.util.Utils;
 import com.minecolonies.api.util.constant.ColonyConstants;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.MineColonies;
@@ -19,6 +24,7 @@ import com.minecolonies.core.entity.ai.combat.CombatUtils;
 import com.minecolonies.core.entity.citizen.EntityCitizen;
 import com.minecolonies.core.entity.pathfinding.navigation.EntityNavigationUtils;
 import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
+import com.minecolonies.core.items.ItemSpear;
 import com.minecolonies.core.util.citizenutils.CitizenItemUtils;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ParticleTypes;
@@ -52,7 +58,6 @@ import static com.minecolonies.core.colony.buildings.modules.BuildingModules.STA
 import static com.minecolonies.core.entity.ai.BehaviourStateGroup.GUARD_ABORT_AND_FIGHT;
 import static com.minecolonies.core.entity.ai.workers.guard.AbstractEntityAIFight.SPEED_LEVEL_BONUS;
 import static com.minecolonies.core.entity.ai.workers.guard.AbstractEntityAIGuard.PATROL_DEVIATION_RAID_POINT;
-import static net.minecraft.SharedConstants.TICKS_PER_SECOND;
 
 /**
  * Knight combat AI
@@ -131,12 +136,19 @@ public class KnightCombatAI extends AttackMoveAI<EntityCitizen>
         return null;
     }
 
+    /**
+     * Checks if the guard has a weapon to attack with.
+     * 
+     * @return true if the guard can attack, false otherwise.
+     */
     @Override
     public boolean canAttack()
     {
+        EquipmentTypeEntry tool = getWeaponType();
+
         final int weaponSlot =
           InventoryUtils.getFirstSlotOfItemHandlerContainingEquipment(user.getInventoryCitizen(),
-            ModEquipmentTypes.sword.get(),
+            tool,
             0,
             user.getCitizenData().getWorkBuilding().getMaxEquipmentLevel());
 
@@ -147,6 +159,16 @@ public class KnightCombatAI extends AttackMoveAI<EntityCitizen>
         }
 
         return false;
+    }
+
+    /**
+     * Gets the weapon type that the AI will look for when checking if it can attack.
+     *
+     * @return the weapon type.
+     */
+    public EquipmentTypeEntry getWeaponType()
+    {
+        return ModEquipmentTypes.sword.get();
     }
 
     @Override
@@ -273,6 +295,10 @@ public class KnightCombatAI extends AttackMoveAI<EntityCitizen>
             if (heldItem.getItem() instanceof SwordItem)
             {
                 addDmg += user.getAttribute(Attributes.ATTACK_DAMAGE).getValue();
+            }
+            else if (heldItem.getItem() instanceof ItemSpear) 
+            {
+                addDmg += ((ItemSpear) heldItem.getItem()).getDamage() + BASE_PHYSICAL_DAMAGE;
             }
             else
             {

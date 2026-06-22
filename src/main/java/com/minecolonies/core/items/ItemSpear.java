@@ -14,11 +14,15 @@ import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TridentItem;
 import net.minecraft.world.level.Level;
+import net.neoforged.neoforge.common.ItemAbilities;
+import net.neoforged.neoforge.common.ItemAbility;
 import org.jetbrains.annotations.NotNull;
 
 
 public class ItemSpear extends TridentItem
 {
+    protected static final int SPEAR_BASE_DAMAGE = 3;
+
     public ItemSpear(final Properties properties)
     {
         super(properties.durability(250));
@@ -71,5 +75,26 @@ public class ItemSpear extends TridentItem
             playerEntity.startUsingItem(hand);
             return InteractionResultHolder.consume(itemstack);
         }
+    }
+
+    /**
+     * For cavalry use, allow the spear to be used as a melee weapon, so allow the default sword actions.
+     * @param stack the item stack.
+     * @param itemAbility the item ability.
+     * @return true if the action can be performed.
+     */
+    @Override
+    public boolean canPerformAction(ItemStack stack, ItemAbility itemAbility)
+    {
+        return ItemAbilities.DEFAULT_SWORD_ACTIONS.contains(itemAbility);
+    }
+
+    /** Gets the base damage of the spear.
+     *
+     * @return the base damage of the spear.
+     **/
+    public int getDamage()
+    {
+        return SPEAR_BASE_DAMAGE;
     }
 }

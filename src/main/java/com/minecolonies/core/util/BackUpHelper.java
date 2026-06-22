@@ -49,7 +49,7 @@ public final class BackUpHelper
     /**
      * Export colony filename scheme
      */
-    public static final String FILENAME_EXPORT = "colony%dExport.zip";
+    public static final String FILENAME_EXPORT = "colony%sExport.zip";
 
     /**
      * Maximum amount of backup zips

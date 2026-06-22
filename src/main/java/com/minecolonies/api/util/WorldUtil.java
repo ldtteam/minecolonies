@@ -1,6 +1,7 @@
 package com.minecolonies.api.util;
 
 import com.minecolonies.api.colony.buildings.IBuilding;
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.Registries;
@@ -30,7 +31,9 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.Executor;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.CitizenConstants.NIGHT;
@@ -446,5 +449,26 @@ public class WorldUtil
         }
 
         return closestEntity;
+    }
+
+    /**
+     * Gets the client/server main thread as appropriate for the current logical side.
+     * @param world the client/server world.
+     * @return the corresponding main thread executor.
+     */
+    @NotNull
+    public static Executor getMainThread(@NotNull final Level world)
+    {
+        if (world.isClientSide())
+        {
+            return getClientMainThread();
+        }
+
+        return Objects.requireNonNull(world.getServer());
+    }
+
+    private static Executor getClientMainThread()
+    {
+        return Minecraft.getInstance();
     }
 }

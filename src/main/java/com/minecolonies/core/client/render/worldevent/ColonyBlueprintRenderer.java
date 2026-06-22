@@ -12,7 +12,6 @@ import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.client.ModKeyMappings;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.IColonyView;
-import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.workorders.IWorkOrderView;
 import com.minecolonies.api.colony.workorders.WorkOrderType;
@@ -379,6 +378,7 @@ public class ColonyBlueprintRenderer
     private record BlueprintCacheKey(
         @NotNull String packName,
         @NotNull String path,
+        @NotNull String special,
         RotationMirror orientation)
     {
     }
@@ -435,7 +435,7 @@ public class ColonyBlueprintRenderer
                         schemPath = schemPath.substring(0, schemPath.length() - 1) + buildingView.getBuildingMaxLevel() + ".blueprint";
 
                         final String structurePack = buildingView.getStructurePack();
-                        final BlueprintCacheKey key = new BlueprintCacheKey(structurePack, schemPath, buildingView.getRotationMirror());
+                        final BlueprintCacheKey key = new BlueprintCacheKey(structurePack, schemPath, "", buildingView.getRotationMirror());
 
                         desired.put(currentPosition,
                             new PendingRenderData(key, currentPosition, 0,
@@ -473,7 +473,7 @@ public class ColonyBlueprintRenderer
                 if (workOrder.getLocation().distSqr(ctx.clientPlayer.blockPosition()) < range)
                 {
                     final int builder = getBuilderId(ctx.nearestColony, workOrder.getClaimedBy());
-                    final BlueprintCacheKey key = new BlueprintCacheKey(workOrder.getStructurePack(), workOrder.getStructurePath(), workOrder.getRotationMirror());
+                    final BlueprintCacheKey key = loadBlueprintFromWorkOrder(workOrder, ctx, false);
                     desired.put(workOrder.getLocation(),
                         new PendingRenderData(key, workOrder.getLocation(), builder,
                             workOrder.getWorkOrderType() == WorkOrderType.REMOVE,
@@ -543,49 +543,48 @@ public class ColonyBlueprintRenderer
             {
                 if (workOrder.getBoundingBox().inflate(8).contains(ctx.clientPlayer.position()))
                 {
-                    final BlockPos workerPos = workOrder.getClaimedBy();
-                    if (workerPos.equals(BlockPos.ZERO))
-                    {
-                        continue;
-                    }
-
-                    final IBuildingView building = ctx.nearestColony.getClientBuildingManager().getBuilding(workerPos);
-                    if (building == null || building.getBuildingType() != ModBuildings.builder.get())
-                    {
-                        continue;
-                    }
-
-                    final BlueprintCacheKey key = new BlueprintCacheKey(workOrder.getStructurePack(), workOrder.getStructurePath(), workOrder.getRotationMirror());
+                    final BlueprintCacheKey key = loadBlueprintFromWorkOrder(workOrder, ctx, true);
 
                     desired.put(workOrder.getLocation(), new PendingRenderData(key, workOrder.getLocation(), -1, false, true));
-
-                    workOrder.loadBlueprint(ctx.clientLevel, blueprint -> {
-                        if (blueprint == null)
-                        {
-                            return;
-                        }
-                        final BlueprintPreviewData blueprintPreviewData = new BlueprintPreviewData(false);
-                        blueprintPreviewData.setPos(workOrder.getLocation());
-                        blueprintPreviewData.setRotationMirror(blueprint.getRotationMirror());
-                        blueprintPreviewData.setBlueprint(blueprint);
-                        blueprintPreviewData.setOverridePreviewTransparency(0.4f);
-                        // blueprintPreviewData.setRenderBlocksNice(true);
-
-                        if (!workerPos.equals(BlockPos.ZERO))
-                        {
-                            if (building != null && building.getModuleView(BuildingModules.BUILDER_SETTINGS) != null)
-                            {
-                                blueprintPreviewData.setSolidSubstitutionOverride(building.getModuleView(BuildingModules.BUILDER_SETTINGS).getSetting(
-                                    BuildingMiner.FILL_BLOCK).getValue().getBlock().defaultBlockState());
-                            }
-                        }
-
-                        blueprintDataCache.put(key, blueprintPreviewData);
-                    });
                 }
             }
 
             return desired;
         }
+    }
+
+    private static BlueprintCacheKey loadBlueprintFromWorkOrder(final IWorkOrderView workOrder, final WorldEventContext ctx, final boolean forceTransparent)
+    {
+        final String special = String.format("%d-%d-%d", workOrder.getCurrentLevel(), workOrder.getTargetLevel(), forceTransparent ? 1 : 0);
+        final BlueprintCacheKey key = new BlueprintCacheKey(workOrder.getStructurePack(), workOrder.getStructurePath(), special, workOrder.getRotationMirror());
+
+        if (blueprintDataCache.asMap().containsKey(key))
+        {
+            return key;
+        }
+
+        final BlueprintPreviewData blueprintPreviewData = new BlueprintPreviewData(false);
+        blueprintPreviewData.setBlueprintFuture(workOrder.loadBlueprintFuture(ctx.clientLevel));
+        blueprintPreviewData.setPos(workOrder.getLocation());
+        blueprintPreviewData.setRotationMirror(workOrder.getRotationMirror());
+        if (forceTransparent)
+        {
+            blueprintPreviewData.setOverridePreviewTransparency(0.4f);
+            // blueprintPreviewData.setRenderBlocksNice(true);
+        }
+
+        final BlockPos workerPos = workOrder.getClaimedBy();
+        if (!workerPos.equals(BlockPos.ZERO))
+        {
+            final IBuildingView building = ctx.nearestColony.getClientBuildingManager().getBuilding(workerPos);
+            if (building != null && building.getModuleView(BuildingModules.BUILDER_SETTINGS) != null)
+            {
+                blueprintPreviewData.setSolidSubstitutionOverride(building.getModuleView(BuildingModules.BUILDER_SETTINGS).getSetting(
+                    BuildingMiner.FILL_BLOCK).getValue().getBlock().defaultBlockState());
+            }
+        }
+
+        blueprintDataCache.put(key, blueprintPreviewData);
+        return key;
     }
 }

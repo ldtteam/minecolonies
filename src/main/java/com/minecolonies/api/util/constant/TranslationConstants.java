@@ -750,6 +750,12 @@ public final class TranslationConstants
     public static final String PARTIAL_EXPEDITION_STATUS                  = "com.minecolonies.gui.workerhuts.expedition.";
     @NonNls
     public static final String PARTIAL_STATS_MODIFIER_NAME                = "com.minecolonies.coremod.gui.townhall.stats.";
+    @NonNls
+    public static final String CAVALRY_NOHORSE                            = "entity.cavalry.nohorse";
+    @NonNls
+    public static final String STABLEMASTER_NEEDED_READYITEMS             = "com.minecolonies.coremod.stablemaster.needed.readyitems";
+    @NonNls
+    public static final String STABLEMASTER_NEEDED_FEEDITEMS              = "com.minecolonies.coremod.stablemaster.needed.feeditems";
 
     //</editor-fold>
 

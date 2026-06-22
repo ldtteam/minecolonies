@@ -9,9 +9,11 @@ import com.minecolonies.api.entity.pathfinding.IDynamicHeuristicNavigator;
 import com.minecolonies.api.entity.pathfinding.IMinecoloniesNavigator;
 import com.minecolonies.api.entity.pathfinding.IStuckHandler;
 import com.minecolonies.api.util.*;
+import com.minecolonies.api.util.constant.GuardConstants;
 import com.minecolonies.core.entity.other.cavalry.CavalryHorseEntity;
 import com.minecolonies.core.entity.pathfinding.PathFindingStatus;
 import com.minecolonies.core.entity.pathfinding.PathPointExtended;
+import com.minecolonies.core.entity.pathfinding.PathingOptions;
 import com.minecolonies.core.entity.pathfinding.Pathfinding;
 import com.minecolonies.core.entity.pathfinding.PathfindingUtils;
 import com.minecolonies.core.entity.pathfinding.pathjobs.*;
@@ -325,10 +327,39 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
             return null;
         }
 
-        job.setPathingOptions(getPathingOptions());
+        job.setPathingOptions(getOptionsForPathJob());
         pathResult = job.getResult();
         pathResult.startJob(Pathfinding.getExecutor());
         return (PathResult<T>) pathResult;
+    }
+
+    /**
+     * Resolve the effective pathing options for a newly created path job.
+     *
+     * <p>Mounted units should path according to their vehicle's constraints without mutating
+     * either navigator's long-lived settings. The returned options are copied into the job.</p>
+     *
+     * @return the pathing options for the next job
+     */
+    protected PathingOptions getOptionsForPathJob()
+    {
+        if (ourEntity.getVehicle() instanceof Mob riddenMob
+              && riddenMob.getNavigation() instanceof AbstractAdvancedPathNavigate vehicleNavigation)
+        {
+            final PathingOptions mountedOptions = new PathingOptions();
+            mountedOptions.importFrom(vehicleNavigation.getPathingOptions());
+
+            if (riddenMob instanceof CavalryHorseEntity)
+            {
+                mountedOptions.setEnterGates(true);
+                mountedOptions.setEnterDoors(false);
+                mountedOptions.setTurnPenalty(GuardConstants.CAVALRY_CORNER_PENALTY);
+            }
+
+            return mountedOptions;
+        }
+
+        return getPathingOptions();
     }
 
     @Override

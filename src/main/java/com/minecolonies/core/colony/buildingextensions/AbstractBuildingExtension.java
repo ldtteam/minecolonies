@@ -146,6 +146,10 @@ public abstract class AbstractBuildingExtension implements IBuildingExtension
         {
             buildingId = BlockPosUtil.read(compound, TAG_OWNER);
         }
+        else
+        {
+            buildingId = null;
+        }
     }
 
     @Override
@@ -164,6 +168,10 @@ public abstract class AbstractBuildingExtension implements IBuildingExtension
         if (buf.readBoolean())
         {
             buildingId = buf.readBlockPos();
+        }
+        else
+        {
+            buildingId = null;
         }
     }
 

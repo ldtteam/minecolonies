@@ -30,6 +30,7 @@ public final class ModBuildings
     public static final String SHEPHERD_ID       = "shepherd";
     public static final String SIFTER_ID         = "sifter";
     public static final String SMELTERY_ID       = "smeltery";
+    public static final String STABLE_ID         = "stable";
     public static final String STONE_MASON_ID    = "stonemason";
     public static final String STONE_SMELTERY_ID = "stonesmeltery";
     public static final String SWINE_HERDER_ID   = "swineherder";
@@ -85,6 +86,7 @@ public final class ModBuildings
     public static DeferredHolder<BuildingEntry, BuildingEntry> shepherd;
     public static DeferredHolder<BuildingEntry, BuildingEntry> sifter;
     public static DeferredHolder<BuildingEntry, BuildingEntry> smeltery;
+    public static DeferredHolder<BuildingEntry, BuildingEntry> stable;
     public static DeferredHolder<BuildingEntry, BuildingEntry> stoneMason;
     public static DeferredHolder<BuildingEntry, BuildingEntry> stoneSmelter;
     public static DeferredHolder<BuildingEntry, BuildingEntry> swineHerder;

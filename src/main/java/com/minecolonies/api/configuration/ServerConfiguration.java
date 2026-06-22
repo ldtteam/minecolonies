@@ -106,9 +106,8 @@ public class ServerConfiguration extends AbstractConfiguration
      *  ------------------- ######## Pathfinding Settings ######## ------------------- *
      *  ------------------------------------------------------------------------------ */
 
-    public final IntValue pathfindingDebugVerbosity;
-    public final IntValue pathfindingMaxThreadCount;
     public final IntValue minimumRailsToPath;
+    public final DoubleValue pathNodeLimitMultiplier;
 
     /*  --------------------------------------------------------------------------------- *
      *  ------------------- ######## Request System Settings ######## ------------------- *
@@ -199,11 +198,8 @@ public class ServerConfiguration extends AbstractConfiguration
         debugInventories = defineBoolean("debuginventories", false);
         blueprintBuildMode = defineBoolean("blueprintbuildmode", false);
 
-        swapToCategory("pathfinding");
-
-        pathfindingDebugVerbosity = defineInteger("pathfindingdebugverbosity", 0, 0, 10);
+        pathNodeLimitMultiplier = defineDouble("pathNodeLimitMultiplier", 1, 1, 4);
         minimumRailsToPath = defineInteger("minimumrailstopath", 8, 5, 100);
-        pathfindingMaxThreadCount = defineInteger("pathfindingmaxthreadcount", 1, 1, 10);
 
         swapToCategory("requestSystem");
 

@@ -10,7 +10,6 @@ import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.ColonyConstants;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.core.MineColonies;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
 import com.minecolonies.core.colony.buildings.modules.BuildingModules;
 import com.minecolonies.core.colony.buildings.modules.ItemListModule;
@@ -774,16 +773,6 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
     {
         for (BlockPos currentPos : blockPositions)
         {
-            if (MineColonies.getConfig().getServer().pathfindingDebugVerbosity.get() > 0)
-            {
-                Log.getLogger()
-                  .info(String.format("Check Leaves Pos(%d, %d, %d) is %s: %s",
-                    currentPos.getX(),
-                    currentPos.getY(),
-                    currentPos.getZ(),
-                    tag.toString(),
-                    world.getBlockState(currentPos).is(tag)));
-            }
             if (world.getBlockState(currentPos).is(tag))
             {
                 mineBlock(currentPos);

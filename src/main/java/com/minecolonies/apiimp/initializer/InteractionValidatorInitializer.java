@@ -156,6 +156,17 @@ public class InteractionValidatorInitializer
 
           });
 
+        InteractionValidatorRegistry.registerStandardPredicate(Component.translatable(CAVALRY_NOHORSE),
+          citizen ->
+          {
+            if (citizen.getJob() instanceof JobCavalry cav)
+            {
+                return cav.isMissingMount();
+            }
+
+            return false;
+          });
+
         InteractionValidatorRegistry.registerStandardPredicate(Component.translatable(PATIENT_FULL_INVENTORY),
             citizen -> citizen.getEntity().isPresent() && citizen.getCitizenDiseaseHandler().isSick()
                 && !citizen.getEntity().get().getInventoryCitizen().hasSpace());

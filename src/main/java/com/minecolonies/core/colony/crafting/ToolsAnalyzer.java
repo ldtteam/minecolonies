@@ -41,7 +41,7 @@ public final class ToolsAnalyzer
 
                 if (stack.isEnchantable())
                 {
-                    for (int enchantLevel = 1; enchantLevel < 4; ++enchantLevel)
+                    for (int enchantLevel = 1; enchantLevel < 6; ++enchantLevel)
                     {
                         tryAddingEnchantedTool(toolItems, toolType, stack, enchantLevel, level);
                     }
@@ -62,12 +62,16 @@ public final class ToolsAnalyzer
         // this list should theoretically end up applying a total of two enchants to each tool type
         tryEnchantStack(enchantedStack, Utils.getRegistryValue(Enchantments.UNBREAKING, level), enchantLevel);
         tryEnchantStack(enchantedStack, Utils.getRegistryValue(Enchantments.LOOTING, level), enchantLevel);
+        tryEnchantStack(enchantedStack, Utils.getRegistryValue(Enchantments.BANE_OF_ARTHROPODS, level), enchantLevel);
         tryEnchantStack(enchantedStack, Utils.getRegistryValue(Enchantments.FLAME, level), enchantLevel);
         tryEnchantStack(enchantedStack, Utils.getRegistryValue(Enchantments.FORTUNE, level), enchantLevel);
         tryEnchantStack(enchantedStack, Utils.getRegistryValue(Enchantments.PROTECTION, level), enchantLevel);
         tryEnchantStack(enchantedStack, Utils.getRegistryValue(Enchantments.LURE, level), enchantLevel);
 
-        tryAddingToolWithLevel(toolItems, tool, enchantedStack);
+        if (enchantedStack.isEnchanted())
+        {
+            tryAddingToolWithLevel(toolItems, tool, enchantedStack);
+        }
     }
 
     private static void tryEnchantStack(@NotNull final ItemStack stack,

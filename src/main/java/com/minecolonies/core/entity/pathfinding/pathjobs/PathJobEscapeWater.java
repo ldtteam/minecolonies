@@ -3,8 +3,6 @@ package com.minecolonies.core.entity.pathfinding.pathjobs;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.api.util.Log;
-import com.minecolonies.core.MineColonies;
 import com.minecolonies.core.entity.pathfinding.MNode;
 import com.minecolonies.core.entity.pathfinding.PathingOptions;
 import com.minecolonies.core.entity.pathfinding.SurfaceType;
@@ -12,11 +10,7 @@ import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.pathfinder.Path;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import static com.minecolonies.api.util.constant.PathingConstants.DEBUG_VERBOSITY_NONE;
 
 /**
  * Job that handles moving away from something.
@@ -60,24 +54,6 @@ public class PathJobEscapeWater extends AbstractPathJob implements IDestinationP
                 preferredDirection = colony.getCenter();
             }
         }
-    }
-
-    /**
-     * Perform the search.
-     *
-     * @return Path of a path to the given location, a best-effort, or null.
-     */
-    @Nullable
-    @Override
-    protected Path search()
-    {
-        if (MineColonies.getConfig().getServer().pathfindingDebugVerbosity.get() > DEBUG_VERBOSITY_NONE)
-        {
-            Log.getLogger().info(String.format("Pathfinding from [%d,%d,%d] away from [%d,%d,%d]",
-              start.getX(), start.getY(), start.getZ(), avoid.getX(), avoid.getY(), avoid.getZ()));
-        }
-
-        return super.search();
     }
 
     /**

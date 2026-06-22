@@ -310,9 +310,9 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
     /**
      * Checks for blocks that need to be treated as deco
      */
-    protected static boolean isDecoItem(Block block)
+    protected static boolean isDecoItem(BlockState block)
     {
-        return block.defaultBlockState().is(ModTags.decorationItems) || block instanceof BlockFluidSubstitution;
+        return block.is(ModTags.decorationItems) || block.getBlock() instanceof BlockFluidSubstitution || !block.getFluidState().isEmpty();
     }
 
     /**
@@ -542,7 +542,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
     private boolean skipDecorate(final BlueprintPositionInfo info, final BlockPos pos, final IStructureHandler handler)
     {
         final BlockState blockInfoState = info.getBlockInfo().getState();
-        return (!isDecoItem(blockInfoState.getBlock()) && BlockUtils.isAnySolid(blockInfoState)) || DONT_TOUCH_PREDICATE.test(info, pos, handler);
+        return (!isDecoItem(blockInfoState) && BlockUtils.isAnySolid(blockInfoState)) || DONT_TOUCH_PREDICATE.test(info, pos, handler);
     }
 
     /**
@@ -557,7 +557,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
     {
         final BlockState blockInfoState = info.getBlockInfo().getState();
         return !BlockUtils.canBlockFloatInAir(blockInfoState)
-                 || isDecoItem(blockInfoState.getBlock())
+                 || isDecoItem(blockInfoState)
                  || DONT_TOUCH_PREDICATE.test(info, pos, handler);
     }
 
