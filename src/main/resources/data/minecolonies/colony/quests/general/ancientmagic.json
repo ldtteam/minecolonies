@@ -69,9 +69,8 @@
       "type": "minecolonies:delivery",
       "details": {
         "target": 1,
-        "item": {
-          "id": "minecolonies:scroll_buff"
-        },
+        "item": "minecolonies:scroll_buff",
+        "qty": 1,
         "next-objective": 2
       }
     },
@@ -111,43 +110,25 @@
     {
       "type": "minecolonies:item",
       "details": {
-        "item": {
-          "id": "minecraft:potion",
-          "count": 1,
-          "components": {
-            "minecraft:potion_contents": {
-              "potion": "minecraft:luck"
-            }
-          }
-        }
+        "item": "minecraft:potion",
+        "qty": 1,
+        "nbt": "{Potion:\"minecraft:luck\"}"
       }
     },
     {
       "type": "minecolonies:item",
       "details": {
-        "item": {
-          "id": "minecraft:potion",
-          "count": 1,
-          "components": {
-            "minecraft:potion_contents": {
-              "potion": "minecraft:luck"
-            }
-          }
-        }
+        "item": "minecraft:potion",
+        "qty": 1,
+        "nbt": "{Potion:\"minecraft:luck\"}"
       }
     },
     {
       "type": "minecolonies:item",
       "details": {
-        "item": {
-          "id": "minecraft:potion",
-          "count": 1,
-          "components": {
-            "minecraft:potion_contents": {
-              "potion": "minecraft:luck"
-            }
-          }
-        }
+        "item": "minecraft:potion",
+        "qty": 1,
+        "nbt": "{Potion:\"minecraft:luck\"}"
       }
     },
     {

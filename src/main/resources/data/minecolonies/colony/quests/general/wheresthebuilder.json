@@ -72,10 +72,8 @@
       "type": "minecolonies:delivery",
       "details": {
         "target": 0,
-        "item": {
-          "id": "minecolonies:scroll_tp",
-          "count": 3
-        },
+        "item": "minecolonies:scroll_tp",
+        "qty": 3,
         "next-objective": 2
       }
     },
@@ -83,10 +81,8 @@
       "type": "minecolonies:delivery",
       "details": {
         "target": 0,
-        "item": {
-          "id": "minecraft:glowstone_dust",
-          "count": 6
-        },
+        "item": "minecraft:glowstone_dust",
+        "qty": 6,
         "next-objective": 3
       }
     },
@@ -94,10 +90,8 @@
       "type": "minecolonies:delivery",
       "details": {
         "target": 0,
-        "item": {
-          "id": "minecraft:paper",
-          "count": 2
-        },
+        "item": "minecraft:paper",
+        "qty": 2,
         "next-objective": 4
       }
     },
@@ -201,37 +195,29 @@
     {
       "type": "minecolonies:item",
       "details": {
-        "item": {
-          "id": "minecolonies:scroll_highlight",
-          "count": 5
-        }
+        "item": "minecolonies:scroll_highlight",
+        "qty": 5
       }
     },
     {
       "type": "minecolonies:item",
       "details": {
-        "item": {
-          "id": "minecolonies:scroll_tp",
-          "count": 3
-        }
+        "item": "minecolonies:scroll_tp",
+        "qty": 3
       }
     },
     {
       "type": "minecolonies:item",
       "details": {
-        "item": {
-          "id": "minecraft:glowstone_dust",
-          "count": 6
-        }
+        "item": "minecraft:glowstone_dust",
+        "qty": 6
       }
     },
     {
       "type": "minecolonies:item",
       "details": {
-        "item": {
-          "id": "minecraft:paper",
-          "count": 2
-        }
+        "item": "minecraft:paper",
+        "qty": 2
       }
     },
     {

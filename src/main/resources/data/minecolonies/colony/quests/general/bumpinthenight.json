@@ -62,10 +62,8 @@
       "type": "minecolonies:delivery",
       "details": {
         "target": 0,
-        "item": {
-          "id": "minecolonies:scroll_tp",
-          "count": 1
-        },
+        "item": "minecolonies:scroll_tp",
+        "qty": 1,
         "next-objective": 2
       }
     },
@@ -73,10 +71,8 @@
       "type": "minecolonies:delivery",
       "details": {
         "target": 0,
-        "item": {
-          "id": "minecraft:lapis_lazuli",
-          "count": 5
-        },
+        "item": "minecraft:lapis_lazuli",
+        "qty": 5,
         "next-objective": 3
       }
     },
@@ -84,10 +80,8 @@
       "type": "minecolonies:delivery",
       "details": {
         "target": 0,
-        "item": {
-          "id": "minecraft:ender_pearl",
-          "count": 1
-        },
+        "item": "minecraft:ender_pearl",
+        "qty": 1,
         "next-objective": 4
       }
     },
@@ -95,10 +89,8 @@
       "type": "minecolonies:delivery",
       "details": {
         "target": 0,
-        "item": {
-          "id": "minecraft:paper",
-          "count": 1
-        },
+        "item": "minecraft:paper",
+        "qty": 1,
         "next-objective": 5
       }
     },
@@ -152,37 +144,29 @@
     {
       "type": "minecolonies:item",
       "details": {
-        "item": {
-          "id": "minecolonies:scroll_guard_help",
-          "count": 3
-        }
+        "item": "minecolonies:scroll_guard_help",
+        "qty": 3
       }
     },
     {
       "type": "minecolonies:item",
       "details": {
-        "item": {
-          "id": "minecraft:lapis_lazuli",
-          "count": 5
-        }
+        "item": "minecraft:lapis_lazuli",
+        "qty": 5
       }
     },
     {
       "type": "minecolonies:item",
       "details": {
-        "item": {
-          "id": "minecraft:ender_pearl",
-          "count": 1
-        }
+        "item": "minecraft:ender_pearl",
+        "qty": 1
       }
     },
     {
       "type": "minecolonies:item",
       "details": {
-        "item": {
-          "id": "minecraft:paper",
-          "count": 1
-        }
+        "item": "minecraft:paper",
+        "qty": 1
       }
     },
     {
