@@ -1,26 +1,37 @@
 package com.minecolonies.core.colony.buildings.workerbuildings;
 
-import com.ldtteam.structurize.blueprints.v1.Blueprint;
+import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.MathUtils;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
-import com.minecolonies.core.colony.buildings.modules.ItemListModule;
+import com.minecolonies.core.colony.buildings.modules.WorkerBuildingModule;
+import com.minecolonies.core.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.core.entity.other.SittingEntity;
+import it.unimi.dsi.fastutil.ints.IntArraySet;
+import it.unimi.dsi.fastutil.ints.IntSet;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.IntTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 
-import static com.minecolonies.api.util.constant.BuildingConstants.FUEL_LIST;
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_CUSTOMER;
 import static com.minecolonies.api.util.constant.SchematicTagConstants.*;
 import static com.minecolonies.api.util.constant.Suppression.OVERRIDE_EQUALS;
+import static com.minecolonies.core.colony.buildings.modules.BuildingModules.ITEMLIST_FUEL;
 
 /**
  * Class of the cook building.
@@ -59,6 +70,11 @@ public class BuildingCook extends AbstractBuilding
     {
         return false;
     }
+
+    /**
+     * List of customers.
+     */
+    private IntSet customers = new IntArraySet();
 
     /**
      * Gets the next sitting position to use for eating, just keeps iterating the aviable positions, so we do not have to keep track of who is where.
@@ -133,7 +149,7 @@ public class BuildingCook extends AbstractBuilding
             return 0;
         }
         
-        final Predicate<ItemStack> allowedFuel = theStack -> getModuleMatching(ItemListModule.class, m -> m.getId().equals(FUEL_LIST)).isItemInList(new ItemStorage(theStack));
+        final Predicate<ItemStack> allowedFuel = theStack -> getModule(ITEMLIST_FUEL).isItemInList(new ItemStorage(theStack));
         if (allowedFuel.test(stack) && (localAlreadyKept.stream().filter(storage -> allowedFuel.test(storage.getItemStack())).mapToInt(ItemStorage::getAmount).sum() < STACKSIZE
               || !inventory))
         {
@@ -147,5 +163,135 @@ public class BuildingCook extends AbstractBuilding
         }
 
         return super.buildingRequiresCertainAmountOfItem(stack, localAlreadyKept, inventory, jobEntry);
+    }
+
+    @Override
+    public void serializeToView(final @NotNull FriendlyByteBuf buf, final boolean fullSync)
+    {
+        super.serializeToView(buf, fullSync);
+        buf.writeInt(customers.size());
+        for (int i : customers)
+        {
+            buf.writeInt(i);
+        }
+    }
+
+    @Override
+    public CompoundTag serializeNBT()
+    {
+        final CompoundTag compoundTag = super.serializeNBT();
+        @NotNull final ListTag customerListTag = new ListTag();
+        for (int value : customers)
+        {
+            customerListTag.add(IntTag.valueOf(value));
+        }
+        compoundTag.put(TAG_CUSTOMER, customerListTag);
+        return compoundTag;
+    }
+
+    @Override
+    public void deserializeNBT(final CompoundTag compound)
+    {
+        super.deserializeNBT(compound);
+        customers.clear();
+        ListTag listTag = compound.getList(TAG_CUSTOMER, Tag.TAG_INT);
+        for (int i = 0; i < listTag.size(); i++)
+        {
+            customers.add(listTag.getInt(i));
+        }
+    }
+
+    /**
+     * Store a new customer of this restaurant.
+     * @param citizenData the new customer citizen data.
+     */
+    public void storeCustomer(final ICitizenData citizenData)
+    {
+        // TODO: Remove in the future, backwards compat.
+        if (customers.isEmpty())
+        {
+            final List<BuildingCook> restaurants = new ArrayList<>();
+            for (IBuilding building: colony.getServerBuildingManager().getBuildings().values())
+            {
+                if (building instanceof BuildingCook buildingCook && buildingCook != this)
+                {
+                    restaurants.add(buildingCook);
+                }
+            }
+
+            for (IBuilding building: colony.getServerBuildingManager().getBuildings().values())
+            {
+                if (building.hasModule(WorkerBuildingModule.class))
+                {
+                    BuildingCook closestRestaurant = this;
+                    double closestRestaurantDist = closestRestaurant.getPosition().distSqr(building.getPosition());
+                    for (BuildingCook restaurant: restaurants)
+                    {
+                        double dist = restaurant.getPosition().distSqr(building.getPosition());
+                        if (dist < closestRestaurantDist)
+                        {
+                            closestRestaurantDist = dist;
+                            closestRestaurant = restaurant;
+                        }
+                    }
+
+                    for (ICitizenData cit : building.getModule(WorkerBuildingModule.class).getAssignedCitizen())
+                    {
+                        closestRestaurant.customers.add(cit.getId());
+                    }
+                }
+            }
+        }
+        for (IBuilding building: colony.getServerBuildingManager().getBuildings().values())
+        {
+            if (building instanceof BuildingCook buildingCook && buildingCook != this)
+            {
+                buildingCook.customers.remove(citizenData.getId());
+            }
+        }
+        customers.add(citizenData.getId());
+        markDirty();
+    }
+
+    /**
+     * The client side representation of the building.
+     */
+    public static class View extends AbstractBuildingView
+    {
+        /**
+         * List of customers.
+         */
+        private IntSet customerList = new IntArraySet();
+
+        /**
+         * Instantiates the view of the building.
+         *
+         * @param c the colonyView.
+         * @param l the location of the block.
+         */
+        public View(final IColonyView c, final BlockPos l)
+        {
+            super(c, l);
+        }
+
+        @Override
+        public void deserialize(final @NotNull FriendlyByteBuf buf)
+        {
+            super.deserialize(buf);
+            final int size = buf.readInt();
+            for (int i = 0; i < size; i++)
+            {
+                customerList.add(buf.readInt());
+            }
+        }
+
+        /**
+         * Get the set of customers from the dining hall.
+         * @return the set of customers
+         */
+        public IntSet getCustomers()
+        {
+            return customerList;
+        }
     }
 }

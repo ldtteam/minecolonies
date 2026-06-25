@@ -27,7 +27,7 @@ public interface ICitizenData extends ICivilianData, IQuestGiver, IQuestParticip
     /**
      * Maximum saturation of a citizen.
      */
-    int MAX_SATURATION = 20;
+    int MAX_SATURATION = 60;
 
     /**
      * When a building is destroyed, inform the citizen so it can do any cleanup of associations that the building's. own IBuilding.onDestroyed did not do.

@@ -40,6 +40,9 @@ import static net.minecraft.client.gui.Gui.GUI_ICONS_LOCATION;
 public class CitizenWindowUtils
 {
     public static final ResourceLocation HAPPINESS_ICONS_LOCATION = new ResourceLocation(Constants.MOD_ID, "textures/gui/citizen/icons.png");
+    public static final ResourceLocation SATURATION_ICON_EMPTY = new ResourceLocation(Constants.MOD_ID, "textures/gui/citizen/empty.png");
+    public static final ResourceLocation SATURATION_ICON_FULL = new ResourceLocation(Constants.MOD_ID, "textures/gui/citizen/full.png");
+    public static final ResourceLocation SATURATION_ICON_HALF = new ResourceLocation(Constants.MOD_ID, "textures/gui/citizen/half.png");
 
     /**
      * Private con to hide public.
@@ -255,38 +258,35 @@ public class CitizenWindowUtils
     {
         view.findPaneOfTypeByID(WINDOW_ID_SATURATION_BAR, View.class).setAlignment(Alignment.MIDDLE_RIGHT);
 
+
         //Max saturation (Black food items).
-        for (int i = 0; i < ICitizenData.MAX_SATURATION; i++)
+        for (int i = 0; i < ICitizenData.MAX_SATURATION / 6.0; i++)
         {
             @NotNull final Image saturation = new Image();
-            saturation.setImage(GUI_ICONS_LOCATION,
-              EMPTY_SATURATION_ITEM_ROW_POS,
-              SATURATION_ICON_COLUMN, HEART_ICON_HEIGHT_WIDTH, HEART_ICON_HEIGHT_WIDTH);
-            saturation.setMapDimensions(256, 256);
+            saturation.setImage(SATURATION_ICON_EMPTY, false);
             saturation.setSize(SATURATION_ICON_HEIGHT_WIDTH, SATURATION_ICON_HEIGHT_WIDTH);
 
             saturation.setPosition(getXOffsetModifier(i) * SATURATION_ICON_POS_X + SATURATION_ICON_OFFSET_X, SATURATION_ICON_POS_Y + getYOffset(i));
             view.findPaneOfTypeByID(WINDOW_ID_SATURATION_BAR, View.class).addChild(saturation);
         }
 
+        final int brokenDownSaturation = (int) (curSaturation / 6.0);
         //Current saturation (Full food hearts).
         int saturationPos;
-        for (saturationPos = 0; saturationPos < ((int) curSaturation); saturationPos++)
+        for (saturationPos = 9; saturationPos >= 10 - brokenDownSaturation; saturationPos--)
         {
             @NotNull final Image saturation = new Image();
-            saturation.setImage(GUI_ICONS_LOCATION, FULL_SATURATION_ITEM_ROW_POS, SATURATION_ICON_COLUMN, HEART_ICON_HEIGHT_WIDTH, HEART_ICON_HEIGHT_WIDTH);
-            saturation.setMapDimensions(256, 256);
+            saturation.setImage(SATURATION_ICON_FULL, false);
             saturation.setSize(SATURATION_ICON_HEIGHT_WIDTH, SATURATION_ICON_HEIGHT_WIDTH);
             saturation.setPosition(getXOffsetModifier(saturationPos) * SATURATION_ICON_POS_X + SATURATION_ICON_OFFSET_X, SATURATION_ICON_POS_Y + getYOffset(saturationPos));
             view.findPaneOfTypeByID(WINDOW_ID_SATURATION_BAR, View.class).addChild(saturation);
         }
 
         //Half food items.
-        if (curSaturation / 2 % 1 > 0)
+        if (curSaturation / 6.0 % 1 > 0)
         {
             @NotNull final Image saturation = new Image();
-            saturation.setImage(GUI_ICONS_LOCATION, HALF_SATURATION_ITEM_ROW_POS, SATURATION_ICON_COLUMN, HEART_ICON_HEIGHT_WIDTH, HEART_ICON_HEIGHT_WIDTH);
-            saturation.setMapDimensions(256, 256);
+            saturation.setImage(SATURATION_ICON_HALF, false);
             saturation.setSize(SATURATION_ICON_HEIGHT_WIDTH, SATURATION_ICON_HEIGHT_WIDTH);
             saturation.setPosition(getXOffsetModifier(saturationPos) * SATURATION_ICON_POS_X + SATURATION_ICON_OFFSET_X, SATURATION_ICON_POS_Y + getYOffset(saturationPos));
             view.findPaneOfTypeByID(WINDOW_ID_SATURATION_BAR, View.class).addChild(saturation);

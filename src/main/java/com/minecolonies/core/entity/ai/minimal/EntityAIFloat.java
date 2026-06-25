@@ -43,10 +43,6 @@ public class EntityAIFloat extends FloatGoal
         {
             if (owner.level().getBlockState(BlockPos.containing(owner.getEyePosition()).above()).isAir())
             {
-                if (owner.tickCount % 3 == 0)
-                {
-                    owner.getJumpControl().jump();
-                }
                 return;
             }
             if (waterPathing == null || !waterPathing.isInProgress())
@@ -75,11 +71,6 @@ public class EntityAIFloat extends FloatGoal
                 {
                     nav.setPauseTicks(0);
                 }
-            }
-
-            if (owner.tickCount % 3 == 0)
-            {
-                owner.getJumpControl().jump();
             }
         }
     }

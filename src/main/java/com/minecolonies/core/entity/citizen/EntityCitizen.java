@@ -117,6 +117,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 
 import static com.minecolonies.api.research.util.ResearchConstants.*;
+import static com.minecolonies.api.util.FoodUtils.computeSaturationConsumptionFactor;
 import static com.minecolonies.api.util.ItemStackUtils.ISFOOD;
 import static com.minecolonies.api.util.constant.CitizenConstants.*;
 import static com.minecolonies.api.util.constant.Constants.*;
@@ -1090,7 +1091,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     @Override
     public void decreaseSaturationForContinuousAction()
     {
-        this.cachedActionSaturationDecrease += SATURATION_DECREASE_FACTOR / 4.0;
+        this.cachedActionSaturationDecrease += SATURATION_DECREASE_FACTOR;
     }
 
     /**
@@ -1982,15 +1983,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
         if (citizenData != null && level() != null && !level().isNight() && !citizenSleepHandler.isAsleep())
         {
             final int buildingLevel = citizenData.getHomeBuilding() == null ? 0 :  citizenData.getHomeBuilding().getBuildingLevelEquivalent();
-            double decrease = switch (buildingLevel)
-            {
-                case 1 -> 0.2;
-                case 2 -> 0.256;
-                case 3 -> 0.32;
-                case 4 -> 0.4;
-                case 5 -> 0.5;
-                default -> 0.1;
-            };
+            double decrease = computeSaturationConsumptionFactor(buildingLevel);
 
             if (citizenData.getJob() != null)
             {

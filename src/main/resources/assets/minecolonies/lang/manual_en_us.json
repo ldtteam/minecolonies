@@ -2866,6 +2866,7 @@
   "com.minecolonies.core.item.food.tooltip.tier.3": "This food will make your citizens happy for sure!",
 
   "com.minecolonies.core.gui.restaurant.foodquality": "Eaten up to Residence level: %d",
+  "com.minecolonies.core.gui.restaurant.foodconsumption": "Citizens in this dining hall consume between %d and %d of this daily.",
   "com.minecolonies.coremod.gui.townhall.happiness.desc.food": "Didn't have at least a tier 2 meal recently",
   "com.minecolonies.coremod.gui.townhall.happiness.desc.greatfood": "Had a tier 3 meal recently.",
   "com.minecolonies.coremod.gui.townhall.happiness.food": "Food Factor",
@@ -2958,7 +2959,7 @@
   "death.attack.entity.minecolonies.campdrownedchiefpirate": "%s was put to a watery grave by a drowned Pirate Chief",
   "com.minecolonies.core.gui.banner.patreon": "Patreon exclusive",
   "item.minecolonies.colonymap": "Colony Map",
-  "com.minecolonies.core.gui.restaurant.vanillafoodquality": "Citizens get only 25% nutrition from this food!",
+  "com.minecolonies.core.gui.restaurant.vanillafoodquality": "Citizens prefer more sophisticated food!",
   "com.minecolonies.core.restaurant.poormenu": "The dining hall menu is lacking variety and is unlikely to satisfy citizens. Please consider adding more Minecolonies food options to improve happiness.",
   "com.minecolonies.core.restaurant.poorrestaurant": "My dining hall needs an upgrade to meet the expectations of my guests. It currently falls short of their standards!",
   "com.minecolonies.core.poor.menu.warning": "A menu lacking quality food may not satisfy your citizens!",
@@ -3048,5 +3049,6 @@
   "com.minecolonies.core.gui.residence.warning.5": "Warning: Your colony may struggle to feed residents at this level. Consider expanding food production and your Dining Hall menu first.",
 
   "com.minecolonies.core.gui.build.confirm.title": "Are you sure you want to upgrade the building?",
-  "com.minecolonies.core.gui.teleport.confirm.title": "Are you sure you want to teleport now?"
+  "com.minecolonies.core.gui.teleport.confirm.title": "Are you sure you want to teleport now?",
+  "com.minecolonies.core.menu.ingredients": "Ingredients"
 }
