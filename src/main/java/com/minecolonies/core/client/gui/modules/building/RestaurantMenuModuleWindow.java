@@ -310,7 +310,7 @@ public class RestaurantMenuModuleWindow extends AbstractModuleWindow<RestaurantM
         for (final ItemStorage dish : menu)
         {
             final ItemStorage input = new ItemStorage(dish.getItemStack());
-            final List<ItemStorage> map = getRecipeFromStack(input);
+            final List<ItemStorage> map = getRecipeFromStack(input, true, 5);
             for (final ItemStorage ingredient : map)
             {
                 ingredients.merge(ingredient, (double) ingredient.getAmount() / input.getAmount(), Double::sum);
@@ -358,24 +358,27 @@ public class RestaurantMenuModuleWindow extends AbstractModuleWindow<RestaurantM
         });
     }
 
-    public static List<ItemStorage> getRecipeFromStack(final ItemStorage storage)
+    public static List<ItemStorage> getRecipeFromStack(final ItemStorage storage, final boolean cache, final int maxDepth)
     {
-        if (recipeMapping.containsKey(storage))
+        if (recipeMapping.containsKey(storage) && cache)
         {
             return recipeMapping.get(storage);
         }
         else
         {
             final List<ItemStorage> set = new ArrayList<>();
-            processRecipe(storage, set, 0, Minecraft.getInstance().level);
-            recipeMapping.put(storage, set);
+            processRecipe(storage, set, 0, Minecraft.getInstance().level, maxDepth);
+            if (cache)
+            {
+                recipeMapping.put(storage, set);
+            }
             return set;
         }
     }
 
-    private static boolean processRecipe(final ItemStorage dish, final List<ItemStorage> ingredients, final int depth, final Level level)
+    public static boolean processRecipe(final ItemStorage dish, final List<ItemStorage> ingredients, final int depth, final Level level, final int maxDepth)
     {
-        if (depth > 10 || dish.getItemStack().is(Tags.Items.STORAGE_BLOCKS))
+        if (depth > maxDepth || dish.getItemStack().is(Tags.Items.STORAGE_BLOCKS))
         {
             return false;
         }
@@ -394,7 +397,7 @@ public class RestaurantMenuModuleWindow extends AbstractModuleWindow<RestaurantM
                 else if (input.getItem() instanceof ItemLargeBottle
                     || input.getItem() instanceof HoneyBottleItem
                     || input.getItem() == Items.DRIED_KELP
-                    || !processRecipe(input, ingredients, depth + 1, level))
+                    || !processRecipe(input, ingredients, depth + 1, level, maxDepth))
                 {
                     ingredients.add(input);
                 }
@@ -423,7 +426,7 @@ public class RestaurantMenuModuleWindow extends AbstractModuleWindow<RestaurantM
                     if (input.getItem() instanceof ItemLargeBottle
                         || input.getItem() instanceof HoneyBottleItem
                         || input.getItem() == Items.DRIED_KELP
-                        || !processRecipe(input, ingredients, depth + 1, level))
+                        || !processRecipe(input, ingredients, depth + 1, level, maxDepth))
                     {
                         ingredients.add(input);
                     }

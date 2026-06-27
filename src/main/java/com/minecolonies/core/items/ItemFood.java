@@ -56,7 +56,7 @@ public class ItemFood extends Item implements IMinecoloniesFoodItem
     {
         NonNullList<ItemStack> nonnulllist = NonNullList.create();
         int qty = 0;
-        for (final ItemStorage ingredient : RestaurantMenuModuleWindow.getRecipeFromStack(new ItemStorage(stack)))
+        for (final ItemStorage ingredient : RestaurantMenuModuleWindow.getRecipeFromStack(new ItemStorage(stack), false, 1))
         {
             // Max Render Quantity.
             if (qty > 16)
