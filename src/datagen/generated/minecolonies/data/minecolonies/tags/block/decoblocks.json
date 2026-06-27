@@ -15,11 +15,27 @@
     "minecraft:farmland",
     "minecraft:sugar_cane",
     "minecraft:cactus",
+    "minecolonies:bell_pepper",
+    "minecolonies:cabbage",
+    "minecolonies:chickpea",
+    "minecolonies:durum",
+    "minecolonies:eggplant",
+    "minecolonies:garlic",
+    "minecolonies:onion",
+    "minecolonies:soybean",
+    "minecolonies:tomato",
+    "minecolonies:rice",
+    "minecolonies:corn",
+    "minecolonies:nether_pepper",
+    "minecolonies:peas",
+    "minecolonies:mint",
+    "minecolonies:butternut_squash",
     "minecolonies:gate_wood",
     "minecolonies:gate_iron",
     "#minecraft:banners",
     "#minecraft:signs",
     "#minecraft:campfires",
-    "#minecraft:flowers"
+    "#minecraft:flowers",
+    "#minecraft:crops"
   ]
 }
