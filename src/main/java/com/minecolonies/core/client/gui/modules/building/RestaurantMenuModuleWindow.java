@@ -31,6 +31,7 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.Level;
+import net.neoforged.neoforge.common.Tags;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -374,8 +375,7 @@ public class RestaurantMenuModuleWindow extends AbstractModuleWindow<RestaurantM
 
     private static boolean processRecipe(final ItemStorage dish, final List<ItemStorage> ingredients, final int depth, final Level level)
     {
-        //todo find out original recipe size.
-        if (depth > 10)
+        if (depth > 10 || dish.getItemStack().is(Tags.Items.STORAGE_BLOCKS))
         {
             return false;
         }

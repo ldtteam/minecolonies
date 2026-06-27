@@ -55,9 +55,16 @@ public class ItemFood extends Item implements IMinecoloniesFoodItem
     public Optional<TooltipComponent> getTooltipImage(ItemStack stack)
     {
         NonNullList<ItemStack> nonnulllist = NonNullList.create();
+        int qty = 0;
         for (final ItemStorage ingredient : RestaurantMenuModuleWindow.getRecipeFromStack(new ItemStorage(stack)))
         {
+            // Max Render Quantity.
+            if (qty > 16)
+            {
+                break;
+            }
             nonnulllist.add(ingredient.getItemStack());
+            qty++;
         }
 
         return Optional.of(new BundleTooltip(new BundleContents(nonnulllist)));
