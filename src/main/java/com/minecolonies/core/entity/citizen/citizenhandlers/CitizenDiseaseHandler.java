@@ -152,7 +152,8 @@ public class CitizenDiseaseHandler implements ICitizenDiseaseHandler
               && canBecomeSick()
               && citizen.getRandom().nextInt(ONE_HUNDRED_PERCENT) < 1)
         {
-            if (citizen.getColony().getResearchManager().getResearchEffects().getEffectStrength(MASKS) <= 0 || citizen.getRandom().nextBoolean())
+            final double masks = citizen.getColony().getResearchManager().getResearchEffects().getEffectStrength(MASKS);
+            if (masks <= 0 || citizen.getRandom().nextBoolean())
             {
                 this.disease = citizen.getCitizenDiseaseHandler().getDisease();
             }
@@ -160,11 +161,11 @@ public class CitizenDiseaseHandler implements ICitizenDiseaseHandler
             {
                 if (citizenData.getColony().getResearchManager().getResearchEffects().getEffectStrength(VACCINES) > 0)
                 {
-                    immunityTicks = COLLISION_COOLDOWN * VACCINE_MODIFIER;
+                    immunityTicks = Math.max(immunityTicks, COLLISION_COOLDOWN * 2);
                 }
                 else
                 {
-                    immunityTicks = COLLISION_COOLDOWN;
+                    immunityTicks = Math.max(immunityTicks, COLLISION_COOLDOWN);
                 }
             }
         }
