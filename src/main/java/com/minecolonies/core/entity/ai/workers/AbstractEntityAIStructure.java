@@ -312,7 +312,15 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
      */
     protected static boolean isDecoItem(BlockState block)
     {
-        return block.is(ModTags.decorationItems) || block.getBlock() instanceof BlockFluidSubstitution || !block.getFluidState().isEmpty();
+        return block.is(ModTags.decorationItems);
+    }
+
+    /**
+     * Checks for blocks that need to be treated as fluids
+     */
+    protected static boolean isFluidItem(BlockState block)
+    {
+        return block.getBlock() instanceof BlockFluidSubstitution || !block.getFluidState().isEmpty();
     }
 
     /**
@@ -392,6 +400,11 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
                                                          !(info.getBlockInfo().getState().getBlock() instanceof AirBlock)
                                                            || (handler.getWorld().isEmptyBlock(pos))
                                                            || DONT_TOUCH_PREDICATE.test(info, pos, handler)), false);
+                break;
+            case BUILD_WATER:
+                // build fluids
+                result = placer.executeStructureStep(world, null, progress, StructurePlacer.Operation.BLOCK_PLACEMENT,
+                    () -> placer.getIterator().increment(this::skipFluid), false);
                 break;
             case DECORATE:
                 // not solid
@@ -546,6 +559,20 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
     }
 
     /**
+     * Checks which blocks are skipped on fluids
+     *
+     * @param info
+     * @param pos
+     * @param handler
+     * @return
+     */
+    private boolean skipFluid(final BlueprintPositionInfo info, final BlockPos pos, final IStructureHandler handler)
+    {
+        final BlockState blockInfoState = info.getBlockInfo().getState();
+        return !isFluidItem(blockInfoState) || DONT_TOUCH_PREDICATE.test(info, pos, handler);
+    }
+
+    /**
      * Checks wich blocks are skipped on building
      *
      * @param info
@@ -558,6 +585,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
         final BlockState blockInfoState = info.getBlockInfo().getState();
         return !BlockUtils.canBlockFloatInAir(blockInfoState)
                  || isDecoItem(blockInfoState)
+                 || isFluidItem(blockInfoState)
                  || DONT_TOUCH_PREDICATE.test(info, pos, handler);
     }
 
@@ -705,15 +733,15 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
             {
                 structure = new BuildingStructureHandler<>(world,
                     workOrder,
-                    this, new BuildingProgressStage[] {BUILD_SOLID, WEAK_SOLID, CLEAR_WATER, CLEAR_NON_SOLIDS, DECORATE, SPAWN});
-                building.setTotalStages(5);
+                    this, new BuildingProgressStage[] {BUILD_SOLID, WEAK_SOLID, CLEAR_WATER, CLEAR_NON_SOLIDS, BUILD_WATER, DECORATE, SPAWN});
+                building.setTotalStages(6);
             }
             else
             {
                 structure = new BuildingStructureHandler<>(world,
                     workOrder,
-                    this, new BuildingProgressStage[] {CLEAR, BUILD_SOLID, WEAK_SOLID, CLEAR_WATER, CLEAR_NON_SOLIDS, DECORATE, SPAWN});
-                building.setTotalStages(6);
+                    this, new BuildingProgressStage[] {CLEAR, BUILD_SOLID, WEAK_SOLID, CLEAR_WATER, CLEAR_NON_SOLIDS, BUILD_WATER, DECORATE, SPAWN});
+                building.setTotalStages(7);
             }
 
             setStructurePlacer(structure);
