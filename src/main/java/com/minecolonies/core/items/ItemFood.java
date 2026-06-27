@@ -73,7 +73,7 @@ public class ItemFood extends Item implements IMinecoloniesFoodItem
     @Override
     public int getUseDuration(final ItemStack stack, final LivingEntity entity)
     {
-        return super.getUseDuration(stack, entity) * (tier + 1);
+        return super.getUseDuration(stack, entity) * Math.max(1, tier);
     }
 
     @Override

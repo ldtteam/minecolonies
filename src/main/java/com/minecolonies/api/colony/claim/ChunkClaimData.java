@@ -125,11 +125,6 @@ public class ChunkClaimData implements IChunkClaimData, INBTSerializable<Compoun
         if (owningColony == NO_COLONY_ID)
         {
             setOwningColony(colonyId, chunk);
-            final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyId, chunk.getLevel().dimension());
-            if (colony != null)
-            {
-                colony.addLoadedChunk(ChunkPos.asLong(chunk.getPos().x, chunk.getPos().z), chunk);
-            }
         }
 
         if (claimingBuildings.containsKey(colonyId))
@@ -142,6 +137,13 @@ public class ChunkClaimData implements IChunkClaimData, INBTSerializable<Compoun
             newList.add(pos);
             claimingBuildings.put(colonyId, newList);
         }
+
+        final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyId, chunk.getLevel().dimension());
+        if (colony != null)
+        {
+            colony.addLoadedChunk(ChunkPos.asLong(chunk.getPos().x, chunk.getPos().z), chunk);
+        }
+
         chunk.setUnsaved(true);
     }
 
