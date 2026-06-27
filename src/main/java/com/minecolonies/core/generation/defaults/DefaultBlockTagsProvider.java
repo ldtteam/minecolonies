@@ -45,11 +45,15 @@ public class DefaultBlockTagsProvider extends BlockTagsProvider
                 .add(Blocks.TUBE_CORAL_BLOCK)
                 .add(Blocks.BELL)
                 .add(Blocks.LANTERN)
+                .add(Blocks.FARMLAND)
+                .add(Blocks.SUGAR_CANE)
+                .add(Blocks.CACTUS)
                 .add(ModBlocks.blockWoodenGate)
                 .add(ModBlocks.blockIronGate)
                 .addTag(BlockTags.BANNERS)
                 .addTag(BlockTags.SIGNS)
-                .addTag(BlockTags.CAMPFIRES);
+                .addTag(BlockTags.CAMPFIRES)
+                .addTag(BlockTags.FLOWERS);
 
         // these tags only exist for backwards compatibility and could be removed in a future Minecraft version
         tag(ModTags.concreteBlocks).addTag(Tags.Blocks.CONCRETES);
