@@ -55,11 +55,6 @@ public final class ModGuardTypesInitializer
             .setClazz(JobMarksman.class)
             .createGuardType());
 
-        // todo make research unlockable
-        // todo make sure it's selectable
-        // todo make sure weapons work.
-        // todo no shield for axe wielder, increase dmg a bit (just a bit slower, but better dmg)
-
         ModGuardTypes.huscarl = DEFERRED_REGISTER.register(ModGuardTypes.HUSCARL_ID.getPath(), () -> new GuardType.Builder()
             .setJobTranslationKey(JOB_HUSCARL)
             .setButtonTranslationKey(JOB_HUSCARL_BUTTON)
