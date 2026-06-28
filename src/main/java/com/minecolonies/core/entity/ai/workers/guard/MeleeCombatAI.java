@@ -46,7 +46,6 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.SwordItem;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
-import vectorwing.farmersdelight.common.registry.ModDamageTypes;
 
 import java.util.List;
 import java.util.Objects;
