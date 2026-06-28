@@ -555,7 +555,15 @@ public class Colony implements IColony
 
             if (this.forceLoadTimer > 0)
             {
-                this.forceLoadTimer -= MAX_TICKRATE;
+
+                if (getPackageManager().getImportantColonyPlayers().isEmpty())
+                {
+                    this.forceLoadTimer -= (MAX_TICKRATE * 3);
+                }
+                else
+                {
+                    this.forceLoadTimer -= MAX_TICKRATE;
+                }
                 if (this.forceLoadTimer <= 0)
                 {
                     for (final long chunkPos : this.ticketedChunks)

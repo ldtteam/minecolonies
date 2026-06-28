@@ -140,7 +140,7 @@ public class ServerConfiguration extends AbstractConfiguration
         foodModifier = defineDouble("foodmodifier", 1.0, 0.1, 100);
         diseaseModifier = defineInteger("diseasemodifier", 5, 1, 100);
         forceLoadColony = defineBoolean("forceloadcolony", true);
-        loadtime = defineInteger("loadtime", 10, 1, 1440);
+        loadtime = defineInteger("loadtime", 20, 1, 1440);
         colonyLoadStrictness = defineInteger("colonyloadstrictness", 3, 1, 15);
         maxTreeSize = defineInteger("maxtreesize", 400, 1, 1000);
         noSupplyPlacementRestrictions = defineBoolean("nosupplyplacementrestrictions", false);
