@@ -9,11 +9,10 @@ import com.minecolonies.api.equipment.registry.EquipmentTypeEntry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Tier;
-import net.minecraft.world.item.Tiers;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
@@ -21,11 +20,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Predicate;
+import java.util.*;
 
 /**
  * This class is to store the methods that call the methods to check for miscellaneous compatibility problems.
@@ -38,148 +33,14 @@ public final class Compatibility
         throw new IllegalAccessError("Utility class");
     }
 
-    private record TierEntry(@NotNull Tier tier, int level) {}
-
-    private static final Map<ItemStorage, TierEntry> itemTierRegistry = new HashMap<>();
-    private static final List<Predicate<ItemStack>> customWeaponRecognizers = new ArrayList<>();
-
-    // Ordered by level 0–5. Level 5 maps to Netherite (the highest vanilla Tier).
-    private static final Tiers[] LEVEL_TO_TIER = {
-        Tiers.WOOD, Tiers.STONE, Tiers.IRON, Tiers.DIAMOND, Tiers.NETHERITE, Tiers.NETHERITE
-    };
-
-    private static Tiers tierForLevel(final int level)
-    {
-        return LEVEL_TO_TIER[Math.min(Math.max(level, 0), LEVEL_TO_TIER.length - 1)];
-    }
-
-    /**
-     * Register an item with an explicit Tier object and pre-computed level.
-     * Always overwrites any existing entry — intended for mod compat hooks.
-     *
-     * @param item  the item to register.
-     * @param tier  the Tier object to associate.
-     * @param level the equipment level integer.
-     */
-    public static void registerItemTier(@NotNull final Item item, @NotNull final Tier tier, final int level)
-    {
-        itemTierRegistry.put(new ItemStorage(new ItemStack(item), true, true), new TierEntry(tier, level));
-    }
-
-    /**
-     * Register an item by level only.
-     * The closest matching vanilla {@link Tiers} instance is stored so that
-     * {@link #getItemTier} never returns null for a registered item.
-     * Always overwrites any existing entry — intended for mod compat hooks.
-     *
-     * @param item  the item to register.
-     * @param level the equipment level integer.
-     */
-    public static void registerItemTier(@NotNull final Item item, final int level)
-    {
-        itemTierRegistry.put(new ItemStorage(new ItemStack(item), true, true), new TierEntry(tierForLevel(level), level));
-    }
-
-    /**
-     * Register an item with an explicit Tier and level only if not already registered.
-     * Used by auto-population so explicit mod registrations are never overwritten.
-     *
-     * @param item  the item to register.
-     * @param tier  the Tier object to associate.
-     * @param level the equipment level integer.
-     */
-    public static void registerItemTierIfAbsent(@NotNull final Item item, @NotNull final Tier tier, final int level)
-    {
-        itemTierRegistry.putIfAbsent(new ItemStorage(new ItemStack(item), true, true), new TierEntry(tier, level));
-    }
-
-    /**
-     * Register an item by level only if not already registered.
-     * The closest matching vanilla {@link Tiers} instance is stored.
-     * Used by auto-population so explicit mod registrations are never overwritten.
-     *
-     * @param item  the item to register.
-     * @param level the equipment level integer.
-     */
-    public static void registerItemTierIfAbsent(@NotNull final Item item, final int level)
-    {
-        itemTierRegistry.putIfAbsent(new ItemStorage(new ItemStack(item), true, true), new TierEntry(tierForLevel(level), level));
-    }
-
-    /**
-     * Return the Tier associated with this stack.
-     * Returns {@code null} only when the item has not been registered.
-     * Items registered without a real Tier (armor, bow, etc.) return the closest
-     * matching vanilla {@link Tiers} instance.
-     *
-     * @param stack the item stack.
-     * @return the registered Tier, or null if not registered.
-     */
-    @Nullable
-    public static Tier getItemTier(final ItemStack stack)
-    {
-        final TierEntry entry = itemTierRegistry.get(new ItemStorage(stack, true));
-        return entry != null ? entry.tier() : null;
-    }
-
-    /**
-     * Return the pre-computed equipment level for this stack, or -1 if not registered.
-     *
-     * @param stack the item stack.
-     * @return the equipment level, or -1.
-     */
-    public static int getItemLevel(final ItemStack stack)
-    {
-        final TierEntry entry = itemTierRegistry.get(new ItemStorage(stack, true));
-        return entry != null ? entry.level() : -1;
-    }
-
-    /**
-     * Register a custom weapon recognizer. The predicate should return true if the stack
-     * is a weapon that should be treated as a sword by colonists (e.g. maces, javelins).
-     *
-     * @param recognizer the predicate to register.
-     */
-    public static void registerWeaponRecognizer(final Predicate<ItemStack> recognizer)
-    {
-        customWeaponRecognizers.add(recognizer);
-    }
-
-    /**
-     * Query all registered weapon recognizers.
-     *
-     * @param stack the item stack.
-     * @return true if any recognizer claims the stack as a weapon.
-     */
-    public static boolean isCustomWeapon(final ItemStack stack)
-    {
-        for (final Predicate<ItemStack> recognizer : customWeaponRecognizers)
-        {
-            if (recognizer.test(stack))
-            {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public static IJeiProxy jeiProxy = new IJeiProxy() {};
-    public static IBeehiveCompat beeHiveCompat = new IBeehiveCompat() {};
+    public static IJeiProxy        jeiProxy           = new IJeiProxy() {};
+    public static IBeehiveCompat   beeHiveCompat      = new IBeehiveCompat() {};
     public static SlimeTreeProxy   tinkersSlimeCompat = new SlimeTreeProxy();
     public static TinkersToolProxy tinkersCompat      = new TinkersToolProxy();
     public static DynamicTreeProxy dynamicTreesCompat = new DynamicTreeProxy();
 
-    /**
-     * This method checks to see if STACK is able to mine anything. It goes through all compatibility checks.
-     *
-     * @param stack the item in question.
-     * @param tool  the name of the tool.
-     * @return boolean whether the stack can mine or not.
-     */
-    public static boolean getMiningLevelCompatibility(@Nullable final ItemStack stack, @Nullable final String tool)
-    {
-        return !tinkersCompat.checkTinkersBroken(stack);
-    }
+    private static final Map<ResourceLocation, Map<ItemStorage, Integer>>         customEquipmentTypeLevels    = new HashMap<>();
+    private static final Map<ResourceLocation, List<CustomEquipmentTypeFunction>> customEquipmentTypeFunctions = new HashMap<>();
 
     /**
      * This method checks if block is slime block.
@@ -249,11 +110,12 @@ public final class Compatibility
 
     /**
      * Check if a certain item stack is a tinkers tool of the given tool type.
-     * @param stack the stack to check for.
+     *
+     * @param stack    the stack to check for.
      * @param toolType the tool type.
      * @return true if so.
      */
-    public static boolean isTinkersTool(@Nullable final ItemStack stack, final EquipmentTypeEntry toolType) { return tinkersCompat.isTinkersTool(stack, toolType); }
+    public static boolean isTinkersTool(@Nullable final ItemStack stack, final EquipmentTypeEntry toolType) {return tinkersCompat.isTinkersTool(stack, toolType);}
 
     /**
      * Calculate the actual attack damage of the tinkers weapon.
@@ -418,5 +280,96 @@ public final class Compatibility
     public static List<ItemStack> getCombsFromHive(BlockPos pos, Level world, int amount)
     {
         return beeHiveCompat.getCombsFromHive(pos, world, amount);
+    }
+
+    /**
+     * Get a custom equipment level for the given equipment type and item stack.
+     *
+     * @param equipmentType the equipment type to look up.
+     * @param stack         the item stack to check.
+     * @return the registered level, or null if no custom level exists for this combination.
+     */
+    @Nullable
+    public static Integer getCustomEquipmentLevel(final ResourceLocation equipmentType, final ItemStack stack)
+    {
+        final Integer customLevel = customEquipmentTypeLevels.getOrDefault(equipmentType, Collections.emptyMap()).get(new ItemStorage(stack));
+        if (customLevel != null)
+        {
+            return customLevel;
+        }
+
+        for (final CustomEquipmentTypeFunction function : customEquipmentTypeFunctions.getOrDefault(equipmentType, Collections.emptyList()))
+        {
+            final Integer functionCustomLevel = function.getLevel(stack);
+            if (functionCustomLevel != null)
+            {
+                return functionCustomLevel;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Register a specific item with a fixed equipment level for the given equipment type.
+     * Always overwrites any existing entry — intended for mod compat hooks.
+     *
+     * @param equipmentType the equipment type to register the item under.
+     * @param item          the item to register.
+     * @param level         the equipment level to assign.
+     */
+    @SuppressWarnings("unused") // Mod compat API
+    public static void registerCustomEquipmentLevel(@NotNull final ResourceLocation equipmentType, @NotNull final Item item, final int level)
+    {
+        customEquipmentTypeLevels.compute(equipmentType, (key, value) -> {
+            if (value == null)
+            {
+                value = new HashMap<>();
+            }
+            value.put(new ItemStorage(new ItemStack(item)), level);
+            return value;
+        });
+    }
+
+    /**
+     * Register a function that dynamically determines the equipment level for items of the given equipment type.
+     * The function receives an item stack and returns its level, or null if not applicable.
+     * Always appends — intended for mod compat hooks.
+     *
+     * @param equipmentType the equipment type to register the function under.
+     * @param function      a function mapping an item stack to its equipment level.
+     */
+    @SuppressWarnings("unused") // Mod compat API
+    public static void registerCustomEquipmentLevel(@NotNull final ResourceLocation equipmentType, @NotNull final CustomEquipmentTypeFunction function)
+    {
+        customEquipmentTypeFunctions.compute(equipmentType, (key, value) -> {
+            if (value == null)
+            {
+                value = new ArrayList<>();
+            }
+            value.add(function);
+            return value;
+        });
+    }
+
+    /**
+     * A function that determines the equipment level of an item stack for a specific equipment type.
+     *
+     * <p>Implementations are responsible for verifying that the given item stack is actually
+     * applicable — i.e., that it is the correct item and is capable of performing the relevant
+     * action. If the item stack is not applicable, return {@code null}.
+     *
+     * <p>The returned level must be in the range {@code [0, 5]}, where {@code 0} is the lowest
+     * and {@code 5} is the highest equipment tier.
+     */
+    @FunctionalInterface
+    public interface CustomEquipmentTypeFunction
+    {
+        /**
+         * @param item the item stack to evaluate.
+         * @return the equipment level in the range [0, 5], or null if the item stack is not applicable.
+         */
+        @Nullable
+        Integer getLevel(ItemStack item);
     }
 }

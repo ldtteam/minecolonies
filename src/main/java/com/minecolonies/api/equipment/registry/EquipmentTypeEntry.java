@@ -1,9 +1,11 @@
 package com.minecolonies.api.equipment.registry;
 
+import com.minecolonies.api.compatibility.Compatibility;
 import com.minecolonies.api.equipment.ModEquipmentTypes;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.function.BiFunction;
@@ -125,7 +127,13 @@ public final class EquipmentTypeEntry
      */
     public int getMiningLevel(ItemStack itemStack)
     {
-        return isEquipment.test(itemStack, this) ? itemLevel.apply(itemStack, this) : -1;
+        final Integer customEquipmentLevel = Compatibility.getCustomEquipmentLevel(this.registryName, itemStack);
+        if (customEquipmentLevel != null)
+        {
+            return Mth.clamp(customEquipmentLevel, 0, 5);
+        }
+
+        return isEquipment.test(itemStack, this) ? Mth.clamp(itemLevel.apply(itemStack, this), 0, 5) : -1;
     }
 
     /**
