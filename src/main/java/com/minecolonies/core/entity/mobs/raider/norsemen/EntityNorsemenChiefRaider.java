@@ -17,8 +17,8 @@ public class EntityNorsemenChiefRaider extends AbstractEntityNorsemenRaider impl
     /**
      * Norse adjustments.
      */
-    public static final double BASE_NORSE_ARMOR = 5;
-    public static final double NORSE_HEALTH_REDUCTION_FACTOR = 10;
+    public static final double BASE_NORSE_ARMOR = 15;
+    public static final double NORSE_HEALTH_REDUCTION_FACTOR = 2;
 
     /**
      * Constructor of the entity.
