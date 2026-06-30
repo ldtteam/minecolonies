@@ -184,4 +184,43 @@ public class BlockStateUtils
         }
         return true;
     }
+
+    /**
+     * Copy the specified properties from the source to the target, leaving other properties on target untouched.
+     * Safe to call when the given properties don't exist on either.
+     * @param target     the block state to copy properties onto.
+     * @param source     the block state to copy properties from.
+     * @param properties the properties to be copied (if they exist).
+     * @return the target block state with the specified properties copied from the source.
+     */
+    public static BlockState copyProperties(
+        @NotNull final BlockState target,
+        @NotNull final BlockState source,
+        @NotNull final Property<?>... properties)
+    {
+        BlockState result = target;
+        for (final Property<?> property : properties)
+        {
+            result = copyProperty(result, source, property);
+        }
+        return result;
+    }
+
+    /**
+     * Copy the specified property from the source to the target, leaving other properties on target untouched.
+     * Safe to call when the given properties don't exist on either.
+     * @param target     the block state to copy properties onto.
+     * @param source     the block state to copy properties from.
+     * @param property   the property to be copied (if it exists).
+     * @return the target block state with the specified properties copied from the source.
+     */
+    public static <T extends Comparable<T>> BlockState copyProperty(
+        @NotNull final BlockState target,
+        @NotNull final BlockState source,
+        @NotNull final Property<T> property)
+    {
+        return source.hasProperty(property)
+            ? target.trySetValue(property, source.getValue(property))
+            : target;
+    }
 }

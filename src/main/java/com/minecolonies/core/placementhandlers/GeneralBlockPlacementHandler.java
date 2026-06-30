@@ -7,6 +7,7 @@ import com.ldtteam.structurize.placement.IPlacementContext;
 import com.ldtteam.structurize.placement.handlers.placement.IPlacementHandler;
 import com.ldtteam.structurize.util.BlockUtils;
 import com.minecolonies.api.compatibility.candb.ChiselAndBitsCheck;
+import com.minecolonies.api.util.BlockStateUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.WorldUtil;
 import net.minecraft.core.BlockPos;
@@ -17,12 +18,10 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.FenceBlock;
-import net.minecraft.world.level.block.FenceGateBlock;
-import net.minecraft.world.level.block.IronBarsBlock;
-import net.minecraft.world.level.block.WallBlock;
+import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
@@ -59,7 +58,17 @@ public class GeneralBlockPlacementHandler implements IPlacementHandler
                     new BlockHitResult(new Vec3(0, 0, 0), Direction.DOWN, pos, true)));
                 if (tempState != null)
                 {
-                    placementState = tempState;
+                    placementState = BlockStateUtils.copyProperties(placementState, tempState,
+                        BlockStateProperties.UP,
+                        BlockStateProperties.NORTH,
+                        BlockStateProperties.NORTH_WALL,
+                        BlockStateProperties.EAST,
+                        BlockStateProperties.EAST_WALL,
+                        BlockStateProperties.SOUTH,
+                        BlockStateProperties.SOUTH_WALL,
+                        BlockStateProperties.WEST,
+                        BlockStateProperties.WEST_WALL,
+                        PillarBlock.COLUMN);
                 }
             }
             catch (final Exception ex)

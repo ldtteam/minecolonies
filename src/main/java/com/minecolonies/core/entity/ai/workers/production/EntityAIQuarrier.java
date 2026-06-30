@@ -229,8 +229,8 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
             final BuildingStructureHandler<JobQuarrier, BuildingMiner> structure;
             structure = new BuildingStructureHandler<>(world,
                 workOrder,
-                this, new BuildingProgressStage[] {BUILD_SOLID, DECORATE, CLEAR});
-            building.setTotalStages(3);
+                this, new BuildingProgressStage[] {BUILD_SOLID, BUILD_WATER, DECORATE, CLEAR});
+            building.setTotalStages(4);
 
             if (!structure.hasBluePrint())
             {
