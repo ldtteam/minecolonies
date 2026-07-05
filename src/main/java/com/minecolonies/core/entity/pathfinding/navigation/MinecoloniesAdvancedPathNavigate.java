@@ -283,7 +283,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
             {
                 if (!FMLEnvironment.production)
                 {
-                    Log.getLogger().info("Unlaoded citizen:" + ourEntity + " trying to path into unloaded position at: " + dest, new Exception());
+                    Log.getLogger().info("Unloaded citizen:" + ourEntity + " trying to path into unloaded position at: " + dest, new Exception());
                 }
                 ourEntity.discard();
                 return null;
