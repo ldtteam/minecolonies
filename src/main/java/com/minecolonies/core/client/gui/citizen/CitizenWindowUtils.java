@@ -40,9 +40,9 @@ import static net.minecraft.client.gui.Gui.GUI_ICONS_LOCATION;
 public class CitizenWindowUtils
 {
     public static final ResourceLocation HAPPINESS_ICONS_LOCATION = new ResourceLocation(Constants.MOD_ID, "textures/gui/citizen/icons.png");
-    public static final ResourceLocation SATURATION_ICON_EMPTY = new ResourceLocation(Constants.MOD_ID, "textures/gui/citizen/empty.png");
-    public static final ResourceLocation SATURATION_ICON_FULL = new ResourceLocation(Constants.MOD_ID, "textures/gui/citizen/full.png");
-    public static final ResourceLocation SATURATION_ICON_HALF = new ResourceLocation(Constants.MOD_ID, "textures/gui/citizen/half.png");
+    public static final ResourceLocation SATURATION_ICON_EMPTY = new ResourceLocation("textures/item/bowl.png");
+    public static final ResourceLocation SATURATION_ICON_FULL  = new ResourceLocation("textures/item/rabbit_stew.png");
+    public static final ResourceLocation SATURATION_ICON_HALF  = new ResourceLocation("textures/item/mushroom_stew.png");
 
     /**
      * Private con to hide public.
@@ -273,7 +273,7 @@ public class CitizenWindowUtils
         final int brokenDownSaturation = (int) (curSaturation / 6.0);
         //Current saturation (Full food hearts).
         int saturationPos;
-        for (saturationPos = 9; saturationPos >= 10 - brokenDownSaturation; saturationPos--)
+        for (saturationPos = 0; saturationPos < brokenDownSaturation; saturationPos++)
         {
             @NotNull final Image saturation = new Image();
             saturation.setImage(SATURATION_ICON_FULL, false);
@@ -374,7 +374,6 @@ public class CitizenWindowUtils
     {
         //Calculates how much percent of the next level has been completed.
         window.findPaneOfTypeByID(WINDOW_ID_HAPPINESS_BAR, View.class).setAlignment(Alignment.MIDDLE_RIGHT);
-        window.findPaneOfTypeByID(WINDOW_ID_HAPPINESS, Text.class).setText(Component.literal(Integer.toString((int) citizen.getHappiness())));
         createHappinessBar(citizen, window.findPaneOfTypeByID(WINDOW_ID_HAPPINESS_BAR, View.class));
     }
 

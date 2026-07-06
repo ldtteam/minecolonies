@@ -7,9 +7,8 @@
     <view id="healthBar" size="120 11" pos="55 42">
         <text id="healthLabel" size="30 11" color="black" pos="135 10" text="44"/>
     </view>
-    <view id="saturationBar" size="120 22" pos="55 54"/>
-    <view id="happinessBar" size="120 11" pos="55 75"/>
-    <text id="happinessLabel" size="30 11" color="black" pos="170 84"/>
+    <view id="saturationBar" size="120 12" pos="55 50"/>
+    <view id="happinessBar" size="120 11" pos="55 63"/>
 
     <text id="title" pos="33 104" size="69 11" color="black" textalign="MIDDLE_RIGHT"
            label="§l$(com.minecolonies.coremod.gui.citizen.skills)"/>
