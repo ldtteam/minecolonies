@@ -40,9 +40,9 @@ import static net.minecraft.client.gui.Gui.GUI_ICONS_LOCATION;
 public class CitizenWindowUtils
 {
     public static final ResourceLocation HAPPINESS_ICONS_LOCATION = new ResourceLocation(Constants.MOD_ID, "textures/gui/citizen/icons.png");
-    public static final ResourceLocation SATURATION_ICON_EMPTY = new ResourceLocation("textures/item/bowl.png");
-    public static final ResourceLocation SATURATION_ICON_FULL  = new ResourceLocation("textures/item/rabbit_stew.png");
-    public static final ResourceLocation SATURATION_ICON_HALF  = new ResourceLocation("textures/item/mushroom_stew.png");
+    public static final ResourceLocation SATURATION_ICON_EMPTY = new ResourceLocation(Constants.MOD_ID, "textures/gui/citizen/empty.png");
+    public static final ResourceLocation SATURATION_ICON_FULL  = new ResourceLocation(Constants.MOD_ID, "textures/gui/citizen/full.png");
+    public static final ResourceLocation SATURATION_ICON_HALF  = new ResourceLocation(Constants.MOD_ID, "textures/gui/citizen/half.png");
 
     /**
      * Private con to hide public.

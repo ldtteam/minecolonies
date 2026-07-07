@@ -797,7 +797,7 @@ public final class WindowConstants
     /**
      * Dimension of the hearts.
      */
-    public static final int SATURATION_ICON_HEIGHT_WIDTH = 12;
+    public static final int SATURATION_ICON_HEIGHT_WIDTH = 9;
 
     /**
      * Saturation icon x position.
@@ -807,7 +807,7 @@ public final class WindowConstants
     /**
      * Saturation item x offset.
      */
-    public static final int SATURATION_ICON_OFFSET_X = 9;
+    public static final int SATURATION_ICON_OFFSET_X = 10;
 
     /**
      * The label to find name in the gui.

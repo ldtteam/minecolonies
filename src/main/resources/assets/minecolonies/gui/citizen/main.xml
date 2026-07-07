@@ -7,13 +7,10 @@
     <view id="healthBar" size="120 11" pos="55 42">
         <text id="healthLabel" size="30 11" color="black" pos="135 10" text="44"/>
     </view>
-    <view id="saturationBar" size="120 12" pos="55 50"/>
+    <view id="saturationBar" size="120 12" pos="55 53"/>
     <view id="happinessBar" size="120 11" pos="55 63"/>
 
-    <text id="title" pos="33 104" size="69 11" color="black" textalign="MIDDLE_RIGHT"
-           label="§l$(com.minecolonies.coremod.gui.citizen.skills)"/>
-
-    <scrollgroup pos="33 117" size="105 100">
+    <scrollgroup pos="55 90" size="105 143">
         <view size="100% 13">
             <text pos="0 1" size="68 12" color="black" textalign="MIDDLE_RIGHT" label="$(com.minecolonies.coremod.gui.citizen.skills.athletics)"/>
             <image pos="70 2" size="9 9" onHoverId="athletics_bts" source="minecolonies:textures/entity/skills/small/athletics.png"/>
@@ -24,7 +21,7 @@
             </view>
         </view>
         <view size="100% 13">
-            <text pos="0 1" size="68 12" color="black" textalign="MIDDLE_RIGHT" label="$(com.minecolonies.coremod.gui.citizen.skills.dexterity)"/>
+            <text pos="0 1" size="68 10" color="black" textalign="MIDDLE_RIGHT" label="$(com.minecolonies.coremod.gui.citizen.skills.dexterity)"/>
             <image pos="70 2" size="9 9" onHoverId="dexterity_bts" source="minecolonies:textures/entity/skills/small/dexterity.png"/>
             <text pos="82 1" size="15 12" id="dexterity" color="black" textalign="MIDDLE_LEFT"/>
             <view pos="56 0" size="24 13" id="dexterity_bts" enabled="false" visible="false">
@@ -115,9 +112,9 @@
         </view>
     </scrollgroup>
 
-    <image id="statusicon" size="30 30" pos="158 110" visible="false"/>
-    <image id="deco4" size="15 49" pos="157 194"
+    <image id="statusicon" size="30 30" pos="164 18" visible="false"/>
+    <image id="deco4" size="15 49" pos="177 209"
            source="minecolonies:textures/gui/citizen/colonist_decor_up_ribbon_smaller.png"/>
-    <image id="gender" size="30 30" pos="150 189"
+    <image id="gender" size="30 30" pos="170 204"
            source="minecolonies:textures/gui/citizen/colonist_wax_male_smaller.png"/>
 </window>
