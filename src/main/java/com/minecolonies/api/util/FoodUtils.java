@@ -10,6 +10,7 @@ import com.minecolonies.api.items.IMinecoloniesFoodItem;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingCook;
 import com.minecolonies.core.items.ItemCrop;
 import com.minecolonies.core.tileentities.TileEntityRack;
+import com.minecolonies.api.items.ModTags;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.Item;
@@ -41,7 +42,7 @@ public class FoodUtils
      */
     public static boolean canEat(final ItemStack stack, final IBuilding homeBuilding, final IBuilding workBuilding)
     {
-        if (!EDIBLE.test(stack))
+        if (!EDIBLE.test(stack) || stack.is(ModTags.poisonous_food))
         {
             return false;
         }
