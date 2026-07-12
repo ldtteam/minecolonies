@@ -67,7 +67,7 @@ public class RequestWindowCitizen extends AbstractWindowCitizen
     {
         super(citizen, WINDOW_ID);
         this.autoOpenRequest = autoOpenRequest;
-        this.requestTreeModule = registerLayoutModule(CitizenRequestTreeWindowModule::new, citizen, 33, 29);
+        this.requestTreeModule = registerModule(CitizenRequestTreeWindowModule::new, citizen);
     }
 
     @Override

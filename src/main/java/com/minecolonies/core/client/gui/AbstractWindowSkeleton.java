@@ -1,7 +1,5 @@
 package com.minecolonies.core.client.gui;
 
-import com.ldtteam.blockui.Loader;
-import com.ldtteam.blockui.Pane;
 import com.ldtteam.blockui.PaneBuilders;
 import com.ldtteam.blockui.controls.Button;
 import com.ldtteam.blockui.controls.ButtonHandler;
@@ -10,7 +8,6 @@ import com.ldtteam.blockui.views.BOWindow;
 import com.ldtteam.blockui.views.SwitchView;
 import com.minecolonies.api.colony.modules.IModuleContainer;
 import com.minecolonies.core.client.gui.modules.IWindowModule;
-import com.minecolonies.core.client.gui.modules.IWindowWithLayoutModule;
 import com.minecolonies.core.network.messages.server.ClickGuiButtonTriggerMessage;
 import com.minecolonies.core.network.messages.server.OpenGuiWindowTriggerMessage;
 import net.minecraft.network.chat.Component;
@@ -139,21 +136,6 @@ public abstract class AbstractWindowSkeleton extends BOWindow implements ButtonH
     public final <T extends IWindowModule, A> T registerModule(final BiFunction<AbstractWindowSkeleton, A, T> moduleBuilder, final A argument)
     {
         final T module = moduleBuilder.apply(this, argument);
-        this.modules.add(module);
-        return module;
-    }
-
-    /**
-     * Add a module to this window. Extending the original logic of the window.
-     *
-     * @param moduleBuilder the new module.
-     */
-    public final <T extends IWindowWithLayoutModule, A> T registerLayoutModule(final BiFunction<AbstractWindowSkeleton, A, T> moduleBuilder, A argument, int xPos, int yPos)
-    {
-        final T module = moduleBuilder.apply(this, argument);
-        final Pane rootPane = Loader.createFromXMLFile(module.getLayout(), this);
-        rootPane.setPosition(xPos, yPos);
-        module.onLayoutMounted(rootPane);
         this.modules.add(module);
         return module;
     }
