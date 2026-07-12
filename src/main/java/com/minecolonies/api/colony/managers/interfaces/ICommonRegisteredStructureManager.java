@@ -163,7 +163,8 @@ public interface ICommonRegisteredStructureManager<B extends ICommonBuilding,T>
         final List<B> allowedBuildings = new ArrayList<>();
         for (final B building : getBuildings().values())
         {
-            if (building.getBuildingType() != ModBuildings.stash.get() && building.getBuildingType() != ModBuildings.postBox.get() && filterPredicate.test(building))
+            if (building.getBuildingType() != ModBuildings.stash.get() && building.getBuildingType() != ModBuildings.postBox.get() && filterPredicate.test(building)
+                && WorldUtil.isEntityBlockLoaded(getColony().getWorld(), building.getPosition()))
             {
                 allowedBuildings.add(building);
             }

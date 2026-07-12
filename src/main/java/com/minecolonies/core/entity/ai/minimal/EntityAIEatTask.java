@@ -18,8 +18,8 @@ import com.minecolonies.core.colony.buildings.modules.BuildingModules;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingCook;
 import com.minecolonies.core.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.core.colony.jobs.AbstractJobGuard;
-import com.minecolonies.core.colony.jobs.guard.JobCavalry;
 import com.minecolonies.core.colony.jobs.JobCook;
+import com.minecolonies.core.colony.jobs.guard.JobCavalry;
 import com.minecolonies.core.entity.citizen.EntityCitizen;
 import com.minecolonies.core.entity.other.SittingEntity;
 import com.minecolonies.core.entity.pathfinding.navigation.EntityNavigationUtils;
@@ -393,7 +393,7 @@ public class EntityAIEatTask implements IStateAI
     private EatingState goToHut()
     {
         final IBuilding buildingWorker = citizen.getCitizenData().getWorkBuilding();
-        if (buildingWorker == null)
+        if (buildingWorker == null || !WorldUtil.isBlockLoaded(citizen.level(), buildingWorker.getPosition()))
         {
             return SEARCH_RESTAURANT;
         }
