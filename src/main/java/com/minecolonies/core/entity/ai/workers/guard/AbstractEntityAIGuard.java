@@ -15,10 +15,7 @@ import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.equipment.registry.EquipmentTypeEntry;
-import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.api.util.DamageSourceKeys;
-import com.minecolonies.api.util.InventoryUtils;
-import com.minecolonies.api.util.LookHandler;
+import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.ColonyConstants;
 import com.minecolonies.core.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.core.colony.buildings.modules.BuildingModules;
@@ -514,7 +511,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
     {
         if (buildingGuards.requiresManualTarget())
         {
-            if (currentPatrolPoint == null || walkToSafePos(currentPatrolPoint))
+            if (currentPatrolPoint == null || walkToSafePos(currentPatrolPoint) || !WorldUtil.isEntityBlockLoaded(world, currentPatrolPoint))
             {
                 currentPatrolPoint = null;
                 if (!EntityNavigationUtils.walkToRandomPos(worker, 20, 1.0))
@@ -535,7 +532,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
         else
         {
             currentPatrolPoint = buildingGuards.getNextPatrolTarget(false);
-            if (currentPatrolPoint != null && (walkToSafePos(currentPatrolPoint)))
+            if (currentPatrolPoint != null && (!WorldUtil.isEntityBlockLoaded(world, currentPatrolPoint) || walkToSafePos(currentPatrolPoint)))
             {
                 setCurrentDelay(10);
                 buildingGuards.arrivedAtPatrolPoint(worker);

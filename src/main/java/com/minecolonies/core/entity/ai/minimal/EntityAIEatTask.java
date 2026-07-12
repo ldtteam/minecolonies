@@ -385,7 +385,7 @@ public class EntityAIEatTask implements IStateAI
     private EatingState goToHut()
     {
         final IBuilding buildingWorker = citizen.getCitizenData().getWorkBuilding();
-        if (buildingWorker == null)
+        if (buildingWorker == null || !WorldUtil.isBlockLoaded(citizen.level(), buildingWorker.getPosition()))
         {
             return SEARCH_RESTAURANT;
         }

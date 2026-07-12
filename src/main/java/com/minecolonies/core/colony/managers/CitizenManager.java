@@ -95,6 +95,11 @@ public class CitizenManager implements ICitizenManager
     private int respawnInterval = 30 * TICKS_SECOND;
 
     /**
+     * The citizen spawn interval
+     */
+    private int citizenRespawnTimer = 5 * 60 * TICKS_SECOND;
+
+    /**
      * Random obj.
      */
     private Random random = new Random();
@@ -229,9 +234,9 @@ public class CitizenManager implements ICitizenManager
             return data;
         }
 
-        if (colony.getServerBuildingManager().hasTownHall())
+        if (colony.getServerBuildingManager().hasTownHall() && spawnPositions.isEmpty())
         {
-            spawnPositions = new ArrayList<>(spawnPositions);
+            spawnPositions = new ArrayList<>();
             spawnPositions.add(colony.getServerBuildingManager().getTownHall().getPosition());
         }
 
@@ -249,14 +254,14 @@ public class CitizenManager implements ICitizenManager
                 {
                     return (T) spawnCitizenOnPosition((ICitizenData) data, world, force, calculatedSpawn);
                 }
+                else if (colony.getServerBuildingManager().hasTownHall() && spawnLocation.equals(colony.getServerBuildingManager().getTownHall().getPosition()))
+                {
+                    final BlockPos townhallPos = colony.getServerBuildingManager().getTownHall().getPosition();
+                    MessageUtils.format(WARNING_COLONY_NO_ARRIVAL_SPACE, townhallPos.getX(), townhallPos.getY(), townhallPos.getZ()).sendTo(colony).forAllPlayers();
+                }
             }
         }
 
-        if (colony.getServerBuildingManager().hasTownHall() && WorldUtil.isEntityBlockLoaded(world, colony.getServerBuildingManager().getTownHall().getPosition()))
-        {
-            final BlockPos townhallPos = colony.getServerBuildingManager().getTownHall().getPosition();
-            MessageUtils.format(WARNING_COLONY_NO_ARRIVAL_SPACE, townhallPos.getX(), townhallPos.getY(), townhallPos.getZ()).sendTo(colony).forAllPlayers();
-        }
         return data;
     }
 
@@ -574,8 +579,9 @@ public class CitizenManager implements ICitizenManager
     @Override
     public void onColonyTick(final IColony colony)
     {
-        if (colony.getServerBuildingManager().hasTownHall())
+        if (colony.getServerBuildingManager().hasTownHall() && (citizenRespawnTimer -= 500) < 0)
         {
+            citizenRespawnTimer = 5 * 60 * TICKS_SECOND;
             getCitizens().stream().filter(Objects::nonNull).forEach(ICitizenData::updateEntityIfNecessary);
         }
 
@@ -681,6 +687,7 @@ public class CitizenManager implements ICitizenManager
     {
         for (final ICitizenData citizenData : citizens.values())
         {
+            citizenData.updateEntityIfNecessary();
             if (citizenData.getCitizenMournHandler().isMourning())
             {
                 citizenData.getCitizenMournHandler().clearDeceasedCitizen();
