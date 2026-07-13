@@ -1,7 +1,9 @@
 package com.minecolonies.core.client.gui.citizen;
 
 import com.ldtteam.blockui.PaneBuilders;
-import com.ldtteam.blockui.controls.*;
+import com.ldtteam.blockui.controls.Button;
+import com.ldtteam.blockui.controls.Image;
+import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.blockui.views.View;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.entity.citizen.Skill;
@@ -18,6 +20,7 @@ import static com.minecolonies.api.util.constant.WindowConstants.*;
 /**
  * BOWindow for the citizen.
  */
+//TODO: Rework the layout, skills should be icons or shortform text with amount, left to right. This leaves more space and allows us to add missing important information such as current Job, home/work location etc
 public class MainWindowCitizen extends AbstractWindowCitizen
 {
     /**
