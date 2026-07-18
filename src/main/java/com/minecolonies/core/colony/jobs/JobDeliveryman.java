@@ -190,7 +190,7 @@ public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeli
         int priority = 1;
         if (!WorldUtil.isBlockLoaded(getColony().getWorld(), getTarget(req)))
         {
-            priority -= 100;
+            priority -= 1000;
         }
         if (req != null && req.getRequest() instanceof AbstractDeliverymanRequestable requestable)
         {

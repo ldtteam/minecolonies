@@ -1544,6 +1544,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
                     {
                         pickup.setDay(pickUpDay < pickup.getDay() ? pickUpDay : pickup.getDay() - 1);
                     }
+                    break;
                 }
             }
             return false;
