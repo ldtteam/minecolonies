@@ -259,7 +259,7 @@ public enum AIWorkerState implements IAIState
     /**
      * Delivery required items or tools.
      */
-    DELIVERY(true),
+    DELIVERY(false),
 
     /**
      * Pickup unneeded items from buildings.

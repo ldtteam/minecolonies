@@ -208,7 +208,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
     /**
      * Gather not needed Items from building.
      *
-     * @param building building to gather it from.
+     * @param targetBuilding building to gather it from.
      * @return true when finished.
      */
     private boolean pickupFromBuilding(@NotNull final IBuilding targetBuilding)
@@ -509,7 +509,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             }
         }
 
-        if (nextPickUp == null || parallelDeliveryCount > 1 + (getSecondarySkillLevel() / 5))
+        if (nextPickUp == null || parallelDeliveryCount > job.getMaxParallelDeliveries())
         {
             return DELIVERY;
         }

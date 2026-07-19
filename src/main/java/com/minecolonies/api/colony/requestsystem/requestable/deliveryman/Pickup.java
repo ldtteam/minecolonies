@@ -24,13 +24,25 @@ public class Pickup extends AbstractDeliverymanRequestable
       TYPE_TOKENS = ReflectionUtils.getSuperClasses(TypeToken.of(Pickup.class)).stream().filter(type -> !type.equals(TypeConstants.OBJECT)).collect(Collectors.toSet());
 
     /**
+     * Day by which the pickup should be done (unless courier is idle).
+     */
+    private int day;
+
+    /**
+     * Qty of items to be picked up (estimate).
+     */
+    private int quantity;
+
+    /**
      * Constructor for Delivery requests
      *
      * @param priority The priority of the request.
      */
-    public Pickup(final int priority)
+    public Pickup(final int priority, final int day, final int qty)
     {
         super(priority);
+        this.day = day;
+        this.quantity = qty;
     }
 
     @NotNull
@@ -38,14 +50,73 @@ public class Pickup extends AbstractDeliverymanRequestable
     {
         final CompoundTag compound = new CompoundTag();
         compound.put(NBT_PRIORITY, controller.serializeTag(provider, pickup.getPriority()));
+        compound.put(NBT_DAY, controller.serializeTag(provider, pickup.getDay()));
+        compound.put(NBT_QTY, controller.serializeTag(provider, pickup.getQuantity()));
+
         return compound;
+    }
+
+    /**
+     * Get the pickup day.
+     * @return the day.
+     */
+    public int getDay()
+    {
+        return day;
+    }
+
+    /**
+     * Get the pickup quantity.
+     * @return the qty.
+     */
+    public int getQuantity()
+    {
+        return quantity;
+    }
+
+    /**
+     * Setter for the day.
+     * @param day the new day.
+     */
+    public void setDay(final int day)
+    {
+        this.day = day;
+    }
+
+    /**
+     * Setter for the qty.
+     * @param qty the new qty.
+     */
+    public void setQuantity(final int qty)
+    {
+        this.quantity = qty;
     }
 
     @NotNull
     public static Pickup deserialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final CompoundTag compound)
     {
         final int priority = controller.deserializeTag(provider, compound.getCompound(NBT_PRIORITY));
-        return new Pickup(priority);
+        final int day;
+        if (compound.contains(NBT_DAY))
+        {
+            day = controller.deserializeTag(provider, compound.getCompound(NBT_DAY));
+        }
+        else
+        {
+            day = -1;
+        }
+
+        final int qty;
+        if (compound.contains(NBT_QTY))
+        {
+            qty = controller.deserializeTag(provider, compound.getCompound(NBT_QTY));
+        }
+        else
+        {
+            qty = -1;
+        }
+
+        return new Pickup(priority, day, qty);
     }
 
     /**
@@ -58,6 +129,8 @@ public class Pickup extends AbstractDeliverymanRequestable
     public static void serialize(final IFactoryController controller, final RegistryFriendlyByteBuf buffer, final Pickup input)
     {
         buffer.writeInt(input.getPriority());
+        buffer.writeInt(input.getDay());
+        buffer.writeInt(input.getQuantity());
     }
 
     /**
@@ -70,8 +143,10 @@ public class Pickup extends AbstractDeliverymanRequestable
     public static Pickup deserialize(final IFactoryController controller, final RegistryFriendlyByteBuf buffer)
     {
         final int priority = buffer.readInt();
+        final int day = buffer.readInt();
+        final int qty = buffer.readInt();
 
-        return new Pickup(priority);
+        return new Pickup(priority, day, qty);
     }
 
     @Override
