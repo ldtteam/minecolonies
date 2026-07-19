@@ -83,6 +83,8 @@ import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import static com.minecolonies.api.colony.requestsystem.requestable.deliveryman.AbstractDeliverymanRequestable.MAX_BUILDING_PRIORITY;
+import static com.minecolonies.api.colony.requestsystem.requestable.deliveryman.AbstractDeliverymanRequestable.getMaxBuildingPriority;
 import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT_MAX_BUILDING_LEVEL;
 import static com.minecolonies.api.util.constant.BuildingConstants.NO_WORK_ORDER;
 import static com.minecolonies.api.util.constant.Constants.MOD_ID;
@@ -152,16 +154,6 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
      */
     protected List<IBuildingModule>                  modules    = new ArrayList<>();
     protected Int2ObjectOpenHashMap<IBuildingModule> modulesMap = new Int2ObjectOpenHashMap<>();
-
-    /**
-     * Day the next pickup should happen.
-     */
-    public int pickUpDay = -1;
-
-    /**
-     * Cached position for citizen standing position next to hut block.
-     */
-    private BlockPos cachedStandingPosition;
 
     /**
      * Prestige value of this building (dominated by schematic complexity).
@@ -976,7 +968,6 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
         getModulesByType(IBuildingEventsModule.class).forEach(module -> module.onUpgradeComplete(newLevel));
         colony.getResearchManager().checkAutoStartResearch();
         colony.getServerBuildingManager().onBuildingUpgradeComplete(this, newLevel);
-        cachedStandingPosition = null;
 
         if (blueprint != null)
         {
@@ -1531,40 +1522,36 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     }
 
     @Override
-    public boolean createPickupRequest(final int pickUpPrio)
+    public boolean createPickupRequest(final int qty, final boolean force)
     {
-        int daysToPickup = 10 - pickUpPrio;
-        if (pickUpDay == -1 || pickUpDay > colony.getDay() + daysToPickup)
-        {
-            pickUpDay = colony.getDay() + daysToPickup;
-        }
-
-        if (colony.getDay() < pickUpDay)
-        {
-            return false;
-        }
-
-        pickUpDay = -1;
-
+        final int priority = force ? getMaxBuildingPriority(true) : this.getPickUpPriority();
         final List<IToken<?>> reqs = new ArrayList<>(getOpenRequestsByRequestableType().getOrDefault(TypeConstants.PICKUP, Collections.emptyList()));
         if (!reqs.isEmpty())
         {
             for (final IToken<?> req : reqs)
             {
                 final IRequest<?> request = colony.getRequestManager().getRequestForToken(req);
-                if (request != null && request.getState() == RequestState.IN_PROGRESS)
+                if (request != null && request.getState() == RequestState.IN_PROGRESS && req instanceof Pickup pickup)
                 {
                     final IRequestResolver<?> resolver = colony.getRequestManager().getResolverForRequest(req);
                     if (resolver instanceof IPlayerRequestResolver || resolver instanceof IRetryingRequestResolver)
                     {
                         colony.getRequestManager().reassignRequest(req, Collections.emptyList());
                     }
+                    pickup.setQuantity(pickup.getQuantity() + qty);
+                    final int pickUpDay = colony.getDay() + Math.max(0, (10 - priority) - (pickup.getQuantity() / 16));
+                    if (pickup.getDay() > colony.getDay())
+                    {
+                        pickup.setDay(pickUpDay < pickup.getDay() ? pickUpDay : pickup.getDay() - 1);
+                    }
+                    break;
                 }
             }
             return false;
         }
 
-        createRequest(new Pickup(pickUpPrio), true);
+        final int pickUpDay = colony.getDay() + Math.max(0, (10 - getPickUpPriority()) - (qty / 16));
+        createRequest(new Pickup(priority, pickUpDay, qty), true);
         return true;
     }
 
