@@ -420,7 +420,7 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
             }
 
             // Don't keep searching more costly nodes when there is a destination
-            if (reachesDestination && node.getScore() > bestNode.getScore())
+            if (reachesDestination && node.getCost() > bestNode.getCost())
             {
                 if (reevaluteHeuristic(bestNode, reachesDestination))
                 {
@@ -1064,6 +1064,17 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
             }
         }
 
+        if (dX != 0 || dZ != 0)
+        {
+            // Entering the next block from the wrong direction
+            cost += getFacingCost(state, dX, dZ);
+            cost += getFacingCost(below, dX, dZ);
+
+            // Leaving the old block in the wrong direction
+            cost += getFacingCost(cachedBlockLookup.getBlockState(parent.x, parent.y, parent.z), dX, dZ);
+            cost += getFacingCost(cachedBlockLookup.getBlockState(parent.x, parent.y - 1, parent.z), dX, dZ);
+        }
+
         if (state.hasProperty(BlockStateProperties.OPEN) && !(state.getBlock() instanceof PanelBlock))
         {
             cost += pathingOptions.traverseToggleAbleCost;
@@ -1108,6 +1119,28 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
     }
 
     /**
+     * Adds the cost for going against the blocks existing facing
+     *
+     * @param state block to check
+     * @param dX
+     * @param dZ
+     * @return added cost or 0
+     */
+    private double getFacingCost(final BlockState state, final int dX, final int dZ)
+    {
+        if (state.hasProperty(HorizontalDirectionalBlock.FACING))
+        {
+            final Direction facing = state.getValue(HorizontalDirectionalBlock.FACING);
+            if (facing.getStepX() != 0 && dZ != 0 || facing.getStepZ() != 0 && dX != 0)
+            {
+                return pathingOptions.badDirectionCost;
+            }
+        }
+
+        return 0;
+    }
+
+    /**
      * Modifies costs if needed for a node
      *
      * @param cost
@@ -1147,7 +1180,10 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
         MNode node = targetNode;
         while (node.parent != null)
         {
-            ++pathLength;
+            if (!node.isCornerNode())
+            {
+                ++pathLength;
+            }
             if (node.isOnRails())
             {
                 ++railsLength;
@@ -1171,6 +1207,12 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
             if (debugDrawEnabled)
             {
                 addPathNodeToDebug(node);
+            }
+
+            if (node.isCornerNode())
+            {
+                node = node.parent;
+                continue;
             }
 
             --pathLength;

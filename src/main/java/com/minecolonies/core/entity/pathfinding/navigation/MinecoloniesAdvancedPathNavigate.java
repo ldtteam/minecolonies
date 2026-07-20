@@ -486,10 +486,11 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
 
                 // Lower speed when moving up/down to the side to not miss a block when we have perpendicular momentum
                 if (Math.abs(wantedPosition.getY() - mob.getY()) > 0.6 && getPreviousNode() != null
-                    && ((getPreviousNode().x != getNextNode().x && mob.xxa > mob.zza)
-                    || (getPreviousNode().z != getNextNode().z && mob.zza > mob.xxa)))
+                    && ((getPreviousNode().x != getNextNode().x && Math.abs(mob.getDeltaMovement().z()) > Math.abs(mob.getDeltaMovement().x()))
+                    || (getPreviousNode().z != getNextNode().z && Math.abs(mob.getDeltaMovement().x()) > Math.abs(mob.getDeltaMovement().z()))))
                 {
-                    moveSpeed *= 0.4;
+                    // Overrule existing speed for safe turn, when changing y levels
+                    moveSpeed = 0.6;
                 }
 
                 mob.getMoveControl().setWantedPosition(wantedPosition.getX(), wantedPosition.getY(), wantedPosition.getZ(), moveSpeed);
@@ -774,10 +775,13 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
                     this.path.setNextNodeIndex(path.getNextNodeIndex() + 1);
                 }
 
+                // Slightly offsets the ladders starting position, so entities walk infront of it and do not get stuck trying to enter from the side
+                final double offSetStartX = nextX + getNextNode().getLadderFacing().getStepX() * 0.1;
+                final double offSetStartZ = nextZ + getNextNode().getLadderFacing().getStepZ() * 0.1;
                 ourEntity.xxa = 0;
                 ourEntity.zza = 0;
-                wantedPosition.set(nextX, nextY, nextZ);
-                this.ourEntity.getMoveControl().setWantedPosition(nextX, nextY, nextZ, 0.4);
+                wantedPosition.set(offSetStartX, nextY, offSetStartZ);
+                this.ourEntity.getMoveControl().setWantedPosition(offSetStartX, nextY, offSetStartZ, 0.4);
             }
             // Scaling ladder, move
             else
