@@ -3,7 +3,6 @@ package com.minecolonies.core.placementhandlers;
 import com.ldtteam.structurize.placement.IPlacementContext;
 import com.ldtteam.structurize.placement.handlers.placement.IPlacementHandler;
 import com.ldtteam.structurize.util.BlockUtils;
-import com.minecolonies.api.util.Log;
 import com.minecolonies.core.blocks.BlockScarecrow;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -21,7 +20,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.ldtteam.structurize.placement.handlers.placement.PlacementHandlers.handleTileEntityPlacement;
+import static com.ldtteam.structurize.placement.handlers.placement.PlacementHandlers.simplePlacement;
 
 public class FieldPlacementHandler implements IPlacementHandler
 {
@@ -41,21 +40,7 @@ public class FieldPlacementHandler implements IPlacementHandler
     {
         if (blockState.getValue(DoorBlock.HALF).equals(DoubleBlockHalf.LOWER))
         {
-            world.setBlock(pos, blockState.setValue(DoorBlock.HALF, DoubleBlockHalf.LOWER), 3);
-            world.setBlock(pos.above(), blockState.setValue(DoorBlock.HALF, DoubleBlockHalf.UPPER), 3);
-        }
-
-        if (tileEntityData != null)
-        {
-            try
-            {
-                handleTileEntityPlacement(tileEntityData, world, pos, placementContext.getRotationMirror());
-                blockState.getBlock().setPlacedBy(world, pos, blockState, null, BlockUtils.getItemStackFromBlockState(blockState));
-            }
-            catch (final Exception ex)
-            {
-                Log.getLogger().warn("Unable to place TileEntity");
-            }
+            return simplePlacement(world, pos, blockState, placementContext.getRotationMirror(), tileEntityData);
         }
 
         return ActionProcessingResult.SUCCESS;
