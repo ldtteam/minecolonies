@@ -773,6 +773,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
                         PathfindingUtils.syncDebugReachedPositions(reached, pathResult.getDebugWatchers());
                     }
                     this.path.setNextNodeIndex(path.getNextNodeIndex() + 1);
+                    return true;
                 }
 
                 // Slightly offsets the ladders starting position, so entities walk infront of it and do not get stuck trying to enter from the side
