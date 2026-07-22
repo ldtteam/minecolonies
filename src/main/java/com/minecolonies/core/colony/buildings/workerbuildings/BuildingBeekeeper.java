@@ -9,6 +9,7 @@ import com.minecolonies.api.crafting.GenericRecipe;
 import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.equipment.ModEquipmentTypes;
+import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.api.util.constant.NbtTagConstants;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
@@ -25,7 +26,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.entity.animal.Animal;
-import net.minecraft.world.entity.animal.Bee;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.NotNull;
@@ -240,7 +240,7 @@ public class BuildingBeekeeper extends AbstractBuilding
 
         public HerdingModule()
         {
-            super(ModJobs.beekeeper.get(), a -> a instanceof Bee, new ItemStorage(ItemStack.EMPTY, 1));
+            super(ModJobs.beekeeper.get(), ModTags.beekeeperAnimals, new ItemStorage(ItemStack.EMPTY, 1));
         }
 
         @NotNull

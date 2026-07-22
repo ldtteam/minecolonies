@@ -22,6 +22,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.AgeableMob;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.Item;
@@ -112,6 +113,12 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
      */
     @Nullable
     protected AnimalHerdingModule current_module;
+
+    /**
+     * Entity type selected for the current herding action. Herd limits are maintained independently for each type.
+     */
+    @Nullable
+    private EntityType<?> currentAnimalType;
 
     /**
      * Selected breeding partners
@@ -205,43 +212,60 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
             breedTimeOut -= DECIDING_DELAY;
         }
 
-        for (final AnimalHerdingModule module : building.getModulesByType(AnimalHerdingModule.class))
+        boolean pickupChecked = false;
+        for (final AnimalHerdingModule module : building.getModules(AnimalHerdingModule.class))
         {
             final List<? extends Animal> animals = searchForAnimals(module::isCompatible);
-            if (animals.isEmpty())
+            final Map<EntityType<?>, List<Animal>> animalsByType = new LinkedHashMap<>();
+            for (final Animal animal : animals)
             {
-                continue;
+                animalsByType.computeIfAbsent(animal.getType(), type -> new ArrayList<>()).add(animal);
             }
 
-            current_module = module;
+            // Support the possibility of having multiple disparate herds.
+            final List<Map.Entry<EntityType<?>, List<Animal>>> herds = new ArrayList<>(animalsByType.entrySet());
 
-            int numOfBreedableAnimals = 0;
-            for (final Animal entity : animals)
+            // Make sure we don't get "stuck" on the first herd only in situations where herders take care of multiple types of animals.
+            Collections.shuffle(herds, worker.getCitizenData().getRandom());
+            for (final Map.Entry<EntityType<?>, List<Animal>> herd : herds)
             {
-                if (isBreedAble(entity))
+                current_module = module;
+                currentAnimalType = herd.getKey();
+                final List<Animal> animalsOfType = herd.getValue();
+
+                int numOfBreedableAnimals = 0;
+                for (final Animal entity : animalsOfType)
                 {
-                    numOfBreedableAnimals++;
+                    if (isBreedAble(entity))
+                    {
+                        numOfBreedableAnimals++;
+                    }
                 }
-            }
 
-            final boolean hasBreedingItem = InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(),
-                stack -> ItemStackUtils.compareItemStorageListIgnoreStackSize(module.getBreedingItems(), stack)) > 1;
+                final boolean hasBreedingItem = InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(),
+                    stack -> ItemStackUtils.compareItemStorageListIgnoreStackSize(module.getBreedingItems(), stack)) > 1;
 
-            if (ColonyConstants.rand.nextDouble() < 0.1 && !searchForItemsInArea().isEmpty())
-            {
-                return HERDER_PICKUP;
-            }
-            else if (ColonyConstants.rand.nextDouble() < chanceToButcher(animals))
-            {
-                return HERDER_BUTCHER;
-            }
-            else if (canBreedChildren() && numOfBreedableAnimals >= NUM_OF_ANIMALS_TO_BREED && hasBreedingItem && breedTimeOut == 0)
-            {
-                return HERDER_BREED;
-            }
-            else if (ColonyConstants.rand.nextDouble() < FEED_CHANCE && hasBreedingItem)
-            {
-                return HERDER_FEED;
+                if (!pickupChecked)
+                {
+                    pickupChecked = true;
+                    if (ColonyConstants.rand.nextDouble() < 0.1 && !searchForItemsInArea().isEmpty())
+                    {
+                        return HERDER_PICKUP;
+                    }
+                }
+
+                if (ColonyConstants.rand.nextDouble() < chanceToButcher(animalsOfType))
+                {
+                    return HERDER_BUTCHER;
+                }
+                else if (canBreedChildren() && numOfBreedableAnimals >= NUM_OF_ANIMALS_TO_BREED && hasBreedingItem && breedTimeOut == 0)
+                {
+                    return HERDER_BREED;
+                }
+                else if (ColonyConstants.rand.nextDouble() < FEED_CHANCE && hasBreedingItem)
+                {
+                    return HERDER_FEED;
+                }
             }
         }
 
@@ -339,7 +363,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
             return DECIDE;
         }
 
-        final List<? extends Animal> animals = searchForAnimals(current_module::isCompatible);
+        final List<? extends Animal> animals = searchForAnimals(this::isCompatibleWithCurrentHerd);
 
         if (!equipTool(InteractionHand.MAIN_HAND, ModEquipmentTypes.axe.get()))
         {
@@ -429,7 +453,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
             return getState();
         }
 
-        final Predicate<Animal> predicate = ((Predicate<Animal>) current_module::isCompatible).and(AbstractEntityAIHerder::isBreedAble);
+        final Predicate<Animal> predicate = ((Predicate<Animal>) this::isCompatibleWithCurrentHerd).and(AbstractEntityAIHerder::isBreedAble);
         final List<? extends Animal> breedables = searchForAnimals(predicate);
 
         if (breedables.size() < 2)
@@ -526,7 +550,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
             return START_WORKING;
         }
 
-        List<? extends Animal> animals = searchForAnimals(current_module::isCompatible);
+        List<? extends Animal> animals = searchForAnimals(this::isCompatibleWithCurrentHerd);
         Animal toFeed = null;
 
         for (final Animal animal : animals)
@@ -565,6 +589,18 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
 
         worker.decreaseSaturationForContinuousAction();
         return getState();
+    }
+
+    /**
+     * Checks whether an animal belongs to the module and entity type selected for the current herding action.
+     *
+     * @param animal the animal to check.
+     * @return true if the animal belongs to the currently selected herd.
+     */
+    private boolean isCompatibleWithCurrentHerd(@NotNull final Animal animal)
+    {
+        return current_module != null && current_module.isCompatible(animal)
+            && (currentAnimalType == null || animal.getType() == currentAnimalType);
     }
 
     /**

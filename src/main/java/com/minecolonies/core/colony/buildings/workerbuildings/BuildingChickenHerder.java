@@ -5,11 +5,11 @@ import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.crafting.GenericRecipe;
 import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.items.ModTags;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
 import com.minecolonies.core.colony.buildings.modules.AnimalHerdingModule;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.animal.Animal;
-import net.minecraft.world.entity.animal.Chicken;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.NotNull;
@@ -62,7 +62,7 @@ public class BuildingChickenHerder extends AbstractBuilding
     {
         public HerdingModule()
         {
-            super(ModJobs.chickenHerder.get(), a -> a instanceof Chicken, new ItemStorage(Items.WHEAT_SEEDS, 2));
+            super(ModJobs.chickenHerder.get(), ModTags.chickenHerderAnimals, new ItemStorage(Items.WHEAT_SEEDS, 2));
         }
 
         @NotNull

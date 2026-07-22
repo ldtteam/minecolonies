@@ -16,7 +16,9 @@ import com.minecolonies.core.colony.buildings.workerbuildings.BuildingHospital;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
 import net.minecraft.util.Tuple;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -40,6 +42,27 @@ public class AnimalHerdingModule extends AbstractBuildingModule implements IHasR
     private final Predicate<Animal> animalPredicate;
     private final ItemStorage breedingItem;
 
+    /**
+     * Creates a herding module whose compatible animals are supplied by an entity type tag.
+     *
+     * @param jobEntry the job associated with the module.
+     * @param animalTag the entity type tag containing animals handled by the module.
+     * @param breedingItem the item used by the herder to breed compatible animals.
+     */
+    public AnimalHerdingModule(@NotNull final JobEntry jobEntry,
+                               @NotNull final TagKey<EntityType<?>> animalTag,
+                               @NotNull final ItemStorage breedingItem)
+    {
+        this(jobEntry, animal -> animal.getType().is(animalTag), breedingItem);
+    }
+
+    /**
+     * Creates a herding module with a programmatic animal predicate.
+     *
+     * @param jobEntry the job associated with the module.
+     * @param animalPredicate predicate selecting animals handled by the module.
+     * @param breedingItem the item used by the herder to breed compatible animals.
+     */
     public AnimalHerdingModule(@NotNull final JobEntry jobEntry,
                                @NotNull final Predicate<Animal> animalPredicate,
                                @NotNull final ItemStorage breedingItem)

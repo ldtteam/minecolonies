@@ -11,6 +11,7 @@ import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.crafting.GenericRecipe;
 import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.equipment.ModEquipmentTypes;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.util.ItemStackUtils;
@@ -150,7 +151,7 @@ public class BuildingCowboy extends AbstractBuilding
 
         public HerdingModule()
         {
-            super(ModJobs.cowboy.get(), a -> a instanceof Cow || a instanceof Goat, new ItemStorage(Items.WHEAT, 2));
+            super(ModJobs.cowboy.get(), ModTags.cowboyAnimals, new ItemStorage(Items.WHEAT, 2));
         }
 
         @Override

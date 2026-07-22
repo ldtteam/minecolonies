@@ -30,6 +30,13 @@ public class DefaultEntityTypeTagsProvider extends EntityTypeTagsProvider
         tag(ModTags.hostile).add(EntityType.SLIME);
         tag(ModTags.mobAttackBlacklist).add(EntityType.ENDERMAN, EntityType.LLAMA);
         tag(ModTags.freeToInteractWith).addOptional(new ResourceLocation("corpse", "corpse"));
+        tag(ModTags.beekeeperAnimals).add(EntityType.BEE);
+        tag(ModTags.chickenHerderAnimals).add(EntityType.CHICKEN);
+        tag(ModTags.cowboyAnimals).add(EntityType.COW, EntityType.MOOSHROOM, EntityType.GOAT);
+        tag(ModTags.rabbitHerderAnimals).add(EntityType.RABBIT);
+        tag(ModTags.shepherdAnimals).add(EntityType.SHEEP);
+        tag(ModTags.stablemasterAnimals).add(EntityType.HORSE);
+        tag(ModTags.swineHerderAnimals).add(EntityType.PIG);
 
         final TagAppender<EntityType<?>> raiderTagAppender = tag(ModTags.raiders);
         ModEntities.getRaiders().forEach(raiderType -> raiderTagAppender.add(TagEntry.element(EntityType.getKey(raiderType))));

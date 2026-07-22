@@ -10,6 +10,7 @@ import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.items.ModItems;
+import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.research.util.ResearchConstants;
 import com.minecolonies.api.util.constant.translation.RequestSystemTranslationConstants;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
@@ -18,8 +19,6 @@ import com.minecolonies.core.colony.buildings.modules.settings.*;
 import com.minecolonies.core.colony.buildings.moduleviews.*;
 import com.minecolonies.core.colony.buildings.workerbuildings.*;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.entity.animal.Pig;
-import net.minecraft.world.entity.animal.Rabbit;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Items;
 
@@ -218,7 +217,7 @@ public class BuildingModules
       new BuildingEntry.ModuleProducer<>("rabbitherder_settings", () -> new SettingsModule().with(AbstractBuilding.BREEDING, new BoolSetting(true)), () -> SettingsModuleView::new);
     public static final BuildingEntry.ModuleProducer<AnimalHerdingModule, IBuildingModuleView>       RABBITHERDER_HERDING  =
       new BuildingEntry.ModuleProducer<>("rabbitherder_herding",
-        () -> new AnimalHerdingModule(ModJobs.rabbitHerder.get(), a -> a instanceof Rabbit, new ItemStorage(Items.CARROT, 2)),
+        () -> new AnimalHerdingModule(ModJobs.rabbitHerder.get(), ModTags.rabbitHerderAnimals, new ItemStorage(Items.CARROT, 2)),
         null);
 
     public static final BuildingEntry.ModuleProducer<WorkerBuildingModule,WorkerBuildingModuleView> SHEPERD_WORK          =
@@ -239,7 +238,7 @@ public class BuildingModules
       new BuildingEntry.ModuleProducer<>("swineherder_settings", () -> new SettingsModule().with(AbstractBuilding.BREEDING, new BoolSetting(true)), () -> SettingsModuleView::new);
     public static final BuildingEntry.ModuleProducer<AnimalHerdingModule, IBuildingModuleView>       SWINEHERDER_HERDING  =
       new BuildingEntry.ModuleProducer<>("swineherder_herding",
-        () -> new AnimalHerdingModule(ModJobs.swineHerder.get(), a -> a instanceof Pig, new ItemStorage(Items.CARROT, 2)),
+        () -> new AnimalHerdingModule(ModJobs.swineHerder.get(), ModTags.swineHerderAnimals, new ItemStorage(Items.CARROT, 2)),
         null);
 
     /**

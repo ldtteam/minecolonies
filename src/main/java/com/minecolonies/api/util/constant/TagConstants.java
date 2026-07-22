@@ -46,6 +46,13 @@ public final class TagConstants
     public static final ResourceLocation RAIDERS                   = new ResourceLocation(MOD_ID, "raiders");
     public static final ResourceLocation IGNORE_NBT                = new ResourceLocation(MOD_ID, "ignore_nbt");
     public static final ResourceLocation ALLOW_INTERACT            = new ResourceLocation(MOD_ID, "allowinteract");
+    public static final ResourceLocation BEEKEEPER_ANIMALS         = new ResourceLocation(MOD_ID, "herders/beekeeper");
+    public static final ResourceLocation CHICKEN_HERDER_ANIMALS    = new ResourceLocation(MOD_ID, "herders/chickenherder");
+    public static final ResourceLocation COWBOY_ANIMALS            = new ResourceLocation(MOD_ID, "herders/cowboy");
+    public static final ResourceLocation RABBIT_HERDER_ANIMALS     = new ResourceLocation(MOD_ID, "herders/rabbitherder");
+    public static final ResourceLocation SHEPHERD_ANIMALS          = new ResourceLocation(MOD_ID, "herders/shepherd");
+    public static final ResourceLocation STABLEMASTER_ANIMALS      = new ResourceLocation(MOD_ID, "herders/stablemaster");
+    public static final ResourceLocation SWINE_HERDER_ANIMALS      = new ResourceLocation(MOD_ID, "herders/swineherder");
     public static final ResourceLocation COLD_BIOMES               = new ResourceLocation(MOD_ID, "coldbiomes");
     public static final ResourceLocation TEMPERATE_BIOMES          = new ResourceLocation(MOD_ID, "temperatebiomes");
     public static final ResourceLocation HUMID_BIOMES              = new ResourceLocation(MOD_ID, "humidbiomes");

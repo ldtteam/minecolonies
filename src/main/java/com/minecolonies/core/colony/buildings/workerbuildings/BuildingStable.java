@@ -11,6 +11,7 @@ import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.core.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.core.colony.buildings.modules.AnimalHerdingModule;
@@ -23,7 +24,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
 import net.minecraft.util.Tuple;
-import net.minecraft.world.entity.animal.horse.Horse;
 import net.minecraft.world.item.Items;
 
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
@@ -95,7 +95,7 @@ public class BuildingStable extends AbstractBuildingGuards
 
         public HerdingModule()
         {
-            super(ModJobs.stablemaster.get(), a -> a instanceof Horse, new ItemStorage(Items.GOLDEN_APPLE, 2));
+            super(ModJobs.stablemaster.get(), ModTags.stablemasterAnimals, new ItemStorage(Items.GOLDEN_APPLE, 2));
         }
     }
 

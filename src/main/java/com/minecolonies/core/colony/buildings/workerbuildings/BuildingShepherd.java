@@ -6,6 +6,7 @@ import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.crafting.GenericRecipe;
 import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.equipment.ModEquipmentTypes;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
 import com.minecolonies.core.colony.buildings.modules.AnimalHerdingModule;
@@ -15,7 +16,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.entity.animal.Animal;
-import net.minecraft.world.entity.animal.Sheep;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -95,7 +95,7 @@ public class BuildingShepherd extends AbstractBuilding
     {
         public HerdingModule()
         {
-            super(ModJobs.shepherd.get(), a -> a instanceof Sheep, new ItemStorage(Items.WHEAT, 2));
+            super(ModJobs.shepherd.get(), ModTags.shepherdAnimals, new ItemStorage(Items.WHEAT, 2));
         }
 
         @NotNull
