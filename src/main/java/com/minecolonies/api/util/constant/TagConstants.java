@@ -49,8 +49,11 @@ public final class TagConstants
     public static final ResourceLocation BEEKEEPER_ANIMALS         = new ResourceLocation(MOD_ID, "herders/beekeeper");
     public static final ResourceLocation CHICKEN_HERDER_ANIMALS    = new ResourceLocation(MOD_ID, "herders/chickenherder");
     public static final ResourceLocation COWBOY_ANIMALS            = new ResourceLocation(MOD_ID, "herders/cowboy");
+    public static final ResourceLocation COWBOY_MILKABLE_ANIMALS   = new ResourceLocation(MOD_ID, "herders/cowboy_milkable_animals");
+    public static final ResourceLocation COWBOY_STEWABLE_ANIMALS   = new ResourceLocation(MOD_ID, "herders/cowboy_stewable_animals");
     public static final ResourceLocation RABBIT_HERDER_ANIMALS     = new ResourceLocation(MOD_ID, "herders/rabbitherder");
     public static final ResourceLocation SHEPHERD_ANIMALS          = new ResourceLocation(MOD_ID, "herders/shepherd");
+    public static final ResourceLocation SHEPHERD_SHEARABLE_ANIMALS = new ResourceLocation(MOD_ID, "herders/shepherd_shearable_animals");
     public static final ResourceLocation STABLEMASTER_ANIMALS      = new ResourceLocation(MOD_ID, "herders/stablemaster");
     public static final ResourceLocation SWINE_HERDER_ANIMALS      = new ResourceLocation(MOD_ID, "herders/swineherder");
     public static final ResourceLocation COLD_BIOMES               = new ResourceLocation(MOD_ID, "coldbiomes");

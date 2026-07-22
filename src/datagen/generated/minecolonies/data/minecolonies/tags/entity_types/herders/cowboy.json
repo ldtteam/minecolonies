@@ -1,7 +1,6 @@
 {
   "values": [
-    "minecraft:cow",
-    "minecraft:mooshroom",
-    "minecraft:goat"
+    "#minecolonies:herders/cowboy_milkable_animals",
+    "#minecolonies:herders/cowboy_stewable_animals"
   ]
 }

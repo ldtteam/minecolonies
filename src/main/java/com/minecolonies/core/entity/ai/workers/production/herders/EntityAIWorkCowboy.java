@@ -5,6 +5,7 @@ import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.items.ModItems;
+import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.StatsUtil;
 import com.minecolonies.api.util.constant.Constants;
@@ -18,8 +19,6 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.animal.Animal;
-import net.minecraft.world.entity.animal.Cow;
-import net.minecraft.world.entity.animal.MushroomCow;
 import net.minecraft.world.entity.animal.goat.Goat;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -28,10 +27,14 @@ import net.minecraftforge.common.util.FakePlayerFactory;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
-import static com.minecolonies.api.util.constant.StatisticsConstants.MILKING_ATTEMPTS;
+import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
+import static com.minecolonies.api.util.constant.StatisticsConstants.DISTINCT_ANIMALS_MILKED;
 import static com.minecolonies.core.colony.buildings.workerbuildings.BuildingCowboy.MILKING_AMOUNT;
 /**
  * The AI behind the {@link JobCowboy} for Breeding, Killing and Milking Cows.
@@ -55,8 +58,18 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, Buildi
      */
     private static final int MILK_COOL_DOWN = 10;
 
+    /**
+     * Time before retrying an animal whose bowl interaction did not produce a stew product.
+     */
+    private static final int FAILED_STEWING_RETRY_TICKS = 30 * TICKS_SECOND;
+
     private int milkCoolDown;
     private int stewCoolDown;
+
+    /**
+     * Animals temporarily excluded after a failed bowl interaction.
+     */
+    private final Map<UUID, Long> failedStewingAnimals = new HashMap<>();
 
     /**
      * Creates the abstract part of the AI. Always use this constructor!
@@ -124,12 +137,12 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, Buildi
     {
         final List<ItemStorage> list = super.getExtraItemsNeeded();
         if (building != null && building.getFirstModuleOccurance(BuildingCowboy.HerdingModule.class).canTryToMilk() &&
-              !searchForAnimals(a -> (a instanceof Cow || a instanceof Goat) && !(a instanceof MushroomCow)).isEmpty())
+              !searchForAnimals(a -> a.getType().is(ModTags.cowboyMilkableAnimals)).isEmpty())
         {
             list.add(new ItemStorage(building.getMilkInputItem().copy(), building.getSetting(MILKING_AMOUNT).getValue()));
         }
         if (building != null && building.getFirstModuleOccurance(BuildingCowboy.HerdingModule.class).canTryToStew() &&
-              !searchForAnimals(a -> a instanceof MushroomCow).isEmpty())
+              !searchForAnimals(a -> a.getType().is(ModTags.cowboyStewableAnimals)).isEmpty())
         {
             list.add(new ItemStorage(Items.BOWL));
         }
@@ -137,7 +150,7 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, Buildi
     }
 
     /**
-     * Makes the Cowboy "Milk" the cows (Honestly all he does is swap an empty bucket for a milk bucket, there's no actual "Milk" method in {@link Cow}
+     * Makes the Cowboy "milk" animals by swapping an empty container for a milk container.
      *
      * @return The next {@link IAIState}
      */
@@ -159,7 +172,7 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, Buildi
             }
         }
 
-        final Animal animal = searchForAnimals(a -> (a instanceof Cow || a instanceof Goat) && !(a instanceof MushroomCow) && !a.isBaby()).stream()
+        final Animal animal = searchForAnimals(a -> a.getType().is(ModTags.cowboyMilkableAnimals) && !a.isBaby()).stream()
                           .findFirst().orElse(null);
 
         if (animal == null)
@@ -178,12 +191,13 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, Buildi
 
                 final SoundEvent sound = animal instanceof Goat goat ? goat.getMilkingSound() : SoundEvents.COW_MILK;
                 worker.queueSound(sound, animal.blockPosition(), 10, 0, 0.9f, worker.getRandom().nextFloat());
+
+                this.incrementActionsDone();
+                worker.decreaseSaturationForContinuousAction();
+                StatsUtil.trackStatByName(building, DISTINCT_ANIMALS_MILKED, animal.getType().getDescriptionId(), 1);
+                worker.getCitizenExperienceHandler().addExperience(1.0);
             }
 
-            this.incrementActionsDone();
-            worker.decreaseSaturationForContinuousAction();
-            StatsUtil.trackStat(building, MILKING_ATTEMPTS, 1);
-            worker.getCitizenExperienceHandler().addExperience(1.0);
             return INVENTORY_FULL;
         }
 
@@ -191,7 +205,8 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, Buildi
     }
 
     /**
-     * Makes the Cowboy "Milk" the mooshrooms
+     * Makes the Cowboy collect stew from stewable animals.
+     * A "stewable" animal is any animal that creates a product when interacted with an empty bowl.
      *
      * @return The next {@link IAIState}
      */
@@ -213,35 +228,46 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, Buildi
             }
         }
 
-        final MushroomCow mooshroom = searchForAnimals(a -> a instanceof MushroomCow && !a.isBaby()).stream()
-                                        .map(a -> (MushroomCow) a).findFirst().orElse(null);
+        final long gameTime = world.getGameTime();
+        failedStewingAnimals.entrySet().removeIf(entry -> entry.getValue() <= gameTime);
 
-        if (mooshroom == null)
+        final Animal stewableAnimal = searchForAnimals(a -> a.getType().is(ModTags.cowboyStewableAnimals)
+                                                            && !a.isBaby()
+                                                            && !failedStewingAnimals.containsKey(a.getUUID())).stream()
+                                          .findFirst().orElse(null);
+
+        if (stewableAnimal == null)
         {
             stewCoolDown = MILK_COOL_DOWN;
             return DECIDE;
         }
 
-        if (equipItem(InteractionHand.MAIN_HAND, Collections.singletonList(new ItemStorage(Items.BOWL))) && !walkingToAnimal(mooshroom))
+        if (equipItem(InteractionHand.MAIN_HAND, Collections.singletonList(new ItemStorage(Items.BOWL))) && !walkingToAnimal(stewableAnimal))
         {
             final FakePlayer fakePlayer = FakePlayerFactory.getMinecraft((ServerLevel) worker.level);
             fakePlayer.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.BOWL));
-            if (mooshroom.mobInteract(fakePlayer, InteractionHand.MAIN_HAND).equals(InteractionResult.CONSUME))
+            final InteractionResult interactionResult = stewableAnimal.mobInteract(fakePlayer, InteractionHand.MAIN_HAND);
+            final ItemStack stewStack = fakePlayer.getMainHandItem().copy();
+            fakePlayer.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
+
+            if (!interactionResult.consumesAction() || stewStack.isEmpty() || stewStack.is(Items.BOWL))
             {
-                if (InventoryUtils.addItemStackToItemHandler(worker.getInventoryCitizen(), fakePlayer.getMainHandItem()))
-                {
-                    building.getFirstModuleOccurance(BuildingCowboy.HerdingModule.class).onStewed();
-                    CitizenItemUtils.setHeldItem(worker, InteractionHand.MAIN_HAND, getItemSlot(fakePlayer.getMainHandItem().getItem()));
-                    InventoryUtils.tryRemoveStackFromItemHandler(worker.getInventoryCitizen(), new ItemStack(Items.BOWL));
-                    worker.queueSound(SoundEvents.MOOSHROOM_MILK, mooshroom.blockPosition(), 10, 0, 0.9f, worker.getRandom().nextFloat());
-                }
-                fakePlayer.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
+                failedStewingAnimals.put(stewableAnimal.getUUID(), world.getGameTime() + FAILED_STEWING_RETRY_TICKS);
+                return DECIDE;
             }
 
-            this.incrementActionsDone();
-            worker.decreaseSaturationForContinuousAction();
-            StatsUtil.trackStat(building, MILKING_ATTEMPTS, 1);
-            worker.getCitizenExperienceHandler().addExperience(1.0);
+            if (InventoryUtils.addItemStackToItemHandler(worker.getInventoryCitizen(), stewStack))
+            {
+                building.getFirstModuleOccurance(BuildingCowboy.HerdingModule.class).onStewed();
+                CitizenItemUtils.setHeldItem(worker, InteractionHand.MAIN_HAND, getItemSlot(stewStack.getItem()));
+                InventoryUtils.tryRemoveStackFromItemHandler(worker.getInventoryCitizen(), new ItemStack(Items.BOWL));
+                worker.queueSound(SoundEvents.MOOSHROOM_MILK, stewableAnimal.blockPosition(), 10, 0, 0.9f, worker.getRandom().nextFloat());
+
+                this.incrementActionsDone();
+                worker.decreaseSaturationForContinuousAction();
+                StatsUtil.trackStatByName(building, DISTINCT_ANIMALS_MILKED, stewableAnimal.getType().getDescriptionId(), 1);
+                worker.getCitizenExperienceHandler().addExperience(1.0);
+            }
             return INVENTORY_FULL;
         }
 

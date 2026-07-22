@@ -83,8 +83,11 @@ public class ModTags
     public static final TagKey<EntityType<?>> beekeeperAnimals = TagKey.create(Registries.ENTITY_TYPE, TagConstants.BEEKEEPER_ANIMALS);
     public static final TagKey<EntityType<?>> chickenHerderAnimals = TagKey.create(Registries.ENTITY_TYPE, TagConstants.CHICKEN_HERDER_ANIMALS);
     public static final TagKey<EntityType<?>> cowboyAnimals = TagKey.create(Registries.ENTITY_TYPE, TagConstants.COWBOY_ANIMALS);
+    public static final TagKey<EntityType<?>> cowboyMilkableAnimals = TagKey.create(Registries.ENTITY_TYPE, TagConstants.COWBOY_MILKABLE_ANIMALS);
+    public static final TagKey<EntityType<?>> cowboyStewableAnimals = TagKey.create(Registries.ENTITY_TYPE, TagConstants.COWBOY_STEWABLE_ANIMALS);
     public static final TagKey<EntityType<?>> rabbitHerderAnimals = TagKey.create(Registries.ENTITY_TYPE, TagConstants.RABBIT_HERDER_ANIMALS);
     public static final TagKey<EntityType<?>> shepherdAnimals = TagKey.create(Registries.ENTITY_TYPE, TagConstants.SHEPHERD_ANIMALS);
+    public static final TagKey<EntityType<?>> shepherdShearableAnimals = TagKey.create(Registries.ENTITY_TYPE, TagConstants.SHEPHERD_SHEARABLE_ANIMALS);
     public static final TagKey<EntityType<?>> stablemasterAnimals = TagKey.create(Registries.ENTITY_TYPE, TagConstants.STABLEMASTER_ANIMALS);
     public static final TagKey<EntityType<?>> swineHerderAnimals = TagKey.create(Registries.ENTITY_TYPE, TagConstants.SWINE_HERDER_ANIMALS);
 

@@ -25,9 +25,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.entity.animal.Animal;
-import net.minecraft.world.entity.animal.Cow;
-import net.minecraft.world.entity.animal.MushroomCow;
-import net.minecraft.world.entity.animal.goat.Goat;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.NotNull;
@@ -182,7 +179,7 @@ public class BuildingCowboy extends AbstractBuilding
         {
             final List<IGenericRecipe> recipes = new ArrayList<>(super.getRecipesForDisplayPurposesOnly(animal));
 
-            if (animal instanceof MushroomCow)
+            if (animal.getType().is(ModTags.cowboyStewableAnimals))
             {
                 recipes.add(GenericRecipe.builder()
                         .withOutputs(List.of(Items.MUSHROOM_STEW.getDefaultInstance(),
@@ -191,7 +188,7 @@ public class BuildingCowboy extends AbstractBuilding
                         .withRequiredEntity(animal.getType())
                         .build());
             }
-            else if (animal instanceof Cow)
+            else if (animal.getType().is(ModTags.cowboyMilkableAnimals))
             {
                 recipes.add(GenericRecipe.builder()
                         .withOutput(Items.MILK_BUCKET)
@@ -204,20 +201,6 @@ public class BuildingCowboy extends AbstractBuilding
                         .withRequiredEntity(animal.getType())
                         .build());
             }
-            else if (animal instanceof Goat)
-            {
-                recipes.add(GenericRecipe.builder()
-                    .withOutput(Items.MILK_BUCKET)
-                    .withInputs(List.of(List.of(Items.BUCKET.getDefaultInstance())))
-                    .withRequiredEntity(animal.getType())
-                    .build());
-                recipes.add(GenericRecipe.builder()
-                    .withOutput(ModItems.large_milk_bottle)
-                    .withInputs(List.of(List.of(ModItems.large_empty_bottle.getDefaultInstance())))
-                    .withRequiredEntity(animal.getType())
-                    .build());
-            }
-
             return recipes;
         }
 

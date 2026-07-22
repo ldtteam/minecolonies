@@ -32,9 +32,12 @@ public class DefaultEntityTypeTagsProvider extends EntityTypeTagsProvider
         tag(ModTags.freeToInteractWith).addOptional(new ResourceLocation("corpse", "corpse"));
         tag(ModTags.beekeeperAnimals).add(EntityType.BEE);
         tag(ModTags.chickenHerderAnimals).add(EntityType.CHICKEN);
-        tag(ModTags.cowboyAnimals).add(EntityType.COW, EntityType.MOOSHROOM, EntityType.GOAT);
+        tag(ModTags.cowboyMilkableAnimals).add(EntityType.COW, EntityType.GOAT);
+        tag(ModTags.cowboyStewableAnimals).add(EntityType.MOOSHROOM);
+        tag(ModTags.cowboyAnimals).addTag(ModTags.cowboyMilkableAnimals).addTag(ModTags.cowboyStewableAnimals);
         tag(ModTags.rabbitHerderAnimals).add(EntityType.RABBIT);
-        tag(ModTags.shepherdAnimals).add(EntityType.SHEEP);
+        tag(ModTags.shepherdShearableAnimals).add(EntityType.SHEEP);
+        tag(ModTags.shepherdAnimals).addTag(ModTags.shepherdShearableAnimals);
         tag(ModTags.stablemasterAnimals).add(EntityType.HORSE);
         tag(ModTags.swineHerderAnimals).add(EntityType.PIG);
 

@@ -55,6 +55,7 @@ public final class StatisticsConstants
     public static final String DISTINCT_BREEDING_ATTEMPTS = "distinct_breeding_attempts";
     public static final String ANIMALS_BUTCHERED = "animals_butchered";
     public static final String DISTINCT_ANIMALS_BUTCHERED = "distinct_animals_butchered";
+    public static final String DISTINCT_ANIMALS_SHEARED = "distinct_animals_sheared";
 
     /**
      * Guard building stats.
@@ -94,6 +95,7 @@ public final class StatisticsConstants
 
     // Cowboy
     public static final String MILKING_ATTEMPTS = "milking_attempts";
+    public static final String DISTINCT_ANIMALS_MILKED = "distinct_animals_milked";
 
     // Delivery Man
     public static final String DELIVERIES_MADE = "deliveries_made";

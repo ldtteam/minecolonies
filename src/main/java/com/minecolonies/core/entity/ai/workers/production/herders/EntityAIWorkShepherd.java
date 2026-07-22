@@ -4,29 +4,35 @@ import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.equipment.ModEquipmentTypes;
 import com.minecolonies.api.equipment.registry.EquipmentTypeEntry;
+import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.api.util.StatsUtil;
 import com.minecolonies.core.Network;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingShepherd;
 import com.minecolonies.core.colony.jobs.JobShepherd;
 import com.minecolonies.core.util.citizenutils.CitizenItemUtils;
 import com.minecolonies.core.network.messages.client.LocalizedParticleEffectMessage;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.animal.Sheep;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraftforge.common.IForgeShearable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
+import static com.minecolonies.api.util.constant.StatisticsConstants.DISTINCT_ANIMALS_SHEARED;
 import static com.minecolonies.api.util.constant.StatisticsConstants.ITEM_OBTAINED;
 import static com.minecolonies.core.colony.buildings.modules.BuildingModules.STATS_MODULE;
-import static net.minecraft.world.entity.animal.Sheep.ITEM_BY_DYE;
 
 /**
  * The AI behind the {@link JobShepherd} for Breeding, Killing and Shearing sheep.
@@ -37,6 +43,16 @@ public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, Bu
      * Constants used for sheep dying calculations.
      */
     private static final int HUNDRED_PERCENT_CHANCE = 100;
+
+    /**
+     * Time before retrying an animal whose shearing implementation made no observable progress.
+     */
+    private static final int FAILED_SHEARING_RETRY_TICKS = 30 * TICKS_SECOND;
+
+    /**
+     * Animals temporarily excluded after a no-op shearing implementation was detected.
+     */
+    private final Map<UUID, Long> failedShearingAnimals = new HashMap<>();
 
     /**
      * Creates the abstract part of the AI. Always use this constructor!
@@ -74,9 +90,9 @@ public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, Bu
     {
         final IAIState result = super.decideWhatToDo();
 
-        final Sheep shearingSheep = findShearableSheep();
+        final Animal shearableAnimal = findShearableAnimal();
 
-        if (building.getSetting(BuildingShepherd.SHEARING).getValue() && result.equals(START_WORKING) && shearingSheep != null)
+        if (building.getSetting(BuildingShepherd.SHEARING).getValue() && result.equals(START_WORKING) && shearableAnimal != null)
         {
             return SHEPHERD_SHEAR;
         }
@@ -93,26 +109,36 @@ public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, Bu
     }
 
     /**
-     * @return a shearable {@link Sheep} or null.
+     * Finds an adult animal that is tagged for the shepherd and currently supports shearing.
+     *
+     * @return a shearable animal, or {@code null} if none is available
      */
     @Nullable
-    private Sheep findShearableSheep()
+    private Animal findShearableAnimal()
     {
-        return searchForAnimals(a -> a instanceof Sheep sheepie && !sheepie.isSheared() && !sheepie.isBaby())
-                 .stream().map(a -> (Sheep) a).findAny().orElse(null);
+        final long gameTime = world.getGameTime();
+        failedShearingAnimals.entrySet().removeIf(entry -> entry.getValue() <= gameTime);
+
+        final ItemStack shears = new ItemStack(Items.SHEARS);
+        return searchForAnimals(animal -> animal.getType().is(ModTags.shepherdShearableAnimals)
+                                             && !animal.isBaby()
+                                             && !failedShearingAnimals.containsKey(animal.getUUID())
+                                             && animal instanceof IForgeShearable shearable
+                                             && shearable.isShearable(shears, world, animal.blockPosition()))
+                 .stream().findAny().orElse(null);
     }
 
     /**
-     * Shears a sheep, with a chance of dying it!
+     * Shears a tagged animal using its Forge shearing implementation.
      *
      * @return The next {@link IAIState}
      */
     private IAIState shearSheep()
     {
 
-        final Sheep sheep = findShearableSheep();
+        final Animal animal = findShearableAnimal();
 
-        if (sheep == null)
+        if (animal == null)
         {
             return DECIDE;
         }
@@ -124,7 +150,7 @@ public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, Bu
 
         if (worker.getMainHandItem() != null)
         {
-            if (walkingToAnimal(sheep))
+            if (walkingToAnimal(animal))
             {
                 return getState();
             }
@@ -134,21 +160,38 @@ public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, Bu
 
             worker.swing(InteractionHand.MAIN_HAND);
 
-            final List<ItemStack> items = new ArrayList<>();
+            List<ItemStack> items = List.of();
+            boolean failedToShear = false;
             if (!this.world.isClientSide)
             {
-                sheep.setSheared(true);
-                int qty = 1 + worker.getRandom().nextInt(enchantmentLevel + 1);
-
-                for (int j = 0; j < qty; ++j)
-                {
-                    items.add(new ItemStack(ITEM_BY_DYE.get(sheep.getColor())));
-                }
+                final IForgeShearable shearable = (IForgeShearable) animal;
+                items = shearable.onSheared(null,
+                  worker.getMainHandItem(),
+                  world,
+                  animal.blockPosition(),
+                  enchantmentLevel);
+                failedToShear = items.isEmpty()
+                                  && shearable.isShearable(worker.getMainHandItem(), world, animal.blockPosition());
             }
 
-            sheep.playSound(SoundEvents.SHEEP_SHEAR, 1.0F, 1.0F);
-            Network.getNetwork().sendToTrackingEntity(new LocalizedParticleEffectMessage(new ItemStack(ITEM_BY_DYE.get(sheep.getColor())), sheep.getOnPos().above()), worker);
-            dyeSheepChance(sheep);
+            if (failedToShear)
+            {
+                failedShearingAnimals.put(animal.getUUID(), world.getGameTime() + FAILED_SHEARING_RETRY_TICKS);
+                return DECIDE;
+            }
+
+            StatsUtil.trackStatByName(building, DISTINCT_ANIMALS_SHEARED, animal.getType().getDescriptionId(), 1);
+
+            if (!items.isEmpty())
+            {
+                Network.getNetwork().sendToTrackingEntity(new LocalizedParticleEffectMessage(items.get(0), animal.getOnPos().above()), worker);
+            }
+
+            // There is no generic interface to indicate that an animal can be dyed - this remains Sheep-specific.
+            if (animal instanceof Sheep sheep)
+            {
+                dyeSheepChance(sheep);
+            }
 
             CitizenItemUtils.damageItemInHand(worker, InteractionHand.MAIN_HAND, 1);
 
