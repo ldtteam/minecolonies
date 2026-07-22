@@ -402,7 +402,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
 
         if (!toKill.isAlive())
         {
-            StatsUtil.trackStat(building, ANIMALS_BUTCHERED, 1);
+            StatsUtil.trackStatByName(building, DISTINCT_ANIMALS_BUTCHERED, toKill.getType().getDescriptionId(), 1);
             worker.getCitizenExperienceHandler().addExperience(XP_PER_ACTION);
             this.incrementActionsDone();
             this.worker.decreaseSaturationForContinuousAction();
@@ -690,7 +690,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
                 animal.setInLove(null);
                 worker.swing(InteractionHand.MAIN_HAND);
                 StatsUtil.trackStatByName(building, ITEM_USED, worker.getMainHandItem().getItem().getDescriptionId(), 1);
-                StatsUtil.trackStat(building, BREEDING_ATTEMPTS, 1);
+                StatsUtil.trackStatByName(building, DISTINCT_BREEDING_ATTEMPTS, animal.getType().getDescriptionId(), 1);
                 worker.getMainHandItem().shrink(1);
                 worker.getCitizenExperienceHandler().addExperience(XP_PER_ACTION);
                 worker.decreaseSaturationForAction();

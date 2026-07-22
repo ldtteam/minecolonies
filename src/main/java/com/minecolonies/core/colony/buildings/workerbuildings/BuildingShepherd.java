@@ -16,6 +16,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.entity.animal.Animal;
+import net.minecraft.world.entity.animal.Sheep;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -104,11 +105,14 @@ public class BuildingShepherd extends AbstractBuilding
         {
             final List<IGenericRecipe> recipes = new ArrayList<>(super.getRecipesForDisplayPurposesOnly(animal));
 
-            recipes.add(GenericRecipe.builder()
-                    .withOutputs(ForgeRegistries.ITEMS.tags().getTag(ItemTags.WOOL).stream().map(ItemStack::new).toList())
-                    .withRequiredTool(ModEquipmentTypes.shears.get())
-                    .withRequiredEntity(animal.getType())
-                    .build());
+            if (animal instanceof Sheep)
+            {
+                recipes.add(GenericRecipe.builder()
+                        .withOutputs(ForgeRegistries.ITEMS.tags().getTag(ItemTags.WOOL).stream().map(ItemStack::new).toList())
+                        .withRequiredTool(ModEquipmentTypes.shears.get())
+                        .withRequiredEntity(animal.getType())
+                        .build());
+            }
 
             return recipes;
         }

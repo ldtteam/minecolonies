@@ -26,6 +26,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.entity.animal.Animal;
+import net.minecraft.world.entity.animal.Bee;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.NotNull;
@@ -263,18 +264,21 @@ public class BuildingBeekeeper extends AbstractBuilding
         {
             final List<IGenericRecipe> recipes = new ArrayList<>(); // we don't kill the bees so don't use the default
 
-            recipes.add(GenericRecipe.builder()
-                    .withOutput(Items.HONEYCOMB)
-                    .withRequiredTool(ModEquipmentTypes.shears.get())
-                    .withRequiredEntity(animal.getType())
-                    .build());
+            if (animal instanceof Bee)
+            {
+                recipes.add(GenericRecipe.builder()
+                        .withOutput(Items.HONEYCOMB)
+                        .withRequiredTool(ModEquipmentTypes.shears.get())
+                        .withRequiredEntity(animal.getType())
+                        .build());
 
-            recipes.add(GenericRecipe.builder()
-                    .withOutput(Items.HONEY_BOTTLE)
-                    .withInputs(List.of(List.of(Items.GLASS_BOTTLE.getDefaultInstance())))
-                    .withRequiredEntity(animal.getType())
-                    .build());
-
+                recipes.add(GenericRecipe.builder()
+                        .withOutput(Items.HONEY_BOTTLE)
+                        .withInputs(List.of(List.of(Items.GLASS_BOTTLE.getDefaultInstance())))
+                        .withRequiredEntity(animal.getType())
+                        .build());
+            }
+            
             return recipes;
         }
     }

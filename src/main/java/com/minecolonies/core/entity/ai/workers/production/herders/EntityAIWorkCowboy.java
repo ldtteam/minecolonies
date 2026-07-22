@@ -124,7 +124,7 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, Buildi
     {
         final List<ItemStorage> list = super.getExtraItemsNeeded();
         if (building != null && building.getFirstModuleOccurance(BuildingCowboy.HerdingModule.class).canTryToMilk() &&
-              !searchForAnimals(a -> a instanceof Cow && !(a instanceof MushroomCow)).isEmpty())
+              !searchForAnimals(a -> (a instanceof Cow || a instanceof Goat) && !(a instanceof MushroomCow)).isEmpty())
         {
             list.add(new ItemStorage(building.getMilkInputItem().copy(), building.getSetting(MILKING_AMOUNT).getValue()));
         }

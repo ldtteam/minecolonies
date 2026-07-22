@@ -9,8 +9,8 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
 import com.minecolonies.api.colony.jobs.ModJobs;
+import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.crafting.ItemStorage;
-import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.core.colony.buildings.AbstractBuildingGuards;
@@ -24,8 +24,8 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
 import net.minecraft.util.Tuple;
+import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.item.Items;
-
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.api.util.constant.SchematicTagConstants.TAG_GROUNDLEVEL;
 import static com.minecolonies.api.util.constant.SchematicTagConstants.TAG_PATROL_POINT;
@@ -96,6 +96,19 @@ public class BuildingStable extends AbstractBuildingGuards
         public HerdingModule()
         {
             super(ModJobs.stablemaster.get(), ModTags.stablemasterAnimals, new ItemStorage(Items.GOLDEN_APPLE, 2));
+        }
+
+        /**
+         * Stablemasters do not butcher their animals, so they have no animal-product recipes to display.
+         *
+         * @param animal the example animal
+         * @return an empty recipe list
+         */
+        @NotNull
+        @Override
+        public List<IGenericRecipe> getRecipesForDisplayPurposesOnly(@NotNull final Animal animal)
+        {
+            return List.of();
         }
     }
 

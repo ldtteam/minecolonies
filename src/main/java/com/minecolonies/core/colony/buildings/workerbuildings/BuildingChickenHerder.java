@@ -10,6 +10,7 @@ import com.minecolonies.core.colony.buildings.AbstractBuilding;
 import com.minecolonies.core.colony.buildings.modules.AnimalHerdingModule;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.animal.Animal;
+import net.minecraft.world.entity.animal.Chicken;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.NotNull;
@@ -71,11 +72,14 @@ public class BuildingChickenHerder extends AbstractBuilding
         {
             final List<IGenericRecipe> recipes = new ArrayList<>(super.getRecipesForDisplayPurposesOnly(animal));
 
-            recipes.add(GenericRecipe.builder()
-                    .withOutput(Items.EGG)
-                    .withRequiredEntity(animal.getType())
-                    .build());
-
+            if (animal instanceof Chicken)
+            {
+                recipes.add(GenericRecipe.builder()
+                        .withOutput(Items.EGG)
+                        .withRequiredEntity(animal.getType())
+                        .build());
+            }
+            
             return recipes;
         }
     }

@@ -52,7 +52,9 @@ public final class StatisticsConstants
     * Husbandry building stats.
     */    
     public static final String BREEDING_ATTEMPTS = "breeding_attempts";
+    public static final String DISTINCT_BREEDING_ATTEMPTS = "distinct_breeding_attempts";
     public static final String ANIMALS_BUTCHERED = "animals_butchered";
+    public static final String DISTINCT_ANIMALS_BUTCHERED = "distinct_animals_butchered";
 
     /**
      * Guard building stats.
