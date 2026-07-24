@@ -187,15 +187,14 @@ public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeli
         }
     }
 
-    private int getRequestPriority(final IToken<?> token, final List<IToken<?>> mutableRequestList)
+    private int getRequestPriority(final IToken<?> token, final IRequest<?> req, final List<IToken<?>> mutableRequestList)
     {
-        final IRequest<?> req = getColony().getRequestManager().getRequestForToken(token);
         int priority = 1;
         if (!WorldUtil.isBlockLoaded(getColony().getWorld(), getTarget(req)))
         {
             priority -= 1000;
         }
-        if (req != null && req.getRequest() instanceof AbstractDeliverymanRequestable requestable)
+        if (req.getRequest() instanceof AbstractDeliverymanRequestable requestable)
         {
             priority = requestable.getPriority();
             if (requestable instanceof Pickup pickup && pickup.getDay() > getColony().getDay())
@@ -242,7 +241,13 @@ public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeli
         int priority = Integer.MIN_VALUE;
         for (final IToken<?> reqId : wareHouseModule.getMutableRequestList())
         {
-            final int localPriority = getRequestPriority(reqId, wareHouseModule.getMutableRequestList());
+            final IRequest<?> req = getColony().getRequestManager().getRequestForToken(reqId);
+            if (req == null)
+            {
+                reqsToRemove.add(reqId);
+                continue;
+            }
+            final int localPriority = getRequestPriority(reqId, req, wareHouseModule.getMutableRequestList());
             if (localPriority > priority)
             {
                 priority = localPriority;
