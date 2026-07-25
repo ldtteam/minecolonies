@@ -26,6 +26,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.ArrayListDeque;
+import net.minecraft.util.FastColor;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.chunk.ChunkAccess;
@@ -145,14 +146,14 @@ public class ColonyBorderMapping
         final AbstractInt2ObjectMap<ColonyBorderOverlay> dimensionOverlays = overlays.get(dimension);
         if (dimensionOverlays == null) return;  // not ready yet
 
-        boolean changed = false;
         if (id == 0)
         {
             for (final AbstractInt2ObjectMap<ColonyBorderOverlay> overlayMap : overlays.values())
             {
                 for (final ColonyBorderOverlay overlay : overlayMap.values())
                 {
-                    changed |= overlay.updateChunks(Collections.emptySet(), Collections.singleton(pos));
+                    overlay.updateChunks(Collections.emptySet(), Collections.singleton(pos));
+                    overlay.updateLoadedChunks(Collections.emptySet(), Collections.singleton(pos));
                 }
             }
         }
@@ -160,7 +161,19 @@ public class ColonyBorderMapping
         {
             final ColonyBorderOverlay overlay = dimensionOverlays
                     .computeIfAbsent(id, k -> new ColonyBorderOverlay(dimension, id));
-            changed |= overlay.updateChunks(Collections.singleton(pos), Collections.emptySet());
+
+            overlay.updateChunks(Collections.singleton(pos), Collections.emptySet());
+
+            final IColonyManager colonyManager = MinecoloniesAPIProxy.getInstance().getColonyManager();
+            final IColonyView colony = colonyManager.getColonyView(id, dimension);
+            if (colony.getTicketedChunks().contains(pos.toLong()))
+            {
+                overlay.updateLoadedChunks(Collections.singleton(pos), Collections.emptySet());
+            }
+            else
+            {
+                overlay.updateLoadedChunks(Collections.emptySet(), Collections.singleton(pos));
+            }
         }
     }
 
@@ -204,7 +217,8 @@ public class ColonyBorderMapping
             final ColonyBorderOverlay overlay = dimensionOverlays
                     .computeIfAbsent(id, k -> new ColonyBorderOverlay(dimension, id));
             final IColonyView colony = colonyManager.getColonyView(id, dimension);
-            overlay.updateInfo(colony, JourneymapOptions.getShowColonyName(jmap.getOptions()));
+            overlay.updateInfo(colony, JourneymapOptions.getShowColonyName(jmap.getOptions()),
+                JourneymapOptions.BorderStyle.HIDDEN.equals(JourneymapOptions.getBorderFullscreenStyle(jmap.getOptions())));
         }
     }
 
@@ -225,7 +239,6 @@ public class ColonyBorderMapping
                 updateChunk(jmap, dimension, entry.id(), entry.pos());
             }
         }
-
         for (final Int2ObjectMap.Entry<ColonyBorderOverlay> colonyEntry : overlays.getOrDefault(dimension, new Int2ObjectRBTreeMap<>()).int2ObjectEntrySet())
         {
             colonyEntry.getValue().updatePending(jmap);
@@ -242,9 +255,12 @@ public class ColonyBorderMapping
         private final int id;
         private final String name;
         private final Set<ChunkPos>        chunks;
+        private final Set<ChunkPos> loadedChunks;
         private final List<PolygonOverlay> overlays = new ArrayList<>();
         private final ShapeProperties      fill;
         private final ShapeProperties stroke;
+        private final ShapeProperties loadedFill;
+        private final ShapeProperties loadedStroke;
         private final TextProperties  text;
         private final TextProperties  noText;
 
@@ -253,6 +269,7 @@ public class ColonyBorderMapping
         private String colonyName = "";
         private JourneymapOptions.BorderStyle fullscreenStyle = JourneymapOptions.BorderStyle.HIDDEN;
         private JourneymapOptions.BorderStyle minimapStyle = JourneymapOptions.BorderStyle.HIDDEN;
+        private JourneymapOptions.BorderStyle loadedStyle = JourneymapOptions.BorderStyle.HIDDEN;
 
         private static final Codec<Set<ChunkPos>> CODEC_SET_CHUNKPOSLONG =
                 Codec.LONG.xmap(ChunkPos::new, ChunkPos::toLong)
@@ -264,7 +281,8 @@ public class ColonyBorderMapping
                         Codec.STRING.optionalFieldOf("colony_name", null).forGetter(o -> o.colonyName),
                         Codec.INT.optionalFieldOf("colour", -1).forGetter(o -> o.text.getColor()),
                         Codec.BOOL.optionalFieldOf("licet", true).forGetter(o -> o.permitted),
-                        CODEC_SET_CHUNKPOSLONG.optionalFieldOf("chunks", Collections.emptySet()).forGetter(o -> o.chunks)
+                        CODEC_SET_CHUNKPOSLONG.optionalFieldOf("chunks", Collections.emptySet()).forGetter(o -> o.chunks),
+                        CODEC_SET_CHUNKPOSLONG.optionalFieldOf("loaded", Collections.emptySet()).forGetter(o -> o.loadedChunks)
                 ).apply(instance, ColonyBorderOverlay::new));
 
         /** Deserialization */
@@ -273,11 +291,13 @@ public class ColonyBorderMapping
                                     final String colonyName,
                                     final int colour,
                                     final boolean permitted,
-                                    @NotNull final Set<ChunkPos> chunks)
+                                    @NotNull final Set<ChunkPos> chunks,
+                                    @NotNull final Set<ChunkPos> loadedChunks)
         {
             this(dimension, id);
             this.chunks.addAll(chunks);
-            updateInfo(colonyName, colour, permitted, true);
+            this.loadedChunks.addAll(loadedChunks);
+            updateInfo(colonyName, colour, permitted, true, false);
             this.dirty = true;
         }
 
@@ -289,6 +309,7 @@ public class ColonyBorderMapping
             this.id = id;
             this.name = String.format("colony_%s_%d", dimension.location(), id);
             this.chunks = new HashSet<>();
+            this.loadedChunks = new HashSet<>();
 
             this.fill = new ShapeProperties()
                     .setStrokeWidth(4).setStrokeColor(0x00ff00).setStrokeOpacity(.7f)
@@ -296,6 +317,12 @@ public class ColonyBorderMapping
             this.stroke = new ShapeProperties()
                     .setStrokeWidth(4).setStrokeColor(0x00ff00).setStrokeOpacity(.7f)
                     .setFillColor(0x00ff00).setFillOpacity(0);
+            this.loadedFill = new ShapeProperties()
+                .setStrokeWidth(2).setStrokeColor(0x00ff00).setStrokeOpacity(.7f)
+                .setFillColor(0x00ff00).setFillOpacity(.2f);
+            this.loadedStroke = new ShapeProperties()
+                .setStrokeWidth(2).setStrokeColor(0x00ff00).setStrokeOpacity(.7f)
+                .setFillColor(0x00ff00).setFillOpacity(0);
 
             this.text = new TextProperties()
                     .setBackgroundColor(0x000022)
@@ -321,8 +348,19 @@ public class ColonyBorderMapping
             return changed;
         }
 
+        /** Add or remove loaded chunks from this overlay */
+        public boolean updateLoadedChunks(@NotNull final Set<ChunkPos> addChunks,
+                                          @NotNull final Set<ChunkPos> removeChunks)
+        {
+            boolean changed;
+            changed = this.loadedChunks.addAll(addChunks);          // new loaded chunks
+            changed |= this.loadedChunks.removeAll(removeChunks);   // new unloaded chunks
+            this.dirty |= changed;
+            return changed;
+        }
+
         /** Update colony-specific data if needed. */
-        public boolean updateInfo(@Nullable final IColonyView colony, final boolean showColonyName)
+        public boolean updateInfo(@Nullable final IColonyView colony, final boolean showColonyName, final boolean mainBorderIsHidden)
         {
             boolean changed = false;
             if (colony != null)
@@ -330,7 +368,7 @@ public class ColonyBorderMapping
                 final boolean permitted = colony.getPermissions().hasPermission(Minecraft.getInstance().player, Action.MAP_BORDER);
 
                 //noinspection ConstantConditions
-                changed |= updateInfo(colony.getName(), colony.getTeamColonyColor().getColor(), permitted, showColonyName);
+                changed |= updateInfo(colony.getName(), colony.getTeamColonyColor().getColor(), permitted, showColonyName, mainBorderIsHidden);
             }
             return changed;
         }
@@ -338,13 +376,18 @@ public class ColonyBorderMapping
         private boolean updateInfo(@Nullable final String colonyName,
                                    final int colour,
                                    final boolean permitted,
-                                   final boolean showColonyName)
+                                   final boolean showColonyName,
+                                   final boolean mainBorderIsHidden)
         {
             final boolean changed = !Objects.equals(colonyName, this.colonyName) ||
                     this.text.getColor() != colour || this.permitted != permitted;
+            final int loadedColour = 0xFFFFFF & intensify(colour);
+            final boolean showLoadedColonyName = showColonyName && mainBorderIsHidden;
 
             this.fill.setFillColor(colour).setStrokeColor(colour);
             this.stroke.setStrokeColor(colour);
+            this.loadedFill.setFillColor(loadedColour).setStrokeColor(loadedColour);
+            this.loadedStroke.setStrokeColor(loadedColour);
             this.text.setColor(colour);
             //noinspection ConstantConditions
             this.text.setBackgroundColor(colour == ChatFormatting.BLACK.getColor() ? 0xDDDDDD : 0x000022);
@@ -354,10 +397,25 @@ public class ColonyBorderMapping
 
             for (final PolygonOverlay overlay : this.overlays)
             {
-                overlay.setLabel(showColonyName ? this.colonyName : "");
+                final boolean loaded = overlay.getId().startsWith("L_");
+                overlay.setLabel((loaded ? showLoadedColonyName : showColonyName) ? this.colonyName : "");
             }
 
             return changed;
+        }
+
+        private static int intensify(final int colour)
+        {
+            int a = FastColor.ARGB32.alpha(colour);
+            int r = FastColor.ARGB32.red(colour);
+            int g = FastColor.ARGB32.green(colour);
+            int b = FastColor.ARGB32.blue(colour);
+
+            int max = Math.max(r, Math.max(g, b));
+
+            int pure = FastColor.ARGB32.color(a, r == max ? 255 : 0, g == max ? 255 : 0, b == max ? 255 : 0);
+
+            return FastColor.ARGB32.lerp(0.25f, colour, pure);
         }
 
         /** Update the map overlays if needed */
@@ -365,19 +423,23 @@ public class ColonyBorderMapping
         {
             final JourneymapOptions.BorderStyle fullscreenStyle = JourneymapOptions.getBorderFullscreenStyle(jmap.getOptions());
             final JourneymapOptions.BorderStyle minimapStyle = JourneymapOptions.getBorderMinimapStyle(jmap.getOptions());
+            final JourneymapOptions.BorderStyle loadedStyle = JourneymapOptions.getBorderLoadedStyle(jmap.getOptions());
             final boolean enabled = this.permitted
                     && !(JourneymapOptions.BorderStyle.HIDDEN.equals(fullscreenStyle)
-                            && JourneymapOptions.BorderStyle.HIDDEN.equals(minimapStyle));
+                            && JourneymapOptions.BorderStyle.HIDDEN.equals(minimapStyle)
+                            && JourneymapOptions.BorderStyle.HIDDEN.equals(loadedStyle));
 
             this.dirty |= !enabled && !this.overlays.isEmpty();                         // freshly disabled; remove
             this.dirty |= enabled && this.overlays.isEmpty() && !this.chunks.isEmpty(); // freshly enabled; add
             this.dirty |= !fullscreenStyle.equals(this.fullscreenStyle);
             this.dirty |= !minimapStyle.equals(this.minimapStyle);
+            this.dirty |= !loadedStyle.equals(this.loadedStyle);
 
             if (this.dirty)
             {
                 this.fullscreenStyle = fullscreenStyle;
                 this.minimapStyle = minimapStyle;
+                this.loadedStyle = loadedStyle;
 
                 unload(jmap);
 
@@ -395,7 +457,7 @@ public class ColonyBorderMapping
                             final ShapeProperties shape = JourneymapOptions.BorderStyle.FILLED.equals(fullscreenStyle)
                                     ? this.fill : this.stroke;
 
-                            final PolygonOverlay overlay = new PolygonOverlay(MOD_ID, this.dimension, shape, polygon.hull, polygon.holes);
+                            final PolygonOverlay overlay = new PolygonOverlay(MOD_ID, this.dimension, shape, polygon);
                             overlay.setOverlayGroupName(this.name)
                                     .setActiveUIs(Context.UI.Fullscreen, Context.UI.Webmap)
                                     .setTextProperties(this.text)
@@ -410,12 +472,40 @@ public class ColonyBorderMapping
                             final ShapeProperties shape = JourneymapOptions.BorderStyle.FILLED.equals(minimapStyle)
                                     ? this.fill : this.stroke;
 
-                            final PolygonOverlay mini = new PolygonOverlay(MOD_ID, this.dimension, shape, polygon.hull, polygon.holes);
+                            final PolygonOverlay mini = new PolygonOverlay(MOD_ID, this.dimension, shape, polygon);
                             mini.setOverlayGroupName(this.name)
                                     .setActiveUIs(Context.UI.Minimap)
                                     .setTextProperties(this.noText);
                             this.overlays.add(mini);
                             jmap.show(mini);
+                        }
+                    }
+                }
+
+                if (!this.loadedChunks.isEmpty() && enabled && jmap.getApi().playerAccepts(MOD_ID, DisplayType.Polygon))
+                {
+                    this.dirty = false;
+
+                    final List<MapPolygonWithHoles> polygons = PolygonHelper.createChunksPolygon(this.loadedChunks, 258);
+
+                    for (final MapPolygonWithHoles polygon : polygons)
+                    {
+                        // fullscreen map
+                        if (!JourneymapOptions.BorderStyle.HIDDEN.equals(loadedStyle))
+                        {
+                            final ShapeProperties shape = JourneymapOptions.BorderStyle.FILLED.equals(loadedStyle)
+                                ? this.loadedFill : this.loadedStroke;
+
+                            final PolygonOverlay overlay = new PolygonOverlay(MOD_ID, this.dimension, shape, polygon);
+                            overlay.setOverlayGroupName(this.name)
+                                .setActiveUIs(Context.UI.Fullscreen, Context.UI.Webmap)
+                                .setTextProperties(this.text);
+                            if (JourneymapOptions.BorderStyle.HIDDEN.equals(fullscreenStyle))
+                            {
+                                overlay.setLabel(this.colonyName);
+                            }
+                            this.overlays.add(overlay);
+                            jmap.show(overlay);
                         }
                     }
                 }
