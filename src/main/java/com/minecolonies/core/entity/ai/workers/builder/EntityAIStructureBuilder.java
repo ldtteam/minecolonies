@@ -237,6 +237,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
 
             if (prevBlockPosition != null)
             {
+                // This is good for building, and bad for mining, this is why mining should validate workFrom.
                 return BlockPosUtil.dist(prevBlockPosition, currentBlock) <= 10;
             }
             return false;
