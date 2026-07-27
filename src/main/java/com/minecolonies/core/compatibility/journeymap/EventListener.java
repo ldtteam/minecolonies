@@ -88,6 +88,7 @@ public class EventListener
         final Set<BlockPos> graves = colony.getGraveManager().getGraves().keySet();
 
         ColonyDeathpoints.updateGraves(this.jmap, colony, graves);
+        ColonyBorderMapping.updateChunksAroundPlayer(this.jmap, colony.getDimension());
     }
 
     @SubscribeEvent
