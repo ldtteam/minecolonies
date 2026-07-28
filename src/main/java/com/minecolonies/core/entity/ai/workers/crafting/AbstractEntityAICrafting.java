@@ -565,13 +565,6 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
             {
                 return executeCraftingAction(toolSlot);
             }
-            else
-            {
-                currentRequest = null;
-                job.finishRequest(false);
-                incrementActionsDoneAndDecSaturation();
-                resetValues();
-            }
             return START_WORKING;
         }
 

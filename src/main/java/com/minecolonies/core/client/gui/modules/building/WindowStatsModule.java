@@ -76,7 +76,7 @@ public class WindowStatsModule extends AbstractModuleWindow<BuildingStatisticsMo
      * within the filtered interval should be hidden.
      * Useful on buildings with a high number of stats (like the builder).
      */
-    private boolean hideZeroStats = false;
+    private boolean hideZeroStats = true;
 
     /**
      * Constructor for the window of the miner hut.
