@@ -13,9 +13,6 @@
     "minecraft:end_rod",
     "#minecraft:shulker_boxes",
     "minecraft:chorus_plant",
-    "minecraft:chorus_flower",
-    "minecraft:ochre_froglight",
-    "minecraft:verdant_froglight",
-    "minecraft:pearlescent_froglight"
+    "minecraft:chorus_flower"
   ]
 }
