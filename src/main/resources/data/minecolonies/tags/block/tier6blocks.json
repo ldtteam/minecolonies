@@ -2,8 +2,11 @@
   "values": [
     "minecraft:wither_rose",
     "minecraft:dragon_head",
+    "minecraft:deepslate_emerald_ore",
     "minecraft:beacon",
     "minecraft:conduit",
-    "minecraft:torchflower"
+    "minecraft:ochre_froglight",
+    "minecraft:verdant_froglight",
+    "minecraft:pearlescent_froglight"
   ]
 }
