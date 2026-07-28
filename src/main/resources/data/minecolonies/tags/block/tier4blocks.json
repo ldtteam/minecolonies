@@ -1,6 +1,5 @@
 {
   "values": [
-    "#minecraft:nylium",
     "minecraft:nether_gold_ore",
     "minecraft:nether_quartz_ore",
     "#minecraft:diamond_ores",
@@ -9,10 +8,6 @@
     "minecraft:crying_obsidian",
     "minecraft:respawn_anchor",
     "minecraft:gilded_blackstone",
-    "minecraft:blue_orchid",
-    "minecraft:allium",
-    "minecraft:lily_of_the_valley",
-    "minecraft:sunflower",
     "minecraft:sponge",
     "minecraft:wet_sponge",
     "minecraft:prismarine",
@@ -25,15 +20,16 @@
     "minecraft:sea_lantern",
     "minecraft:prismarine_slab",
     "minecraft:dark_prismarine_slab",
-    "minecraft:sculk",
-    "minecraft:sculk_vein",
     "minecraft:sculk_catalyst",
     "minecraft:sculk_shrieker",
     "minecraft:ender_chest",
     "minecraft:skeleton_skull",
     "minecraft:wither_skeleton_skull",
     "minecraft:ancient_debris",
+    "minecraft:torchflower",
     "minecraft:lodestone",
-    "minecolonies:gate_iron"
+    "minecraft:calibrated_sculk_sensor",
+    "minecraft:pitcher_plant",
+    "minecraft:prismarine_brick_slab"
   ]
 }
