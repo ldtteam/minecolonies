@@ -24,7 +24,7 @@ import net.minecraft.world.entity.npc.AbstractVillager;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 
-import static com.minecolonies.api.entity.mobs.RaiderMobUtils.MOB_ATTACK_DAMAGE;
+import static net.minecraft.world.entity.ai.attributes.Attributes.ATTACK_DAMAGE;
 
 /**
  * Raider AI for shooting arrows at a target
@@ -108,7 +108,7 @@ public class RaiderRangedAI<T extends AbstractEntityMinecoloniesMonster & IThrea
             customArrowEntity.setWaterInertia(0.99f);
         }
 
-        arrowEntity.setBaseDamage(user.getAttribute(MOB_ATTACK_DAMAGE).getValue());
+        arrowEntity.setBaseDamage(user.getAttribute(ATTACK_DAMAGE).getValue());
         if (flightCounter > 5 && arrowEntity instanceof CustomArrowEntity)
         {
             ((CustomArrowEntity) arrowEntity).setPlayerArmorPierce();
