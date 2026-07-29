@@ -188,12 +188,12 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
             }
 
             furnacePos = null;
-            return IDLE;
+            return START_WORKING;
         }
 
         if (furnacePos == null)
         {
-            return IDLE;
+            return START_WORKING;
         }
 
         if (!walkToWorkPos(furnacePos))
@@ -216,7 +216,7 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
         }
 
         furnacePos = null;
-        return IDLE;
+        return START_WORKING;
     }
 
     /**
