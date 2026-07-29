@@ -319,7 +319,7 @@ public class RangeCombatAI extends AttackMoveAI<EntityCitizen>
             damage *= 1.5;
         }
 
-        return (RANGER_BASE_DMG + damage) * MineColonies.getConfig().getServer().guardDamageMultiplier.get() * (1-(isMarksman() ? marksManTrueDamageShare() : 1));
+        return (RANGER_BASE_DMG + damage) * MineColonies.getConfig().getServer().guardDamageMultiplier.get() * ((isMarksman() ? 1 - marksManTrueDamageShare() : 1));
     }
 
     /**
