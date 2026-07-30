@@ -647,7 +647,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
             {
                 it.remove();
             }
-            else if (!walkingToAnimal(animal))
+            else if (walkingToAnimal(animal))
             {
                 break;
             }
