@@ -47,6 +47,14 @@ public class WorkManager implements IWorkManager
     private static final String TAG_WORK_ORDERS = "workOrders";
     private static final String TAG_NEW_SYSTEM  = "newsystem";
 
+    /**
+     * Orders work orders by their user-selected priority, with a stable tie-breaker.
+     */
+    private static final Comparator<IServerWorkOrder> WORK_ORDER_COMPARATOR = Comparator
+        .comparingInt(IServerWorkOrder::getPriority)
+        .reversed()
+        .thenComparingInt(IServerWorkOrder::getID);
+
     //  Once a second
     //private static final int    WORK_ORDER_FULFILL_INCREMENT = 1 * 20;
     /**
@@ -406,11 +414,22 @@ public class WorkManager implements IWorkManager
             {
                 order.setClaimedBy(BlockPos.ZERO);
             }
-
-            tryAssignWorkOrder(order, (b) -> order.getClaimedBy().equals(b.getPosition()));
         }
 
-        for (final IServerWorkOrder wo : colony.getWorkManager().getWorkOrders().values())
+        final List<IServerWorkOrder> claimedWorkOrders = workOrders.values().stream()
+            .filter(IServerWorkOrder::isClaimed)
+            .sorted(WORK_ORDER_COMPARATOR)
+            .toList();
+        for (final IServerWorkOrder order : claimedWorkOrders)
+        {
+            tryAssignWorkOrder(order, building -> order.getClaimedBy().equals(building.getPosition()));
+        }
+
+        final List<IServerWorkOrder> unclaimedWorkOrders = workOrders.values().stream()
+            .filter(order -> !order.isClaimed())
+            .sorted(WORK_ORDER_COMPARATOR)
+            .toList();
+        for (final IServerWorkOrder wo : unclaimedWorkOrders)
         {
             tryAssignWorkOrder(wo, wo::canBuild);
         }
@@ -494,7 +513,7 @@ public class WorkManager implements IWorkManager
         return workOrders.values().stream()
           .filter(o -> (!o.isClaimed() || o.getClaimedBy().equals(builder)))
           .filter(predicate)
-          .sorted(Comparator.comparingInt(IWorkOrder::getPriority).reversed())
+          .sorted(WORK_ORDER_COMPARATOR)
           .collect(Collectors.toList());
     }
 

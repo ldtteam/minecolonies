@@ -180,7 +180,9 @@ public class WindowInfoPage extends AbstractWindowTownHall
      */
     private void sortWorkOrders()
     {
-        workOrders.sort(Comparator.comparing(IWorkOrderView::getPriority, Comparator.reverseOrder()));
+        workOrders.sort(Comparator.comparingInt(IWorkOrderView::getPriority)
+                          .reversed()
+                          .thenComparingInt(IWorkOrderView::getID));
     }
 
     /**

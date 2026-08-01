@@ -5,12 +5,14 @@ import com.ldtteam.blockui.PaneBuilders;
 import com.ldtteam.blockui.controls.Button;
 import com.ldtteam.blockui.controls.ButtonImage;
 import com.ldtteam.blockui.controls.Text;
+import com.ldtteam.blockui.views.Box;
 import com.ldtteam.blockui.views.ScrollingList;
 import com.minecolonies.api.colony.workorders.IWorkOrderView;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.Network;
 import com.minecolonies.core.client.gui.AbstractModuleWindow;
+import com.minecolonies.core.colony.buildings.moduleviews.BuildingResourcesModuleView;
 import com.minecolonies.core.colony.buildings.moduleviews.SettingsModuleView;
 import com.minecolonies.core.colony.buildings.moduleviews.WorkOrderListModuleView;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingBuilder;
@@ -53,6 +55,11 @@ public class WorkOrderModuleWindow extends AbstractModuleWindow<WorkOrderListMod
      * The tick check.
      */
     private int tick = 0;
+
+    /**
+     * The ID of the work order currently being worked.
+     */
+    private int currentWorkOrderId = -1;
 
     /**
      * @param moduleView the module view
@@ -105,6 +112,7 @@ public class WorkOrderModuleWindow extends AbstractModuleWindow<WorkOrderListMod
      */
     private void updateWorkOrders()
     {
+        currentWorkOrderId = buildingView.getModuleViewByType(BuildingResourcesModuleView.class).getWorkOrderId();
         final Predicate<IWorkOrderView> shouldShow = wo -> wo.shouldShowIn(buildingView);
         final Predicate<IWorkOrderView> isClaimedBySelf = wo -> wo.getClaimedBy().equals(buildingView.getPosition());
         final Predicate<IWorkOrderView> isUnclaimed = wo -> wo.getClaimedBy().equals(BlockPos.ZERO);
@@ -113,7 +121,7 @@ public class WorkOrderModuleWindow extends AbstractModuleWindow<WorkOrderListMod
         Predicate<IWorkOrderView> finalPredicate = shouldShow.and(isInRange);
         if (manualMode)
         {
-            finalPredicate = finalPredicate.and(isClaimedBySelf).or(isUnclaimed);
+            finalPredicate = finalPredicate.and(isClaimedBySelf.or(isUnclaimed));
         }
         else
         {
@@ -132,7 +140,31 @@ public class WorkOrderModuleWindow extends AbstractModuleWindow<WorkOrderListMod
      */
     private void sortWorkOrders()
     {
-        workOrders.sort(Comparator.comparing(IWorkOrderView::getPriority, Comparator.reverseOrder()));
+        workOrders.sort(Comparator
+                          .comparingInt((IWorkOrderView order) -> getWorkOrderGroup(order, currentWorkOrderId))
+                          .thenComparing(Comparator.comparingInt(IWorkOrderView::getPriority).reversed())
+                          .thenComparingInt(IWorkOrderView::getID));
+    }
+
+    /**
+     * Gets the display group of a work order: current, queued for this hut, then available
+     * to be assigned or claimed.
+     *
+     * @param order              the work order.
+     * @param currentWorkOrderId the current work order ID.
+     * @return the display group.
+     */
+    private int getWorkOrderGroup(final IWorkOrderView order, final int currentWorkOrderId)
+    {
+        if (order.getID() == currentWorkOrderId)
+        {
+            return 0;
+        }
+        if (order.getClaimedBy().equals(buildingView.getPosition()))
+        {
+            return 1;
+        }
+        return 2;
     }
 
     /**
@@ -144,6 +176,16 @@ public class WorkOrderModuleWindow extends AbstractModuleWindow<WorkOrderListMod
     private void updateAvailableWorkOrders(final int index, @NotNull final Pane rowPane)
     {
         final IWorkOrderView order = workOrders.get(index);
+        final Box workOrderBox = rowPane.findPaneOfTypeByID("workOrderBox", Box.class);
+        if (order.getID() == currentWorkOrderId)
+        {
+            // Outline the current work order in green to differentiate it.
+            workOrderBox.setColor(0, 170, 0);
+        }
+        else
+        {
+            workOrderBox.setColor(0, 0, 0);
+        }
         boolean buttonEnabled = true;
         String disabledMessage = "";
 
