@@ -8,7 +8,9 @@ import com.minecolonies.api.colony.workorders.IWorkOrder;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.equipment.ModEquipmentTypes;
 import com.minecolonies.api.equipment.registry.EquipmentTypeEntry;
-import com.minecolonies.api.util.*;
+import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.Tuple;
 import com.minecolonies.core.colony.buildings.modules.BuildingModules;
 import com.minecolonies.core.colony.buildings.modules.BuildingResourcesModule;
 import com.minecolonies.core.colony.buildings.modules.WorkerBuildingModule;
@@ -349,7 +351,7 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuilding
      */
     public void resetNeededResources()
     {
-        getFirstModuleOccurance(BuildingResourcesModule.class).resetNeededResources();
+        getModule(BuildingModules.BUILDING_RESOURCES).resetNeededResources();
         this.markDirty();
     }
 
@@ -361,7 +363,7 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuilding
      */
     public boolean requiresResourceForBuilding(final ItemStack stack)
     {
-       return getFirstModuleOccurance(BuildingResourcesModule.class).requiresResourceForBuilding(stack);
+        return getModule(BuildingModules.BUILDING_RESOURCES).requiresResourceForBuilding(stack);
     }
 
     /**
