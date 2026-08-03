@@ -7,6 +7,7 @@ import com.ldtteam.blockui.controls.ButtonImage;
 import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.blockui.views.Box;
 import com.ldtteam.blockui.views.ScrollingList;
+import com.minecolonies.api.colony.workorders.IWorkOrder;
 import com.minecolonies.api.colony.workorders.IWorkOrderView;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.constant.Constants;
@@ -142,8 +143,7 @@ public class WorkOrderModuleWindow extends AbstractModuleWindow<WorkOrderListMod
     {
         workOrders.sort(Comparator
                           .comparingInt((IWorkOrderView order) -> getWorkOrderGroup(order, currentWorkOrderId))
-                          .thenComparing(Comparator.comparingInt(IWorkOrderView::getPriority).reversed())
-                          .thenComparingInt(IWorkOrderView::getID));
+                          .thenComparing(IWorkOrder.WORK_ORDER_COMPARATOR));
     }
 
     /**

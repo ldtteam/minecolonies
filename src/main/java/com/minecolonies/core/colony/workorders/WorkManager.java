@@ -47,14 +47,6 @@ public class WorkManager implements IWorkManager
     private static final String TAG_WORK_ORDERS = "workOrders";
     private static final String TAG_NEW_SYSTEM  = "newsystem";
 
-    /**
-     * Orders work orders by their user-selected priority, with a stable tie-breaker.
-     */
-    private static final Comparator<IServerWorkOrder> WORK_ORDER_COMPARATOR = Comparator
-        .comparingInt(IServerWorkOrder::getPriority)
-        .reversed()
-        .thenComparingInt(IServerWorkOrder::getID);
-
     //  Once a second
     //private static final int    WORK_ORDER_FULFILL_INCREMENT = 1 * 20;
     /**
@@ -394,44 +386,46 @@ public class WorkManager implements IWorkManager
     @Override
     public void onColonyTick(@NotNull final IColony colony)
     {
-        @NotNull final Iterator<IServerWorkOrder> iter = workOrders.values().iterator();
+        final List<IServerWorkOrder> orderedWorkOrders = new ArrayList<>(workOrders.size());
+        final Iterator<IServerWorkOrder> iter = workOrders.values().iterator();
+
+        // Clean up invalid orders and handle builder deconstruction scenarios
         while (iter.hasNext())
         {
             final IServerWorkOrder order = iter.next();
-            if (!order.isValid(this.colony))
+
+            if (!order.isValid(colony))
             {
                 iter.remove();
                 dirty = true;
                 continue;
             }
-            else if (order.isDirty())
+
+            if (order.isDirty())
             {
                 dirty = true;
                 order.resetChange();
             }
 
-            if (order.isClaimed() && getColony().getServerBuildingManager().getBuildings().get(order.getClaimedBy()) == null)
+            if (order.isClaimed()
+                && colony.getServerBuildingManager().getBuilding(order.getClaimedBy()) == null)
             {
                 order.setClaimedBy(BlockPos.ZERO);
             }
+
+            orderedWorkOrders.add(order);
         }
 
-        final List<IServerWorkOrder> claimedWorkOrders = workOrders.values().stream()
-            .filter(IServerWorkOrder::isClaimed)
-            .sorted(WORK_ORDER_COMPARATOR)
-            .toList();
-        for (final IServerWorkOrder order : claimedWorkOrders)
-        {
-            tryAssignWorkOrder(order, building -> order.getClaimedBy().equals(building.getPosition()));
-        }
+        // Sort first by group, then by priority.
+        orderedWorkOrders.sort(
+            Comparator.comparing(IServerWorkOrder::isClaimed)
+                .reversed()
+                .thenComparing(IWorkOrder.WORK_ORDER_COMPARATOR));
 
-        final List<IServerWorkOrder> unclaimedWorkOrders = workOrders.values().stream()
-            .filter(order -> !order.isClaimed())
-            .sorted(WORK_ORDER_COMPARATOR)
-            .toList();
-        for (final IServerWorkOrder wo : unclaimedWorkOrders)
+        // Attempt to assign the orders.
+        for (final IServerWorkOrder order : orderedWorkOrders)
         {
-            tryAssignWorkOrder(wo, wo::canBuild);
+            tryAssignWorkOrder(order, order::canBuild);
         }
     }
 
@@ -446,7 +440,7 @@ public class WorkManager implements IWorkManager
         {
             if (building instanceof AbstractBuildingStructureBuilder abstractBuildingStructureBuilder)
             {
-                final @Nullable ICitizenData citizen = building.getFirstModuleOccurance(WorkerBuildingModule.class).getFirstCitizen();
+                final @Nullable ICitizenData citizen = building.getModule(WorkerBuildingModule.class).getFirstCitizen();
                 if (citizen == null)
                 {
                     continue;
@@ -463,7 +457,7 @@ public class WorkManager implements IWorkManager
                     {
                         abstractBuildingStructureBuilder.setWorkOrder(order);
                         order.setClaimedBy(building.getID());
-                        continue;
+                        return;
                     }
                     continue;
                 }
@@ -478,6 +472,7 @@ public class WorkManager implements IWorkManager
                 {
                     abstractBuildingStructureBuilder.setWorkOrder(order);
                     order.setClaimedBy(building.getID());
+                    return;
                 }
             }
         }
@@ -513,7 +508,7 @@ public class WorkManager implements IWorkManager
         return workOrders.values().stream()
           .filter(o -> (!o.isClaimed() || o.getClaimedBy().equals(builder)))
           .filter(predicate)
-          .sorted(WORK_ORDER_COMPARATOR)
+          .sorted(IWorkOrder.WORK_ORDER_COMPARATOR)
           .collect(Collectors.toList());
     }
 
