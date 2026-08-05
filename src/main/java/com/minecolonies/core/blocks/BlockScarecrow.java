@@ -256,6 +256,20 @@ public class BlockScarecrow extends AbstractBlockMinecoloniesDefault<BlockScarec
         builder.add(HALF, FACING, LANTERN);
     }
 
+    @Override
+    @NotNull
+    public  BlockState rotate(BlockState state, Rotation rot)
+    {
+        return state.setValue(FACING, rot.rotate(state.getValue(FACING)));
+    }
+
+    @Override
+    @NotNull
+    public BlockState mirror(BlockState state, Mirror mirror)
+    {
+        return state.rotate(mirror.getRotation(state.getValue(FACING)));
+    }
+
     /**
      * Notify the colony about the destruction of the field.
      *
