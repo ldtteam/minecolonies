@@ -258,14 +258,14 @@ public class BlockScarecrow extends AbstractBlockMinecoloniesDefault<BlockScarec
 
     @Override
     @NotNull
-    protected  BlockState rotate(BlockState state, Rotation rot)
+    public  BlockState rotate(BlockState state, Rotation rot)
     {
         return state.setValue(FACING, rot.rotate(state.getValue(FACING)));
     }
 
     @Override
     @NotNull
-    protected BlockState mirror(BlockState state, Mirror mirror)
+    public BlockState mirror(BlockState state, Mirror mirror)
     {
         return state.rotate(mirror.getRotation(state.getValue(FACING)));
     }
