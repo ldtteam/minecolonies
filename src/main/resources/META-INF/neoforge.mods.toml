@@ -96,3 +96,40 @@ file="META-INF/accesstransformer.cfg"
     versionRange="[${dynamicTreesVersion},)"
     ordering="NONE"
     side="BOTH"
+
+[[dependencies.minecolonies]]
+    modId="minecolonies_compatibility"
+    type="discouraged"
+    reason="Usage of mixins repeatedly breaks compatibility with Minecolonies, for support, removal of this mod is required"
+[[dependencies.minecolonies]]
+    modId="minecolonies_tweaks"
+    type="discouraged"
+    reason="Usage of mixins repeatedly breaks compatibility with Minecolonies, for support, removal of this mod is required"
+[[dependencies.minecolonies]]
+    modId="easycolony"
+    type="discouraged"
+    reason="Usage of mixins repeatedly breaks compatibility with Minecolonies, for support, removal of this mod is required"
+[[dependencies.minecolonies]]
+    modId="colonypathingedition"
+    type="discouraged"
+    reason="Usage of mixins repeatedly breaks compatibility with Minecolonies, for support, removal of this mod is required"
+[[dependencies.minecolonies]]
+    modId="minecolonies_qol"
+    type="discouraged"
+    reason="Usage of mixins repeatedly breaks compatibility with Minecolonies, for support, removal of this mod is required"
+[[dependencies.minecolonies]]
+    modId="mindofthecolony"
+    type="discouraged"
+    reason="Usage of mixins repeatedly breaks compatibility with Minecolonies, for support, removal of this mod is required"
+[[dependencies.minecolonies]]
+    modId="minecoloniestransitnetworks"
+    type="discouraged"
+    reason="Usage of mixins repeatedly breaks compatibility with Minecolonies, for support, removal of this mod is required"
+[[dependencies.minecolonies]]
+    modId="minecolonieslive"
+    type="discouraged"
+    reason="Usage of mixins repeatedly breaks compatibility with Minecolonies, for support, removal of this mod is required"
+[[dependencies.minecolonies]]
+    modId="mctier_engine"
+    type="discouraged"
+    reason="Usage of mixins repeatedly breaks compatibility with Minecolonies, for support, removal of this mod is required"
