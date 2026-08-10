@@ -9,10 +9,10 @@ import com.ldtteam.structurize.storage.StructurePacks;
 import com.ldtteam.structurize.util.BlockUtils;
 import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.blocks.ModBlocks;
-import com.minecolonies.core.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.Utils;
 import com.minecolonies.api.util.WorldUtil;
+import com.minecolonies.core.tileentities.TileEntityColonyBuilding;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Tuple;
@@ -64,7 +64,7 @@ public class HutPlacementHandler implements IPlacementHandler
         {
             try
             {
-                handleTileEntityPlacement(tileEntityData, world, pos, placementContext.getRotationMirror());
+                handleTileEntityPlacement(tileEntityData, world, pos, placementContext.getRotationMirror().getRotationMirror());
                 final BlockEntity be = world.getBlockEntity(pos);
                 if (be != null)
                 {

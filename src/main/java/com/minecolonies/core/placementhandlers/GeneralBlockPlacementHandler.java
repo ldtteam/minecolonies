@@ -81,7 +81,7 @@ public class GeneralBlockPlacementHandler implements IPlacementHandler
         {
             try
             {
-                handleTileEntityPlacement(tileEntityData, world, pos, context.getRotationMirror());
+                handleTileEntityPlacement(tileEntityData, world, pos, context.getRotationMirror().getRotationMirror());
                 blockState.getBlock().setPlacedBy(world, pos, blockState, null, BlockUtils.getItemStackFromBlockState(blockState));
             }
             catch (final Exception ex)

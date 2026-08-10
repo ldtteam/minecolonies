@@ -62,8 +62,8 @@ public class DoDoorBlockPlacementHandler implements IPlacementHandler
             {
                 try
                 {
-                    handleTileEntityPlacement(tileEntityData, world, pos, placementContext.getRotationMirror());
-                    handleTileEntityPlacement(tileEntityData, world, pos.above(), placementContext.getRotationMirror());
+                    handleTileEntityPlacement(tileEntityData, world, pos, placementContext.getRotationMirror().getRotationMirror());
+                    handleTileEntityPlacement(tileEntityData, world, pos.above(), placementContext.getRotationMirror().getRotationMirror());
                 }
                 catch (final Exception ex)
                 {

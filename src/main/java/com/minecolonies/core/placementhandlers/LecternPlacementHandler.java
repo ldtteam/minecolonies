@@ -64,7 +64,7 @@ public class LecternPlacementHandler implements IPlacementHandler
 
         if (tileEntityData != null)
         {
-            PlacementHandlers.handleTileEntityPlacement(tileEntityData, world, pos, placementContext.getRotationMirror());
+            PlacementHandlers.handleTileEntityPlacement(tileEntityData, world, pos, placementContext.getRotationMirror().getRotationMirror());
         }
 
         return ActionProcessingResult.SUCCESS;
