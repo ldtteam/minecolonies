@@ -4,6 +4,7 @@ import com.ldtteam.blockui.Pane;
 import com.ldtteam.blockui.PaneBuilders;
 import com.ldtteam.blockui.controls.*;
 import com.ldtteam.blockui.views.ScrollingList;
+import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.items.IMinecoloniesFoodItem;
@@ -12,19 +13,31 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.Network;
 import com.minecolonies.core.client.gui.AbstractModuleWindow;
 import com.minecolonies.core.colony.buildings.moduleviews.RestaurantMenuModuleView;
+import com.minecolonies.core.colony.buildings.workerbuildings.BuildingCook;
+import com.minecolonies.core.colony.crafting.CustomRecipe;
+import com.minecolonies.core.colony.crafting.CustomRecipeManager;
+import com.minecolonies.core.items.ItemLargeBottle;
 import com.minecolonies.core.network.messages.server.colony.building.AlterRestaurantMenuItemMessage;
+import it.unimi.dsi.fastutil.objects.Object2DoubleArrayMap;
+import it.unimi.dsi.fastutil.objects.Object2DoubleMap;
+import net.minecraft.client.Minecraft;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.food.FoodProperties;
+import net.minecraft.world.item.*;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.level.Level;
+import net.minecraftforge.common.Tags;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 import java.util.function.Predicate;
 
-import static com.minecolonies.api.util.constant.TranslationConstants.FOOD_QUALITY_TOOLTIP;
-import static com.minecolonies.api.util.constant.TranslationConstants.VANILLA_FOOD_QUALITY_TOOLTIP;
+import static com.minecolonies.api.research.util.ResearchConstants.SATURATION;
+import static com.minecolonies.api.util.FoodUtils.computeSaturationConsumptionFactor;
+import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 import static org.jline.utils.AttributedStyle.WHITE;
 
@@ -74,6 +87,17 @@ public class RestaurantMenuModuleWindow extends AbstractModuleWindow<RestaurantM
     private List<ItemStorage> menu;
 
     /**
+     * Data about the module consumers.
+     */
+    private double avgCustomerConsumption = 0;
+    private int    numerOfCustomers      = 0;
+
+    /**
+     * Recipe mapping cache from itemstorage to ingredients.
+     */
+    private static Map<ItemStorage, List<ItemStorage>> recipeMapping = new HashMap<>();
+
+    /**
      * Constructor for the minimum stock window view.
      *
      * @param moduleView the module view.
@@ -99,6 +123,24 @@ public class RestaurantMenuModuleWindow extends AbstractModuleWindow<RestaurantM
                 this.tick = 10;
             }
         });
+
+
+        if (moduleView.getBuildingView() instanceof BuildingCook.View buildingCookView)
+        {
+            double sum = 0;
+            for (final int i : buildingCookView.getCustomers())
+            {
+                final ICitizenDataView citizenDataView = buildingCookView.getColony().getCitizen(i);
+                if (citizenDataView != null)
+                {
+                    final int buildingLevel = citizenDataView.getHomeBuilding() == null ? 0 :  buildingCookView.getColony().getClientBuildingManager().getBuilding(citizenDataView.getHomeBuilding()).getBuildingLevelEquivalent();
+                    sum += computeSaturationConsumptionFactor(buildingLevel);
+                }
+            }
+            this.avgCustomerConsumption = sum/buildingCookView.getCustomers().size();
+            this.numerOfCustomers = buildingCookView.getCustomers().size();
+        }
+
     }
 
     /**
@@ -220,24 +262,30 @@ public class RestaurantMenuModuleWindow extends AbstractModuleWindow<RestaurantM
                 rowPane.findPaneOfTypeByID(RESOURCE_ICON, ItemIcon.class).setItem(resource);
 
                 final Gradient gradient = rowPane.findPaneOfTypeByID("gradient", Gradient.class);
-                if (resource.getItem() instanceof IMinecoloniesFoodItem foodItem)
+                final int tier = FoodUtils.getFoodTier(resource);
+                if (tier == 3)
                 {
-                    if (foodItem.getTier() == 3)
-                    {
-                        gradient.setGradientStart(255, 215, 0, 255);
-                        gradient.setGradientEnd(255, 215, 0, 255);
-                    }
-                    else if (foodItem.getTier() == 2)
-                    {
-                        gradient.setGradientStart(211, 211, 211, 255);
-                        gradient.setGradientEnd(211, 211, 211, 255);
-                    }
-                    else if (foodItem.getTier() == 1)
-                    {
-                        gradient.setGradientStart(205, 127, 50, 255);
-                        gradient.setGradientEnd(205, 127, 50, 255);
-                    }
+                    gradient.setGradientStart(255, 215, 0, 255);
+                    gradient.setGradientEnd(255, 215, 0, 255);
+                }
+                else if (tier == 2)
+                {
+                    gradient.setGradientStart(211, 211, 211, 255);
+                    gradient.setGradientEnd(211, 211, 211, 255);
+                }
+                else if (tier == 1)
+                {
+                    gradient.setGradientStart(205, 127, 50, 255);
+                    gradient.setGradientEnd(205, 127, 50, 255);
+                }
+                else
+                {
+                    gradient.setGradientStart(0, 0, 0, 0);
+                    gradient.setGradientEnd(0, 0, 0, 0);
+                }
 
+                if (resource.getItem() instanceof IMinecoloniesFoodItem || tier > 0)
+                {
                     PaneBuilders.tooltipBuilder()
                             .append(Component.translatable(FOOD_QUALITY_TOOLTIP, FoodUtils.getBuildingLevelForFood(resource)))
                             .hoverPane(gradient)
@@ -245,9 +293,6 @@ public class RestaurantMenuModuleWindow extends AbstractModuleWindow<RestaurantM
                 }
                 else
                 {
-                    gradient.setGradientStart(0, 0, 0, 0);
-                    gradient.setGradientEnd(0, 0, 0, 0);
-
                     PaneBuilders.tooltipBuilder()
                             .append(Component.translatable(FOOD_QUALITY_TOOLTIP, FoodUtils.getBuildingLevelForFood(resource)))
                             .appendNL(Component.translatable(VANILLA_FOOD_QUALITY_TOOLTIP))
@@ -256,6 +301,138 @@ public class RestaurantMenuModuleWindow extends AbstractModuleWindow<RestaurantM
                 }
             }
         });
+
+        final Object2DoubleMap<ItemStorage> ingredients = new Object2DoubleArrayMap<>();
+        int saturationSum = 0;
+        final int researchBonus = (int) buildingView.getColony().getResearchManager().getResearchEffects().getEffectStrength(SATURATION);
+        for (final ItemStorage dish : menu)
+        {
+            final ItemStorage input = new ItemStorage(dish.getItemStack());
+            final List<ItemStorage> map = getRecipeFromStack(input, true, 5);
+            for (final ItemStorage ingredient : map)
+            {
+                ingredients.merge(ingredient, (double) ingredient.getAmount() / input.getAmount(), Double::sum);
+            }
+            final FoodProperties foodProperty = dish.getItem().getFoodProperties(dish.getItemStack(), null);
+            saturationSum += FoodUtils.getFoodValue(dish.getItemStack(), foodProperty, researchBonus);
+        }
+        final double consumption = (avgCustomerConsumption * 10 * numerOfCustomers) / saturationSum;
+
+        final ArrayList<Object2DoubleMap.Entry<ItemStorage>> ingredientList = new ArrayList<>(ingredients.object2DoubleEntrySet());
+        ingredientList.sort(Comparator.comparingDouble(i -> -i.getValue()));
+
+        //Creates a dataProvider for the unemployed resourceList.
+        this.window.findPaneOfTypeByID("ingredientslist", ScrollingList.class).setDataProvider(new ScrollingList.DataProvider()
+        {
+            /**
+             * The number of rows of the list.
+             * @return the number.
+             */
+            @Override
+            public int getElementCount()
+            {
+                return ingredientList.size();
+            }
+
+            /**
+             * Inserts the elements into each row.
+             * @param index the index of the row/list element.
+             * @param rowPane the parent Pane for the row, containing the elements to update.
+             */
+            @Override
+            public void updateElement(final int index, @NotNull final Pane rowPane)
+            {
+                final Object2DoubleMap.Entry<ItemStorage> resource = ingredientList.get(index);
+                final ItemStack ingredient = resource.getKey().getItemStack().copy();
+                ingredient.setCount((int) resource.getDoubleValue());
+                rowPane.findPaneOfTypeByID(RESOURCE_NAME, Text.class).setText(ingredient.getHoverName());
+                final ItemIcon itemIcon = rowPane.findPaneOfTypeByID(RESOURCE_ICON, ItemIcon.class);
+                itemIcon.setItem(ingredient);
+                PaneBuilders.tooltipBuilder()
+                    .hoverPane(itemIcon)
+                        .append(Component.translatable(FOOD_CONSUMPTION_TOOLTIP, (int) consumption*resource.getValue(), (int) consumption*resource.getValue()*1.5))
+                        .build();
+            }
+        });
+    }
+
+    public static List<ItemStorage> getRecipeFromStack(final ItemStorage storage, final boolean cache, final int maxDepth)
+    {
+        if (recipeMapping.containsKey(storage) && cache)
+        {
+            return recipeMapping.get(storage);
+        }
+        else
+        {
+            final List<ItemStorage> set = new ArrayList<>();
+            processRecipe(storage, set, 0, Minecraft.getInstance().level, maxDepth);
+            if (cache)
+            {
+                recipeMapping.put(storage, set);
+            }
+            return set;
+        }
+    }
+
+    public static boolean processRecipe(final ItemStorage dish, final List<ItemStorage> ingredients, final int depth, final Level level, final int maxDepth)
+    {
+        if (depth > maxDepth || dish.getItemStack().is(Tags.Items.STORAGE_BLOCKS))
+        {
+            return false;
+        }
+        for (final CustomRecipe recipe : CustomRecipeManager.getInstance().getRecipeByOutput(dish))
+        {
+            if (depth == 0)
+            {
+                dish.setAmount(recipe.getPrimaryOutput().getCount());
+            }
+            for (final ItemStorage input : recipe.getInputs())
+            {
+                if (input.getItem() == Items.BOWL || input.getItem() instanceof BottleItem)
+                {
+                    continue;
+                }
+                else if (input.getItem() instanceof ItemLargeBottle
+                    || input.getItem() instanceof HoneyBottleItem
+                    || input.getItem() == Items.DRIED_KELP
+                    || !processRecipe(input, ingredients, depth + 1, level, maxDepth))
+                {
+                    ingredients.add(input);
+                }
+            }
+            // For now we're only interested in the first alternative.
+            return true;
+        }
+
+        final Optional<? extends Recipe<?>> recipe = level.getRecipeManager().byKey(BuiltInRegistries.ITEM.getKey(dish.getItem()));
+        if (recipe.isPresent())
+        {
+            if (depth == 0)
+            {
+                dish.setAmount(recipe.get().getResultItem(level.registryAccess()).getCount());
+            }
+            for (final Ingredient ingredient : recipe.get().getIngredients())
+            {
+                final ItemStack[] inputs = ingredient.getItems();
+                if (inputs.length >= 1)
+                {
+                    final ItemStorage input = new ItemStorage(inputs[0]);
+                    if (input.getItem() == Items.BOWL || input.getItem() instanceof BottleItem)
+                    {
+                        continue;
+                    }
+                    if (input.getItem() instanceof ItemLargeBottle
+                        || input.getItem() instanceof HoneyBottleItem
+                        || input.getItem() == Items.DRIED_KELP
+                        || !processRecipe(input, ingredients, depth + 1, level, maxDepth))
+                    {
+                        ingredients.add(input);
+                    }
+                }
+            }
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -287,8 +464,8 @@ public class RestaurantMenuModuleWindow extends AbstractModuleWindow<RestaurantM
     protected void applySorting(final List<ItemStorage> displayedList)
     {
         displayedList.sort((o1, o2) -> {
-            int score = o1.getItem() instanceof IMinecoloniesFoodItem foodItem ? foodItem.getTier()* -100 : -o1.getItemStack().getFoodProperties(null).getNutrition();
-            int score2 = o2.getItem() instanceof IMinecoloniesFoodItem foodItem2 ? foodItem2.getTier()* -100 : -o2.getItemStack().getFoodProperties(null).getNutrition();
+            int score = FoodUtils.getFoodTier(o1.getItemStack()) * -100 - o1.getItemStack().getFoodProperties(null).getNutrition();
+            int score2 = FoodUtils.getFoodTier(o2.getItemStack())* -100 - o2.getItemStack().getFoodProperties(null).getNutrition();
 
             final int scoreComparison = Integer.compare(score, score2);
             if (scoreComparison != 0)
@@ -338,24 +515,29 @@ public class RestaurantMenuModuleWindow extends AbstractModuleWindow<RestaurantM
                 final boolean isInMenu  = moduleView.getMenu().contains(new ItemStorage(resource));
                 final Button switchButton = rowPane.findPaneOfTypeByID(BUTTON_SWITCH, Button.class);
                 final Gradient gradient = rowPane.findPaneOfTypeByID("gradient", Gradient.class);
-                if (resource.getItem() instanceof IMinecoloniesFoodItem foodItem)
+                final int tier = FoodUtils.getFoodTier(resource);
+                if (tier == 3)
                 {
-                    if (foodItem.getTier() == 3)
-                    {
-                        gradient.setGradientStart(255, 215, 0, 255);
-                        gradient.setGradientEnd(255, 215, 0, 255);
-                    }
-                    else if (foodItem.getTier() == 2)
-                    {
-                        gradient.setGradientStart(211, 211, 211, 255);
-                        gradient.setGradientEnd(211, 211, 211, 255);
-                    }
-                    else if (foodItem.getTier() == 1)
-                    {
-                        gradient.setGradientStart(205, 127, 50, 255);
-                        gradient.setGradientEnd(205, 127, 50, 255);
-                    }
-
+                    gradient.setGradientStart(255, 215, 0, 255);
+                    gradient.setGradientEnd(255, 215, 0, 255);
+                }
+                else if (tier == 2)
+                {
+                    gradient.setGradientStart(211, 211, 211, 255);
+                    gradient.setGradientEnd(211, 211, 211, 255);
+                }
+                else if (tier == 1)
+                {
+                    gradient.setGradientStart(205, 127, 50, 255);
+                    gradient.setGradientEnd(205, 127, 50, 255);
+                }
+                else
+                {
+                    gradient.setGradientStart(0, 0, 0, 0);
+                    gradient.setGradientEnd(0, 0, 0, 0);
+                }
+                if (resource.getItem() instanceof IMinecoloniesFoodItem || tier > 0)
+                {
                     PaneBuilders.tooltipBuilder()
                             .append(Component.translatable(FOOD_QUALITY_TOOLTIP, FoodUtils.getBuildingLevelForFood(resource)))
                             .hoverPane(gradient)
@@ -363,9 +545,6 @@ public class RestaurantMenuModuleWindow extends AbstractModuleWindow<RestaurantM
                 }
                 else
                 {
-                    gradient.setGradientStart(0, 0, 0, 0);
-                    gradient.setGradientEnd(0, 0, 0, 0);
-
                     PaneBuilders.tooltipBuilder()
                             .append(Component.translatable(FOOD_QUALITY_TOOLTIP, FoodUtils.getBuildingLevelForFood(resource)))
                             .appendNL(Component.translatable(VANILLA_FOOD_QUALITY_TOOLTIP))

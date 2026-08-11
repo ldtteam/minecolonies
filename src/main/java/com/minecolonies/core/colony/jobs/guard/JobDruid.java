@@ -1,9 +1,10 @@
-package com.minecolonies.core.colony.jobs;
+package com.minecolonies.core.colony.jobs.guard;
 
 import com.minecolonies.api.client.render.modeltype.ModModelTypes;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.Skill;
+import com.minecolonies.core.colony.jobs.AbstractJobGuard;
 import com.minecolonies.core.entity.ai.workers.guard.EntityAIDruid;
 import com.minecolonies.core.util.AttributeModifierUtils;
 import net.minecraft.resources.ResourceLocation;

@@ -104,9 +104,8 @@ public class ServerConfiguration extends AbstractConfiguration
      *  ------------------- ######## Pathfinding Settings ######## ------------------- *
      *  ------------------------------------------------------------------------------ */
 
-    public final ForgeConfigSpec.IntValue pathfindingDebugVerbosity;
-    public final ForgeConfigSpec.IntValue pathfindingMaxThreadCount;
     public final ForgeConfigSpec.IntValue minimumRailsToPath;
+    public final ForgeConfigSpec.DoubleValue pathNodeLimitMultiplier;
 
     /*  --------------------------------------------------------------------------------- *
      *  ------------------- ######## Request System Settings ######## ------------------- *
@@ -136,7 +135,7 @@ public class ServerConfiguration extends AbstractConfiguration
         foodModifier = defineDouble(builder, "foodmodifier", 1.0, 0.1, 100);
         diseaseModifier = defineInteger(builder, "diseasemodifier", 5, 1, 100);
         forceLoadColony = defineBoolean(builder, "forceloadcolony", true);
-        loadtime = defineInteger(builder, "loadtime", 10, 1, 1440);
+        loadtime = defineInteger(builder, "loadtime", 20, 1, 1440);
         colonyLoadStrictness = defineInteger(builder, "colonyloadstrictness", 3, 1, 15);
         maxTreeSize = defineInteger(builder, "maxtreesize", 400, 1, 1000);
         noSupplyPlacementRestrictions = defineBoolean(builder, "nosupplyplacementrestrictions", false);
@@ -196,9 +195,8 @@ public class ServerConfiguration extends AbstractConfiguration
 
         swapToCategory(builder, "pathfinding");
 
-        pathfindingDebugVerbosity = defineInteger(builder, "pathfindingdebugverbosity", 0, 0, 10);
         minimumRailsToPath = defineInteger(builder, "minimumrailstopath", 8, 5, 100);
-        pathfindingMaxThreadCount = defineInteger(builder, "pathfindingmaxthreadcount", 1, 1, 10);
+        pathNodeLimitMultiplier = defineDouble(builder, "pathNodeLimitMultiplier", 1, 1, 4);
 
         swapToCategory(builder, "requestSystem");
 

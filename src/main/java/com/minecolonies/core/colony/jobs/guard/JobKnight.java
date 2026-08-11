@@ -1,6 +1,7 @@
-package com.minecolonies.core.colony.jobs;
+package com.minecolonies.core.colony.jobs.guard;
 
 import com.minecolonies.api.colony.jobs.IJobWithColonyFlag;
+import com.minecolonies.core.colony.jobs.AbstractJobGuard;
 import com.minecolonies.core.util.citizenutils.CitizenItemUtils;
 import net.minecraft.resources.ResourceLocation;
 import com.minecolonies.api.client.render.modeltype.ModModelTypes;
@@ -8,7 +9,7 @@ import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.InventoryUtils;
-import com.minecolonies.core.entity.ai.workers.guard.EntityAIKnight;
+import com.minecolonies.core.entity.ai.workers.guard.EntityAIMelee;
 import com.minecolonies.core.util.AttributeModifierUtils;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
@@ -47,9 +48,9 @@ public class JobKnight extends AbstractJobGuard<JobKnight> implements IJobWithCo
     }
 
     @Override
-    public EntityAIKnight generateGuardAI()
+    public EntityAIMelee generateGuardAI()
     {
-        return new EntityAIKnight(this);
+        return new EntityAIMelee(this);
     }
 
     @Override

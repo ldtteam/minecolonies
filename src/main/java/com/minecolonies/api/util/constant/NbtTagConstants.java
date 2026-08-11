@@ -65,7 +65,7 @@ public final class NbtTagConstants
     public static final String TAG_TARGET_DISTANCE        = "targetdistance";
     public static final String TAG_CACHED_ABOVE           = "cachedabove";
     public static final String TAG_ANIMAL_MANAGER         = "animalManager";
-    
+
     public static final String TAG_CITIZEN                = "citizen";
     public static final String TAG_HELD_ITEM_SLOT         = "HeldItemSlot";
     public static final String TAG_OFFHAND_HELD_ITEM_SLOT = "OffhandHeldItemSlot";
@@ -103,12 +103,13 @@ public final class NbtTagConstants
     public static final String TAG_PENDING         = "pending";
     public static final String TAG_CONNECTION_TYPE = "connectiontype";
     public static final String TAG_PRESTIGE       = "prestige";
-
+    public static final String TAG_CUSTOMER       = "customer";
     public static final String TAG_PARENT_A = "parentA";
     public static final String TAG_PARENT_B = "parentB";
     public static final String TAG_SIBLINGS = "siblings";
     public static final String TAG_CHILDREN = "children";
     public static final String TAG_PARTNER  = "partner";
+    public static final String TAG_DIPLOMACY  = "diplomacy";
 
     public static final String TAG_AV_QUESTS            = "avquests";
     public static final String TAG_PART_QUESTS          = "partquests";

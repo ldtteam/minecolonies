@@ -40,7 +40,7 @@ public class PathingOptions
     /**
      * Additional cost of swimming - base 1.
      */
-    public double swimCost = 2D;
+    public double swimCost = 4D;
 
     /**
      * Additional cost of cave air.
@@ -71,6 +71,11 @@ public class PathingOptions
      * Cost to dive (head underwater).
      */
     public double divingCost = 4D;
+
+    /**
+     * Cost added for going against the blocks inherent direction/facing value
+     */
+    public double badDirectionCost = 5;
 
     /**
      * Factor multiplied to the small random base cost of values, increases this increases the paths randomness/volatilty. Set to 0 to disable rng.
@@ -291,6 +296,12 @@ public class PathingOptions
     public PathingOptions withDivingCost(final double divingCost)
     {
         this.divingCost = divingCost;
+        return this;
+    }
+
+    public PathingOptions withBadDirectionCost(final double badDirectionCost)
+    {
+        this.badDirectionCost = badDirectionCost;
         return this;
     }
 

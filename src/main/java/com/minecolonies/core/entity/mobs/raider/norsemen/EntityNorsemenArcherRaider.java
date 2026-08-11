@@ -5,6 +5,8 @@ import com.minecolonies.api.entity.mobs.vikings.IArcherNorsemenEntity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
 
+import static com.minecolonies.core.entity.mobs.raider.norsemen.EntityNorsemenChiefRaider.NORSE_HEALTH_REDUCTION_FACTOR;
+
 /**
  * Class for the Archer norsemen entity.
  */
@@ -20,5 +22,11 @@ public class EntityNorsemenArcherRaider extends AbstractEntityNorsemenRaider imp
     public EntityNorsemenArcherRaider(final EntityType<? extends EntityNorsemenArcherRaider> type, final Level worldIn)
     {
         super(type, worldIn);
+    }
+
+    @Override
+    public void initStatsFor(final double baseHealth, final double difficulty, final double baseDamage)
+    {
+        super.initStatsFor(baseHealth / NORSE_HEALTH_REDUCTION_FACTOR, difficulty, baseDamage);
     }
 }

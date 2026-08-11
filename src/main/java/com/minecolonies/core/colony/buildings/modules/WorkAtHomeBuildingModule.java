@@ -11,6 +11,7 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingTownHall;
 import net.minecraft.network.chat.MutableComponent;
 import com.minecolonies.api.util.MessageUtils;
+import net.minecraft.resources.ResourceLocation;
 
 import java.util.function.Function;
 
@@ -28,6 +29,16 @@ public class WorkAtHomeBuildingModule extends WorkerBuildingModule implements IA
       final Function<IBuilding, Integer> sizeLimit)
     {
         super(entry, primary, secondary, canWorkingDuringRain, sizeLimit);
+    }
+
+    public WorkAtHomeBuildingModule(final JobEntry entry,
+        final Skill primary,
+        final Skill secondary,
+        final boolean canWorkingDuringRain,
+        final Function<IBuilding, Integer> sizeLimit,
+        final ResourceLocation researchRequirement)
+    {
+        super(entry, primary, secondary, canWorkingDuringRain, sizeLimit, researchRequirement);
     }
 
     @Override

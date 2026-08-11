@@ -1,5 +1,6 @@
 package com.minecolonies.core.entity.ai.workers.guard;
 
+import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.compatibility.tinkers.TinkersToolHelper;
 import com.minecolonies.api.entity.ai.combat.CombatAIStates;
 import com.minecolonies.api.entity.ai.combat.threat.IThreatTableEntity;
@@ -39,6 +40,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.AxeItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.SwordItem;
@@ -61,7 +63,7 @@ import static com.minecolonies.core.entity.ai.workers.guard.AbstractEntityAIGuar
 /**
  * Knight combat AI
  */
-public class KnightCombatAI extends AttackMoveAI<EntityCitizen>
+public class MeleeCombatAI extends AttackMoveAI<EntityCitizen>
 {
     /**
      * Combat icon
@@ -95,7 +97,7 @@ public class KnightCombatAI extends AttackMoveAI<EntityCitizen>
      */
     private static final double COMBAT_SPEED = 1.0;
 
-    public KnightCombatAI(
+    public MeleeCombatAI(
       final EntityCitizen owner,
       final ITickRateStateMachine stateMachine,
       final AbstractEntityAIGuard parentAI)
@@ -116,7 +118,7 @@ public class KnightCombatAI extends AttackMoveAI<EntityCitizen>
     protected IAIState attackProtect()
     {
         final int shieldSlot = InventoryUtils.findFirstSlotInItemHandlerWith(user.getInventoryCitizen(), Items.SHIELD);
-        if (shieldSlot != -1 && target != null && target.isAlive() && nextAttackTime - user.level.getGameTime() >= MIN_TIME_TO_ATTACK &&
+        if (!isHuscarl() && shieldSlot != -1 && target != null && target.isAlive() && nextAttackTime - user.level.getGameTime() >= MIN_TIME_TO_ATTACK &&
               user.getCitizenColonyHandler().getColonyOrRegister().getResearchManager().getResearchEffects().getEffectStrength(SHIELD_USAGE) > 0)
         {
             CitizenItemUtils.setHeldItem(user, InteractionHand.OFF_HAND, shieldSlot);
@@ -134,6 +136,15 @@ public class KnightCombatAI extends AttackMoveAI<EntityCitizen>
         }
 
         return null;
+    }
+
+    /**
+     * Check if is a huscarl instance.
+     * @return true if so.
+     */
+    public boolean isHuscarl()
+    {
+        return parentAI.getJob().getJobRegistryEntry() == ModJobs.huscarl.get();
     }
 
     /**
@@ -168,7 +179,14 @@ public class KnightCombatAI extends AttackMoveAI<EntityCitizen>
      */
     public EquipmentTypeEntry getWeaponType()
     {
-        return ModEquipmentTypes.sword.get();
+        if (isHuscarl())
+        {
+            return ModEquipmentTypes.axe.get();
+        }
+        else
+        {
+            return ModEquipmentTypes.sword.get();
+        }
     }
 
     @Override
@@ -200,7 +218,17 @@ public class KnightCombatAI extends AttackMoveAI<EntityCitizen>
             doAoeAttack(source, damageToBeDealt);
         }
 
-        target.hurt(source, (float) damageToBeDealt);
+        if (isHuscarl())
+        {
+            double share = (50 + user.getCitizenData().getCitizenSkillHandler().getLevel(Skill.Adaptability) / 2.0) / 100.0;
+            target.hurt(target.level.damageSources().source(DamageSourceKeys.PIERCE, user), (float) damageToBeDealt * (float) share);
+            target.hurt(source, (float) damageToBeDealt * (float) (1.0 - share));
+        }
+        else
+        {
+            target.hurt(source, (float) damageToBeDealt);
+        }
+
         target.setLastHurtByMob(user);
 
         if (target instanceof Mob && user.getCitizenColonyHandler().getColonyOrRegister().getResearchManager().getResearchEffects().getEffectStrength(KNIGHT_TAUNT) > 0)
@@ -295,6 +323,10 @@ public class KnightCombatAI extends AttackMoveAI<EntityCitizen>
             {
                 addDmg += ((ItemSpear) heldItem.getItem()).getDamage() + BASE_PHYSICAL_DAMAGE;
             }
+            else if (heldItem.getItem() instanceof AxeItem)
+            {
+                addDmg += heldItem.getItem().getDamage(heldItem) + BASE_PHYSICAL_DAMAGE;
+            }
             else
             {
                 addDmg += TinkersToolHelper.getDamage(heldItem);
@@ -329,7 +361,7 @@ public class KnightCombatAI extends AttackMoveAI<EntityCitizen>
     protected int getAttackDelay()
     {
         // TODO: Not sure if we should make knights attack faster, they are intended to not scale in dmg, but health
-        final int reload = KNIGHT_ATTACK_DELAY_BASE - user.getCitizenData().getCitizenSkillHandler().getLevel(Skill.Adaptability) / 3;
+        final int reload = KNIGHT_ATTACK_DELAY_BASE - user.getCitizenData().getCitizenSkillHandler().getLevel(Skill.Adaptability) / (isHuscarl() ? 2 : 3);
         return Math.max(reload, KNIGHT_ATTACK_DELAY_MIN);
     }
 

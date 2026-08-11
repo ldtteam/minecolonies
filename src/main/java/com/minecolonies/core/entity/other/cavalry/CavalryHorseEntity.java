@@ -21,7 +21,7 @@ import com.minecolonies.api.util.LookHandler;
 import com.minecolonies.api.util.constant.CitizenConstants;
 import com.minecolonies.api.util.constant.NbtTagConstants;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingStable;
-import com.minecolonies.core.colony.jobs.JobCavalry;
+import com.minecolonies.core.colony.jobs.guard.JobCavalry;
 import com.minecolonies.core.entity.ai.cavalry.CavalryStrollGoal;
 import com.minecolonies.core.entity.ai.cavalry.ReturnToStableGoal;
 import com.minecolonies.core.entity.citizen.EntityCitizen;

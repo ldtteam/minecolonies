@@ -9,6 +9,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.DoorBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -48,7 +49,7 @@ public class FieldPlacementHandler implements IPlacementHandler
         {
             try
             {
-                handleTileEntityPlacement(tileEntityData, world, pos, placementContext.getRotationMirror());
+                handleTileEntityPlacement(tileEntityData, world, pos, placementContext.getRotationMirror().getRotationMirror());
                 blockState.getBlock().setPlacedBy(world, pos, blockState, null, BlockUtils.getItemStackFromBlockState(blockState));
             }
             catch (final Exception ex)
@@ -72,6 +73,10 @@ public class FieldPlacementHandler implements IPlacementHandler
         if (blockState.getValue(DoorBlock.HALF).equals(DoubleBlockHalf.LOWER))
         {
             itemList.add(BlockUtils.getItemStackFromBlockState(blockState));
+            if (blockState.getValue(BlockScarecrow.LANTERN))
+            {
+                itemList.add(new ItemStack(Items.LANTERN));
+            }
         }
 
         return itemList;

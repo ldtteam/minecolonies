@@ -22,6 +22,7 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -58,6 +59,11 @@ public class WorkerBuildingModule extends AbstractAssignedCitizenModule
      */
     private final Function<IBuilding, Integer> sizeLimit;
 
+    /**
+     * Research requirement, default to null.
+     */
+    private ResourceLocation researchRequirement = null;
+
     public WorkerBuildingModule(
       final JobEntry entry,
       final Skill primary,
@@ -71,6 +77,23 @@ public class WorkerBuildingModule extends AbstractAssignedCitizenModule
         this.canWorkingDuringRain = canWorkingDuringRain;
         this.sizeLimit = sizeLimit;
     }
+
+    public WorkerBuildingModule(
+        final JobEntry entry,
+        final Skill primary,
+        final Skill secondary,
+        final boolean canWorkingDuringRain,
+        final Function<IBuilding, Integer> sizeLimit,
+        final ResourceLocation researchRequirement)
+    {
+        this.jobEntry = entry;
+        this.primary = primary;
+        this.secondary = secondary;
+        this.canWorkingDuringRain = canWorkingDuringRain;
+        this.sizeLimit = sizeLimit;
+        this.researchRequirement = researchRequirement;
+    }
+
 
     @Override
     public boolean assignCitizen(final ICitizenData citizen)
@@ -141,7 +164,7 @@ public class WorkerBuildingModule extends AbstractAssignedCitizenModule
     public void onColonyTick(@NotNull final IColony colony)
     {
         // If we have no active worker, grab one from the Colony
-        if (!isFull() && BuildingUtils.canAutoHire(building, getHiringMode(), getJobEntry()))
+        if (!isFull() && BuildingUtils.canAutoHire(building, getHiringMode(), getJobEntry()) && (researchRequirement == null || colony.getResearchManager().getResearchEffects().getEffectStrength(researchRequirement) > 0))
         {
             final ICitizenData joblessCitizen = colony.getCitizenManager().getJoblessCitizen();
             if (joblessCitizen != null)
@@ -173,6 +196,11 @@ public class WorkerBuildingModule extends AbstractAssignedCitizenModule
         buf.writeRegistryId(IMinecoloniesAPI.getInstance().getJobRegistry(), jobEntry);
         buf.writeInt(getPrimarySkill().ordinal());
         buf.writeInt(getSecondarySkill().ordinal());
+        buf.writeBoolean(researchRequirement != null);
+        if (researchRequirement != null)
+        {
+            buf.writeResourceLocation(researchRequirement);
+        }
     }
 
     @Override

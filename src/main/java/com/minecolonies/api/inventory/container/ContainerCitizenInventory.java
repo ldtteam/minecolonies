@@ -7,14 +7,17 @@ import com.minecolonies.api.entity.ai.workers.util.GuardGearBuilder;
 import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.api.inventory.ModContainers;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ItemStack;
@@ -42,7 +45,7 @@ public class ContainerCitizenInventory extends AbstractContainerMenu
     /**
      * Amount of rows.
      */
-    private final int              inventorySize;
+    private final int inventorySize;
 
     /**
      * Citizen related data.
@@ -53,7 +56,7 @@ public class ContainerCitizenInventory extends AbstractContainerMenu
      * Related entity.
      */
     private Optional<? extends Entity> entity = Optional.empty();
-    private       String           displayName;
+    private String                     displayName;
 
     /**
      * Deserialize packet buffer to container instance.
@@ -150,12 +153,12 @@ public class ContainerCitizenInventory extends AbstractContainerMenu
 
         List<GuardGear> guardGear = switch (workBuildingLevel)
         {
-            case 5-> GuardGearBuilder.buildGearForLevel(ARMOR_LEVEL_IRON, ARMOR_LEVEL_MAX, LEATHER_BUILDING_LEVEL_RANGE, DIA_BUILDING_LEVEL_RANGE);
-            case 4-> GuardGearBuilder.buildGearForLevel(ARMOR_LEVEL_CHAIN, ARMOR_LEVEL_DIAMOND, LEATHER_BUILDING_LEVEL_RANGE, DIA_BUILDING_LEVEL_RANGE);
-            case 3-> GuardGearBuilder.buildGearForLevel(ARMOR_LEVEL_LEATHER, ARMOR_LEVEL_IRON, LEATHER_BUILDING_LEVEL_RANGE, IRON_BUILDING_LEVEL_RANGE);
-            case 2-> GuardGearBuilder.buildGearForLevel(ARMOR_LEVEL_LEATHER, ARMOR_LEVEL_CHAIN, LEATHER_BUILDING_LEVEL_RANGE, CHAIN_BUILDING_LEVEL_RANGE);
-            case 1-> GuardGearBuilder.buildGearForLevel(ARMOR_LEVEL_LEATHER, ARMOR_LEVEL_GOLD, LEATHER_BUILDING_LEVEL_RANGE, GOLD_BUILDING_LEVEL_RANGE);
-            default-> Collections.emptyList();
+            case 5 -> GuardGearBuilder.buildGearForLevel(ARMOR_LEVEL_IRON, ARMOR_LEVEL_MAX, LEATHER_BUILDING_LEVEL_RANGE, DIA_BUILDING_LEVEL_RANGE);
+            case 4 -> GuardGearBuilder.buildGearForLevel(ARMOR_LEVEL_CHAIN, ARMOR_LEVEL_DIAMOND, LEATHER_BUILDING_LEVEL_RANGE, DIA_BUILDING_LEVEL_RANGE);
+            case 3 -> GuardGearBuilder.buildGearForLevel(ARMOR_LEVEL_LEATHER, ARMOR_LEVEL_IRON, LEATHER_BUILDING_LEVEL_RANGE, IRON_BUILDING_LEVEL_RANGE);
+            case 2 -> GuardGearBuilder.buildGearForLevel(ARMOR_LEVEL_LEATHER, ARMOR_LEVEL_CHAIN, LEATHER_BUILDING_LEVEL_RANGE, CHAIN_BUILDING_LEVEL_RANGE);
+            case 1 -> GuardGearBuilder.buildGearForLevel(ARMOR_LEVEL_LEATHER, ARMOR_LEVEL_GOLD, LEATHER_BUILDING_LEVEL_RANGE, GOLD_BUILDING_LEVEL_RANGE);
+            default -> Collections.emptyList();
         };
 
         for (int j = 0; j < Math.min(this.inventorySize, INVENTORY_BAR_SIZE); ++j)
@@ -164,78 +167,33 @@ public class ContainerCitizenInventory extends AbstractContainerMenu
             {
                 if (index < size)
                 {
-                    this.addSlot(
-                      new SlotItemHandler(inventory, index,
+                    this.addSlot(new SlotItemHandler(inventory,
+                        index,
                         INVENTORY_BAR_SIZE + k * PLAYER_INVENTORY_OFFSET_EACH,
                         newOffset + PLAYER_INVENTORY_OFFSET_EACH + j * PLAYER_INVENTORY_OFFSET_EACH)
-                      {
-                          @Override
-                          public void set(@NotNull final ItemStack stack)
-                          {
-                              if (workBuilding != null && !playerInventory.player.level().isClientSide && !ItemStackUtils.isEmpty(stack))
-                              {
-                                  final IBuilding building = colony.getServerBuildingManager().getBuilding(workBuilding);
-                                  final ICitizenData citizenData = colony.getCitizenManager().getCivilian(citizenId);
+                    {
+                        @Override
+                        public void set(@NotNull final ItemStack stack)
+                        {
+                            if (workBuilding != null && !playerInventory.player.level().isClientSide && !ItemStackUtils.isEmpty(stack))
+                            {
+                                final IBuilding building = colony.getServerBuildingManager().getBuilding(workBuilding);
+                                final ICitizenData citizenData = colony.getCitizenManager().getCivilian(citizenId);
 
-                                  building.overruleNextOpenRequestOfCitizenWithStack(citizenData, stack);
-                              }
-                              super.set(stack);
-                          }
-                      });
+                                building.overruleNextOpenRequestOfCitizenWithStack(citizenData, stack);
+                            }
+                            super.set(stack);
+                        }
+                    });
                     index++;
                 }
             }
         }
 
-
-        index = 3;
-        for (int j = 0; j < 4; ++j)
-        {
-                final EquipmentSlot equipmentSlot = EquipmentSlot.byTypeAndIndex(EquipmentSlot.Type.ARMOR, index);
-                    this.addSlot(
-                      new Slot(new SimpleContainer(inventory.getArmorInSlot(equipmentSlot)), 0,INVENTORY_BAR_SIZE + 215,
-                        23 + j * PLAYER_INVENTORY_OFFSET_EACH)
-                      {
-                          @Override
-                          public void set(@NotNull final ItemStack stack)
-                          {
-                              if (workBuilding != null && !playerInventory.player.level.isClientSide && !ItemStackUtils.isEmpty(stack))
-                              {
-                                  final IBuilding building = colony.getServerBuildingManager().getBuilding(workBuilding);
-                                  final ICitizenData citizenData = colony.getCitizenManager().getCivilian(citizenId);
-
-                                  building.overruleNextOpenRequestOfCitizenWithStack(citizenData, stack);
-                              }
-                              super.set(stack);
-                              inventory.forceArmorStackToSlot(equipmentSlot, stack);
-                          }
-
-                          @Override
-                          public ItemStack remove(final int slot)
-                          {
-                              inventory.forceClearArmorInSlot(equipmentSlot, inventory.getArmorInSlot(equipmentSlot));
-                              return super.remove(slot);
-                          }
-
-                          @Override
-                          public boolean mayPlace(final ItemStack stack)
-                          {
-                              if (stack.getItem() instanceof ArmorItem armorItem && armorItem.getEquipmentSlot() == equipmentSlot)
-                              {
-                                  for (final GuardGear gear : guardGear)
-                                  {
-                                      if (gear.test(stack))
-                                      {
-                                        return true;
-                                      }
-                                  }
-                                  return false;
-                              }
-                              return false;
-                          }
-                      });
-                    index--;
-        }
+        createArmorSlot(0, EquipmentSlot.HEAD, inventory, workBuilding, guardGear, citizenId, colony);
+        createArmorSlot(1, EquipmentSlot.CHEST, inventory, workBuilding, guardGear, citizenId, colony);
+        createArmorSlot(2, EquipmentSlot.LEGS, inventory, workBuilding, guardGear, citizenId, colony);
+        createArmorSlot(3, EquipmentSlot.FEET, inventory, workBuilding, guardGear, citizenId, colony);
 
         // Player inventory slots
         // Note: The slot numbers are within the player inventory and may be the same as the field inventory.
@@ -244,25 +202,87 @@ public class ContainerCitizenInventory extends AbstractContainerMenu
         {
             for (int j = 0; j < INVENTORY_COLUMNS; j++)
             {
-                addSlot(new Slot(
-                  playerInventory,
-                  j + i * INVENTORY_COLUMNS + INVENTORY_COLUMNS,
-                  PLAYER_INVENTORY_INITIAL_X_OFFSET + j * PLAYER_INVENTORY_OFFSET_EACH,
-                  PLAYER_INVENTORY_INITIAL_Y_OFFSET + newOffset + extraOffset + PLAYER_INVENTORY_OFFSET_EACH * Math.min(this.inventorySize, INVENTORY_BAR_SIZE)
-                    + i * PLAYER_INVENTORY_OFFSET_EACH
-                ));
+                addSlot(new Slot(playerInventory,
+                    j + i * INVENTORY_COLUMNS + INVENTORY_COLUMNS,
+                    PLAYER_INVENTORY_INITIAL_X_OFFSET + j * PLAYER_INVENTORY_OFFSET_EACH,
+                    PLAYER_INVENTORY_INITIAL_Y_OFFSET + newOffset + extraOffset + PLAYER_INVENTORY_OFFSET_EACH * Math.min(this.inventorySize, INVENTORY_BAR_SIZE)
+                        + i * PLAYER_INVENTORY_OFFSET_EACH));
             }
         }
 
         for (i = 0; i < INVENTORY_COLUMNS; i++)
         {
-            addSlot(new Slot(
-              playerInventory, i,
-              PLAYER_INVENTORY_INITIAL_X_OFFSET + i * PLAYER_INVENTORY_OFFSET_EACH,
-              PLAYER_INVENTORY_HOTBAR_OFFSET + newOffset + extraOffset + PLAYER_INVENTORY_OFFSET_EACH * Math.min(this.inventorySize,
-                INVENTORY_BAR_SIZE)
-            ));
+            addSlot(new Slot(playerInventory,
+                i,
+                PLAYER_INVENTORY_INITIAL_X_OFFSET + i * PLAYER_INVENTORY_OFFSET_EACH,
+                PLAYER_INVENTORY_HOTBAR_OFFSET + newOffset + extraOffset + PLAYER_INVENTORY_OFFSET_EACH * Math.min(this.inventorySize, INVENTORY_BAR_SIZE)));
         }
+    }
+
+    private void createArmorSlot(
+        final int index,
+        final EquipmentSlot equipmentSlot,
+        final InventoryCitizen inventory,
+        final BlockPos workBuilding,
+        final List<GuardGear> guardGear,
+        final int citizenId,
+        final IColony colony)
+    {
+        this.addSlot(new Slot(new SimpleContainer(inventory.getArmorInSlot(equipmentSlot)), 0, INVENTORY_BAR_SIZE + 215, 23 + index * PLAYER_INVENTORY_OFFSET_EACH)
+        {
+            @Override
+            public void set(@NotNull final ItemStack stack)
+            {
+                if (workBuilding != null && !playerInventory.player.level.isClientSide && !ItemStackUtils.isEmpty(stack))
+                {
+                    final IBuilding building = colony.getServerBuildingManager().getBuilding(workBuilding);
+                    final ICitizenData citizenData = colony.getCitizenManager().getCivilian(citizenId);
+
+                    building.overruleNextOpenRequestOfCitizenWithStack(citizenData, stack);
+                }
+                super.set(stack);
+                inventory.forceArmorStackToSlot(equipmentSlot, stack);
+            }
+
+            @Override
+            @NotNull
+            public ItemStack remove(final int slot)
+            {
+                inventory.forceClearArmorInSlot(equipmentSlot, inventory.getArmorInSlot(equipmentSlot));
+                return super.remove(slot);
+            }
+
+            @Override
+            public boolean mayPlace(final @NotNull ItemStack stack)
+            {
+                if (stack.getItem() instanceof ArmorItem armorItem && armorItem.getEquipmentSlot() == equipmentSlot)
+                {
+                    for (final GuardGear gear : guardGear)
+                    {
+                        if (gear.test(stack))
+                        {
+                            return true;
+                        }
+                    }
+                    return false;
+                }
+                return false;
+            }
+
+            @Override
+            public Pair<ResourceLocation, ResourceLocation> getNoItemIcon()
+            {
+                final ResourceLocation icon = switch (equipmentSlot)
+                {
+                    case HEAD -> InventoryMenu.EMPTY_ARMOR_SLOT_HELMET;
+                    case CHEST -> InventoryMenu.EMPTY_ARMOR_SLOT_CHESTPLATE;
+                    case LEGS -> InventoryMenu.EMPTY_ARMOR_SLOT_LEGGINGS;
+                    case FEET -> InventoryMenu.EMPTY_ARMOR_SLOT_BOOTS;
+                    default -> null;
+                };
+                return icon == null ? null : Pair.of(InventoryMenu.BLOCK_ATLAS, icon);
+            }
+        });
     }
 
     /**
@@ -331,6 +351,7 @@ public class ContainerCitizenInventory extends AbstractContainerMenu
 
     /**
      * Get the entity of this container.
+     *
      * @return the entity.
      */
     public Optional<? extends Entity> getEntity()

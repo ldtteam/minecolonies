@@ -806,7 +806,6 @@ public class DefaultRecipeProvider extends RecipeProvider
         ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.pasta_tomato)
           .requires(ModItems.raw_noodle)
           .requires(ModBlocks.blockTomato)
-          .requires(ModBlocks.blockTomato)
           .requires(ModBlocks.blockOnion)
           .requires(Items.BOWL)
           .requires(ModBlocks.blockGarlic)
@@ -823,9 +822,9 @@ public class DefaultRecipeProvider extends RecipeProvider
           .unlockedBy("has_durum", has(ModBlocks.blockDurum))
           .save(consumer, new ResourceLocation(MOD_ID, "pottage"));
 
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.rice_ball, 2)
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.rice_ball, 1)
           .requires(ModItems.tofu)
-          .requires(ModItems.cooked_rice)
+          .requires(ModItems.cooked_rice, 2)
           .requires(Items.DRIED_KELP)
           .unlockedBy("has_rice", has(ModBlocks.blockRice))
           .save(consumer, new ResourceLocation(MOD_ID, "rice_ball"));
@@ -834,6 +833,7 @@ public class DefaultRecipeProvider extends RecipeProvider
           .requires(ModBlocks.blockBellPepper)
           .requires(ModBlocks.blockBellPepper)
           .requires(ModBlocks.blockGarlic)
+          .requires(ModBlocks.blockOnion)
           .requires(ModBlocks.blockChickpea)
           .requires(ModBlocks.blockChickpea)
           .unlockedBy("has_chickpea", has(ModBlocks.blockChickpea))
@@ -849,7 +849,6 @@ public class DefaultRecipeProvider extends RecipeProvider
           .save(consumer, new ResourceLocation(MOD_ID, "mint_jelly"));
 
         ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.mint_tea, 2)
-          .requires(ModBlocks.blockMint)
           .requires(ModBlocks.blockMint)
           .requires(ModBlocks.blockMint)
           .requires(ModItems.large_water_bottle)
@@ -875,7 +874,6 @@ public class DefaultRecipeProvider extends RecipeProvider
 
         ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.corn_chowder, 2)
           .requires(ModBlocks.blockGarlic)
-          .requires(ModBlocks.blockOnion)
           .requires(ModBlocks.blockCorn)
           .requires(Items.BOWL, 2)
           .requires(ModItems.large_milk_bottle)
@@ -901,23 +899,19 @@ public class DefaultRecipeProvider extends RecipeProvider
 
         ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.meat_ravioli, 1)
           .requires(ModBlocks.blockDurum)
-          .requires(ModBlocks.blockDurum)
           .requires(Items.BEEF)
           .unlockedBy("has_durum", has(ModBlocks.blockDurum))
           .save(consumer, new ResourceLocation(MOD_ID, "meat_ravioli"));
 
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.kebab, 2)
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.kebab, 1)
           .requires(ModBlocks.blockOnion)
-          .requires(ModBlocks.blockGarlic)
           .requires(ModBlocks.blockNetherPepper)
           .requires(Items.STICK)
-          .requires(Items.MUTTON)
           .requires(Items.MUTTON)
           .unlockedBy("has_nether_pepper", has(ModBlocks.blockNetherPepper))
           .save(consumer, new ResourceLocation(MOD_ID, "mutton_kebab"));
 
         ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.pea_soup, 2)
-          .requires(ModBlocks.blockGarlic)
           .requires(ModBlocks.blockOnion)
           .requires(ModBlocks.blockPeas)
           .requires(ModItems.large_milk_bottle)
@@ -951,7 +945,6 @@ public class DefaultRecipeProvider extends RecipeProvider
           .save(consumer, new ResourceLocation(MOD_ID, "potato_soup"));
 
         ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.squash_soup, 2)
-          .requires(ModBlocks.blockGarlic)
           .requires(ModBlocks.blockOnion)
           .requires(ModBlocks.blockButternutSquash)
           .requires(Items.BOWL, 2)
@@ -964,7 +957,7 @@ public class DefaultRecipeProvider extends RecipeProvider
           .unlockedBy("has_corn", has(ModBlocks.blockCorn))
           .save(consumer, new ResourceLocation(MOD_ID, "tortillas"));
 
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.veggie_ravioli, 1)
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.veggie_ravioli, 2)
           .requires(ModBlocks.blockDurum)
           .requires(ModBlocks.blockDurum)
           .requires(Items.BEETROOT)
@@ -978,7 +971,7 @@ public class DefaultRecipeProvider extends RecipeProvider
           .save(consumer, new ResourceLocation(MOD_ID, "soy_milk"));
 
         ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.yogurt, 1)
-          .requires(ModItems.large_milk_bottle)
+          .requires(ModItems.large_milk_bottle, 2)
           .unlockedBy("has_milk", has(ModItems.large_milk_bottle))
           .save(consumer, new ResourceLocation(MOD_ID, "yogurt"));
 
@@ -988,17 +981,16 @@ public class DefaultRecipeProvider extends RecipeProvider
           .save(consumer, new ResourceLocation(MOD_ID, "soy_yogurt"));
 
         ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.baked_salmon, 2)
-          .requires(ModBlocks.blockGarlic)
-          .requires(ModBlocks.blockGarlic)
-          .requires(ModBlocks.blockGarlic)
+          .requires(ModBlocks.blockGarlic, 3)
+          .requires(ModBlocks.blockOnion, 2)
           .requires(Items.SALMON)
           .requires(Items.SALMON)
           .unlockedBy("has_garlic", has(ModBlocks.blockGarlic))
           .save(consumer, new ResourceLocation(MOD_ID, "baked_salmon"));
 
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.eggdrop_soup, 2)
-          .requires(ModBlocks.blockOnion)
-          .requires(ModBlocks.blockOnion)
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.eggdrop_soup, 1)
+          .requires(ModBlocks.blockOnion, 2)
+          .requires(ModBlocks.blockGarlic, 1)
           .requires(Items.EGG)
           .requires(Items.EGG)
           .requires(Items.CHICKEN)
@@ -1105,6 +1097,8 @@ public class DefaultRecipeProvider extends RecipeProvider
 
         ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.fried_rice, 1)
           .requires(ModBlocks.blockOnion)
+          .requires(ModBlocks.blockGarlic)
+          .requires(ModBlocks.blockEggplant)
           .requires(Items.CARROT)
           .requires(ModItems.cooked_rice)
           .requires(Items.EGG)

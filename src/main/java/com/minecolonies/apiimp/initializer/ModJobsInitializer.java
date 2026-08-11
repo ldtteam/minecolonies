@@ -4,6 +4,7 @@ import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.colony.jobs.*;
+import com.minecolonies.core.colony.jobs.guard.*;
 import com.minecolonies.core.colony.jobs.views.CrafterJobView;
 import com.minecolonies.core.colony.jobs.views.DefaultJobView;
 import com.minecolonies.core.colony.jobs.views.DmanJobView;
@@ -131,6 +132,18 @@ public final class ModJobsInitializer
           .setJobViewProducer(() -> DefaultJobView::new)
           .setRegistryName(ModJobs.KNIGHT_ID)
           .createJobEntry());
+
+        ModJobs.marksman = register(DEFERRED_REGISTER, ModJobs.MARKSMAN_ID.getPath(), () -> new JobEntry.Builder()
+            .setJobProducer(JobMarksman::new)
+            .setJobViewProducer(() -> DefaultJobView::new)
+            .setRegistryName(ModJobs.MARKSMAN_ID)
+            .createJobEntry());
+
+        ModJobs.huscarl = register(DEFERRED_REGISTER, ModJobs.HUSCARL_ID.getPath(), () -> new JobEntry.Builder()
+            .setJobProducer(JobHuscarl::new)
+            .setJobViewProducer(() -> DefaultJobView::new)
+            .setRegistryName(ModJobs.HUSCARL_ID)
+            .createJobEntry());
 
         ModJobs.cavalry = register(DEFERRED_REGISTER, ModJobs.CAVALRY_ID.getPath(), () -> new JobEntry.Builder()
           .setJobProducer(JobCavalry::new)

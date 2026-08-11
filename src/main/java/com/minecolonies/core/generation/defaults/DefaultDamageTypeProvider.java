@@ -8,6 +8,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.world.damagesource.DamageScaling;
 import net.minecraft.world.damagesource.DamageType;
+import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.EntityType;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.common.data.JsonCodecProvider;
@@ -39,6 +40,7 @@ public class DefaultDamageTypeProvider extends JsonCodecProvider<DamageType>
                 Map.entry(DamageSourceKeys.STUCK_DAMAGE.location(), damage("entity.minecolonies.stuckdamage")),
                 Map.entry(DamageSourceKeys.TRAINING.location(), damage("entity.minecolonies.training")),
                 Map.entry(DamageSourceKeys.WAKEY.location(), damage("entity.minecolonies.wakeywakey")),
+                Map.entry(DamageSourceKeys.PIERCE.location(), damage("entity.minecolonies.pierce")),
 
                 Map.entry(DamageSourceKeys.AMAZON.location(), entityDamage(ModEntities.AMAZON)),
                 Map.entry(DamageSourceKeys.AMAZONCHIEF.location(), entityDamage(ModEntities.AMAZONCHIEF)),
@@ -81,7 +83,7 @@ public class DefaultDamageTypeProvider extends JsonCodecProvider<DamageType>
                 Map.entry(DamageSourceKeys.CAMP_NORSEMENARCHER.location(), entityDamage(ModEntities.CAMP_NORSEMEN_ARCHER)),
                 Map.entry(DamageSourceKeys.CAMP_NORSEMENCHIEF.location(), entityDamage(ModEntities.CAMP_NORSEMEN_CHIEF)),
                 Map.entry(DamageSourceKeys.CAMP_SHIELDMAIDEN.location(), entityDamage(ModEntities.CAMP_SHIELDMAIDEN))
-          );
+        );
     }
 
     @NotNull
