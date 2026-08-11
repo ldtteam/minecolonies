@@ -166,7 +166,7 @@ public class ColonyBorderMapping
 
             final IColonyManager colonyManager = MinecoloniesAPIProxy.getInstance().getColonyManager();
             final IColonyView colony = colonyManager.getColonyView(id, dimension);
-            if (colony.getTicketedChunks().contains(pos.toLong()))
+            if (colony != null && colony.getTicketedChunks().contains(pos.toLong()))
             {
                 overlay.updateLoadedChunks(Collections.singleton(pos), Collections.emptySet());
             }
