@@ -39,12 +39,12 @@ public class DefaultRecipeLootProvider implements LootTableSubProvider
         generator.accept(ResourceKey.create(Registries.LOOT_TABLE, LOOT_TABLE_GLASS_BOTTLE), LootTable.lootTable()
                 .withPool(LootPool.lootPool()
                         .add(EmptyLootItem.emptyItem().setWeight(100).setQuality(-1))
-                        .add(LootItem.lootTableItem(Items.GLASS_BOTTLE).setWeight(0).setQuality(1))));
+                        .add(LootItem.lootTableItem(Items.GLASS_BOTTLE).setWeight(100).setQuality(1))));
 
         generator.accept(ResourceKey.create(Registries.LOOT_TABLE, LOOT_TABLE_LARGE_BOTTLE), LootTable.lootTable()
                 .withPool(LootPool.lootPool()
                         .add(EmptyLootItem.emptyItem().setWeight(100).setQuality(-1))
-                        .add(LootItem.lootTableItem(ModItems.large_empty_bottle).setWeight(0).setQuality(1))));
+                        .add(LootItem.lootTableItem(ModItems.large_empty_bottle).setWeight(100).setQuality(1))));
 
         generator.accept(ResourceKey.create(Registries.LOOT_TABLE, LOOT_TABLE_GRAVEL), LootTable.lootTable()
                 .withPool(LootPool.lootPool()
