@@ -697,14 +697,17 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
         final CrafterRecipeSetting recipeMode = building.getSetting(RECIPE_MODE);
 
         //If we have more than one possible recipe, let's choose the one with the most stock in the warehouses
-        if(candidates.size() > 1 && building.hasModule(ISettingsModule.class) && recipeMode != null && recipeMode.getValue().equals(CrafterRecipeSetting.MAX_STOCK))
+        if(candidates.size() > 1 && building.hasModule(ISettingsModule.class))
         {
-            for(Map.Entry<IRecipeStorage, Integer> foo : candidates.entrySet())
+            if (recipeMode != null && recipeMode.getValue().equals(CrafterRecipeSetting.MAX_STOCK))
             {
-                final ItemStorage checkItem = foo.getKey().getCleanedInput().stream().max(Comparator.comparingInt(ItemStorage::getAmount)).get();
-                candidates.put(foo.getKey(), getWarehouseCount(checkItem));
+                for(Map.Entry<IRecipeStorage, Integer> foo : candidates.entrySet())
+                {
+                    final ItemStorage checkItem = foo.getKey().getCleanedInput().stream().max(Comparator.comparingInt(ItemStorage::getAmount)).get();
+                    candidates.put(foo.getKey(), getWarehouseCount(checkItem));
+                }
+                foundRecipe = candidates.entrySet().stream().min(Map.Entry.comparingByValue(Comparator.reverseOrder())).get().getKey();
             }
-            foundRecipe = candidates.entrySet().stream().min(Map.Entry.comparingByValue(Comparator.reverseOrder())).get().getKey();
         }
 
         if(foundRecipe != null && foundRecipe.getRecipeType() instanceof MultiOutputRecipe)
