@@ -1,9 +1,10 @@
 package com.minecolonies.core.colony.managers;
 
+import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.managers.interfaces.IColonyPackageManager;
 import com.minecolonies.api.colony.workorders.IServerWorkOrder;
 import com.minecolonies.api.colony.workorders.IWorkManager;
-import com.minecolonies.api.util.ColonyUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.core.Network;
@@ -128,7 +129,8 @@ public class ColonyPackageManager implements IColonyPackageManager
                 continue;
             }
 
-            if (ColonyUtils.getOwningColony(chunk) != colony.getID())
+            final IColony owningColony = IColonyManager.getInstance().getOwningColony(colony.getWorld(), chunk);
+            if (owningColony == null || owningColony.getID() != colony.getID())
             {
                 iterator.remove();
             }
@@ -219,6 +221,7 @@ public class ColonyPackageManager implements IColonyPackageManager
             }
         }
         colony.getRequestManager().setDirty(false);
+        colony.clearClaimsDirty();
     }
 
     @Override

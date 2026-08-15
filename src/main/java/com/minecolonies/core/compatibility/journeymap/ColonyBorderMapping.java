@@ -1,12 +1,9 @@
 package com.minecolonies.core.compatibility.journeymap;
 
-import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.permissions.Action;
-import com.minecolonies.api.util.ColonyUtils;
-import com.minecolonies.core.MineColonies;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import journeymap.client.api.display.Context;
@@ -24,7 +21,6 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.FastColor;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.chunk.LevelChunk;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -39,7 +35,6 @@ import static com.minecolonies.api.util.constant.Constants.MOD_ID;
 public class ColonyBorderMapping
 {
     private static final Map<ResourceKey<Level>, Map<Integer, ColonyBorderOverlay>> overlays = new HashMap<>();
-    private static ChunkPos lastPlayerChunk = ChunkPos.ZERO;
 
     static final Codec<List<ColonyBorderOverlay>> DIM_BORDER_CODEC = ColonyBorderOverlay.CODEC.listOf();
 
@@ -106,79 +101,47 @@ public class ColonyBorderMapping
     }
 
     /**
-     * Flags the colony border overlay for update, if needed for all chunks near the player.
+     * Updates the colony border overlay for a single colony, from its full synced claimed-chunk set. Replaces the
+     * previous loaded-chunk scanning approach entirely &mdash; a colony's territory is now known in full as soon as its
+     * {@code ColonyView} syncs, regardless of which chunks the client has actually loaded.
      *
-     * @param jmap The JourneyMap API
-     * @param dimension The dimension of the world.  Nothing happens unless this is the client world.
+     * @param jmap   The JourneyMap API
+     * @param colony The colony view that was just updated.
      */
-    public static void updateChunksAroundPlayer(@NotNull final Journeymap jmap,
-                                                @NotNull final ResourceKey<Level> dimension)
+    public static void updateColony(@NotNull final Journeymap jmap,
+                                    @NotNull final IColonyView colony)
     {
-        final Minecraft mc = Minecraft.getInstance();
-        if (mc.player == null || mc.level == null || !mc.level.dimension().equals(dimension)) return;
-
-        final ChunkPos playerChunkPos = new ChunkPos(mc.player.blockPosition());
-        if (playerChunkPos.equals(lastPlayerChunk)) return;
-        lastPlayerChunk = playerChunkPos;
-
-        final int range = Math.max(Math.max(mc.options.renderDistance().get() - 2, 2), MineColonies.getConfig().getServer().maxColonySize.get());
-        for (int chunkX = -range; chunkX <= range; chunkX++)
-        {
-            for (int chunkZ = -range; chunkZ <= range; chunkZ++)
-            {
-                final LevelChunk chunk = mc.level.getChunk(playerChunkPos.x + chunkX, playerChunkPos.z + chunkZ);
-                if (chunk.isEmpty()) continue;
-
-                updateChunk(jmap, dimension, chunk);
-            }
-        }
-    }
-
-    /**
-     * Flags the colony border overlay for update, if needed for a single just-loaded chunk.
-     *
-     * @param jmap The JourneyMap API
-     * @param dimension The dimension of the world.  Nothing happens unless this is the client world.
-     * @param chunk The chunk that was just loaded.
-     */
-    public static void updateChunk(@NotNull final Journeymap jmap,
-                                   @NotNull final ResourceKey<Level> dimension,
-                                   @NotNull final LevelChunk chunk)
-    {
-        final Level world = Minecraft.getInstance().level;
-        if (world == null || !dimension.equals(world.dimension())) return;
-
+        final ResourceKey<Level> dimension = colony.getDimension();
         final Map<Integer, ColonyBorderOverlay> dimensionOverlays = overlays.get(dimension);
         if (dimensionOverlays == null) return;  // not ready yet
 
-        boolean changed = false;
-        final int id = ColonyUtils.getOwningColony(chunk);
-        if (id == 0)
-        {
-            for (final Map<Integer, ColonyBorderOverlay> overlayMap : overlays.values())
-            {
-                for (final ColonyBorderOverlay overlay : overlayMap.values())
-                {
-                    changed |= overlay.updateChunks(Collections.emptySet(), Collections.singleton(chunk.getPos()));
-                    changed |= overlay.updateLoadedChunks(Collections.emptySet(), Collections.singleton(chunk.getPos()));
-                }
-            }
-        }
-        else
-        {
-            final IColonyManager colonyManager = MinecoloniesAPIProxy.getInstance().getColonyManager();
-            final IColonyView colony = colonyManager.getColonyView(id, dimension);
-            final boolean loaded = colony.getTicketedChunks().contains(chunk.getPos().toLong());
+        final int id = colony.getID();
+        final ColonyBorderOverlay overlay = dimensionOverlays.computeIfAbsent(id, k -> new ColonyBorderOverlay(dimension, id));
 
-            final ColonyBorderOverlay overlay = dimensionOverlays
-                    .computeIfAbsent(id, k -> new ColonyBorderOverlay(dimension, id));
-            changed |= overlay.updateChunks(Collections.singleton(chunk.getPos()), Collections.emptySet());
-            changed |= loaded
-                ? overlay.updateLoadedChunks(Collections.singleton(chunk.getPos()), Collections.emptySet())
-                : overlay.updateLoadedChunks(Collections.emptySet(), Collections.singleton(chunk.getPos()));
-            changed |= overlay.updateInfo(colony, JourneymapOptions.getShowColonyName(jmap.getOptions()),
-                JourneymapOptions.BorderStyle.HIDDEN.equals(JourneymapOptions.getBorderFullscreenStyle(jmap.getOptions())));
+        final Set<ChunkPos> claimed = new HashSet<>();
+        for (final long chunkPos : colony.getClaimedChunks())
+        {
+            claimed.add(new ChunkPos(chunkPos));
         }
+        final Set<ChunkPos> added = new HashSet<>(claimed);
+        added.removeAll(overlay.chunks);
+        final Set<ChunkPos> removed = new HashSet<>(overlay.chunks);
+        removed.removeAll(claimed);
+        overlay.updateChunks(added, removed);
+
+        final Set<ChunkPos> loaded = new HashSet<>();
+        for (final long chunkPos : colony.getTicketedChunks())
+        {
+            loaded.add(new ChunkPos(chunkPos));
+        }
+        final Set<ChunkPos> loadedAdded = new HashSet<>(loaded);
+        loadedAdded.removeAll(overlay.loadedChunks);
+        final Set<ChunkPos> loadedRemoved = new HashSet<>(overlay.loadedChunks);
+        loadedRemoved.removeAll(loaded);
+        overlay.updateLoadedChunks(loadedAdded, loadedRemoved);
+
+        overlay.updateInfo(colony, JourneymapOptions.getShowColonyName(jmap.getOptions()),
+            JourneymapOptions.BorderStyle.HIDDEN.equals(JourneymapOptions.getBorderFullscreenStyle(jmap.getOptions())));
     }
 
     /**
