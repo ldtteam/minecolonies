@@ -817,6 +817,7 @@ public final class ColonyManager implements IColonyManager
             {
                 c.onWorldLoad(world);
 
+                // TODO: Remove on next version
                 // A colony with no claims at all can only be a pre-refactor save that predates claim data existing (or,
                 // in principle, a colony that somehow lost all its claims outright). Its world couldn't be set yet back
                 // when claims were loaded from NBT, so the rebuild had to wait until now.
