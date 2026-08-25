@@ -115,6 +115,15 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
     {
         worker.getCitizenData().setVisibleStatus(VisibleCitizenStatus.WORKING);
 
+        final GraveyardManagementModule module = building.getModule(GraveyardManagementModule.class);
+
+        // If we had a pending burial to oversee that was interrupted by a sleep cycle or break, resume it the next time we start working.
+        if (module !=null && module.getLastGraveData() != null)
+        {
+            worker.getCitizenData().setJobStatus(JobStatus.WORKING);
+            return BURY_CITIZEN;
+        }
+
         @Nullable final BlockPos currentGrave = building.getGraveToWorkOn();
         if (currentGrave != null)
         {

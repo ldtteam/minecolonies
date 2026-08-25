@@ -133,10 +133,11 @@ public class GraveyardManagementModule extends AbstractBuildingModule implements
         // Graveyard burial plots.
         if (building instanceof BuildingGraveyard graveyard)
         {
-            final Set<BlockPos> gravePlotPositions = graveyard.getGravePlotPositions();
+            final Set<Tuple<BlockPos, Direction>> gravePlotPositions = graveyard.getGravePositions();
             buf.writeInt(gravePlotPositions.size());
-            for (final BlockPos gravePlotPosition : gravePlotPositions)
+            for (final Tuple<BlockPos, Direction> gravePlotEntry : gravePlotPositions)
             {
+                BlockPos gravePlotPosition  = gravePlotEntry.getA();
                 buf.writeBlockPos(gravePlotPosition);
             }
         }
