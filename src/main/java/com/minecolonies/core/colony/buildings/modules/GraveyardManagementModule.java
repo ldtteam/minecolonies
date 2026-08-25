@@ -1,5 +1,6 @@
 package com.minecolonies.core.colony.buildings.modules;
 
+import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.blocks.AbstractBlockMinecoloniesNamedGrave;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.GraveData;
@@ -9,10 +10,12 @@ import com.minecolonies.api.colony.buildings.modules.IBuildingEventsModule;
 import com.minecolonies.api.colony.buildings.modules.IBuildingModule;
 import com.minecolonies.api.colony.buildings.modules.IPersistentModule;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-import com.minecolonies.core.tileentities.TileEntityGrave;
-import com.minecolonies.core.tileentities.TileEntityNamedGrave;
+import com.minecolonies.api.eventbus.events.colony.citizens.CitizenBuriedModEvent;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.WorldUtil;
+import com.minecolonies.core.colony.buildings.workerbuildings.BuildingGraveyard;
+import com.minecolonies.core.tileentities.TileEntityGrave;
+import com.minecolonies.core.tileentities.TileEntityNamedGrave;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -126,6 +129,21 @@ public class GraveyardManagementModule extends AbstractBuildingModule implements
         {
             buf.writeUtf(citizenName);
         }
+
+        // Graveyard burial plots.
+        if (building instanceof BuildingGraveyard graveyard)
+        {
+            final Set<BlockPos> gravePlotPositions = graveyard.getGravePlotPositions();
+            buf.writeInt(gravePlotPositions.size());
+            for (final BlockPos gravePlotPosition : gravePlotPositions)
+            {
+                buf.writeBlockPos(gravePlotPosition);
+            }
+        }
+        else
+        {
+            buf.writeInt(0);
+        }
     }
 
     /**
@@ -165,9 +183,13 @@ public class GraveyardManagementModule extends AbstractBuildingModule implements
     }
 
     /**
-     * Add a citizen to the list of resting citizen in this graveyard
+     * Add a citizen to the list of resting citizens in this graveyard.
+     *
+     * @param positionAndDirection the burial plot position and grave direction.
+     * @param worker the undertaker performing the burial.
+     * @return {@code true} if the named grave was placed and the burial was recorded; otherwise {@code false}.
      */
-    public void buryCitizenHere(final Tuple<BlockPos, Direction> positionAndDirection, final AbstractEntityCitizen worker)
+    public boolean buryCitizenHere(final Tuple<BlockPos, Direction> positionAndDirection, final AbstractEntityCitizen worker)
     {
         if(lastGraveData != null && !restingCitizen.contains(lastGraveData.getCitizenName()))
         {
@@ -179,8 +201,11 @@ public class GraveyardManagementModule extends AbstractBuildingModule implements
             }
 
             colony.getWorld().destroyBlock(positionAndDirection.getA(), true, worker);
-            colony.getWorld().setBlockAndUpdate(positionAndDirection.getA(),
-                    ModBlocks.blockNamedGrave.defaultBlockState().setValue(AbstractBlockMinecoloniesNamedGrave.FACING, facing));
+            if (!colony.getWorld().setBlockAndUpdate(positionAndDirection.getA(),
+              ModBlocks.blockNamedGrave.defaultBlockState().setValue(AbstractBlockMinecoloniesNamedGrave.FACING, facing)))
+            {
+                return false;
+            }
 
             BlockEntity tileEntity = colony.getWorld().getBlockEntity(positionAndDirection.getA());
             if (tileEntity instanceof TileEntityNamedGrave)
@@ -200,6 +225,20 @@ public class GraveyardManagementModule extends AbstractBuildingModule implements
 
             restingCitizen.add(lastGraveData.getCitizenName());
             markDirty();
+
+            final CompoundTag savedCitizenNbt = lastGraveData.getCitizenDataNBT();
+            if (savedCitizenNbt != null)
+            {
+                IMinecoloniesAPI.getInstance().getEventBus().post(new CitizenBuriedModEvent(
+                  colony,
+                  positionAndDirection.getA(),
+                  savedCitizenNbt,
+                  lastGraveData.getCitizenName(),
+                  lastGraveData.getCitizenJobName(),
+                  worker.getCitizenData()));
+            }
+            return true;
         }
+        return false;
     }
 }

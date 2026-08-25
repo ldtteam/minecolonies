@@ -3,8 +3,9 @@
 
     <image source="minecolonies:textures/gui/builderhut/builder_paper.png" size="190 244"/>
 
-    <text size="130 11" pos="30 14" color="black" textalign="MIDDLE" label="$(com.minecolonies.coremod.gui.workerhuts.graveyard.graves):"/>
-    <list id="graves" size="164 102" pos="13 30">
+    <text id="plotStatistics" size="164 11" pos="13 14" color="black" textalign="MIDDLE"/>
+    <text size="130 11" pos="30 27" color="black" textalign="MIDDLE" label="$(com.minecolonies.coremod.gui.workerhuts.graveyard.graves):"/>
+    <list id="graves" size="164 91" pos="13 41">
         <box size="100% 34" linewidth="1">
             <text id="name" color="black" pos="20 2" size="130 9"/>
             <text id="dist" color="black" pos="20 12" size="65 9"/>

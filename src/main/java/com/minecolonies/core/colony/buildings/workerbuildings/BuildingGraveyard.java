@@ -172,6 +172,21 @@ public class BuildingGraveyard extends AbstractBuilding
         return visualGravePositions;
     }
 
+    /**
+     * Get the positions of all burial plots registered from the graveyard schematic.
+     *
+     * @return an unmodifiable set of burial plot positions.
+     */
+    public Set<BlockPos> getGravePlotPositions()
+    {
+        final Set<BlockPos> gravePlotPositions = new HashSet<>();
+        for (final Tuple<BlockPos, Direction> gravePosition : visualGravePositions)
+        {
+            gravePlotPositions.add(gravePosition.getA());
+        }
+        return Collections.unmodifiableSet(gravePlotPositions);
+    }
+
     @NotNull
     @Override
     public String getSchematicName()

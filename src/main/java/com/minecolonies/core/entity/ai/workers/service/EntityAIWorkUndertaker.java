@@ -467,7 +467,12 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
         effortCounter = 0;
         unequip();
 
-        module.buryCitizenHere(burialPos, worker);
+        if (!module.buryCitizenHere(burialPos, worker))
+        {
+            burialPos = null;
+            return getState();
+        }
+
         //Disabled until Mourning AI update: worker.getCitizenColonyHandler().getColony().setNeedToMourn(false, buildingGraveyard.getLastGraveData().getCitizenName());
         AdvancementUtils.TriggerAdvancementPlayersForColony(worker.getCitizenColonyHandler().getColonyOrRegister(), playerMP -> AdvancementTriggers.CITIZEN_BURY.trigger(playerMP));
 
