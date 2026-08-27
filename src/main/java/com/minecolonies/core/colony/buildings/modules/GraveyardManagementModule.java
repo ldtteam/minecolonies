@@ -11,9 +11,9 @@ import com.minecolonies.api.colony.buildings.modules.IBuildingModule;
 import com.minecolonies.api.colony.buildings.modules.IPersistentModule;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.eventbus.events.colony.citizens.CitizenBuriedModEvent;
+import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.WorldUtil;
-import com.minecolonies.core.colony.buildings.workerbuildings.BuildingGraveyard;
 import com.minecolonies.core.tileentities.TileEntityGrave;
 import com.minecolonies.core.tileentities.TileEntityNamedGrave;
 import net.minecraft.core.BlockPos;
@@ -21,13 +21,17 @@ import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -48,10 +52,20 @@ public class GraveyardManagementModule extends AbstractBuildingModule implements
      */
     private static final String TAG_GRAVE_DATA = "gravedata";
 
+    private static final String TAG_VISUAL_GRAVES = "visualgraves";
+
+    private static final String TAG_VISUAL_GRAVES_BLOCKPOS = "visualgravesblockpos";
+
+    private static final String TAG_VISUAL_GRAVES_FACING = "visualgravesfacing";
+
     /**
      * The list of resting citizen in this graveyard.
      */
     private final List<String> restingCitizen = new ArrayList<>();
+
+    private final Set<Tuple<BlockPos, Direction>> gravePositions = new HashSet<>();
+
+    private boolean gravePositionsLoadedFromModuleNbt;
 
     /**
      * The data of the last grave dug by the undertaker.
@@ -79,6 +93,13 @@ public class GraveyardManagementModule extends AbstractBuildingModule implements
             lastGraveData.read(compound.getCompound(TAG_GRAVE_DATA));
         }
         else lastGraveData = null;
+
+        gravePositions.clear();
+        gravePositionsLoadedFromModuleNbt = compound.contains(TAG_VISUAL_GRAVES, Tag.TAG_LIST);
+        if (gravePositionsLoadedFromModuleNbt)
+        {
+            readGravePositions(compound);
+        }
     }
 
     @Override
@@ -95,6 +116,8 @@ public class GraveyardManagementModule extends AbstractBuildingModule implements
         {
             compound.put(TAG_GRAVE_DATA, lastGraveData.write());
         }
+
+        writeGravePositions(compound);
     }
 
     @Override
@@ -130,21 +153,115 @@ public class GraveyardManagementModule extends AbstractBuildingModule implements
             buf.writeUtf(citizenName);
         }
 
-        // Graveyard burial plots.
-        if (building instanceof BuildingGraveyard graveyard)
+        buf.writeInt(gravePositions.size());
+        for (final Tuple<BlockPos, Direction> gravePlotEntry : gravePositions)
         {
-            final Set<Tuple<BlockPos, Direction>> gravePlotPositions = graveyard.getGravePositions();
-            buf.writeInt(gravePlotPositions.size());
-            for (final Tuple<BlockPos, Direction> gravePlotEntry : gravePlotPositions)
+            buf.writeBlockPos(gravePlotEntry.getA());
+        }
+    }
+
+    /**
+     * Migrates burial plot positions stored on the graveyard building before ownership moved to this module.
+     * Module data always takes precedence when both formats are present.
+     *
+     * @param compound the legacy building data.
+     */
+    public void migrateLegacyGravePositions(final CompoundTag compound)
+    {
+        if (!gravePositionsLoadedFromModuleNbt && compound.contains(TAG_VISUAL_GRAVES, Tag.TAG_LIST))
+        {
+            readGravePositions(compound);
+            markDirty();
+        }
+    }
+
+    /**
+     * Read the burial plot positions and their directions from NBT.
+     *
+     * @param compound the NBT data containing the burial plot positions.
+     */
+    private void readGravePositions(final CompoundTag compound)
+    {
+        gravePositions.clear();
+        final ListTag visualGraveTagList = compound.getList(TAG_VISUAL_GRAVES, Tag.TAG_COMPOUND);
+        for (int i = 0; i < visualGraveTagList.size(); ++i)
+        {
+            final CompoundTag graveCompound = visualGraveTagList.getCompound(i);
+            final Direction facing = Direction.byName(graveCompound.getString(TAG_VISUAL_GRAVES_FACING));
+            if (facing != null)
             {
-                BlockPos gravePlotPosition  = gravePlotEntry.getA();
-                buf.writeBlockPos(gravePlotPosition);
+                gravePositions.add(new Tuple<>(BlockPosUtil.read(graveCompound, TAG_VISUAL_GRAVES_BLOCKPOS), facing));
             }
         }
-        else
+    }
+
+    /**
+     * Write the burial plot positions and their directions to NBT.
+     *
+     * @param compound the NBT data to write the burial plot positions to.
+     */
+    private void writeGravePositions(final CompoundTag compound)
+    {
+        final ListTag visualGraveTagList = new ListTag();
+        for (final Tuple<BlockPos, Direction> gravePosition : gravePositions)
         {
-            buf.writeInt(0);
+            final CompoundTag graveCompound = new CompoundTag();
+            BlockPosUtil.write(graveCompound, TAG_VISUAL_GRAVES_BLOCKPOS, gravePosition.getA());
+            graveCompound.putString(TAG_VISUAL_GRAVES_FACING, gravePosition.getB().getName());
+            visualGraveTagList.add(graveCompound);
         }
+        compound.put(TAG_VISUAL_GRAVES, visualGraveTagList);
+    }
+
+    /**
+     * Get the burial plot positions and their directions.
+     *
+     * @return the burial plot positions.
+     */
+    public Set<Tuple<BlockPos, Direction>> getGravePositions()
+    {
+        return gravePositions;
+    }
+
+    /**
+     * Register a named grave block as a burial plot.
+     *
+     * @param state the block state.
+     * @param pos the block position.
+     */
+    public void registerGravePosition(final BlockState state, final BlockPos pos)
+    {
+        if (state.getBlock() == ModBlocks.blockNamedGrave
+              && gravePositions.add(new Tuple<>(pos, state.getValue(AbstractBlockMinecoloniesNamedGrave.FACING))))
+        {
+            markDirty();
+        }
+    }
+
+    /**
+     * Return a random free visual grave position.
+     *
+     * @return a free burial plot, or {@code null} when none are available.
+     */
+    @Nullable
+    public Tuple<BlockPos, Direction> getRandomFreeVisualGravePos()
+    {
+        final List<Tuple<BlockPos, Direction>> availablePositions = new ArrayList<>();
+        for (final Tuple<BlockPos, Direction> gravePosition : gravePositions)
+        {
+            if (building.getColony().getWorld().getBlockState(gravePosition.getA()).canBeReplaced())
+            {
+                availablePositions.add(gravePosition);
+            }
+        }
+
+        if (availablePositions.isEmpty())
+        {
+            return null;
+        }
+
+        Collections.shuffle(availablePositions);
+        return availablePositions.get(0);
     }
 
     /**

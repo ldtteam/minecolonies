@@ -450,7 +450,7 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
 
         if (burialPos == null || !world.getBlockState(burialPos.getA()).canBeReplaced())
         {
-            burialPos = building.getRandomFreeVisualGravePos();
+            burialPos = module.getRandomFreeVisualGravePos();
         }
 
         if (burialPos == null || burialPos.getA() == null)
