@@ -469,7 +469,7 @@ public class EventHandler
         if (event.getEntity() instanceof ServerPlayer)
         {
             final ServerPlayer player = (ServerPlayer) event.getEntity();
-            for (final IColony colony : IColonyManager.getInstance().getAllColonies())
+            for (final IColony colony : IColonyManager.getInstance().getColonies(player.level()))
             {
                 if (colony.getPermissions().getRank(player).isColonyManager())
                 {
