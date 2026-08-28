@@ -469,9 +469,9 @@ public class EventHandler
         if (event.getEntity() instanceof ServerPlayer)
         {
             final ServerPlayer player = (ServerPlayer) event.getEntity();
-            for (final IColony colony : IColonyManager.getInstance().getColonies(player.level()))
+            for (final IColony colony : IColonyManager.getInstance().getAllColonies())
             {
-                if (colony.getPermissions().getRank(player).isColonyManager())
+                if (colony.getWorld() != null && colony.getPermissions().getRank(player).isColonyManager())
                 {
                     colony.getPackageManager().addImportantColonyPlayer(player);
                     colony.getPackageManager().sendColonyViewPackets();
