@@ -164,17 +164,23 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
     @Override
     public void upgradeContainers(final Level world)
     {
-        if (getFirstModuleOccurance(WarehouseModule.class).getStorageUpgrade() < MAX_STORAGE_UPGRADE)
+        final WarehouseModule module = getFirstModuleOccurance(WarehouseModule.class);
+        if (module.getStorageUpgrade() < MAX_STORAGE_UPGRADE)
         {
+            module.incrementStorageUpgrade();
             for (final BlockPos pos : getContainers())
             {
                 final BlockEntity entity = world.getBlockEntity(pos);
                 if (entity instanceof TileEntityRack && !(entity instanceof TileEntityColonyBuilding))
                 {
-                    ((AbstractTileEntityRack) entity).upgradeRackSize();
+                    // Catch racks up to the storage upgrade level; one that missed an earlier
+                    // upgrade would otherwise stay short of slots until the hut is rebuilt.
+                    while (((AbstractTileEntityRack) entity).getUpgradeSize() < module.getStorageUpgrade())
+                    {
+                        ((AbstractTileEntityRack) entity).upgradeRackSize();
+                    }
                 }
             }
-            getFirstModuleOccurance(WarehouseModule.class).incrementStorageUpgrade();
         }
         markDirty();
     }
