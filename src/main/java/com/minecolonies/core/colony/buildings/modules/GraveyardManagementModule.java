@@ -48,14 +48,23 @@ public class GraveyardManagementModule extends AbstractBuildingModule implements
     private static final String TAG_RIP_CITIZEN_LIST = "ripCitizenList";
 
     /**
-     * NBTTag to store grave data.
+     * NBTTag to store grave data about the most recent grave.
      */
     private static final String TAG_GRAVE_DATA = "gravedata";
 
+    /**
+     * NBT tag for the list of visible graves.
+     */
     private static final String TAG_VISUAL_GRAVES = "visualgraves";
 
+    /**
+     * NBT tag for the position of a given visible grave.
+     */
     private static final String TAG_VISUAL_GRAVES_BLOCKPOS = "visualgravesblockpos";
 
+    /**
+     * NBT tag for the facing of a given visible grave.
+     */
     private static final String TAG_VISUAL_GRAVES_FACING = "visualgravesfacing";
 
     /**
@@ -63,9 +72,15 @@ public class GraveyardManagementModule extends AbstractBuildingModule implements
      */
     private final List<String> restingCitizen = new ArrayList<>();
 
-    private final Set<Tuple<BlockPos, Direction>> gravePositions = new HashSet<>();
-
+    /**
+     * Indicates whether the grave positions were loaded from the module data (as opposed to the legacy building data).
+     */
     private boolean gravePositionsLoadedFromModuleNbt;
+
+    /**
+     * The set of registered grave plot positions and their facing.
+     */
+    private final Set<Tuple<BlockPos, Direction>> gravePositions = new HashSet<>();
 
     /**
      * The data of the last grave dug by the undertaker.
