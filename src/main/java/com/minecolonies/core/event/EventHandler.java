@@ -156,6 +156,27 @@ public class EventHandler
                 event.setCanceled(true);
             }
         }
+
+        // Makes the server the entity authority, and the client no longer rejects a new entity for an old potentially stale or desynced one
+        if (!(event.getLevel() instanceof ClientLevel clientLevel)
+            || !(event.getEntity() instanceof AbstractFastMinecoloniesEntity citizen))
+        {
+            return;
+        }
+
+        final List<Integer> duplicateIds = new ArrayList<>();
+        for (final Entity existing : clientLevel.entityStorage.getEntityGetter().getAll())
+        {
+            if (existing != citizen && existing.getUUID().equals(citizen.getUUID()))
+            {
+                duplicateIds.add(existing.getId());
+            }
+        }
+
+        for (final int duplicateId : duplicateIds)
+        {
+            clientLevel.removeEntity(duplicateId, Entity.RemovalReason.DISCARDED);
+        }
     }
 
     private static void buildCropDrops()
