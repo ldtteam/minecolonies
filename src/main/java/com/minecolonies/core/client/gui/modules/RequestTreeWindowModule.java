@@ -313,6 +313,11 @@ public abstract class RequestTreeWindowModule implements IWindowWithLayoutModule
     private void cancel(@NotNull final Button button)
     {
         final int row = resourceList.getListElementIndexByPane(button);
+        if (getCachedOpenRequests().isEmpty())
+        {
+            return;
+        }
+
         cancel(getCachedOpenRequests().get(row).request());
     }
 
