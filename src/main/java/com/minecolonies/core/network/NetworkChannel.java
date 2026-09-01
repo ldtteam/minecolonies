@@ -120,7 +120,6 @@ public class NetworkChannel
         registerMessage(++idx, PermissionsMessage.View.class, PermissionsMessage.View::new);
         registerMessage(++idx, ColonyViewWorkOrderMessage.class, ColonyViewWorkOrderMessage::new);
         registerMessage(++idx, ColonyViewRemoveWorkOrderMessage.class, ColonyViewRemoveWorkOrderMessage::new);
-        registerMessage(++idx, UpdateChunkCapabilityMessage.class, UpdateChunkCapabilityMessage::new);
         registerMessage(++idx, ColonyViewResearchManagerViewMessage.class, ColonyViewResearchManagerViewMessage::new);
 
         //  Permission Request messages
@@ -214,7 +213,6 @@ public class NetworkChannel
         registerMessage(++idx, CompostParticleMessage.class, CompostParticleMessage::new);
         registerMessage(++idx, ItemParticleEffectMessage.class, ItemParticleEffectMessage::new);
         registerMessage(++idx, LocalizedParticleEffectMessage.class, LocalizedParticleEffectMessage::new);
-        registerMessage(++idx, UpdateChunkRangeCapabilityMessage.class, UpdateChunkRangeCapabilityMessage::new);
         registerMessage(++idx, OpenSuggestionWindowMessage.class, OpenSuggestionWindowMessage::new);
         registerMessage(++idx, UpdateClientWithCompatibilityMessage.class, UpdateClientWithCompatibilityMessage::new);
         registerMessage(++idx, CircleParticleEffectMessage.class, CircleParticleEffectMessage::new);

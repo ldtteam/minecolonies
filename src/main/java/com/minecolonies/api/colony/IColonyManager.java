@@ -3,6 +3,9 @@ package com.minecolonies.api.colony;
 import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
+import com.minecolonies.api.colony.claims.ClaimInfo;
+import com.minecolonies.api.colony.claims.ClaimReason;
+import com.minecolonies.api.colony.claims.UnclaimReason;
 import com.minecolonies.api.compatibility.ICompatibilityManager;
 import com.minecolonies.api.crafting.IRecipeManager;
 import net.minecraft.core.BlockPos;
@@ -11,11 +14,13 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraftforge.event.TickEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 public interface IColonyManager
@@ -130,6 +135,82 @@ public interface IColonyManager
      */
     @NotNull
     List<IColony> getColonies(@NotNull Level w);
+
+    /**
+     * Get the colony that currently owns the given chunk, if any.
+     * <p>
+     * This and the other claim-related methods below are the only way to read or change a colony's claims &mdash; they forward
+     * to the dimension's {@code IColonyManagerCapability}, which is the actual owner of the claim data, so a claim can never be
+     * granted without other colonies getting a say first.
+     *
+     * @param world    the world.
+     * @param chunkPos the chunk position, as {@code ChunkPos.asLong(x, z)}.
+     * @return the owning colony, or null if unclaimed.
+     */
+    @Nullable
+    IColony getOwningColony(@NotNull Level world, long chunkPos);
+
+    /**
+     * Get the colony that currently owns the given chunk, if any. Convenience overload for callers that already have a loaded
+     * chunk in hand.
+     *
+     * @param world the world.
+     * @param chunk the chunk.
+     * @return the owning colony, or null if unclaimed.
+     */
+    @Nullable
+    default IColony getOwningColony(@NotNull final Level world, @NotNull final LevelChunk chunk)
+    {
+        return getOwningColony(world, chunk.getPos().toLong());
+    }
+
+    /**
+     * Attempts to claim a chunk for the given colony, for the given reason. Asks every other known colony in the dimension
+     * whether they already claim it (unless the reason says not to); if none object, the chunk is claimed. Building and
+     * center claims are only requested when a colony actually needs to grow its claimed area (building construction/upgrade,
+     * colony creation) &mdash; never on a tick or chunk-load event.
+     *
+     * @param world       the world.
+     * @param chunkPos    the chunk position, as {@code ChunkPos.asLong(x, z)}.
+     * @param requester   the colony requesting the claim.
+     * @param reason      why the chunk is being claimed, which decides what gets recorded and whether other colonies get a
+     *                    say first.
+     * @return true if the claim was granted.
+     */
+    boolean tryClaimChunkForColony(@NotNull Level world, long chunkPos, @NotNull IColony requester, @NotNull ClaimReason reason);
+
+    /**
+     * Releases a colony's claim on a chunk, for the given reason. A colony never needs permission to release its own claim,
+     * but the change still goes through this method so claim data is never touched except via the manager.
+     *
+     * @param world    the world.
+     * @param chunkPos the chunk position, as {@code ChunkPos.asLong(x, z)}.
+     * @param owner    the colony releasing the claim.
+     * @param reason   why the claim is being released, which decides what gets cleared.
+     */
+    void unclaimChunkForColony(@NotNull Level world, long chunkPos, @NotNull IColony owner, @NotNull UnclaimReason reason);
+
+    /**
+     * Get all chunks currently claimed by the given colony. Server-side only &mdash; on the client, use
+     * {@code IColony.getClaimedChunks()} on a {@code ColonyView} instead, which is populated from synced data.
+     *
+     * @param world  the world.
+     * @param colony the colony.
+     * @return the set of claimed chunk positions, as {@code ChunkPos.asLong(x, z)}.
+     */
+    @NotNull
+    Set<Long> getClaimedChunks(@NotNull Level world, @NotNull IColony colony);
+
+    /**
+     * Get the raw claim record for a chunk, for a specific colony. Read-only debug/reporting access, does not affect ownership.
+     *
+     * @param world    the world.
+     * @param chunkPos the chunk position, as {@code ChunkPos.asLong(x, z)}.
+     * @param colony   the colony to check.
+     * @return the claim record, or null if that colony has no claim on the chunk.
+     */
+    @Nullable
+    ClaimInfo getClaimInfo(@NotNull Level world, long chunkPos, @NotNull IColony colony);
 
     /**
      * Get all colonies in all worlds.

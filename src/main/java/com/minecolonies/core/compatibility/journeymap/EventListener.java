@@ -2,7 +2,6 @@ package com.minecolonies.core.compatibility.journeymap;
 
 import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.colony.IColonyView;
-import com.minecolonies.core.event.ClientChunkUpdatedEvent;
 import com.minecolonies.api.eventbus.events.colony.ColonyViewUpdatedModEvent;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.jobs.registry.IJobRegistry;
@@ -74,21 +73,13 @@ public class EventListener
         }
     }
 
-    @SubscribeEvent
-    public void onColonyChunkDataUpdated(@NotNull final ClientChunkUpdatedEvent event)
-    {
-        final ResourceKey<Level> dimension = event.getChunk().getLevel().dimension();
-
-        ColonyBorderMapping.updateChunk(this.jmap, dimension, event.getChunk());
-    }
-
     public void onColonyViewUpdated(@NotNull final ColonyViewUpdatedModEvent event)
     {
         final IColonyView colony = event.getColony();
         final Set<BlockPos> graves = colony.getGraveManager().getGraves().keySet();
 
         ColonyDeathpoints.updateGraves(this.jmap, colony, graves);
-        ColonyBorderMapping.updateChunksAroundPlayer(this.jmap, colony.getDimension());
+        ColonyBorderMapping.updateColony(this.jmap, colony);
     }
 
     @SubscribeEvent

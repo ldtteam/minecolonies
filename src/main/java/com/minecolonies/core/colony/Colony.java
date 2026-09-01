@@ -115,6 +115,13 @@ public class Colony implements IColony
     private boolean ticketedChunksDirty = true;
 
     /**
+     * Whether this colony's claimed chunks changed since the last time they were sent to subscribers. Set by
+     * {@link #tryClaimChunk(long, BlockPos)}/{@link #unclaimChunk(long, BlockPos)}/{@link #forceClaimChunk(long)}, cleared once
+     * the change has been sent (see {@link #clearClaimsDirty()}).
+     */
+    private boolean claimsDirty = true;
+
+    /**
      * List of chunks that have to be be force loaded.
      */
     private final Set<Long> pendingChunks = new HashSet<>();
@@ -1304,7 +1311,8 @@ public class Colony implements IColony
 
 
         final LevelChunk chunk = w.getChunkAt(pos);
-        return ColonyUtils.getOwningColony(chunk) == this.getID();
+        final IColony owningColony = IColonyManager.getInstance().getOwningColony(w, chunk);
+        return owningColony != null && owningColony.getID() == this.getID();
     }
 
     @Override
@@ -1915,6 +1923,41 @@ public class Colony implements IColony
     public Set<Long> getTicketedChunks()
     {
         return ticketedChunks;
+    }
+
+    @Nullable
+    @Override
+    public Integer getForceLoadTimer()
+    {
+        return forceLoadTimer > 0 ? forceLoadTimer : null;
+    }
+
+    @Override
+    public Set<Long> getClaimedChunks()
+    {
+        return IColonyManager.getInstance().getClaimedChunks(world, this);
+    }
+
+    @Override
+    public void markClaimsDirty()
+    {
+        claimsDirty = true;
+    }
+
+    /**
+     * Whether this colony's claimed chunks changed since the last time they were sent to subscribers.
+     */
+    public boolean isClaimsDirty()
+    {
+        return claimsDirty;
+    }
+
+    /**
+     * Clears the claims-dirty flag after a successful sync to subscribers.
+     */
+    public void clearClaimsDirty()
+    {
+        claimsDirty = false;
     }
 
     @Override
