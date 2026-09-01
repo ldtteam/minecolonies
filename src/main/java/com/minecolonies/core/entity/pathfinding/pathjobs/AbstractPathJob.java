@@ -1388,6 +1388,11 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
             return false;
         }
 
+        if (!pathingOptions.canPassDanger() && PathfindingUtils.isLavaNearby(world, tempWorldPos.set(x, y, z)))
+        {
+            return false;
+        }
+
         if (!block.isAir())
         {
             final VoxelShape shape = block.getCollisionShape(world, tempWorldPos.set(x, y, z));
@@ -1468,8 +1473,9 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
                     return true;
                 }
 
-                if (ShapeUtil.isEmpty(shape) || ShapeUtil.max(shape, Direction.Axis.Y) <= 0.1
-                    && !PathfindingUtils.isLiquid((block)) && (block.getBlock() != Blocks.SNOW || block.getValue(SnowLayerBlock.LAYERS) == 1))
+                if ((ShapeUtil.isEmpty(shape) || ShapeUtil.max(shape, Direction.Axis.Y) <= 0.1)
+                    && !PathfindingUtils.isLiquid(block)
+                    && (block.getBlock() != Blocks.SNOW || block.getValue(SnowLayerBlock.LAYERS) == 1))
                 {
                     final PathType pathType = block.getBlockPathType(world, tempWorldPos.set(x, y, z), entity);
                     if (pathType == null || pathType.getMalus() < 0)
@@ -1497,12 +1503,29 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
     protected boolean isPassable(final int x, final int y, final int z, final boolean head, final MNode parent)
     {
         final BlockState state = cachedBlockLookup.getBlockState(x, y, z);
+        if (!pathingOptions.canPassDanger() && PathfindingUtils.isLavaNearby(world, tempWorldPos.set(x, y, z)))
+        {
+            return false;
+        }
+
         final VoxelShape shape = state.getCollisionShape(world, tempWorldPos.set(x, y, z));
         if (ShapeUtil.isEmpty(shape) || ShapeUtil.max(shape, Direction.Axis.Y) <= 0.1)
         {
-            return !head
-                     || !(state.getBlock() instanceof WoolCarpetBlock || state.getBlock() instanceof FloatingCarpetBlock || state.getBlock() instanceof WaterlilyBlock)
-                     || PathfindingUtils.isLadder(state, pathingOptions);
+            if (head
+                  && (state.getBlock() instanceof WoolCarpetBlock
+                      || state.getBlock() instanceof FloatingCarpetBlock
+                      || state.getBlock() instanceof WaterlilyBlock)
+                  && !PathfindingUtils.isLadder(state, pathingOptions))
+            {
+                return false;
+            }
+
+            if (!state.isAir())
+            {
+                return isPassable(state, x, y, z, parent, head);
+            }
+
+            return true;
         }
         return isPassable(state, x, y, z, parent, head);
     }

@@ -45,6 +45,7 @@ import com.mojang.authlib.GameProfile;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.InteractionHand;
@@ -256,6 +257,31 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
            */
           new AIEventTarget(AIBlockingEventType.AI_BLOCKING, this::isStartingPaused, INVENTORY_FULL, TICKS_SECOND)
         );
+    }
+
+    /**
+     * Debug information for the worker AI, used by the citizen debug window.
+     */
+    public Component getDebugInfo()
+    {
+        final MutableComponent info = Component.literal("Work AI debug:\n");
+        info.append(Component.literal("state=" + getState() + "\n"));
+        info.append(Component.literal("currentWorkingLocation=" + formatDebugPos(currentWorkingLocation) + "\n"));
+        info.append(Component.literal("walkTo=" + formatDebugPos(walkTo) + "\n"));
+        info.append(Component.literal("statusPosition=" + formatDebugPos(worker.getCitizenData().getStatusPosition()) + "\n"));
+        if (building != null)
+        {
+            info.append(Component.literal("workBuilding=" + formatDebugPos(building.getPosition()) + "\n"));
+        }
+        return info;
+    }
+
+    /**
+     * Format a block position for debug output.
+     */
+    protected static String formatDebugPos(@Nullable final BlockPos pos)
+    {
+        return pos == null ? "null" : pos.toShortString();
     }
 
     /**

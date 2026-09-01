@@ -33,6 +33,8 @@ import com.minecolonies.core.entity.ai.workers.util.BuildingProgressStage;
 import com.minecolonies.core.entity.ai.workers.util.BuildingStructureHandler;
 import com.minecolonies.core.tileentities.TileEntityDecorationController;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.InteractionHand;
@@ -187,6 +189,28 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
           new AITarget(COMPLETE_BUILD, this::completeBuild, STANDARD_DELAY),
           new AITarget(PICK_UP, this::pickUpMaterial, 5)
         );
+    }
+
+    @Override
+    public Component getDebugInfo()
+    {
+        final MutableComponent info = Component.empty().append(super.getDebugInfo());
+        info.append(Component.literal("Structure debug:\n"));
+        info.append(Component.literal("limitReached=" + limitReached + "\n"));
+        info.append(Component.literal("workFrom=" + formatDebugPos(workFrom) + "\n"));
+        info.append(Component.literal("prevBlockPosition=" + formatDebugPos(prevBlockPosition) + "\n"));
+        info.append(Component.literal("blockToMine=" + formatDebugPos(blockToMine) + "\n"));
+        info.append(Component.literal("gotoPos=" + formatDebugPos(gotoPos) + "\n"));
+        info.append(Component.literal("currentBuildingPosition=" + formatDebugPos(getCurrentBuildingPosition()) + "\n"));
+        if (structurePlacer != null && structurePlacer.getB() != null)
+        {
+            info.append(Component.literal("stage=" + String.valueOf(structurePlacer.getB().getStage()) + "\n"));
+        }
+
+        final Tuple<BlockPos, BuildingProgressStage> progress = getProgressPos();
+        info.append(Component.literal("progressPos=" + (progress == null ? "null" : formatDebugPos(progress.getA())) + "\n"));
+        info.append(Component.literal("progressStage=" + (progress == null ? "null" : String.valueOf(progress.getB())) + "\n"));
+        return info;
     }
 
     /**
