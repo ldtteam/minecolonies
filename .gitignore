@@ -33,6 +33,7 @@
 .cache
 /libs
 gradle\.properties
+.devcontainer
 
 # Exclude all Mac DS_Store files
 /**/.DS_Store
