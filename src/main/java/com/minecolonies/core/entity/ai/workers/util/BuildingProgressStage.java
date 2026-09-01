@@ -14,4 +14,5 @@ public enum BuildingProgressStage
     REMOVE,
     REMOVE_WATER,
     WEAK_SOLID,
+    CLEAR_BOTTOM_UP,
 }

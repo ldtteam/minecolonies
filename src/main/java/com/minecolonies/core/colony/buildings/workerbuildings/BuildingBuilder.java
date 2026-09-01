@@ -4,6 +4,7 @@ import com.ldtteam.blockui.views.BOWindow;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
 import com.minecolonies.api.colony.workorders.IBuilderWorkOrder;
 import com.minecolonies.api.colony.workorders.IServerWorkOrder;
@@ -41,12 +42,15 @@ public class BuildingBuilder extends AbstractBuildingStructureBuilder
      */
     public static final ISettingKey<StringSetting> MODE = new SettingKey<>(StringSetting.class, new ResourceLocation(Constants.MOD_ID, "mode"));
     public static final ISettingKey<BuilderModeSetting> BUILDING_MODE = new SettingKey<>(BuilderModeSetting.class, new ResourceLocation(Constants.MOD_ID, "buildmode"));
+    public static final ISettingKey<StringSetting> CLEAR_MODE = new SettingKey<>(StringSetting.class, new ResourceLocation(Constants.MOD_ID, "clearmode"));
 
     /**
      * Both setting options.
      */
     public static final String MANUAL_SETTING = "com.minecolonies.core.builder.setting.manual";
     public static final String AUTO_SETTING = "com.minecolonies.core.builder.setting.automatic";
+    public static final String CLEAR_TOP_DOWN_SETTING = "com.minecolonies.core.builder.setting.clear.topdown";
+    public static final String CLEAR_BOTTOM_UP_SETTING = "com.minecolonies.core.builder.setting.clear.bottomup";
 
     /**
      * The job description.
@@ -136,6 +140,17 @@ public class BuildingBuilder extends AbstractBuildingStructureBuilder
     public boolean getManualMode()
     {
         return getSetting(MODE).getValue().equals(MANUAL_SETTING);
+    }
+
+    /**
+     * Check whether the builder should clear new build sites bottom-up first.
+     *
+     * @param building the builder building.
+     * @return true when bottom-up clearing is enabled.
+     */
+    public static boolean shouldClearFromBottomUp(@NotNull final IBuilding building)
+    {
+        return CLEAR_BOTTOM_UP_SETTING.equals(building.getSettingValueOrDefault(CLEAR_MODE, CLEAR_TOP_DOWN_SETTING));
     }
 
     /**
