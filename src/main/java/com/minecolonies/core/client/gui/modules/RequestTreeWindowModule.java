@@ -5,6 +5,7 @@ import com.ldtteam.blockui.PaneBuilders;
 import com.ldtteam.blockui.controls.*;
 import com.ldtteam.blockui.views.ScrollingList;
 import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
@@ -274,7 +275,12 @@ public abstract class RequestTreeWindowModule implements IWindowWithLayoutModule
      */
     public final boolean isFulfillable(final IRequest<?> request)
     {
-        if (!(this instanceof IRequestTreeSupportsFulfill) || !(request.getRequest() instanceof IDeliverable deliverable))
+        if (!(this instanceof IRequestTreeSupportsFulfill requestTreeSupportsFulfill) || !(request.getRequest() instanceof IDeliverable deliverable))
+        {
+            return false;
+        }
+
+        if (request.hasParent() && !request.getRequester().getLocation().equals(requestTreeSupportsFulfill.getLocation()))
         {
             return false;
         }
@@ -397,6 +403,10 @@ public abstract class RequestTreeWindowModule implements IWindowWithLayoutModule
     public interface IRequestTreeSupportsFulfill
     {
         void onFulfill(@NotNull final IRequest<?> request);
+
+        IToken<?> getRequesterId();
+
+        @NotNull ILocation getLocation();
     }
 
     /**

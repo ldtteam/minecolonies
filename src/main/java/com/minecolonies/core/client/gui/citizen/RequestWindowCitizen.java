@@ -2,6 +2,7 @@ package com.minecolonies.core.client.gui.citizen;
 
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
+import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
@@ -104,6 +105,19 @@ public class RequestWindowCitizen extends AbstractWindowCitizen
             this.buildingView = citizenDataView.getColony().getClientBuildingManager().getBuilding(citizenDataView.getWorkBuilding());
             this.isCreative = Minecraft.getInstance().player.isCreative();
             this.inventory = Minecraft.getInstance().player.getInventory();
+        }
+
+        @Override
+        public IToken<?> getRequesterId()
+        {
+            return buildingView.getId();
+        }
+
+        @NotNull
+        @Override
+        public ILocation getLocation()
+        {
+            return buildingView.getLocation();
         }
 
         @Override

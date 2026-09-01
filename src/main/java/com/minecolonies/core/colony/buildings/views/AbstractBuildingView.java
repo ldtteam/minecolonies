@@ -21,6 +21,7 @@ import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.core.client.gui.WindowHutMinPlaceholder;
 import com.minecolonies.core.client.gui.huts.WindowHutWorkerModulePlaceholder;
 import com.minecolonies.core.colony.buildings.moduleviews.WorkerBuildingModuleView;
+import com.minecolonies.core.colony.requestsystem.locations.StaticLocation;
 import com.minecolonies.core.network.messages.server.colony.OpenInventoryMessage;
 import com.minecolonies.core.network.messages.server.colony.building.HutRenameMessage;
 import it.unimi.dsi.fastutil.ints.Int2ObjectLinkedOpenHashMap;
@@ -154,7 +155,12 @@ public abstract class AbstractBuildingView implements IBuildingView
     /**
      * Prestige value of this building.
      */
-    private int prestige;
+    private          int       prestige;
+
+    /**
+     * Requester location of this.
+     */
+    private @NotNull ILocation iLocation;
 
     /**
      * Creates a building view.
@@ -383,6 +389,7 @@ public abstract class AbstractBuildingView implements IBuildingView
     @Override
     public void deserialize(@NotNull final RegistryFriendlyByteBuf buf)
     {
+        this.iLocation = new StaticLocation(getPosition(), colony.getDimension());
         buildingLevel = buf.readInt();
         buildingMaxLevel = buf.readInt();
         buildingDmPrio = buf.readInt();
@@ -598,7 +605,7 @@ public abstract class AbstractBuildingView implements IBuildingView
     @Override
     public ILocation getLocation()
     {
-        return null;
+        return this.iLocation;
     }
 
     @Override
