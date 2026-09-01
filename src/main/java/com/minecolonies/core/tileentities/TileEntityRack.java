@@ -281,6 +281,9 @@ public class TileEntityRack extends AbstractTileEntityRack implements IMateriall
         final BlockState state = level.getBlockState(worldPosition);
         level.sendBlockUpdated(worldPosition, state, state, 0x03);
         invalidateCap();
+        // Without this the enlarged rack is never written back, so the extra slots are
+        // lost on reload while the warehouse still counts the storage upgrade.
+        setChanged();
     }
 
     @Override
