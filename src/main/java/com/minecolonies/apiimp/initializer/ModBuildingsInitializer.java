@@ -170,6 +170,7 @@ public final class ModBuildingsInitializer
           .setBuildingViewProducer(() -> EmptyView::new)
           .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.STABLE_ID))
           .addBuildingModuleProducer(CAVALRY_STABLE_WORK)
+          .addBuildingModuleProducer(BED)
           .addBuildingModuleProducer(STABLEMASTER_WORK)
           .addBuildingModuleProducer(STABLEMASTER_HERDING)
           .addBuildingModuleProducer(GUARD_ENTITY_LIST)

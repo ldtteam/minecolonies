@@ -14,11 +14,13 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.managers.interfaces.IAnimalDataView;
 import com.minecolonies.api.colony.managers.interfaces.IManagedAnimal;
 import com.minecolonies.api.entity.ModEntities;
+import com.minecolonies.api.research.util.ResearchConstants;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.DamageSourceKeys;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.LookHandler;
 import com.minecolonies.api.util.constant.CitizenConstants;
+import com.minecolonies.api.util.constant.GuardConstants;
 import com.minecolonies.api.util.constant.NbtTagConstants;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingStable;
 import com.minecolonies.core.colony.jobs.guard.JobCavalry;
@@ -27,7 +29,9 @@ import com.minecolonies.core.entity.ai.cavalry.ReturnToStableGoal;
 import com.minecolonies.core.entity.citizen.EntityCitizen;
 import com.minecolonies.core.entity.mobs.AnimalColonyHandler;
 import com.minecolonies.core.entity.mobs.IAnimalColonyHandler;
+import com.minecolonies.core.entity.other.ICitizenJobMount;
 import com.minecolonies.core.entity.pathfinding.PathPointExtended;
+import com.minecolonies.core.entity.pathfinding.PathingOptions;
 import com.minecolonies.core.entity.pathfinding.navigation.MinecoloniesAdvancedPathNavigate;
 
 import net.minecraft.core.BlockPos;
@@ -71,7 +75,7 @@ import net.minecraft.world.level.pathfinder.Node;
  * Cavalry Horse Entity class for Minecolonies.
  * Extends the vanilla Horse entity with custom behavior for cavalry units.
  */
-public class CavalryHorseEntity extends Horse implements IManagedAnimal<CavalryHorseEntity>
+public class CavalryHorseEntity extends Horse implements IManagedAnimal<CavalryHorseEntity>, ICitizenJobMount
 {
     public static final EntityDataAccessor<Integer>  DATA_COLONY_ID         = SynchedEntityData.defineId(CavalryHorseEntity.class, EntityDataSerializers.INT);
     public static final EntityDataAccessor<Integer>  DATA_MANAGED_ANIMAL_ID = SynchedEntityData.defineId(CavalryHorseEntity.class, EntityDataSerializers.INT);
@@ -146,6 +150,20 @@ public class CavalryHorseEntity extends Horse implements IManagedAnimal<CavalryH
         super(type, level);
         this.setMaxUpStep(1.1F);
         this.animalColonyHandler = new AnimalColonyHandler(this);
+    }
+
+    @Override
+    public void configureMountedPathing(final PathingOptions options)
+    {
+        options.setEnterGates(true);
+        options.setEnterDoors(false);
+        options.setTurnPenalty(GuardConstants.CAVALRY_CORNER_PENALTY);
+    }
+
+    @Override
+    public boolean hadHorizontalCollision()
+    {
+        return hadHorizontalCollission();
     }
 
     /**
@@ -650,8 +668,14 @@ public class CavalryHorseEntity extends Horse implements IManagedAnimal<CavalryH
         AttributeInstance speedAttr = vanilla.getAttribute(Attributes.MOVEMENT_SPEED);
         AttributeInstance jumpAttr = vanilla.getAttribute(Attributes.JUMP_STRENGTH);
 
-        // TODO: Create research that improves the capability of CavalryHorses
-        double maxHealth = healthAttr != null ? healthAttr.getBaseValue() * 1.25 : 30.0D;
+        final double mountHealthBonus = colony.getResearchManager()
+            .getResearchEffects()
+            .getEffectStrength(ResearchConstants.MOUNT_HEALTH);
+
+        final double maxHealth = healthAttr != null
+            ? healthAttr.getBaseValue() * 1.25D * (1.0D + mountHealthBonus)
+            : 30.0D * (1.0D + mountHealthBonus);
+
         double moveSpeed = speedAttr != null ? speedAttr.getBaseValue() * 1.25 : 0.25D;
         double jumpStrength = jumpAttr != null ? 0.7D : 0.7D;
 
@@ -668,10 +692,6 @@ public class CavalryHorseEntity extends Horse implements IManagedAnimal<CavalryH
         // Convert to CavalryHorseEntity
         CavalryHorseEntity cav = vanilla.convertTo(ModEntities.CAVALRY_HORSE, true);
         if (cav == null) return null;
-
-        IAnimalData animalData = colony.getAnimalManager().createAndRegisterAnimalData(cav);
-        cav.setAnimalData(animalData);
-        cav.setColonyId(colony.getID());
 
         // Re-apply attributes & health
         AttributeInstance cavHealthAttr = cav.getAttribute(Attributes.MAX_HEALTH);
@@ -718,6 +738,14 @@ public class CavalryHorseEntity extends Horse implements IManagedAnimal<CavalryH
             cav.setLeashedTo(leashHolder, true);
         }
 
+        IAnimalData animalData = colony.getAnimalManager().createAndRegisterAnimalData(cav);
+        cav.setAnimalData(animalData);
+        cav.setColonyId(colony.getID());
+
+        // Newly trained mounts start in an unready state, and must be readied.
+        animalData.setCombatCooldown((float)maxHealth);
+        animalData.markDirty();
+
         return cav;
     }
 
@@ -753,7 +781,6 @@ public class CavalryHorseEntity extends Horse implements IManagedAnimal<CavalryH
 
         if (damageSource.is(DamageTypeTags.IS_EXPLOSION) && damageSource.getEntity() instanceof Creeper) 
         {
-            // TODO: Introduce research to improve explosion damage mitigation.
             damageAmount *= 0.30f;
         }
 
@@ -762,10 +789,21 @@ public class CavalryHorseEntity extends Horse implements IManagedAnimal<CavalryH
             damageAmount *= 0.0f;
         }
 
-        // TODO: Create research that provides combat cooldown mitigation
-        animalData.setCombatCooldown(animalData.getCombatCooldown() + (damageAmount * cooldownImpact));
-        animalData.markDirty();
+        final float mountArmorBonus = (float) animalColonyHandler.getColony().getResearchManager()
+            .getResearchEffects()
+            .getEffectStrength(ResearchConstants.MOUNT_ARMOR);
 
+        if (mountArmorBonus > 0.0f)
+        {
+            damageAmount = damageAmount * (1.0f - mountArmorBonus);
+        }
+
+        if (animalData != null)
+        {
+            animalData.setCombatCooldown(animalData.getCombatCooldown() + (damageAmount * cooldownImpact));
+            animalData.markDirty();
+        }
+        
         return super.hurt(damageSource, damageAmount);
     }
 

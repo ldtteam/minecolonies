@@ -1,10 +1,7 @@
 package com.minecolonies.core.entity.ai.workers.production.herders;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.IAnimalData;
-import com.minecolonies.api.colony.requestsystem.request.IRequest;
-import com.minecolonies.api.colony.requestsystem.requestable.Stack;
 import com.minecolonies.api.colony.requestsystem.requestable.StackList;
 import com.minecolonies.api.entity.ai.JobStatus;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
@@ -467,8 +464,7 @@ public class EntityAIWorkStablemaster extends AbstractEntityAIHerder<JobStablema
             {   
                 float combatCooldownBefore = horse.getAnimalData().getCombatCooldown();
 
-                // TODO: Reasearch to influence readiness recovery rate?
-                if (stackToUse.getItem() == Items.SADDLE)
+                if (stackToUse.getItem() == Items.LEATHER_HORSE_ARMOR)
                 {
                     horse.getAnimalData().setCombatCooldown(0);
                 }

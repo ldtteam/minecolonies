@@ -33,6 +33,7 @@ import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.api.inventory.container.ContainerCitizenInventory;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.items.ModTags;
+import com.minecolonies.api.research.util.ResearchConstants;
 import com.minecolonies.api.sounds.EventType;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.MessageUtils.MessagePriority;
@@ -58,7 +59,7 @@ import com.minecolonies.core.entity.ai.workers.AbstractEntityAIBasic;
 import com.minecolonies.core.entity.ai.workers.CitizenAI;
 import com.minecolonies.core.entity.ai.workers.guard.AbstractEntityAIGuard;
 import com.minecolonies.core.entity.citizen.citizenhandlers.*;
-import com.minecolonies.core.entity.other.cavalry.CavalryHorseEntity;
+import com.minecolonies.core.entity.other.ICitizenJobMount;
 import com.minecolonies.core.entity.pathfinding.navigation.EntityNavigationUtils;
 import com.minecolonies.core.entity.pathfinding.navigation.MovementHandler;
 import com.minecolonies.core.event.EventHandler;
@@ -1367,7 +1368,8 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
         // For cavalry, allocate some of the damage to the horse.
         if (citizenJobHandler.getColonyJob() instanceof JobCavalry cav && citizenData != null)
         {
-            if (this.getVehicle() instanceof CavalryHorseEntity horse) 
+            final Entity mount = this.getVehicle();
+            if (mount instanceof ICitizenJobMount)
             {
                 if (damageSource.is(DamageTypeTags.IS_PROJECTILE))
                 {
@@ -1378,7 +1380,17 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
                 float horseSplit = cav.getMountDamageSplit() * damageInc;
                 damageInc = damageInc - horseSplit;
 
-                horse.hurt(damageSource, horseSplit);
+                // Apply mount armor damage mitigation.
+                final float mountArmorBonus = (float) citizenColonyHandler.getColonyOrRegister().getResearchManager()
+                    .getResearchEffects()
+                    .getEffectStrength(ResearchConstants.MOUNT_ARMOR);
+
+                if (mountArmorBonus > 0.0f)
+                {
+                    horseSplit = horseSplit * (1.0f - mountArmorBonus);
+                }
+
+                mount.hurt(damageSource, horseSplit);
             }
         }
 
