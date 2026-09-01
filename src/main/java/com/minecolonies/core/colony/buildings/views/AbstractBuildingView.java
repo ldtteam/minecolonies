@@ -172,6 +172,7 @@ public abstract class AbstractBuildingView implements IBuildingView
     {
         colony = c;
         location = new BlockPos(l);
+        this.iLocation = new StaticLocation(getPosition(), colony.getDimension());
     }
 
     /**
@@ -389,7 +390,6 @@ public abstract class AbstractBuildingView implements IBuildingView
     @Override
     public void deserialize(@NotNull final RegistryFriendlyByteBuf buf)
     {
-        this.iLocation = new StaticLocation(getPosition(), colony.getDimension());
         buildingLevel = buf.readInt();
         buildingMaxLevel = buf.readInt();
         buildingDmPrio = buf.readInt();
