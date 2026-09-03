@@ -1,5 +1,6 @@
 package com.minecolonies.core.entity.other.cavalry;
 
+import java.util.HashSet;
 import java.util.UUID;
 import javax.annotation.Nonnull;
 
@@ -59,6 +60,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.LadderBlock;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.BreedGoal;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
@@ -71,6 +73,9 @@ import net.minecraft.world.entity.ai.goal.WrappedGoal;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.level.pathfinder.Path;
 import net.minecraft.world.level.pathfinder.Node;
+
+import static com.minecolonies.api.util.constant.GuardConstants.CAVALRY_RANGED_DAMAGE_VULNERABILITY;
+
 /**
  * Cavalry Horse Entity class for Minecolonies.
  * Extends the vanilla Horse entity with custom behavior for cavalry units.
@@ -100,6 +105,11 @@ public class CavalryHorseEntity extends Horse implements IManagedAnimal<CavalryH
     private int logCooldown = 0;
 
     public static final float COMBAT_READINESS_THRESHOLD = .66f;
+
+    /**
+     * Attribute modifier used to apply the colony's mount health research to this horse.
+     */
+    private static final String MOUNT_HEALTH_RESEARCH_MODIFIER = "minecolonies.mount_health_research";
 
     /**
      * The animal colony handler.
@@ -668,13 +678,9 @@ public class CavalryHorseEntity extends Horse implements IManagedAnimal<CavalryH
         AttributeInstance speedAttr = vanilla.getAttribute(Attributes.MOVEMENT_SPEED);
         AttributeInstance jumpAttr = vanilla.getAttribute(Attributes.JUMP_STRENGTH);
 
-        final double mountHealthBonus = colony.getResearchManager()
-            .getResearchEffects()
-            .getEffectStrength(ResearchConstants.MOUNT_HEALTH);
-
         final double maxHealth = healthAttr != null
-            ? healthAttr.getBaseValue() * 1.25D * (1.0D + mountHealthBonus)
-            : 30.0D * (1.0D + mountHealthBonus);
+            ? healthAttr.getBaseValue() * 1.25D
+            : 30.0D;
 
         double moveSpeed = speedAttr != null ? speedAttr.getBaseValue() * 1.25 : 0.25D;
         double jumpStrength = jumpAttr != null ? 0.7D : 0.7D;
@@ -750,6 +756,80 @@ public class CavalryHorseEntity extends Horse implements IManagedAnimal<CavalryH
     }
 
     /**
+     * Checks whether this horse's mount health modifier differs from its colony's current research bonus.
+     *
+     * @return true when the Stablemaster needs to apply or update the mount health training
+     */
+    public boolean needsHealthTraining()
+    {
+        final IColony colony = animalColonyHandler.getColony();
+        final AttributeInstance healthAttribute = getAttribute(Attributes.MAX_HEALTH);
+
+        if (colony == null || healthAttribute == null)
+        {
+            return false;
+        }
+
+        final double expectedBonus = colony.getResearchManager()
+            .getResearchEffects()
+            .getEffectStrength(ResearchConstants.MOUNT_HEALTH);
+
+        for (final AttributeModifier modifier : healthAttribute.getModifiers())
+        {
+            if (MOUNT_HEALTH_RESEARCH_MODIFIER.equals(modifier.getName()))
+            {
+                return Double.compare(modifier.getAmount(), expectedBonus) != 0;
+            }
+        }
+
+        return expectedBonus > 0.0D;
+    }
+
+    /**
+     * Replaces this horse's mount health modifier with the bonus granted by its colony's current research.
+     * The horse retains its current health so that any newly gained capacity is restored through normal feeding.
+     *
+     * @return true when the modifier was changed, false when no update could be applied or was necessary
+     */
+    public boolean applyHealthTraining()
+    {
+        final IColony colony = animalColonyHandler.getColony();
+        final AttributeInstance healthAttribute = getAttribute(Attributes.MAX_HEALTH);
+
+        if (colony == null || healthAttribute == null || !needsHealthTraining())
+        {
+            return false;
+        }
+
+        final double expectedBonus = colony.getResearchManager()
+            .getResearchEffects()
+            .getEffectStrength(ResearchConstants.MOUNT_HEALTH);
+
+        for (final AttributeModifier modifier : new HashSet<>(healthAttribute.getModifiers()))
+        {
+            if (MOUNT_HEALTH_RESEARCH_MODIFIER.equals(modifier.getName()))
+            {
+                healthAttribute.removeModifier(modifier);
+            }
+        }
+
+        if (expectedBonus > 0.0D)
+        {
+            healthAttribute.addPermanentModifier(new AttributeModifier(
+                MOUNT_HEALTH_RESEARCH_MODIFIER,
+                expectedBonus,
+                AttributeModifier.Operation.MULTIPLY_BASE));
+        }
+
+        if (getHealth() > getMaxHealth())
+        {
+            setHealth(getMaxHealth());
+        }
+
+        return true;
+    }
+
+    /**
      * Whether this entity should be saved to disk.
      * <p>As CavalryHorse entities are always saved to disk, this method always returns true.
      */
@@ -787,6 +867,12 @@ public class CavalryHorseEntity extends Horse implements IManagedAnimal<CavalryH
         if (damageSource.is(DamageSourceKeys.STUCK_DAMAGE))
         {
             damageAmount *= 0.0f;
+        }
+
+        if (damageSource.is(DamageTypeTags.IS_PROJECTILE))
+        {
+            // Horses take more damage from ranged attacks
+            damageAmount *= CAVALRY_RANGED_DAMAGE_VULNERABILITY;
         }
 
         final float mountArmorBonus = (float) animalColonyHandler.getColony().getResearchManager()

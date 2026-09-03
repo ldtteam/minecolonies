@@ -360,6 +360,19 @@ public class EntityAIWorkStablemaster extends AbstractEntityAIHerder<JobStablema
         // ... and then get it ready for combat!
         if (horseToGetReady != null)
         {
+            if (horseToGetReady.needsHealthTraining())
+            {
+                if (horseToGetReady.applyHealthTraining())
+                {
+                    effectsAtHorse(horseToGetReady);
+                    worker.getCitizenExperienceHandler().addExperience(XP_PER_ACTION);
+                    incrementActionsDone();
+                }
+
+                horseToGetReady = null;
+                return DECIDE;
+            }
+
             boolean didWork = false;
 
             if (horseToGetReady.getHealth() < horseToGetReady.getMaxHealth())
@@ -396,7 +409,7 @@ public class EntityAIWorkStablemaster extends AbstractEntityAIHerder<JobStablema
         {
             if (a instanceof CavalryHorseEntity cav)
             {
-                if (cav.getCombatCooldown() > 0 || cav.getHealth() < cav.getMaxHealth())
+                if (cav.needsHealthTraining() || cav.getCombatCooldown() > 0 || cav.getHealth() < cav.getMaxHealth())
                 {
                     horseToGetReady = cav;
                     return HERDER_READY_FOR_COMBAT;

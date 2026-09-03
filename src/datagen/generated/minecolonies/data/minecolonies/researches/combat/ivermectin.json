@@ -25,6 +25,11 @@
       "type": "minecolonies:building",
       "building": "minecolonies:stable",
       "level": 2
+    },
+    {
+      "type": "minecolonies:building",
+      "building": "minecolonies:hospital",
+      "level": 2
     }
   ],
   "researchLevel": 3,

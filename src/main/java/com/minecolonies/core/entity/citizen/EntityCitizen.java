@@ -33,7 +33,6 @@ import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.api.inventory.container.ContainerCitizenInventory;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.items.ModTags;
-import com.minecolonies.api.research.util.ResearchConstants;
 import com.minecolonies.api.sounds.EventType;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.MessageUtils.MessagePriority;
@@ -129,7 +128,6 @@ import static com.minecolonies.api.util.constant.StatisticsConstants.DEATH;
 import static com.minecolonies.api.util.constant.Suppression.INCREMENT_AND_DECREMENT_OPERATORS_SHOULD_NOT_BE_USED_IN_A_METHOD_CALL_OR_MIXED_WITH_OTHER_OPERATORS_IN_AN_EXPRESSION;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.core.entity.ai.minimal.EntityAIInteractToggleAble.*;
-import static com.minecolonies.api.util.constant.GuardConstants.CAVALRY_RANGED_DAMAGE_VULNERABILITY;
 
 /**
  * The Class used to represent the citizen entities.
@@ -1371,24 +1369,8 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
             final Entity mount = this.getVehicle();
             if (mount instanceof ICitizenJobMount)
             {
-                if (damageSource.is(DamageTypeTags.IS_PROJECTILE))
-                {
-                    // Horses take more damage from fire, so increase the split.
-                    damageInc *= CAVALRY_RANGED_DAMAGE_VULNERABILITY;
-                }
-
                 float horseSplit = cav.getMountDamageSplit() * damageInc;
                 damageInc = damageInc - horseSplit;
-
-                // Apply mount armor damage mitigation.
-                final float mountArmorBonus = (float) citizenColonyHandler.getColonyOrRegister().getResearchManager()
-                    .getResearchEffects()
-                    .getEffectStrength(ResearchConstants.MOUNT_ARMOR);
-
-                if (mountArmorBonus > 0.0f)
-                {
-                    horseSplit = horseSplit * (1.0f - mountArmorBonus);
-                }
 
                 mount.hurt(damageSource, horseSplit);
             }
