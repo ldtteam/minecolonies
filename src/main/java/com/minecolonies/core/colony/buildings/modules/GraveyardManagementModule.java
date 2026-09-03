@@ -73,11 +73,6 @@ public class GraveyardManagementModule extends AbstractBuildingModule implements
     private final List<String> restingCitizen = new ArrayList<>();
 
     /**
-     * Indicates whether the grave positions were loaded from the module data (as opposed to the legacy building data).
-     */
-    private boolean gravePositionsLoadedFromModuleNbt;
-
-    /**
      * The set of registered grave plot positions and their facing.
      */
     private final Set<Tuple<BlockPos, Direction>> gravePositions = new HashSet<>();
@@ -110,8 +105,7 @@ public class GraveyardManagementModule extends AbstractBuildingModule implements
         else lastGraveData = null;
 
         gravePositions.clear();
-        gravePositionsLoadedFromModuleNbt = compound.contains(TAG_VISUAL_GRAVES, Tag.TAG_LIST);
-        if (gravePositionsLoadedFromModuleNbt)
+        if (compound.contains(TAG_VISUAL_GRAVES, Tag.TAG_LIST))
         {
             readGravePositions(compound);
         }
@@ -177,13 +171,12 @@ public class GraveyardManagementModule extends AbstractBuildingModule implements
 
     /**
      * Migrates burial plot positions stored on the graveyard building before ownership moved to this module.
-     * Module data always takes precedence when both formats are present.
      *
      * @param compound the legacy building data.
      */
     public void migrateLegacyGravePositions(final CompoundTag compound)
     {
-        if (!gravePositionsLoadedFromModuleNbt && compound.contains(TAG_VISUAL_GRAVES, Tag.TAG_LIST))
+        if (compound.contains(TAG_VISUAL_GRAVES, Tag.TAG_LIST))
         {
             readGravePositions(compound);
             markDirty();
