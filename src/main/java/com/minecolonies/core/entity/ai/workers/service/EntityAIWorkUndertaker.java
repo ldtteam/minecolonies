@@ -115,6 +115,15 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
     {
         worker.getCitizenData().setVisibleStatus(VisibleCitizenStatus.WORKING);
 
+        final GraveyardManagementModule module = building.getModule(GraveyardManagementModule.class);
+
+        // If we had a pending burial to oversee that was interrupted by a sleep cycle or break, resume it the next time we start working.
+        if (module !=null && module.getLastGraveData() != null)
+        {
+            worker.getCitizenData().setJobStatus(JobStatus.WORKING);
+            return BURY_CITIZEN;
+        }
+
         @Nullable final BlockPos currentGrave = building.getGraveToWorkOn();
         if (currentGrave != null)
         {
@@ -441,7 +450,7 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
 
         if (burialPos == null || !world.getBlockState(burialPos.getA()).canBeReplaced())
         {
-            burialPos = building.getRandomFreeVisualGravePos();
+            burialPos = module.getRandomFreeVisualGravePos();
         }
 
         if (burialPos == null || burialPos.getA() == null)
@@ -467,7 +476,12 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
         effortCounter = 0;
         unequip();
 
-        module.buryCitizenHere(burialPos, worker);
+        if (!module.buryCitizenHere(burialPos, worker))
+        {
+            burialPos = null;
+            return getState();
+        }
+
         //Disabled until Mourning AI update: worker.getCitizenColonyHandler().getColony().setNeedToMourn(false, buildingGraveyard.getLastGraveData().getCitizenName());
         AdvancementUtils.TriggerAdvancementPlayersForColony(worker.getCitizenColonyHandler().getColonyOrRegister(), playerMP -> AdvancementTriggers.CITIZEN_BURY.trigger(playerMP));
 

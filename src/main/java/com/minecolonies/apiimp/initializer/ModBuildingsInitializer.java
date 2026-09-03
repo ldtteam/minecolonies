@@ -605,6 +605,7 @@ public final class ModBuildingsInitializer
           .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.GRAVEYARD_ID))
           .addBuildingModuleProducer(GRAVEYARD_WORK)
           .addBuildingModuleProducer(GRAVEYARD)
+          .addBuildingModuleProducer(MIN_STOCK)
           .addBuildingModuleProducer(STATS_MODULE)
           .createBuildingEntry());
 
