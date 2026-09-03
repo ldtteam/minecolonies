@@ -379,7 +379,13 @@ public abstract class AbstractWorkOrder implements IBuilderWorkOrder
     @Override
     public final void setPriority(int priority)
     {
+        if (this.priority == priority)
+        {
+            return;
+        }
+
         this.priority = priority;
+        changed = true;
     }
 
     @Override
