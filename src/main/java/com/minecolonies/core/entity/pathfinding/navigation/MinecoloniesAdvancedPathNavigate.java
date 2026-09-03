@@ -10,8 +10,7 @@ import com.minecolonies.api.entity.pathfinding.IMinecoloniesNavigator;
 import com.minecolonies.api.entity.pathfinding.IStuckHandler;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.ColonyConstants;
-import com.minecolonies.api.util.constant.GuardConstants;
-import com.minecolonies.core.entity.other.cavalry.CavalryHorseEntity;
+import com.minecolonies.core.entity.other.ICitizenJobMount;
 import com.minecolonies.core.entity.pathfinding.*;
 import com.minecolonies.core.entity.pathfinding.pathjobs.*;
 import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
@@ -359,11 +358,9 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
             final PathingOptions mountedOptions = new PathingOptions();
             mountedOptions.importFrom(vehicleNavigation.getPathingOptions());
 
-            if (riddenMob instanceof CavalryHorseEntity)
+            if (riddenMob instanceof ICitizenJobMount mount)
             {
-                mountedOptions.setEnterGates(true);
-                mountedOptions.setEnterDoors(false);
-                mountedOptions.setTurnPenalty(GuardConstants.CAVALRY_CORNER_PENALTY);
+                mount.configureMountedPathing(mountedOptions);
             }
 
             return mountedOptions;
@@ -739,7 +736,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
         {
             final Entity entity = ourEntity.vehicle;
             ourEntity.stopRiding();
-            if (!(ourEntity.vehicle instanceof CavalryHorseEntity))
+            if (!(entity instanceof ICitizenJobMount))
             {
                 entity.remove(Entity.RemovalReason.DISCARDED);
             }
@@ -1057,7 +1054,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
                 return;
             }
 
-            if (!pEx.isOnRails() && ourEntity.vehicle != null && !(ourEntity.vehicle instanceof CavalryHorseEntity))
+            if (!pEx.isOnRails() && ourEntity.vehicle != null && !(ourEntity.vehicle instanceof ICitizenJobMount))
             {
                 final Entity entity = ourEntity.vehicle;
                 ourEntity.stopRiding();
@@ -1181,7 +1178,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
             pathResult.cancel();
             pathResult.setStatus(PathFindingStatus.CANCELLED);
             pathResult = null;
-            if ((ourEntity.getVehicle() != null) && !(ourEntity.getVehicle() instanceof CavalryHorseEntity))
+            if ((ourEntity.getVehicle() != null) && !(ourEntity.getVehicle() instanceof ICitizenJobMount))
             {
                 final Entity entity = ourEntity.getVehicle();
                 ourEntity.stopRiding();

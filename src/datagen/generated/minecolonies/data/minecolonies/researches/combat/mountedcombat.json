@@ -1,0 +1,25 @@
+{
+  "branch": "minecolonies:combat",
+  "costs": [
+    {
+      "type": "minecolonies:item_simple",
+      "item": "minecraft:saddle",
+      "quantity": 1
+    },
+    {
+      "type": "minecolonies:item_simple",
+      "item": "minecraft:lead",
+      "quantity": 1
+    }
+  ],
+  "effects": [
+    {
+      "id": "minecolonies:effects/blockhutstable",
+      "level": 1
+    }
+  ],
+  "icon": "minecolonies:blockhutstable",
+  "parentResearch": "minecolonies:combat/tactictraining",
+  "researchLevel": 2,
+  "subtitle": "com.minecolonies.research.combat.mountedcombat.subtitle"
+}
