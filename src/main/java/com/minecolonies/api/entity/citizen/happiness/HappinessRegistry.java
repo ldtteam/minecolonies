@@ -10,6 +10,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.RegistryObject;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -69,33 +70,35 @@ public class HappinessRegistry
      * @param persist  whether we're reading from persisted data or from networking.
      * @return the modifier instance.
      */
+    @Nullable
     public static IHappinessModifier loadFrom(@NotNull final CompoundTag compound, final boolean persist)
     {
-        final ResourceLocation modifierType = compound.contains(NbtTagConstants.TAG_MODIFIER_TYPE)
-                                                ? new ResourceLocation(compound.getString(NbtTagConstants.TAG_MODIFIER_TYPE))
-                                                : new ResourceLocation(Constants.MOD_ID, "null");
-        final IHappinessModifier modifier = getHappinessTypeRegistry().getValue(modifierType).create();
-
-        if (modifier != null)
+        final ResourceLocation modifierType = ResourceLocation.tryParse(compound.getString(NbtTagConstants.TAG_MODIFIER_TYPE));
+        if (modifierType == null || !getHappinessTypeRegistry().containsKey(modifierType))
         {
-            try
+            Log.getLogger().warn("Unknown Happiness Modifier type '{}', its state cannot be restored.", modifierType);
+            return null;
+        }
+
+        try
+        {
+            final HappinessFactorTypeEntry entry = getHappinessTypeRegistry().getValue(modifierType);
+            final IHappinessModifier modifier = entry == null ? null : entry.create();
+            if (modifier == null)
             {
-                modifier.read(compound, persist);
-            }
-            catch (final RuntimeException ex)
-            {
-                Log.getLogger()
-                  .error(String.format("A Happiness Modifier %s has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
-                    modifierType), ex);
+                Log.getLogger().warn("Happiness Modifier type '{}' has no usable factory, its state cannot be restored.", modifierType);
                 return null;
             }
-        }
-        else
-        {
-            Log.getLogger().warn(String.format("Unknown Happiness Modifier type '%s' or missing constructor of proper format.", modifierType));
-        }
 
-        return modifier;
+            modifier.read(compound, persist);
+            return modifier;
+        }
+        catch (final RuntimeException ex)
+        {
+            Log.getLogger().error("A Happiness Modifier of type '{}' has thrown an exception during loading, its state cannot be restored. Report this to the mod author.",
+              modifierType, ex);
+            return null;
+        }
     }
 
     /**
@@ -126,25 +129,35 @@ public class HappinessRegistry
         }
     }
 
-    public static ResourceLocation STATIC_MODIFIER      = new ResourceLocation(Constants.MOD_ID, "static");
-    public static ResourceLocation EXPIRATION_MODIFIER  = new ResourceLocation(Constants.MOD_ID, "expiration");
-    public static ResourceLocation TIME_PERIOD_MODIFIER = new ResourceLocation(Constants.MOD_ID, "time");
+    /**
+     * Registry ID for happiness modifier types.
+     */
+    public static final ResourceLocation HAPPINESS_FACTOR_TYPE_REGISTRY_ID = new ResourceLocation(Constants.MOD_ID, "happinessfactortypes");
+
+    /**
+     * Registry ID for happiness functions.
+     */
+    public static final ResourceLocation HAPPINESS_FUNCTION_REGISTRY_ID = new ResourceLocation(Constants.MOD_ID, "happinessfunction");
+
+    public static final ResourceLocation STATIC_MODIFIER      = new ResourceLocation(Constants.MOD_ID, "static");
+    public static final ResourceLocation EXPIRATION_MODIFIER  = new ResourceLocation(Constants.MOD_ID, "expiration");
+    public static final ResourceLocation TIME_PERIOD_MODIFIER = new ResourceLocation(Constants.MOD_ID, "time");
 
     public static RegistryObject<HappinessFactorTypeEntry> staticHappinessModifier;
     public static RegistryObject<HappinessFactorTypeEntry> expirationBasedHappinessModifier;
     public static RegistryObject<HappinessFactorTypeEntry> timeBasedHappinessModifier;
 
-    public static ResourceLocation SCHOOL_FUNCTION        = new ResourceLocation(Constants.MOD_ID, "school");
-    public static ResourceLocation SECURITY_FUNCTION      = new ResourceLocation(Constants.MOD_ID, "security");
-    public static ResourceLocation SOCIAL_FUNCTION        = new ResourceLocation(Constants.MOD_ID, "social");
-    public static ResourceLocation MYSTICAL_SITE_FUNCTION = new ResourceLocation(Constants.MOD_ID, "mystical");
+    public static final ResourceLocation SCHOOL_FUNCTION        = new ResourceLocation(Constants.MOD_ID, "school");
+    public static final ResourceLocation SECURITY_FUNCTION      = new ResourceLocation(Constants.MOD_ID, "security");
+    public static final ResourceLocation SOCIAL_FUNCTION        = new ResourceLocation(Constants.MOD_ID, "social");
+    public static final ResourceLocation MYSTICAL_SITE_FUNCTION = new ResourceLocation(Constants.MOD_ID, "mystical");
 
-    public static ResourceLocation HOUSING_FUNCTION      = new ResourceLocation(Constants.MOD_ID, "housing");
-    public static ResourceLocation UNEMPLOYMENT_FUNCTION = new ResourceLocation(Constants.MOD_ID, "unemployment");
-    public static ResourceLocation HEALTH_FUNCTION       = new ResourceLocation(Constants.MOD_ID, "health");
-    public static ResourceLocation IDLEATJOB_FUNCTION    = new ResourceLocation(Constants.MOD_ID, "idleatjob");
-    public static ResourceLocation SLEPTTONIGHT_FUNCTION = new ResourceLocation(Constants.MOD_ID, "slepttonight");
-    public static ResourceLocation FOOD_FUNCTION         = new ResourceLocation(Constants.MOD_ID, "food");
+    public static final ResourceLocation HOUSING_FUNCTION      = new ResourceLocation(Constants.MOD_ID, "housing");
+    public static final ResourceLocation UNEMPLOYMENT_FUNCTION = new ResourceLocation(Constants.MOD_ID, "unemployment");
+    public static final ResourceLocation HEALTH_FUNCTION       = new ResourceLocation(Constants.MOD_ID, "health");
+    public static final ResourceLocation IDLEATJOB_FUNCTION    = new ResourceLocation(Constants.MOD_ID, "idleatjob");
+    public static final ResourceLocation SLEPTTONIGHT_FUNCTION = new ResourceLocation(Constants.MOD_ID, "slepttonight");
+    public static final ResourceLocation FOOD_FUNCTION         = new ResourceLocation(Constants.MOD_ID, "food");
 
     public static RegistryObject<HappinessFunctionEntry> schoolFunction;
     public static RegistryObject<HappinessFunctionEntry> securityFunction;

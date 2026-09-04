@@ -313,13 +313,13 @@ public class CommonMinecoloniesAPIImpl implements IMinecoloniesAPI
                        .setIDRange(0, Integer.MAX_VALUE - 1), (b) -> questDialogueAnswerRegistry = b);
 
         event.create(new RegistryBuilder<HappinessRegistry.HappinessFactorTypeEntry>()
-                       .setName(new ResourceLocation(Constants.MOD_ID, "happinessfactortypes"))
+                       .setName(HappinessRegistry.HAPPINESS_FACTOR_TYPE_REGISTRY_ID)
                        .setDefaultKey(new ResourceLocation(Constants.MOD_ID, "null"))
                        .disableSaving().allowModification()
                        .setIDRange(0, Integer.MAX_VALUE - 1), (b) -> happinessFactorTypeRegistry = b);
 
         event.create(new RegistryBuilder<HappinessRegistry.HappinessFunctionEntry>()
-                       .setName(new ResourceLocation(Constants.MOD_ID, "happinessfunction"))
+                       .setName(HappinessRegistry.HAPPINESS_FUNCTION_REGISTRY_ID)
                        .setDefaultKey(new ResourceLocation(Constants.MOD_ID, "null"))
                        .disableSaving().allowModification()
                        .setIDRange(0, Integer.MAX_VALUE - 1), (b) -> happinessFunctionRegistry = b);
