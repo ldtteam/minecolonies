@@ -61,28 +61,6 @@ public final class HappinessConstants
     public static final String HADGREATFOOD     = "greatfood";
 
     /**
-     * Legacy list of MineColonies happiness modifier instance IDs.
-     *
-     * @deprecated Modifier reconstruction is validated through the happiness factor type registry instead.
-     */
-    @Deprecated
-    public static final Set<String> VALID_HAPPINESS_MODIFIERS = ImmutableSet.of(HOMELESSNESS,
-      UNEMPLOYMENT,
-      HEALTH,
-      IDLEATJOB,
-      SCHOOL,
-      MYSTICAL_SITE,
-      SECURITY,
-      SOCIAL,
-      DAMAGE,
-      DEATH,
-      RAIDWITHOUTDEATH,
-      SLEPTTONIGHT,
-      QUEST,
-      FOOD,
-      HADGREATFOOD);
-
-    /**
      * Private constructor to hide implicit public one.
      */
     private HappinessConstants()
