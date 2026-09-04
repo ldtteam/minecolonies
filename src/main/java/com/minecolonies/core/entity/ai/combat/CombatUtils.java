@@ -1,5 +1,9 @@
 package com.minecolonies.core.entity.ai.combat;
 
+import net.minecraft.world.entity.EntityTypes;
+
+import net.minecraft.world.entity.EntitySpawnReason;
+
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.entity.ModEntities;
@@ -16,7 +20,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.projectile.AbstractArrow;
+import net.minecraft.world.entity.projectile.arrow.AbstractArrow;
 import net.minecraft.world.item.BowItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -45,7 +49,7 @@ public class CombatUtils
      */
     public static AbstractArrow createArrowForShooter(final LivingEntity shooter)
     {
-        AbstractArrow arrowEntity = ModEntities.MC_NORMAL_ARROW.create(shooter.level());
+        AbstractArrow arrowEntity = ModEntities.MC_NORMAL_ARROW.create(shooter.level(), EntitySpawnReason.EVENT);
 
         final ItemStack rangedWeapon = shooter.getItemInHand(InteractionHand.MAIN_HAND);
         final Item rangedWeaponItem = rangedWeapon.getItem();
@@ -59,11 +63,11 @@ public class CombatUtils
         }
         else if (rangedWeaponItem instanceof ItemSpear)
         {
-            arrowEntity = ModEntities.SPEAR.create(shooter.level());
+            arrowEntity = ModEntities.SPEAR.create(shooter.level(), EntitySpawnReason.EVENT);
         }
         else if (rangedWeaponItem instanceof TridentItem)
         {
-            arrowEntity = EntityType.TRIDENT.create(shooter.level());
+            arrowEntity = EntityTypes.TRIDENT.create(shooter.level(), EntitySpawnReason.EVENT);
         }
 
         arrowEntity.setOwner(shooter);
@@ -86,16 +90,9 @@ public class CombatUtils
         final double zVector = target.getZ() - arrow.getZ();
         final double distance = Mth.sqrt((float) (xVector * xVector + zVector * zVector));
         final double dist3d = Mth.sqrt((float) (yVector * yVector + xVector * xVector + zVector * zVector));
-        final double distanceMultiplier = arrow.shotFromCrossbow() ? 0.05 : AIM_SLIGHTLY_HIGHER_MULTIPLIER;
+        final double distanceMultiplier = AIM_SLIGHTLY_HIGHER_MULTIPLIER;
         arrow.shoot(xVector, yVector + distance * distanceMultiplier, zVector, (float) (ARROW_SPEED * 1 + (dist3d / SPEED_FOR_DIST)), (float) hitChance);
-        if (arrow.shotFromCrossbow())
-        {
-            target.playSound(SoundEvents.CROSSBOW_SHOOT, 1.0F, 1.0F / (target.level().getRandom().nextFloat() * 0.4F + 0.8F));
-        }
-        else
-        {
-            target.playSound(SoundEvents.ARROW_SHOOT, 1.0F, 1.0F / (target.level().getRandom().nextFloat() * 0.4F + 1.2F));
-        }
+        target.playSound(SoundEvents.ARROW_SHOOT, 1.0F, 1.0F / (target.level().getRandom().nextFloat() * 0.4F + 1.2F));
         target.level().addFreshEntity(arrow);
     }
 

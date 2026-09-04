@@ -53,7 +53,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeColor;
@@ -282,7 +282,7 @@ public final class ColonyView implements IColonyView
     {
         //  General Attributes
         buf.writeUtf(colony.getName());
-        buf.writeUtf(colony.getDimension().location().toString());
+        buf.writeUtf(colony.getDimension().identifier().toString());
         buf.writeBlockPos(colony.getCenter());
         //  Citizenry
         buf.writeInt(colony.getCitizenManager().getMaxCitizens());
@@ -664,7 +664,7 @@ public final class ColonyView implements IColonyView
 
         //  General Attributes
         name = buf.readUtf(32767);
-        dimensionId = ResourceKey.create(Registries.DIMENSION, ResourceLocation.parse(buf.readUtf(32767)));
+        dimensionId = ResourceKey.create(Registries.DIMENSION, Identifier.parse(buf.readUtf(32767)));
         center = buf.readBlockPos();
         //  Citizenry
         citizenCount = buf.readInt();
@@ -684,7 +684,7 @@ public final class ColonyView implements IColonyView
         final int blockListSize = buf.readInt();
         for (int i = 0; i < blockListSize; i++)
         {
-            freeBlocks.add(BuiltInRegistries.BLOCK.get(ResourceLocation.parse((buf.readUtf(32767)))));
+            freeBlocks.add(BuiltInRegistries.BLOCK.getValue(Identifier.parse((buf.readUtf(32767)))));
         }
 
         final int posListSize = buf.readInt();
@@ -924,6 +924,10 @@ public final class ColonyView implements IColonyView
     public void handleColonyViewRemoveWorkOrderMessage(final int workOrderId)
     {
         workOrders.remove(workOrderId);
+        // A completed/removed work order must disappear from the client
+        // blueprint renderer immediately. Otherwise its cached preview can
+        // remain visible until the player moves far enough to rebuild it.
+        ColonyBlueprintRenderer.invalidateCache();
     }
 
     @Override

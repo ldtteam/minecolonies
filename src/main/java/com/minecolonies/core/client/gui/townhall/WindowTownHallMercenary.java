@@ -11,7 +11,7 @@ import com.minecolonies.core.colony.CitizenData;
 import com.minecolonies.core.colony.ColonyView;
 import com.minecolonies.core.network.messages.server.colony.HireMercenaryMessage;
 import net.minecraft.client.Minecraft;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvents;
 import org.jetbrains.annotations.NotNull;
 
@@ -34,7 +34,7 @@ public class WindowTownHallMercenary extends BOWindow implements ButtonHandler
      */
     public WindowTownHallMercenary(final IColonyView c)
     {
-        super(new ResourceLocation(Constants.MOD_ID, "gui/townhall/windowtownhallmercenary.xml"));
+        super(Identifier.fromNamespaceAndPath(Constants.MOD_ID, "gui/townhall/windowtownhallmercenary.xml"));
         this.colony = c;
 
         int amountOfMercenaries = colony.getCitizenCount();
@@ -48,7 +48,7 @@ public class WindowTownHallMercenary extends BOWindow implements ButtonHandler
         {
 
             final Image newImage = new Image();
-            newImage.setImage(new ResourceLocation(Constants.MOD_ID, "textures/entity_icon/citizen/default/citizenmale3" + CitizenData.SUFFIXES.get(ColonyConstants.rand.nextInt(CitizenData.SUFFIXES.size())) + ".png"), false);
+            newImage.setImage(Identifier.fromNamespaceAndPath(Constants.MOD_ID, "textures/entity_icon/citizen/default/citizenmale3" + CitizenData.SUFFIXES.get(ColonyConstants.rand.nextInt(CitizenData.SUFFIXES.size())) + ".png"), false);
             newImage.setSize(10, 10);
             newImage.setPosition(startX, startY);
             this.addChild(newImage);

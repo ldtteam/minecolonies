@@ -15,7 +15,7 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedHashMap;
@@ -56,15 +56,15 @@ public class SettingsModule extends AbstractBuildingModule implements IPersisten
     @Override
     public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound)
     {
-        final CompoundTag settingsCompound = compound.contains("settings") ? compound.getCompound("settings") : compound;
-        final ListTag list = settingsCompound.getList("settingslist", Tag.TAG_COMPOUND);
+        final CompoundTag settingsCompound = compound.contains("settings") ? compound.getCompoundOrEmpty("settings") : compound;
+        final ListTag list = settingsCompound.getListOrEmpty("settingslist");
         for (int i = 0; i < list.size(); i++)
         {
-            final CompoundTag entryCompound = list.getCompound(i);
-            final ResourceLocation key = ResourceLocation.parse(entryCompound.getString("key"));
+            final CompoundTag entryCompound = list.getCompoundOrEmpty(i);
+            final Identifier key = Identifier.parse(entryCompound.getStringOr("key", ""));
             try
             {
-                final ISetting setting = StandardFactoryController.getInstance().deserializeTag(provider, entryCompound.getCompound("value"));
+                final ISetting setting = StandardFactoryController.getInstance().deserializeTag(provider, entryCompound.getCompoundOrEmpty("value"));
                 final ISettingKey<?> settingsKey = new SettingKey<>(setting.getClass(), key);
                 if (settings.containsKey(settingsKey))
                 {
@@ -99,7 +99,7 @@ public class SettingsModule extends AbstractBuildingModule implements IPersisten
         buf.writeInt(settings.size());
         for (final Map.Entry<ISettingKey<?>, ISetting<?>> setting : settings.entrySet())
         {
-            buf.writeResourceLocation(setting.getKey().getUniqueId());
+            buf.writeIdentifier(setting.getKey().getUniqueId());
             StandardFactoryController.getInstance().serialize(buf, setting.getValue());
         }
     }

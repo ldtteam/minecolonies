@@ -62,8 +62,8 @@ public class PickupRequestResolverFactory implements IRequestResolverFactory<Pic
     @Override
     public PickupRequestResolver deserialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final CompoundTag nbt)
     {
-        final IToken<?> token = controller.deserializeTag(provider, nbt.getCompound(NBT_TOKEN));
-        final ILocation location = controller.deserializeTag(provider, nbt.getCompound(NBT_LOCATION));
+        final IToken<?> token = controller.deserializeTag(provider, nbt.getCompoundOrEmpty(NBT_TOKEN));
+        final ILocation location = controller.deserializeTag(provider, nbt.getCompoundOrEmpty(NBT_LOCATION));
 
         return new PickupRequestResolver(location, token);
     }

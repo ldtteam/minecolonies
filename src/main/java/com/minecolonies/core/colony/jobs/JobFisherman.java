@@ -5,14 +5,14 @@ import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.StatsUtil;
-import com.minecolonies.api.util.Tuple;
+import com.ldtteam.structurize.api.util.Tuple;
 import com.minecolonies.core.entity.ai.workers.production.agriculture.EntityAIWorkFisherman;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.item.ItemStack;
 
@@ -59,7 +59,7 @@ public class JobFisherman extends AbstractJob<EntityAIWorkFisherman, JobFisherma
      */
     @NotNull
     @Override
-    public ResourceLocation getModel()
+    public Identifier getModel()
     {
         return ModModelTypes.FISHERMAN_ID;
     }
@@ -103,10 +103,10 @@ public class JobFisherman extends AbstractJob<EntityAIWorkFisherman, JobFisherma
 
         if (compound.contains(TAG_PONDS))
         {
-            final ListTag listOfPonds = compound.getList(TAG_PONDS, Tag.TAG_COMPOUND);
+            final ListTag listOfPonds = compound.getListOrEmpty(TAG_PONDS);
             for (int i = 0; i < listOfPonds.size(); i++)
             {
-                ponds.add(new Tuple<>(BlockPosUtil.read(listOfPonds.getCompound(i), TAG_WATER_POND), BlockPosUtil.read(listOfPonds.getCompound(i), TAG_PARENT_POND)));
+                ponds.add(new Tuple<>(BlockPosUtil.read(listOfPonds.getCompoundOrEmpty(i), TAG_WATER_POND), BlockPosUtil.read(listOfPonds.getCompoundOrEmpty(i), TAG_PARENT_POND)));
             }
         }
     }

@@ -4,7 +4,7 @@ import com.google.gson.JsonObject;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.quests.IQuestInstance;
 import com.minecolonies.api.quests.IQuestRewardTemplate;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Player;
 
 import static com.minecolonies.api.quests.QuestParseConstant.DETAILS_KEY;
@@ -18,13 +18,13 @@ public class ResearchCompleteRewardTemplate implements IQuestRewardTemplate
     /**
      * The research to complete
      */
-    private final ResourceLocation research;
+    private final Identifier research;
 
     /**
      * Setup the research reward.
      * @param research the research.
      */
-    public ResearchCompleteRewardTemplate(final ResourceLocation research)
+    public ResearchCompleteRewardTemplate(final Identifier research)
     {
         this.research = research;
     }
@@ -37,7 +37,7 @@ public class ResearchCompleteRewardTemplate implements IQuestRewardTemplate
     public static IQuestRewardTemplate createReward(final JsonObject jsonObject)
     {
         JsonObject details = jsonObject.getAsJsonObject(DETAILS_KEY);
-        final ResourceLocation research = ResourceLocation.parse(details.get(ID_KEY).getAsString());
+        final Identifier research = Identifier.parse(details.get(ID_KEY).getAsString());
         return new ResearchCompleteRewardTemplate(research);
     }
     @Override

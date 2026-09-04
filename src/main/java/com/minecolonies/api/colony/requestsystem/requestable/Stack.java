@@ -190,14 +190,14 @@ public class Stack implements IConcreteDeliverable
     public static CompoundTag serialize(@NotNull final HolderLookup.Provider provider, final IFactoryController controller, final Stack input)
     {
         final CompoundTag compound = new CompoundTag();
-        compound.put(NBT_STACK, input.theStack.saveOptional(provider));
+        compound.put(NBT_STACK, ItemStackUtils.serializeOptional(input.theStack, provider));
         compound.putBoolean(NBT_MATCHMETA, input.matchDamage);
         compound.putBoolean(NBT_MATCHNBT, input.matchNBT);
         compound.putBoolean(NBT_BUILDING_RES, input.canBeResolvedByBuilding);
 
         if (!ItemStackUtils.isEmpty(input.result))
         {
-            compound.put(NBT_RESULT, input.result.saveOptional(provider));
+            compound.put(NBT_RESULT, ItemStackUtils.serializeOptional(input.result, provider));
         }
         compound.putInt(NBT_COUNT, input.getCount());
         compound.putInt(NBT_MINCOUNT, input.getMinimumCount());
@@ -214,19 +214,19 @@ public class Stack implements IConcreteDeliverable
      */
     public static Stack deserialize(@NotNull final HolderLookup.Provider provider, final IFactoryController controller, final CompoundTag compound)
     {
-        final ItemStack stack = ItemStackUtils.deserializeFromNBT(compound.getCompound(NBT_STACK), provider);
-        final boolean matchMeta = compound.getBoolean(NBT_MATCHMETA);
-        final boolean matchNBT = compound.getBoolean(NBT_MATCHNBT);
-        final boolean canBeResolved = compound.contains(NBT_BUILDING_RES) ? compound.getBoolean(NBT_BUILDING_RES) : true;
+        final ItemStack stack = ItemStackUtils.deserializeFromNBT(compound.getCompoundOrEmpty(NBT_STACK), provider);
+        final boolean matchMeta = compound.getBooleanOr(NBT_MATCHMETA, false);
+        final boolean matchNBT = compound.getBooleanOr(NBT_MATCHNBT, false);
+        final boolean canBeResolved = compound.contains(NBT_BUILDING_RES) ? compound.getBooleanOr(NBT_BUILDING_RES, false) : true;
 
-        final ItemStack result = compound.contains(NBT_RESULT) ? ItemStackUtils.deserializeFromNBT(compound.getCompound(NBT_RESULT), provider) : ItemStackUtils.EMPTY;
+        final ItemStack result = compound.contains(NBT_RESULT) ? ItemStackUtils.deserializeFromNBT(compound.getCompoundOrEmpty(NBT_RESULT), provider) : ItemStackUtils.EMPTY;
 
-        int count = compound.getInt("size");
+        int count = compound.getIntOr("size", 0);
         int minCount = count;
         if (compound.contains(NBT_COUNT))
         {
-            count = compound.getInt(NBT_COUNT);
-            minCount = compound.getInt(NBT_MINCOUNT);
+            count = compound.getIntOr(NBT_COUNT, 0);
+            minCount = compound.getIntOr(NBT_MINCOUNT, 0);
         }
 
         if (stack.isEmpty())

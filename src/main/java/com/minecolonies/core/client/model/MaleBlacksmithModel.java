@@ -4,14 +4,14 @@
 package com.minecolonies.core.client.model;
 
 import com.minecolonies.api.client.render.modeltype.CitizenModel;
-import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.client.render.modeltype.CitizenRenderState;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.client.model.HumanoidModel;
 import org.jetbrains.annotations.NotNull;
 
-public class MaleBlacksmithModel extends CitizenModel<AbstractEntityCitizen>
+public class MaleBlacksmithModel extends CitizenModel<CitizenRenderState>
 {
 
     public MaleBlacksmithModel(final ModelPart part)
@@ -70,10 +70,10 @@ public class MaleBlacksmithModel extends CitizenModel<AbstractEntityCitizen>
     }
 
     @Override
-    public void setupAnim(@NotNull final AbstractEntityCitizen entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
+    public void setupAnim(@NotNull final CitizenRenderState state)
     {
-        super.setupAnim(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
-        final boolean working = isWorking(entity);
+        super.setupAnim(state);
+        final boolean working = isWorking(state);
         body.getChild("apronBody").visible = working;
         leftLeg.getChild("apronLeftLeg").visible = working;
         rightLeg.getChild("apronRightLeg").visible = working;

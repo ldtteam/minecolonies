@@ -15,7 +15,7 @@ import com.minecolonies.core.datalistener.DiseasesListener;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.RandomSource;
 import org.jetbrains.annotations.Nullable;
 
@@ -199,17 +199,17 @@ public class CitizenDiseaseHandler implements ICitizenDiseaseHandler
     @Override
     public void read(final CompoundTag compound)
     {
-        if (!compound.contains(TAG_DISEASE, Tag.TAG_COMPOUND))
+        if (!compound.contains(TAG_DISEASE))
         {
             return;
         }
 
-        CompoundTag diseaseTag = compound.getCompound(TAG_DISEASE);
+        CompoundTag diseaseTag = compound.getCompoundOrEmpty(TAG_DISEASE);
         if (diseaseTag.contains(TAG_DISEASE_ID))
         {
-            this.disease = DiseasesListener.getDisease(ResourceLocation.parse(diseaseTag.getString(TAG_DISEASE_ID)));
+            this.disease = DiseasesListener.getDisease(Identifier.parse(diseaseTag.getStringOr(TAG_DISEASE_ID, "")));
         }
-        this.immunityTicks = diseaseTag.getInt(TAG_IMMUNITY);
+        this.immunityTicks = diseaseTag.getIntOr(TAG_IMMUNITY, 0);
     }
 
     @Override

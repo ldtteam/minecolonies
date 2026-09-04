@@ -20,7 +20,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.*;
@@ -71,19 +71,18 @@ public class WindowSchematicAnalyzer extends AbstractWindowSkeleton
 
     public WindowSchematicAnalyzer()
     {
-        super(new ResourceLocation(Constants.MOD_ID, "gui/analyzer/windowanalyze.xml"));
+        super(Identifier.fromNamespaceAndPath(Constants.MOD_ID, "gui/analyzer/windowanalyze.xml"));
         registerButton(BUTTON_CANCEL, b -> close());
         registerButton(BUTTON_SELECT_SCHEMATIC,
             b -> new WindowExtendedBuildTool(BlockPos.containing(Minecraft.getInstance().player.position().add(Minecraft.getInstance().player.getLookAngle().multiply(10, 10, 10))),
                 1,
                 (window, blueprint) -> {
-                    Minecraft.getInstance().setScreen(this.getScreen());
+                    Minecraft.getInstance().setScreenAndShow(this.getScreen());
                     final SchemAnalyzerUtil.SchematicAnalyzationResult result = analyzationResults.computeIfAbsent(blueprint, bl -> SchemAnalyzerUtil.analyzeSchematic(bl, mc.level.registryAccess()));
                     sortAnalyzationResults();
                     switchSelectionTo(getBoxForSide(b), result);
                 },
-                (a) -> true,
-                mc.level.registryAccess()).open());
+                (a) -> true).open());
 
         registerButton(BUTTON_SELECTION_LEFT, b -> {
             switchSelection(b, false);
@@ -391,7 +390,7 @@ public class WindowSchematicAnalyzer extends AbstractWindowSkeleton
     @Override
     public void onClosed()
     {
-        RenderingCache.removeBox("analyzer");
+        RenderingCache.removeBlueprint("analyzer");
         super.onClosed();
     }
 }

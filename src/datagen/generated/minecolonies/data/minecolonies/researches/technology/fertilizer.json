@@ -3,7 +3,7 @@
   "costs": [
     {
       "count": 512,
-      "item": "minecraft:wheat_seeds"
+      "ingredient": "minecraft:wheat_seeds"
     }
   ],
   "effects": [

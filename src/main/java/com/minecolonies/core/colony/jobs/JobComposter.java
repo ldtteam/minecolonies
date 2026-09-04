@@ -1,7 +1,7 @@
 package com.minecolonies.core.colony.jobs;
 
 import com.minecolonies.core.colony.buildings.modules.BuildingModules;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import com.minecolonies.api.client.render.modeltype.ModModelTypes;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.core.colony.buildings.modules.WorkerBuildingModule;
@@ -28,7 +28,7 @@ public class JobComposter extends AbstractJob<EntityAIWorkComposter, JobComposte
      */
     @NotNull
     @Override
-    public ResourceLocation getModel()
+    public Identifier getModel()
     {
         return ModModelTypes.COMPOSTER_ID;
     }

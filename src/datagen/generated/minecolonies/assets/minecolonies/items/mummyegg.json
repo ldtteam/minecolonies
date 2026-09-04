@@ -1,0 +1,16 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "minecolonies:item/mummyegg",
+    "tints": [
+      {
+        "type": "minecraft:constant",
+        "value": 16776960
+      },
+      {
+        "type": "minecraft:constant",
+        "value": 16777215
+      }
+    ]
+  }
+}

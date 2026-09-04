@@ -30,10 +30,10 @@ public class WarehouseRequestQueueModule extends AbstractBuildingModule implemen
     @Override
     public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound)
     {
-        final ListTag requestTagList = compound.getList(TAG_REQUEST, Tag.TAG_COMPOUND);
+        final ListTag requestTagList = compound.getListOrEmpty(TAG_REQUEST);
         for (int i = 0; i < requestTagList.size(); ++i)
         {
-            requestList.add(StandardFactoryController.getInstance().deserializeTag(provider, requestTagList.getCompound(i)));
+            requestList.add(StandardFactoryController.getInstance().deserializeTag(provider, requestTagList.getCompoundOrEmpty(i)));
         }
     }
 

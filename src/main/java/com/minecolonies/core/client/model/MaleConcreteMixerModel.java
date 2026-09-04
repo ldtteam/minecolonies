@@ -4,13 +4,13 @@
 package com.minecolonies.core.client.model;
 
 import com.minecolonies.api.client.render.modeltype.CitizenModel;
-import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.client.render.modeltype.CitizenRenderState;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.client.model.HumanoidModel;
 
-public class MaleConcreteMixerModel extends CitizenModel<AbstractEntityCitizen>
+public class MaleConcreteMixerModel extends CitizenModel<CitizenRenderState>
 {
     public MaleConcreteMixerModel(final ModelPart part)
     {

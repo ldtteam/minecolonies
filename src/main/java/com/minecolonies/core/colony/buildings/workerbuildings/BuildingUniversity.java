@@ -76,7 +76,7 @@ public class BuildingUniversity extends AbstractBuilding
     public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound)
     {
         super.deserializeNBT(provider, compound);
-        final ListTag furnaceTagList = compound.getList(TAG_BOOKCASES, Tag.TAG_INT_ARRAY);
+        final ListTag furnaceTagList = compound.getListOrEmpty(TAG_BOOKCASES);
         for (int i = 0; i < furnaceTagList.size(); ++i)
         {
             bookCases.add(NBTUtils.readBlockPos(furnaceTagList.get(i)));

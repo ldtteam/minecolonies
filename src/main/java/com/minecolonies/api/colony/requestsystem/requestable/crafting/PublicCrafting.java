@@ -57,7 +57,7 @@ public class PublicCrafting extends AbstractCrafting
     public static CompoundTag serialize(@NotNull final HolderLookup.Provider provider, final IFactoryController controller, final PublicCrafting input)
     {
         final CompoundTag compound = new CompoundTag();
-        compound.put(NBT_STACK, input.getStack().saveOptional(provider));
+        compound.put(NBT_STACK, ItemStackUtils.serializeOptional(input.getStack(), provider));
         compound.putInt(NBT_COUNT, input.getCount());
         final CompoundTag tokenCompound = StandardFactoryController.getInstance().serializeTag(provider, input.getRecipeID());
         compound.put(NBT_TOKEN, tokenCompound);
@@ -73,12 +73,12 @@ public class PublicCrafting extends AbstractCrafting
      */
     public static PublicCrafting deserialize(@NotNull final HolderLookup.Provider provider, final IFactoryController controller, final CompoundTag compound)
     {
-        final ItemStack stack = ItemStackUtils.deserializeFromNBT(compound.getCompound(NBT_STACK), provider);
-        final int count = compound.getInt(NBT_COUNT);
+        final ItemStack stack = ItemStackUtils.deserializeFromNBT(compound.getCompoundOrEmpty(NBT_STACK), provider);
+        final int count = compound.getIntOr(NBT_COUNT, 0);
         IToken<?> token = null;
         if (compound.contains(NBT_TOKEN))
         {
-            token = StandardFactoryController.getInstance().deserializeTag(provider, compound.getCompound(NBT_TOKEN));
+            token = StandardFactoryController.getInstance().deserializeTag(provider, compound.getCompoundOrEmpty(NBT_TOKEN));
         }
         return new PublicCrafting(stack, count, token);
     }

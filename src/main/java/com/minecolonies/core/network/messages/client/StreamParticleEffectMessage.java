@@ -93,7 +93,7 @@ public class StreamParticleEffectMessage extends AbstractClientPlayMessage
 
         this.stage = buf.readInt();
         this.maxStage = buf.readInt();
-        this.type = (SimpleParticleType) BuiltInRegistries.PARTICLE_TYPE.get(buf.readResourceLocation());
+        this.type = (SimpleParticleType) BuiltInRegistries.PARTICLE_TYPE.getValue(buf.readIdentifier());
     }
 
     @Override
@@ -109,7 +109,7 @@ public class StreamParticleEffectMessage extends AbstractClientPlayMessage
 
         buf.writeInt(this.stage);
         buf.writeInt(this.maxStage);
-        buf.writeResourceLocation(BuiltInRegistries.PARTICLE_TYPE.getKey(this.type));
+        buf.writeIdentifier(BuiltInRegistries.PARTICLE_TYPE.getKey(this.type));
     }
 
     @Override

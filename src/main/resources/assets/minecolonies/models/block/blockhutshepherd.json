@@ -10,7 +10,7 @@
 		"first": {
       "render_type": "solid",
 			"textures": {
-				"5": "item/shears",
+				"5": "minecolonies:block_item/shears",
 				"7": "block/black_wool",
 				"8": "block/gray_wool",
 				"9": "block/green_wool",
@@ -19,7 +19,7 @@
 				"12": "block/hay_block_side",
 				"13": "block/hay_block_top",
 				"14": "entity/chest/normal",
-				"15": "item/bucket",
+				"15": "minecolonies:block_item/bucket",
 				"16": "block/oak_planks",
 				"17": "minecolonies:block/liquid/liq1"
 			},
@@ -526,7 +526,7 @@
 		"second": {
       "render_type": "cutout",
 			"textures": {
-				"5": "item/shears"
+				"5": "minecolonies:block_item/shears"
 			},
 			"elements": [
 				{

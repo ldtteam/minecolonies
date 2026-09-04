@@ -10,7 +10,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
-import net.minecraft.world.item.UseAnim;
+import net.minecraft.world.item.ItemUseAnimation;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.Level;
@@ -20,7 +20,6 @@ import static com.minecolonies.api.util.constant.TranslationConstants.*;
 
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.InteractionResultHolder;
 
 /**
  * Scroll items base class, does colony registering/checks.
@@ -47,15 +46,15 @@ public abstract class AbstractItemScroll extends AbstractItemMinecolonies
     }
 
     @Override
-    public UseAnim getUseAnimation(ItemStack itemStack)
+    public ItemUseAnimation getUseAnimation(ItemStack itemStack)
     {
-        return UseAnim.BOW;
+        return ItemUseAnimation.BOW;
     }
 
     @Override
     public ItemStack finishUsingItem(ItemStack itemStack, Level world, LivingEntity entityLiving)
     {
-        if (!(entityLiving instanceof ServerPlayer) || world.isClientSide)
+        if (!(entityLiving instanceof ServerPlayer) || world.isClientSide())
         {
             return itemStack;
         }
@@ -70,7 +69,7 @@ public abstract class AbstractItemScroll extends AbstractItemMinecolonies
         final IColony colony = getColony(itemStack);
         if (colony == null)
         {
-            player.displayClientMessage(Component.translatableEscape(MESSAGE_SCROLL_NEED_COLONY), true);
+            player.sendOverlayMessage(Component.translatableEscape(MESSAGE_SCROLL_NEED_COLONY));
             return itemStack;
         }
 
@@ -94,13 +93,13 @@ public abstract class AbstractItemScroll extends AbstractItemMinecolonies
     protected abstract ItemStack onItemUseSuccess(final ItemStack itemStack, final Level world, final ServerPlayer player);
 
     @Override
-    public InteractionResultHolder<ItemStack> use(Level world, Player player, InteractionHand hand)
+    public InteractionResult use(Level world, Player player, InteractionHand hand)
     {
         ItemStack itemStack = player.getItemInHand(hand);
         player.startUsingItem(hand);
 
         // Sneak rightclick
-        return new InteractionResultHolder<>(InteractionResult.FAIL, itemStack);
+        return InteractionResult.FAIL;
     }
 
     @Override
@@ -108,7 +107,7 @@ public abstract class AbstractItemScroll extends AbstractItemMinecolonies
     public InteractionResult useOn(UseOnContext ctx)
     {
         // Right click on block
-        if (ctx.getLevel().isClientSide || !ctx.getPlayer().isShiftKeyDown() || !needsColony())
+        if (ctx.getLevel().isClientSide() || !ctx.getPlayer().isShiftKeyDown() || !needsColony())
         {
             return InteractionResult.PASS;
         }

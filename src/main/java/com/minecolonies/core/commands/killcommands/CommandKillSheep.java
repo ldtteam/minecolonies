@@ -5,7 +5,7 @@ import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 
 public class CommandKillSheep implements IMCOPCommand
 {
@@ -21,7 +21,7 @@ public class CommandKillSheep implements IMCOPCommand
     {
         entitiesKilled = 0;
 
-        context.getSource().getLevel().getEntities(EntityType.SHEEP, entity -> true).forEach(entity ->
+        context.getSource().getLevel().getEntities(EntityTypes.SHEEP, entity -> true).forEach(entity ->
         {
             entity.remove(Entity.RemovalReason.KILLED);
             entitiesKilled++;

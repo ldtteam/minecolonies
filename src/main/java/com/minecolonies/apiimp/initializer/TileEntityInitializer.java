@@ -4,9 +4,15 @@ import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.tileentities.*;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.tileentities.*;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.entity.BlockEntityType.BlockEntitySupplier;
+import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
+
+import java.util.Set;
 
 public class TileEntityInitializer
 {
@@ -14,35 +20,60 @@ public class TileEntityInitializer
 
     static
     {
-        MinecoloniesTileEntities.SCARECROW = BLOCK_ENTITIES.register("scarecrow", () -> BlockEntityType.Builder.of(TileEntityScarecrow::new, ModBlocks.blockScarecrow).build(null));
+        MinecoloniesTileEntities.SCARECROW = registerArray("scarecrow", TileEntityScarecrow::new, () -> new Block[] { ModBlocks.blockScarecrow});
 
-        MinecoloniesTileEntities.PLANTATION_FIELD = BLOCK_ENTITIES.register("plantationfield", () -> BlockEntityType.Builder.of(TileEntityPlantationField::new, ModBlocks.blockPlantationField).build(null));
+        MinecoloniesTileEntities.PLANTATION_FIELD = registerArray("plantationfield", TileEntityPlantationField::new, () -> new Block[] { ModBlocks.blockPlantationField});
 
-        MinecoloniesTileEntities.BARREL = BLOCK_ENTITIES.register("barrel", () -> BlockEntityType.Builder.of(TileEntityBarrel::new, ModBlocks.blockBarrel).build(null));
+        MinecoloniesTileEntities.BARREL = registerArray("barrel", TileEntityBarrel::new, () -> new Block[] { ModBlocks.blockBarrel});
 
-        MinecoloniesTileEntities.BUILDING = BLOCK_ENTITIES.register("colonybuilding", () -> BlockEntityType.Builder.of(TileEntityColonyBuilding::new, ModBlocks.getHuts()).build(null));
+        MinecoloniesTileEntities.BUILDING = registerArray("colonybuilding", TileEntityColonyBuilding::new, ModBlocks::getHuts);
 
-        MinecoloniesTileEntities.DECO_CONTROLLER = BLOCK_ENTITIES.register("decorationcontroller", () -> BlockEntityType.Builder
-                                                     .of(TileEntityDecorationController::new, ModBlocks.blockDecorationPlaceholder)
-                                                     .build(null));
+        MinecoloniesTileEntities.DECO_CONTROLLER = registerArray("decorationcontroller", TileEntityDecorationController::new, () -> new Block[] { ModBlocks.blockDecorationPlaceholder});
 
-        MinecoloniesTileEntities.RACK = BLOCK_ENTITIES.register("rack", () -> BlockEntityType.Builder.of(TileEntityRack::new, ModBlocks.blockRack).build(null));
+        MinecoloniesTileEntities.RACK = registerArray("rack", TileEntityRack::new, () -> new Block[] { ModBlocks.blockRack});
 
-        MinecoloniesTileEntities.GRAVE = BLOCK_ENTITIES.register("grave", () -> BlockEntityType.Builder.of(TileEntityGrave::new, ModBlocks.blockGrave).build(null));
+        MinecoloniesTileEntities.GRAVE = registerArray("grave", TileEntityGrave::new, () -> new Block[] { ModBlocks.blockGrave});
 
-        MinecoloniesTileEntities.NAMED_GRAVE = BLOCK_ENTITIES.register("namedgrave", () -> BlockEntityType.Builder.of(TileEntityNamedGrave::new, ModBlocks.blockNamedGrave).build(null));
+        MinecoloniesTileEntities.NAMED_GRAVE = registerArray("namedgrave", TileEntityNamedGrave::new, () -> new Block[] { ModBlocks.blockNamedGrave});
 
-        MinecoloniesTileEntities.WAREHOUSE = BLOCK_ENTITIES.register("warehouse", () -> BlockEntityType.Builder.of(TileEntityWareHouse::new, ModBlocks.blockHutWareHouse).build(null));
+        MinecoloniesTileEntities.WAREHOUSE = registerArray("warehouse", TileEntityWareHouse::new, () -> new Block[] { ModBlocks.blockHutWareHouse});
 
-        MinecoloniesTileEntities.COMPOSTED_DIRT = BLOCK_ENTITIES.register("composteddirt", () -> BlockEntityType.Builder.of(TileEntityCompostedDirt::new, ModBlocks.blockCompostedDirt)
-                                                    .build(null));
+        MinecoloniesTileEntities.COMPOSTED_DIRT = registerArray("composteddirt", TileEntityCompostedDirt::new, () -> new Block[] { ModBlocks.blockCompostedDirt});
 
-        MinecoloniesTileEntities.ENCHANTER = BLOCK_ENTITIES.register("enchanter", () -> BlockEntityType.Builder.of(TileEntityEnchanter::new, ModBlocks.blockHutEnchanter).build(null));
+        MinecoloniesTileEntities.ENCHANTER = registerArray("enchanter", TileEntityEnchanter::new, () -> new Block[] { ModBlocks.blockHutEnchanter});
 
-        MinecoloniesTileEntities.STASH = BLOCK_ENTITIES.register("stash", () -> BlockEntityType.Builder.of(TileEntityStash::new, ModBlocks.blockStash).build(null));
+        MinecoloniesTileEntities.STASH = registerArray("stash", TileEntityStash::new, () -> new Block[] { ModBlocks.blockStash});
 
-        MinecoloniesTileEntities.COLONY_FLAG = BLOCK_ENTITIES.register("colony_flag", () -> BlockEntityType.Builder.of(TileEntityColonyFlag::new, ModBlocks.blockColonyBanner, ModBlocks.blockColonyWallBanner).build(null));
+        MinecoloniesTileEntities.COLONY_FLAG = registerArray("colony_flag", TileEntityColonyFlag::new,
+            () -> new Block[] {ModBlocks.blockColonyBanner, ModBlocks.blockColonyWallBanner});
 
-        MinecoloniesTileEntities.COLONY_SIGN = BLOCK_ENTITIES.register("colonysign", () -> BlockEntityType.Builder.of(TileEntityColonySign::new, ModBlocks.blockColonySign).build(null));
+        MinecoloniesTileEntities.COLONY_SIGN = registerArray("colonysign", TileEntityColonySign::new, () -> new Block[] { ModBlocks.blockColonySign});
+    }
+
+    private static <T extends BlockEntity> DeferredHolder<BlockEntityType<?>, BlockEntityType<T>> register(
+        final String name,
+        final BlockEntitySupplier<T> factory,
+        final java.util.function.Supplier<Block[]> blocks)
+    {
+        return registerArray(name, factory, blocks);
+    }
+
+    private static <T extends BlockEntity> DeferredHolder<BlockEntityType<?>, BlockEntityType<T>> registerArray(
+        final String name,
+        final BlockEntitySupplier<T> factory,
+        final java.util.function.Supplier<Block[]> blocks)
+    {
+        return BLOCK_ENTITIES.register(name, () ->
+        {
+            final Block[] validBlocks = blocks.get();
+            for (final Block block : validBlocks)
+            {
+                if (block == null)
+                {
+                    throw new IllegalStateException("Uninitialized MineColonies block supplied to block entity " + name);
+                }
+            }
+            return new BlockEntityType<>(factory, Set.of(validBlocks));
+        });
     }
 }

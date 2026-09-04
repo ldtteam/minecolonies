@@ -3,7 +3,7 @@
   "costs": [
     {
       "count": 12,
-      "item": "minecraft:book"
+      "ingredient": "minecraft:book"
     }
   ],
   "effects": [

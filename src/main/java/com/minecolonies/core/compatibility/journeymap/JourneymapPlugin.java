@@ -9,18 +9,18 @@ import com.minecolonies.core.colony.jobs.AbstractJobGuard;
 import com.minecolonies.core.entity.visitor.VisitorCitizen;
 import journeymap.api.v2.client.IClientAPI;
 import journeymap.api.v2.client.IClientPlugin;
-import journeymap.api.v2.client.JourneyMapPlugin;
-import journeymap.api.v2.client.display.Context;
 import journeymap.api.v2.client.entity.WrappedEntity;
 import journeymap.api.v2.client.event.EntityRadarUpdateEvent;
 import journeymap.api.v2.client.event.MappingEvent;
 import journeymap.api.v2.client.event.RegistryEvent;
+import journeymap.api.v2.common.Context;
+import journeymap.api.v2.common.JourneyMapPlugin;
 import journeymap.api.v2.common.event.ClientEventRegistry;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.Entity;
 import org.jetbrains.annotations.NotNull;
 
@@ -49,8 +49,8 @@ public class JourneymapPlugin implements IClientPlugin
         this.listener = new EventListener(this.jmap);
 
         ClientEventRegistry.MAPPING_EVENT.subscribe(MOD_ID, this::onMappingEvent);
-        ClientEventRegistry.OPTIONS_REGISTRY_EVENT_EVENT.subscribe(MOD_ID, this::onOptionsRegistryEvent);
-        ClientEventRegistry.INFO_SLOT_REGISTRY_EVENT_EVENT.subscribe(MOD_ID, this::onInfoRegistryEvent);
+        ClientEventRegistry.OPTIONS_REGISTRY_EVENT.subscribe(MOD_ID, this::onOptionsRegistryEvent);
+        ClientEventRegistry.INFO_SLOT_REGISTRY_EVENT.subscribe(MOD_ID, this::onInfoRegistryEvent);
         ClientEventRegistry.ENTITY_RADAR_UPDATE_EVENT.subscribe(MOD_ID, this::onEntityRadarUpdateEvent);
     }
 
@@ -108,7 +108,7 @@ public class JourneymapPlugin implements IClientPlugin
             else
             {
                 final String jobId = entity.getEntityData().get(DATA_JOB);
-                final JobEntry jobEntry = jobId.isEmpty() ? null : IJobRegistry.getInstance().get(ResourceLocation.parse(jobId));
+                final JobEntry jobEntry = jobId.isEmpty() ? null : IJobRegistry.getInstance().getValue(Identifier.parse(jobId));
                 final IJob<?> job = jobEntry == null ? null : jobEntry.produceJob(null);
 
                 if (job instanceof AbstractJobGuard

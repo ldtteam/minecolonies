@@ -1,15 +1,10 @@
 {
   "type": "minecolonies:zero_waste",
   "ingredients": [
-    {
-      "item": "minecolonies:large_water_bottle"
-    },
-    {
-      "item": "minecolonies:soybean"
-    }
+    "minecolonies:large_water_bottle",
+    "minecolonies:soybean"
   ],
   "result": {
-    "count": 1,
     "id": "minecolonies:large_soy_milk_bottle"
   }
 }

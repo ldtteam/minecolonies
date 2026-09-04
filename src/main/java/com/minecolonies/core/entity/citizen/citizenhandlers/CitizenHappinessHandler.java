@@ -7,7 +7,7 @@ import com.minecolonies.api.colony.interactionhandling.InteractionValidatorRegis
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenFoodHandler;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenHappinessHandler;
 import com.minecolonies.api.entity.citizen.happiness.*;
-import com.minecolonies.api.util.Tuple;
+import com.ldtteam.structurize.api.util.Tuple;
 import com.minecolonies.core.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.core.colony.jobs.AbstractJobGuard;
 import net.minecraft.core.HolderLookup;
@@ -164,11 +164,11 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
         // Only deserialize for new version. Old can keep the above defaults just fine.
         if (compound.contains(TAG_NEW_HAPPINESS))
         {
-            final ListTag tag = compound.getList(TAG_NEW_HAPPINESS, Tag.TAG_COMPOUND);
+            final ListTag tag = compound.getListOrEmpty(TAG_NEW_HAPPINESS);
             for (int i = 0; i < tag.size(); i++)
             {
-                final CompoundTag compoundTag = tag.getCompound(i);
-                final String id = compoundTag.getString(TAG_ID);
+                final CompoundTag compoundTag = tag.getCompoundOrEmpty(i);
+                final String id = compoundTag.getStringOr(TAG_ID, "");
                 if (happinessFactors.containsKey(id))
                 {
                     happinessFactors.get(id).read(provider, compoundTag, persist);

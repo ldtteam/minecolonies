@@ -4,7 +4,7 @@ import com.minecolonies.api.research.ModResearchEffects;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.apiimp.CommonMinecoloniesAPIImpl;
 import com.minecolonies.core.research.GlobalResearchEffect;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
@@ -34,7 +34,7 @@ public class ModResearchEffectInitializer
      * @return the finalized registry object.
      */
     private static DeferredHolder<ResearchEffectEntry, ResearchEffectEntry> create(
-        final ResourceLocation registryName,
+        final Identifier registryName,
         final ReadFromNBTFunction readFromNBT)
     {
         return DEFERRED_REGISTER.register(registryName.getPath(), () -> new ResearchEffectEntry(registryName, readFromNBT));

@@ -4,13 +4,13 @@
 package com.minecolonies.core.client.model;
 
 import com.minecolonies.api.client.render.modeltype.CitizenModel;
-import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.client.render.modeltype.CitizenRenderState;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 
-public class MaleSettlerModel extends CitizenModel<AbstractEntityCitizen>
+public class MaleSettlerModel extends CitizenModel<CitizenRenderState>
 {
     public MaleSettlerModel(final ModelPart part)
     {

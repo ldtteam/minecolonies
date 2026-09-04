@@ -6,7 +6,7 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingSawmill;
 import com.minecolonies.core.colony.jobs.JobSawmill;
 import com.minecolonies.core.entity.ai.workers.crafting.AbstractEntityAICrafting;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -18,7 +18,7 @@ public class EntityAIWorkSawmill extends AbstractEntityAICrafting<JobSawmill, Bu
      * Crafting icon
      */
     private final static VisibleCitizenStatus CRAFTING =
-      new VisibleCitizenStatus(new ResourceLocation(Constants.MOD_ID, "textures/icons/work/sawmill.png"), "com.minecolonies.gui.visiblestatus.sawmill");
+      new VisibleCitizenStatus(Identifier.fromNamespaceAndPath(Constants.MOD_ID, "textures/icons/work/sawmill.png"), "com.minecolonies.gui.visiblestatus.sawmill");
 
     /**
      * Initialize the sawmill and add all his tasks.

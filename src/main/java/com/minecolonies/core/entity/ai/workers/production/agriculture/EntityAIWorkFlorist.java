@@ -1,6 +1,7 @@
 package com.minecolonies.core.entity.ai.workers.production.agriculture;
 
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
+import com.ldtteam.structurize.api.util.Tuple;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
@@ -16,8 +17,9 @@ import com.minecolonies.core.tileentities.TileEntityCompostedDirt;
 import com.minecolonies.core.util.citizenutils.CitizenItemUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.tags.BlockItemTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
@@ -87,7 +89,7 @@ public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist, Bu
      * Gardening icon
      */
     private final static VisibleCitizenStatus GARDENING =
-      new VisibleCitizenStatus(new ResourceLocation(Constants.MOD_ID, "textures/icons/work/florist.png"), "com.minecolonies.gui.visiblestatus.florist");
+      new VisibleCitizenStatus(Identifier.fromNamespaceAndPath(Constants.MOD_ID, "textures/icons/work/florist.png"), "com.minecolonies.gui.visiblestatus.florist");
 
     /**
      * Xp gained on harvest
@@ -138,7 +140,7 @@ public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist, Bu
     protected void updateRenderMetaData()
     {
         worker.setRenderMetadata(
-          (InventoryUtils.hasItemInItemHandler(worker.getItemHandlerCitizen(), stack -> stack.is(ItemTags.FLOWERS)) ? RENDER_META_FLOWERS : "")
+          (InventoryUtils.hasItemInItemHandler(worker.getItemHandlerCitizen(), stack -> stack.is(BlockItemTags.FLOWERS.item())) ? RENDER_META_FLOWERS : "")
             + (getState() == IDLE ? "" : RENDER_META_WORKING));
     }
 
@@ -404,7 +406,7 @@ public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist, Bu
         List<ItemStack> drops = Block.getDrops(state, world, pos, null, worker, worker.getMainHandItem());
         for (ItemStack drop : drops) 
         {
-            if (drop.is(ItemTags.FLOWERS)) 
+            if (drop.is(BlockItemTags.FLOWERS.item())) 
             { 
                 flowerDrops.add(drop.getItem().getDescriptionId());
             }

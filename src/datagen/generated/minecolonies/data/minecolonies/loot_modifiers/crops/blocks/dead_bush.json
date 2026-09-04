@@ -12,5 +12,6 @@
       "loot_table_id": "minecraft:blocks/dead_bush"
     }
   ],
+  "priority": 0,
   "table": "minecolonies:crops/blocks/dead_bush"
 }

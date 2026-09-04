@@ -14,14 +14,15 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentSerialization;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
+import net.minecraft.resources.FileToIdConverter;
+import net.minecraft.util.ExtraCodecs;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.util.RandomSource;
 import net.minecraft.util.profiling.ProfilerFiller;
-import net.minecraft.util.random.WeightedRandomList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -32,7 +33,7 @@ import java.util.Map;
 /**
  * Loads and listens to diseases data.
  */
-public class DiseasesListener extends SimpleJsonResourceReloadListener
+public class DiseasesListener extends SimpleJsonResourceReloadListener<JsonElement>
 {
     /**
      * Gson instance
@@ -49,14 +50,14 @@ public class DiseasesListener extends SimpleJsonResourceReloadListener
     /**
      * The map of diseases.
      */
-    private static WeightedRandomList<Disease> DISEASES = WeightedRandomList.create();
+    private static List<Disease> DISEASES = List.of();
 
     /**
      * Default constructor.
      */
     public DiseasesListener()
     {
-        super(GSON, "colony/diseases");
+        super(ExtraCodecs.JSON, FileToIdConverter.json("colony/diseases"));
     }
 
     /**
@@ -67,10 +68,10 @@ public class DiseasesListener extends SimpleJsonResourceReloadListener
     public static void sendGlobalDiseasesPackets(final ServerPlayer player)
     {
         final RegistryFriendlyByteBuf byteBuf = new RegistryFriendlyByteBuf(new FriendlyByteBuf(Unpooled.buffer()), player.level().registryAccess());
-        byteBuf.writeInt(DISEASES.unwrap().size());
-        for (final Disease disease : DISEASES.unwrap())
+        byteBuf.writeInt(DISEASES.size());
+        for (final Disease disease : DISEASES)
         {
-            byteBuf.writeResourceLocation(disease.id());
+            byteBuf.writeIdentifier(disease.id());
             Utils.serializeCodecMess(ComponentSerialization.STREAM_CODEC, byteBuf, disease.name());
             byteBuf.writeInt(disease.rarity());
             byteBuf.writeInt(disease.cureItems().size());
@@ -93,7 +94,7 @@ public class DiseasesListener extends SimpleJsonResourceReloadListener
         final int size = byteBuf.readInt();
         for (int i = 0; i < size; i++)
         {
-            final ResourceLocation id = byteBuf.readResourceLocation();
+            final Identifier id = byteBuf.readIdentifier();
             final Component name = Utils.deserializeCodecMess(ComponentSerialization.STREAM_CODEC, byteBuf);
             final int rarity = byteBuf.readInt();
 
@@ -106,7 +107,7 @@ public class DiseasesListener extends SimpleJsonResourceReloadListener
 
             newDiseases.add(new Disease(id, name, rarity, cureItems));
         }
-        DISEASES = WeightedRandomList.create(newDiseases);
+        DISEASES = List.copyOf(newDiseases);
     }
 
     /**
@@ -117,7 +118,7 @@ public class DiseasesListener extends SimpleJsonResourceReloadListener
     @NotNull
     public static List<Disease> getDiseases()
     {
-        return DISEASES.unwrap();
+        return DISEASES;
     }
 
     /**
@@ -127,9 +128,9 @@ public class DiseasesListener extends SimpleJsonResourceReloadListener
      * @return the disease instance or null if it does not exist.
      */
     @Nullable
-    public static Disease getDisease(final ResourceLocation id)
+    public static Disease getDisease(final Identifier id)
     {
-        for (final Disease disease : DISEASES.unwrap())
+        for (final Disease disease : DISEASES)
         {
             if (disease.id().equals(id))
             {
@@ -148,17 +149,37 @@ public class DiseasesListener extends SimpleJsonResourceReloadListener
     @Nullable
     public static Disease getRandomDisease(final RandomSource random)
     {
-        return DISEASES.getRandom(random).orElse(null);
+        if (DISEASES.isEmpty())
+        {
+            return null;
+        }
+
+        int totalWeight = 0;
+        for (final Disease disease : DISEASES)
+        {
+            totalWeight += disease.rarity();
+        }
+
+        int remaining = random.nextInt(totalWeight);
+        for (final Disease disease : DISEASES)
+        {
+            remaining -= disease.rarity();
+            if (remaining < 0)
+            {
+                return disease;
+            }
+        }
+        return DISEASES.getLast();
     }
 
     @Override
     protected void apply(
-      final @NotNull Map<ResourceLocation, JsonElement> jsonElementMap,
+      final @NotNull Map<Identifier, JsonElement> jsonElementMap,
       final @NotNull ResourceManager resourceManager,
       final @NotNull ProfilerFiller profiler)
     {
         final List<Disease> diseases = new ArrayList<>();
-        for (final Map.Entry<ResourceLocation, JsonElement> entry : jsonElementMap.entrySet())
+        for (final Map.Entry<Identifier, JsonElement> entry : jsonElementMap.entrySet())
         {
             if (!entry.getValue().isJsonObject())
             {
@@ -185,6 +206,6 @@ public class DiseasesListener extends SimpleJsonResourceReloadListener
 
             diseases.add(new Disease(entry.getKey(), name, rarity, cureItems));
         }
-        DISEASES = WeightedRandomList.create(diseases);
+        DISEASES = List.copyOf(diseases);
     }
 }

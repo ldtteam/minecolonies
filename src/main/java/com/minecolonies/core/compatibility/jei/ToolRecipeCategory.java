@@ -12,7 +12,7 @@ import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.category.AbstractRecipeCategory;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
@@ -81,22 +81,22 @@ public class ToolRecipeCategory extends AbstractRecipeCategory<ToolUsage>
     @Override
     public void draw(@NotNull final ToolUsage recipe,
                      @NotNull final IRecipeSlotsView recipeSlotsView,
-                     @NotNull final GuiGraphics stack,
+                     @NotNull final GuiGraphicsExtractor stack,
                      final double mouseX, final double mouseY)
     {
         final Minecraft mc = Minecraft.getInstance();
 
         final int scale = 2;
-        stack.pose().pushPose();
-        stack.pose().scale(1F / scale, 1F / scale, 1.0F);
+        stack.pose().pushMatrix();
+        stack.pose().scale(1F / scale, 1F / scale);
         int x = SLOT_X;
         for (int i = 0; i <= MAX_BUILDING_LEVEL; ++i)
         {
             final Component text = Component.translatableEscape(TranslationConstants.PARTIAL_JEI_INFO + "onelevelrestriction", i);
-            stack.drawString(mc.font, text, (x + (18 - mc.font.width(text)/scale) / 2) * scale, scale, 0, false);
+            stack.text(mc.font, text, (x + (18 - mc.font.width(text)/scale) / 2) * scale, scale, 0, false);
             x += 18;
         }
-        stack.pose().popPose();
+        stack.pose().popMatrix();
     }
 
     @Override

@@ -12,7 +12,7 @@ import net.minecraft.nbt.CompoundTag;
 import com.minecolonies.core.colony.buildings.modules.settings.RecipeSetting;
 import com.minecolonies.core.colony.buildings.modules.settings.IntSetting;
 import com.minecolonies.core.colony.buildings.modules.settings.SettingKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
@@ -25,8 +25,8 @@ public class BuildingCrusher extends AbstractBuilding
     /**
      * Settings key for the building mode.
      */
-    public static final ISettingKey<RecipeSetting> MODE        = new SettingKey<>(RecipeSetting.class, new ResourceLocation(Constants.MOD_ID, "crushermode"));
-    public static final ISettingKey<IntSetting>    DAILY_LIMIT = new SettingKey<>(IntSetting.class, new ResourceLocation(Constants.MOD_ID, "dailylimit"));
+    public static final ISettingKey<RecipeSetting> MODE        = new SettingKey<>(RecipeSetting.class, Identifier.fromNamespaceAndPath(Constants.MOD_ID, "crushermode"));
+    public static final ISettingKey<IntSetting>    DAILY_LIMIT = new SettingKey<>(IntSetting.class, Identifier.fromNamespaceAndPath(Constants.MOD_ID, "dailylimit"));
 
     /**
      * The multiplier to define the max craft per day.
@@ -117,8 +117,8 @@ public class BuildingCrusher extends AbstractBuilding
     public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound)
     {
         super.deserializeNBT(provider, compound);
-        this.currentDailyQuantity = compound.getInt(TAG_CURRENT_DAILY);
-        this.oneByOne = compound.getBoolean(TAG_CRUSHER_RATIO);
+        this.currentDailyQuantity = compound.getIntOr(TAG_CURRENT_DAILY, 0);
+        this.oneByOne = compound.getBooleanOr(TAG_CRUSHER_RATIO, false);
     }
 
     @Override

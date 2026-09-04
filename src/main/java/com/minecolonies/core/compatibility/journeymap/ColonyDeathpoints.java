@@ -12,7 +12,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -142,7 +142,7 @@ public class ColonyDeathpoints
 
             for (final Map.Entry<BlockPos, Waypoint> waypointEntry : colonyEntry.getValue().entrySet())
             {
-                if (waypointEntry.getValue() == null && chunk.getPos().equals(new ChunkPos(waypointEntry.getKey())))
+                if (waypointEntry.getValue() == null && chunk.getPos().equals(ChunkPos.containing(waypointEntry.getKey())))
                 {
                     waypointEntry.setValue(tryCreatingWaypoint(jmap, colony, chunk, waypointEntry.getKey()));
                 }
@@ -155,8 +155,8 @@ public class ColonyDeathpoints
                                                 @NotNull final IColonyView colony,
                                                 @NotNull final BlockPos pos)
     {
-        final ChunkPos chunkPos = new ChunkPos(pos);
-        final ChunkAccess chunk = colony.getWorld().getChunk(chunkPos.x, chunkPos.z, ChunkStatus.FULL, false);
+        final ChunkPos chunkPos = ChunkPos.containing(pos);
+        final ChunkAccess chunk = colony.getWorld().getChunk(chunkPos.x(), chunkPos.z(), ChunkStatus.FULL, false);
 
         return (chunk == null) ? null : tryCreatingWaypoint(jmap, colony, chunk, pos);
     }
@@ -176,8 +176,8 @@ public class ColonyDeathpoints
                 final Component text = grave.getCitizenJobName() == null
                                               ? Component.translatableEscape(PARTIAL_JOURNEY_MAP_INFO + "deathpoint_name", grave.getCitizenName())
                                               : Component.translatableEscape(PARTIAL_JOURNEY_MAP_INFO + "deathpoint_namejob", grave.getCitizenName(), grave.getCitizenJobName());
-                final Waypoint waypoint = WaypointFactory.createClientWaypoint(MOD_ID, pos, text.getString(), colony.getDimension(), false);
-                waypoint.setIconResourceLoctaion(new ResourceLocation(MOD_ID, "textures/icons/grave_icon.png"));
+                final Waypoint waypoint = WaypointFactory.createWaypoint(MOD_ID, pos, text.getString(), colony.getDimension(), false);
+                waypoint.setIconIdentifier(Identifier.fromNamespaceAndPath(MOD_ID, "textures/icons/grave_icon.png"));
                 waypoint.setIconTextureSize(16, 16);
                 waypoint.setColor(0x888888);
                 jmap.getApi().addWaypoint(MOD_ID, waypoint);

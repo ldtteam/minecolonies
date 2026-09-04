@@ -1,13 +1,13 @@
 package com.minecolonies.core.placementhandlers;
 
-import com.ldtteam.structurize.api.RotationMirror;
+import com.ldtteam.structurize.util.RotationMirror;
 import com.ldtteam.structurize.placement.IPlacementContext;
 import com.ldtteam.structurize.placement.handlers.placement.IPlacementHandler;
 import com.ldtteam.structurize.placement.handlers.placement.PlacementHandlers;
 import com.ldtteam.structurize.util.BlockUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.util.Tuple;
+import com.ldtteam.structurize.api.util.Tuple;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
@@ -65,7 +65,7 @@ public class LecternPlacementHandler implements IPlacementHandler
 
         if (tileEntityData != null)
         {
-            PlacementHandlers.handleTileEntityPlacement(tileEntityData, world, pos, placementContext.getRotationMirror());
+            PlacementHandlers.handleTileEntityPlacement(tileEntityData, world, pos, placementContext.getRotationMirror().getRotationMirror());
         }
 
         return ActionProcessingResult.SUCCESS;

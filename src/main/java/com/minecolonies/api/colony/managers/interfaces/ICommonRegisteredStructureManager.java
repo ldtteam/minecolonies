@@ -8,7 +8,7 @@ import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.WorldUtil;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -204,7 +204,7 @@ public interface ICommonRegisteredStructureManager<B extends ICommonBuilding,T>
      * @param singleBuilding if one or more buildings can match it.
      * @return true if so.
      */
-    default boolean hasBuilding(final ResourceLocation id, final int level, final boolean singleBuilding)
+    default boolean hasBuilding(final Identifier id, final int level, final boolean singleBuilding)
     {
         int sum = 0;
         for (final B building : getBuildings().values())

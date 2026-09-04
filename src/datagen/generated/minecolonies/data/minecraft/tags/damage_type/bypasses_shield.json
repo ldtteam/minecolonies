@@ -1,5 +1,8 @@
 {
   "values": [
-    "minecolonies:pierce"
+    {
+      "id": "minecolonies:pierce",
+      "required": false
+    }
   ]
 }

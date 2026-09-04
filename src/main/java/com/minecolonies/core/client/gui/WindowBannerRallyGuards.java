@@ -14,7 +14,7 @@ import com.minecolonies.core.network.messages.server.ToggleBannerRallyGuardsMess
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.NotNull;
@@ -76,7 +76,7 @@ public class WindowBannerRallyGuards extends AbstractWindowSkeleton
      */
     public WindowBannerRallyGuards(final ItemStack banner)
     {
-        super(new ResourceLocation(Constants.MOD_ID, "gui/windowbannerrallyguards.xml"));
+        super(Identifier.fromNamespaceAndPath(Constants.MOD_ID, "gui/windowbannerrallyguards.xml"));
         this.banner = banner;
 
         registerButton(BUTTON_REMOVE, this::removeClicked);

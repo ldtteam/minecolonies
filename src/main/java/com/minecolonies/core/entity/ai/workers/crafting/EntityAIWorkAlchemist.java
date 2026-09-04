@@ -19,7 +19,7 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.StatsUtil;
-import com.minecolonies.api.util.Tuple;
+import com.ldtteam.structurize.api.util.Tuple;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingAlchemist;
 import com.minecolonies.core.colony.interactionhandling.StandardInteraction;
@@ -178,7 +178,7 @@ public class EntityAIWorkAlchemist extends AbstractEntityAICrafting<JobAlchemist
                 {
                     for (ItemStack netherwartDrop : netherwartDrops)
                     {
-                        StatsUtil.trackStatByName(building, INGREDIENTS_HARVESTED, netherwartDrop.getDescriptionId(), netherwartDrop.getCount());
+                        StatsUtil.trackStatByName(building, INGREDIENTS_HARVESTED, netherwartDrop.getItem().getDescriptionId(), netherwartDrop.getCount());
                     }
                     walkTo = null;
                     worker.decreaseSaturationForContinuousAction();
@@ -286,7 +286,7 @@ public class EntityAIWorkAlchemist extends AbstractEntityAICrafting<JobAlchemist
             {
                 worker.decreaseSaturationForContinuousAction();
                 ItemStack mistletoe = new ItemStack(ModItems.mistletoe, 1);
-                StatsUtil.trackStatByName(building, INGREDIENTS_HARVESTED, mistletoe.getDescriptionId(), mistletoe.getCount());
+                StatsUtil.trackStatByName(building, INGREDIENTS_HARVESTED, mistletoe.getItem().getDescriptionId(), mistletoe.getCount());
                 InventoryUtils.addItemStackToItemHandler(worker.getInventoryCitizen(), mistletoe);
                 walkTo = null;
                 CitizenItemUtils.damageItemInHand(worker, InteractionHand.MAIN_HAND, 1);
@@ -831,7 +831,7 @@ public class EntityAIWorkAlchemist extends AbstractEntityAICrafting<JobAlchemist
     private void extractFromBrewingStandSlot(final BrewingStandBlockEntity brewingStand, final int slot)
     {
         InvWrapper standWrapper = new InvWrapper(brewingStand);
-        String extractName = standWrapper.getStackInSlot(slot).getDescriptionId();
+        String extractName = standWrapper.getStackInSlot(slot).getItem().getDescriptionId();
         int extractQty = standWrapper.getStackInSlot(slot).getCount();
         
         InventoryUtils.transferItemStackIntoNextFreeSlotInItemHandler(standWrapper, slot, worker.getInventoryCitizen());

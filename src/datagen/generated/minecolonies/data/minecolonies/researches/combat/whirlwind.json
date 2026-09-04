@@ -3,15 +3,15 @@
   "costs": [
     {
       "count": 64,
-      "item": "minecraft:redstone"
+      "ingredient": "minecraft:redstone"
     },
     {
       "count": 64,
-      "item": "minecraft:gold_ingot"
+      "ingredient": "minecraft:gold_ingot"
     },
     {
       "count": 128,
-      "item": "minecraft:lapis_lazuli"
+      "ingredient": "minecraft:lapis_lazuli"
     }
   ],
   "effects": [

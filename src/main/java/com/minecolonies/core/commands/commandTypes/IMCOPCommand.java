@@ -1,4 +1,5 @@
 package com.minecolonies.core.commands.commandTypes;
+import net.minecraft.server.permissions.Permissions;
 
 import com.minecolonies.api.util.MessageUtils;
 import com.mojang.brigadier.context.CommandContext;
@@ -19,7 +20,7 @@ public interface IMCOPCommand extends IMCCommand
     @Override
     default boolean checkPreCondition(final CommandContext<CommandSourceStack> context)
     {
-        if (context.getSource().hasPermission(OP_PERM_LEVEL))
+        if (context.getSource().permissions().hasPermission(Permissions.COMMANDS_OWNER))
         {
             return true;
         }

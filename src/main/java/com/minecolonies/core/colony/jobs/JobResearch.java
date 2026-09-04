@@ -1,7 +1,7 @@
 package com.minecolonies.core.colony.jobs;
 
 import net.minecraft.core.HolderLookup;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import com.minecolonies.api.client.render.modeltype.ModModelTypes;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.entity.citizen.Skill;
@@ -48,7 +48,7 @@ public class JobResearch extends AbstractJob<EntityAIWorkResearcher, JobResearch
 
     @NotNull
     @Override
-    public ResourceLocation getModel()
+    public Identifier getModel()
     {
         return ModModelTypes.STUDENT_ID;
     }
@@ -101,7 +101,7 @@ public class JobResearch extends AbstractJob<EntityAIWorkResearcher, JobResearch
     public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound)
     {
         super.deserializeNBT(provider, compound);
-        this.currentMana = compound.getInt(TAG_CURR_MANA);
+        this.currentMana = compound.getIntOr(TAG_CURR_MANA, 0);
     }
 
     /**

@@ -5,7 +5,7 @@ import com.minecolonies.api.util.constant.translation.CommandTranslationConstant
 import com.minecolonies.core.commands.arguments.ColonyIdArgument;
 import com.minecolonies.core.commands.commandTypes.IMCColonyOfficerCommand;
 import com.minecolonies.core.commands.commandTypes.IMCCommand;
-import com.mojang.authlib.GameProfile;
+import net.minecraft.server.players.NameAndId;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
@@ -30,7 +30,7 @@ public class CommandChangeOwner implements IMCColonyOfficerCommand
     {
         final IColony colony = ColonyIdArgument.getColony(context, COLONYID_ARG);
 
-        GameProfile profile;
+        NameAndId profile;
         try
         {
             profile = GameProfileArgument.getGameProfiles(context, PLAYERNAME_ARG).stream().findFirst().orElse(null);
@@ -40,17 +40,17 @@ public class CommandChangeOwner implements IMCColonyOfficerCommand
             return 0;
         }
 
-        final Player player = context.getSource().getServer().getPlayerList().getPlayer(profile.getId());
+        final Player player = context.getSource().getServer().getPlayerList().getPlayer(profile.id());
         if (player == null)
         {
             // could not find player with given name.
-            context.getSource().sendSuccess(() -> Component.translatableEscape(CommandTranslationConstants.COMMAND_PLAYER_NOT_FOUND, profile.getName()), true);
+            context.getSource().sendSuccess(() -> Component.translatableEscape(CommandTranslationConstants.COMMAND_PLAYER_NOT_FOUND, profile.name()), true);
             return 0;
         }
 
         colony.getPermissions().setOwner(player);
 
-        context.getSource().sendSuccess(() -> Component.translatableEscape(CommandTranslationConstants.COMMAND_OWNER_CHANGE_SUCCESS, profile.getName(), colony.getName()), true);
+        context.getSource().sendSuccess(() -> Component.translatableEscape(CommandTranslationConstants.COMMAND_OWNER_CHANGE_SUCCESS, profile.name(), colony.getName()), true);
         return 1;
     }
 

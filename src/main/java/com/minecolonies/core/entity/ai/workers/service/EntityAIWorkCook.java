@@ -1,6 +1,7 @@
 package com.minecolonies.core.entity.ai.workers.service;
 
 import com.minecolonies.api.MinecoloniesAPIProxy;
+import com.ldtteam.structurize.api.util.Tuple;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
@@ -26,7 +27,7 @@ import com.minecolonies.core.entity.citizen.EntityCitizen;
 
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.FurnaceBlockEntity;
@@ -82,7 +83,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
      * Cooking icon
      */
     private final static VisibleCitizenStatus COOK =
-      new VisibleCitizenStatus(new ResourceLocation(Constants.MOD_ID, "textures/icons/work/cook.png"), "com.minecolonies.gui.visiblestatus.cook");
+      new VisibleCitizenStatus(Identifier.fromNamespaceAndPath(Constants.MOD_ID, "textures/icons/work/cook.png"), "com.minecolonies.gui.visiblestatus.cook");
 
     /**
      * Constructor for the Cook. Defines the tasks the cook executes.
@@ -233,7 +234,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
             worker.getCitizenData().triggerInteraction(new StandardInteraction(Component.translatable(POOR_RESTAURANT_INTERACTION), ChatPriority.IMPORTANT));
         }
 
-        String foodName = worker.getInventoryCitizen().getStackInSlot(foodSlot).getDescriptionId();
+        String foodName = worker.getInventoryCitizen().getStackInSlot(foodSlot).getItem().getDescriptionId();
         int qty = (int) (Math.max(1.0, (FULL_SATURATION - citizen.getCitizenData().getSaturation()) / FoodUtils.getFoodValue(worker.getInventoryCitizen().getStackInSlot(foodSlot), citizen)));
         // Hand out a bit extra
         qty = (int) Math.ceil(qty * 1.5);

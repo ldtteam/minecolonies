@@ -140,7 +140,7 @@ public class RaiderWalkAI implements IStateAI
             return;
         }
 
-        walkTimer = raider.level().getGameTime() + raider.level().random.nextInt(1000);
+        walkTimer = raider.level().getGameTime() + raider.level().getRandom().nextInt(1000);
         EntityNavigationUtils.walkToRandomPosAround(raider, campFire, 10, 0.7);
     }
 }

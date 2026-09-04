@@ -7,7 +7,7 @@ import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.core.colony.buildings.views.AbstractBuildingView;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
@@ -30,7 +30,7 @@ public abstract class AbstractModuleWindow<T extends IBuildingModuleView> extend
      * @param moduleView {@link AbstractBuildingView}.
      * @param resource   window resource location.
      */
-    public AbstractModuleWindow(final T moduleView, final ResourceLocation resource)
+    public AbstractModuleWindow(final T moduleView, final Identifier resource)
     {
         this(null, moduleView, resource);
     }
@@ -42,7 +42,7 @@ public abstract class AbstractModuleWindow<T extends IBuildingModuleView> extend
      * @param moduleView {@link AbstractBuildingView}.
      * @param resource   window resource location.
      */
-    public AbstractModuleWindow(final BOWindow parent, final T moduleView, final ResourceLocation resource)
+    public AbstractModuleWindow(final BOWindow parent, final T moduleView, final Identifier resource)
     {
         super(parent, moduleView.getBuildingView(), resource);
         this.moduleView = moduleView;

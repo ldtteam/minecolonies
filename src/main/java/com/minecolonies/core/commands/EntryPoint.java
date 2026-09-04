@@ -63,7 +63,8 @@ public class EntryPoint
             .addNode(new CommandRSReset().build())
             .addNode(new CommandRSResetAll().build())
             .addNode(new CommandSetAbandoned().build())
-            .addNode(new CommandExportColony().build());
+            .addNode(new CommandExportColony().build())
+            .addNode(new CommandEconomy().build());
 
         /*
          * Citizen commands subtree

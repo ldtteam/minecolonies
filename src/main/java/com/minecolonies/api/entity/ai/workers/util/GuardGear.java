@@ -2,12 +2,13 @@ package com.minecolonies.api.entity.ai.workers.util;
 
 import com.minecolonies.api.equipment.registry.EquipmentTypeEntry;
 import com.minecolonies.api.util.ItemStackUtils;
-import net.minecraft.util.Tuple;
+import com.ldtteam.structurize.api.util.Tuple;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ShieldItem;
-import net.minecraft.world.item.SwordItem;
+import net.minecraft.world.item.equipment.Equippable;
+import net.minecraft.tags.ItemTags;
 
 import java.util.function.Predicate;
 
@@ -150,9 +151,14 @@ public class GuardGear implements Predicate<ItemStack>
     public boolean test(final ItemStack stack)
     {
         return
-          (ItemStackUtils.hasEquipmentLevel(stack, itemNeeded, minArmorLevel, maxArmorLevel) && stack.getItem() instanceof ArmorItem
-             && ((ArmorItem) stack.getItem()).getEquipmentSlot() == getType())
-            || (stack.getItem() instanceof SwordItem && getType() == EquipmentSlot.MAINHAND)
+          (ItemStackUtils.hasEquipmentLevel(stack, itemNeeded, minArmorLevel, maxArmorLevel) && isEquippableForSlot(stack))
+            || (stack.is(ItemTags.SWORDS) && getType() == EquipmentSlot.MAINHAND)
             || (stack.getItem() instanceof ShieldItem && getType() == EquipmentSlot.OFFHAND);
+    }
+
+    private boolean isEquippableForSlot(final ItemStack stack)
+    {
+        final Equippable equippable = stack.get(DataComponents.EQUIPPABLE);
+        return equippable != null && equippable.slot() == getType();
     }
 }

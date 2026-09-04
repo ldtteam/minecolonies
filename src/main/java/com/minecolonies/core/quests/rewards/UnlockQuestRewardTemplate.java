@@ -4,7 +4,7 @@ import com.google.gson.JsonObject;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.quests.IQuestInstance;
 import com.minecolonies.api.quests.IQuestRewardTemplate;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Player;
 
 import static com.minecolonies.api.quests.QuestParseConstant.*;
@@ -17,12 +17,12 @@ public class UnlockQuestRewardTemplate implements IQuestRewardTemplate
     /**
      * The quest to unlock
      */
-    private final ResourceLocation questId;
+    private final Identifier questId;
 
     /**
      * Setup the quest unlock reward.
      */
-    public UnlockQuestRewardTemplate(final ResourceLocation questId)
+    public UnlockQuestRewardTemplate(final Identifier questId)
     {
         this.questId = questId;
     }
@@ -37,7 +37,7 @@ public class UnlockQuestRewardTemplate implements IQuestRewardTemplate
         JsonObject details = jsonObject.getAsJsonObject(DETAILS_KEY);
         final String id = details.get(ID_KEY).getAsString();
 
-        return new UnlockQuestRewardTemplate(ResourceLocation.parse(id));
+        return new UnlockQuestRewardTemplate(Identifier.parse(id));
     }
     @Override
     public void applyReward(final IColony colony, final Player player, final IQuestInstance colonyQuest)

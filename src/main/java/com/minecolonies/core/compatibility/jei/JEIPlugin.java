@@ -28,13 +28,14 @@ import mezz.jei.api.recipe.IFocus;
 import mezz.jei.api.recipe.IFocusFactory;
 import mezz.jei.api.recipe.IRecipeManager;
 import mezz.jei.api.recipe.RecipeIngredientRole;
-import mezz.jei.api.recipe.RecipeType;
+import mezz.jei.api.recipe.types.IRecipeType;
 import mezz.jei.api.registration.*;
 import mezz.jei.api.runtime.IJeiRuntime;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -83,9 +84,9 @@ public class JEIPlugin implements IModPlugin
 
     @NotNull
     @Override
-    public ResourceLocation getPluginUid()
+    public Identifier getPluginUid()
     {
-        return new ResourceLocation(Constants.MOD_ID, Constants.MOD_ID);
+        return Identifier.fromNamespaceAndPath(Constants.MOD_ID, Constants.MOD_ID);
     }
 
     private final List<JobBasedRecipeCategory<?>> categories = new ArrayList<>();
@@ -198,7 +199,14 @@ public class JEIPlugin implements IModPlugin
             recipeManager.addRecipes(ModRecipeTypes.FISHING, FishermanRecipeCategory.findRecipes());
 
             final ClientLevel level = Objects.requireNonNull(Minecraft.getInstance().level);
-            final Map<CraftingType, List<IGenericRecipe>> vanilla = RecipeAnalyzer.buildVanillaRecipesMap(level.getRecipeManager(), level);
+            final List<RecipeHolder<?>> vanillaRecipeHolders = new ArrayList<>();
+            vanillaRecipeHolders.addAll(recipeManager.createRecipeLookup(RecipeTypes.CRAFTING).get()
+                    .map(holder -> (RecipeHolder<?>) holder)
+                    .toList());
+            vanillaRecipeHolders.addAll(recipeManager.createRecipeLookup(RecipeTypes.SMELTING).get()
+                    .map(holder -> (RecipeHolder<?>) holder)
+                    .toList());
+            final Map<CraftingType, List<IGenericRecipe>> vanilla = RecipeAnalyzer.buildVanillaRecipesMap(vanillaRecipeHolders, level);
             final List<Animal> animals = RecipeAnalyzer.createAnimals(level);
 
             for (final JobBasedRecipeCategory<?> category : this.categories)
@@ -211,7 +219,7 @@ public class JEIPlugin implements IModPlugin
     private <R> void addJobBasedRecipes(@NotNull final Map<CraftingType, List<IGenericRecipe>> vanilla,
                                         @NotNull final List<Animal> animals,
                                         @NotNull final JobBasedRecipeCategory<R> category,
-                                        @NotNull final BiConsumer<RecipeType<R>, List<R>> registrar,
+                                        @NotNull final BiConsumer<IRecipeType<R>, List<R>> registrar,
                                         @NotNull final Level world)
     {
         try
@@ -227,14 +235,14 @@ public class JEIPlugin implements IModPlugin
     @Override
     public void registerRecipeCatalysts(@NotNull final IRecipeCatalystRegistration registration)
     {
-        registration.addRecipeCatalyst(ModBlocks.blockBarrel, ModRecipeTypes.COMPOSTING);
-        registration.addRecipeCatalyst(ModBlocks.blockHutComposter, ModRecipeTypes.COMPOSTING);
-        registration.addRecipeCatalyst(ModBlocks.blockHutFisherman, ModRecipeTypes.FISHING);
-        registration.addRecipeCatalyst(ModBlocks.blockHutFlorist, ModRecipeTypes.FLOWERS);
+        registration.addRecipeCatalysts(ModRecipeTypes.COMPOSTING, ModBlocks.blockBarrel);
+        registration.addRecipeCatalysts(ModRecipeTypes.COMPOSTING, ModBlocks.blockHutComposter);
+        registration.addRecipeCatalysts(ModRecipeTypes.FISHING, ModBlocks.blockHutFisherman);
+        registration.addRecipeCatalysts(ModRecipeTypes.FLOWERS, ModBlocks.blockHutFlorist);
 
         for (final JobBasedRecipeCategory<?> category : this.categories)
         {
-            registration.addRecipeCatalyst(category.getCatalyst(), category.getRecipeType());
+            registration.addRecipeCatalysts(category.getRecipeType(), category.getCatalyst());
         }
     }
 
@@ -271,4 +279,5 @@ public class JEIPlugin implements IModPlugin
         this.jei = null;
         this.recipesLoaded = false;
     }
+
 }

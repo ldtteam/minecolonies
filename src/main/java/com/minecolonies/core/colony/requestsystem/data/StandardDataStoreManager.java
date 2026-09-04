@@ -18,7 +18,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.util.Tuple;
+import com.ldtteam.structurize.api.util.Tuple;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -117,14 +117,14 @@ public class StandardDataStoreManager implements IDataStoreManager
         public StandardDataStoreManager deserialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final CompoundTag nbt) throws Throwable
         {
             final Map<IToken<?>, IDataStore> storeMap = new HashMap<>();
-            final ListTag list = nbt.getList(NbtTagConstants.TAG_LIST, Tag.TAG_COMPOUND);
+            final ListTag list = nbt.getListOrEmpty(NbtTagConstants.TAG_LIST);
             for (int i = 0; i < list.size(); i++)
             {
-                final CompoundTag tag = list.getCompound(i);
+                final CompoundTag tag = list.getCompoundOrEmpty(i);
                 try
                 {
-                    final IToken<?> token = controller.deserializeTag(provider, tag.getCompound(NbtTagConstants.TAG_TOKEN));
-                    final IDataStore store = controller.deserializeTag(provider, tag.getCompound(NbtTagConstants.TAG_VALUE));
+                    final IToken<?> token = controller.deserializeTag(provider, tag.getCompoundOrEmpty(NbtTagConstants.TAG_TOKEN));
+                    final IDataStore store = controller.deserializeTag(provider, tag.getCompoundOrEmpty(NbtTagConstants.TAG_VALUE));
                     storeMap.put(token, store);
                 }
                 catch (final Exception ex)

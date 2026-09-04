@@ -3,9 +3,7 @@ package com.minecolonies.core.datalistener.model;
 import com.minecolonies.api.crafting.ItemStorage;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.random.Weight;
-import net.minecraft.util.random.WeightedEntry;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
@@ -21,7 +19,7 @@ import java.util.function.Predicate;
  * @param rarity    the rarity of the disease.
  * @param cureItems the list of items needed to heal.
  */
-public record Disease(ResourceLocation id, Component name, int rarity, List<ItemStorage> cureItems) implements WeightedEntry
+public record Disease(Identifier id, Component name, int rarity, List<ItemStorage> cureItems)
 {
     /**
      * Predicate for the different usages to check if inventory contains a cure.
@@ -66,10 +64,4 @@ public record Disease(ResourceLocation id, Component name, int rarity, List<Item
         return cureString;
     }
 
-    @Override
-    @NotNull
-    public Weight getWeight()
-    {
-        return Weight.of(rarity);
-    }
 }

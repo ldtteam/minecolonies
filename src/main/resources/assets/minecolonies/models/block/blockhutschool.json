@@ -339,7 +339,7 @@
       "render_type": "cutout",
 			"parent": "block/block",
 			"textures": {
-				"15": "item/feather"
+				"15": "minecolonies:block_item/feather"
 			},
 			"elements": [
 				{

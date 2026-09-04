@@ -3,11 +3,11 @@
   "costs": [
     {
       "count": 64,
-      "item": "minecraft:arrow"
+      "ingredient": "minecraft:arrow"
     },
     {
       "count": 64,
-      "item": "minecraft:redstone"
+      "ingredient": "minecraft:redstone"
     }
   ],
   "effects": [

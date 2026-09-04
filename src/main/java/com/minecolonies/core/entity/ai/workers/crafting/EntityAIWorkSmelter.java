@@ -113,7 +113,7 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter,
 
         worker.setItemInHand(InteractionHand.MAIN_HAND, inputItem);
         worker.swing(InteractionHand.MAIN_HAND);
-        SoundUtils.playSoundAtCitizen(world, building.getID(), SoundEvents.LEASH_KNOT_BREAK);
+        SoundUtils.playSoundAtCitizen(world, building.getID(), SoundEvents.LEAD_BREAK);
 
         return getState();
     }

@@ -15,7 +15,7 @@ import com.minecolonies.core.colony.buildings.views.AbstractBuildingView;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.contents.TranslatableContents;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -58,7 +58,7 @@ public class EnchanterStationModuleWindow extends AbstractModuleWindow<Enchanter
      */
     public EnchanterStationModuleWindow(final EnchanterStationsModuleView moduleView)
     {
-        super(moduleView, new ResourceLocation(Constants.MOD_ID, "gui/layouthuts/layoutenchanter.xml"));
+        super(moduleView, Identifier.fromNamespaceAndPath(Constants.MOD_ID, "gui/layouthuts/layoutenchanter.xml"));
         super.registerButton(BUTTON_SWITCH, this::switchClicked);
     }
 

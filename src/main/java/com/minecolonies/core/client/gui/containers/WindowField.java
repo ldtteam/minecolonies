@@ -28,7 +28,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
@@ -101,7 +101,7 @@ public class WindowField extends AbstractWindowSkeleton
      */
     public WindowField(@NotNull TileEntityScarecrow tileEntityScarecrow)
     {
-        super(new ResourceLocation(Constants.MOD_ID, "gui/windowfield.xml"));
+        super(Identifier.fromNamespaceAndPath(Constants.MOD_ID, "gui/windowfield.xml"));
         this.tileEntityScarecrow = tileEntityScarecrow;
 
         registerButton(SELECT_SEED_BUTTON_ID, this::selectSeed);
@@ -111,11 +111,12 @@ public class WindowField extends AbstractWindowSkeleton
         }
 
         final Holder<Biome> biomeHolder = Minecraft.getInstance().level.getBiome(tileEntityScarecrow.getBlockPos());
-        final ResourceLocation biomeID = biomeHolder.unwrapKey().get().location();
+        final Identifier biomeID = biomeHolder.unwrapKey().get().identifier();
         final String biomeLangKey = "biome." + biomeID.getNamespace() + "." + biomeID.getPath();
         this.findPaneOfTypeByID("biome", Text.class)
             .setText(Component.translatable("com.minecolonies.core.biome")
-                .append(I18n.exists(biomeLangKey) ? Component.translatable(biomeLangKey) : Component.literal(biomeID.getPath())));
+                .append(!I18n.get(biomeLangKey).equals(biomeLangKey)
+                  ? Component.translatable(biomeLangKey) : Component.literal(biomeID.getPath())));
 
         MutableComponent biomecategory = Component.literal("");
         for (final TagKey<Biome> preferredBiome : cropBiomeTags)

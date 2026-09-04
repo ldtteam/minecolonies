@@ -3,7 +3,7 @@
   "costs": [
     {
       "count": 1,
-      "item": "minecraft:ghast_tear"
+      "ingredient": "minecraft:ghast_tear"
     }
   ],
   "effects": [

@@ -1,4 +1,5 @@
 package com.minecolonies.core.commands.colonycommands;
+import net.minecraft.server.permissions.Permissions;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.core.MineColonies;
@@ -28,7 +29,7 @@ public class CommandColonyRaidsInfo implements IMCOPCommand
     {
         final IColony colony = ColonyIdArgument.getColony(context, COLONYID_ARG);
 
-        if (!context.getSource().hasPermission(OP_PERM_LEVEL) && !MineColonies.getConfig().getServer().canPlayerUseShowColonyInfoCommand.get())
+        if (!context.getSource().permissions().hasPermission(Permissions.COMMANDS_OWNER) && !MineColonies.getConfig().getServer().canPlayerUseShowColonyInfoCommand.get())
         {
             context.getSource().sendSuccess(() -> Component.translatableEscape(COMMAND_DISABLED_IN_CONFIG), true);
             return 0;

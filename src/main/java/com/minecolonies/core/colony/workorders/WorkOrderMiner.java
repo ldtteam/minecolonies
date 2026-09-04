@@ -1,6 +1,6 @@
 package com.minecolonies.core.colony.workorders;
 
-import com.ldtteam.structurize.api.RotationMirror;
+import com.ldtteam.structurize.util.RotationMirror;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;

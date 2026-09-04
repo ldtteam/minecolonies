@@ -2,7 +2,7 @@ package com.minecolonies.api.research;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.contents.TranslatableContents;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.common.crafting.SizedIngredient;
@@ -69,24 +69,24 @@ public interface IGlobalResearch
 
     /**
      * Getter of the id of the research.
-     * @return the research id, as a ResourceLocation
+     * @return the research id, as a Identifier
      */
-    ResourceLocation getId();
+    Identifier getId();
 
     /**
      * Get the id of the parent IResearch.
      *
-     * @return the parent id, as a ResourceLocation
+     * @return the parent id, as a Identifier
      */
     @Nullable
-    ResourceLocation getParent();
+    Identifier getParent();
 
     /**
      * Get the id of the branch.
      *
-     * @return the branch id, as a ResourceLocation
+     * @return the branch id, as a Identifier
      */
-    ResourceLocation getBranch();
+    Identifier getBranch();
 
     /**
      * Get the depth in the research tree.
@@ -156,7 +156,7 @@ public interface IGlobalResearch
      * Add a child to a research, without setting parentage.
      * @param child the child to add
      */
-    void addChild(final ResourceLocation child);
+    void addChild(final Identifier child);
 
     /**
      * Add item costs.
@@ -181,7 +181,7 @@ public interface IGlobalResearch
      *
      * @return a copy of the list of child identifiers.
      */
-    List<ResourceLocation> getChildren();
+    List<Identifier> getChildren();
 
     /**
      * Getter for the research requirement.

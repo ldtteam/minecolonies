@@ -3,7 +3,7 @@
   "costs": [
     {
       "count": 64,
-      "item": "minecraft:diamond"
+      "ingredient": "minecraft:diamond"
     }
   ],
   "effects": [

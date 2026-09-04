@@ -2,7 +2,7 @@
 	"credit": "Made with Blockbench",
 	"parent": "block/block",
 	"textures": {
-		"0": "item/iron_pickaxe",
+		"0": "minecolonies:block_item/iron_pickaxe",
 		"1": "block/barrel_side",
 		"2": "block/barrel_top_open",
 		"4": "block/stone",

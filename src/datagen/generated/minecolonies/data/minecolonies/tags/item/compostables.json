@@ -44,10 +44,9 @@
     "#c:crops",
     "#c:eggs",
     "#minecraft:flowers",
-    "#minecraft:fishes",
+    "#c:foods/raw_fish",
     "#minecraft:leaves",
     "#minecraft:wool",
-    "#c:foods/raw_fish",
     "#c:foods/raw_meat",
     "#c:mushrooms",
     "#minecolonies:fungi"

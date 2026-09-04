@@ -7,19 +7,25 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.core.Direction;
+import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
+import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
+import com.minecolonies.core.client.render.state.NamedGraveRenderState;
 import net.minecraft.util.FormattedCharSequence;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.network.chat.Style;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
+
 @OnlyIn(Dist.CLIENT)
-public class TileEntityNamedGraveRenderer implements BlockEntityRenderer<TileEntityNamedGrave> {
+public class TileEntityNamedGraveRenderer implements BlockEntityRenderer<TileEntityNamedGrave, NamedGraveRenderState> {
 
     /**
      * Basic rotation to achieve a certain direction.
@@ -48,60 +54,79 @@ public class TileEntityNamedGraveRenderer implements BlockEntityRenderer<TileEnt
 
 
     @Override
-    public void render(@NotNull final TileEntityNamedGrave tileEntity, final float partialTicks, final PoseStack matrixStack, @NotNull final MultiBufferSource buffer, final int combinedLight, final int combinedOverlay)
+    public NamedGraveRenderState createRenderState()
     {
-        matrixStack.pushPose();
+        return new NamedGraveRenderState();
+    }
 
-        if(tileEntity != null)
+    @Override
+    public void extractRenderState(@NotNull final TileEntityNamedGrave tileEntity,
+                                   @NotNull final NamedGraveRenderState state,
+                                   final float partialTicks,
+                                   @NotNull final Vec3 cameraPosition,
+                                   final ModelFeatureRenderer.CrumblingOverlay breakProgress)
+    {
+        BlockEntityRenderer.super.extractRenderState(tileEntity, state, partialTicks, cameraPosition, breakProgress);
+        state.isNamedGrave = tileEntity.getBlockState().getBlock() == ModBlocks.blockNamedGrave;
+        state.facing = tileEntity.getBlockState().getValue(AbstractBlockMinecoloniesDefault.FACING);
+        state.textLines = List.copyOf(tileEntity.getTextLines());
+    }
+
+    @Override
+    public void submit(@NotNull final NamedGraveRenderState state,
+                       @NotNull final PoseStack matrixStack,
+                       @NotNull final SubmitNodeCollector collector,
+                       @NotNull final CameraRenderState camera)
+    {
+        if (!state.isNamedGrave)
         {
-            final BlockState state = tileEntity.getLevel().getBlockState(tileEntity.getBlockPos());
-            if (state.getBlock() == ModBlocks.blockNamedGrave)
-            {
-                final Direction facing = state.getValue(AbstractBlockMinecoloniesDefault.FACING);
-                switch (facing)
-                {
-                    case NORTH:
-                        matrixStack.translate(0.5f, 1.18F, 0.48F); //in front of the center point of the name plate
-                        matrixStack.scale(0.006F, -0.006F, 0.006F); //size of the text font
-                        matrixStack.mulPose(Axis.YP.rotationDegrees(BASIC_ROTATION * ROTATE_NORTH));
-                        break;
-                    case SOUTH:
-                        matrixStack.translate(0.5f, 1.18F, 0.54F); //in front of the center point of the name plate
-                        matrixStack.scale(0.006F, -0.006F, 0.006F); //size of the text font
-                        //don't rotate at all.
-                        break;
+            return;
+        }
 
-                    case EAST:
-                        matrixStack.translate(0.54f, 1.18F, 0.5F); //in front of the center point of the name plate
-                        matrixStack.scale(0.006F, -0.006F, 0.006F); //size of the text font
-                        matrixStack.mulPose(Axis.YP.rotationDegrees(BASIC_ROTATION * ROTATE_EAST));
-                        break;
-                    case WEST:
-                        matrixStack.translate(0.48f, 1.18F, 0.5F); //in front of the center point of the name plate
-                        matrixStack.scale(0.006F, -0.006F, 0.006F); //size of the text font
-                        matrixStack.mulPose(Axis.YP.rotationDegrees(BASIC_ROTATION * ROTATE_WEST));
-                        break;
-                }
-
-                if (tileEntity.getTextLines().isEmpty())
-                {
-                    renderText(matrixStack, buffer, combinedLight, "Unknown Citizen", 0);
-                }
-                else
-                {
-                    for (int i = 0; i < tileEntity.getTextLines().size(); i++)
-                    {
-                        renderText(matrixStack, buffer, combinedLight, tileEntity.getTextLines().get(i), i);
-                    }
-                }
+        matrixStack.pushPose();
+        switch (state.facing)
+        {
+            case NORTH -> {
+                matrixStack.translate(0.5f, 1.18F, 0.48F);
+                matrixStack.scale(0.006F, -0.006F, 0.006F);
+                matrixStack.mulPose(Axis.YP.rotationDegrees(BASIC_ROTATION * ROTATE_NORTH));
+            }
+            case EAST -> {
+                matrixStack.translate(0.54f, 1.18F, 0.5F);
+                matrixStack.scale(0.006F, -0.006F, 0.006F);
+                matrixStack.mulPose(Axis.YP.rotationDegrees(BASIC_ROTATION * ROTATE_EAST));
+            }
+            case WEST -> {
+                matrixStack.translate(0.48f, 1.18F, 0.5F);
+                matrixStack.scale(0.006F, -0.006F, 0.006F);
+                matrixStack.mulPose(Axis.YP.rotationDegrees(BASIC_ROTATION * ROTATE_WEST));
+            }
+            default -> {
+                matrixStack.translate(0.5f, 1.18F, 0.54F);
+                matrixStack.scale(0.006F, -0.006F, 0.006F);
             }
         }
 
-        // restore the original transformation matrix + normals matrix
+        if (state.textLines.isEmpty())
+        {
+            renderText(matrixStack, collector, state.lightCoords, "Unknown Citizen", 0);
+        }
+        else
+        {
+            for (int i = 0; i < state.textLines.size(); i++)
+            {
+                renderText(matrixStack, collector, state.lightCoords, state.textLines.get(i), i);
+            }
+        }
+
         matrixStack.popPose();
     }
 
-    private void renderText(final PoseStack matrixStack, final MultiBufferSource buffer, final int combinedLight, String text, final int line)
+    private void renderText(final PoseStack matrixStack,
+                            final SubmitNodeCollector collector,
+                            final int combinedLight,
+                            String text,
+                            final int line)
     {
         final int maxSize = 20;
         if (text.length() > maxSize)
@@ -109,21 +134,18 @@ public class TileEntityNamedGraveRenderer implements BlockEntityRenderer<TileEnt
             text = text.substring(0, maxSize);
         }
 
-        final FormattedCharSequence iReorderingProcessor = FormattedCharSequence.forward(text, Style.EMPTY);
-        if (iReorderingProcessor != null)
-        {
-            final Font fontRenderer = Minecraft.getInstance().font;
-
-            float x = (float) (-fontRenderer.width(iReorderingProcessor) / 2); //render width of text divided by 2
-            fontRenderer.drawInBatch(iReorderingProcessor, x, line * 10f,
-              0xdcdcdc00, false, matrixStack.last().pose(), buffer, Font.DisplayMode.NORMAL, 0, combinedLight);
-        }
+        final FormattedCharSequence sequence = FormattedCharSequence.forward(text, Style.EMPTY);
+        collector.submitText(
+            matrixStack,
+            (-Minecraft.getInstance().font.width(sequence)) / 2.0F,
+            line * 10.0F,
+            sequence,
+            false,
+            Font.DisplayMode.NORMAL,
+            combinedLight,
+            0xdcdcdc00,
+            0,
+            0);
     }
 
-    // this should be true for tileentities which render globally (no render bounding box), such as beacons.
-    @Override
-    public boolean shouldRenderOffScreen(TileEntityNamedGrave tileEntityMBE21)
-    {
-        return false;
-    }
 }

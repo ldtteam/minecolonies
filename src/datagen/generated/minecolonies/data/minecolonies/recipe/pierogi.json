@@ -1,25 +1,13 @@
 {
   "type": "minecraft:crafting_shapeless",
-  "category": "misc",
   "ingredients": [
-    {
-      "item": "minecolonies:garlic"
-    },
-    {
-      "item": "minecolonies:onion"
-    },
-    {
-      "item": "minecolonies:durum"
-    },
-    {
-      "item": "minecolonies:cheddar_cheese"
-    },
-    {
-      "item": "minecraft:potato"
-    }
+    "minecolonies:garlic",
+    "minecolonies:onion",
+    "minecolonies:durum",
+    "minecolonies:cheddar_cheese",
+    "minecraft:potato"
   ],
   "result": {
-    "count": 1,
     "id": "minecolonies:pierogi"
   }
 }

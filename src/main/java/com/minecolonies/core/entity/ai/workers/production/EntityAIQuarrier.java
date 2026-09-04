@@ -1,6 +1,7 @@
 package com.minecolonies.core.entity.ai.workers.production;
 
-import com.ldtteam.structurize.api.RotationMirror;
+import com.ldtteam.structurize.util.RotationMirror;
+import com.ldtteam.structurize.api.util.Tuple;
 import com.ldtteam.structurize.placement.BlockPlacementResult;
 import com.ldtteam.structurize.placement.StructurePhasePlacementResult;
 import com.ldtteam.structurize.placement.StructurePlacer;
@@ -28,6 +29,7 @@ import com.minecolonies.core.entity.ai.workers.util.LayerBlueprintIterator;
 import com.minecolonies.core.entity.ai.workers.util.WorkerLoadOnlyStructureHandler;
 import com.minecolonies.core.entity.pathfinding.navigation.EntityNavigationUtils;
 import net.minecraft.core.BlockPos;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
@@ -303,7 +305,7 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
             building.setTotalStages(3);
             structurePlacer.getB().setStage(BUILD_SOLID);
         }
-        else if (structurePlacer.getB().getStage() == CLEAR && result.getBlockResult().getWorldPos().getY() <= worker.level().getMinBuildHeight())
+        else if (structurePlacer.getB().getStage() == CLEAR && result.getBlockResult().getWorldPos().getY() <= worker.level().getMinY())
         {
             // At bedrock level, so we're done
             return false;
@@ -394,8 +396,8 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
                   requestProgress,
                   StructurePlacer.Operation.GET_RES_REQUIREMENTS,
                   () -> placer.getIterator()
-                          .decrement(DONT_TOUCH_PREDICATE.or((info, pos, handler) -> !BlockUtils.isAnySolid(info.getBlockInfo().getState())
-                                                                                       || isDecoItem(info.getBlockInfo().getState().getBlock()))),
+                          .decrement(withDontTouch((info, pos, handler) -> !BlockUtils.isAnySolid(info.getBlockInfo().getState())
+                                                                                        || isDecoItem(info.getBlockInfo().getState().getBlock()))),
                   false);
 
                 for (final ItemStack stack : result.getBlockResult().getRequiredItems())
@@ -432,9 +434,9 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
                   requestProgress,
                   StructurePlacer.Operation.GET_RES_REQUIREMENTS,
                   () -> placer.getIterator()
-                          .increment(DONT_TOUCH_PREDICATE.or((info, pos, handler) -> BlockUtils.isAnySolid(info.getBlockInfo().getState()) && !isDecoItem(info.getBlockInfo()
-                                                                                                                                                            .getState()
-                                                                                                                                                            .getBlock()))),
+                          .increment(withDontTouch((info, pos, handler) -> BlockUtils.isAnySolid(info.getBlockInfo().getState()) && !isDecoItem(info.getBlockInfo()
+                                                                                                                                                             .getState()
+                                                                                                                                                             .getBlock()))),
                   false);
 
                 for (final ItemStack stack : result.getBlockResult().getRequiredItems())
@@ -535,11 +537,11 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
             {
                 renderData.append(RENDER_META_STONE);
             }
-            else if (stack.canPerformAction(ItemAbilities.PICKAXE_DIG) && renderData.indexOf(RENDER_META_PICKAXE) == -1)
+            else if (stack.is(ItemTags.PICKAXES) && renderData.indexOf(RENDER_META_PICKAXE) == -1)
             {
                 renderData.append(RENDER_META_PICKAXE);
             }
-            else if (stack.canPerformAction(ItemAbilities.SHOVEL_DIG) && renderData.indexOf(RENDER_META_SHOVEL) == -1)
+            else if (stack.is(ItemTags.SHOVELS) && renderData.indexOf(RENDER_META_SHOVEL) == -1)
             {
                 renderData.append(RENDER_META_SHOVEL);
             }

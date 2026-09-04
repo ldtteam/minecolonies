@@ -5,7 +5,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.item.CrossbowItem;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.UseAnim;
+import net.minecraft.world.item.ItemUseAnimation;
 import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 
 public class RenderUtils
@@ -33,38 +33,38 @@ public class RenderUtils
         {
             if (entity.getUsedItemHand() == hand && entity.getUseItemRemainingTicks() > 0)
             {
-                UseAnim useanim = itemstack.getUseAnimation();
-                if (useanim == UseAnim.BLOCK)
+                ItemUseAnimation useanim = itemstack.getUseAnimation();
+                if (useanim == ItemUseAnimation.BLOCK)
                 {
                     return HumanoidModel.ArmPose.BLOCK;
                 }
 
-                if (useanim == UseAnim.BOW)
+                if (useanim == ItemUseAnimation.BOW)
                 {
                     return HumanoidModel.ArmPose.BOW_AND_ARROW;
                 }
 
-                if (useanim == UseAnim.SPEAR)
+                if (useanim == ItemUseAnimation.SPEAR)
                 {
-                    return HumanoidModel.ArmPose.THROW_SPEAR;
+                    return HumanoidModel.ArmPose.SPEAR;
                 }
 
-                if (useanim == UseAnim.CROSSBOW && hand == entity.getUsedItemHand())
+                if (useanim == ItemUseAnimation.CROSSBOW && hand == entity.getUsedItemHand())
                 {
                     return HumanoidModel.ArmPose.CROSSBOW_CHARGE;
                 }
 
-                if (useanim == UseAnim.SPYGLASS)
+                if (useanim == ItemUseAnimation.SPYGLASS)
                 {
                     return HumanoidModel.ArmPose.SPYGLASS;
                 }
 
-                if (useanim == UseAnim.TOOT_HORN)
+                if (useanim == ItemUseAnimation.TOOT_HORN)
                 {
                     return HumanoidModel.ArmPose.TOOT_HORN;
                 }
 
-                if (useanim == UseAnim.BRUSH)
+                if (useanim == ItemUseAnimation.BRUSH)
                 {
                     return HumanoidModel.ArmPose.BRUSH;
                 }

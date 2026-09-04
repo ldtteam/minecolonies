@@ -1,6 +1,7 @@
 package com.minecolonies.core.entity.ai.workers;
 
 import com.ldtteam.structurize.blocks.schematic.BlockFluidSubstitution;
+import com.ldtteam.structurize.api.util.Tuple;
 import com.ldtteam.structurize.placement.BlockPlacementResult;
 import com.ldtteam.structurize.placement.StructurePhasePlacementResult;
 import com.ldtteam.structurize.placement.StructurePlacer;
@@ -43,7 +44,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.common.util.TriPredicate;
+import com.ldtteam.structurize.api.util.TriPredicate;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -116,6 +117,16 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
                  || (info.getBlockInfo().getState().getBlock() instanceof AbstractBlockHut && handler.getCenterPos().equals(worldPos)
                        && worldState.getBlock() instanceof AbstractBlockHut);
     };
+
+    /**
+     * Combine the immutable structure guard with a stage-specific skip rule.
+     */
+    protected TriPredicate<BlueprintPositionInfo, BlockPos, IStructureHandler> withDontTouch(
+      final TriPredicate<BlueprintPositionInfo, BlockPos, IStructureHandler> predicate)
+    {
+        return (info, pos, handler) -> DONT_TOUCH_PREDICATE.test(info, pos, handler)
+                 || predicate.test(info, pos, handler);
+    }
 
     /**
      * Position where the Builders constructs from.

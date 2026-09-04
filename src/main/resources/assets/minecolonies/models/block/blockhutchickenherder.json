@@ -2,13 +2,13 @@
 	"credit": "Made with Blockbench",
 	"ambientocclusion": false,
 	"textures": {
-		"6": "entity/chicken",
-		"7": "item/egg",
-		"15": "item/bucket",
+		"6": "entity/chicken/chicken_temperate",
+		"7": "minecolonies:block_item/egg",
+		"15": "minecolonies:block_item/bucket",
 		"16": "block/oak_planks",
 		"17": "minecolonies:block/liquid/liq1",
 		"18": "block/hay_block_top",
-		"particle": "item/bucket"
+		"particle": "minecolonies:block_item/bucket"
 	},
 	"elements": [
 		{

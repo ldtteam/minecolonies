@@ -10,7 +10,6 @@ import com.minecolonies.core.client.gui.questlog.WindowQuestLog;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -52,12 +51,12 @@ public class ItemQuestLog extends AbstractItemMinecolonies
         if (entity instanceof TileEntityColonyBuilding buildingEntity)
         {
             buildingEntity.writeColonyToItemStack(questLog);
-            if (!ctx.getLevel().isClientSide)
+            if (!ctx.getLevel().isClientSide())
             {
                 MessageUtils.format(COM_MINECOLONIES_QUEST_LOG_COLONY_SET, buildingEntity.getColony().getName()).sendTo(ctx.getPlayer());
             }
         }
-        else if (ctx.getLevel().isClientSide)
+        else if (ctx.getLevel().isClientSide())
         {
             openWindow(questLog, ctx.getLevel(), ctx.getPlayer());
         }
@@ -75,21 +74,21 @@ public class ItemQuestLog extends AbstractItemMinecolonies
      */
     @Override
     @NotNull
-    public InteractionResultHolder<ItemStack> use(
+    public InteractionResult use(
       final Level worldIn,
       final Player playerIn,
       final InteractionHand hand)
     {
         final ItemStack questLog = playerIn.getItemInHand(hand);
 
-        if (!worldIn.isClientSide)
+        if (!worldIn.isClientSide())
         {
-            return new InteractionResultHolder<>(InteractionResult.SUCCESS, questLog);
+            return InteractionResult.SUCCESS.heldItemTransformedTo(questLog);
         }
 
         openWindow(questLog, worldIn, playerIn);
 
-        return new InteractionResultHolder<>(InteractionResult.SUCCESS, questLog);
+        return InteractionResult.SUCCESS.heldItemTransformedTo(questLog);
     }
 
     /**
@@ -107,7 +106,7 @@ public class ItemQuestLog extends AbstractItemMinecolonies
         }
         else
         {
-            player.displayClientMessage(Component.translatableEscape(TranslationConstants.COM_MINECOLONIES_QUEST_LOG_NEED_COLONY), true);
+            player.sendOverlayMessage(Component.translatableEscape(TranslationConstants.COM_MINECOLONIES_QUEST_LOG_NEED_COLONY));
         }
     }
 }

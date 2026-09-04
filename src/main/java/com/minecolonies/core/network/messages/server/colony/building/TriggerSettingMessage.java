@@ -12,7 +12,7 @@ import com.minecolonies.core.colony.buildings.modules.settings.SettingKey;
 import com.minecolonies.core.network.messages.server.AbstractColonyServerMessage;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
@@ -27,7 +27,7 @@ public class TriggerSettingMessage extends AbstractColonyServerMessage
     /**
      * The unique setting key.
      */
-    private ResourceLocation key;
+    private Identifier key;
 
     /**
      * The value of the setting.
@@ -64,7 +64,7 @@ public class TriggerSettingMessage extends AbstractColonyServerMessage
     {
         super(buf, type);
         this.moduleID = buf.readInt();
-        this.key = buf.readResourceLocation();
+        this.key = buf.readIdentifier();
         this.value = StandardFactoryController.getInstance().deserialize(buf);
         this.buildingPos = buf.readBlockPos();
     }
@@ -74,7 +74,7 @@ public class TriggerSettingMessage extends AbstractColonyServerMessage
     {
         super.toBytes(buf);
         buf.writeInt(moduleID);
-        buf.writeResourceLocation(this.key);
+        buf.writeIdentifier(this.key);
         StandardFactoryController.getInstance().serialize(buf, this.value);
         buf.writeBlockPos(this.buildingPos);
     }

@@ -7,7 +7,7 @@ import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.ingredient.IRecipeSlotView;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.recipe.RecipeIngredientRole;
-import mezz.jei.api.recipe.RecipeType;
+import mezz.jei.api.recipe.types.IRecipeType;
 import mezz.jei.api.recipe.transfer.IRecipeTransferError;
 import mezz.jei.api.recipe.transfer.IRecipeTransferHandler;
 import mezz.jei.api.recipe.transfer.IRecipeTransferHandlerHelper;
@@ -50,7 +50,7 @@ public class PrivateBrewingTeachingTransferHandler implements IRecipeTransferHan
 
     @NotNull
     @Override
-    public RecipeType<IJeiBrewingRecipe> getRecipeType()
+    public IRecipeType<IJeiBrewingRecipe> getRecipeType()
     {
         return RecipeTypes.BREWING;
     }

@@ -8,7 +8,7 @@ import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.blockui.views.DropDownList;
 import com.ldtteam.blockui.views.ScrollingList;
 import com.ldtteam.common.network.AbstractServerPlayMessage;
-import com.ldtteam.structurize.api.RotationMirror;
+import com.ldtteam.structurize.util.RotationMirror;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.placement.BlockPlacementResult;
 import com.ldtteam.structurize.placement.StructurePhasePlacementResult;
@@ -28,8 +28,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.Tuple;
+import net.minecraft.resources.Identifier;
+import com.ldtteam.structurize.api.util.Tuple;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
@@ -104,7 +104,7 @@ public class WindowBuildDecoration extends AbstractWindowSkeleton
       final RotationMirror rotationMirror,
       final Function<BlockPos, AbstractServerPlayMessage> buildRequestMessage)
     {
-        super(new ResourceLocation(Constants.MOD_ID, "gui/windowbuildbuilding.xml"));
+        super(Identifier.fromNamespaceAndPath(Constants.MOD_ID, "gui/windowbuildbuilding.xml"));
         this.path = path;
         this.structurePos = pos;
 
@@ -121,7 +121,7 @@ public class WindowBuildDecoration extends AbstractWindowSkeleton
         findPaneOfTypeByID(DROPDOWN_STYLE_ID, DropDownList.class).hide();
 
         final String cleanedPackName = packMeta.replace(Minecraft.getInstance().player.getUUID().toString(), "");
-        blueprintFuture = StructurePacks.getBlueprintFuture(cleanedPackName, path, mc.level.registryAccess());
+        blueprintFuture = StructurePacks.getBlueprintFuture(cleanedPackName, path);
         this.rotationMirror = rotationMirror;
         this.buildRequestMessage = buildRequestMessage;
     }
@@ -264,7 +264,7 @@ public class WindowBuildDecoration extends AbstractWindowSkeleton
             return;
         }
         final int hashCode = res.getComponentsPatch().hashCode();
-        final String key = res.getDescriptionId() + "-" + hashCode;
+        final String key = res.getItem().getDescriptionId() + "-" + hashCode;
         ItemStorage resource = resources.get(key);
         if (resource == null)
         {

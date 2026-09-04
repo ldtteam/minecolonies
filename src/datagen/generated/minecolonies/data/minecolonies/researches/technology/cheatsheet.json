@@ -3,7 +3,7 @@
   "costs": [
     {
       "count": 64,
-      "item": "minecraft:paper"
+      "ingredient": "minecraft:paper"
     }
   ],
   "effects": [

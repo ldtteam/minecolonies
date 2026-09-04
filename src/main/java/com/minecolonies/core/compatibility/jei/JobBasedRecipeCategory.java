@@ -4,7 +4,6 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-import com.ldtteam.blockui.UiRenderMacros;
 import com.ldtteam.common.fakelevel.FakeLevel;
 import com.ldtteam.common.fakelevel.SingleBlockFakeLevel;
 import com.minecolonies.api.MinecoloniesAPIProxy;
@@ -21,7 +20,8 @@ import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.core.colony.CitizenData;
 import com.minecolonies.core.colony.crafting.LootTableAnalyzer;
 import com.minecolonies.core.entity.citizen.EntityCitizen;
-import com.mojang.blaze3d.platform.Lighting;
+import com.mojang.blaze3d.platform.InputConstants;
+import com.mojang.math.Axis;
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.builder.IRecipeSlotBuilder;
@@ -35,24 +35,30 @@ import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.helpers.IModIdHelper;
 import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
-import mezz.jei.api.recipe.RecipeType;
+import mezz.jei.api.recipe.types.IRecipeType;
 import mezz.jei.api.recipe.category.AbstractRecipeCategory;
+import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
+import net.minecraft.client.renderer.entity.EntityRenderer;
+import net.minecraft.client.renderer.entity.state.EntityRenderState;
+import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.renderer.Rect2i;
-import net.minecraft.client.resources.language.I18n;
+import net.minecraft.locale.Language;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.loot.LootTable;
+import net.minecraft.world.entity.Entity;
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -68,7 +74,7 @@ public abstract class JobBasedRecipeCategory<T> extends AbstractRecipeCategory<T
 {
     private static final Map<EquipmentTypeEntry, List<ItemStack>> TOOL_CACHE = new HashMap<>();
 
-    protected static final ResourceLocation TEXTURE = new ResourceLocation(Constants.MOD_ID, "textures/gui/jei_recipe.png");
+    protected static final Identifier TEXTURE = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "textures/gui/jei_recipe.png");
     @NotNull protected final IJob<?> job;
     @NotNull private final ItemStack catalyst;
     @NotNull private final IDrawableStatic background;
@@ -89,7 +95,7 @@ public abstract class JobBasedRecipeCategory<T> extends AbstractRecipeCategory<T
     protected static final int CITIZEN_H = 71;
 
     protected JobBasedRecipeCategory(@NotNull final IJob<?> job,
-                                     @NotNull final RecipeType<T> type,
+                                     @NotNull final IRecipeType<T> type,
                                      @NotNull final ItemStack icon,
                                      @NotNull final IGuiHelper guiHelper)
     {
@@ -169,7 +175,7 @@ public abstract class JobBasedRecipeCategory<T> extends AbstractRecipeCategory<T
     {
         if (requiredTool != ModEquipmentTypes.none.get())
         {
-            final IRecipeSlotBuilder slot = builder.addSlot(RecipeIngredientRole.CATALYST, x, y).setSlotName("tool");
+            final IRecipeSlotBuilder slot = builder.addSlot(RecipeIngredientRole.INPUT, x, y).setSlotName("tool");
 
             if (withBackground)
             {
@@ -193,7 +199,7 @@ public abstract class JobBasedRecipeCategory<T> extends AbstractRecipeCategory<T
     @Override
     public void draw(@NotNull final T recipe,
                      @NotNull final IRecipeSlotsView recipeSlotsView,
-                     @NotNull final GuiGraphics stack,
+                     @NotNull final GuiGraphicsExtractor stack,
                      final double mouseX, final double mouseY)
     {
         this.background.draw(stack);
@@ -207,12 +213,18 @@ public abstract class JobBasedRecipeCategory<T> extends AbstractRecipeCategory<T
         final EntityCitizen citizen = createCitizenWithJob(this.job);
         if (citizen != null)
         {
-            final float headYaw = (float) Math.atan((citizen_cx - mouseX) / 40.0F) * 40.0F;
-            final float yaw = (float) Math.atan((citizen_cx - mouseX) / 40.0F) * 20.0F;
-            final float pitch = (float) Math.atan((citizen_cy - offsetY - mouseY) / 40.0F) * 20.0F;
-            Lighting.setupForFlatItems();
-            UiRenderMacros.drawEntity(stack.pose(), citizen_cx, citizen_by - offsetY, scale, headYaw, yaw, pitch, citizen);
-            Lighting.setupFor3DItems();
+            drawEntity(stack,
+                citizen,
+                CITIZEN_X,
+                CITIZEN_Y,
+                CITIZEN_W,
+                CITIZEN_H,
+                citizen_cx,
+                citizen_cy,
+                offsetY,
+                scale,
+                mouseX,
+                mouseY);
         }
     }
 
@@ -222,13 +234,13 @@ public abstract class JobBasedRecipeCategory<T> extends AbstractRecipeCategory<T
                                    @NotNull final IFocusGroup focuses)
     {
         builder.addText(this.description, getWidth(), 44)
-                .setColor(ChatFormatting.BLACK.getColor());
+                .setColor(0xFF000000);
 
         for (final InfoBlock block : this.infoBlocksCache.getUnchecked(recipe))
         {
             builder.addText(block.text, block.bounds.getWidth(), block.bounds.getHeight())
                     .setPosition(block.bounds.getX(), block.bounds.getY())
-                    .setColor(ChatFormatting.YELLOW.getColor())
+                    .setColor(0xFFFFFF00)
                     .setShadow(true);
         }
     }
@@ -263,7 +275,7 @@ public abstract class JobBasedRecipeCategory<T> extends AbstractRecipeCategory<T
             if (line.getContents() instanceof TranslatableContents contents)
             {
                 final String key = contents.getKey() + ".tip";
-                if (I18n.exists(key))
+                if (Language.getInstance().has(key))
                 {
                     tip = Component.translatableEscape(key, contents.getArgs());
                 }
@@ -310,12 +322,67 @@ public abstract class JobBasedRecipeCategory<T> extends AbstractRecipeCategory<T
         return Arrays.stream(keys).map(Component::translatable).collect(Collectors.toList());
     }
 
+    protected static void drawEntity(@NotNull final GuiGraphicsExtractor graphics,
+                                     @NotNull final Entity entity,
+                                     final int x,
+                                     final int y,
+                                     final int width,
+                                     final int height,
+                                     final int centerX,
+                                     final int centerY,
+                                     final int offsetY,
+                                     final float scale,
+                                     final double mouseX,
+                                     final double mouseY)
+    {
+        final Minecraft minecraft = Minecraft.getInstance();
+        final EntityRenderDispatcher dispatcher = minecraft.getEntityRenderDispatcher();
+        @SuppressWarnings({"unchecked", "rawtypes"})
+        final EntityRenderer<Entity, EntityRenderState> renderer =
+            (EntityRenderer) dispatcher.getRenderer(entity);
+
+        final EntityRenderState renderState = renderer.createRenderState(entity, 1.0F);
+        renderState.shadowPieces.clear();
+        renderState.nameTag = null;
+
+        final float headYaw = (float) Math.atan((centerX - mouseX) / 40.0D) * 40.0F;
+        final float yaw = (float) Math.atan((centerX - mouseX) / 40.0D) * 20.0F;
+        final float pitch = (float) Math.atan((centerY - offsetY - mouseY) / 40.0D) * 20.0F;
+
+        if (renderState instanceof final LivingEntityRenderState livingState)
+        {
+            livingState.yRot = 180.0F + headYaw;
+            livingState.xRot = -pitch;
+            livingState.bodyRot = 180.0F + yaw;
+        }
+
+        final Quaternionf rotation = Axis.ZP.rotationDegrees(180.0F).mul(Axis.XP.rotationDegrees(pitch));
+        final Quaternionf cameraAngle = Axis.XP.rotationDegrees(pitch).conjugate();
+
+        graphics.entity(renderState,
+            scale,
+            new Vector3f(),
+            rotation,
+            cameraAngle,
+            x,
+            y,
+            x + width,
+            y + height);
+    }
+
+    private static boolean isShiftDown()
+    {
+        final Minecraft minecraft = Minecraft.getInstance();
+        return InputConstants.isKeyDown(minecraft.getWindow(), InputConstants.KEY_LSHIFT)
+            || InputConstants.isKeyDown(minecraft.getWindow(), InputConstants.KEY_RSHIFT);
+    }
+
     protected static class RecipeIdTooltipCallback implements IRecipeSlotRichTooltipCallback
     {
-        private final ResourceLocation id;
+        private final Identifier id;
         private final IModIdHelper modIdHelper;
 
-        public RecipeIdTooltipCallback(final ResourceLocation id, final IModIdHelper modIdHelper)
+        public RecipeIdTooltipCallback(final Identifier id, final IModIdHelper modIdHelper)
         {
             this.id = id;
             this.modIdHelper = modIdHelper;
@@ -329,7 +396,7 @@ public abstract class JobBasedRecipeCategory<T> extends AbstractRecipeCategory<T
             if (modIdHelper.isDisplayingModNameEnabled())
             {
                 final String recipeModId = id.getNamespace();
-                final String ingredientModId = ingredient.getItem().getCreatorModId(ingredient);
+                final String ingredientModId = ingredient.getItem().getCreatorModId(Minecraft.getInstance().level.registryAccess(), ingredient);
                 if (!recipeModId.equals(ingredientModId))
                 {
                     final String modName = modIdHelper.getFormattedModNameForModId(recipeModId);
@@ -338,7 +405,7 @@ public abstract class JobBasedRecipeCategory<T> extends AbstractRecipeCategory<T
                 }
             }
 
-            final boolean showAdvanced = Minecraft.getInstance().options.advancedItemTooltips || Screen.hasShiftDown();
+            final boolean showAdvanced = Minecraft.getInstance().options.advancedItemTooltips || isShiftDown();
             if (showAdvanced)
             {
                 final MutableComponent recipeId = Component.translatableEscape("jei.tooltip.recipe.id", id.toString());
@@ -382,10 +449,10 @@ public abstract class JobBasedRecipeCategory<T> extends AbstractRecipeCategory<T
                 tooltip.add(Component.translatableEscape(TranslationConstants.PARTIAL_JEI_INFO + "conditions.tip"));
             }
 
-            final boolean showAdvanced = Minecraft.getInstance().options.advancedItemTooltips || Screen.hasShiftDown();
+            final boolean showAdvanced = Minecraft.getInstance().options.advancedItemTooltips || isShiftDown();
             if (showAdvanced)
             {
-                final MutableComponent recipeId = Component.translatableEscape("com.minecolonies.coremod.jei.loottableid", id.location().toString());
+                final MutableComponent recipeId = Component.translatableEscape("com.minecolonies.coremod.jei.loottableid", id.identifier().toString());
                 tooltip.add(recipeId.withStyle(ChatFormatting.DARK_GRAY));
             }
         }

@@ -1,12 +1,11 @@
 package com.minecolonies.api.client.render.modeltype;
 
-import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.builders.CubeDeformation;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.Pose;
 import org.jetbrains.annotations.NotNull;
@@ -14,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Citizen model.
  */
-public class CitizenModel<T extends AbstractEntityCitizen> extends HumanoidModel<AbstractEntityCitizen>
+public class CitizenModel<T extends CitizenRenderState> extends HumanoidModel<T>
 {
     /**
      * Working render meta.
@@ -25,24 +24,24 @@ public class CitizenModel<T extends AbstractEntityCitizen> extends HumanoidModel
 
     public CitizenModel(final ModelPart part)
     {
-        super(part, RenderType::entityCutoutNoCull);
+        super(part, RenderTypes::entityCutout);
     }
 
     @Override
-    public void setupAnim(@NotNull final AbstractEntityCitizen citizen, float f1, float f2, float f3, float f4, float f5)
+    public void setupAnim(@NotNull final T state)
     {
-        super.setupAnim(citizen, f1, f2, f3, f4, f5);
+        super.setupAnim(state);
         if (body.xRot == 0)
         {
-            body.xRot = getActualRotation(citizen);
+            body.xRot = state.actualBodyRotation;
         }
 
         if (head.xRot == 0)
         {
-            head.xRot = getActualRotation(citizen);
+            head.xRot = state.actualBodyRotation;
         }
 
-        if (citizen.getCitizenDataView() != null && citizen.getCitizenDataView().getCustomTextureUUID() != null)
+        if (state.customHeadHidden)
         {
             head.visible = false;
             hat.visible = false;
@@ -55,7 +54,7 @@ public class CitizenModel<T extends AbstractEntityCitizen> extends HumanoidModel
 
         if (isItApril1st)
         {
-            switch (citizen.getCivilianID() % 7)
+            switch (state.getCitizen().getCivilianID() % 7)
             {
                 case 0:
                     leftArm.visible = false;
@@ -93,7 +92,7 @@ public class CitizenModel<T extends AbstractEntityCitizen> extends HumanoidModel
      *
      * @return the rotation.
      */
-    public float getActualRotation(@NotNull final AbstractEntityCitizen entity)
+    public float getActualRotation(@NotNull final T state)
     {
         return 0;
     }
@@ -103,9 +102,9 @@ public class CitizenModel<T extends AbstractEntityCitizen> extends HumanoidModel
      * @param citizen the citizen entity to check.
      * @return true if so.
      */
-    public boolean isWorking(final AbstractEntityCitizen citizen)
+    public boolean isWorking(final CitizenRenderState state)
     {
-        return citizen.getRenderMetadata().contains(RENDER_META_WORKING);
+        return state.working;
     }
 
     /**
@@ -113,12 +112,12 @@ public class CitizenModel<T extends AbstractEntityCitizen> extends HumanoidModel
      * @param citizen the citizen entity to check.
      * @return true if so.
      */
-    public boolean displayHat(final AbstractEntityCitizen citizen)
+    public boolean displayHat(final T state)
     {
-        if (citizen.getPose() == Pose.SLEEPING || !citizen.getItemBySlot(EquipmentSlot.HEAD).isEmpty())
+        if (state.hasPose(Pose.SLEEPING) || !state.headEquipment.isEmpty())
         {
             return false;
         }
-        return citizen.getCitizenDataView() == null || (citizen.getCitizenDataView().getDisplayArmor(EquipmentSlot.HEAD).isEmpty() && citizen.getCitizenDataView().getCustomTextureUUID() == null);
+        return !state.customHeadHidden;
     }
 }

@@ -1,6 +1,6 @@
 {
 	"credit": "Made with Blockbench",
-	"parent": "block/cube_all",
+	"parent": "block/block",
 	"ambientocclusion": false,
 	"loader": "neoforge:composite",
 	"textures": {
@@ -9,14 +9,14 @@
 	"children": {
 		"first": {
       "render_type": "solid",
-			"parent": "block/cube_all",
+			"parent": "block/block",
 			"textures": {
 				"0": "block/oak_planks",
 				"4": "entity/chest/normal",
 				"2_1": "block/iron_block",
                 "3": "block/red_concrete",
 				"3_3": "block/polished_andesite",
-				"transp": "map/map_icons",
+				"transp": "minecolonies:block/transparent",
 				"3_1": "block/spruce_planks"
 			},
 			"elements": [
@@ -889,7 +889,7 @@
 		},
 		"second": {
       "render_type": "cutout",
-			"parent": "block/cube_all",
+			"parent": "block/block",
 			"textures": {
 				"3": "minecolonies:block/books/map1"
 			},

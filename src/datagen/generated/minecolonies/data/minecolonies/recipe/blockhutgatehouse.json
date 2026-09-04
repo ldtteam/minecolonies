@@ -1,19 +1,10 @@
 {
   "type": "minecraft:crafting_shaped",
-  "category": "misc",
   "key": {
-    "B": {
-      "item": "minecraft:bow"
-    },
-    "C": {
-      "item": "minecraft:iron_sword"
-    },
-    "T": {
-      "item": "structurize:sceptergold"
-    },
-    "X": {
-      "tag": "minecraft:planks"
-    }
+    "B": "minecraft:bow",
+    "C": "minecraft:iron_sword",
+    "T": "structurize:sceptergold",
+    "X": "#minecraft:planks"
   },
   "pattern": [
     "XTX",
@@ -21,7 +12,6 @@
     "XXX"
   ],
   "result": {
-    "count": 1,
     "id": "minecolonies:blockhutgatehouse"
   }
 }

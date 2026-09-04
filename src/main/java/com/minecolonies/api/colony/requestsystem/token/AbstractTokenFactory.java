@@ -57,8 +57,8 @@ public abstract class AbstractTokenFactory<I> implements ITokenFactory<I, Standa
     @Override
     public StandardToken deserialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final CompoundTag nbt)
     {
-        final Long msb = nbt.getLong(NBT_MSB);
-        final Long lsb = nbt.getLong(NBT_LSB);
+        final Long msb = nbt.getLongOr(NBT_MSB, 0L);
+        final Long lsb = nbt.getLongOr(NBT_LSB, 0L);
 
         final UUID id = new UUID(msb, lsb);
 

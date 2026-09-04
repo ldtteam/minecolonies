@@ -106,7 +106,7 @@ public class EntityAIInteractToggleAble extends Goal
             throw new IllegalArgumentException("Unsupported mob type for EntityAIInteractToggleAble");
         }
 
-        offSet = entityIn.level().random.nextInt(20);
+        offSet = entityIn.level().getRandom().nextInt(20);
     }
 
     /**
@@ -445,7 +445,7 @@ public class EntityAIInteractToggleAble extends Goal
 
         if (!posList.isEmpty())
         {
-            final BlockPos chosen = posList.get(entity.level().random.nextInt(posList.size()));
+            final BlockPos chosen = posList.get(entity.level().getRandom().nextInt(posList.size()));
             {
                 final BlockState state = entity.level().getBlockState(chosen);
                 for (final ToggleAble toggleAble : toggleAbles)

@@ -1,7 +1,7 @@
 package com.minecolonies.api.entity.citizen.happiness;
 
 import com.minecolonies.api.colony.ICitizenData;
-import com.minecolonies.api.util.Tuple;
+import com.ldtteam.structurize.api.util.Tuple;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.NbtTagConstants;
 import net.minecraft.core.HolderLookup;
@@ -127,15 +127,15 @@ public final class TimeBasedHappinessModifier extends AbstractHappinessModifier 
     public void read(@NotNull final HolderLookup.Provider provider, final CompoundTag compoundNBT, final boolean persist)
     {
         super.read(provider, compoundNBT, persist);
-        this.days = compoundNBT.getInt(TAG_DAY);
+        this.days = compoundNBT.getIntOr(TAG_DAY, 0);
         if (!persist)
         {
-            final ListTag listTag = compoundNBT.getList(TAG_LIST, Constants.TAG_COMPOUND);
+            final ListTag listTag = compoundNBT.getListOrEmpty(TAG_LIST);
             final List<Tuple<Integer, Double>> list = new ArrayList<>();
             for (int i = 0; i < listTag.size(); i++)
             {
-                final CompoundTag entryTag = listTag.getCompound(i);
-                list.add(new Tuple<>(entryTag.getInt(TAG_DAY), entryTag.getDouble(TAG_VALUE)));
+                final CompoundTag entryTag = listTag.getCompoundOrEmpty(i);
+                list.add(new Tuple<>(entryTag.getIntOr(TAG_DAY, 0), entryTag.getDoubleOr(TAG_VALUE, 0.0D)));
             }
             this.timeBasedFactor = list;
         }

@@ -10,7 +10,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.util.Tuple;
+import com.ldtteam.structurize.api.util.Tuple;
 import net.minecraft.core.BlockPos;
 
 import org.jetbrains.annotations.NotNull;
@@ -40,7 +40,7 @@ public class EnchanterStationsModule extends AbstractBuildingModule implements I
     public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound)
     {
         buildingToGatherFrom.clear();
-        NBTUtils.streamCompound(compound.getList(TAG_GATHER_LIST, Tag.TAG_COMPOUND))
+        NBTUtils.streamCompound(compound.getListOrEmpty(TAG_GATHER_LIST))
           .map(this::deserializeListElement)
           .forEach(t -> buildingToGatherFrom.put(t.getA(), t.getB()));
     }
@@ -70,7 +70,7 @@ public class EnchanterStationsModule extends AbstractBuildingModule implements I
     private Tuple<BlockPos, Boolean> deserializeListElement(final CompoundTag nbtTagCompound)
     {
         final BlockPos pos = BlockPosUtil.read(nbtTagCompound, TAG_POS);
-        final boolean gatheredAlready = nbtTagCompound.getBoolean(TAG_GATHERED_ALREADY);
+        final boolean gatheredAlready = nbtTagCompound.getBooleanOr(TAG_GATHERED_ALREADY, false);
         return new Tuple<>(pos, gatheredAlready);
     }
 

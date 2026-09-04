@@ -11,7 +11,7 @@ import com.minecolonies.api.util.constant.TypeConstants;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.research.util.ResearchConstants.*;
@@ -37,7 +37,7 @@ public class LocalResearchFactory implements ILocalResearchFactory
 
     @NotNull
     @Override
-    public ILocalResearch getNewInstance(final ResourceLocation id, final ResourceLocation branch, final int depth)
+    public ILocalResearch getNewInstance(final Identifier id, final Identifier branch, final int depth)
     {
         return new LocalResearch(id, branch, depth);
     }
@@ -60,11 +60,11 @@ public class LocalResearchFactory implements ILocalResearchFactory
     @Override
     public ILocalResearch deserialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final CompoundTag nbt)
     {
-        final int state = nbt.getInt(TAG_STATE);
-        final ResourceLocation id = ResourceLocation.parse(nbt.getString(TAG_ID));
-        final ResourceLocation branch = ResourceLocation.parse(nbt.getString(TAG_BRANCH));
-        final int depth = nbt.getInt(TAG_RESEARCH_LVL);
-        final int progress = nbt.getInt(TAG_PROGRESS);
+        final int state = nbt.getIntOr(TAG_STATE, 0);
+        final Identifier id = Identifier.parse(nbt.getStringOr(TAG_ID, ""));
+        final Identifier branch = Identifier.parse(nbt.getStringOr(TAG_BRANCH, ""));
+        final int depth = nbt.getIntOr(TAG_RESEARCH_LVL, 0);
+        final int progress = nbt.getIntOr(TAG_PROGRESS, 0);
 
         final ILocalResearch research = getNewInstance(id, branch, depth);
         research.setState(ResearchState.values()[state]);
@@ -77,7 +77,7 @@ public class LocalResearchFactory implements ILocalResearchFactory
     {
         packetBuffer.writeInt(input.getState().ordinal());
         packetBuffer.writeUtf(input.getId().toString());
-        packetBuffer.writeResourceLocation(input.getBranch());
+        packetBuffer.writeIdentifier(input.getBranch());
         packetBuffer.writeInt(input.getProgress());
         packetBuffer.writeInt(input.getDepth());
     }
@@ -86,8 +86,8 @@ public class LocalResearchFactory implements ILocalResearchFactory
     public ILocalResearch deserialize(IFactoryController controller, RegistryFriendlyByteBuf buffer) throws Throwable
     {
         final int state = buffer.readInt();
-        final ResourceLocation id = buffer.readResourceLocation();
-        final ResourceLocation branch = buffer.readResourceLocation();
+        final Identifier id = buffer.readIdentifier();
+        final Identifier branch = buffer.readIdentifier();
         final int progress = buffer.readInt();
         final int depth = buffer.readInt();
 

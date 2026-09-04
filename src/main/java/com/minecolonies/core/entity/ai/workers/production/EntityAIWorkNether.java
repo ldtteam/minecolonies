@@ -1,5 +1,11 @@
 package com.minecolonies.core.entity.ai.workers.production;
 
+import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.tags.ItemTags;
+
+import com.minecolonies.core.entity.ai.combat.ServerDamageHelper;
+import com.ldtteam.structurize.api.util.Tuple;
+
 import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColonyManager;
@@ -30,6 +36,7 @@ import com.minecolonies.core.util.citizenutils.CitizenItemUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundEvents;
@@ -39,6 +46,8 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.block.Block;
@@ -137,11 +146,11 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
             {
                 renderData.append(RENDER_META_TORCH);
             }
-            else if (stack.canPerformAction(ItemAbilities.PICKAXE_DIG) && renderData.indexOf(RENDER_META_PICKAXE) == -1)
+            else if (stack.is(ItemTags.PICKAXES) && renderData.indexOf(RENDER_META_PICKAXE) == -1)
             {
                 renderData.append(RENDER_META_PICKAXE);
             }
-            else if (stack.canPerformAction(ItemAbilities.SHOVEL_DIG) && renderData.indexOf(RENDER_META_SHOVEL) == -1)
+            else if (stack.is(ItemTags.SHOVELS) && renderData.indexOf(RENDER_META_SHOVEL) == -1)
             {
                 renderData.append(RENDER_META_SHOVEL);
             }
@@ -401,7 +410,7 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
 
                             //Set up the mob to do battle with
                             EntityType<?> mobType = component.entityType();
-                            LivingEntity mob = (LivingEntity) mobType.create(world);
+                            LivingEntity mob = (LivingEntity) mobType.create(world, EntitySpawnReason.EVENT);
                             float mobHealth = mob.getHealth();
 
                             // Calculate how much damage the mob will do if it lands a hit (Before armor)
@@ -423,9 +432,16 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
                                 final ItemStack sword = worker.getItemBySlot(EquipmentSlot.MAINHAND);
                                 if (!sword.isEmpty())
                                 {
-                                    if (sword.getItem() instanceof SwordItem swordItem)
+                                    if (sword.is(net.minecraft.tags.ItemTags.SWORDS))
                                     {
-                                        damageToDo += swordItem.getDamage(sword);
+                                        final float[] swordDamage = {0.0F};
+                                        sword.forEachModifier(EquipmentSlot.MAINHAND, (attribute, modifier) -> {
+                                            if (attribute.is(Attributes.ATTACK_DAMAGE) && modifier.operation() == AttributeModifier.Operation.ADD_VALUE)
+                                            {
+                                                swordDamage[0] += (float) modifier.amount();
+                                            }
+                                        });
+                                        damageToDo += swordDamage[0];
                                     }
                                     else
                                     {
@@ -449,7 +465,7 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
                                 }
 
                                 // Get hit by the mob
-                                if (takeDamage && !worker.hurt(source, incomingDamage))
+                                if (takeDamage && !ServerDamageHelper.apply(worker, source, incomingDamage))
                                 {
                                     //Shouldn't get here, but if we do we can force the damage.
                                     incomingDamage = worker.calculateDamageAfterAbsorbs(source, incomingDamage);
@@ -495,12 +511,16 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
                             {
                                 // Generate loot for this mob, with all the right modifiers
                                 LootParams context = this.getLootContext();
-                                LootTable loot = world.getServer().reloadableRegistries().getLootTable(mob.getLootTable());
-                                List<ItemStack> mobLoot = loot.getRandomItems(context);
-                                job.addProcessedResultsList(mobLoot);
+                                final Optional<ResourceKey<LootTable>> mobLootTable = mob.getLootTable();
+                                if (mobLootTable.isPresent())
+                                {
+                                    LootTable loot = world.getServer().reloadableRegistries().getLootTable(mobLootTable.get());
+                                    List<ItemStack> mobLoot = loot.getRandomItems(context);
+                                    job.addProcessedResultsList(mobLoot);
 
-                                expeditionLog.addMob(mobType);
-                                expeditionLog.addLoot(mobLoot);
+                                    expeditionLog.addMob(mobType);
+                                    expeditionLog.addLoot(mobLoot);
+                                }
                             }
 
                             worker.setItemSlot(EquipmentSlot.MAINHAND, ItemStack.EMPTY);
@@ -518,25 +538,29 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
                         final Block block = bi.getBlock();
 
                         ItemStack tool = findTool(block.defaultBlockState(), worker.blockPosition());
-                        if (tool.getItem() instanceof TieredItem)
+                        if (!tool.isEmpty() && tool.isCorrectToolForDrops(block.defaultBlockState()))
                         {
                             worker.setItemSlot(EquipmentSlot.MAINHAND, tool);
 
                             for (int i = 0; i < currStack.getCount() && !tool.isEmpty(); i++)
                             {
                                 LootParams context = this.getLootContext();
-                                LootTable loot = world.getServer().reloadableRegistries().getLootTable(block.getLootTable());
-                                List<ItemStack> mobLoot = loot.getRandomItems(context);
-
-                                job.addProcessedResultsList(mobLoot);
-                                expeditionLog.addLoot(mobLoot);
-                                tool.hurtAndBreak(1, (ServerLevel) worker.level(), worker, item -> {});
-                                if (tool.isEmpty())
+                                final Optional<ResourceKey<LootTable>> blockLootTable = block.getLootTable();
+                                if (blockLootTable.isPresent())
                                 {
-                                    // it's unlikely the worker will have a spare tool (mobs probably don't drop any), but
-                                    // just in case, let's not be silly and ignore it if we do have one
-                                    tool = findTool(block.defaultBlockState(), worker.blockPosition());
-                                    worker.setItemSlot(EquipmentSlot.MAINHAND, tool);
+                                    LootTable loot = world.getServer().reloadableRegistries().getLootTable(blockLootTable.get());
+                                    List<ItemStack> mobLoot = loot.getRandomItems(context);
+
+                                    job.addProcessedResultsList(mobLoot);
+                                    expeditionLog.addLoot(mobLoot);
+                                    tool.hurtAndBreak(1, (ServerLevel) worker.level(), worker, item -> {});
+                                    if (tool.isEmpty())
+                                    {
+                                        // it's unlikely the worker will have a spare tool (mobs probably don't drop any), but
+                                        // just in case, let's not be silly and ignore it if we do have one
+                                        tool = findTool(block.defaultBlockState(), worker.blockPosition());
+                                        worker.setItemSlot(EquipmentSlot.MAINHAND, tool);
+                                    }
                                 }
                                 worker.getCitizenExperienceHandler().addExperience(CitizenItemUtils.applyMending(worker, xpOnDrop(block)));
 
@@ -677,7 +701,7 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
             if (!block.is(Blocks.NETHER_PORTAL))
             {
                 useFlintAndSteel();
-                ps.get().createPortalBlocks();
+                ps.get().createPortalBlocks(world);
                 return NETHER_LEAVE;
             }
         }

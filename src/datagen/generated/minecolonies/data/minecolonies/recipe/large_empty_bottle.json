@@ -1,16 +1,9 @@
 {
   "type": "minecraft:crafting_shaped",
-  "category": "misc",
   "key": {
-    "G": {
-      "item": "minecraft:glass"
-    },
-    "P": {
-      "item": "minecraft:glass_pane"
-    },
-    "S": {
-      "tag": "minecraft:wooden_slabs"
-    }
+    "G": "minecraft:glass",
+    "P": "minecraft:glass_pane",
+    "S": "#minecraft:wooden_slabs"
   },
   "pattern": [
     "PSP",

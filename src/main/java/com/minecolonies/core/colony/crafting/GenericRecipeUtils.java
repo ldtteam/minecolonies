@@ -10,7 +10,7 @@ import com.minecolonies.api.util.OptionalPredicate;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -44,13 +44,13 @@ public final class GenericRecipeUtils
             restrictions.add(Component.translatableEscape(TranslationConstants.PARTIAL_JEI_INFO + "levelrestriction",
                     customRecipe.getMinBuildingLevel(), customRecipe.getMaxBuildingLevel()));
         }
-        for (final ResourceLocation researchId : customRecipe.getRequiredResearchIds())
+        for (final Identifier researchId : customRecipe.getRequiredResearchIds())
         {
             final Component researchName = getResearchDisplayName(researchId);
             restrictions.add(Component.translatableEscape(TranslationConstants.PARTIAL_JEI_INFO + "minresearch",
                     researchName));
         }
-        for (final ResourceLocation researchId : customRecipe.getExcludedResearchIds())
+        for (final Identifier researchId : customRecipe.getExcludedResearchIds())
         {
             final Component researchName = getResearchDisplayName(researchId);
             restrictions.add(Component.translatableEscape(TranslationConstants.PARTIAL_JEI_INFO + "maxresearch",
@@ -141,7 +141,7 @@ public final class GenericRecipeUtils
     }
 
     @NotNull
-    private static Component getResearchDisplayName(@NotNull final ResourceLocation researchId)
+    private static Component getResearchDisplayName(@NotNull final Identifier researchId)
     {
         final IGlobalResearchTree researchTree = IGlobalResearchTree.getInstance();
 

@@ -2,7 +2,7 @@ package com.minecolonies.api.util;
 
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
-import net.minecraft.Util;
+import net.minecraft.util.Util;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.world.level.ChunkPos;
@@ -25,7 +25,7 @@ public class CodecUtil
      * Chunk pos codec
      */
     public static final Codec<ChunkPos> CHUNK_POS = Codec.INT_STREAM
-        .comapFlatMap(stream -> Util.fixedSize(stream, 2).map(arr -> new ChunkPos(arr[0], arr[1])), pos -> IntStream.of(pos.x, pos.z))
+        .comapFlatMap(stream -> Util.fixedSize(stream, 2).map(arr -> new ChunkPos(arr[0], arr[1])), pos -> IntStream.of(pos.x(), pos.z()))
         .stable();
 
     /**

@@ -210,18 +210,18 @@ public class StatisticsManager implements IStatisticsManager
         stats.clear();
         if (compound.contains(TAG_STAT_MANAGER))
         {
-            final ListTag statsNbts = compound.getList(TAG_STAT_MANAGER, Tag.TAG_COMPOUND);
+            final ListTag statsNbts = compound.getListOrEmpty(TAG_STAT_MANAGER);
             for (int i = 0; i < statsNbts.size(); i++)
             {
-                final CompoundTag statCompound = statsNbts.getCompound(i);
-                final String id = statCompound.getString(TAG_ID);
-                final ListTag timeStampNbts = statCompound.getList(TAG_STAT, Tag.TAG_COMPOUND);
+                final CompoundTag statCompound = statsNbts.getCompoundOrEmpty(i);
+                final String id = statCompound.getStringOr(TAG_ID, "");
+                final ListTag timeStampNbts = statCompound.getListOrEmpty(TAG_STAT);
                 final Int2IntLinkedOpenHashMap timeStamps = new Int2IntLinkedOpenHashMap();
                 for (int j = 0; j < timeStampNbts.size(); j++)
                 {
-                    final CompoundTag compoundTag = timeStampNbts.getCompound(j);
-                    final int day = compoundTag.getInt(TAG_TIME);
-                    final int qty = compoundTag.getInt(TAG_QUANTITY);
+                    final CompoundTag compoundTag = timeStampNbts.getCompoundOrEmpty(j);
+                    final int day = compoundTag.getIntOr(TAG_TIME, 0);
+                    final int qty = compoundTag.getIntOr(TAG_QUANTITY, 0);
 
                     timeStamps.put(day, qty);
                 }

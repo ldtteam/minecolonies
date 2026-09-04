@@ -78,7 +78,7 @@ public class Tool implements IDeliverable
         compound.putString(NBT_TYPE, equipment.getEquipmentType().getRegistryName().toString());
         compound.putInt(NBT_MIN_LEVEL, equipment.getMinLevel());
         compound.putInt(NBT_MAX_LEVEL, equipment.getMaxLevel());
-        compound.put(NBT_RESULT, equipment.getResult().saveOptional(provider));
+        compound.put(NBT_RESULT, ItemStackUtils.serializeOptional(equipment.getResult(), provider));
 
         return compound;
     }
@@ -127,11 +127,11 @@ public class Tool implements IDeliverable
     public static Tool deserialize(@NotNull final HolderLookup.Provider provider, final IFactoryController controller, final CompoundTag nbt)
     {
         //API:Map the given strings a proper way.
-        String resLoc = nbt.getString(NBT_TYPE);
-        final EquipmentTypeEntry type = ModEquipmentTypes.getRegistry().get(EquipmentTypeEntry.parseResourceLocation(resLoc));
-        final Integer minLevel = nbt.getInt(NBT_MIN_LEVEL);
-        final Integer maxLevel = nbt.getInt(NBT_MAX_LEVEL);
-        final ItemStack result = ItemStack.parseOptional(provider, nbt.getCompound(NBT_RESULT));
+        String resLoc = nbt.getStringOr(NBT_TYPE, "");
+        final EquipmentTypeEntry type = ModEquipmentTypes.getRegistry().getValue(EquipmentTypeEntry.parseIdentifier(resLoc));
+        final Integer minLevel = nbt.getIntOr(NBT_MIN_LEVEL, 0);
+        final Integer maxLevel = nbt.getIntOr(NBT_MAX_LEVEL, 0);
+        final ItemStack result = ItemStackUtils.parseOptional(provider, nbt.getCompoundOrEmpty(NBT_RESULT));
 
         return new Tool(type, minLevel, maxLevel, result);
     }
@@ -145,7 +145,7 @@ public class Tool implements IDeliverable
      */
     public static void serialize(final IFactoryController controller, final RegistryFriendlyByteBuf buffer, final Tool input)
     {
-        buffer.writeResourceLocation(input.getEquipmentType().getRegistryName());
+        buffer.writeIdentifier(input.getEquipmentType().getRegistryName());
         buffer.writeInt(input.getMinLevel());
         buffer.writeInt(input.getMaxLevel());
         buffer.writeBoolean(!ItemStackUtils.isEmpty(input.result));
@@ -164,7 +164,7 @@ public class Tool implements IDeliverable
      */
     public static Tool deserialize(final IFactoryController controller, final RegistryFriendlyByteBuf buffer)
     {
-        final EquipmentTypeEntry type = ModEquipmentTypes.getRegistry().get(buffer.readResourceLocation());
+        final EquipmentTypeEntry type = ModEquipmentTypes.getRegistry().getValue(buffer.readIdentifier());
         final int minLevel = buffer.readInt();
         final int maxLevel = buffer.readInt();
         final ItemStack result = buffer.readBoolean() ? Utils.deserializeCodecMess(buffer) : ItemStack.EMPTY;
@@ -186,7 +186,7 @@ public class Tool implements IDeliverable
         }
         catch (final Exception e)
         {
-            Log.getLogger().warn("Got exception for Itemstack when trying to match equipment level: " + stack.getDisplayName() + " - " + stack.getItem().getCreatorModId(stack), e);
+            Log.getLogger().warn("Got exception for Itemstack when trying to match equipment level: " + stack.getDisplayName() + " - " + stack.getItem().builtInRegistryHolder().getRegisteredName().split(":")[0], e);
             return false;
         }
     }

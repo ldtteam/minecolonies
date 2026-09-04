@@ -163,7 +163,13 @@ public final class DynamicTreeCompat extends DynamicTreeProxy
                 fake.setItemInHand(InteractionHand.MAIN_HAND, toolToUse);
             }
 
-            curBlock.onDestroyedByPlayer(curBlockState, world, blockToBreak, fake, true, world.getFluidState(blockToBreak));
+            curBlock.onDestroyedByPlayer(curBlockState,
+              (Level) world,
+              blockToBreak,
+              fake,
+              toolToUse != null ? toolToUse : ItemStack.EMPTY,
+              true,
+              world.getFluidState(blockToBreak));
         };
     }
 

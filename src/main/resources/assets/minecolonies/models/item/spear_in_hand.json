@@ -1,8 +1,9 @@
 {
-    "parent": "builtin/entity",
+    "parent": "minecraft:item/generated",
     "gui_light": "front",
     "textures": {
-        "particle": "#spear"
+        "layer0": "minecolonies:item/spear",
+        "particle": "minecolonies:item/spear"
     },
   "display": {
     "thirdperson_righthand": {

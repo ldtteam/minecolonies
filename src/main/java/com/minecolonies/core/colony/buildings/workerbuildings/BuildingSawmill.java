@@ -10,6 +10,7 @@ import com.minecolonies.api.util.OptionalPredicate;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
 import com.minecolonies.core.colony.buildings.modules.AbstractCraftingBuildingModule;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
@@ -103,7 +104,7 @@ public class BuildingSawmill extends AbstractBuilding
                         amountOfValidBlocks += stack.getCount();
                         continue;
                     }
-                    for (final TagKey<Item> tag : stack.getTags().toList())
+                    for (final TagKey<Item> tag : BuiltInRegistries.ITEM.wrapAsHolder(stack.getItem()).tags().toList())
                     {
                         if (tag.location().getPath().contains("wood"))
                         {

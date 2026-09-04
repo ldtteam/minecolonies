@@ -1,7 +1,10 @@
 package com.minecolonies.api.colony.requestsystem.requestable;
 
 import com.google.common.reflect.TypeToken;
+import com.minecolonies.api.IMinecoloniesAPI;
+import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
+import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.ReflectionUtils;
 import com.minecolonies.api.util.Utils;
@@ -11,7 +14,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.entity.FurnaceBlockEntity;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
@@ -59,7 +61,7 @@ public class Burnable implements IDeliverable
 
         if (!ItemStackUtils.isEmpty(burnable.result))
         {
-            compound.put(NBT_RESULT, burnable.result.saveOptional(provider));
+            compound.put(NBT_RESULT, ItemStackUtils.serializeOptional(burnable.result, provider));
         }
 
         return compound;
@@ -74,8 +76,8 @@ public class Burnable implements IDeliverable
      */
     public static Burnable deserialize(@NotNull final HolderLookup.Provider provider, final IFactoryController controller, final CompoundTag compound)
     {
-        final int count = compound.getInt(NBT_COUNT);
-        final ItemStack result = compound.contains(NBT_RESULT) ? ItemStackUtils.deserializeFromNBT(compound.getCompound(NBT_RESULT), provider) : ItemStackUtils.EMPTY;
+        final int count = compound.getIntOr(NBT_COUNT, 0);
+        final ItemStack result = compound.contains(NBT_RESULT) ? ItemStackUtils.deserializeFromNBT(compound.getCompoundOrEmpty(NBT_RESULT), provider) : ItemStackUtils.EMPTY;
 
         return new Burnable(count, result);
     }
@@ -116,7 +118,7 @@ public class Burnable implements IDeliverable
     @Override
     public boolean matches(@NotNull final ItemStack stack)
     {
-        return FurnaceBlockEntity.isFuel(stack);
+        return IColonyManager.getInstance().getCompatibilityManager().getFuel().contains(new ItemStorage(stack));
     }
 
     @Override

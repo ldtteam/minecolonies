@@ -14,7 +14,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -125,7 +125,7 @@ public class BuildBuildingObjectiveTemplate extends DialogueObjectiveTemplateTem
         JsonObject details = jsonObject.getAsJsonObject(DETAILS_KEY);
 
         final int target = details.get(TARGET_KEY).getAsInt();
-        final BuildingEntry buildingEntry = IMinecoloniesAPI.getInstance().getBuildingRegistry().get(ResourceLocation.parse(details.get(BUILDING_KEY).getAsString()));
+        final BuildingEntry buildingEntry = IMinecoloniesAPI.getInstance().getBuildingRegistry().getValue(Identifier.parse(details.get(BUILDING_KEY).getAsString()));
 
         final int level = details.get(LEVEL_KEY).getAsInt();
         final int quantity = details.get(QUANTITY_KEY).getAsInt();
@@ -340,7 +340,7 @@ public class BuildBuildingObjectiveTemplate extends DialogueObjectiveTemplateTem
         @Override
         public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag nbt)
         {
-            this.currentProgress = nbt.getInt(TAG_QUANTITY);
+            this.currentProgress = nbt.getIntOr(TAG_QUANTITY, 0);
         }
     }
 }

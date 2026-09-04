@@ -9,7 +9,7 @@ import com.minecolonies.core.network.messages.server.colony.building.fields.Assi
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -43,9 +43,9 @@ public abstract class FieldsModuleView extends AbstractBuildingModuleView
     }
 
     @Override
-    public ResourceLocation getIconResourceLocation()
+    public Identifier getIconIdentifier()
     {
-        return new ResourceLocation(Constants.MOD_ID, "textures/gui/modules/field.png");
+        return Identifier.fromNamespaceAndPath(Constants.MOD_ID, "textures/gui/modules/field.png");
     }
 
     @Override

@@ -3,7 +3,7 @@
   "costs": [
     {
       "count": 5,
-      "item": "minecraft:bow"
+      "ingredient": "minecraft:bow"
     }
   ],
   "effects": [

@@ -12,7 +12,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.loot.LootTableProvider;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -282,7 +282,7 @@ public class DefaultSifterCraftingProvider extends CustomRecipeAndLootTableProvi
 
                 final List<LootTableAnalyzer.LootDrop> drops = LootTableAnalyzer.toDrops(provider, Holder.direct(mesh.getLootTable().build()));
                 final Stream<Item> loot = drops.stream().flatMap(drop -> drop.getItemStacks().stream()
-                        .sorted(Comparator.comparing(ItemStack::getCount).reversed().thenComparing(ItemStack::getDescriptionId))
+                        .sorted(Comparator.comparing(ItemStack::getCount).reversed().thenComparing(stack -> stack.getItem().getDescriptionId()))
                         .map(ItemStack::getItem));
 
                 recipe(SIFTER, MODULE_CUSTOM, name)
@@ -293,7 +293,7 @@ public class DefaultSifterCraftingProvider extends CustomRecipeAndLootTableProvi
                         .secondaryOutputs(Stream.concat(Stream.of(mesh.getMesh()), loot)
                                 .map(ItemStack::new)
                                 .collect(Collectors.toList()))
-                        .lootTable(new ResourceLocation(MOD_ID, "recipes/" + name))
+                        .lootTable(Identifier.fromNamespaceAndPath(MOD_ID, "recipes/" + name))
                         .minBuildingLevel(mesh.getMinBuildingLevel())
                         .build(consumer);
             }
@@ -307,10 +307,10 @@ public class DefaultSifterCraftingProvider extends CustomRecipeAndLootTableProvi
     }
 
     private void mesh(@NotNull final Consumer<CustomRecipeBuilder> consumer,
-                      @NotNull final ResourceLocation job,
+                      @NotNull final Identifier job,
                       @NotNull final ItemLike input,
                       @NotNull final ItemLike output,
-                      @NotNull final ResourceLocation research)
+                      @NotNull final Identifier research)
     {
         recipe(job.getPath(), MODULE_CRAFTING, BuiltInRegistries.ITEM.getKey(output.asItem()).getPath())
                 .inputs(List.of(new ItemStorage(new ItemStack(input))))
@@ -331,7 +331,7 @@ public class DefaultSifterCraftingProvider extends CustomRecipeAndLootTableProvi
                 for (final SifterMeshDetails mesh : inputEntry.getValue())
                 {
                     final String name = mesh.getName() + "/" + BuiltInRegistries.ITEM.getKey(inputEntry.getKey()).getPath();
-                    builder.accept(table(new ResourceLocation(MOD_ID, "recipes/" + name)), mesh.getLootTable());
+                    builder.accept(table(Identifier.fromNamespaceAndPath(MOD_ID, "recipes/" + name)), mesh.getLootTable());
                 }
             }
         }, LootContextParamSets.ALL_PARAMS));

@@ -15,8 +15,8 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingHospital;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.Tuple;
+import net.minecraft.resources.Identifier;
+import com.ldtteam.structurize.api.util.Tuple;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.LootTable;
@@ -92,7 +92,7 @@ public class AnimalHerdingModule extends AbstractBuildingModule implements IHasR
      */
     public List<ResourceKey<LootTable>> getLootTables(@NotNull final Animal animal)
     {
-        return Collections.singletonList(animal.getLootTable());
+        return animal.getLootTable().map(Collections::singletonList).orElse(Collections.emptyList());
     }
 
     @Override
@@ -125,7 +125,7 @@ public class AnimalHerdingModule extends AbstractBuildingModule implements IHasR
         return List.of(GenericRecipe.builder()
                 .withRecipeId(BuiltInRegistries.ENTITY_TYPE.getKey(animal.getType()))
             .withInputs(List.of(getBreedingItems().stream().map(ItemStorage::getItemStack).toList()))
-            .withLootTable(animal.getLootTable())
+            .withLootTable(animal.getLootTable().orElse(null))
             .withRequiredTool(ModEquipmentTypes.axe.get())
             .withRequiredEntity(animal.getType())
             .build());

@@ -484,7 +484,7 @@
         "second": {
       "render_type": "cutout",
             "textures": {
-                "11": "item/iron_pickaxe"
+                "11": "minecolonies:block_item/iron_pickaxe"
             },
             "elements": [
                 {

@@ -10,13 +10,13 @@ import com.ldtteam.structurize.client.gui.WindowSelectRes;
 import com.minecolonies.api.colony.buildings.modules.IMinimumStockModuleView;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.Tuple;
+import com.ldtteam.structurize.api.util.Tuple;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.client.gui.AbstractModuleWindow;
 import com.minecolonies.core.network.messages.server.colony.building.AddMinimumStockToBuildingModuleMessage;
 import com.minecolonies.core.network.messages.server.colony.building.RemoveMinimumStockFromBuildingModuleMessage;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
@@ -44,7 +44,7 @@ public class MinimumStockModuleWindow extends AbstractModuleWindow<IMinimumStock
      */
     public MinimumStockModuleWindow(final IMinimumStockModuleView moduleView)
     {
-        this(moduleView, new ResourceLocation(Constants.MOD_ID, "gui/layouthuts/layoutminimumstock.xml"));
+        this(moduleView, Identifier.fromNamespaceAndPath(Constants.MOD_ID, "gui/layouthuts/layoutminimumstock.xml"));
     }
 
     /**
@@ -53,7 +53,7 @@ public class MinimumStockModuleWindow extends AbstractModuleWindow<IMinimumStock
      * @param moduleView the module view.
      * @param layoutId   the layout to use for rendering this window.
      */
-    public MinimumStockModuleWindow(final IMinimumStockModuleView moduleView, final ResourceLocation layoutId)
+    public MinimumStockModuleWindow(final IMinimumStockModuleView moduleView, final Identifier layoutId)
     {
         super(moduleView, layoutId);
 
@@ -64,7 +64,7 @@ public class MinimumStockModuleWindow extends AbstractModuleWindow<IMinimumStock
         {
             final ButtonImage button = findPaneOfTypeByID(STOCK_ADD, ButtonImage.class);
             button.setText(Component.translatableEscape(LABEL_LIMIT_REACHED));
-            button.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/builderhut/builder_button_medium_disabled.png"));
+            button.setImage(Identifier.fromNamespaceAndPath(Constants.MOD_ID, "textures/gui/builderhut/builder_button_medium_disabled.png"));
         }
 
         registerButton(STOCK_REMOVE, this::removeStock);

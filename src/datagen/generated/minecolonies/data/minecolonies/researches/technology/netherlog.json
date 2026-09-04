@@ -3,11 +3,11 @@
   "costs": [
     {
       "count": 16,
-      "item": "minecraft:ender_eye"
+      "ingredient": "minecraft:ender_eye"
     },
     {
       "count": 1,
-      "item": "minecolonies:ancienttome"
+      "ingredient": "minecolonies:ancienttome"
     }
   ],
   "effects": [

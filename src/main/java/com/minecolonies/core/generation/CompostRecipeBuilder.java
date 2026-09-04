@@ -2,7 +2,9 @@ package com.minecolonies.core.generation;
 
 import com.minecolonies.api.crafting.CompostRecipe;
 import net.minecraft.data.recipes.RecipeOutput;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.neoforged.neoforge.common.crafting.CompoundIngredient;
 import org.jetbrains.annotations.NotNull;
@@ -35,8 +37,9 @@ public class CompostRecipeBuilder
     }
 
     public void save(@NotNull final RecipeOutput consumer,
-                     @NotNull final ResourceLocation id)
+                     @NotNull final Identifier id)
     {
-        consumer.accept(id, new CompostRecipe(CompoundIngredient.of(inputs.toArray(Ingredient[]::new)), strength), null);
+        consumer.accept(ResourceKey.create(Registries.RECIPE, id),
+                        new CompostRecipe(CompoundIngredient.of(inputs.toArray(Ingredient[]::new)), strength), null);
     }
 }

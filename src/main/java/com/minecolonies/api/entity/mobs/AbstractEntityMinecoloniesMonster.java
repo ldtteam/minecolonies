@@ -16,7 +16,7 @@ import com.minecolonies.api.util.MathUtils;
 import com.minecolonies.core.entity.pathfinding.navigation.AbstractAdvancedPathNavigate;
 import com.minecolonies.core.entity.pathfinding.navigation.PathingStuckHandler;
 import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
@@ -26,6 +26,8 @@ import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.AABB;
 import org.jetbrains.annotations.NotNull;
 
@@ -149,7 +151,7 @@ public abstract class AbstractEntityMinecoloniesMonster extends AbstractFastMine
     {
         super.playAmbientSound();
         final SoundEvent soundevent = this.getAmbientSound();
-        if (soundevent != null && level().random.nextInt(OUT_OF_ONE_HUNDRED) <= ONE)
+        if (soundevent != null && level().getRandom().nextInt(OUT_OF_ONE_HUNDRED) <= ONE)
         {
             this.playSound(soundevent, this.getSoundVolume(), this.getVoicePitch());
         }
@@ -254,7 +256,7 @@ public abstract class AbstractEntityMinecoloniesMonster extends AbstractFastMine
             collisionCounter--;
         }
 
-        if (level().isClientSide)
+        if (level().isClientSide())
         {
             super.aiStep();
             return;
@@ -269,7 +271,7 @@ public abstract class AbstractEntityMinecoloniesMonster extends AbstractFastMine
     }
 
     @Override
-    public boolean hurt(@NotNull final DamageSource damageSource, final float damage)
+    public boolean hurtServer(@NotNull final ServerLevel level, @NotNull final DamageSource damageSource, final float damage)
     {
         if (damageSource.getEntity() instanceof AbstractEntityMinecoloniesMonster)
         {
@@ -288,7 +290,7 @@ public abstract class AbstractEntityMinecoloniesMonster extends AbstractFastMine
             threatTable.addThreat(attacker, (int) damage);
         }
 
-        return super.hurt(damageSource, damage);
+        return super.hurtServer(level, damageSource, damage);
     }
 
     /**
@@ -307,23 +309,23 @@ public abstract class AbstractEntityMinecoloniesMonster extends AbstractFastMine
     }
 
     @Override
-    public void addAdditionalSaveData(final CompoundTag compound)
+    public void addAdditionalSaveData(final ValueOutput output)
     {
         if (spawnPos != null)
         {
-            compound.putLong(TAG_SPAWN_POS, spawnPos.asLong());
+            output.putLong(TAG_SPAWN_POS, spawnPos.asLong());
         }
-        super.addAdditionalSaveData(compound);
+        super.addAdditionalSaveData(output);
     }
 
     @Override
-    public void readAdditionalSaveData(final CompoundTag compound)
+    public void readAdditionalSaveData(final ValueInput input)
     {
-        if (compound.contains(TAG_SPAWN_POS))
+        if (input.getLong(TAG_SPAWN_POS).isPresent())
         {
-            this.spawnPos = BlockPos.of(compound.getLong(TAG_SPAWN_POS));
+            this.spawnPos = BlockPos.of(input.getLongOr(TAG_SPAWN_POS, 0L));
         }
-        super.readAdditionalSaveData(compound);
+        super.readAdditionalSaveData(input);
     }
 
     /**
@@ -388,14 +390,4 @@ public abstract class AbstractEntityMinecoloniesMonster extends AbstractFastMine
         return 1;
     }
 
-    /**
-     * Vanilla monster: Despawn in peaceful
-     *
-     * @return
-     */
-    @Override
-    protected boolean shouldDespawnInPeaceful()
-    {
-        return true;
-    }
 }

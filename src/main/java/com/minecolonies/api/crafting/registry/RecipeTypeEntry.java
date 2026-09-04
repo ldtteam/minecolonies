@@ -3,7 +3,7 @@ package com.minecolonies.api.crafting.registry;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.crafting.AbstractRecipeType;
 import com.minecolonies.api.crafting.IRecipeStorage;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.Objects;
 import java.util.function.Function;
@@ -16,7 +16,7 @@ public final class RecipeTypeEntry
 {
 
     private final Function<IRecipeStorage, AbstractRecipeType<IRecipeStorage>> recipeTypeProducer;
-    private final ResourceLocation registryName;
+    private final Identifier registryName;
 
     /**
      * Builder for a {@link AbstractRecipeType}.
@@ -24,7 +24,7 @@ public final class RecipeTypeEntry
     public static final class Builder
     {
         private Function<IRecipeStorage, AbstractRecipeType<IRecipeStorage>> recipeTypeProducer;
-        private ResourceLocation                registryName;
+        private Identifier                registryName;
 
         /**
          * Setter the for the producer.
@@ -44,7 +44,7 @@ public final class RecipeTypeEntry
          * @param registryName The registry name.
          * @return The builder.
          */
-        public Builder setRegistryName(final ResourceLocation registryName)
+        public Builder setRegistryName(final Identifier registryName)
         {
             this.registryName = registryName;
             return this;
@@ -76,7 +76,7 @@ public final class RecipeTypeEntry
     }
 
     private RecipeTypeEntry(
-      final Function<IRecipeStorage, AbstractRecipeType<IRecipeStorage>> recipeTypeProducer, final ResourceLocation registryName)
+      final Function<IRecipeStorage, AbstractRecipeType<IRecipeStorage>> recipeTypeProducer, final Identifier registryName)
     {
         super();
         this.recipeTypeProducer = recipeTypeProducer;

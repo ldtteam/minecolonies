@@ -12,10 +12,10 @@ import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.common.util.INBTSerializable;
+import com.minecolonies.api.util.INBTSerializable;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
@@ -37,7 +37,7 @@ public interface IJob<AI extends ITickingStateAI> extends INBTSerializable<Compo
      *
      * @return Model of the citizen.
      */
-    ResourceLocation getModel();
+    Identifier getModel();
 
     /**
      * Get the Colony that this Job is associated with (shortcut for getAssignedCitizen().getColonyByPosFromWorld()).

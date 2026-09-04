@@ -11,8 +11,8 @@ import net.neoforged.neoforge.registries.DeferredHolder;
  */
 public class ModRecipeSerializer
 {
-    public static DeferredHolder<RecipeSerializer<?>, CompostRecipe.Serializer> CompostRecipeSerializer;
+    public static DeferredHolder<RecipeSerializer<?>, RecipeSerializer<CompostRecipe>> CompostRecipeSerializer;
     public static DeferredHolder<RecipeType<?>, RecipeType<CompostRecipe>> CompostRecipeType;
 
-    public static DeferredHolder<RecipeSerializer<?>, ZeroWasteRecipe.Serializer> ZeroWasteRecipeSerializer;
+    public static DeferredHolder<RecipeSerializer<?>, RecipeSerializer<ZeroWasteRecipe>> ZeroWasteRecipeSerializer;
 }

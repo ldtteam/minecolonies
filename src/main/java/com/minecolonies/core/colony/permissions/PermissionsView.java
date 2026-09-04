@@ -1,13 +1,14 @@
 package com.minecolonies.core.colony.permissions;
 
 import com.minecolonies.api.IMinecoloniesAPI;
+import com.minecolonies.core.colony.permissions.Permissions;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.colony.permissions.ColonyPlayer;
 import com.minecolonies.api.colony.permissions.IPermissions;
 import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.Utils;
-import com.mojang.authlib.GameProfile;
+import net.minecraft.server.players.NameAndId;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -73,7 +74,7 @@ public class PermissionsView implements IPermissions
     }
 
     @Override
-    public boolean addPlayer(@NotNull final GameProfile gameprofile, final Rank rank)
+    public boolean addPlayer(@NotNull final NameAndId gameprofile, final Rank rank)
     {
         return false;
     }
@@ -284,7 +285,7 @@ public class PermissionsView implements IPermissions
     @Override
     public boolean hasPermission(@NotNull final Player player, @NotNull final Action action)
     {
-        if (player.hasPermissions(IMinecoloniesAPI.getInstance().getConfig().getServer().permissionEventMinBypassPermLevel.get()))
+        if (Permissions.hasVanillaPermissionLevel(player, IMinecoloniesAPI.getInstance().getConfig().getServer().permissionEventMinBypassPermLevel.get()))
         {
             return true;
         }

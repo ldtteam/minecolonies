@@ -8,7 +8,7 @@ import com.ldtteam.blockui.views.ScrollingList;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
-import com.minecolonies.api.util.Tuple;
+import com.ldtteam.structurize.api.util.Tuple;
 import com.minecolonies.api.util.constant.CitizenConstants;
 import com.minecolonies.core.MineColonies;
 import com.minecolonies.core.colony.buildings.moduleviews.CombinedHiringLimitModuleView;

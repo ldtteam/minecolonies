@@ -9,7 +9,7 @@ import com.minecolonies.core.client.gui.AbstractWindowSkeleton;
 import com.minecolonies.core.client.gui.WindowBuildingBrowser;
 import com.minecolonies.core.network.messages.client.colony.ColonyListMessage;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -27,7 +27,7 @@ public class WindowColonyPrestigeRanking extends AbstractWindowSkeleton
      */
     public WindowColonyPrestigeRanking(final boolean atTownHall, final ITownHallView building)
     {
-        super(new ResourceLocation(Constants.MOD_ID, "gui/map/windowcolonyprestigeranking.xml"));
+        super(Identifier.fromNamespaceAndPath(Constants.MOD_ID, "gui/map/windowcolonyprestigeranking.xml"));
 
         if (atTownHall)
         {

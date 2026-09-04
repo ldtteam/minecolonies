@@ -4,14 +4,19 @@ import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.items.ModTags;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.data.tags.TagAppender;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.TagKey;
+import org.jetbrains.annotations.NotNull;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.common.data.BlockTagsProvider;
-import net.neoforged.neoforge.common.data.ExistingFileHelper;
-import org.jetbrains.annotations.Nullable;
+
+import java.util.Objects;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -24,15 +29,16 @@ public class DefaultBlockTagsProvider extends BlockTagsProvider
     public DefaultBlockTagsProvider(
       final PackOutput output,
       final CompletableFuture<HolderLookup.Provider> lookupProvider,
-      @Nullable final ExistingFileHelper existingFileHelper)
+      final CompletableFuture<HolderLookup.Provider> unusedLookupProvider)
     {
-        super(output, lookupProvider, MOD_ID, existingFileHelper);
+        super(output, lookupProvider, MOD_ID);
+        Objects.requireNonNull(unusedLookupProvider);
     }
 
     @Override
     protected void addTags(final HolderLookup.Provider holder)
     {
-        tag(ModTags.decorationItems)
+        blockTag(ModTags.decorationItems)
                 .add(Blocks.DEAD_BRAIN_CORAL_BLOCK)
                 .add(Blocks.DEAD_BUBBLE_CORAL_BLOCK)
                 .add(Blocks.DEAD_FIRE_CORAL_BLOCK)
@@ -52,10 +58,10 @@ public class DefaultBlockTagsProvider extends BlockTagsProvider
                 .addTag(BlockTags.CAMPFIRES);
 
         // these tags only exist for backwards compatibility and could be removed in a future Minecraft version
-        tag(ModTags.concreteBlocks).addTag(Tags.Blocks.CONCRETES);
-        tag(ModTags.concretePowderBlocks).addTag(BlockTags.CONCRETE_POWDER);
+        blockTag(ModTags.concreteBlocks).addTag(Tags.Blocks.CONCRETES);
+        blockTag(ModTags.concretePowderBlocks).addTag(BlockTags.CONCRETE_POWDERS);
 
-        tag(ModTags.pathingBlocks)
+        blockTag(ModTags.pathingBlocks)
                 .addTag(ModTags.concreteBlocks)
                 .addTag(BlockTags.STONE_BRICKS)
             .addTag(BlockTags.PLANKS)
@@ -128,50 +134,51 @@ public class DefaultBlockTagsProvider extends BlockTagsProvider
                 .add(com.ldtteam.domumornamentum.block.ModBlocks.getInstance().getAllBrickStairBlocks().toArray(new Block[0]))
                 .addTag(com.ldtteam.domumornamentum.tag.ModTags.BRICKS);
 
-        tag(ModTags.dangerousBlocks);
+        blockTag(ModTags.dangerousBlocks);
 
-        tag(ModTags.freeClimbBlocks)
+        blockTag(ModTags.freeClimbBlocks)
                 .add(Blocks.LADDER)
                 .add(Blocks.SCAFFOLDING);
 
-        tag(ModTags.mangroveTree)
+        blockTag(ModTags.mangroveTree)
                 .add(Blocks.MANGROVE_LOG)
                 .add(Blocks.MANGROVE_ROOTS);
 
-        tag(ModTags.extraTree)
-                .addOptionalTag(new ResourceLocation("productivebees", "nests/wood_nests"));
+        blockTag(ModTags.extraTree).addOptionalTag(TagKey.create(Registries.BLOCK,
+                Identifier.fromNamespaceAndPath("productivebees", "nests/wood_nests")));
 
         // sadly forge doesn't provide the block form of this tag, despite providing an item tag
-        tag(ModTags.mushroomBlocks)
+        blockTag(ModTags.mushroomBlocks)
                 .add(Blocks.BROWN_MUSHROOM)
                 .add(Blocks.RED_MUSHROOM);
 
-        tag(ModTags.hugeMushroomBlocks)
+        blockTag(ModTags.hugeMushroomBlocks)
                 .add(Blocks.BROWN_MUSHROOM_BLOCK)
                 .add(Blocks.RED_MUSHROOM_BLOCK);
 
-        tag(ModTags.fungiBlocks)
+        blockTag(ModTags.fungiBlocks)
                 .add(Blocks.WARPED_FUNGUS)
                 .add(Blocks.CRIMSON_FUNGUS);
 
-        tag(ModTags.tree)
+        blockTag(ModTags.tree)
                 .addTag(BlockTags.LOGS)
                 .addTag(ModTags.mangroveTree)
                 .add(Blocks.MUSHROOM_STEM)
                 .addTag(ModTags.extraTree);
 
-        tag(ModTags.colonyProtectionException)
-                .addOptionalTag(ResourceLocation.fromNamespaceAndPath("waystones", "waystones"));
+        blockTag(ModTags.colonyProtectionException).addOptionalTag(
+                TagKey.create(Registries.BLOCK,
+                        Identifier.fromNamespaceAndPath("waystones", "waystones")));
 
-        tag(ModTags.indestructible).add(Blocks.BEDROCK);
-        tag(ModTags.oreChanceBlocks)
+        blockTag(ModTags.indestructible).add(Blocks.BEDROCK);
+        blockTag(ModTags.oreChanceBlocks)
                 .addTags(Tags.Blocks.STONES)
                 .addTags(BlockTags.BASE_STONE_OVERWORLD, BlockTags.BASE_STONE_NETHER);
 
-        tag(BlockTags.MINEABLE_WITH_PICKAXE)
+        blockTag(BlockTags.MINEABLE_WITH_PICKAXE)
                 .add(ModBlocks.blockIronGate);
 
-        tag(BlockTags.MINEABLE_WITH_AXE)
+        blockTag(BlockTags.MINEABLE_WITH_AXE)
                 .add(ModBlocks.blockBarrel)
                 .add(ModBlocks.blockRack)
                 .add(ModBlocks.blockWoodenGate)
@@ -184,17 +191,65 @@ public class DefaultBlockTagsProvider extends BlockTagsProvider
                 .add(ModBlocks.blockPlantationField)
                 .add(ModBlocks.getHuts());
 
-        tag(BlockTags.MINEABLE_WITH_SHOVEL)
+        blockTag(BlockTags.MINEABLE_WITH_SHOVEL)
                 .add(ModBlocks.blockCompostedDirt)
                 .add(ModBlocks.blockGrave)
                 .add(ModBlocks.blockNamedGrave);
 
-        tag(ModTags.validSpawn)
+        blockTag(ModTags.validSpawn)
           .add(Blocks.AIR, Blocks.CAVE_AIR, Blocks.SNOW, Blocks.TALL_GRASS, Blocks.SHORT_GRASS, Blocks.FERN, Blocks.TORCH)
           .addTags(BlockTags.BUTTONS)
           .addTags(BlockTags.RAILS)
           .addTags(BlockTags.WOOL_CARPETS);
 
-        tag(com.ldtteam.structurize.tag.ModTags.GOOD_SOLID_FOR_PLACEHOLDER).add(ModBlocks.farmland, ModBlocks.floodedFarmland);
+        blockTag(com.ldtteam.structurize.tag.ModTags.GOOD_SOLID_FOR_PLACEHOLDER).add(ModBlocks.farmland, ModBlocks.floodedFarmland);
+    }
+
+    private BlockAppender blockTag(final TagKey<Block> key)
+    {
+        return new BlockAppender(super.tag(key));
+    }
+
+    protected static final class BlockAppender
+    {
+        private final TagAppender<Block> delegate;
+
+        private BlockAppender(@NotNull final TagAppender<Block> delegate)
+        {
+            this.delegate = delegate;
+        }
+
+        public BlockAppender add(final Block... blocks)
+        {
+            for (final Block block : blocks)
+            {
+                delegate.add(block.defaultBlockState().typeHolder().unwrapKey().orElseThrow());
+            }
+            return this;
+        }
+
+        public BlockAppender addTags(final TagKey<Block>... tags)
+        {
+            delegate.addTags(tags);
+            return this;
+        }
+
+        public BlockAppender addOptionalTags(final TagKey<Block>... tags)
+        {
+            delegate.addOptionalTags(tags);
+            return this;
+        }
+
+        public BlockAppender addTag(final TagKey<Block> tag)
+        {
+            delegate.addTag(tag);
+            return this;
+        }
+
+        public BlockAppender addOptionalTag(final TagKey<Block> tag)
+        {
+            delegate.addOptionalTag(tag);
+            return this;
+        }
     }
 }

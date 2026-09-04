@@ -3,11 +3,11 @@
   "costs": [
     {
       "count": 32,
-      "item": "minecraft:leather"
+      "ingredient": "minecraft:leather"
     },
     {
       "count": 16,
-      "item": "minecraft:iron_ingot"
+      "ingredient": "minecraft:iron_ingot"
     }
   ],
   "effects": [

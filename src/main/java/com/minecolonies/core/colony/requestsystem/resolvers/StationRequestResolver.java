@@ -32,7 +32,7 @@ public class StationRequestResolver extends BuildingRequestResolver
     @Override
     public boolean canResolveRequest(@NotNull final IRequestManager manager, final IRequest<? extends IDeliverable> request)
     {
-        if (!manager.getColony().getWorld().isClientSide)
+        if (!manager.getColony().getWorld().isClientSide())
         {
             final Optional<AbstractBuilding> building = getBuilding(manager, request.getId()).map(r -> (AbstractBuilding) r);
             if (building.isPresent())

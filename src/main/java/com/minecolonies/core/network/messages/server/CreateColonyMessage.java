@@ -92,7 +92,7 @@ public class CreateColonyMessage extends AbstractServerPlayMessage
     @Override
     protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer sender)
     {
-        final ServerLevel world = sender.serverLevel();
+        final ServerLevel world = sender.level();
 
         final IColony colony = IColonyManager.getInstance().getClosestColony(world, townHall);
 
@@ -125,10 +125,10 @@ public class CreateColonyMessage extends AbstractServerPlayMessage
         hut.setStructurePack(StructurePacks.getStructurePack(pack));
         hut.setBlueprintPath(pathName);
 
-        final double spawnDistance = Math.sqrt(BlockPosUtil.getDistanceSquared2D(townHall, world.getSharedSpawnPos()));
+        final double spawnDistance = Math.sqrt(BlockPosUtil.getDistanceSquared2D(townHall, world.getRespawnData().pos()));
         if (spawnDistance < MineColonies.getConfig().getServer().minDistanceFromWorldSpawn.get())
         {
-            if (!world.isClientSide)
+            if (!world.isClientSide())
             {
                 MessageUtils.format(CANT_PLACE_COLONY_TOO_CLOSE_TO_SPAWN, MineColonies.getConfig().getServer().minDistanceFromWorldSpawn.get() - spawnDistance).sendTo(sender);
             }
@@ -136,7 +136,7 @@ public class CreateColonyMessage extends AbstractServerPlayMessage
         }
         else if (spawnDistance > MineColonies.getConfig().getServer().maxDistanceFromWorldSpawn.get())
         {
-            if (!world.isClientSide)
+            if (!world.isClientSide())
             {
                 MessageUtils.format(CANT_PLACE_COLONY_TOO_FAR_FROM_SPAWN, spawnDistance - MineColonies.getConfig().getServer().maxDistanceFromWorldSpawn.get()).sendTo(sender);
             }

@@ -2,15 +2,9 @@
   "type": "minecraft:crafting_shaped",
   "category": "equipment",
   "key": {
-    "B": {
-      "item": "structurize:sceptergold"
-    },
-    "I": {
-      "item": "minecraft:iron_ingot"
-    },
-    "S": {
-      "item": "minecraft:stick"
-    }
+    "B": "structurize:sceptergold",
+    "I": "minecraft:iron_ingot",
+    "S": "minecraft:stick"
   },
   "pattern": [
     "  I",
@@ -18,7 +12,6 @@
     "S  "
   ],
   "result": {
-    "count": 1,
     "id": "minecolonies:spear"
   }
 }

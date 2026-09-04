@@ -1,13 +1,13 @@
 package com.minecolonies.core.blocks;
 
+import com.minecolonies.api.blocks.AbstractBlockMinecolonies;
 import com.minecolonies.api.blocks.AbstractBlockBarrel;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.blocks.types.BarrelType;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.tileentities.TileEntityBarrel;
 import com.mojang.serialization.MapCodec;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.entity.player.Player;
@@ -51,7 +51,7 @@ public class BlockBarrel extends AbstractBlockBarrel<BlockBarrel> implements Ent
 
     public BlockBarrel()
     {
-        this(Properties.of().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(BLOCK_HARDNESS, RESISTANCE));
+        this(AbstractBlockMinecolonies.registrationProperties().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(BLOCK_HARDNESS, RESISTANCE));
     }
 
     public BlockBarrel(final Properties properties)
@@ -67,9 +67,9 @@ public class BlockBarrel extends AbstractBlockBarrel<BlockBarrel> implements Ent
     }
 
     @Override
-    public ResourceLocation getRegistryName()
+    public Identifier getRegistryName()
     {
-        return new ResourceLocation(Constants.MOD_ID, BLOCK_NAME);
+        return Identifier.fromNamespaceAndPath(Constants.MOD_ID, BLOCK_NAME);
     }
 
     @Override
@@ -87,7 +87,7 @@ public class BlockBarrel extends AbstractBlockBarrel<BlockBarrel> implements Ent
 
     @NotNull
     @Override
-    public ItemInteractionResult useItemOn(
+    public InteractionResult useItemOn(
       final ItemStack stack,
       final BlockState state,
       final Level worldIn,
@@ -96,15 +96,15 @@ public class BlockBarrel extends AbstractBlockBarrel<BlockBarrel> implements Ent
       final InteractionHand hand,
       final BlockHitResult ray)
     {
-        final ItemStack itemstack = player.getInventory().getSelected();
+        final ItemStack itemstack = player.getInventory().getSelectedItem();
         final BlockEntity te = worldIn.getBlockEntity(pos);
-        if (te instanceof TileEntityBarrel && !worldIn.isClientSide)
+        if (te instanceof TileEntityBarrel && !worldIn.isClientSide())
         {
             ((TileEntityBarrel) te).useBarrel(player, itemstack, ray.getDirection());
             ((TileEntityBarrel) te).updateBlock(worldIn);
         }
 
-        return ItemInteractionResult.SUCCESS;
+        return InteractionResult.SUCCESS;
     }
 
     @NotNull

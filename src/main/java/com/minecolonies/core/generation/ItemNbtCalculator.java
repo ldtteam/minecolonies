@@ -13,7 +13,9 @@ import com.mojang.serialization.DynamicOps;
 import it.unimi.dsi.fastutil.objects.ReferenceArraySet;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.MappedRegistry;
 import net.minecraft.core.Registry;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -24,7 +26,9 @@ import net.minecraft.data.PackOutput;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.RegistryDataLoader;
+import net.minecraft.resources.RegistryValidator;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.PackLocationInfo;
 import net.minecraft.server.packs.PackResources;
 import net.minecraft.server.packs.PackType;
@@ -34,7 +38,6 @@ import net.minecraft.server.packs.resources.MultiPackResourceManager;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.tags.TagKey;
 import net.minecraft.tags.TagLoader;
-import net.minecraft.tags.TagManager;
 import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.item.*;
 import net.neoforged.fml.ModList;
@@ -78,9 +81,8 @@ public class ItemNbtCalculator implements DataProvider
 
         // Force loading some tags, since the creative tabs don't enumerate properly without them
         return lookupProvider
-            // Tag TagKey[minecraft:instrument / minecraft:goat_horns] can't be dereferenced during construction
-            .thenApply(p -> loadRegistryTags(p, serverResources, BuiltInRegistries.INSTRUMENT))
-            // Missing tag: 'minecraft:enchantable/fishing' in 'minecraft:item'
+            // MC26 moved instruments to a data-driven registry, so load it before creative tabs enumerate goat horns.
+            .thenApply(p -> loadDataRegistries(p, serverResources))
             .thenApply(p -> loadRegistryTags(p, serverResources, BuiltInRegistries.ITEM))
             // Missing tag: 'minecraft:blocks_wind_charge_explosions' in 'minecraft:block'
             .thenApply(p -> loadRegistryTags(p, serverResources, BuiltInRegistries.BLOCK))
@@ -128,14 +130,13 @@ public class ItemNbtCalculator implements DataProvider
             typesToRemove.add(DataComponents.RARITY);
             typesToRemove.add(DataComponents.ENCHANTMENT_GLINT_OVERRIDE);
             ModDataComponents.REGISTRY.getEntries().forEach(t -> typesToRemove.add(t.get()));
-            com.ldtteam.structurize.component.ModDataComponents.REGISTRY.getEntries().forEach(t -> typesToRemove.add(t.get()));
 
             for (final ItemStack stack : allStacks)
             {
-                final ResourceLocation resourceLocation = stack.getItemHolder().unwrapKey().get().location();
+                final Identifier resourceLocation = BuiltInRegistries.ITEM.getKey(stack.getItem());
                 final Set<DataComponentType<?>> keys = new ReferenceArraySet<>(stack.getComponents().keySet());
 
-                if (stack.getItem() instanceof ArmorItem)
+                if (stack.has(DataComponents.EQUIPPABLE))
                 {
                     keys.add(DataComponents.DYED_COLOR);
                 }
@@ -147,11 +148,13 @@ public class ItemNbtCalculator implements DataProvider
                 {
                     keys.remove(DataComponents.ENCHANTMENTS);
                 }
-                if (!stack.isRepairable())
+                if (stack.get(DataComponents.REPAIRABLE) == null)
                 {
                     keys.remove(DataComponents.REPAIR_COST);
                 }
-                if (stack.getAttributeModifiers().modifiers().isEmpty())
+                final net.minecraft.world.item.component.ItemAttributeModifiers attributeModifiers =
+                    stack.get(DataComponents.ATTRIBUTE_MODIFIERS);
+                if (attributeModifiers == null || attributeModifiers.modifiers().isEmpty())
                 {
                     keys.remove(DataComponents.ATTRIBUTE_MODIFIERS);
                 }
@@ -173,7 +176,7 @@ public class ItemNbtCalculator implements DataProvider
                 });
             }
 
-            final Path path = packOutput.createPathProvider(PackOutput.Target.DATA_PACK, "compatibility").file(new ResourceLocation(MOD_ID, "itemnbtmatching"), "json");
+            final Path path = packOutput.createPathProvider(PackOutput.Target.DATA_PACK, "compatibility").file(Identifier.fromNamespaceAndPath(MOD_ID, "itemnbtmatching"), "json");
             final JsonArray jsonArray = new JsonArray();
             for (final Map.Entry<String, Set<String>> entry : keyMapping.entrySet())
             {
@@ -211,45 +214,54 @@ public class ItemNbtCalculator implements DataProvider
             @NotNull final ResourceManager resources,
             @NotNull final Registry<T> registry)
     {
-        final ResourceKey<? extends Registry<T>> registryId = registry.key();
-
-        // from TagManager.createLoader
-        final TagLoader<Holder<T>> tagLoader = new TagLoader<>(registry::getHolder, Registries.tagsDirPath(registryId));
-        final TagManager.LoadResult<T> loadResult = new TagManager.LoadResult<>(registryId, tagLoader.loadAndBuild(resources));
-
-        final Map<TagKey<T>, List<Holder<T>>> map = loadResult.tags()
-                .entrySet()
-                .stream()
-                .collect(Collectors.toUnmodifiableMap(entry -> TagKey.create(registryId, entry.getKey()), values -> List.copyOf(values.getValue())));
-        registry.bindTags(map);
-
-        return new HolderLookup.Provider()
-        {
-            @NotNull
-            @Override
-            public Stream<ResourceKey<? extends Registry<?>>> listRegistries()
-            {
-                return provider.listRegistries();
-            }
-
-            @NotNull
-            @Override
-            public <U> Optional<HolderLookup.RegistryLookup<U>> lookup(@NotNull final ResourceKey<? extends Registry<? extends U>> id)
-            {
-                if (id.equals(registryId))
-                {
-                    return Optional.of((HolderLookup.RegistryLookup<U>) registry.asLookup());
-                }
-
-                return provider.lookup(id);
-            }
-
-            @NotNull
-            @Override
-            public <V> RegistryOps<V> createSerializationContext(@NotNull final DynamicOps<V> ops)
-            {
-                return provider.createSerializationContext(ops);
-            }
-        };
+        return loadRegistryTags(provider, resources, registry.key(), registry);
     }
+
+    private static <T> HolderLookup.Provider loadRegistryTags(
+            @NotNull final HolderLookup.Provider provider,
+            @NotNull final ResourceManager resources,
+            @NotNull final ResourceKey<? extends Registry<T>> registryId,
+            @NotNull final Registry<T> registry)
+    {
+
+        if (!(registry instanceof MappedRegistry<T> writableRegistry))
+        {
+            return provider;
+        }
+
+        // Registries are frozen before datagen providers run in MC26.2. The
+        // creative-tab builders used below inspect the global holders, so a
+        // pending lookup alone is insufficient: their tags must be bound on
+        // the registry itself. NeoForge explicitly supports this internal
+        // freeze/unfreeze cycle for applying snapshots and tags.
+        writableRegistry.unfreeze(false);
+        try
+        {
+            final Map<TagKey<T>, List<Holder<T>>> map = TagLoader.loadTagsForRegistry(resources, registryId,
+                    TagLoader.ElementLookup.fromWritableRegistry(writableRegistry));
+            writableRegistry.bindTags(map);
+        }
+        finally
+        {
+            writableRegistry.freeze();
+        }
+
+        return provider;
+    }
+
+    private static HolderLookup.Provider loadDataRegistries(final HolderLookup.Provider provider, final ResourceManager resources)
+    {
+        final RegistryAccess.Frozen loaded = RegistryDataLoader.load(
+            resources,
+            provider.listRegistries().filter(lookup -> !lookup.key().equals(Registries.INSTRUMENT)).toList(),
+            List.of(new RegistryDataLoader.RegistryData<>(
+                Registries.INSTRUMENT, Instrument.DIRECT_CODEC, RegistryValidator.none())),
+            Runnable::run
+        ).join();
+
+        return HolderLookup.Provider.create(Stream.concat(
+            provider.listRegistries().filter(lookup -> !lookup.key().equals(Registries.INSTRUMENT)),
+            Stream.of(loaded.lookupOrThrow(Registries.INSTRUMENT))));
+    }
+
 }

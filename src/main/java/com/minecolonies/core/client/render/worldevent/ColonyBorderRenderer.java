@@ -1,25 +1,18 @@
 package com.minecolonies.core.client.render.worldevent;
 
 import com.ldtteam.blockui.util.color.ColourARGB;
-import com.ldtteam.blockui.util.color.ColourQuartet;
-import com.ldtteam.blockui.util.color.ColouredVertexConsumer;
+import com.ldtteam.blockui.util.color.ColourQuartet4i;
 import com.ldtteam.blockui.util.color.IColour;
+import com.ldtteam.structurize.client.rendertask.util.WorldRenderMacros;
 import com.ldtteam.structurize.items.ModItems;
-import com.ldtteam.structurize.util.WorldRenderMacros;
 import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.claim.IChunkClaimData;
 import com.minecolonies.core.MineColonies;
-import com.minecolonies.core.util.MutableChunkPos;
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.BufferBuilder;
-import com.mojang.blaze3d.vertex.MeshData;
-import com.mojang.blaze3d.vertex.Tesselator;
-import com.mojang.blaze3d.vertex.VertexBuffer;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.Minecraft;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.chunk.LevelChunk;
 
@@ -32,10 +25,9 @@ public class ColonyBorderRenderer
     private static final int CHUNK_SIZE = 16;
     private static final int PLAYER_CHUNK_STEP = CHUNK_SIZE / 4;
 
-    private static VertexBuffer colonies           = null;
-    private static VertexBuffer chunktickets       = null;
-    private static ChunkPos                     lastPlayerChunkPos = null;
+    private static ChunkPos lastPlayerChunkPos = null;
     private static IColonyView lastColony = null;
+    private static boolean lastShowTickets = false;
 
     static void render(final WorldEventContext ctx)
     {
@@ -44,283 +36,177 @@ public class ColonyBorderRenderer
             return;
         }
 
-        final ChunkPos playerChunkPos = new ChunkPos(ctx.clientPlayer.blockPosition());
-
-        if (lastColony != ctx.nearestColony || !lastPlayerChunkPos.equals(playerChunkPos))
+        final var blockPosition = ctx.clientPlayer.blockPosition();
+        final ChunkPos playerChunkPos = new ChunkPos(blockPosition.getX() >> 4, blockPosition.getZ() >> 4);
+        final boolean showTickets = Minecraft.getInstance().hasControlDown();
+        if (lastColony != ctx.nearestColony
+              || lastShowTickets != showTickets
+              || !playerChunkPos.equals(lastPlayerChunkPos))
         {
             lastColony = ctx.nearestColony;
             lastPlayerChunkPos = playerChunkPos;
+            lastShowTickets = showTickets;
+        }
 
-            final Map<ChunkPos, Integer> coloniesMap = new HashMap<>();
-            final Map<ChunkPos, Integer> chunkticketsMap = new HashMap<>();
-            final int nearestColonyId = ctx.nearestColony.getID();
-            final int playerRenderDist = Math.max(ctx.clientRenderDist - RENDER_DIST_THRESHOLD, 2);
-            final int range = Math.max(ctx.clientRenderDist, MineColonies.getConfig().getServer().maxColonySize.get());
+        final Map<ChunkPos, Integer> chunksToDraw = new HashMap<>();
+        final int nearestColonyId = ctx.nearestColony.getID();
+        final int playerRenderDist = Math.max(ctx.clientRenderDist - RENDER_DIST_THRESHOLD, 2);
+        final int range = Math.max(ctx.clientRenderDist, MineColonies.getConfig().getServer().maxColonySize.get());
 
-            for (int chunkX = -range; chunkX <= range; chunkX++)
+        for (int chunkX = -range; chunkX <= range; chunkX++)
+        {
+            for (int chunkZ = -range; chunkZ <= range; chunkZ++)
             {
-                for (int chunkZ = -range; chunkZ <= range; chunkZ++)
+                final LevelChunk chunk = ctx.clientLevel.getChunk(playerChunkPos.x() + chunkX, playerChunkPos.z() + chunkZ);
+                if (chunk.isEmpty())
                 {
-                    final LevelChunk chunk = ctx.clientLevel.getChunk(playerChunkPos.x + chunkX, playerChunkPos.z + chunkZ);
-                    if (chunk.isEmpty()) { continue; }
-                    final ChunkPos chunkPos = chunk.getPos();
+                    continue;
+                }
 
-                    final IChunkClaimData cap = IColonyManager.getInstance().getClaimData(ctx.nearestColony.getDimension(), chunkPos);;
-                    if (cap != null)
-                    {
-                        coloniesMap.put(chunkPos, cap.getOwningColony());
-                    }
-
-                    if (ctx.nearestColony.getTicketedChunks().contains(chunkPos.toLong()))
-                    {
-                        chunkticketsMap.put(chunkPos, nearestColonyId);
-                    }
-                    else
-                    {
-                        chunkticketsMap.put(chunkPos, 0);
-                    }
+                final ChunkPos chunkPos = chunk.getPos();
+                final IChunkClaimData claimData =
+                    IColonyManager.getInstance().getClaimData(ctx.nearestColony.getDimension(), chunkPos);
+                if (!showTickets && claimData != null && claimData.getOwningColony() != 0)
+                {
+                    chunksToDraw.put(chunkPos, claimData.getOwningColony());
+                }
+                else if (showTickets && ctx.nearestColony.getTicketedChunks().contains(chunkPos.pack()))
+                {
+                    chunksToDraw.put(chunkPos, nearestColonyId);
                 }
             }
-
-            if (colonies != null)
-            {
-                colonies.close();
-            }
-            if (chunktickets != null)
-            {
-                chunktickets.close();
-            }
-            colonies = draw(ctx, coloniesMap, nearestColonyId, playerChunkPos, playerRenderDist);
-            chunktickets = draw(ctx, chunkticketsMap, nearestColonyId, playerChunkPos, playerRenderDist);
         }
 
-        final VertexBuffer p = Screen.hasControlDown() ? chunktickets : colonies;
-        if (p == null)
-        {
-            return;
-        }
-
-        ctx.pushPoseCameraToPos(lastPlayerChunkPos.getWorldPosition());
-        ctx.pushShaderMvMatrixFromPose();
-        WorldRenderMacros.LINES.setupRenderState();
-        p.bind();
-        p.drawWithShader(RenderSystem.getModelViewMatrix(), RenderSystem.getProjectionMatrix(), GameRenderer.getPositionColorShader());
-        VertexBuffer.unbind();
-        WorldRenderMacros.LINES.clearRenderState();
-        ctx.popShaderMvMatrix();
-        ctx.popPose();
+        draw(ctx, chunksToDraw, nearestColonyId, playerChunkPos, playerRenderDist);
     }
 
-    private static VertexBuffer draw(final WorldEventContext ctx,
+    private static void draw(final WorldEventContext ctx,
         final Map<ChunkPos, Integer> mapToDraw,
         final int playerColonyId,
         final ChunkPos playerChunkPos,
         final int playerRenderDist)
     {
-        final MutableChunkPos mutableChunkPos = new MutableChunkPos(0, 0);
         final Map<Integer, IColour> colonyColours = new HashMap<>();
         final boolean useColonyColour = IMinecoloniesAPI.getInstance().getConfig().getClient().colonyteamborders.get();
+        final VertexConsumer buffer = ctx.bufferSource.getBuffer(WorldRenderMacros.LINES);
 
-        final BufferBuilder bufferbuilder = Tesselator.getInstance().begin(WorldRenderMacros.LINES.mode(), WorldRenderMacros.LINES.format());
-        final ColouredVertexConsumer buf = new ColouredVertexConsumer(bufferbuilder);
         mapToDraw.forEach((chunkPos, colonyId) -> {
-            if (colonyId == 0 || chunkPos.x <= playerChunkPos.x - playerRenderDist || chunkPos.x >= playerChunkPos.x + playerRenderDist
-                || chunkPos.z <= playerChunkPos.z - playerRenderDist || chunkPos.z >= playerChunkPos.z + playerRenderDist)
+            if (colonyId == 0 || chunkPos.x() <= playerChunkPos.x() - playerRenderDist
+                  || chunkPos.x() >= playerChunkPos.x() + playerRenderDist
+                  || chunkPos.z() <= playerChunkPos.z() - playerRenderDist
+                  || chunkPos.z() >= playerChunkPos.z() + playerRenderDist)
             {
                 return;
             }
 
-            final boolean isPlayerChunkX = colonyId == playerColonyId && chunkPos.x == playerChunkPos.x;
-            final boolean isPlayerChunkZ = colonyId == playerColonyId && chunkPos.z == playerChunkPos.z;
-            final float minX = chunkPos.getMinBlockX() - playerChunkPos.getMinBlockX();
-            final float maxX = chunkPos.getMaxBlockX() - playerChunkPos.getMinBlockX() + 1.0f;
-            final float minZ = chunkPos.getMinBlockZ() - playerChunkPos.getMinBlockZ();
-            final float maxZ = chunkPos.getMaxBlockZ() - playerChunkPos.getMinBlockZ() + 1.0f;
-            final int minY = ctx.clientLevel.getMinBuildHeight();
-            final int maxY = ctx.clientLevel.getMaxBuildHeight();
-            final int testedColonyId = colonyId;
+            final boolean isPlayerChunkX = colonyId == playerColonyId && chunkPos.x() == playerChunkPos.x();
+            final boolean isPlayerChunkZ = colonyId == playerColonyId && chunkPos.z() == playerChunkPos.z();
+            final int minX = chunkPos.getMinBlockX();
+            final int maxX = chunkPos.getMaxBlockX() + 1;
+            final int minZ = chunkPos.getMinBlockZ();
+            final int maxZ = chunkPos.getMaxBlockZ() + 1;
+            final int minY = ctx.clientLevel.getMinY();
+            final int maxY = ctx.clientLevel.getMaxY();
+            final int color = getColor(colonyColours, colonyId, playerColonyId, useColonyColour, ctx);
 
-            if (useColonyColour)
-            {
-                buf.defaultColor = colonyColours.computeIfAbsent(colonyId, id ->
-                {
-                    final IColonyView colony = IMinecoloniesAPI.getInstance().getColonyManager().getColonyView(id, ctx.clientLevel.dimension());
-                    final ChatFormatting team = colony != null ? colony.getTeamColonyColor()
-                            : id == playerColonyId ? ChatFormatting.WHITE : ChatFormatting.RED;
-                    return new ColourARGB(team.getColor() | 0xff000000).asQuartet();
-                });
-            }
-            else if (colonyId == playerColonyId)
-            {
-                buf.defaultColor = new ColourQuartet(255, 255, 255, 255);
-            }
-            else
-            {
-                buf.defaultColor = new ColourQuartet(255, 70, 70, 255);
-            }
+            final boolean north = mapToDraw.getOrDefault(new ChunkPos(chunkPos.x(), chunkPos.z() - 1), -1) != colonyId;
+            final boolean south = mapToDraw.getOrDefault(new ChunkPos(chunkPos.x(), chunkPos.z() + 1), -1) != colonyId;
+            final boolean east = mapToDraw.getOrDefault(new ChunkPos(chunkPos.x() + 1, chunkPos.z()), -1) != colonyId;
+            final boolean west = mapToDraw.getOrDefault(new ChunkPos(chunkPos.x() - 1, chunkPos.z()), -1) != colonyId;
 
-            mutableChunkPos.setX(chunkPos.x);
-            mutableChunkPos.setZ(chunkPos.z - 1);
-            final boolean north = mapToDraw.getOrDefault(mutableChunkPos, -1) != testedColonyId;
+            addLine(buffer, minX, minY, minZ, minX, maxY, minZ, north || west, color);
+            addLine(buffer, maxX, minY, minZ, maxX, maxY, minZ, north || east, color);
+            addLine(buffer, minX, minY, maxZ, minX, maxY, maxZ, south || west, color);
+            addLine(buffer, maxX, minY, maxZ, maxX, maxY, maxZ, south || east, color);
 
-            mutableChunkPos.setZ(chunkPos.z + 1);
-            final boolean south = mapToDraw.getOrDefault(mutableChunkPos, -1) != testedColonyId;
-
-            mutableChunkPos.setX(chunkPos.x + 1);
-            mutableChunkPos.setZ(chunkPos.z);
-            final boolean east = mapToDraw.getOrDefault(mutableChunkPos, -1) != testedColonyId;
-
-            mutableChunkPos.setX(chunkPos.x - 1);
-            final boolean west = mapToDraw.getOrDefault(mutableChunkPos, -1) != testedColonyId;
-
-            // vert lines
-            if (north || west)
-            {
-                buf.addVertex(minX, minY, minZ).setDefaultColor();
-                buf.addVertex(minX, maxY, minZ).setDefaultColor();
-            }
-            if (north || east)
-            {
-                buf.addVertex(maxX, minY, minZ).setDefaultColor();
-                buf.addVertex(maxX, maxY, minZ).setDefaultColor();
-            }
-            if (south || west)
-            {
-                buf.addVertex(minX, minY, maxZ).setDefaultColor();
-                buf.addVertex(minX, maxY, maxZ).setDefaultColor();
-            }
-            if (south || east)
-            {
-                buf.addVertex(maxX, minY, maxZ).setDefaultColor();
-                buf.addVertex(maxX, maxY, maxZ).setDefaultColor();
-            }
-
-            // horizontal lines
             if (north)
             {
-                if (isPlayerChunkX)
-                {
-                    for (int shift = PLAYER_CHUNK_STEP; shift < CHUNK_SIZE; shift += PLAYER_CHUNK_STEP)
-                    {
-                        buf.addVertex(minX + shift, minY, minZ).setDefaultColor();
-                        buf.addVertex(minX + shift, maxY, minZ).setDefaultColor();
-                    }
-                    for (int y = minY + PLAYER_CHUNK_STEP; y < maxY; y += PLAYER_CHUNK_STEP)
-                    {
-                        buf.addVertex(minX, y, minZ).setDefaultColor();
-                        buf.addVertex(maxX, y, minZ).setDefaultColor();
-                    }
-                }
-                else
-                {
-                    for (int y = minY + CHUNK_SIZE; y < maxY; y += CHUNK_SIZE)
-                    {
-                        buf.addVertex(minX, y, minZ).setDefaultColor();
-                        buf.addVertex(maxX, y, minZ).setDefaultColor();
-                    }
-                }
+                addChunkTicks(buffer, isPlayerChunkZ, minX, maxX, minY, maxZ, minZ, true, color);
             }
             if (south)
             {
-                if (isPlayerChunkX)
-                {
-                    for (int shift = PLAYER_CHUNK_STEP; shift < CHUNK_SIZE; shift += PLAYER_CHUNK_STEP)
-                    {
-                        buf.addVertex(minX + shift, minY, maxZ).setDefaultColor();
-                        buf.addVertex(minX + shift, maxY, maxZ).setDefaultColor();
-                    }
-                    for (int y = minY + PLAYER_CHUNK_STEP; y < maxY; y += PLAYER_CHUNK_STEP)
-                    {
-                        buf.addVertex(minX, y, maxZ).setDefaultColor();
-                        buf.addVertex(maxX, y, maxZ).setDefaultColor();
-                    }
-                }
-                else
-                {
-                    for (int y = minY + CHUNK_SIZE; y < maxY; y += CHUNK_SIZE)
-                    {
-                        buf.addVertex(minX, y, maxZ).setDefaultColor();
-                        buf.addVertex(maxX, y, maxZ).setDefaultColor();
-                    }
-                }
+                addChunkTicks(buffer, isPlayerChunkZ, minX, maxX, minY, maxZ, maxZ, true, color);
             }
             if (west)
             {
-                if (isPlayerChunkZ)
-                {
-                    for (int shift = PLAYER_CHUNK_STEP; shift < CHUNK_SIZE; shift += PLAYER_CHUNK_STEP)
-                    {
-                        buf.addVertex(minX, minY, minZ + shift).setDefaultColor();
-                        buf.addVertex(minX, maxY, minZ + shift).setDefaultColor();
-                    }
-                    for (int y = minY + PLAYER_CHUNK_STEP; y < maxY; y += PLAYER_CHUNK_STEP)
-                    {
-                        buf.addVertex(minX, y, minZ).setDefaultColor();
-                        buf.addVertex(minX, y, maxZ).setDefaultColor();
-                    }
-                }
-                else
-                {
-                    for (int y = minY + CHUNK_SIZE; y < maxY; y += CHUNK_SIZE)
-                    {
-                        buf.addVertex(minX, y, minZ).setDefaultColor();
-                        buf.addVertex(minX, y, maxZ).setDefaultColor();
-                    }
-                }
+                addChunkTicks(buffer, isPlayerChunkX, minZ, maxZ, minY, maxZ, minX, false, color);
             }
             if (east)
             {
-                if (isPlayerChunkZ)
-                {
-                    for (int shift = PLAYER_CHUNK_STEP; shift < CHUNK_SIZE; shift += PLAYER_CHUNK_STEP)
-                    {
-                        buf.addVertex(maxX, minY, minZ + shift).setDefaultColor();
-                        buf.addVertex(maxX, maxY, minZ + shift).setDefaultColor();
-                    }
-                    for (int y = minY + PLAYER_CHUNK_STEP; y < maxY; y += PLAYER_CHUNK_STEP)
-                    {
-                        buf.addVertex(maxX, y, minZ).setDefaultColor();
-                        buf.addVertex(maxX, y, maxZ).setDefaultColor();
-                    }
-                }
-                else
-                {
-                    for (int y = minY + CHUNK_SIZE; y < maxY; y += CHUNK_SIZE)
-                    {
-                        buf.addVertex(maxX, y, minZ).setDefaultColor();
-                        buf.addVertex(maxX, y, maxZ).setDefaultColor();
-                    }
-                }
+                addChunkTicks(buffer, isPlayerChunkX, minZ, maxZ, minY, maxZ, maxX, false, color);
             }
         });
-
-        final MeshData renderedBuffer = bufferbuilder.build();
-        if (renderedBuffer == null)
-        {
-            return null;
-        }
-        // create bytebuffer copy since buffer builder uses slice
-        final VertexBuffer vertexBuffer = new VertexBuffer(VertexBuffer.Usage.STATIC);
-        vertexBuffer.bind();
-        vertexBuffer.upload(renderedBuffer);
-        VertexBuffer.unbind();
-        return vertexBuffer;
     }
 
-    /**
-     * Cleanup on logout.
-     */
+    private static int getColor(final Map<Integer, IColour> colors,
+        final int colonyId,
+        final int playerColonyId,
+        final boolean useColonyColour,
+        final WorldEventContext ctx)
+    {
+        if (!useColonyColour)
+        {
+            return colonyId == playerColonyId ? new ColourQuartet4i(255, 255, 255, 255).argb()
+                                              : new ColourQuartet4i(70, 70, 255, 255).argb();
+        }
+
+        return colors.computeIfAbsent(colonyId, id -> {
+            final IColonyView colony =
+                IMinecoloniesAPI.getInstance().getColonyManager().getColonyView(id, ctx.clientLevel.dimension());
+            final ChatFormatting team = colony != null ? colony.getTeamColonyColor()
+                : id == playerColonyId ? ChatFormatting.WHITE : ChatFormatting.RED;
+            final int rgb = net.minecraft.network.chat.TextColor.fromLegacyFormat(team).getValue();
+            return new ColourARGB(rgb | 0xff000000);
+        }).argb();
+    }
+
+    private static void addLine(final VertexConsumer buffer,
+        final int x1,
+        final int y1,
+        final int z1,
+        final int x2,
+        final int y2,
+        final int z2,
+        final boolean visible,
+        final int color)
+    {
+        if (!visible)
+        {
+            return;
+        }
+        buffer.addVertex(x1, y1, z1).setColor(color);
+        buffer.addVertex(x2, y2, z2).setColor(color);
+    }
+
+    @SuppressWarnings("PMD.ExcessiveParameterList")
+    private static void addChunkTicks(final VertexConsumer buffer,
+        final boolean dense,
+        final int from1,
+        final int to1,
+        final int minY,
+        final int maxY,
+        final int fixed,
+        final boolean fixedIsZ,
+        final int color)
+    {
+        final int step = dense ? PLAYER_CHUNK_STEP : CHUNK_SIZE;
+        for (int value = from1 + step; value < to1; value += step)
+        {
+            if (fixedIsZ)
+            {
+                addLine(buffer, value, minY, fixed, value, maxY, fixed, true, color);
+            }
+            else
+            {
+                addLine(buffer, fixed, minY, value, fixed, maxY, value, true, color);
+            }
+        }
+    }
+
     public static void cleanup()
     {
-        if (colonies != null)
-        {
-            colonies.close();
-        }
-        if (chunktickets != null)
-        {
-            chunktickets.close();
-        }
         lastColony = null;
         lastPlayerChunkPos = null;
+        lastShowTickets = false;
     }
 }

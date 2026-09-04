@@ -1,6 +1,6 @@
 package com.minecolonies.api.tileentities;
 
-import com.ldtteam.structurize.api.RotationMirror;
+import com.ldtteam.structurize.util.RotationMirror;
 import com.ldtteam.structurize.blockentities.interfaces.IBlueprintDataProviderBE;
 import com.ldtteam.structurize.storage.StructurePackMeta;
 import com.minecolonies.api.colony.IColony;
@@ -12,9 +12,11 @@ import com.minecolonies.api.util.InventoryFunctions;
 import com.minecolonies.core.tileentities.TileEntityRack;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.Tuple;
+import net.minecraft.resources.Identifier;
+import com.ldtteam.structurize.api.util.Tuple;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -191,7 +193,7 @@ public abstract class AbstractTileEntityColonyBuilding extends TileEntityRack im
      *
      * @return The buildings name.
      */
-    public abstract ResourceLocation getBuildingName();
+    public abstract Identifier getBuildingName();
 
     @Override
     public String getSchematicName()
@@ -263,11 +265,11 @@ public abstract class AbstractTileEntityColonyBuilding extends TileEntityRack im
     }
 
     @Override
-    public void loadAdditional(@NotNull final CompoundTag compound, @NotNull final HolderLookup.Provider provider)
+    public void loadAdditional(@NotNull final ValueInput compound)
     {
-        super.loadAdditional(compound, provider);
-        readSchematicDataFromNBT(compound);
-        this.version = compound.getInt(TAG_VERSION);
+        super.loadAdditional(compound);
+        compound.read(TAG_BLUEPRINTDATA, CompoundTag.CODEC).ifPresent(this::readSchematicDataFromNBT);
+        this.version = compound.getIntOr(TAG_VERSION, 0);
     }
 
     @Override
@@ -276,7 +278,7 @@ public abstract class AbstractTileEntityColonyBuilding extends TileEntityRack im
         final String old = getSchematicName();
         IBlueprintDataProviderBE.super.readSchematicDataFromNBT(originalCompound);
 
-        if (level == null || level.isClientSide || getColony() == null || getColony().getServerBuildingManager() == null)
+        if (level == null || level.isClientSide() || getColony() == null || getColony().getServerBuildingManager() == null)
         {
             return;
         }
@@ -290,10 +292,12 @@ public abstract class AbstractTileEntityColonyBuilding extends TileEntityRack im
     }
 
     @Override
-    public void saveAdditional(@NotNull final CompoundTag compound, @NotNull final HolderLookup.Provider provider)
+    public void saveAdditional(@NotNull final ValueOutput compound)
     {
-        super.saveAdditional(compound, provider);
-        writeSchematicDataToNBT(compound);
+        super.saveAdditional(compound);
+        final CompoundTag schematicData = new CompoundTag();
+        writeSchematicDataToNBT(schematicData);
+        compound.store(TAG_BLUEPRINTDATA, CompoundTag.CODEC, schematicData);
         compound.putInt(TAG_VERSION, this.version);
     }
 

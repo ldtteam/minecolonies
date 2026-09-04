@@ -14,7 +14,7 @@ import com.minecolonies.core.network.messages.server.colony.building.HireFireMes
 import com.minecolonies.core.network.messages.server.colony.building.QuarryHiringModeMessage;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -65,9 +65,9 @@ public class MinerAssignmentModuleView extends AbstractBuildingModuleView implem
     }
 
     @Override
-    public ResourceLocation getIconResourceLocation()
+    public Identifier getIconIdentifier()
     {
-        return new ResourceLocation(Constants.MOD_ID, "textures/gui/modules/entity.png");
+        return Identifier.fromNamespaceAndPath(Constants.MOD_ID, "textures/gui/modules/entity.png");
     }
 
     @Override
@@ -120,7 +120,7 @@ public class MinerAssignmentModuleView extends AbstractBuildingModuleView implem
     @Override
     public BOWindow getWindow()
     {
-        return new SpecialAssignmentModuleWindow(this, new ResourceLocation(Constants.MOD_ID, "gui/layouthuts/layoutminerassignment.xml"));
+        return new SpecialAssignmentModuleWindow(this, Identifier.fromNamespaceAndPath(Constants.MOD_ID, "gui/layouthuts/layoutminerassignment.xml"));
     }
 
     @Override

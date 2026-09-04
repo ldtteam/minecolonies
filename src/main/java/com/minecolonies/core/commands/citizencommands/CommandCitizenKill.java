@@ -1,4 +1,5 @@
 package com.minecolonies.core.commands.citizencommands;
+import net.minecraft.server.permissions.Permissions;
 
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
@@ -36,7 +37,7 @@ public class CommandCitizenKill implements IMCColonyOfficerCommand
     {
         final IColony colony = ColonyIdArgument.getColony(context, COLONYID_ARG);
 
-        if (!context.getSource().hasPermission(OP_PERM_LEVEL) && !MineColonies.getConfig().getServer().canPlayerUseKillCitizensCommand.get())
+        if (!context.getSource().permissions().hasPermission(Permissions.COMMANDS_OWNER) && !MineColonies.getConfig().getServer().canPlayerUseKillCitizensCommand.get())
         {
             context.getSource().sendSuccess(() -> Component.translatableEscape(CommandTranslationConstants.COMMAND_DISABLED_IN_CONFIG), true);
             return 0;

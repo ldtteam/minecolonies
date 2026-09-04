@@ -12,5 +12,6 @@
       "loot_table_id": "minecraft:blocks/small_dripleaf"
     }
   ],
+  "priority": 0,
   "table": "minecolonies:crops/blocks/small_dripleaf"
 }

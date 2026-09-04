@@ -18,7 +18,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -68,7 +68,7 @@ public class PermissionsMessage
         {
             super(buf, type);
             colonyID = buf.readInt();
-            dimension = ResourceKey.create(Registries.DIMENSION, ResourceLocation.parse(buf.readUtf(32767)));
+            dimension = ResourceKey.create(Registries.DIMENSION, Identifier.parse(buf.readUtf(32767)));
             data = new RegistryFriendlyByteBuf(new FriendlyByteBuf(Unpooled.wrappedBuffer(buf.readByteArray())), buf.registryAccess());
         }
 
@@ -84,7 +84,7 @@ public class PermissionsMessage
         {
             data.resetReaderIndex();
             buf.writeInt(colonyID);
-            buf.writeUtf(dimension.location().toString());
+            buf.writeUtf(dimension.identifier().toString());
             buf.writeByteArray(data.array());
         }
     }

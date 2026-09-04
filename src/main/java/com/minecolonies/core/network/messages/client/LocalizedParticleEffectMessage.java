@@ -80,7 +80,7 @@ public class LocalizedParticleEffectMessage extends AbstractClientPlayMessage
         {
             final Vec3 randomPos = new Vec3((RAND.nextDouble() - 0.5D) * 0.1D, RAND.nextDouble() * 0.1D + 0.1D, 0.0D);
             final Vec3 randomOffset = new Vec3((RAND.nextDouble() - 0.5D) * 0.1D, RAND.nextDouble() - 0.5D * 0.1D, (RAND.nextDouble() - 0.5D) * 0.1D);
-            player.level().addParticle(new ItemParticleOption(ParticleTypes.ITEM, stack),
+            player.level().addParticle(new ItemParticleOption(ParticleTypes.ITEM, stack.getItem()),
               posX + randomOffset.x,
               posY + randomOffset.y,
               posZ + randomOffset.z,

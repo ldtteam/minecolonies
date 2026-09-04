@@ -444,9 +444,9 @@
       "render_type": "cutout",
 			"textures": {
 				"1": "minecolonies:block/fisher_net",
-				"12": "item/string",
-				"13": "item/tropical_fish",
-				"14": "item/salmon"
+				"12": "minecolonies:block_item/string",
+				"13": "minecolonies:block_item/tropical_fish",
+				"14": "minecolonies:block_item/salmon"
 			},
 			"elements": [
 				{

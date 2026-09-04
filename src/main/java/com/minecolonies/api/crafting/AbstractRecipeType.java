@@ -1,7 +1,7 @@
 package com.minecolonies.api.crafting;
 
 import com.google.common.collect.ImmutableList;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.List;
@@ -12,7 +12,7 @@ import java.util.List;
 public abstract class AbstractRecipeType<R extends IRecipeStorage>
 {
     final IRecipeStorage recipe;
-    ResourceLocation id; 
+    Identifier id;
 
     /**
      * Constructor basis for recipe types
@@ -33,7 +33,7 @@ public abstract class AbstractRecipeType<R extends IRecipeStorage>
     /**
      * Get the ID of this type
      */
-    public abstract ResourceLocation getId();
+    public abstract Identifier getId();
 
     /**
      * The output display stacks, for rotation through in the views

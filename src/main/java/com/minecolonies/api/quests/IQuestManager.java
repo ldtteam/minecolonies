@@ -2,9 +2,9 @@ package com.minecolonies.api.quests;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Player;
-import net.neoforged.neoforge.common.util.INBTSerializable;
+import com.minecolonies.api.util.INBTSerializable;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
@@ -19,7 +19,7 @@ public interface IQuestManager extends INBTSerializable<CompoundTag>
     /**
      * All quests that exist.
      */
-   Map<ResourceLocation, IQuestTemplate> GLOBAL_SERVER_QUESTS = new HashMap<>();
+   Map<Identifier, IQuestTemplate> GLOBAL_SERVER_QUESTS = new HashMap<>();
 
     /**
      * Have player attempt to accept a colony quest.
@@ -27,13 +27,13 @@ public interface IQuestManager extends INBTSerializable<CompoundTag>
      * @param player the player trying to accept it.
      * @return true if successful.
      */
-    boolean attemptAcceptQuest(ResourceLocation questID, Player player);
+    boolean attemptAcceptQuest(Identifier questID, Player player);
 
     /**
      * Conclude a given quest. This is called FROM the quest, to the colony.
      * @param questId the unique id of the quest.
      */
-    void completeQuest(ResourceLocation questId);
+    void completeQuest(Identifier questId);
 
     /**
      * On each colony tick.
@@ -44,7 +44,7 @@ public interface IQuestManager extends INBTSerializable<CompoundTag>
      * Deactivate a given quest.
      * @param questID the id of the quest.
      */
-    void deleteQuest(ResourceLocation questID);
+    void deleteQuest(Identifier questID);
 
     /**
      * Get the currently available or in progress quest with a given id.
@@ -52,7 +52,7 @@ public interface IQuestManager extends INBTSerializable<CompoundTag>
      * @return the quest.
      */
     @Nullable
-    IQuestInstance getAvailableOrInProgressQuest(final ResourceLocation questId);
+    IQuestInstance getAvailableOrInProgressQuest(final Identifier questId);
 
     /**
      * On world load handling.
@@ -63,14 +63,14 @@ public interface IQuestManager extends INBTSerializable<CompoundTag>
      * Unlock a quest with a given id.
      * @param questId the quest to unlock.
      */
-    void unlockQuest(ResourceLocation questId);
+    void unlockQuest(Identifier questId);
 
     /**
      * Check if a quest is unlocked.
      * @param questId the id of the quest.
      * @return true if so.
      */
-    boolean isUnlocked(ResourceLocation questId);
+    boolean isUnlocked(Identifier questId);
 
     /**
      * Alter the quest reputation.

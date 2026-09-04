@@ -10,7 +10,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
@@ -64,7 +64,7 @@ public class ColonyViewMessage extends AbstractClientPlayMessage
         super(buf, type);
         colonyId = buf.readInt();
         isNewSubscription = buf.readBoolean();
-        dim = ResourceKey.create(Registries.DIMENSION, ResourceLocation.parse(buf.readUtf(32767)));
+        dim = ResourceKey.create(Registries.DIMENSION, Identifier.parse(buf.readUtf(32767)));
         colonyBuffer = new RegistryFriendlyByteBuf(new FriendlyByteBuf(Unpooled.wrappedBuffer(buf.readByteArray())), buf.registryAccess());
     }
 
@@ -74,7 +74,7 @@ public class ColonyViewMessage extends AbstractClientPlayMessage
         colonyBuffer.resetReaderIndex();
         buf.writeInt(colonyId);
         buf.writeBoolean(isNewSubscription);
-        buf.writeUtf(dim.location().toString());
+        buf.writeUtf(dim.identifier().toString());
         buf.writeByteArray(colonyBuffer.array());
     }
 

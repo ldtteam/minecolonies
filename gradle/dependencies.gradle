@@ -1,65 +1,38 @@
-/*repositories {
+repositories {
+    mavenLocal()
     maven {
-        name "JEI"
-        url 'https://maven.blamejared.com/'
+        name = 'LocalBlockUI'
+        url = uri(rootProject.layout.projectDirectory.dir('../BlockUI/repo'))
     }
     maven {
-        name "JourneyMap"
-        url "https://jm.gserv.me/repository/maven-public/"
+        name = 'LocalDomumOrnamentum'
+        url = uri(rootProject.layout.projectDirectory.dir('../Domum-Ornamentum/repo'))
     }
     maven {
-        name "Rei"
-        url "https://maven.shedaniel.me/"
+        name = 'LocalStructurize'
+        url = uri(rootProject.layout.projectDirectory.dir('../Structurize/repo'))
     }
-}*/
+    maven {
+        name = 'LDTTeamModding'
+        url = uri('https://ldtteam.jfrog.io/ldtteam/modding/')
+    }
+    maven {
+        name = 'JourneyMap'
+        url = uri('https://jm.gserv.me/repository/maven-public/')
+    }
+}
 
 dependencies {
-    implementation ("com.ldtteam:domum-ornamentum:${project.domumOrnamentumVersion}"){
-        transitive = false
-    }
+    implementation('com.ldtteam:domum-ornamentum:1.0.0-local')
+    implementation('com.ldtteam:blockui:0.0.1-local')
+    implementation('com.ldtteam:structurize:0.0.1-local')
+    implementation('com.ldtteam:multipiston:0.0.1-local')
+    implementation('com.dtteam.dynamictrees:dynamictrees-neoforge-26.2:1.8.0')
 
-    implementation ("com.ldtteam:blockui:${project.blockUI_version}"){
-        transitive = false
-    }
+    compileOnly 'mezz.jei:jei-26.2-neoforge-api:30.25.0.177'
+    runtimeOnly 'mezz.jei:jei-26.2-neoforge:30.25.0.177'
 
-    implementation ("com.ldtteam:structurize:${project.structurize_version}"){
-        transitive = false
-    }
+    compileOnly 'info.journeymap:journeymap-api-neoforge:26.2-2.0.0'
 
-    implementation ("com.ldtteam:multipiston:${project.multiPistonVersion}"){
-        transitive = false
-    }
-
-    implementation ("com.ldtteam:datagenerators:${project.dataGeneratorsVersion}:universal") {
-        transitive = false
-    }
-
-    // optional compat mods (not included in test environment by default)
-
-    compileOnly "mezz.jei:jei-${project.jei_mcversion}-neoforge-api:${project.jei_version}"
-    runtimeOnly "mezz.jei:jei-${project.jei_mcversion}-neoforge:${project.jei_version}"
-
-    compileOnly "info.journeymap:journeymap-api-neoforge:${project.jmapApiVersion}"
-    if (project.findProperty("runWithJourneymap")?.toString()?.toBoolean() == true) {
-         runtimeOnly "flat:journeymap-neoforge:${project.jmapVersion}"
-    }
-
-    if (project.hasProperty("dynamicTreesVersion")) {
-        if (project.findProperty("runWithDynamicTrees")?.toString()?.toBoolean() == true) {
-            implementation ("com.dtteam.dynamictrees:dynamictrees-neoforge-${project.dynamicTreesMcVersion}:${project.dynamicTreesVersion}") {
-                transitive = false
-            }
-        } else {
-            compileOnly ("com.dtteam.dynamictrees:dynamictrees-neoforge-${project.dynamicTreesMcVersion}:${project.dynamicTreesVersion}") {
-                transitive = false
-            }
-        }
-    }
-
-    // replace "compileOnly" with "implementation" when you want to include it for testing
-    // compileOnly "slimeknights.tconstruct:TConstruct:${project.exactMinecraftVersion}-${project.tinkersConstructVersion}")
-    // compileOnly "slimeknights.mantle:Mantle:${project.exactMinecraftVersion}-${project.mantleVersion}")
-
-    // apiCompileOnly "slimeknights.mantle:Mantle:${project.exactMinecraftVersion}-${project.mantleVersion}")
-    // apiCompileOnly "slimeknights.tconstruct:TConstruct:${project.exactMinecraftVersion}-${project.tinkersConstructVersion}")
+    testImplementation 'junit:junit:4.13.2'
 }

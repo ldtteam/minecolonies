@@ -9,7 +9,7 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingUniversity;
 import com.minecolonies.core.network.messages.server.AbstractBuildingServerMessage;
 import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
@@ -24,12 +24,12 @@ public class TryResearchMessage extends AbstractBuildingServerMessage<BuildingUn
     /**
      * Id of research to try research.
      */
-    private final ResourceLocation researchId;
+    private final Identifier researchId;
 
     /**
      * Id of research to try research.
      */
-    private final ResourceLocation branch;
+    private final Identifier branch;
 
     /**
      * If the request is a reset.
@@ -43,7 +43,7 @@ public class TryResearchMessage extends AbstractBuildingServerMessage<BuildingUn
      * @param branch     the research branch.
      * @param building   the building we're executing on.
      */
-    public TryResearchMessage(final IBuildingView building, @NotNull final ResourceLocation researchId, final ResourceLocation branch, final boolean reset)
+    public TryResearchMessage(final IBuildingView building, @NotNull final Identifier researchId, final Identifier branch, final boolean reset)
     {
         super(TYPE, building);
         this.researchId = researchId;
@@ -54,8 +54,8 @@ public class TryResearchMessage extends AbstractBuildingServerMessage<BuildingUn
     protected TryResearchMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
     {
         super(buf, type);
-        researchId = buf.readResourceLocation();
-        branch = buf.readResourceLocation();
+        researchId = buf.readIdentifier();
+        branch = buf.readIdentifier();
         reset = buf.readBoolean();
     }
 
@@ -63,8 +63,8 @@ public class TryResearchMessage extends AbstractBuildingServerMessage<BuildingUn
     protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf)
     {
         super.toBytes(buf);
-        buf.writeResourceLocation(researchId);
-        buf.writeResourceLocation(branch);
+        buf.writeIdentifier(researchId);
+        buf.writeIdentifier(branch);
         buf.writeBoolean(reset);
     }
 

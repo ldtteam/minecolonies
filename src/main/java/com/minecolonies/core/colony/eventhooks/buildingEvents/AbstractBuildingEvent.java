@@ -69,8 +69,8 @@ public abstract class AbstractBuildingEvent implements IBuildingEventDescription
     public void deserializeNBT(@NotNull final HolderLookup.Provider provider, CompoundTag compound)
     {
         eventPos = BlockPosUtil.read(compound, TAG_EVENT_POS);
-        buildingName = compound.getString(TAG_BUILDING_NAME);
-        level = compound.getInt(TAG_BUILDING_LEVEL);
+        buildingName = compound.getStringOr(TAG_BUILDING_NAME, "");
+        level = compound.getIntOr(TAG_BUILDING_LEVEL, 0);
     }
 
     @Override

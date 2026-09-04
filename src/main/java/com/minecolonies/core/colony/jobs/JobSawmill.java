@@ -6,7 +6,7 @@ import com.minecolonies.api.sounds.ModSoundEvents;
 import com.minecolonies.core.entity.ai.workers.crafting.EntityAIWorkSawmill;
 import com.minecolonies.core.entity.citizen.EntityCitizen;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvents;
 import org.jetbrains.annotations.NotNull;
 
@@ -38,7 +38,7 @@ public class JobSawmill extends AbstractJobCrafter<EntityAIWorkSawmill, JobSawmi
     }
 
     @Override
-    public @NotNull ResourceLocation getModel()
+    public @NotNull Identifier getModel()
     {
         return ModModelTypes.CARPENTER_ID;
     }

@@ -1,7 +1,7 @@
 package com.minecolonies.api.research;
 
 import com.minecolonies.api.research.util.ResearchState;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 /**
  * Interface defining how a local research at a colony is. This represents how a colony stores researches they finished or started.
@@ -18,9 +18,9 @@ public interface ILocalResearch
     /**
      * Getter of the id of the research.
      *
-     * @return the research id, as a ResourceLocation
+     * @return the research id, as a Identifier
      */
-    ResourceLocation getId();
+    Identifier getId();
 
     /**
      * Get the ResearchState of the research.
@@ -32,9 +32,9 @@ public interface ILocalResearch
     /**
      * Get the identifier of the branch.
      *
-     * @return the branch id, as a ResourceLocation.
+     * @return the branch id, as a Identifier.
      */
-    ResourceLocation getBranch();
+    Identifier getBranch();
 
     /**
      * Getter for the research depth.

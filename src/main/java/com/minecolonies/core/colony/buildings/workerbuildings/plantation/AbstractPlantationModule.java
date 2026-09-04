@@ -6,7 +6,7 @@ import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.core.colony.buildingextensions.PlantationField;
 import com.minecolonies.core.colony.buildingextensions.modules.AbstractBuildingExtensionModule;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BoneMealItem;
 import net.minecraft.world.item.Item;
@@ -85,7 +85,7 @@ public abstract class AbstractPlantationModule extends AbstractBuildingExtension
     }
 
     @Override
-    public ResourceLocation getRequiredResearchEffect()
+    public Identifier getRequiredResearchEffect()
     {
         return null;
     }

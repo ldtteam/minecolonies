@@ -3,7 +3,7 @@
   "costs": [
     {
       "count": 1,
-      "item": "minecraft:golden_apple"
+      "ingredient": "minecraft:golden_apple"
     }
   ],
   "effects": [

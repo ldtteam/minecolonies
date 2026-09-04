@@ -16,7 +16,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -102,7 +102,7 @@ public class CommandColonyPrintStats implements IMCOPCommand
                   Collectors.joining("\n"))), false);
         }
 
-        List<ResourceLocation> completed = ((LocalResearchTree) colony.getResearchManager().getResearchTree()).getCompletedList();
+        List<Identifier> completed = ((LocalResearchTree) colony.getResearchManager().getResearchTree()).getCompletedList();
         context.getSource().sendSuccess(() -> literalAndRemember("Reasearches completed count:" + completed.size()), false);
         context.getSource().sendSuccess(() -> literalAndRemember(completed.stream().map(r -> r.toString()).collect(Collectors.joining("\n"))), false);
 

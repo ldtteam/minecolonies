@@ -12,7 +12,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -61,12 +60,12 @@ public class ItemClipboard extends AbstractItemMinecolonies
         {
             buildingEntity.writeColonyToItemStack(clipboard);
 
-            if (!ctx.getLevel().isClientSide)
+            if (!ctx.getLevel().isClientSide())
             {
                 MessageUtils.format(COM_MINECOLONIES_CLIPBOARD_COLONY_SET, buildingEntity.getColony().getName()).sendTo(ctx.getPlayer());
             }
         }
-        else if (ctx.getLevel().isClientSide)
+        else if (ctx.getLevel().isClientSide())
         {
             openWindow(clipboard, ctx.getLevel(), ctx.getPlayer());
         }
@@ -84,20 +83,20 @@ public class ItemClipboard extends AbstractItemMinecolonies
      */
     @Override
     @NotNull
-    public InteractionResultHolder<ItemStack> use(
+    public InteractionResult use(
             final Level worldIn,
             final Player playerIn,
             final InteractionHand hand)
     {
         final ItemStack clipboard = playerIn.getItemInHand(hand);
 
-        if (!worldIn.isClientSide) {
-            return new InteractionResultHolder<>(InteractionResult.SUCCESS, clipboard);
+        if (!worldIn.isClientSide()) {
+            return InteractionResult.SUCCESS.heldItemTransformedTo(clipboard);
         }
 
         openWindow(clipboard, worldIn, playerIn);
 
-        return new InteractionResultHolder<>(InteractionResult.SUCCESS, clipboard);
+        return InteractionResult.SUCCESS.heldItemTransformedTo(clipboard);
     }
 
     /**
@@ -117,14 +116,14 @@ public class ItemClipboard extends AbstractItemMinecolonies
 
             if (compound.contains(TAG_HIDEUNIMPORTANT))
             {
-                hide = compound.getBoolean(TAG_HIDEUNIMPORTANT);
+                hide = compound.getBooleanOr(TAG_HIDEUNIMPORTANT, false);
             }
 
             new WindowClipBoard(colonyView, hide).open();
         }
         else
         {
-            player.displayClientMessage(Component.translatableEscape(TranslationConstants.COM_MINECOLONIES_CLIPBOARD_NEED_COLONY), true);
+            player.sendOverlayMessage(Component.translatableEscape(TranslationConstants.COM_MINECOLONIES_CLIPBOARD_NEED_COLONY));
         }
     }
 }

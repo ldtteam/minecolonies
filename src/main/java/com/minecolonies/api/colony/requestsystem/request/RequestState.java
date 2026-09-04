@@ -104,7 +104,7 @@ public enum RequestState
      */
     public static RequestState deserialize(final IntTag nbt)
     {
-        return indexList.get(nbt.getAsInt());
+        return indexList.get(nbt.intValue());
     }
 
     /**

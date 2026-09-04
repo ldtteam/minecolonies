@@ -1,8 +1,26 @@
 {
   "sources": [
     {
+      "type": "minecraft:directory",
+      "prefix": "block/",
+      "source": "block"
+    },
+    {
+      "type": "minecraft:directory",
+      "prefix": "entity/conduit/",
+      "source": "entity/conduit"
+    },
+    {
       "type": "minecraft:single",
-      "resource": "minecraft:map/map_icons"
+      "resource": "minecraft:entity/bell/bell_body"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "minecraft:entity/enchantment/enchanting_table_book"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "minecolonies:block/transparent"
     },
     {
       "type": "minecraft:single",
@@ -14,11 +32,11 @@
     },
     {
       "type": "minecraft:single",
-      "resource": "minecraft:entity/chicken"
+      "resource": "minecraft:entity/chicken/chicken_temperate"
     },
     {
       "type": "minecraft:single",
-      "resource": "minecraft:entity/armorstand/wood"
+      "resource": "minecraft:entity/armorstand/armorstand"
     },
     {
       "type": "minecraft:single",
@@ -26,7 +44,7 @@
     },
     {
       "type": "minecraft:single",
-      "resource": "minecraft:models/armor/leather_layer_1"
+      "resource": "minecraft:entity/equipment/humanoid/leather"
     },
     {
       "type": "minecraft:single",
@@ -35,6 +53,96 @@
     {
       "type": "minecraft:single",
       "resource": "minecolonies:gui/builderhut/builder_paper_sketch_block"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "minecraft:item/string",
+      "sprite": "minecolonies:block_item/string"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "minecraft:item/brick",
+      "sprite": "minecolonies:block_item/brick"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "minecraft:item/clay_ball",
+      "sprite": "minecolonies:block_item/clay_ball"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "minecraft:item/netherite_pickaxe",
+      "sprite": "minecolonies:block_item/netherite_pickaxe"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "minecraft:item/diamond_pickaxe",
+      "sprite": "minecolonies:block_item/diamond_pickaxe"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "minecraft:item/iron_pickaxe",
+      "sprite": "minecolonies:block_item/iron_pickaxe"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "minecolonies:item/scarecrow",
+      "sprite": "minecolonies:block_item/scarecrow"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "minecraft:item/feather",
+      "sprite": "minecolonies:block_item/feather"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "minecraft:item/egg",
+      "sprite": "minecolonies:block_item/egg"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "minecraft:item/bucket",
+      "sprite": "minecolonies:block_item/bucket"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "minecraft:item/arrow",
+      "sprite": "minecolonies:block_item/arrow"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "minecraft:item/carrot",
+      "sprite": "minecolonies:block_item/carrot"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "minecraft:item/beetroot",
+      "sprite": "minecolonies:block_item/beetroot"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "minecraft:item/rotten_flesh",
+      "sprite": "minecolonies:block_item/rotten_flesh"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "minecraft:item/bread",
+      "sprite": "minecolonies:block_item/bread"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "minecraft:item/shears",
+      "sprite": "minecolonies:block_item/shears"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "minecraft:item/tropical_fish",
+      "sprite": "minecolonies:block_item/tropical_fish"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "minecraft:item/salmon",
+      "sprite": "minecolonies:block_item/salmon"
     }
   ]
 }

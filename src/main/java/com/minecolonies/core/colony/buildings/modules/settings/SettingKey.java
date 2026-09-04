@@ -2,7 +2,7 @@ package com.minecolonies.core.colony.buildings.modules.settings;
 
 import com.minecolonies.api.colony.buildings.modules.settings.ISetting;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.Objects;
 
@@ -19,14 +19,14 @@ public class SettingKey<T extends ISetting> implements ISettingKey<T>
     /**
      * Unique id.
      */
-    private final ResourceLocation id;
+    private final Identifier id;
 
     /**
      * Create a new settings key.
      * @param type the specific ISetting class.
      * @param id the unique id.
      */
-    public SettingKey(final Class<T> type, final ResourceLocation id)
+    public SettingKey(final Class<T> type, final Identifier id)
     {
         this.type = type;
         this.id = id;
@@ -39,7 +39,7 @@ public class SettingKey<T extends ISetting> implements ISettingKey<T>
     }
 
     @Override
-    public ResourceLocation getUniqueId()
+    public Identifier getUniqueId()
     {
         return id;
     }

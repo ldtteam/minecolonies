@@ -18,7 +18,7 @@ import com.minecolonies.core.colony.buildings.utils.BuildingBuilderResource;
 import com.minecolonies.core.network.messages.server.colony.building.MarkBuildingDirtyMessage;
 import com.minecolonies.core.network.messages.server.colony.building.TransferItemsRequestMessage;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.items.wrapper.InvWrapper;
@@ -59,7 +59,7 @@ public class WindowBuilderResModule extends AbstractModuleWindow<BuildingResourc
      */
     public WindowBuilderResModule(final BuildingResourcesModuleView moduleView)
     {
-        super(moduleView, new ResourceLocation(Constants.MOD_ID, "gui/layouthuts/layoutbuilderres.xml"));
+        super(moduleView, Identifier.fromNamespaceAndPath(Constants.MOD_ID, "gui/layouthuts/layoutbuilderres.xml"));
         findPaneOfTypeByID(DESC_LABEL, Text.class).setText(moduleView.getDesc());
 
         pullResourcesFromHut();

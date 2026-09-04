@@ -3,7 +3,7 @@ package com.minecolonies.api.colony.interactionhandling.registry;
 import com.minecolonies.api.colony.ICitizen;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.interactionhandling.IInteractionResponseHandler;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.Objects;
 import java.util.function.Function;
@@ -15,7 +15,7 @@ import java.util.function.Function;
 public final class InteractionResponseHandlerEntry
 {
     private final Function<ICitizen, IInteractionResponseHandler> responseHandlerProducer;
-    private ResourceLocation                                registryName;
+    private Identifier                                registryName;
 
     /**
      * Builder for a {@link InteractionResponseHandlerEntry}.
@@ -23,7 +23,7 @@ public final class InteractionResponseHandlerEntry
     public static final class Builder
     {
         private Function<ICitizen, IInteractionResponseHandler> responseHandlerProducer;
-        private ResourceLocation                                registryName;
+        private Identifier                                registryName;
 
         /**
          * Setter the for the producer.
@@ -43,7 +43,7 @@ public final class InteractionResponseHandlerEntry
          * @param registryName The registry name.
          * @return The builder.
          */
-        public Builder setRegistryName(final ResourceLocation registryName)
+        public Builder setRegistryName(final Identifier registryName)
         {
             this.registryName = registryName;
             return this;
@@ -74,7 +74,7 @@ public final class InteractionResponseHandlerEntry
         return responseHandlerProducer;
     }
 
-    private InteractionResponseHandlerEntry(final Function<ICitizen, IInteractionResponseHandler> producer, final ResourceLocation registryName)
+    private InteractionResponseHandlerEntry(final Function<ICitizen, IInteractionResponseHandler> producer, final Identifier registryName)
     {
         super();
         this.responseHandlerProducer = producer;

@@ -18,7 +18,7 @@
           "condition": "minecraft:entity_properties",
           "entity": "this",
           "predicate": {
-            "type": "#minecolonies:raiders"
+            "minecraft:entity_type": "#minecolonies:raiders"
           }
         }
       }

@@ -1,7 +1,8 @@
 package com.minecolonies.core.util;
 
-import com.ldtteam.structurize.api.Log;
-import com.ldtteam.structurize.api.RotationMirror;
+import com.ldtteam.structurize.api.util.Log;
+import com.ldtteam.structurize.util.RotationMirror;
+import com.ldtteam.structurize.util.PlacementSettings;
 import com.ldtteam.structurize.blockentities.interfaces.IBlueprintDataProviderBE;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.management.Manager;
@@ -72,7 +73,7 @@ public final class CreativeRaiderStructureHandler extends CreativeStructureHandl
       final IColonyRaidEvent event,
       final int colonyId)
     {
-        super(world, pos, blueprintFuture, rotMir, fancyPlacement);
+        super(world, pos, blueprintFuture, new PlacementSettings(rotMir.mirror(), rotMir.rotation()), fancyPlacement);
 
         this.event = event;
         this.colonyId = colonyId;
@@ -116,7 +117,7 @@ public final class CreativeRaiderStructureHandler extends CreativeStructureHandl
       final IColonyRaidEvent event,
       final int colonyId)
     {
-        super(world, pos, blueprint, rotMir, fancyPlacement);
+        super(world, pos, blueprint, new PlacementSettings(rotMir.mirror(), rotMir.rotation()), fancyPlacement);
 
         this.event = event;
         this.colonyId = colonyId;

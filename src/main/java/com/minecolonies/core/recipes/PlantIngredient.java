@@ -4,6 +4,7 @@ import com.minecolonies.apiimp.initializer.ModIngredientTypeInitializer;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.block.CropBlock;
@@ -13,8 +14,8 @@ import net.neoforged.neoforge.common.crafting.IngredientType;
 import net.neoforged.neoforge.common.util.Lazy;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import net.minecraft.core.Holder;
 
-import java.util.List;
 import java.util.stream.Stream;
 
 /**
@@ -31,15 +32,17 @@ public class PlantIngredient implements ICustomIngredient
 
     public static final MapCodec<PlantIngredient> CODEC = MapCodec.unit(INSTANCE);
 
-    private final List<ItemStack> items;
-
     private PlantIngredient()
     {
-        items = BuiltInRegistries.ITEM.stream()
+    }
+
+    private Stream<ItemStack> getItemStacks()
+    {
+        return BuiltInRegistries.ITEM.stream()
                 .filter(item -> item instanceof final BlockItem block &&
                         (block.getBlock() instanceof CropBlock || block.getBlock() instanceof StemBlock))
                 .map(ItemStack::new)
-                .toList();
+                .toList().stream();
     }
 
     @NotNull
@@ -56,14 +59,17 @@ public class PlantIngredient implements ICustomIngredient
             return false;
         }
 
-        return getItems().anyMatch(s -> stack.is(s.getItem()));
+        return getItemStacks().anyMatch(s -> stack.is(s.getItem()));
     }
 
     @NotNull
     @Override
-    public Stream<ItemStack> getItems()
+    public Stream<Holder<Item>> items()
     {
-        return items.stream();
+        return BuiltInRegistries.ITEM.stream()
+                .filter(item -> item instanceof final BlockItem block &&
+                        (block.getBlock() instanceof CropBlock || block.getBlock() instanceof StemBlock))
+                .map(BuiltInRegistries.ITEM::wrapAsHolder);
     }
 
     @Override

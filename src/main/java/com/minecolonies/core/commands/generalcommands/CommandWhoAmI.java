@@ -29,7 +29,7 @@ public class CommandWhoAmI implements IMCCommand
             return 0;
         }
 
-        final IColony colony = IColonyManager.getInstance().getIColonyByOwner(sender.getCommandSenderWorld(), sender.getUUID());
+        final IColony colony = IColonyManager.getInstance().getIColonyByOwner(sender.level(), sender.getUUID());
 
         if (colony == null)
         {

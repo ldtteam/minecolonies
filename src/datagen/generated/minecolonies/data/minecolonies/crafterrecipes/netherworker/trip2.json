@@ -2,12 +2,6 @@
   "type": "recipe",
   "additional-output": [
     {
-      "id": "minecraft:rotten_flesh"
-    },
-    {
-      "id": "minecraft:gold_nugget"
-    },
-    {
       "id": "minecraft:netherrack"
     },
     {
@@ -41,25 +35,7 @@
       "id": "minecraft:crimson_stem"
     },
     {
-      "id": "minecraft:porkchop"
-    },
-    {
       "id": "minecraft:nether_wart"
-    },
-    {
-      "id": "minecraft:leather"
-    },
-    {
-      "id": "minecraft:gunpowder"
-    },
-    {
-      "id": "minecraft:ghast_tear"
-    },
-    {
-      "id": "minecraft:ender_pearl"
-    },
-    {
-      "id": "minecraft:magma_cream"
     }
   ],
   "crafter": "netherworker_custom",

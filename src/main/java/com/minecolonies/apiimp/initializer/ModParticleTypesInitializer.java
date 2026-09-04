@@ -4,7 +4,7 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.client.particles.SleepingParticle;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -21,12 +21,12 @@ public class ModParticleTypesInitializer
      * Particle type
      */
     public static final SimpleParticleType SLEEPINGPARTICLE_TYPE = new SimpleParticleType(true);
-    public static final ResourceLocation  SLEEPING_TEXTURE      = new ResourceLocation(Constants.MOD_ID, "particle/sleeping");
+    public static final Identifier  SLEEPING_TEXTURE      = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "particle/sleeping");
 
     /**
      * Register the particle
      */
-    @EventBusSubscriber(modid = Constants.MOD_ID, bus = EventBusSubscriber.Bus.MOD)
+    @EventBusSubscriber(modid = Constants.MOD_ID)
     public static class CommonRegistration
     {
         @SubscribeEvent
@@ -39,7 +39,7 @@ public class ModParticleTypesInitializer
     /**
      * Register the client side factory
      */
-    @EventBusSubscriber(modid = Constants.MOD_ID, value = Dist.CLIENT, bus = EventBusSubscriber.Bus.MOD)
+    @EventBusSubscriber(modid = Constants.MOD_ID, value = Dist.CLIENT)
     public static class ClientRegistration
     {
         @SubscribeEvent

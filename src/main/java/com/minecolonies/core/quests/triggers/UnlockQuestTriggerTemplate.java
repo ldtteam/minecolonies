@@ -4,7 +4,7 @@ import com.google.gson.JsonObject;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.quests.IQuestTriggerTemplate;
 import com.minecolonies.api.quests.ITriggerReturnData;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 /**
  * Unlock quest trigger.
@@ -35,7 +35,7 @@ public class UnlockQuestTriggerTemplate implements IQuestTriggerTemplate
     }
 
     @Override
-    public ITriggerReturnData canTriggerQuest(final ResourceLocation questId, final IColony colony)
+    public ITriggerReturnData canTriggerQuest(final Identifier questId, final IColony colony)
     {
         return new BooleanTriggerReturnData(colony.getQuestManager().isUnlocked(questId));
     }

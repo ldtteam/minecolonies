@@ -14,7 +14,7 @@ import com.minecolonies.core.colony.requestsystem.resolvers.PublicWorkerCrafting
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.NotNull;
 
 public class PublicWorkerCraftingProductionResolverFactory implements IRequestResolverFactory<PublicWorkerCraftingProductionResolver>
@@ -64,9 +64,9 @@ public class PublicWorkerCraftingProductionResolverFactory implements IRequestRe
     @Override
     public PublicWorkerCraftingProductionResolver deserialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final CompoundTag nbt)
     {
-        final IToken<?> token = controller.deserializeTag(provider, nbt.getCompound(NBT_TOKEN));
-        final ILocation location = controller.deserializeTag(provider, nbt.getCompound(NBT_LOCATION));
-        final JobEntry entry = IJobRegistry.getInstance().get(ResourceLocation.parse(nbt.getString(NBT_JOB)));
+        final IToken<?> token = controller.deserializeTag(provider, nbt.getCompoundOrEmpty(NBT_TOKEN));
+        final ILocation location = controller.deserializeTag(provider, nbt.getCompoundOrEmpty(NBT_LOCATION));
+        final JobEntry entry = IJobRegistry.getInstance().getValue(Identifier.parse(nbt.getStringOr(NBT_JOB, "")));
         return new PublicWorkerCraftingProductionResolver(location, token, entry);
     }
 

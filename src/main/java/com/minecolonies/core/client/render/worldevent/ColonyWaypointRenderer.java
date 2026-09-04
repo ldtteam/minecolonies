@@ -6,6 +6,7 @@ import com.ldtteam.structurize.storage.rendering.RenderingCache;
 import com.ldtteam.structurize.storage.rendering.types.BlueprintPreviewData;
 import net.minecraft.core.BlockPos;
 
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
@@ -40,7 +41,7 @@ public class ColonyWaypointRenderer
         {
             if (wayPointTemplate == null && pendingTemplate == null)
             {
-                pendingTemplate = StructurePacks.getBlueprintFuture(STORAGE_STYLE, "infrastructure/misc/waypoint.blueprint", ctx.clientLevel.registryAccess());
+                pendingTemplate = StructurePacks.getBlueprintFuture(STORAGE_STYLE, "infrastructure/misc/waypoint.blueprint");
             }
 
             if (pendingTemplate != null)
@@ -75,7 +76,7 @@ public class ColonyWaypointRenderer
                 RenderingCache.getOrCreateBlueprintPreviewData("waypoint").getBlueprint().hashCode() == wayPointTemplate.hashCode() ?
                     RenderingCache.getOrCreateBlueprintPreviewData("waypoint") :
                     wayPointTemplate,
-                ctx.nearestColony.getWayPoints().keySet());
+                List.copyOf(ctx.nearestColony.getWayPoints().keySet()));
         }
     }
 }

@@ -8,7 +8,7 @@ import com.minecolonies.api.util.constant.Constants;
 
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 
@@ -48,7 +48,7 @@ public interface IBuildingModuleView
 
     /**
      * Get the icon string for the module view.
-     * @Deprecated in favor of getIconResourceLocation
+     * @Deprecated in favor of getIconIdentifier
      * @return the icon identifier.
      */
     @Deprecated
@@ -61,9 +61,9 @@ public interface IBuildingModuleView
      * Get the resource location of the icon for the module view.
      * @return the resource location.
      */
-    default ResourceLocation getIconResourceLocation()
+    default Identifier getIconIdentifier()
     {
-        return new ResourceLocation(Constants.MOD_ID, "textures/gui/modules/" + getIcon() + ".png");
+        return Identifier.fromNamespaceAndPath(Constants.MOD_ID, "textures/gui/modules/" + getIcon() + ".png");
     }
     
     /**

@@ -5,7 +5,7 @@ import com.minecolonies.api.quests.IQuestInstance;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.UnknownNullability;
 
 /**
@@ -13,7 +13,7 @@ import org.jetbrains.annotations.UnknownNullability;
  */
 public class WorkerIdleSideEffect implements IQuestSideEffect, ICitizenQuestSideEffect
 {
-    public static final ResourceLocation ID = new ResourceLocation(Constants.MOD_ID, "workeridle");
+    public static final Identifier ID = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "workeridle");
 
     /**
      * Citizen data we applied to
@@ -31,7 +31,7 @@ public class WorkerIdleSideEffect implements IQuestSideEffect, ICitizenQuestSide
     }
 
     @Override
-    public ResourceLocation getID()
+    public Identifier getID()
     {
         return ID;
     }

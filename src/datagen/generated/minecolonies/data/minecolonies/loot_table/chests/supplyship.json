@@ -2,7 +2,6 @@
   "type": "minecraft:chest",
   "pools": [
     {
-      "bonus_rolls": 0.0,
       "entries": [
         {
           "type": "minecraft:item",
@@ -28,9 +27,7 @@
               "name": {
                 "translate": "item.minecolonies.supply.free",
                 "with": [
-                  {
-                    "translate": "item.minecolonies.supplychestdeployer"
-                  }
+                  "item.minecolonies.supplychestdeployer"
                 ]
               },
               "target": "item_name"
@@ -48,7 +45,6 @@
           ],
           "functions": [
             {
-              "add": false,
               "count": 4.0,
               "function": "minecraft:set_count"
             }

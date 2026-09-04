@@ -1,5 +1,7 @@
 package com.minecolonies.core.entity.mobs;
 
+import com.minecolonies.core.entity.ai.combat.ServerDamageHelper;
+
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.entity.ai.statemachine.states.IState;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.ITickRateStateMachine;
@@ -182,7 +184,7 @@ public class EntityMercenaryAI extends Goal
             else
             {
                 movingToBuilding = false;
-                currentPatrolPos = BlockPosUtil.getRandomPosition(entity.getCommandSenderWorld(), entity.blockPosition(), entity.blockPosition(), 10, 27);
+                currentPatrolPos = BlockPosUtil.getRandomPosition(entity.level(), entity.blockPosition(), entity.blockPosition(), 10, 27);
             }
         }
 
@@ -239,7 +241,7 @@ public class EntityMercenaryAI extends Goal
         {
             entity.swing(InteractionHand.MAIN_HAND);
             entity.playSound(MercenarySounds.mercenaryAttack, 0.55f, 1.0f);
-            entity.getTarget().hurt(entity.level().damageSources().mobAttack(entity), 15);
+            ServerDamageHelper.apply(entity.getTarget(), entity.level().damageSources().mobAttack(entity), 15);
             entity.getTarget().setRemainingFireTicks(3 * TICKS_PER_SECOND);
             attacktimer = ATTACK_DELAY;
         }

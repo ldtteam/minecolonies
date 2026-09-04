@@ -5,11 +5,11 @@ import com.minecolonies.api.colony.IVisitorViewData;
 import com.minecolonies.api.util.Utils;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.yggdrasil.ProfileResult;
-import net.minecraft.Util;
+import net.minecraft.util.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.DefaultPlayerSkin;
 import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
@@ -26,7 +26,7 @@ public class VisitorDataView extends CitizenDataView implements IVisitorViewData
     /**
      * Cached player info for custom texture.
      */
-    private volatile ResourceLocation cachedTexture;
+    private volatile Identifier cachedTexture;
 
     /**
      * Session profile cache for a given special visitor.
@@ -59,7 +59,7 @@ public class VisitorDataView extends CitizenDataView implements IVisitorViewData
     }
 
     @Override
-    public ResourceLocation getCustomTexture()
+    public Identifier getCustomTexture()
     {
         if (textureUUID == null)
         {
@@ -72,24 +72,20 @@ public class VisitorDataView extends CitizenDataView implements IVisitorViewData
             {
                 if (cachedProfile == null)
                 {
-                    final ProfileResult profile = Minecraft.getInstance().getMinecraftSessionService().fetchProfile(textureUUID, true);
-                    if (profile != null)
-                    {
-                        cachedProfile = profile.profile();
-                    }
+                    cachedProfile = Minecraft.getInstance().services().profileResolver().fetchById(textureUUID).orElse(null);
                 }
             });
         }
 
         if (cachedProfile != null && cachedTexture == null)
         {
-            final ResourceLocation texture = Minecraft.getInstance().getSkinManager().getInsecureSkin(cachedProfile).texture();
-            if (texture != DefaultPlayerSkin.get(textureUUID).texture())
+            final Identifier texture = Minecraft.getInstance().getSkinManager().createLookup(cachedProfile, true).get().body().texturePath();
+            if (texture != DefaultPlayerSkin.get(textureUUID).body().texturePath())
             {
                 cachedTexture = texture;
             }
         }
 
-        return cachedTexture == null ? DefaultPlayerSkin.get(textureUUID).texture() : cachedTexture;
+        return cachedTexture == null ? DefaultPlayerSkin.get(textureUUID).body().texturePath() : cachedTexture;
     }
 }

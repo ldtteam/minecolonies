@@ -4,7 +4,7 @@ import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.core.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
@@ -17,7 +17,7 @@ public class CitizenGrownUpEvent extends AbstractCitizenEvent
     /**
      * This events id, registry entries use res locations as ids.
      */
-    public static final ResourceLocation CITIZEN_GROWN_UP_EVENT_ID = new ResourceLocation(Constants.MOD_ID, "citizen_grown_up");
+    public static final Identifier CITIZEN_GROWN_UP_EVENT_ID = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "citizen_grown_up");
 
     /**
      * Creates a new citizen grown up event.
@@ -39,7 +39,7 @@ public class CitizenGrownUpEvent extends AbstractCitizenEvent
     }
 
     @Override
-    public ResourceLocation getEventTypeId()
+    public Identifier getEventTypeId()
     {
         return CITIZEN_GROWN_UP_EVENT_ID;
     }

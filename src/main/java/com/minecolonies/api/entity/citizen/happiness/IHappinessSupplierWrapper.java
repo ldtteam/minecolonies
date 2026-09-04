@@ -1,13 +1,13 @@
 package com.minecolonies.api.entity.citizen.happiness;
 
 import com.minecolonies.api.colony.ICitizenData;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.neoforged.neoforge.common.util.INBTSerializable;
 
 /**
  * Wrapper to deal with happiness suppliers.
  */
-public interface IHappinessSupplierWrapper extends INBTSerializable<CompoundTag>
+public interface IHappinessSupplierWrapper
 {
     /**
      * Get the matching value.
@@ -21,4 +21,8 @@ public interface IHappinessSupplierWrapper extends INBTSerializable<CompoundTag>
      * @return the last cached value.
      */
     double getLastCachedValue();
+
+    CompoundTag serializeNBT(HolderLookup.Provider provider);
+
+    void deserializeNBT(HolderLookup.Provider provider, CompoundTag nbt);
 }

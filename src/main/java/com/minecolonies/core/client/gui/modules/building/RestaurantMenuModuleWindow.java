@@ -1,4 +1,5 @@
 package com.minecolonies.core.client.gui.modules.building;
+import net.minecraft.core.component.DataComponents;
 
 import com.ldtteam.blockui.Pane;
 import com.ldtteam.blockui.PaneBuilders;
@@ -7,6 +8,7 @@ import com.ldtteam.blockui.views.ScrollingList;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.crafting.RecipeUtils;
 import com.minecolonies.api.items.IMinecoloniesFoodItem;
 import com.minecolonies.api.util.FoodUtils;
 import com.minecolonies.api.util.constant.Constants;
@@ -23,10 +25,14 @@ import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.food.FoodProperties;
-import net.minecraft.world.item.*;
+import net.minecraft.world.item.BottleItem;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
@@ -106,7 +112,7 @@ public class RestaurantMenuModuleWindow extends AbstractModuleWindow<RestaurantM
      */
     public RestaurantMenuModuleWindow(final RestaurantMenuModuleView moduleView)
     {
-        super(moduleView, new ResourceLocation(Constants.MOD_ID, "gui/layouthuts/layoutfoodstock.xml"));
+        super(moduleView, Identifier.fromNamespaceAndPath(Constants.MOD_ID, "gui/layouthuts/layoutfoodstock.xml"));
 
         menuList = this.window.findPaneOfTypeByID("resourcesstock", ScrollingList.class);
 
@@ -315,7 +321,7 @@ public class RestaurantMenuModuleWindow extends AbstractModuleWindow<RestaurantM
             {
                 ingredients.merge(ingredient, (double) ingredient.getAmount() / input.getAmount(), Double::sum);
             }
-            final FoodProperties foodProperty = dish.getItem().getFoodProperties(dish.getItemStack(), null);
+            final FoodProperties foodProperty = dish.getItemStack().get(DataComponents.FOOD);
             saturationSum += FoodUtils.getFoodValue(dish.getItemStack(), foodProperty, researchBonus);
         }
         final double consumption = (avgCustomerConsumption * 10 * numerOfCustomers) / saturationSum;
@@ -395,7 +401,7 @@ public class RestaurantMenuModuleWindow extends AbstractModuleWindow<RestaurantM
                     continue;
                 }
                 else if (input.getItem() instanceof ItemLargeBottle
-                    || input.getItem() instanceof HoneyBottleItem
+                    || input.getItem() == Items.HONEY_BOTTLE
                     || input.getItem() == Items.DRIED_KELP
                     || !processRecipe(input, ingredients, depth + 1, level, maxDepth))
                 {
@@ -406,25 +412,31 @@ public class RestaurantMenuModuleWindow extends AbstractModuleWindow<RestaurantM
             return true;
         }
 
-        final Optional<RecipeHolder<?>> recipe = level.getRecipeManager().byKey(BuiltInRegistries.ITEM.getKey(dish.getItem()));
-        if (recipe.isPresent())
+        final var recipeMap = RecipeUtils.clientSyncedRecipes();
+        if (recipeMap == null)
+        {
+            return false;
+        }
+        final ResourceKey<Recipe<?>> recipeKey = ResourceKey.create(Registries.RECIPE,
+          Identifier.withDefaultNamespace(dish.getItem().getDescriptionId()));
+        final RecipeHolder<?> recipe = recipeMap.byKey(recipeKey);
+        if (recipe != null)
         {
             if (depth == 0)
             {
-                dish.setAmount(recipe.get().value().getResultItem(level.registryAccess()).getCount());
+                dish.setAmount(1);
             }
-            for (final Ingredient ingredient : recipe.get().value().getIngredients())
+            for (final Ingredient ingredient : recipe.value().placementInfo().ingredients())
             {
-                final ItemStack[] inputs = ingredient.getItems();
-                if (inputs.length >= 1)
+                final ItemStack firstInput = ingredient.items().findFirst().map(ItemStack::new).orElse(ItemStack.EMPTY);
                 {
-                    final ItemStorage input = new ItemStorage(inputs[0]);
+                    final ItemStorage input = new ItemStorage(firstInput);
                     if (input.getItem() == Items.BOWL || input.getItem() instanceof BottleItem)
                     {
                         continue;
                     }
                     if (input.getItem() instanceof ItemLargeBottle
-                        || input.getItem() instanceof HoneyBottleItem
+                        || input.getItem() == Items.HONEY_BOTTLE
                         || input.getItem() == Items.DRIED_KELP
                         || !processRecipe(input, ingredients, depth + 1, level, maxDepth))
                     {
@@ -443,7 +455,7 @@ public class RestaurantMenuModuleWindow extends AbstractModuleWindow<RestaurantM
     private void updateResources()
     {
         final Predicate<ItemStack> filterPredicate = stack -> filter.isEmpty()
-                                                                || stack.getDescriptionId().toLowerCase(Locale.US).contains(filter.toLowerCase(Locale.US))
+                                                                || stack.getItem().getDescriptionId().toLowerCase(Locale.US).contains(filter.toLowerCase(Locale.US))
                                                                 || stack.getHoverName().getString().toLowerCase(Locale.US).contains(filter.toLowerCase(Locale.US));
         currentDisplayedList.clear();
         for (final ItemStorage storage : groupedItemList)
@@ -466,8 +478,8 @@ public class RestaurantMenuModuleWindow extends AbstractModuleWindow<RestaurantM
     protected void applySorting(final List<ItemStorage> displayedList)
     {
         displayedList.sort((o1, o2) -> {
-            int score = FoodUtils.getFoodTier(o1.getItemStack()) * -100 - o1.getItemStack().getFoodProperties(null).nutrition();
-            int score2 = FoodUtils.getFoodTier(o2.getItemStack())* -100 - o2.getItemStack().getFoodProperties(null).nutrition();
+            int score = FoodUtils.getFoodTier(o1.getItemStack()) * -100 - o1.getItemStack().get(DataComponents.FOOD).nutrition();
+            int score2 = FoodUtils.getFoodTier(o2.getItemStack())* -100 - o2.getItemStack().get(DataComponents.FOOD).nutrition();
 
             final int scoreComparison = Integer.compare(score, score2);
             if (scoreComparison != 0)

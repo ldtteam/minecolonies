@@ -12,7 +12,7 @@ import com.minecolonies.core.network.messages.server.colony.building.AssignFilte
 import com.minecolonies.core.network.messages.server.colony.building.ResetFilterableItemMessage;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
@@ -141,12 +141,12 @@ public class ItemListModuleView extends AbstractBuildingModuleView implements II
     @OnlyIn(Dist.CLIENT)
     public BOWindow getWindow()
     {
-        return new ItemListModuleWindow(this, new ResourceLocation(Constants.MOD_ID, "gui/layouthuts/layoutfilterablelist.xml"));
+        return new ItemListModuleWindow(this, Identifier.fromNamespaceAndPath(Constants.MOD_ID, "gui/layouthuts/layoutfilterablelist.xml"));
     }
 
     @Override
-    public ResourceLocation getIconResourceLocation()
+    public Identifier getIconIdentifier()
     {
-        return new ResourceLocation(Constants.MOD_ID, "textures/gui/modules/" + this.getId() + ".png");
+        return Identifier.fromNamespaceAndPath(Constants.MOD_ID, "textures/gui/modules/" + this.getId() + ".png");
     }
 }

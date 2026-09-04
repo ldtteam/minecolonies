@@ -1,26 +1,27 @@
 package com.minecolonies.core.commands.generalcommands;
 
 import com.ldtteam.structurize.Structurize;
-import com.ldtteam.structurize.api.BlockPosUtil;
-import com.ldtteam.structurize.api.Log;
-import com.ldtteam.structurize.api.constants.Constants;
+import com.ldtteam.structurize.api.util.BlockPosUtil;
+import com.ldtteam.structurize.api.util.Log;
+import com.ldtteam.structurize.api.util.constant.Constants;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.blueprints.v1.BlueprintUtil;
 import com.ldtteam.structurize.commands.AbstractCommand;
+import com.ldtteam.structurize.Network;
 import com.ldtteam.structurize.network.messages.SaveScanMessage;
-import com.ldtteam.structurize.storage.rendering.types.BoxPreviewData;
+import com.ldtteam.structurize.client.rendertask.tasks.BoxPreviewData;
 import com.ldtteam.structurize.util.BlockInfo;
 import com.ldtteam.structurize.util.ScanToolData;
 import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.core.network.messages.client.SaveStructureNBTMessage;
-import com.mojang.authlib.GameProfile;
+import net.minecraft.server.players.NameAndId;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import net.minecraft.ResourceLocationException;
+import net.minecraft.IdentifierException;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.arguments.GameProfileArgument;
 import net.minecraft.commands.arguments.coordinates.BlockPosArgument;
@@ -30,7 +31,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.StringTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
@@ -52,9 +53,9 @@ import java.util.Locale;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static com.ldtteam.structurize.api.constants.Constants.MOD_ID;
-import static com.ldtteam.structurize.api.constants.TranslationConstants.ANCHOR_POS_OUTSIDE_SCHEMATIC;
-import static com.ldtteam.structurize.api.constants.TranslationConstants.MAX_SCHEMATIC_SIZE_REACHED;
+import static com.ldtteam.structurize.api.util.constant.Constants.MOD_ID;
+import static com.ldtteam.structurize.api.util.constant.TranslationConstants.ANCHOR_POS_OUTSIDE_SCHEMATIC;
+import static com.ldtteam.structurize.api.util.constant.TranslationConstants.MAX_SCHEMATIC_SIZE_REACHED;
 import static com.ldtteam.structurize.blockentities.interfaces.IBlueprintDataProviderBE.TAG_BLUEPRINTDATA;
 
 /**
@@ -121,30 +122,30 @@ public class ScanCommand extends AbstractCommand
       final ScanToolData.Slot slot,
       final boolean saveEntities)
     {
-        if (slot.box().anchor().isPresent())
+        if (slot.getBox().getAnchor().isPresent())
         {
-            if (!BlockPosUtil.isInbetween(slot.box().anchor().get(), slot.box().pos1(), slot.box().pos2()))
+            if (!BlockPosUtil.isInbetween(slot.getBox().getAnchor().get(), slot.getBox().getPos1(), slot.getBox().getPos2()))
             {
-                player.displayClientMessage(Component.translatable(ANCHOR_POS_OUTSIDE_SCHEMATIC), false);
+                player.sendSystemMessage(Component.translatable(ANCHOR_POS_OUTSIDE_SCHEMATIC));
                 return;
             }
         }
 
-        final BoundingBox box = BoundingBox.fromCorners(slot.box().pos1(), slot.box().pos2());
+        final BoundingBox box = BoundingBox.fromCorners(slot.getBox().getPos1(), slot.getBox().getPos2());
         if (box.getXSpan() * box.getYSpan() * box.getZSpan() > Structurize.getConfig().getServer().schematicBlockLimit.get())
         {
-            player.displayClientMessage(Component.translatable(MAX_SCHEMATIC_SIZE_REACHED, Structurize.getConfig().getServer().schematicBlockLimit.get()), false);
+            player.sendSystemMessage(Component.translatable(MAX_SCHEMATIC_SIZE_REACHED, Structurize.getConfig().getServer().schematicBlockLimit.get()));
             return;
         }
 
         String fileName;
-        if (slot.name().isEmpty())
+        if (slot.getName().isEmpty())
         {
             fileName = Component.translatable("item.sceptersteel.scanformat", new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss").format(Date.from(Instant.now()))).getString();
         }
         else
         {
-            fileName = slot.name();
+            fileName = slot.getName();
         }
 
         if (!fileName.contains(".blueprint"))
@@ -157,9 +158,9 @@ public class ScanCommand extends AbstractCommand
 
         final BlockPos zero = new BlockPos(box.minX(), box.minY(), box.minZ());
         final Blueprint
-          bp = BlueprintUtil.createBlueprint(world, zero, saveEntities, (short) box.getXSpan(), (short) box.getYSpan(), (short) box.getZSpan(), fileName, slot.box().anchor());
+          bp = BlueprintUtil.createBlueprint(world, zero, saveEntities, (short) box.getXSpan(), (short) box.getYSpan(), (short) box.getZSpan(), fileName, slot.getBox().getAnchor());
 
-        if (slot.box().anchor().isEmpty() && bp.getPrimaryBlockOffset().equals(new BlockPos(bp.getSizeX() / 2, 0, bp.getSizeZ() / 2)))
+        if (slot.getBox().getAnchor().isEmpty() && bp.getPrimaryBlockOffset().equals(new BlockPos(bp.getSizeX() / 2, 0, bp.getSizeZ() / 2)))
         {
             final List<BlockInfo> list = bp.getBlockInfoAsList().stream()
                                            .filter(blockInfo -> blockInfo.hasTileEntityData() && blockInfo.getTileEntityData().contains(TAG_BLUEPRINTDATA))
@@ -167,11 +168,12 @@ public class ScanCommand extends AbstractCommand
 
             if (list.size() > 1)
             {
-                player.displayClientMessage(Component.translatableEscape("com.ldtteam.structurize.gui.scantool.scanbadanchor", fileName), false);
+                player.sendSystemMessage(Component.translatableEscape("com.ldtteam.structurize.gui.scantool.scanbadanchor", fileName));
             }
         }
 
-        new SaveScanMessage(BlueprintUtil.writeBlueprintToNBT(bp), fileName.toLowerCase(Locale.US)).sendToPlayer((ServerPlayer) player);
+        Network.getNetwork().sendToPlayer(
+            new SaveScanMessage(BlueprintUtil.writeBlueprintToNBT(bp), fileName.toLowerCase(Locale.US)), (ServerPlayer) player);
         if (style.isEmpty())
         {
             return;
@@ -227,21 +229,21 @@ public class ScanCommand extends AbstractCommand
                     }
                     if (isHut)
                     {
-                        jigsawBlockEntity.setPool(ResourceKey.create(Registries.TEMPLATE_POOL, new ResourceLocation("minecolonies", "" + piecesName+ "/roads")));
-                        jigsawBlockEntity.setName(new ResourceLocation("minecolonies", "building_entrance"));
-                        jigsawBlockEntity.setTarget(new ResourceLocation("minecolonies", "building_entrance"));
+                        jigsawBlockEntity.setPool(ResourceKey.create(Registries.TEMPLATE_POOL, Identifier.fromNamespaceAndPath("minecolonies", "" + piecesName+ "/roads")));
+                        jigsawBlockEntity.setName(Identifier.fromNamespaceAndPath("minecolonies", "building_entrance"));
+                        jigsawBlockEntity.setTarget(Identifier.fromNamespaceAndPath("minecolonies", "building_entrance"));
                     }
-                    else if (jigsawBlockEntity.getPool().location().getPath().contains("building"))
+                    else if (jigsawBlockEntity.getPool().identifier().getPath().contains("building"))
                     {
-                        jigsawBlockEntity.setPool(ResourceKey.create(Registries.TEMPLATE_POOL, new ResourceLocation("minecolonies", "" + piecesName+ "/buildings")));
-                        jigsawBlockEntity.setName(new ResourceLocation("minecolonies", "building_entrance"));
-                        jigsawBlockEntity.setTarget(new ResourceLocation("minecolonies", "building_entrance"));
+                        jigsawBlockEntity.setPool(ResourceKey.create(Registries.TEMPLATE_POOL, Identifier.fromNamespaceAndPath("minecolonies", "" + piecesName+ "/buildings")));
+                        jigsawBlockEntity.setName(Identifier.fromNamespaceAndPath("minecolonies", "building_entrance"));
+                        jigsawBlockEntity.setTarget(Identifier.fromNamespaceAndPath("minecolonies", "building_entrance"));
                     }
                     else
                     {
-                        jigsawBlockEntity.setPool(ResourceKey.create(Registries.TEMPLATE_POOL, new ResourceLocation("minecolonies", "" + piecesName+ "/roads")));
-                        jigsawBlockEntity.setName(new ResourceLocation("minecolonies", "street"));
-                        jigsawBlockEntity.setTarget(new ResourceLocation("minecolonies", "street"));
+                        jigsawBlockEntity.setPool(ResourceKey.create(Registries.TEMPLATE_POOL, Identifier.fromNamespaceAndPath("minecolonies", "" + piecesName+ "/roads")));
+                        jigsawBlockEntity.setName(Identifier.fromNamespaceAndPath("minecolonies", "street"));
+                        jigsawBlockEntity.setTarget(Identifier.fromNamespaceAndPath("minecolonies", "street"));
                     }
                 }
                 jigsawBlockEntity.setChanged();
@@ -255,12 +257,12 @@ public class ScanCommand extends AbstractCommand
         StructureTemplate structuretemplate;
         try
         {
-            final ResourceLocation location = new ResourceLocation(Constants.MOD_ID, fileName.replace(".blueprint", "").replace(" ", "").toLowerCase(Locale.US));
+            final Identifier location = Identifier.fromNamespaceAndPath(Constants.MOD_ID, fileName.replace(".blueprint", "").replace(" ", "").toLowerCase(Locale.US));
             structuretemplate = structuretemplatemanager.getOrCreate(location);
-            structuretemplate.fillFromWorld(world, newZero, new BlockPos(box.getXSpan(), box.getYSpan() - yDif, box.getZSpan()), false, Blocks.STRUCTURE_VOID);
+            structuretemplate.fillFromWorld(world, newZero, new BlockPos(box.getXSpan(), box.getYSpan() - yDif, box.getZSpan()), false, List.of(Blocks.STRUCTURE_VOID));
             new SaveStructureNBTMessage(structuretemplate.save(new CompoundTag()), fileName.replace(".blueprint", ".nbt").toLowerCase(Locale.US)).sendToPlayer((ServerPlayer) player);
         }
-        catch (final ResourceLocationException resLocEx)
+        catch (final IdentifierException resLocEx)
         {
             Log.getLogger().warn("Couldnt save nbt.");
         }
@@ -272,7 +274,7 @@ public class ScanCommand extends AbstractCommand
         }
     }
 
-    private static int execute(final CommandSourceStack source, final BlockPos from, final BlockPos to, final Optional<BlockPos> anchorPos, final GameProfile profile, final String name) throws CommandSyntaxException
+    private static int execute(final CommandSourceStack source, final BlockPos from, final BlockPos to, final Optional<BlockPos> anchorPos, final NameAndId profile, final String name) throws CommandSyntaxException
     {
         @Nullable final Level world = source.getLevel();
         if (source.getEntity() instanceof Player && !source.getPlayerOrException().isCreative())
@@ -283,10 +285,10 @@ public class ScanCommand extends AbstractCommand
         final Player player;
         if (profile != null && world.getServer() != null)
         {
-            player = world.getServer().getPlayerList().getPlayer(profile.getId());
+            player = world.getServer().getPlayerList().getPlayer(profile.id());
             if (player == null)
             {
-                source.sendFailure(Component.translatableEscape(PLAYER_NOT_FOUND, profile.getName()));
+                source.sendFailure(Component.translatableEscape(PLAYER_NOT_FOUND, profile.name()));
                 return 0;
             }
         } 
@@ -325,7 +327,7 @@ public class ScanCommand extends AbstractCommand
     {
         final BlockPos from = BlockPosArgument.getSpawnablePos(context, POS1);
         final BlockPos to = BlockPosArgument.getSpawnablePos(context, POS2);
-        GameProfile profile = GameProfileArgument.getGameProfiles(context, PLAYER_NAME).stream().findFirst().orElse(null);
+        NameAndId profile = GameProfileArgument.getGameProfiles(context, PLAYER_NAME).stream().findFirst().orElse(null);
         return execute(context.getSource(), from, to, Optional.empty(), profile, null);
     }
 
@@ -333,7 +335,7 @@ public class ScanCommand extends AbstractCommand
     {
         final BlockPos from = BlockPosArgument.getSpawnablePos(context, POS1);
         final BlockPos to = BlockPosArgument.getSpawnablePos(context, POS2);
-        GameProfile profile = GameProfileArgument.getGameProfiles(context, PLAYER_NAME).stream().findFirst().orElse(null);
+        NameAndId profile = GameProfileArgument.getGameProfiles(context, PLAYER_NAME).stream().findFirst().orElse(null);
         String name = StringArgumentType.getString(context, FILE_NAME);
         return execute(context.getSource(), from, to, Optional.empty(), profile, name);
     }
@@ -343,7 +345,7 @@ public class ScanCommand extends AbstractCommand
         final BlockPos from = BlockPosArgument.getSpawnablePos(context, POS1);
         final BlockPos to = BlockPosArgument.getSpawnablePos(context, POS2);
         final BlockPos anchorPos = BlockPosArgument.getSpawnablePos(context, ANCHOR_POS);
-        GameProfile profile = GameProfileArgument.getGameProfiles(context, PLAYER_NAME).stream().findFirst().orElse(null);
+        NameAndId profile = GameProfileArgument.getGameProfiles(context, PLAYER_NAME).stream().findFirst().orElse(null);
         String name = StringArgumentType.getString(context, FILE_NAME);
         return execute(context.getSource(), from, to, Optional.of(anchorPos), profile, name);
     }
@@ -373,18 +375,18 @@ public class ScanCommand extends AbstractCommand
     @NotNull
     public static String format(@NotNull final ScanToolData.Slot slot)
     {
-        final String name = slot.name().chars().anyMatch(c -> !StringReader.isAllowedInUnquotedString((char)c))
-                ? StringTag.quoteAndEscape(slot.name()) : slot.name();
+        final String name = slot.getName().chars().anyMatch(c -> !StringReader.isAllowedInUnquotedString((char)c))
+                ? StringTag.quoteAndEscape(slot.getName()) : slot.getName();
 
         final StringBuilder builder = new StringBuilder();
         builder.append(String.format("/%s %s %s %s @p %s", MOD_ID, NAME,
-                BlockPosUtil.format(slot.box().pos1()),
-                BlockPosUtil.format(slot.box().pos2()),
+                BlockPosUtil.format(slot.getBox().getPos1()),
+                BlockPosUtil.format(slot.getBox().getPos2()),
                 name));
-        if (slot.box().anchor().isPresent() && BlockPosUtil.isInbetween(slot.box().anchor().get(), slot.box().pos1(), slot.box().pos2()))
+        if (slot.getBox().getAnchor().isPresent() && BlockPosUtil.isInbetween(slot.getBox().getAnchor().get(), slot.getBox().getPos1(), slot.getBox().getPos2()))
         {
             builder.append(' ');
-            builder.append(BlockPosUtil.format(slot.box().anchor().get()));
+            builder.append(BlockPosUtil.format(slot.getBox().getAnchor().get()));
         }
         return builder.toString();
     }

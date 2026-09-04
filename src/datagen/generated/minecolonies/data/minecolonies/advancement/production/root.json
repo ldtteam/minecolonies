@@ -15,7 +15,6 @@
       "translate": "advancements.minecolonies.root.production.description"
     },
     "icon": {
-      "count": 1,
       "id": "minecolonies:blockhutbuilder"
     },
     "show_toast": false,

@@ -5,7 +5,7 @@ import com.ldtteam.common.network.PlayMessageType;
 import com.minecolonies.api.advancements.AdvancementTriggers;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
@@ -16,9 +16,9 @@ public class OpenGuiWindowTriggerMessage extends AbstractServerPlayMessage
     /**
      * The window's Resource
      */
-    private final ResourceLocation resource;
+    private final Identifier resource;
 
-    public OpenGuiWindowTriggerMessage(final ResourceLocation resource)
+    public OpenGuiWindowTriggerMessage(final Identifier resource)
     {
         super(TYPE);
         this.resource = resource;
@@ -27,13 +27,13 @@ public class OpenGuiWindowTriggerMessage extends AbstractServerPlayMessage
     @Override
     protected void toBytes(final RegistryFriendlyByteBuf buf)
     {
-        buf.writeResourceLocation(this.resource);
+        buf.writeIdentifier(this.resource);
     }
 
     protected OpenGuiWindowTriggerMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
     {
         super(buf, type);
-        this.resource = buf.readResourceLocation();
+        this.resource = buf.readIdentifier();
     }
 
     @Override

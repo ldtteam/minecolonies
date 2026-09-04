@@ -1,25 +1,12 @@
 {
   "type": "minecraft:crafting_shapeless",
-  "category": "misc",
   "ingredients": [
-    {
-      "item": "minecolonies:garlic"
-    },
-    {
-      "item": "minecolonies:onion"
-    },
-    {
-      "item": "minecolonies:corn"
-    },
-    {
-      "item": "minecraft:bowl"
-    },
-    {
-      "item": "minecraft:bowl"
-    },
-    {
-      "item": "minecolonies:large_soy_milk_bottle"
-    }
+    "minecolonies:garlic",
+    "minecolonies:onion",
+    "minecolonies:corn",
+    "minecraft:bowl",
+    "minecraft:bowl",
+    "minecolonies:large_soy_milk_bottle"
   ],
   "result": {
     "count": 2,

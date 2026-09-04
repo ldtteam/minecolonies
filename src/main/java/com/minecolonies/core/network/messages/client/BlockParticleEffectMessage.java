@@ -64,11 +64,11 @@ public class BlockParticleEffectMessage extends AbstractClientPlayMessage
     {
         if (side == BREAK_BLOCK)
         {
-            Minecraft.getInstance().particleEngine.destroy(pos, block);
+            Minecraft.getInstance().level.addDestroyBlockEffect(pos, block);
         }
         else
         {
-            Minecraft.getInstance().particleEngine.crack(pos, Direction.from3DDataValue(side));
+            Minecraft.getInstance().level.addDestroyBlockEffect(pos, block);
         }
     }
 }

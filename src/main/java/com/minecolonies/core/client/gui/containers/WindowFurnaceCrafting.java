@@ -7,6 +7,7 @@ import com.minecolonies.api.compatibility.Compatibility;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.crafting.ModCraftingTypes;
 import com.minecolonies.api.inventory.container.ContainerCraftingFurnace;
+import com.ldtteam.blockui.UiRenderMacros;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.client.gui.modules.building.WindowSelectRequest;
@@ -14,12 +15,12 @@ import com.minecolonies.core.colony.buildings.moduleviews.CraftingModuleView;
 import com.minecolonies.core.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.core.network.messages.server.colony.building.worker.AddRemoveRecipeMessage;
 import com.minecolonies.core.util.DomumOrnamentumUtils;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
@@ -41,7 +42,7 @@ import static com.minecolonies.api.util.constant.translation.BaseGameTranslation
  */
 public class WindowFurnaceCrafting extends AbstractContainerScreen<ContainerCraftingFurnace>
 {
-    private static final ResourceLocation CRAFTING_FURNACE = new ResourceLocation(Constants.MOD_ID, "textures/gui/furnace.png");
+    private static final Identifier CRAFTING_FURNACE = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "textures/gui/furnace.png");
 
     /**
      * X offset of the button.
@@ -166,7 +167,7 @@ public class WindowFurnaceCrafting extends AbstractContainerScreen<ContainerCraf
 
     private void reopenWithRequest(@Nullable final IRequest<?> request)
     {
-        minecraft.setScreen(this);
+        minecraft.setScreenAndShow(this);
 
         final List<ItemStack> stacks = requestables.getOrDefault(request, new ArrayList<>());
         if (!stacks.isEmpty())
@@ -179,15 +180,17 @@ public class WindowFurnaceCrafting extends AbstractContainerScreen<ContainerCraf
      * Draws the background layer of this container (behind the items).
      */
     @Override
-    protected void renderBg(@NotNull final GuiGraphics stack, final float partialTicks, final int mouseX, final int mouseY)
+    public void extractBackground(@NotNull final GuiGraphicsExtractor stack, final int mouseX, final int mouseY, final float partialTicks)
     {
-        stack.blit(CRAFTING_FURNACE, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight);
+        super.extractBackground(stack, mouseX, mouseY, partialTicks);
+        UiRenderMacros.blit(stack, CRAFTING_FURNACE, this.leftPos, this.topPos,
+            this.imageWidth, this.imageHeight, 0, 0, 256, 256);
     }
 
     @Override
-    public void render(@NotNull final GuiGraphics stack, int x, int y, float z)
+    public void extractRenderState(@NotNull final GuiGraphicsExtractor stack, int x, int y, float z)
     {
-        super.render(stack, x, y, z);
-        this.renderTooltip(stack, x, y);
+        super.extractRenderState(stack, x, y, z);
+        // tooltip extraction is handled by AbstractContainerScreen;
     }
 }

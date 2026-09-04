@@ -1,20 +1,22 @@
 package com.minecolonies.core.util;
+import com.minecolonies.api.crafting.RecipeUtils;
+import com.minecolonies.api.util.ItemStackUtils;
 
 import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.compatibility.IFurnaceRecipes;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.crafting.RecipeStorage;
-import net.minecraft.core.NonNullList;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.item.crafting.RecipeManager;
-import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.item.crafting.SmeltingRecipe;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
+import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 public class FurnaceRecipes implements IFurnaceRecipes
@@ -28,38 +30,39 @@ public class FurnaceRecipes implements IFurnaceRecipes
     /**
      * Load all the recipes in the recipe storage.
      *
-     * @param recipeManager  The recipe manager to parse.
+     * @param recipes The vanilla recipes to parse.
      */
-    public void loadRecipes(final RecipeManager recipeManager, final Level level)
+    public void loadRecipes(final Collection<RecipeHolder<?>> vanillaRecipes, final Level level)
     {
         recipes.clear();
         reverseRecipes.clear();
-        recipeManager.getAllRecipesFor(RecipeType.SMELTING).forEach(holder -> {
-            final SmeltingRecipe recipe = holder.value();
-            final NonNullList<Ingredient> list = recipe.getIngredients();
+        for (final RecipeHolder<?> holder : vanillaRecipes)
+        {
+            if (!(holder.value() instanceof final SmeltingRecipe recipe)) continue;
+            final List<Ingredient> list = RecipeUtils.getIngredients(recipe);
             if (list.size() == 1)
             {
-                for(final ItemStack smeltable: list.get(0).getItems())
+                for(final ItemStack smeltable: ItemStackUtils.getIngredientStacks(list.get(0)))
                 {
                     if (!smeltable.isEmpty())
                     {
                         final RecipeStorage storage = RecipeStorage.builder()
                                 .withInputs(ImmutableList.of(new ItemStorage(smeltable)))
-                                .withPrimaryOutput(recipe.getResultItem(level.registryAccess()))
+                                .withPrimaryOutput(RecipeUtils.getOutput(recipe, level))
                                 .withGridSize(1)
                                 .withIntermediate(Blocks.FURNACE)
-                                .withRecipeId(holder.id())
+                                .withRecipeId(holder.id().identifier())
                                 .build();
 
                         recipes.put(storage.getCleanedInput().get(0), storage);
 
-                        final ItemStack output = recipe.getResultItem(level.registryAccess()).copy();
+                        final ItemStack output = RecipeUtils.getOutput(recipe, level).copy();
                         output.setCount(1);
                         reverseRecipes.put(new ItemStorage(output), storage);
                     }
                 }
             }
-        });
+        }
     }
 
     @Override

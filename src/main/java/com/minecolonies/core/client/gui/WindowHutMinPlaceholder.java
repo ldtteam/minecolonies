@@ -2,7 +2,7 @@ package com.minecolonies.core.client.gui;
 
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.colony.buildings.views.AbstractBuildingView;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 /**
  * BOWindow for worker. Placeholder for many different jobs.
@@ -18,6 +18,6 @@ public class WindowHutMinPlaceholder<B extends AbstractBuildingView> extends Abs
      */
     public WindowHutMinPlaceholder(final B building)
     {
-        super(building, new ResourceLocation(Constants.MOD_ID, "gui/layouthuts/layouthutpageactionsmin.xml"));
+        super(building, Identifier.fromNamespaceAndPath(Constants.MOD_ID, "gui/layouthuts/layouthutpageactionsmin.xml"));
     }
 }

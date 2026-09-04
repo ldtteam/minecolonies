@@ -14,7 +14,7 @@ import com.minecolonies.core.colony.buildings.moduleviews.BuildingStatisticsModu
 import com.minecolonies.core.colony.buildings.moduleviews.MinerLevelManagementModuleView;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -42,22 +42,22 @@ public class WindowStatsModule extends AbstractModuleWindow<BuildingStatisticsMo
     /**
      * Texture of the assign button when it's on.
      */
-    private static final ResourceLocation TEXTURE_ASSIGN_ON_NORMAL = ResourceLocation.parse("minecolonies:textures/gui/builderhut/builder_button_mini_check.png");
+    private static final Identifier TEXTURE_ASSIGN_ON_NORMAL = Identifier.parse("minecolonies:textures/gui/builderhut/builder_button_mini_check.png");
 
     /**
      * Texture of the assign button when it's on and disabled.
      */
-    private static final ResourceLocation TEXTURE_ASSIGN_ON_DISABLED = ResourceLocation.parse("minecolonies:textures/gui/builderhut/builder_button_mini_disabled_check.png");
+    private static final Identifier TEXTURE_ASSIGN_ON_DISABLED = Identifier.parse("minecolonies:textures/gui/builderhut/builder_button_mini_disabled_check.png");
 
     /**
      * Texture of the assign button when it's off.
      */
-    private static final ResourceLocation TEXTURE_ASSIGN_OFF_NORMAL = ResourceLocation.parse("minecolonies:textures/gui/builderhut/builder_button_mini.png");
+    private static final Identifier TEXTURE_ASSIGN_OFF_NORMAL = Identifier.parse("minecolonies:textures/gui/builderhut/builder_button_mini.png");
 
     /**
      * Texture of the assign button when it's off and disabled.
      */
-    private static final ResourceLocation TEXTURE_ASSIGN_OFF_DISABLED = ResourceLocation.parse("minecolonies:textures/gui/builderhut/builder_button_mini_disabled.png");
+    private static final Identifier TEXTURE_ASSIGN_OFF_DISABLED = Identifier.parse("minecolonies:textures/gui/builderhut/builder_button_mini_disabled.png");
 
     static
     {
@@ -86,7 +86,7 @@ public class WindowStatsModule extends AbstractModuleWindow<BuildingStatisticsMo
      */
     public WindowStatsModule(final BuildingStatisticsModuleView moduleView)
     {
-        super(moduleView, new ResourceLocation(Constants.MOD_ID, "gui/layouthuts/layoutstatsmodule.xml"));
+        super(moduleView, Identifier.fromNamespaceAndPath(Constants.MOD_ID, "gui/layouthuts/layoutstatsmodule.xml"));
         registerButton(TAG_BUTTON_HIDEZERO, this::hideZeroClicked);
     }
 

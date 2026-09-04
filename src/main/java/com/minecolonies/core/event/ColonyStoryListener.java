@@ -1,4 +1,5 @@
 package com.minecolonies.core.event;
+import com.google.gson.JsonElement;
 
 import com.google.gson.*;
 import com.minecolonies.api.util.Log;
@@ -7,7 +8,9 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
+import net.minecraft.resources.FileToIdConverter;
+import net.minecraft.util.ExtraCodecs;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
 import net.minecraft.tags.TagKey;
@@ -17,7 +20,7 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
-import net.neoforged.neoforge.client.event.RegisterClientReloadListenersEvent;
+import net.neoforged.neoforge.client.event.AddClientReloadListenersEvent;
 import net.neoforged.neoforge.server.ServerLifecycleHooks;
 import org.jetbrains.annotations.NotNull;
 
@@ -26,13 +29,12 @@ import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.Constants.MOD_ID;
 import static com.minecolonies.core.generation.DataGeneratorConstants.COLONY_STORIES_DIR;
-import static net.neoforged.fml.common.EventBusSubscriber.Bus.MOD;
 
 /**
  * Loads and listens to colony story changes.
  */
-@EventBusSubscriber(value = Dist.CLIENT, modid = Constants.MOD_ID, bus = MOD)
-public class ColonyStoryListener extends SimpleJsonResourceReloadListener
+@EventBusSubscriber(value = Dist.CLIENT, modid = Constants.MOD_ID)
+public class ColonyStoryListener extends SimpleJsonResourceReloadListener<JsonElement>
 {
     /**
      * Gson instance
@@ -42,19 +44,19 @@ public class ColonyStoryListener extends SimpleJsonResourceReloadListener
     /**
      * Names for abandoned colonies.
      */
-    public static final ResourceLocation ABANDONED_COLONY_NAME = new ResourceLocation(MOD_ID, "abandoned_name");
+    public static final Identifier ABANDONED_COLONY_NAME = Identifier.fromNamespaceAndPath(MOD_ID, "abandoned_name");
     /**
      * Stories for abandoned colonies.
      */
-    public static final ResourceLocation ABANDONED_COLONY_STORY = new ResourceLocation(MOD_ID, "abandoned");
+    public static final Identifier ABANDONED_COLONY_STORY = Identifier.fromNamespaceAndPath(MOD_ID, "abandoned");
     /**
      * Stories for supply camps.
      */
-    public static final ResourceLocation SUPPLY_CAMP_STORY = new ResourceLocation(MOD_ID, "camp");
+    public static final Identifier SUPPLY_CAMP_STORY = Identifier.fromNamespaceAndPath(MOD_ID, "camp");
     /**
      * Stories for supply ships.
      */
-    public static final ResourceLocation SUPPLY_SHIP_STORY = new ResourceLocation(MOD_ID, "ship");
+    public static final Identifier SUPPLY_SHIP_STORY = Identifier.fromNamespaceAndPath(MOD_ID, "ship");
 
     /**
      * List of story and lore elements loaded from data.
@@ -66,9 +68,9 @@ public class ColonyStoryListener extends SimpleJsonResourceReloadListener
     public static Set<StoryText> supplyCampStories = new HashSet<>();
 
     @SubscribeEvent
-    public static void modInitClient(final RegisterClientReloadListenersEvent event)
+    public static void modInitClient(final AddClientReloadListenersEvent event)
     {
-        event.registerReloadListener(new ColonyStoryListener());
+        event.addListener(Identifier.fromNamespaceAndPath(Constants.MOD_ID, "colony_stories"), new ColonyStoryListener());
     }
 
     /**
@@ -76,7 +78,7 @@ public class ColonyStoryListener extends SimpleJsonResourceReloadListener
      */
     public ColonyStoryListener()
     {
-        super(GSON, COLONY_STORIES_DIR);
+        super(ExtraCodecs.JSON, FileToIdConverter.json(COLONY_STORIES_DIR));
     }
 
     /**
@@ -98,14 +100,14 @@ public class ColonyStoryListener extends SimpleJsonResourceReloadListener
     }
 
     @Override
-    protected void apply(final Map<ResourceLocation, JsonElement> jsonElementMap, final @NotNull ResourceManager resourceManager, final @NotNull ProfilerFiller profiler)
+    protected void apply(final Map<Identifier, JsonElement> jsonElementMap, final @NotNull ResourceManager resourceManager, final @NotNull ProfilerFiller profiler)
     {
         abandonedColonyNames.clear();
         abandonedColonyStories.clear();
         supplyShipStories.clear();
         supplyCampStories.clear();
 
-        for (final Map.Entry<ResourceLocation, JsonElement> entry : jsonElementMap.entrySet())
+        for (final Map.Entry<Identifier, JsonElement> entry : jsonElementMap.entrySet())
         {
             try
             {
@@ -127,7 +129,7 @@ public class ColonyStoryListener extends SimpleJsonResourceReloadListener
 
     private void parseStory(final JsonObject json)
     {
-        final ResourceLocation type = ResourceLocation.parse(Objects.requireNonNullElse(json.get("type"), new JsonPrimitive("")).getAsString());
+        final Identifier type = Identifier.parse(Objects.requireNonNullElse(json.get("type"), new JsonPrimitive("")).getAsString());
         if (type.equals(ABANDONED_COLONY_NAME))
         {
             abandonedColonyNames.addAll(parseStoryText(json));
@@ -221,14 +223,14 @@ public class ColonyStoryListener extends SimpleJsonResourceReloadListener
         {
             if (value.startsWith("#"))
             {
-                final TagKey<Biome> tagKey = TagKey.create(Registries.BIOME, ResourceLocation.parse(value.substring(1)));
+                final TagKey<Biome> tagKey = TagKey.create(Registries.BIOME, Identifier.parse(value.substring(1)));
                 return new BiomeFilter(b -> b.is(tagKey));
             }
             else
             {
                 final RegistryAccess registryAccess = ServerLifecycleHooks.getCurrentServer().registryAccess();
-                final ResourceKey<Biome> key = ResourceKey.create(Registries.BIOME, ResourceLocation.parse(value));
-                final Holder<Biome> biome = registryAccess.registryOrThrow(Registries.BIOME).getHolderOrThrow(key);
+                final ResourceKey<Biome> key = ResourceKey.create(Registries.BIOME, Identifier.parse(value));
+                final Holder<Biome> biome = registryAccess.lookupOrThrow(Registries.BIOME).getOrThrow(key);
                 return new BiomeFilter(b -> b.equals(biome));
             }
         }

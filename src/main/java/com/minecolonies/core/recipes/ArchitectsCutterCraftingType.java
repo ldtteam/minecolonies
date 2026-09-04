@@ -11,6 +11,8 @@ import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.crafting.ModCraftingTypes;
 import com.minecolonies.api.crafting.RecipeCraftingType;
 import net.minecraft.core.Holder;
+import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.HolderSet;
 import net.minecraft.core.HolderSet.Named;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.ItemStack;
@@ -22,6 +24,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
@@ -37,13 +40,19 @@ public class ArchitectsCutterCraftingType extends RecipeCraftingType<ArchitectsC
     @Override
     public @NotNull List<IGenericRecipe> findRecipes(@NotNull RecipeManager recipeManager, @Nullable Level world)
     {
+        return findRecipes(recipeManager.getRecipes(), world);
+    }
+
+    @Override
+    public @NotNull List<IGenericRecipe> findRecipes(@NotNull final Collection<RecipeHolder<?>> recipeHolders, @Nullable Level world)
+    {
         final Random rnd = new Random();
         final List<IGenericRecipe> recipes = new ArrayList<>();
-        for (final RecipeHolder<ArchitectsCutterRecipe> holder : recipeManager.getAllRecipesFor(ModRecipeTypes.ARCHITECTS_CUTTER.get()))
+        for (final RecipeHolder<?> holder : recipeHolders)
         {
-            final ArchitectsCutterRecipe recipe = holder.value();
+            if (!(holder.value() instanceof final ArchitectsCutterRecipe recipe)) continue;
             // cutter recipes don't implement getIngredients(), so we have to work around it
-            final Block generatedBlock = BuiltInRegistries.BLOCK.get(recipe.getBlockName());
+            final Block generatedBlock = BuiltInRegistries.BLOCK.getValue(recipe.getBlockName());
 
             if (!(generatedBlock instanceof final IMateriallyTexturedBlock materiallyTexturedBlock))
                 continue;
@@ -51,7 +60,7 @@ public class ArchitectsCutterCraftingType extends RecipeCraftingType<ArchitectsC
             final List<List<ItemStack>> inputs = new ArrayList<>();
             for (final IMateriallyTexturedBlockComponent component : materiallyTexturedBlock.getComponents())
             {
-                final Named<Block> tag = BuiltInRegistries.BLOCK.getTag(component.getValidSkins()).orElse(null);
+                final HolderSet.Named<Block> tag = BuiltInRegistries.BLOCK.get(component.getValidSkins()).orElse(null);
                 if (tag != null)
                 {
                     final List<Block> blocks = tag.stream().map(Holder::value).collect(Collectors.toList());
@@ -60,12 +69,12 @@ public class ArchitectsCutterCraftingType extends RecipeCraftingType<ArchitectsC
                 }
             }
 
-            final ItemStack output = recipe.getResultItem(world.registryAccess()).copy();
+            final ItemStack output = recipe.getResultItem(world == null ? RegistryAccess.EMPTY : world.registryAccess()).copy();
             output.setCount(Math.max(recipe.getCount(), inputs.size()));
             MaterialTextureData.EMPTY.writeToItemStack(output);
 
             recipes.add(GenericRecipe.builder()
-                    .withRecipeId(holder.id())
+                    .withRecipeId(holder.id().identifier())
                     .withOutput(output)
                     .withInputs(inputs)
                     .withGridSize(3)

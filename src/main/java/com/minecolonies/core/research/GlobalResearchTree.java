@@ -15,7 +15,7 @@ import io.netty.buffer.Unpooled;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -32,17 +32,17 @@ public class GlobalResearchTree implements IGlobalResearchTree
     /**
      * The map containing all researches by ID and branch.
      */
-    private final Map<ResourceLocation, Map<ResourceLocation, IGlobalResearch>> researchTree = new HashMap<>();
+    private final Map<Identifier, Map<Identifier, IGlobalResearch>> researchTree = new HashMap<>();
 
     /**
      * The map matching branch IDs to their branch data.
      */
-    private final Map<ResourceLocation, IGlobalResearchBranch> branchDatas = new HashMap<>();
+    private final Map<Identifier, IGlobalResearchBranch> branchDatas = new HashMap<>();
 
     /**
-     * The list containing all resettable researches by ResourceLocation.
+     * The list containing all resettable researches by Identifier.
      */
-    private final List<ResourceLocation> reloadableResearch = new ArrayList<>();
+    private final List<Identifier> reloadableResearch = new ArrayList<>();
 
     /**
      * The list containing all autostart research.
@@ -52,16 +52,16 @@ public class GlobalResearchTree implements IGlobalResearchTree
     /**
      * The map containing loaded Research Effect IDs.
      */
-    private final Map<ResourceLocation, Set<IGlobalResearch>> researchEffectsIds = new HashMap<>();
+    private final Map<Identifier, Set<IGlobalResearch>> researchEffectsIds = new HashMap<>();
 
     @Override
-    public IGlobalResearch getResearch(final ResourceLocation branch, final ResourceLocation id) { return researchTree.get(branch).get(id); }
+    public IGlobalResearch getResearch(final Identifier branch, final Identifier id) { return researchTree.get(branch).get(id); }
 
     @Nullable
     @Override
-    public IGlobalResearch getResearch(final ResourceLocation id)
+    public IGlobalResearch getResearch(final Identifier id)
     {
-        for(final Map.Entry<ResourceLocation, Map<ResourceLocation, IGlobalResearch>> branch: researchTree.entrySet())
+        for(final Map.Entry<Identifier, Map<Identifier, IGlobalResearch>> branch: researchTree.entrySet())
         {
             if(branch.getValue().containsKey(id))
             {
@@ -72,15 +72,15 @@ public class GlobalResearchTree implements IGlobalResearchTree
     }
 
     @Override
-    public boolean hasResearch(final ResourceLocation branch, final ResourceLocation id)
+    public boolean hasResearch(final Identifier branch, final Identifier id)
     {
         return (researchTree.containsKey(branch) && researchTree.get(branch).containsKey(id));
     }
 
     @Override
-    public boolean hasResearch(final ResourceLocation id)
+    public boolean hasResearch(final Identifier id)
     {
-        for(final Map.Entry<ResourceLocation, Map<ResourceLocation, IGlobalResearch>> branch: researchTree.entrySet())
+        for(final Map.Entry<Identifier, Map<Identifier, IGlobalResearch>> branch: researchTree.entrySet())
         {
             if(branch.getValue().containsKey(id))
             {
@@ -91,9 +91,9 @@ public class GlobalResearchTree implements IGlobalResearchTree
     }
 
     @Override
-    public void addResearch(final ResourceLocation branch, final IGlobalResearch research, final boolean isReloadedWithWorld)
+    public void addResearch(final Identifier branch, final IGlobalResearch research, final boolean isReloadedWithWorld)
     {
-        final Map<ResourceLocation, IGlobalResearch> branchMap;
+        final Map<Identifier, IGlobalResearch> branchMap;
         if (researchTree.containsKey(branch))
         {
             branchMap = researchTree.get(branch);
@@ -126,31 +126,31 @@ public class GlobalResearchTree implements IGlobalResearchTree
     }
 
     @Override
-    public void addBranchData(final ResourceLocation branchId, final IGlobalResearchBranch branchData)
+    public void addBranchData(final Identifier branchId, final IGlobalResearchBranch branchData)
     {
         this.branchDatas.put(branchId, branchData);
     }
 
     @Override
-    public Set<IGlobalResearch> getResearchForEffect(final ResourceLocation id)
+    public Set<IGlobalResearch> getResearchForEffect(final Identifier id)
     {
         return researchEffectsIds.get(id);
     }
 
     @Override
-    public boolean hasResearchEffect(final ResourceLocation id)
+    public boolean hasResearchEffect(final Identifier id)
     {
         return researchEffectsIds.get(id) != null;
     }
 
     @Override
-    public List<ResourceLocation> getBranches()
+    public List<Identifier> getBranches()
     {
         return new ArrayList<>(researchTree.keySet());
     }
 
     @Override
-    public IGlobalResearchBranch getBranchData(final ResourceLocation id)
+    public IGlobalResearchBranch getBranchData(final Identifier id)
     {
         if(branchDatas.containsKey(id))
         {
@@ -163,7 +163,7 @@ public class GlobalResearchTree implements IGlobalResearchTree
     }
 
     @Override
-    public List<ResourceLocation> getPrimaryResearch(final ResourceLocation branch)
+    public List<Identifier> getPrimaryResearch(final Identifier branch)
     {
         if (!researchTree.containsKey(branch))
         {
@@ -177,9 +177,9 @@ public class GlobalResearchTree implements IGlobalResearchTree
     @Override
     public void reset()
     {
-        for(ResourceLocation reset : reloadableResearch)
+        for(Identifier reset : reloadableResearch)
         {
-            for(Map.Entry<ResourceLocation, Map<ResourceLocation, IGlobalResearch>> branch : researchTree.entrySet())
+            for(Map.Entry<Identifier, Map<Identifier, IGlobalResearch>> branch : researchTree.entrySet())
             {
                 branch.getValue().remove(reset);
             }
@@ -192,7 +192,7 @@ public class GlobalResearchTree implements IGlobalResearchTree
         // Autostart is only accessible as a dynamically-assigned trait, so we can reset all of it.
         autostartResearch.clear();
         branchDatas.clear();
-        final Iterator<Map.Entry<ResourceLocation, Map<ResourceLocation, IGlobalResearch>>> iterator = researchTree.entrySet().iterator();
+        final Iterator<Map.Entry<Identifier, Map<Identifier, IGlobalResearch>>> iterator = researchTree.entrySet().iterator();
         while (!researchTree.isEmpty() && iterator.hasNext())
         {
             if (iterator.next().getValue().isEmpty())
@@ -231,7 +231,7 @@ public class GlobalResearchTree implements IGlobalResearchTree
     public void serializeNetworkData(final RegistryFriendlyByteBuf buf)
     {
         buf.writeVarInt(researchTree.size());
-        for(final Map<ResourceLocation, IGlobalResearch> branch : researchTree.values())
+        for(final Map<Identifier, IGlobalResearch> branch : researchTree.values())
         {
             buf.writeVarInt(branch.size());
             for(final IGlobalResearch research : branch.values())
@@ -240,9 +240,9 @@ public class GlobalResearchTree implements IGlobalResearchTree
             }
         }
         // Lastly, we'll send the branch identifiers.
-        for(Map.Entry<ResourceLocation, IGlobalResearchBranch> branch : branchDatas.entrySet())
+        for(Map.Entry<Identifier, IGlobalResearchBranch> branch : branchDatas.entrySet())
         {
-            buf.writeResourceLocation(branch.getKey());
+            buf.writeIdentifier(branch.getKey());
             buf.writeNbt(branch.getValue().writeToNBT());
         }
     }
@@ -263,15 +263,15 @@ public class GlobalResearchTree implements IGlobalResearchTree
         }
         for (int i = 0; i < researchTree.size(); i++)
         {
-            ResourceLocation branchId = buf.readResourceLocation();
+            Identifier branchId = buf.readIdentifier();
             branchDatas.put(branchId, new GlobalResearchBranch(buf.readNbt()));
         }
     }
 
     @Override
-    public List<IResearchEffect> getEffectsForResearch(@NotNull final ResourceLocation id)
+    public List<IResearchEffect> getEffectsForResearch(@NotNull final Identifier id)
     {
-        for(final ResourceLocation branch: this.getBranches())
+        for(final Identifier branch: this.getBranches())
         {
             final IGlobalResearch r = this.getResearch(branch, id);
             if (r != null)

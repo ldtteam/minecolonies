@@ -4,7 +4,7 @@
 package com.minecolonies.core.client.model;
 
 import com.minecolonies.api.client.render.modeltype.CitizenModel;
-import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.client.render.modeltype.CitizenRenderState;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
@@ -12,7 +12,7 @@ import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.world.entity.Pose;
 import org.jetbrains.annotations.NotNull;
 
-public class FemaleNobleModle extends CitizenModel<AbstractEntityCitizen>
+public class FemaleNobleModle extends CitizenModel<CitizenRenderState>
 {
     public FemaleNobleModle(final ModelPart part)
     {
@@ -102,12 +102,12 @@ public class FemaleNobleModle extends CitizenModel<AbstractEntityCitizen>
 	}
 
     @Override
-    public void setupAnim(@NotNull final AbstractEntityCitizen entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
+    public void setupAnim(@NotNull final CitizenRenderState state)
     {
-        super.setupAnim(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
-        head.getChild("SimpleHat").visible = entity.getPose() != Pose.SLEEPING;
-        head.getChild("Hat").visible = displayHat(entity);
-        body.getChild("NobleDress").visible = entity.getPose() != Pose.SLEEPING;
-        body.getChild("handbag").visible = entity.getPose() != Pose.SLEEPING;
+        super.setupAnim(state);
+        head.getChild("SimpleHat").visible = state.hasPose(Pose.SLEEPING) == false;
+        head.getChild("Hat").visible = displayHat(state);
+        body.getChild("NobleDress").visible = state.hasPose(Pose.SLEEPING) == false;
+        body.getChild("handbag").visible = state.hasPose(Pose.SLEEPING) == false;
     }
 }

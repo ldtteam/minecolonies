@@ -1,44 +1,25 @@
 package com.minecolonies.core.commands;
 
-import net.minecraft.network.chat.ClickEvent;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Small utility class to run an executable on a chat click event.
+ * Runs deferred actions when a client-side click handler needs to bridge an
+ * event back to MineColonies-owned logic.
  */
-public class ClickEventWithExecutable extends ClickEvent
+public final class ClickEventWithExecutable
 {
-    /**
-     * The actions to run
-     */
-    private Runnable[] actions;
+    private final Runnable[] actions;
 
-    /**
-     * Default constructor.
-     *
-     * @param actions the actions this event should execute.
-     */
     public ClickEventWithExecutable(@NotNull final Runnable... actions)
     {
-        super(ClickEvent.Action.RUN_COMMAND, "");
-        this.actions = actions;
+        this.actions = actions.clone();
     }
 
-    /**
-     * Triggered when the chat component is clicked.
-     */
-    @Override
-    @NotNull
-    public Action getAction()
+    public void run()
     {
-        if (actions != null)
+        for (final Runnable action : actions)
         {
-            for (Runnable r : actions)
-            {
-                r.run();
-            }
-            actions = null;
+            action.run();
         }
-        return super.getAction();
     }
 }

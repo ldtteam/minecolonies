@@ -10,7 +10,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.network.chat.MutableComponent;
 
 import org.jetbrains.annotations.NotNull;
@@ -25,7 +25,7 @@ public class NorsemenShipRaidEvent extends AbstractShipRaidEvent
     /**
      * This raids event id, registry entries use res locations as ids.
      */
-    public static final ResourceLocation NORSEMEN_RAID_EVENT_TYPE_ID = new ResourceLocation(Constants.MOD_ID, "norsemen_ship_raid");
+    public static final Identifier NORSEMEN_RAID_EVENT_TYPE_ID = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "norsemen_ship_raid");
 
     /**
      * Ship description
@@ -49,7 +49,7 @@ public class NorsemenShipRaidEvent extends AbstractShipRaidEvent
     }
 
     @Override
-    public ResourceLocation getEventTypeID()
+    public Identifier getEventTypeID()
     {
         return NORSEMEN_RAID_EVENT_TYPE_ID;
     }

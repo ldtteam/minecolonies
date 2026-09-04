@@ -1,4 +1,5 @@
 package com.minecolonies.core.quests;
+import com.minecolonies.api.util.NBTUtils;
 
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
@@ -9,7 +10,7 @@ import net.minecraft.nbt.IntTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -33,7 +34,7 @@ public class QuestInstance implements IQuestInstance
     /**
      * The id of this quest
      */
-    private ResourceLocation questTemplateID;
+    private Identifier questTemplateID;
 
     /**
      * Quest giver.
@@ -71,7 +72,7 @@ public class QuestInstance implements IQuestInstance
      * @param colony the colony it belongs to.
      * @param triggerReturnData the trigger return data that made this quest available.
      */
-    public QuestInstance(final ResourceLocation questTemplateID, final IColony colony, final List<ITriggerReturnData<?>> triggerReturnData)
+    public QuestInstance(final Identifier questTemplateID, final IColony colony, final List<ITriggerReturnData<?>> triggerReturnData)
     {
         this.colony = colony;
         this.questTemplateID = questTemplateID;
@@ -155,7 +156,7 @@ public class QuestInstance implements IQuestInstance
     }
 
     @Override
-    public ResourceLocation getId()
+    public Identifier getId()
     {
         return questTemplateID;
     }
@@ -282,7 +283,7 @@ public class QuestInstance implements IQuestInstance
 
         if (assignedPlayer != null)
         {
-            compoundNBT.putUUID(TAG_PLAYER, assignedPlayer);
+            NBTUtils.putUUID(compoundNBT, TAG_PLAYER, assignedPlayer);
         }
 
         return compoundNBT;
@@ -291,27 +292,27 @@ public class QuestInstance implements IQuestInstance
     @Override
     public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag nbt)
     {
-        questTemplateID = ResourceLocation.parse(nbt.getString(TAG_ID));
-        assignmentStart = nbt.getInt(TAG_ASSIGN_START);
-        objectiveProgress = nbt.getInt(TAG_PROGRESS);
-        questGiver = nbt.getInt(TAG_QUEST_GIVER);
+        questTemplateID = Identifier.parse(nbt.getStringOr(TAG_ID, ""));
+        assignmentStart = nbt.getIntOr(TAG_ASSIGN_START, 0);
+        objectiveProgress = nbt.getIntOr(TAG_PROGRESS, 0);
+        questGiver = nbt.getIntOr(TAG_QUEST_GIVER, 0);
 
-        final ListTag participantList = nbt.getList(TAG_PARTICIPANTS, Tag.TAG_INT);
+        final ListTag participantList = nbt.getListOrEmpty(TAG_PARTICIPANTS);
         for (final Tag tag : participantList)
         {
-            questParticipants.add(((IntTag) tag).getAsInt());
+            questParticipants.add(((IntTag) tag).intValue());
         }
 
         if (nbt.contains(TAG_OBJECTIVE))
         {
             final IObjectiveInstance data = IQuestManager.GLOBAL_SERVER_QUESTS.get(questTemplateID).getObjective(objectiveProgress).createObjectiveInstance();
-            data.deserializeNBT(provider, nbt.getCompound(TAG_OBJECTIVE));
+            data.deserializeNBT(provider, nbt.getCompoundOrEmpty(TAG_OBJECTIVE));
             this.currentObjectiveInstance = data;
         }
 
         if (nbt.contains(TAG_PLAYER))
         {
-            assignedPlayer = nbt.getUUID(TAG_PLAYER);
+            assignedPlayer = NBTUtils.getUUID(nbt, TAG_PLAYER);
         }
     }
 

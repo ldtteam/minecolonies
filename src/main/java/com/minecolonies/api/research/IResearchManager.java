@@ -2,7 +2,7 @@ package com.minecolonies.api.research;
 
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.block.Block;
 import org.jetbrains.annotations.NotNull;
@@ -56,7 +56,7 @@ public interface IResearchManager
      * @param block       The block to get a research identifier for.
      * @return            The string format of that research identifier.
      */
-    ResourceLocation getResearchEffectIdFrom(Block block);
+    Identifier getResearchEffectIdFrom(Block block);
 
     /**
      * Checks if any autostart research has its prerequisites filled,

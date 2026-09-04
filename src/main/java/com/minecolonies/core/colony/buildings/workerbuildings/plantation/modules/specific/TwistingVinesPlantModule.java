@@ -4,7 +4,7 @@ import com.minecolonies.api.colony.buildingextensions.IBuildingExtension;
 import com.minecolonies.api.equipment.ModEquipmentTypes;
 import com.minecolonies.api.equipment.registry.EquipmentTypeEntry;
 import com.minecolonies.core.colony.buildings.workerbuildings.plantation.modules.generic.UpwardsGrowingPlantModule;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
@@ -66,7 +66,7 @@ public class TwistingVinesPlantModule extends UpwardsGrowingPlantModule
     }
 
     @Override
-    public ResourceLocation getRequiredResearchEffect()
+    public Identifier getRequiredResearchEffect()
     {
         return PLANTATION_NETHER;
     }

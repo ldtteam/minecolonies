@@ -8,7 +8,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.PackOutput;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.NotNull;
@@ -102,12 +102,12 @@ public class DefaultRecruitmentItemsProvider implements DataProvider
 
     private CompletableFuture<?> makeRecruitmentItem(final CachedOutput cachedOutput, final Item item, final int rarity)
     {
-        final ResourceLocation itemId = BuiltInRegistries.ITEM.getKey(item);
+        final Identifier itemId = BuiltInRegistries.ITEM.getKey(item);
 
         final JsonObject object = new JsonObject();
         object.addProperty(RecruitmentItemsListener.KEY_ITEM, itemId.toString());
         object.addProperty(RecruitmentItemsListener.KEY_RARITY, rarity);
 
-        return DataProvider.saveStable(cachedOutput, object, outputProvider.json(new ResourceLocation(Constants.MOD_ID, itemId.getPath())));
+        return DataProvider.saveStable(cachedOutput, object, outputProvider.json(Identifier.fromNamespaceAndPath(Constants.MOD_ID, itemId.getPath())));
     }
 }

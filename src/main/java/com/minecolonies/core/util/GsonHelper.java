@@ -2,7 +2,7 @@ package com.minecolonies.core.util;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.Optional;
 import java.util.function.Function;
@@ -23,14 +23,14 @@ public class GsonHelper extends net.minecraft.util.GsonHelper
         return object.has(key) ? convertToString(object.get(key), key) : defaultValue.get();
     }
 
-    public static ResourceLocation getAsResourceLocation(final JsonObject object, final String key)
+    public static Identifier getAsIdentifier(final JsonObject object, final String key)
     {
-        return ResourceLocation.parse(getAsString(object, key));
+        return Identifier.parse(getAsString(object, key));
     }
 
-    public static ResourceLocation getAsResourceLocation(final JsonObject object, final String key, final ResourceLocation defaultValue)
+    public static Identifier getAsIdentifier(final JsonObject object, final String key, final Identifier defaultValue)
     {
-        return Optional.ofNullable(getAsString(object, key, (String) null)).map(ResourceLocation::parse).orElse(defaultValue);
+        return Optional.ofNullable(getAsString(object, key, (String) null)).map(Identifier::parse).orElse(defaultValue);
     }
 
     public static <T> JsonArray getAsJsonArray(final JsonObject object, final String key, final Function<T, JsonArray> defaultValue, final T arg)

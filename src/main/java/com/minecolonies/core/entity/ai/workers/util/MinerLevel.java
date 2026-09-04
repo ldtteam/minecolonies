@@ -1,6 +1,6 @@
 package com.minecolonies.core.entity.ai.workers.util;
 
-import com.ldtteam.structurize.api.RotationMirror;
+import com.ldtteam.structurize.util.RotationMirror;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.Vec2i;
@@ -138,7 +138,7 @@ public class MinerLevel
     public MinerLevel(@NotNull final CompoundTag compound)
     {
 
-        this.depth = compound.getInt(TAG_DEPTH);
+        this.depth = compound.getIntOr(TAG_DEPTH, 0);
         if (compound.contains(TAG_LEVEL_SIGN))
         {
             this.levelSign = BlockPosUtil.read(compound, TAG_LEVEL_SIGN);
@@ -148,10 +148,10 @@ public class MinerLevel
             this.levelSign = null;
         }
 
-        final ListTag nodeTagList = compound.getList(TAG_NODES, Tag.TAG_COMPOUND);
+        final ListTag nodeTagList = compound.getListOrEmpty(TAG_NODES);
         for (int i = 0; i < nodeTagList.size(); i++)
         {
-            @NotNull final MineNode node = MineNode.createFromNBT(nodeTagList.getCompound(i));
+            @NotNull final MineNode node = MineNode.createFromNBT(nodeTagList.getCompoundOrEmpty(i));
             this.nodes.put(new Vec2i(node.getX(), node.getZ()), node);
         }
 
@@ -161,22 +161,22 @@ public class MinerLevel
         final int ladderZ;
         if (hasDoubles)
         {
-            ladderX = (int) Math.floor(compound.getDouble(TAG_LADDERX));
-            ladderZ = (int) Math.floor(compound.getDouble(TAG_LADDERZ));
+            ladderX = (int) Math.floor(compound.getDoubleOr(TAG_LADDERX, 0.0D));
+            ladderZ = (int) Math.floor(compound.getDoubleOr(TAG_LADDERZ, 0.0D));
         }
         else
         {
-            ladderX = compound.getInt(TAG_LADDERX);
-            ladderZ = compound.getInt(TAG_LADDERZ);
+            ladderX = compound.getIntOr(TAG_LADDERX, 0);
+            ladderZ = compound.getIntOr(TAG_LADDERZ, 0);
         }
 
         this.ladderNode = this.nodes.get(new Vec2i(ladderX, ladderZ));
 
 
-        final ListTag openNodeTagList = compound.getList(TAG_OPEN_NODES, Tag.TAG_COMPOUND);
+        final ListTag openNodeTagList = compound.getListOrEmpty(TAG_OPEN_NODES);
         for (int i = 0; i < openNodeTagList.size(); i++)
         {
-            @NotNull final MineNode node = MineNode.createFromNBT(openNodeTagList.getCompound(i));
+            @NotNull final MineNode node = MineNode.createFromNBT(openNodeTagList.getCompoundOrEmpty(i));
             this.openNodes.add(node);
         }
     }

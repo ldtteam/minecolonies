@@ -37,7 +37,7 @@ public class CommandSetAbandoned implements IMCColonyOfficerCommand
 
         if (addOfficer)
         {
-            colony.getPermissions().addPlayer(((Player) sender).getGameProfile(), colony.getPermissions().getRankOfficer());
+            colony.getPermissions().addPlayer(((Player) sender).nameAndId(), colony.getPermissions().getRankOfficer());
         }
 
         context.getSource().sendSuccess(() -> Component.translatableEscape(COMMAND_OWNER_CHANGE_SUCCESS, "[abandoned]", colony.getName()), true);

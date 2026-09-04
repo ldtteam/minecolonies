@@ -157,7 +157,7 @@ public class CommandCitizenInfo implements IMCColonyOfficerCommand
      */
     private static Style styleWithTeleport(final BlockPos pos)
     {
-        return Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/tp " + pos.getX() + " " + pos.getY() + " " + pos.getZ()));
+        return Style.EMPTY.withClickEvent(new ClickEvent.RunCommand("/tp " + pos.getX() + " " + pos.getY() + " " + pos.getZ()));
     }
 
     /**

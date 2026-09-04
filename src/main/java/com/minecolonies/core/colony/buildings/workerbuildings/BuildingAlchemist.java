@@ -17,7 +17,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.util.Tuple;
+import com.ldtteam.structurize.api.util.Tuple;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
@@ -107,19 +107,19 @@ public class BuildingAlchemist extends AbstractBuilding
     public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound)
     {
         super.deserializeNBT(provider, compound);
-        final ListTag sandPos = compound.getList(TAG_PLANTGROUND, CompoundTag.TAG_INT_ARRAY);
+        final ListTag sandPos = compound.getListOrEmpty(TAG_PLANTGROUND);
         for (int i = 0; i < sandPos.size(); ++i)
         {
             soulsand.add(NBTUtils.readBlockPos(sandPos.get(i)));
         }
 
-        final ListTag leavesPos = compound.getList(TAG_LEAVES, CompoundTag.TAG_INT_ARRAY);
+        final ListTag leavesPos = compound.getListOrEmpty(TAG_LEAVES);
         for (int i = 0; i < leavesPos.size(); ++i)
         {
             leaves.add(NBTUtils.readBlockPos(leavesPos.get(i)));
         }
 
-        final ListTag brewingStandPos = compound.getList(TAG_BREWING_STAND, CompoundTag.TAG_INT_ARRAY);
+        final ListTag brewingStandPos = compound.getListOrEmpty(TAG_BREWING_STAND);
         for (int i = 0; i < brewingStandPos.size(); ++i)
         {
             brewingStands.add(NBTUtils.readBlockPos(brewingStandPos.get(i)));

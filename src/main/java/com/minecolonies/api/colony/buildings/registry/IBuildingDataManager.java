@@ -11,7 +11,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.Block;
 import org.jetbrains.annotations.NotNull;
 
@@ -52,7 +52,7 @@ public interface IBuildingDataManager
      * @param buildingName The name of the {@link IBuilding} as registered to the registry.
      * @return The {@link IBuilding} with the data loaded from {@link AbstractTileEntityColonyBuilding}.
      */
-    IBuilding createFrom(final IColony colony, BlockPos position, final ResourceLocation buildingName);
+    IBuilding createFrom(final IColony colony, BlockPos position, final Identifier buildingName);
 
     /**
      * Creates a new entry from a given {@link IColonyView}, the position as {@link BlockPos} and the data passed in as {@link ByteBuf}.

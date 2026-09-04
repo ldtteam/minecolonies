@@ -7,7 +7,7 @@ import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenColonyHandler;
 import com.minecolonies.api.util.Log;
 import net.minecraft.network.syncher.EntityDataAccessor;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
@@ -150,7 +150,7 @@ public class CitizenColonyHandler implements ICitizenColonyHandler
 
             citizen.setFemale(citizen.getEntityData().get(DATA_IS_FEMALE) != 0);
             citizen.setIsChild(citizen.getEntityData().get(DATA_IS_CHILD));
-            citizen.setModelId(ResourceLocation.parse(citizen.getEntityData().get(DATA_MODEL)));
+            citizen.setModelId(Identifier.parse(citizen.getEntityData().get(DATA_MODEL)));
             citizen.setTextureId(citizen.getEntityData().get(DATA_TEXTURE));
             citizen.setRenderMetadata(citizen.getEntityData().get(DATA_RENDER_METADATA));
             citizen.setTexture();
@@ -185,7 +185,7 @@ public class CitizenColonyHandler implements ICitizenColonyHandler
     @Nullable
     public IColony getColonyOrRegister()
     {
-        if (colony == null && !citizen.level().isClientSide)
+        if (colony == null && !citizen.level().isClientSide())
         {
             registerWithColony(getColonyId(), citizen.getCivilianID());
         }

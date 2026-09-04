@@ -4,7 +4,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.minecolonies.api.IMinecoloniesAPI;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -132,7 +132,9 @@ public interface IDialogueObjectiveTemplate extends IQuestObjectiveTemplate
         public static AnswerElement parse(final JsonObject jsonObject)
         {
             final JsonObject resultObj = jsonObject.getAsJsonObject(RESULT_ID);
-            return new AnswerElement(Component.translatableEscape(jsonObject.get(ANSWER_ID).getAsString()), IMinecoloniesAPI.getInstance().getQuestDialogueAnswerRegistry().get(ResourceLocation.parse(resultObj.get(TYPE_ID).getAsString())).produce(resultObj));
+            return new AnswerElement(Component.translatableEscape(jsonObject.get(ANSWER_ID).getAsString()), IMinecoloniesAPI.getInstance()
+                .getQuestDialogueAnswerRegistry().get(Identifier.parse(resultObj.get(TYPE_ID).getAsString()))
+                .orElseThrow(() -> new IllegalArgumentException("Unknown quest dialogue answer")).value().produce(resultObj));
         }
     }
 }

@@ -7,6 +7,7 @@ import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.crafting.ModCraftingTypes;
 import com.minecolonies.api.crafting.registry.CraftingType;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
@@ -14,6 +15,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -30,6 +32,23 @@ public class BrewingCraftingType extends CraftingType
     @NotNull
     public List<IGenericRecipe> findRecipes(@NotNull RecipeManager recipeManager, @Nullable Level world)
     {
+        return findRecipes(world);
+    }
+
+    @Override
+    @NotNull
+    public List<IGenericRecipe> findRecipes(@NotNull final Collection<RecipeHolder<?>> recipeHolders, @Nullable final Level world)
+    {
+        return findRecipes(world);
+    }
+
+    private List<IGenericRecipe> findRecipes(@Nullable final Level world)
+    {
+        if (world == null)
+        {
+            return List.of();
+        }
+
         final List<IGenericRecipe> recipes = new ArrayList<>();
         final ICompatibilityManager compatibilityManager = MinecoloniesAPIProxy.getInstance().getColonyManager().getCompatibilityManager();
 

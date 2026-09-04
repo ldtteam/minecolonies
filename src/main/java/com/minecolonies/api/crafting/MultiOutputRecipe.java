@@ -1,7 +1,7 @@
 package com.minecolonies.api.crafting;
 
 import com.google.common.collect.ImmutableList;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.ArrayList;
@@ -40,7 +40,7 @@ public class MultiOutputRecipe extends AbstractRecipeType<IRecipeStorage>
     }
 
     @Override
-    public ResourceLocation getId()
+    public Identifier getId()
     {
         return ModRecipeTypes.MULTI_OUTPUT_ID;
     }

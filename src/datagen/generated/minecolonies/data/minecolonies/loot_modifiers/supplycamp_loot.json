@@ -82,5 +82,6 @@
       ]
     }
   ],
+  "priority": 0,
   "table": "minecolonies:chests/supplycamp"
 }

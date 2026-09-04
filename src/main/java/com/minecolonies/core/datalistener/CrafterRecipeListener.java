@@ -1,4 +1,5 @@
 package com.minecolonies.core.datalistener;
+import com.google.gson.JsonElement;
 
 import com.google.gson.*;
 import com.minecolonies.api.util.Log;
@@ -8,7 +9,9 @@ import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.GsonHelper;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
+import net.minecraft.resources.FileToIdConverter;
+import net.minecraft.util.ExtraCodecs;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
@@ -18,7 +21,7 @@ import static com.minecolonies.core.colony.crafting.CustomRecipe.*;
 /**
  * Loader for Json based crafter specific recipes
  */
-public class CrafterRecipeListener extends SimpleJsonResourceReloadListener
+public class CrafterRecipeListener extends SimpleJsonResourceReloadListener<JsonElement>
 {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
 
@@ -28,11 +31,11 @@ public class CrafterRecipeListener extends SimpleJsonResourceReloadListener
      */
     public CrafterRecipeListener()
     {
-        super(GSON, "crafterrecipes");
+        super(ExtraCodecs.JSON, FileToIdConverter.json("crafterrecipes"));
     }
 
     @Override
-    protected void apply(@NotNull final Map<ResourceLocation, JsonElement> object,
+    protected void apply(@NotNull final Map<Identifier, JsonElement> object,
                          @NotNull final ResourceManager resourceManagerIn,
                          @NotNull final ProfilerFiller profilerIn)
     {
@@ -40,9 +43,9 @@ public class CrafterRecipeListener extends SimpleJsonResourceReloadListener
 
         final CustomRecipeManager recipeManager = CustomRecipeManager.getInstance();
         recipeManager.reset();
-        for(final Map.Entry<ResourceLocation, JsonElement> entry : object.entrySet())
+        for(final Map.Entry<Identifier, JsonElement> entry : object.entrySet())
         {
-            final ResourceLocation key = entry.getKey();
+            final Identifier key = entry.getKey();
             try
             {
                 final JsonObject recipeJson = entry.getValue().getAsJsonObject();
@@ -57,7 +60,7 @@ public class CrafterRecipeListener extends SimpleJsonResourceReloadListener
                         recipeManager.addRecipeTemplate(key, recipeJson);
                         break;
                     case RECIPE_TYPE_REMOVE:
-                        final ResourceLocation toRemove = ResourceLocation.parse(GsonHelper.getAsString(recipeJson, RECIPE_ID_TO_REMOVE_PROP, ""));
+                        final Identifier toRemove = Identifier.parse(GsonHelper.getAsString(recipeJson, RECIPE_ID_TO_REMOVE_PROP, ""));
                         recipeManager.removeRecipe(toRemove);
                         break;
                 }

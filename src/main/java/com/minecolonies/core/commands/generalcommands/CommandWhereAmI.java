@@ -27,7 +27,7 @@ public class CommandWhereAmI implements IMCCommand
         final Entity sender = context.getSource().getEntity();
 
         final BlockPos playerPos = sender.blockPosition();
-        final IColony colony = IColonyManager.getInstance().getClosestColony(sender.getCommandSenderWorld(), playerPos);
+        final IColony colony = IColonyManager.getInstance().getClosestColony(sender.level(), playerPos);
 
         if (colony == null)
         {
@@ -40,7 +40,7 @@ public class CommandWhereAmI implements IMCCommand
         final String id = Integer.toString(colony.getID());
         final String distanceText = new DecimalFormat("0.##").format(distance);
 
-        if (IColonyManager.getInstance().isCoordinateInAnyColony(sender.getCommandSenderWorld(), playerPos))
+        if (IColonyManager.getInstance().isCoordinateInAnyColony(sender.level(), playerPos))
         {
             MessageUtils.format(CommandTranslationConstants.COMMAND_WHERE_AM_I_IN_COLONY, colonyName, id, distanceText).sendTo((Player) sender);
         }

@@ -3,7 +3,7 @@ package com.minecolonies.core.colony.jobs.guard;
 import com.minecolonies.api.equipment.ModEquipmentTypes;
 import com.minecolonies.api.equipment.registry.EquipmentTypeEntry;
 import com.minecolonies.core.colony.jobs.AbstractJobGuard;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import com.minecolonies.api.client.render.modeltype.ModModelTypes;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.core.entity.ai.workers.guard.EntityAIRange;
@@ -32,7 +32,7 @@ public class JobRanger extends AbstractJobGuard<JobRanger>
     }
 
     @Override
-    public ResourceLocation getModel()
+    public Identifier getModel()
     {
         return ModModelTypes.ARCHER_GUARD_ID;
     }

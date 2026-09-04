@@ -146,7 +146,7 @@ public class SchemAnalyzerUtil
 
             if (DomumOrnamentumUtils.isDoBlock(block) && blockInfo.hasTileEntityData())
             {
-                final MaterialTextureData textureData = Utils.deserializeCodecMess(MaterialTextureData.CODEC, provider, blockInfo.getTileEntityData().getCompound(Constants.BLOCK_ENTITY_TEXTURE_DATA));
+                final MaterialTextureData textureData = Utils.deserializeCodecMess(MaterialTextureData.CODEC, provider, blockInfo.getTileEntityData().getCompoundOrEmpty(Constants.BLOCK_ENTITY_TEXTURE_DATA));
                 final ItemStack result = new ItemStack(block);
                 if (!textureData.isEmpty())
                 {

@@ -9,7 +9,7 @@ import com.minecolonies.api.colony.interactionhandling.IChatPriority;
 import com.minecolonies.api.colony.interactionhandling.InteractionValidatorRegistry;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.NBTUtils;
-import com.minecolonies.api.util.Tuple;
+import com.ldtteam.structurize.api.util.Tuple;
 import com.minecolonies.api.util.Utils;
 import com.minecolonies.core.client.gui.citizen.MainWindowCitizen;
 import com.minecolonies.core.network.messages.server.colony.InteractionResponse;
@@ -203,9 +203,9 @@ public abstract class ServerCitizenInteraction extends AbstractInteractionRespon
     public void deserializeNBT(@NotNull final HolderLookup.Provider provider, @NotNull final CompoundTag compoundNBT)
     {
         super.deserializeNBT(provider, compoundNBT);
-        this.displayAtWorldTick = compoundNBT.getInt(TAG_DELAY);
+        this.displayAtWorldTick = compoundNBT.getIntOr(TAG_DELAY, 0);
         this.parents.clear();
-        final ListTag list = compoundNBT.getList(TAG_PARENTS, Tag.TAG_COMPOUND);
+        final ListTag list = compoundNBT.getListOrEmpty(TAG_PARENTS);
         for (Tag tag : list)
         {
             this.parents.add(Utils.deserializeCodecMess(ComponentSerialization.CODEC, provider, tag));

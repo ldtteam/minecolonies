@@ -5,7 +5,7 @@ import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.StatsUtil;
-import com.minecolonies.api.util.Tuple;
+import com.ldtteam.structurize.api.util.Tuple;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingConcreteMixer;
 import com.minecolonies.core.colony.jobs.JobConcreteMixer;
 import net.minecraft.core.BlockPos;
@@ -90,7 +90,7 @@ public class EntityAIConcreteMixer extends AbstractEntityAICrafting<JobConcreteM
         final Block block = ((BlockItem) stack.getItem()).getBlock();
         if (InventoryUtils.attemptReduceStackInItemHandler(worker.getInventoryCitizen(), stack, 1))
         {
-            world.setBlock(posToPlace, block.defaultBlockState().updateShape(Direction.DOWN, block.defaultBlockState(), world, posToPlace, posToPlace), UPDATE_FLAG);
+            world.setBlock(posToPlace, block.defaultBlockState().updateShape(world, world, posToPlace, Direction.DOWN, posToPlace, block.defaultBlockState(), world.getRandom()), UPDATE_FLAG);
         }
 
         return getState();

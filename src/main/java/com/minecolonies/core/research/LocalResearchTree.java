@@ -15,7 +15,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.common.crafting.SizedIngredient;
@@ -35,22 +35,22 @@ public class LocalResearchTree implements ILocalResearchTree
     /**
      * The map containing all researches by ID.
      */
-    private final Map<ResourceLocation, Map<ResourceLocation, ILocalResearch>> researchTree = new HashMap<>();
+    private final Map<Identifier, Map<Identifier, ILocalResearch>> researchTree = new HashMap<>();
 
     /**
      * All research in progress.
      */
-    private final Map<ResourceLocation, ILocalResearch> inProgress = new HashMap<>();
+    private final Map<Identifier, ILocalResearch> inProgress = new HashMap<>();
 
     /**
      * All completed research.
      */
-    private final Set<ResourceLocation> isComplete = new HashSet<>();
+    private final Set<Identifier> isComplete = new HashSet<>();
 
     /**
      * Map containing all branches for which the max level research has been occupied already.
      */
-    private final Set<ResourceLocation> maxLevelResearchCompleted = new HashSet<>();
+    private final Set<Identifier> maxLevelResearchCompleted = new HashSet<>();
 
     /**
      * The colony reference.
@@ -63,7 +63,7 @@ public class LocalResearchTree implements ILocalResearchTree
     }
 
     @Override
-    public ILocalResearch getResearch(final ResourceLocation branch, final ResourceLocation id)
+    public ILocalResearch getResearch(final Identifier branch, final Identifier id)
     {
         if (!researchTree.containsKey(branch))
         {
@@ -73,7 +73,7 @@ public class LocalResearchTree implements ILocalResearchTree
     }
 
     @Override
-    public boolean hasCompletedResearch(final ResourceLocation researchId)
+    public boolean hasCompletedResearch(final Identifier researchId)
     {
         if (IGlobalResearchTree.getInstance().hasResearch(researchId))
         {
@@ -87,7 +87,7 @@ public class LocalResearchTree implements ILocalResearchTree
     }
 
     @Override
-    public void addResearch(final ResourceLocation branch, final ILocalResearch research)
+    public void addResearch(final Identifier branch, final ILocalResearch research)
     {
         if (!researchTree.containsKey(branch))
         {
@@ -118,7 +118,7 @@ public class LocalResearchTree implements ILocalResearchTree
     }
 
     @Override
-    public boolean branchFinishedHighestLevel(final ResourceLocation branch)
+    public boolean branchFinishedHighestLevel(final Identifier branch)
     {
         return maxLevelResearchCompleted.contains(branch);
     }
@@ -130,7 +130,7 @@ public class LocalResearchTree implements ILocalResearchTree
     }
 
     @Override
-    public void finishResearch(final ResourceLocation id)
+    public void finishResearch(final Identifier id)
     {
         inProgress.remove(id);
         isComplete.add(id);
@@ -194,16 +194,15 @@ public class LocalResearchTree implements ILocalResearchTree
                     continue;
                 }
 
-                // ItemStorage needs an ItemStack; for tag-based ingredients we just pick any representative
-                // and set the count to the total required. Predicates will enforce the actual match.
-                final ItemStack[] candidates = cost.getItems();
-                if (candidates == null || candidates.length == 0)
+                final ItemStack representative = cost.ingredient()
+                    .items()
+                    .findFirst()
+                    .map(item -> new ItemStack(item.value(), required))
+                    .orElse(null);
+                if (representative == null)
                 {
                     continue;
                 }
-
-                final ItemStack representative = candidates[0].copy();
-                representative.setCount(required);
 
                 final ItemStorage itemsToTake = new ItemStorage(representative);
 
@@ -259,7 +258,7 @@ public class LocalResearchTree implements ILocalResearchTree
         // If complete, it's a request to undo the research.
         else if (research.getState() == ResearchState.FINISHED)
         {
-            for (ResourceLocation childIds : IGlobalResearchTree.getInstance().getResearch(research.getBranch(), research.getId()).getChildren())
+            for (Identifier childIds : IGlobalResearchTree.getInstance().getResearch(research.getBranch(), research.getId()).getChildren())
             {
                 if (researchTree.get(research.getBranch()).get(childIds) != null)
                 {
@@ -317,7 +316,7 @@ public class LocalResearchTree implements ILocalResearchTree
      * @param branch The research branch id.
      * @param id     The research id.
      */
-    private void removeResearch(final ResourceLocation branch, final ResourceLocation id)
+    private void removeResearch(final Identifier branch, final Identifier id)
     {
         if (!researchTree.get(branch).containsKey(id))
         {
@@ -345,9 +344,9 @@ public class LocalResearchTree implements ILocalResearchTree
             // Instead, we have to apply every extant effect again.
             // Because effects may cross branches, must check all branches, not just the current one.
             colony.getResearchManager().getResearchEffects().removeAllEffects();
-            for (final Map.Entry<ResourceLocation, Map<ResourceLocation, ILocalResearch>> branch : researchTree.entrySet())
+            for (final Map.Entry<Identifier, Map<Identifier, ILocalResearch>> branch : researchTree.entrySet())
             {
-                for (final Map.Entry<ResourceLocation, ILocalResearch> research : branch.getValue().entrySet())
+                for (final Map.Entry<Identifier, ILocalResearch> research : branch.getValue().entrySet())
                 {
                     if (research.getValue().getState() == ResearchState.FINISHED)
                     {
@@ -366,7 +365,7 @@ public class LocalResearchTree implements ILocalResearchTree
     public void writeToNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound)
     {
         final ListTag researchList = new ListTag();
-        for (final Map<ResourceLocation, ILocalResearch> researchMap : researchTree.values())
+        for (final Map<Identifier, ILocalResearch> researchMap : researchTree.values())
         {
             for (final ILocalResearch research : researchMap.values())
             {
@@ -384,7 +383,7 @@ public class LocalResearchTree implements ILocalResearchTree
         inProgress.clear();
         isComplete.clear();
         maxLevelResearchCompleted.clear();
-        NBTUtils.streamCompound(compound.getList(TAG_RESEARCH_TREE, Tag.TAG_COMPOUND))
+        NBTUtils.streamCompound(compound.getListOrEmpty(TAG_RESEARCH_TREE))
           .map(researchCompound -> (ILocalResearch) StandardFactoryController.getInstance().deserializeTag(provider, researchCompound))
           .forEach(research -> {
               /// region Updated ID helper.
@@ -394,8 +393,8 @@ public class LocalResearchTree implements ILocalResearchTree
                   {
                       final ResearchState currentState = research.getState();
                       final int progress = research.getProgress();
-                      research = new LocalResearch(new ResourceLocation(com.minecolonies.api.util.constant.Constants.MOD_ID, research.getId().getPath()),
-                        new ResourceLocation(com.minecolonies.api.util.constant.Constants.MOD_ID, research.getBranch().getPath()), research.getDepth());
+                      research = new LocalResearch(Identifier.fromNamespaceAndPath(com.minecolonies.api.util.constant.Constants.MOD_ID, research.getId().getPath()),
+                        Identifier.fromNamespaceAndPath(com.minecolonies.api.util.constant.Constants.MOD_ID, research.getBranch().getPath()), research.getDepth());
                       research.setState(currentState);
                       research.setProgress(progress);
                   }
@@ -437,13 +436,13 @@ public class LocalResearchTree implements ILocalResearchTree
     }
 
     @Override
-    public List<ResourceLocation> getCompletedList()
+    public List<Identifier> getCompletedList()
     {
         return new ArrayList<>(isComplete);
     }
 
     @Override
-    public boolean isComplete(final ResourceLocation location)
+    public boolean isComplete(final Identifier location)
     {
         return isComplete.contains(location);
     }

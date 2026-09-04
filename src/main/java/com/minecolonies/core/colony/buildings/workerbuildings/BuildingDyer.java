@@ -16,18 +16,19 @@ import com.minecolonies.core.colony.buildings.modules.AbstractCraftingBuildingMo
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.ItemTags;
-import net.minecraft.tags.TagKey;
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.component.DyedItemColor;
 import net.minecraft.world.level.Level;
-import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT_MAX_BUILDING_LEVEL;
 import static com.minecolonies.api.util.constant.TagConstants.CRAFTING_DYER;
@@ -42,6 +43,16 @@ public class BuildingDyer extends AbstractBuilding
      * Description string of the building.
      */
     private static final String DYER = "dyer";
+
+    private static Item whiteWool()
+    {
+        return BuiltInRegistries.ITEM.getValue(Identifier.withDefaultNamespace("white_wool"));
+    }
+
+    private static Item whiteDye()
+    {
+        return BuiltInRegistries.ITEM.getValue(Identifier.withDefaultNamespace("white_dye"));
+    }
 
     /**
      * Instantiates a new dyer building.
@@ -109,36 +120,31 @@ public class BuildingDyer extends AbstractBuilding
             final List<IGenericRecipe> recipes = new ArrayList<>(super.getAdditionalRecipesForDisplayPurposesOnly(world));
 
             // show dyeable leather items (at least for the single-dye recipes)
-            final List<TagKey<Item>> dyes = List.of(
-                    Tags.Items.DYES_WHITE, Tags.Items.DYES_ORANGE, Tags.Items.DYES_MAGENTA, Tags.Items.DYES_LIGHT_BLUE,
-                    Tags.Items.DYES_YELLOW, Tags.Items.DYES_LIME, Tags.Items.DYES_PINK, Tags.Items.DYES_GRAY,
-                    Tags.Items.DYES_LIGHT_GRAY, Tags.Items.DYES_CYAN, Tags.Items.DYES_PURPLE, Tags.Items.DYES_BLUE,
-                    Tags.Items.DYES_BROWN, Tags.Items.DYES_GREEN, Tags.Items.DYES_RED, Tags.Items.DYES_BLACK);
             for (final ItemStack item : IColonyManager.getInstance().getCompatibilityManager().getListOfAllItems())
             {
-                if (!(item.getItem() instanceof ArmorItem armorItem) || !item.has(DataComponents.DYED_COLOR))
+                if (!item.has(DataComponents.EQUIPPABLE) || !item.has(DataComponents.DYED_COLOR))
                 {
                     continue;
                 }
 
-                for (final TagKey<Item> dyeTag : dyes)
+                for (final DyeColor color : DyeColor.VALUES)
                 {
-                    final List<ItemStack> dyeItems = BuiltInRegistries.ITEM.getTag(dyeTag).get()
-                            .stream().map(ItemStack::new).toList();
-                    if (dyeItems.isEmpty()) { continue; }
-
-                    if (dyeItems.get(0).getItem() instanceof final DyeItem dye)
+                    final List<ItemStack> dyeItems = StreamSupport.stream(
+                            BuiltInRegistries.ITEM.getTagOrEmpty(color.getTag()).spliterator(), false)
+                            .map(ItemStack::new).toList();
+                    if (dyeItems.isEmpty())
                     {
+                        continue;
+                    }
 
-                        final ItemStack result = DyedItemColor.applyDyes(item, List.of(dye));
-                        if (!result.isEmpty())
-                        {
-                            recipes.add(GenericRecipe.builder()
-                                    .withOutput(result)
-                                    .withInputs(List.of(List.of(item), dyeItems))
-                                    .withGridSize(2)
-                                    .build());
-                        }
+                    final ItemStack result = DyedItemColor.applyDyes(item, List.of(color));
+                    if (!result.isEmpty())
+                    {
+                        recipes.add(GenericRecipe.builder()
+                                .withOutput(result)
+                                .withInputs(List.of(List.of(item), dyeItems))
+                                .withGridSize(2)
+                                .build());
                     }
                 }
             }
@@ -151,7 +157,7 @@ public class BuildingDyer extends AbstractBuilding
         {
             IRecipeStorage recipe = super.getFirstRecipe(stackPredicate);
 
-            if(recipe == null && stackPredicate.test(new ItemStack(Items.WHITE_WOOL)))
+            if(recipe == null && stackPredicate.test(new ItemStack(whiteWool())))
             {
                 final HashMap<ItemStorage, Integer> inventoryCounts = new HashMap<>();
 
@@ -191,14 +197,14 @@ public class BuildingDyer extends AbstractBuilding
                 return false;
             }
 
-            return recipe.getPrimaryOutput().getItem() == Items.WHITE_WOOL;
+            return recipe.getPrimaryOutput().getItem() == whiteWool();
         }
 
         @Override
         public IRecipeStorage getFirstFulfillableRecipe(final Predicate<ItemStack> stackPredicate, final int count, final boolean considerReservation)
         {
             IRecipeStorage recipe = super.getFirstFulfillableRecipe(stackPredicate, count, considerReservation);
-            if (recipe == null && stackPredicate.test(new ItemStack(Items.WHITE_WOOL)))
+            if (recipe == null && stackPredicate.test(new ItemStack(whiteWool())))
             {
                 final Set<IItemHandler> handlers = new HashSet<>();
                 for (final ICitizenData workerEntity : building.getAllAssignedCitizen())
@@ -230,8 +236,8 @@ public class BuildingDyer extends AbstractBuilding
         {
             if (woolItems == null)
             {
-                woolItems = BuiltInRegistries.ITEM.getOrCreateTag(ItemTags.WOOL).stream()
-                  .filter(item -> !item.value().equals(Items.WHITE_WOOL))
+                woolItems = StreamSupport.stream(BuiltInRegistries.ITEM.getTagOrEmpty(ItemTags.WOOL).spliterator(), false)
+                  .filter(item -> !item.value().equals(whiteWool()))
                   .map(i -> new ItemStorage(new ItemStack(i))).collect(Collectors.toList());
             }
             return woolItems;
@@ -245,8 +251,8 @@ public class BuildingDyer extends AbstractBuilding
         private IToken<?> getTokenForWool(ItemStorage wool)
         {
             final IRecipeStorage tempRecipe = RecipeStorage.builder()
-                    .withInputs(ImmutableList.of(wool, new ItemStorage(new ItemStack(Items.WHITE_DYE))))
-                    .withPrimaryOutput(new ItemStack(Items.WHITE_WOOL))
+                    .withInputs(ImmutableList.of(wool, new ItemStorage(new ItemStack(whiteDye()))))
+                    .withPrimaryOutput(new ItemStack(whiteWool()))
                     .build();
 
             return IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(tempRecipe);

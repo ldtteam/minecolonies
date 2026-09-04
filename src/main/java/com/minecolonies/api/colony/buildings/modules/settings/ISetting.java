@@ -8,7 +8,7 @@ import com.minecolonies.api.colony.buildings.modules.ICommonSettingsModule;
 import com.minecolonies.api.colony.buildings.modules.ISettingsModule;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.Nullable;
 
@@ -22,7 +22,7 @@ public interface ISetting<S>
      *
      * @return the resource location indicating which view to use.
      */
-    ResourceLocation getLayoutItem();
+    Identifier getLayoutItem();
 
     /**
      * Add the handling of the specific setting to the box in the UI.

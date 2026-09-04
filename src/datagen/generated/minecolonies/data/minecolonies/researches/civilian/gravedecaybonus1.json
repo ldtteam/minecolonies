@@ -3,7 +3,7 @@
   "costs": [
     {
       "count": 64,
-      "item": "minecraft:rotten_flesh"
+      "ingredient": "minecraft:rotten_flesh"
     }
   ],
   "effects": [

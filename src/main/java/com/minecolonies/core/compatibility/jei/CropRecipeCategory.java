@@ -15,12 +15,12 @@ import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
-import mezz.jei.api.recipe.RecipeType;
+import mezz.jei.api.recipe.types.IRecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
@@ -52,7 +52,7 @@ public class CropRecipeCategory implements IRecipeCategory<CropRecipeCategory.Cr
         this.background = guiHelper.createBlankDrawable(WIDTH, HEIGHT);
         this.icon = guiHelper.createDrawableIngredient(VanillaTypes.ITEM_STACK, new ItemStack(Items.DIAMOND_HOE));
         this.slot = guiHelper.getSlotDrawable();
-        this.chanceSlot = guiHelper.createDrawable(new ResourceLocation(Constants.MOD_ID, "textures/gui/jei_recipe.png"), 0, 121, 18, 18);
+        this.chanceSlot = guiHelper.createDrawable(Identifier.fromNamespaceAndPath(Constants.MOD_ID, "textures/gui/jei_recipe.png"), 0, 121, 18, 18);
     }
 
     @NotNull
@@ -69,13 +69,24 @@ public class CropRecipeCategory implements IRecipeCategory<CropRecipeCategory.Cr
 
     @NotNull
     @Override
-    public RecipeType<CropRecipe> getRecipeType()
+    public IRecipeType<CropRecipe> getRecipeType()
     {
         return ModRecipeTypes.CROPS;
     }
 
-    @NotNull
     @Override
+    public int getWidth()
+    {
+        return WIDTH;
+    }
+
+    @Override
+    public int getHeight()
+    {
+        return HEIGHT;
+    }
+
+    @NotNull
     public IDrawable getBackground()
     {
         return this.background;
@@ -101,7 +112,7 @@ public class CropRecipeCategory implements IRecipeCategory<CropRecipeCategory.Cr
                           @NotNull final IFocusGroup focuses)
     {
         final EquipmentTypeEntry requiredTool = ModEquipmentTypes.hoe.get();
-        builder.addSlot(RecipeIngredientRole.CATALYST, WIDTH - 18, 0)
+        builder.addSlot(RecipeIngredientRole.INPUT, WIDTH - 18, 0)
                 .setSlotName("tool")
                 .setBackground(this.chanceSlot, -1, -1)
                 .addItemStacks(MinecoloniesAPIProxy.getInstance().getColonyManager().getCompatibilityManager().getListOfAllItems().stream()
@@ -112,9 +123,14 @@ public class CropRecipeCategory implements IRecipeCategory<CropRecipeCategory.Cr
         builder.addSlot(RecipeIngredientRole.INPUT, 0, 0)
                 .setSlotName("block")
                 .setBackground(this.slot, -1, -1)
-                .addItemStack(recipe.source().getCloneItemStack(Minecraft.getInstance().level, BlockPos.ZERO, recipe.source().defaultBlockState()));
+                .addItemStack(recipe.source().getCloneItemStack(Minecraft.getInstance().level,
+                    BlockPos.ZERO,
+                    recipe.source().defaultBlockState(),
+                    false,
+                    null));
 
-        final List<LootTableAnalyzer.LootDrop> drops = CustomRecipeManager.getInstance().getLootDrops(recipe.source().getLootTable());
+        final var lootTableId = recipe.source().getLootTable().orElse(null);
+        final List<LootTableAnalyzer.LootDrop> drops = CustomRecipeManager.getInstance().getLootDrops(lootTableId);
         final int initialColumns = (WIDTH - 36) / this.slot.getWidth();
         final int rows = Math.max(1, (drops.size() + initialColumns - 1) / initialColumns);
         final int columns = (drops.size() + rows - 1) / rows;
@@ -128,7 +144,10 @@ public class CropRecipeCategory implements IRecipeCategory<CropRecipeCategory.Cr
             final IRecipeSlotBuilder slot = builder.addSlot(RecipeIngredientRole.OUTPUT, x, y)
                     .setBackground(this.chanceSlot, -1, -1)
                     .addItemStacks(drop.getItemStacks());
-            slot.addRichTooltipCallback(new JobBasedRecipeCategory.LootTableTooltipCallback(drop, recipe.source().getLootTable()));
+            if (lootTableId != null)
+            {
+                slot.addRichTooltipCallback(new JobBasedRecipeCategory.LootTableTooltipCallback(drop, lootTableId));
+            }
             if (++c >= columns)
             {
                 c = 0;

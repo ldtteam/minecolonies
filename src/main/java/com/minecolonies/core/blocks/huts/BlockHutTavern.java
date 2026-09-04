@@ -53,7 +53,7 @@ public class BlockHutTavern extends AbstractBlockHut<com.minecolonies.core.block
         
         for (final IBuilding building : colony.getServerBuildingManager().getBuildings().values())
         {
-            if (colony.getWorld() != null && !colony.getWorld().isClientSide && building.hasModule(BuildingModules.TAVERN_VISITOR))
+            if (colony.getWorld() != null && !colony.getWorld().isClientSide() && building.hasModule(BuildingModules.TAVERN_VISITOR))
             {
                 MessageUtils.format(WARNING_DUPLICATE_TAVERN, building.getPosition().toShortString()).sendTo(player);
                 return false;

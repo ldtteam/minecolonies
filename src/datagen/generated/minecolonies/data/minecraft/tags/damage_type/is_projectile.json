@@ -1,6 +1,12 @@
 {
   "values": [
-    "minecolonies:spear",
-    "minecolonies:pierce"
+    {
+      "id": "minecolonies:spear",
+      "required": false
+    },
+    {
+      "id": "minecolonies:pierce",
+      "required": false
+    }
   ]
 }

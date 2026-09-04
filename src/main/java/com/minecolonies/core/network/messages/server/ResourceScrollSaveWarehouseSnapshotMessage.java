@@ -82,7 +82,7 @@ public class ResourceScrollSaveWarehouseSnapshotMessage extends AbstractServerPl
     @Override
     protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player)
     {
-        player.getInventory().items.stream()
+        player.getInventory().getNonEquipmentItems().stream()
           .filter(stack -> stack.getItem() instanceof ItemResourceScroll)
           .filter(stack -> Objects.equals(builderPos, BuildingId.readFromItemStack(stack).id()))
           .forEach(stack -> new WarehouseSnapshot(snapshot, workOrderHash).writeToItemStack(stack));

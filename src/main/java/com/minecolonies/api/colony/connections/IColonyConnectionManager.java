@@ -4,7 +4,7 @@ import com.minecolonies.api.colony.IColony;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
-import net.neoforged.neoforge.common.util.INBTSerializable;
+import com.minecolonies.api.util.INBTSerializable;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;

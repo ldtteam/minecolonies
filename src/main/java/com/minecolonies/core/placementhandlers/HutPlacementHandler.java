@@ -1,7 +1,7 @@
 package com.minecolonies.core.placementhandlers;
 
-import com.ldtteam.structurize.api.ItemStackUtils;
-import com.ldtteam.structurize.api.constants.Constants;
+import com.ldtteam.structurize.api.util.ItemStackUtils;
+import com.ldtteam.structurize.api.util.constant.Constants;
 import com.ldtteam.structurize.blockentities.interfaces.IBlueprintDataProviderBE;
 import com.ldtteam.structurize.placement.IPlacementContext;
 import com.ldtteam.structurize.placement.handlers.placement.IPlacementHandler;
@@ -15,7 +15,7 @@ import com.minecolonies.api.util.Utils;
 import com.minecolonies.api.util.WorldUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.util.Tuple;
+import com.ldtteam.structurize.api.util.Tuple;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -64,7 +64,7 @@ public class HutPlacementHandler implements IPlacementHandler
         {
             try
             {
-                handleTileEntityPlacement(tileEntityData, world, pos, placementContext.getRotationMirror());
+                handleTileEntityPlacement(tileEntityData, world, pos, placementContext.getRotationMirror().getRotationMirror());
                 final BlockEntity be = world.getBlockEntity(pos);
                 if (be != null)
                 {
@@ -129,7 +129,7 @@ public class HutPlacementHandler implements IPlacementHandler
 
         if (tileEntityData != null)
         {
-            itemList.addAll(ItemStackUtils.getItemStacksOfTileEntity(tileEntityData, blockState, world));
+            itemList.addAll(ItemStackUtils.getItemStacksOfTileEntity(tileEntityData, blockState));
         }
         itemList.removeIf(ItemStackUtils::isEmpty);
         return itemList;

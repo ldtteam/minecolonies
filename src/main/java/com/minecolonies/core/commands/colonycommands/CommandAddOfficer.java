@@ -1,4 +1,5 @@
 package com.minecolonies.core.commands.colonycommands;
+import net.minecraft.server.permissions.Permissions;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.util.constant.translation.CommandTranslationConstants;
@@ -6,7 +7,7 @@ import com.minecolonies.core.MineColonies;
 import com.minecolonies.core.commands.arguments.ColonyIdArgument;
 import com.minecolonies.core.commands.commandTypes.IMCColonyOfficerCommand;
 import com.minecolonies.core.commands.commandTypes.IMCCommand;
-import com.mojang.authlib.GameProfile;
+import net.minecraft.server.players.NameAndId;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
@@ -27,7 +28,7 @@ public class CommandAddOfficer implements IMCColonyOfficerCommand
     @Override
     public int onExecute(final CommandContext<CommandSourceStack> context)
     {
-        if (!context.getSource().hasPermission(OP_PERM_LEVEL) && !MineColonies.getConfig().getServer().canPlayerUseAddOfficerCommand.get())
+        if (!context.getSource().permissions().hasPermission(Permissions.COMMANDS_OWNER) && !MineColonies.getConfig().getServer().canPlayerUseAddOfficerCommand.get())
         {
             context.getSource().sendSuccess(() -> Component.translatableEscape(CommandTranslationConstants.COMMAND_DISABLED_IN_CONFIG), true);
             return 0;
@@ -35,7 +36,7 @@ public class CommandAddOfficer implements IMCColonyOfficerCommand
 
         final IColony colony = ColonyIdArgument.getColony(context, COLONYID_ARG);
 
-        GameProfile profile;
+        NameAndId profile;
         try
         {
             profile = GameProfileArgument.getGameProfiles(context, PLAYERNAME_ARG).stream().findFirst().orElse(null);
@@ -45,16 +46,16 @@ public class CommandAddOfficer implements IMCColonyOfficerCommand
             return 0;
         }
 
-        if (context.getSource().getServer().getPlayerList().getPlayer(profile.getId()) == null)
+        if (context.getSource().getServer().getPlayerList().getPlayer(profile.id()) == null)
         {
             // could not find player with given name.
-            context.getSource().sendSuccess(() -> Component.translatableEscape(CommandTranslationConstants.COMMAND_PLAYER_NOT_FOUND, profile.getName()), true);
+            context.getSource().sendSuccess(() -> Component.translatableEscape(CommandTranslationConstants.COMMAND_PLAYER_NOT_FOUND, profile.name()), true);
             return 0;
         }
         colony.getPermissions().addPlayer(profile, colony.getPermissions().getRank(colony.getPermissions().OFFICER_RANK_ID));
-        colony.getPackageManager().addImportantColonyPlayer(context.getSource().getServer().getPlayerList().getPlayer(profile.getId()));
+        colony.getPackageManager().addImportantColonyPlayer(context.getSource().getServer().getPlayerList().getPlayer(profile.id()));
 
-        context.getSource().sendSuccess(() -> Component.translatableEscape(CommandTranslationConstants.COMMAND_OFFICER_ADD_SUCCESS, profile.getName(), colony.getName()), true);
+        context.getSource().sendSuccess(() -> Component.translatableEscape(CommandTranslationConstants.COMMAND_OFFICER_ADD_SUCCESS, profile.name(), colony.getName()), true);
         return 1;
     }
 

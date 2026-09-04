@@ -58,7 +58,7 @@ public class PublicWorkerCraftingProductionResolver extends AbstractCraftingProd
     @Override
     public void onAssignedRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends PublicCrafting> request)
     {
-        if (!manager.getColony().getWorld().isClientSide)
+        if (!manager.getColony().getWorld().isClientSide())
         {
             final Colony colony = (Colony) manager.getColony();
             removeRequestFromTaskList(request, colony);
@@ -154,7 +154,7 @@ public class PublicWorkerCraftingProductionResolver extends AbstractCraftingProd
     @Override
     protected boolean canBuildingCraftStack(@NotNull final IRequestManager manager, @NotNull final AbstractBuilding building, @NotNull final ItemStack stack)
     {
-        if (manager.getColony().getWorld().isClientSide)
+        if (manager.getColony().getWorld().isClientSide())
         {
             return false;
         }
@@ -172,7 +172,7 @@ public class PublicWorkerCraftingProductionResolver extends AbstractCraftingProd
       final boolean simulation,
       @NotNull final AbstractBuilding building)
     {
-        if (manager.getColony().getWorld().isClientSide)
+        if (manager.getColony().getWorld().isClientSide())
         {
             return;
         }
@@ -199,7 +199,7 @@ public class PublicWorkerCraftingProductionResolver extends AbstractCraftingProd
     @Override
     public void resolveForBuilding(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends PublicCrafting> request, @NotNull final AbstractBuilding building)
     {
-        if (manager.getColony().getWorld().isClientSide)
+        if (manager.getColony().getWorld().isClientSide())
         {
             return;
         }

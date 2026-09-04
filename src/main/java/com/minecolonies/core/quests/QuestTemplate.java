@@ -3,7 +3,7 @@ package com.minecolonies.core.quests;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.quests.*;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Player;
 
 import java.util.List;
@@ -17,12 +17,12 @@ public class QuestTemplate implements IQuestTemplate
     /**
      * The unique id of this quest.
      */
-    private final ResourceLocation questID;
+    private final Identifier questID;
 
     /**
      * List of parents to fulfill before this can start.
      */
-    private final List<ResourceLocation> parents;
+    private final List<Identifier> parents;
 
     /**
      * List of quest triggers assigned to this quest data including the trigger order.
@@ -54,8 +54,8 @@ public class QuestTemplate implements IQuestTemplate
      * @param questTimeout the time until it times out.
      * @param questRewards its rewards
      */
-    public QuestTemplate(final ResourceLocation questID, final Component name,
-      final List<ResourceLocation> parents,
+    public QuestTemplate(final Identifier questID, final Component name,
+      final List<Identifier> parents,
       final int maxOccurrence, final Function<IColony, List<ITriggerReturnData<?>>> questTriggerList, final List<IQuestObjectiveTemplate> questObjectives, final int questTimeout, final List<IQuestRewardTemplate> questRewards)
     {
         this.questID = questID;
@@ -120,7 +120,7 @@ public class QuestTemplate implements IQuestTemplate
     }
 
     @Override
-    public List<ResourceLocation> getParents()
+    public List<Identifier> getParents()
     {
         return this.parents;
     }

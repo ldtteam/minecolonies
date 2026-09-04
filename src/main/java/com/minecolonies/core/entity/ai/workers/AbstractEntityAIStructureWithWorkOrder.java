@@ -1,6 +1,7 @@
 package com.minecolonies.core.entity.ai.workers;
 
-import com.ldtteam.structurize.api.RotationMirror;
+import com.ldtteam.structurize.util.RotationMirror;
+import com.ldtteam.structurize.api.util.Tuple;
 import com.ldtteam.structurize.blockentities.interfaces.IBlueprintDataProviderBE;
 import com.ldtteam.structurize.placement.BlockPlacementResult;
 import com.ldtteam.structurize.placement.StructurePhasePlacementResult;
@@ -257,10 +258,10 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
                   requestProgress,
                   StructurePlacer.Operation.GET_RES_REQUIREMENTS,
                   () -> placer.getIterator()
-                          .increment(DONT_TOUCH_PREDICATE.or((info, pos, handler) -> !BlockUtils.canBlockFloatInAir(info.getBlockInfo().getState())
-                                                                                       || isDecoItem(info.getBlockInfo()
-                                                                                                       .getState()
-                                                                                                       .getBlock()))),
+                          .increment(withDontTouch((info, pos, handler) -> !BlockUtils.canBlockFloatInAir(info.getBlockInfo().getState())
+                                                                                        || isDecoItem(info.getBlockInfo()
+                                                                                                        .getState()
+                                                                                                        .getBlock()))),
                   false);
                 requestProgress = result.getIteratorPos();
 
@@ -280,7 +281,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
                   null,
                   requestProgress,
                   StructurePlacer.Operation.GET_RES_REQUIREMENTS,
-                  () -> placer.getIterator().increment(DONT_TOUCH_PREDICATE.or((info, pos, handler) -> !BlockUtils.isWeakSolidBlock(info.getBlockInfo().getState()))),
+                  () -> placer.getIterator().increment(withDontTouch((info, pos, handler) -> !BlockUtils.isWeakSolidBlock(info.getBlockInfo().getState()))),
                   false);
                 requestProgress = result.getIteratorPos();
 
@@ -301,7 +302,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
                   requestProgress,
                   StructurePlacer.Operation.GET_RES_REQUIREMENTS,
                   () -> placer.getIterator()
-                          .increment(DONT_TOUCH_PREDICATE.or((info, pos, handler) -> BlockUtils.isAnySolid(info.getBlockInfo().getState()) && !isDecoItem(info.getBlockInfo()
+                          .increment(withDontTouch((info, pos, handler) -> BlockUtils.isAnySolid(info.getBlockInfo().getState()) && !isDecoItem(info.getBlockInfo()
                                                                                                                                                             .getState()
                                                                                                                                                             .getBlock()))),
                   false);
@@ -319,7 +320,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
                 return false;
             case ENTITIES:
                 result = placer.executeStructureStep(world, null, requestProgress, StructurePlacer.Operation.GET_RES_REQUIREMENTS,
-                  () -> placer.getIterator().increment(DONT_TOUCH_PREDICATE.or((info, pos, handler) -> info.getEntities().length == 0)), true);
+                  () -> placer.getIterator().increment(withDontTouch((info, pos, handler) -> info.getEntities().length == 0)), true);
                 requestProgress = result.getIteratorPos();
 
                 for (final ItemStack stack : result.getBlockResult().getRequiredItems())
@@ -345,7 +346,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
     public void registerBlockAsNeeded(final ItemStack stack)
     {
         final int hashCode = stack.getComponentsPatch().hashCode();
-        if (building.getNeededResources().get(stack.getDescriptionId() + "-" + hashCode) == null)
+        if (building.getNeededResources().get(stack.getItem().getDescriptionId() + "-" + hashCode) == null)
         {
             building.addNeededResource(stack, 1);
         }
@@ -359,7 +360,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
             return 0;
         }
         final int hashCode = deliveredItemStack.getComponentsPatch().hashCode();
-        final BuildingBuilderResource resource = building.getNeededResources().get(deliveredItemStack.getDescriptionId() + "-" + hashCode);
+        final BuildingBuilderResource resource = building.getNeededResources().get(deliveredItemStack.getItem().getDescriptionId() + "-" + hashCode);
         if (resource != null)
         {
             return resource.getAmount();
@@ -516,12 +517,12 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
         }
         final int hashCode = stack.getComponentsPatch().hashCode();
         final AbstractBuildingStructureBuilder buildingWorker = building;
-        BuildingBuilderResource resource = buildingWorker.getNeededResources().get(stack.getDescriptionId() + "-" + hashCode);
+        BuildingBuilderResource resource = buildingWorker.getNeededResources().get(stack.getItem().getDescriptionId() + "-" + hashCode);
 
         if (resource == null)
         {
             requestMaterials();
-            resource = buildingWorker.getNeededResources().get(stack.getDescriptionId() + "-" + hashCode);
+            resource = buildingWorker.getNeededResources().get(stack.getItem().getDescriptionId() + "-" + hashCode);
         }
 
         if (resource == null)

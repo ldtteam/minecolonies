@@ -82,8 +82,8 @@ public final class ExpirationBasedHappinessModifier extends AbstractHappinessMod
     public void read(@NotNull final HolderLookup.Provider provider, final CompoundTag compoundNBT, final boolean persist)
     {
         super.read(provider, compoundNBT, persist);
-        this.days = compoundNBT.getInt(TAG_DAY);
-        this.period = compoundNBT.getInt(TAG_PERIOD);
+        this.days = compoundNBT.getIntOr(TAG_DAY, 0);
+        this.period = compoundNBT.getIntOr(TAG_PERIOD, 0);
     }
 
     @Override

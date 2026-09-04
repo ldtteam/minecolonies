@@ -9,7 +9,6 @@ import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
-import net.minecraft.world.level.storage.loot.predicates.LootItemConditionType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -46,9 +45,9 @@ public class EntityInBiomeTag implements LootItemCondition
 
     @NotNull
     @Override
-    public LootItemConditionType getType()
+    public MapCodec<? extends LootItemCondition> codec()
     {
-        return ModLootConditions.entityInBiomeTag.get();
+        return CODEC;
     }
 
     @Override
@@ -59,7 +58,7 @@ public class EntityInBiomeTag implements LootItemCondition
             return true;
         }
 
-        final Entity entity = lootContext.getParamOrNull(LootContextParams.THIS_ENTITY);
+        final Entity entity = lootContext.getOptionalParameter(LootContextParams.THIS_ENTITY);
         if (entity != null && entity.level() != null)
         {
             return entity.level().getBiome(entity.blockPosition()).is(tag);

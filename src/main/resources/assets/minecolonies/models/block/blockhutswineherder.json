@@ -15,10 +15,10 @@
 				"3": "block/hay_block_top",
 				"4": "block/oak_planks",
 				"5": "block/iron_block",
-				"6": "item/carrot",
-				"7": "item/beetroot",
-				"8": "item/rotten_flesh",
-				"9": "item/bread",
+				"6": "minecolonies:block_item/carrot",
+				"7": "minecolonies:block_item/beetroot",
+				"8": "minecolonies:block_item/rotten_flesh",
+				"9": "minecolonies:block_item/bread",
 				"10": "entity/chest/normal",
 				"11": "block/cauldron_side"
 			},
@@ -428,10 +428,10 @@
       "render_type": "cutout",
 			"parent": "block/block",
 			"textures": {
-				"6": "item/carrot",
-				"7": "item/beetroot",
-				"8": "item/rotten_flesh",
-				"9": "item/bread"
+				"6": "minecolonies:block_item/carrot",
+				"7": "minecolonies:block_item/beetroot",
+				"8": "minecolonies:block_item/rotten_flesh",
+				"9": "minecolonies:block_item/bread"
 			},
 			"elements": [
 				{

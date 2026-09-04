@@ -12,6 +12,7 @@ import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
+import java.net.URI;
 
 /**
  * Adaptation of CombatTracker to properly handle citizen death messages.
@@ -19,8 +20,8 @@ import java.util.Objects;
 public class CitizenCombatTracker extends CombatTracker
 {
     private static final Style         INTENTIONAL_GAME_DESIGN_STYLE =
-      Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://bugs.mojang.com/browse/MCPE-28723"))
-        .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal("MCPE-28723")));
+      Style.EMPTY.withClickEvent(new ClickEvent.OpenUrl(URI.create("https://bugs.mojang.com/browse/MCPE-28723")))
+        .withHoverEvent(new HoverEvent.ShowText(Component.literal("MCPE-28723")));
     private final        EntityCitizen citizen;
 
     public CitizenCombatTracker(EntityCitizen citizen)

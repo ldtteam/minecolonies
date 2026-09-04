@@ -1,7 +1,7 @@
 package com.minecolonies.api.entity.ai.workers.util;
 
 import com.minecolonies.api.equipment.ModEquipmentTypes;
-import net.minecraft.util.Tuple;
+import com.ldtteam.structurize.api.util.Tuple;
 import net.minecraft.world.entity.EquipmentSlot;
 
 import java.util.ArrayList;

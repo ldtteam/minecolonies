@@ -7,7 +7,7 @@ import net.minecraft.data.DataProvider;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.loot.LootTableProvider;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.storage.loot.LootTable;
 import org.jetbrains.annotations.NotNull;
 
@@ -51,7 +51,7 @@ public abstract class CustomRecipeAndLootTableProvider implements DataProvider
         return recipeProvider.recipe(crafter, module, id);
     }
 
-    protected static ResourceKey<LootTable> table(@NotNull final ResourceLocation id)
+    protected static ResourceKey<LootTable> table(@NotNull final Identifier id)
     {
         return SimpleLootTableProvider.table(id);
     }
@@ -61,7 +61,7 @@ public abstract class CustomRecipeAndLootTableProvider implements DataProvider
     public CompletableFuture<?> run(@NotNull final CachedOutput cache)
     {
         return providerFuture
-                .thenComposeAsync(provider -> {
+                .thenCompose(provider -> {
                     this.provider = provider;
                     return generate(provider);
                 })

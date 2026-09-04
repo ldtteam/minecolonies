@@ -10,7 +10,7 @@
 		"8": "block/beehive_front",
 		"9": "block/beehive_side",
 		"10": "block/orange_terracotta",
-		"transp": "map/map_icons",
+			"transp": "minecolonies:block/transparent",
 		"particle": "block/spruce_planks"
 	},
 	"elements": [

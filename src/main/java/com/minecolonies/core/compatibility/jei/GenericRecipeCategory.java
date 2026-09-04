@@ -2,7 +2,6 @@ package com.minecolonies.core.compatibility.jei;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-import com.ldtteam.blockui.UiRenderMacros;
 import com.minecolonies.api.colony.buildings.modules.ICraftingBuildingModule;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
@@ -14,7 +13,6 @@ import com.minecolonies.core.colony.buildings.modules.AnimalHerdingModule;
 import com.minecolonies.core.colony.crafting.CustomRecipeManager;
 import com.minecolonies.core.colony.crafting.LootTableAnalyzer;
 import com.minecolonies.core.colony.crafting.RecipeAnalyzer;
-import com.mojang.blaze3d.platform.Lighting;
 import mezz.jei.api.gui.ITickTimer;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.builder.IRecipeSlotBuilder;
@@ -24,16 +22,17 @@ import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.helpers.IModIdHelper;
 import mezz.jei.api.recipe.IFocusGroup;
-import mezz.jei.api.recipe.RecipeType;
+import mezz.jei.api.recipe.types.IRecipeType;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -100,10 +99,10 @@ public class GenericRecipeCategory extends JobBasedRecipeCategory<IGenericRecipe
     }
 
     @NotNull
-    private static RecipeType<IGenericRecipe> createRecipeType(@NotNull final IJob<?> job)
+    private static IRecipeType<IGenericRecipe> createRecipeType(@NotNull final IJob<?> job)
     {
-        final ResourceLocation uid = job.getJobRegistryEntry().getKey();
-        return RecipeType.create(uid.getNamespace(), uid.getPath(), IGenericRecipe.class);
+        final Identifier uid = job.getJobRegistryEntry().getKey();
+        return IRecipeType.create(uid.getNamespace(), uid.getPath(), IGenericRecipe.class);
     }
 
     @NotNull
@@ -132,7 +131,7 @@ public class GenericRecipeCategory extends JobBasedRecipeCategory<IGenericRecipe
                                  @NotNull final IGenericRecipe recipe,
                                  @NotNull final IFocusGroup focuses)
     {
-        final ResourceLocation id = recipe.getRecipeId();
+        final Identifier id = recipe.getRecipeId();
 
         addToolSlot(builder, recipe.getRequiredTool(), WIDTH - 18, CITIZEN_Y - 20, true);
 
@@ -202,7 +201,7 @@ public class GenericRecipeCategory extends JobBasedRecipeCategory<IGenericRecipe
     {
         assert recipe.getLootTable() != null;
         final List<LootTableAnalyzer.LootDrop> drops = getLootDrops(recipe.getLootTable());
-        final ResourceLocation id = recipe.getRecipeId();
+        final Identifier id = recipe.getRecipeId();
 
         addToolSlot(builder, recipe.getRequiredTool(), WIDTH - 18, CITIZEN_Y - 20, true);
 
@@ -275,7 +274,7 @@ public class GenericRecipeCategory extends JobBasedRecipeCategory<IGenericRecipe
     @Override
     public void draw(@NotNull final IGenericRecipe recipe,
                      @NotNull final IRecipeSlotsView recipeSlotsView,
-                     @NotNull final GuiGraphics stack,
+                     @NotNull final GuiGraphicsExtractor stack,
                      final double mouseX, final double mouseY)
     {
         super.draw(recipe, recipeSlotsView, stack, mouseX, mouseY);
@@ -296,7 +295,8 @@ public class GenericRecipeCategory extends JobBasedRecipeCategory<IGenericRecipe
         {
             try
             {
-                final Entity entity = entityCache.get(entityType, () -> entityType.create(Minecraft.getInstance().level));
+                final Entity entity = entityCache.get(entityType,
+                    () -> entityType.create(Minecraft.getInstance().level, EntitySpawnReason.TRIGGERED));
 
                 final float scale = ANIMAL_H / 2.4f;
                 final int animal_cx = ANIMAL_X + (ANIMAL_W / 2);
@@ -306,9 +306,18 @@ public class GenericRecipeCategory extends JobBasedRecipeCategory<IGenericRecipe
                 final float yaw = animalTimer.getValue();
                 final float headYaw = (float) Math.atan((animal_cx - mouseX) / 40.0F) * 40.0F + yaw;
                 final float pitch = (float) Math.atan((animal_cy - offsetY - mouseY) / 40.0F) * 20.0F;
-                Lighting.setupForFlatItems();
-                UiRenderMacros.drawEntity(stack.pose(), animal_cx, animal_by - offsetY, scale, headYaw, yaw, pitch, entity);
-                Lighting.setupFor3DItems();
+                drawEntity(stack,
+                    entity,
+                    ANIMAL_X,
+                    ANIMAL_Y,
+                    ANIMAL_W,
+                    ANIMAL_H,
+                    animal_cx,
+                    animal_cy,
+                    offsetY,
+                    scale,
+                    mouseX,
+                    mouseY);
             }
             catch (final Throwable e)
             {

@@ -3,7 +3,7 @@
   "costs": [
     {
       "count": 16,
-      "item": "minecraft:iron_ingot"
+      "ingredient": "minecraft:iron_ingot"
     }
   ],
   "effects": [

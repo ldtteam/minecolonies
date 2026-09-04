@@ -1,6 +1,6 @@
 package com.minecolonies.api.quests;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 /**
  * Type of entity that participates somehow in quests.
@@ -17,14 +17,14 @@ public interface IQuestParticipant
      * Method for cleanup purposes on quest deletion.
      * @param questId the id of the quest.
      */
-    void onQuestDeletion(final ResourceLocation questId);
+    void onQuestDeletion(final Identifier questId);
 
     /**
      * Check if the citizen has a quest open.
      * @param questId the id of the quest.
      * @return true if so.
      */
-    boolean isParticipantOfQuest(final ResourceLocation questId);
+    boolean isParticipantOfQuest(final Identifier questId);
 
     /**
      * Initiates a dialogue at the citizen.

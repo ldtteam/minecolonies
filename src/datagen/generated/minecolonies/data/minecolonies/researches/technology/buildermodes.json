@@ -3,7 +3,7 @@
   "costs": [
     {
       "count": 1,
-      "item": "minecraft:diamond_axe"
+      "ingredient": "minecraft:diamond_axe"
     }
   ],
   "effects": [

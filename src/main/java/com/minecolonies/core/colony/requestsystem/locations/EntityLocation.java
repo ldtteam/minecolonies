@@ -101,7 +101,7 @@ public class EntityLocation implements ILocation
         }
         else
         {
-            return entityRef.getCommandSenderWorld().dimension();
+            return entityRef.level().dimension();
         }
     }
 
@@ -193,7 +193,7 @@ public class EntityLocation implements ILocation
         @Override
         public EntityLocation deserialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final CompoundTag nbt)
         {
-            final UUID uuid = new UUID(nbt.getLong(NBT_MSB), nbt.getLong(NBT_LSB));
+            final UUID uuid = new UUID(nbt.getLongOr(NBT_MSB, 0L), nbt.getLongOr(NBT_LSB, 0L));
 
             return new EntityLocation(uuid);
         }

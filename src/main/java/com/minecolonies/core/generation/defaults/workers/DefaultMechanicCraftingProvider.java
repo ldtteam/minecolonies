@@ -76,12 +76,12 @@ public class DefaultMechanicCraftingProvider extends CustomRecipeProvider
                 .minBuildingLevel(3)
                 .build(consumer);
 
-        deoxidize(consumer, Items.OXIDIZED_COPPER, Items.WEATHERED_COPPER);
-        deoxidize(consumer, Items.OXIDIZED_CUT_COPPER, Items.WEATHERED_CUT_COPPER);
-        deoxidize(consumer, Items.WEATHERED_COPPER, Items.EXPOSED_COPPER);
-        deoxidize(consumer, Items.WEATHERED_CUT_COPPER, Items.EXPOSED_CUT_COPPER);
-        deoxidize(consumer, Items.EXPOSED_COPPER, Items.COPPER_BLOCK);
-        deoxidize(consumer, Items.EXPOSED_CUT_COPPER, Items.CUT_COPPER);
+        deoxidize(consumer, Items.COPPER_BLOCK.weathering().oxidized(), Items.COPPER_BLOCK.weathering().weathered());
+        deoxidize(consumer, Items.CUT_COPPER.weathering().oxidized(), Items.CUT_COPPER.weathering().weathered());
+        deoxidize(consumer, Items.COPPER_BLOCK.weathering().weathered(), Items.COPPER_BLOCK.weathering().exposed());
+        deoxidize(consumer, Items.CUT_COPPER.weathering().weathered(), Items.CUT_COPPER.weathering().exposed());
+        deoxidize(consumer, Items.COPPER_BLOCK.weathering().exposed(), Items.COPPER_BLOCK.weathering().unaffected());
+        deoxidize(consumer, Items.CUT_COPPER.weathering().exposed(), Items.CUT_COPPER.weathering().unaffected());
     }
 
     private void deoxidize(@NotNull final Consumer<CustomRecipeBuilder> consumer,

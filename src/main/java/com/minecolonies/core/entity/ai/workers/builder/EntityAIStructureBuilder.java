@@ -8,7 +8,7 @@ import com.minecolonies.api.colony.workorders.WorkOrderType;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.MessageUtils;
-import com.minecolonies.api.util.Tuple;
+import com.ldtteam.structurize.api.util.Tuple;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.core.colony.buildings.modules.settings.BuilderModeSetting;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingBuilder;
@@ -207,10 +207,38 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
     @Override
     public boolean walkToConstructionSite(final BlockPos currentBlock)
     {
+        // A builder that is already within the normal working radius does not
+        // need an asynchronous path calculation.  This is also important for
+        // freshly-created worlds where the path executor can briefly lag the
+        // server tick; the placement code below already enforces the same
+        // five-block horizontal working radius.
+        if (workFrom == null && BlockPosUtil.getDistance2D(worker.blockPosition(), currentBlock) <= 5)
+        {
+            workFrom = worker.blockPosition();
+            prevBlockPosition = currentBlock;
+            return true;
+        }
+
         if (workFrom != null && workFrom.getX() == currentBlock.getX() && workFrom.getZ() == currentBlock.getZ() && workFrom.getY() >= currentBlock.getY())
         {
             // Reset working position when standing ontop
             workFrom = null;
+        }
+
+        // A previous path can remain in progress after the worker has already
+        // reached the next block.  Stop that stale path and use the worker's
+        // current position instead of waiting forever for an unreachable
+        // safe-position node.
+        final BlockPos workerPosition = worker.blockPosition();
+        if (BlockPosUtil.getDistance2D(workerPosition, currentBlock) <= 5
+              && !(workerPosition.getX() == currentBlock.getX()
+                     && workerPosition.getZ() == currentBlock.getZ()
+                     && workerPosition.getY() >= currentBlock.getY()))
+        {
+            worker.getNavigation().stop();
+            workFrom = workerPosition;
+            prevBlockPosition = currentBlock;
+            return true;
         }
 
         if (workFrom == null)
@@ -316,13 +344,13 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
                 wo.getDisplayName(),
                 BlockPosUtil.calcDirection(building.getColony().getCenter(), position).getLongText())
             .withStyle(style -> style
-                .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
+                .withHoverEvent(new HoverEvent.ShowText(
                     Component.translatable("message.positiondist",
                         position.getX(),
                         position.getY(),
                         position.getZ(),
-                        (int) BlockPosUtil.dist(building.getColony().getCenter(), position)))))
-            .withStyle(ChatFormatting.GREEN);
+                        (int) BlockPosUtil.dist(building.getColony().getCenter(), position))))
+            .withColor(ChatFormatting.GREEN));
 
         if (showManualSuffix)
         {

@@ -1,9 +1,9 @@
 package com.minecolonies.core.items;
-
 import com.minecolonies.api.blocks.decorative.AbstractBlockGate;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
@@ -12,10 +12,10 @@ import net.minecraft.network.chat.Style;
 import net.minecraft.ChatFormatting;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
-
 import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.function.Consumer;
 import java.util.List;
-
 /**
  * Item for gates
  */
@@ -28,10 +28,11 @@ public class ItemGate extends BlockItem
     {
         super(block, properties);
     }
-
     @Override
-    public void appendHoverText(@NotNull final ItemStack stack, @Nullable final TooltipContext ctx, @NotNull final List<Component> tooltip, @NotNull final TooltipFlag flagIn)
+    public void appendHoverText(@NotNull final ItemStack stack, @Nullable final TooltipContext ctx, @NotNull final TooltipDisplay display, Consumer<Component> tooltipConsumer, @NotNull final TooltipFlag flagIn)
+    
     {
+        final List<Component> tooltip = new ArrayList<>();
         if (getBlock() instanceof final AbstractBlockGate gate)
         {
             final MutableComponent guiHint2 = Component.translatable(TranslationConstants.GATE_PLACEMENT_TOOLTIP,
@@ -39,5 +40,6 @@ public class ItemGate extends BlockItem
             guiHint2.setStyle(Style.EMPTY.withColor(ChatFormatting.DARK_AQUA));
             tooltip.add(guiHint2);
         }
+        tooltip.forEach(tooltipConsumer);
     }
 }

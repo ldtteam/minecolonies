@@ -1,6 +1,6 @@
 package com.minecolonies.core.entity.ai.workers.util;
 
-import com.ldtteam.structurize.api.RotationMirror;
+import com.ldtteam.structurize.util.PlacementSettings;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.placement.AbstractBlueprintIteratorWrapper;
 import com.ldtteam.structurize.placement.StructureIterators;
@@ -238,7 +238,7 @@ public class LayerBlueprintIterator extends AbstractBlueprintIteratorWrapper
                 }
             }
 
-            layerBlueprint = new Blueprint((short) sizeX, sizeY, (short) sizeZ, blueprint.getPalleteSize(), Arrays.asList(blueprint.getPalette()), structureAtLayer, tagsAtLayer.toArray(new CompoundTag[0]), blueprint.getRequiredMods(), getWorld().registryAccess());
+            layerBlueprint = new Blueprint((short) sizeX, sizeY, (short) sizeZ, blueprint.getPalleteSize(), Arrays.asList(blueprint.getPalette()), structureAtLayer, tagsAtLayer.toArray(new CompoundTag[0]), blueprint.getRequiredMods());
         }
 
         @Override
@@ -267,9 +267,15 @@ public class LayerBlueprintIterator extends AbstractBlueprintIteratorWrapper
         }
 
         @Override
-        public RotationMirror getRotationMirror()
+        public PlacementSettings getRotationMirror()
         {
             return delegate.getRotationMirror();
+        }
+
+        @Override
+        public PlacementSettings getSettings()
+        {
+            return delegate.getSettings();
         }
 
         @Override
@@ -366,6 +372,12 @@ public class LayerBlueprintIterator extends AbstractBlueprintIteratorWrapper
         public BlockState getSolidBlockForPos(final BlockPos blockPos, @Nullable final Function<BlockPos, BlockState> function)
         {
             return delegate.getSolidBlockForPos(blockPos, function);
+        }
+
+        @Override
+        public BlockState getSolidBlockForPos(final BlockPos blockPos)
+        {
+            return delegate.getSolidBlockForPos(blockPos);
         }
 
         @Override

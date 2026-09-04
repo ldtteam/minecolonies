@@ -17,10 +17,10 @@ import com.minecolonies.api.eventbus.events.colony.citizens.CitizenAddedModEvent
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.StatsUtil;
-import com.minecolonies.api.util.Tuple;
+import com.ldtteam.structurize.api.util.Tuple;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -50,7 +50,7 @@ public class RecruitmentInteraction extends ServerCitizenInteraction
     /**
      * The icon's res location which is displayed for this interaction
      */
-    private static final ResourceLocation icon = new ResourceLocation(Constants.MOD_ID, "textures/icons/recruiticon.png");
+    private static final Identifier icon = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "textures/icons/recruiticon.png");
 
     /**
      * The recruit answer
@@ -169,7 +169,7 @@ public class RecruitmentInteraction extends ServerCitizenInteraction
 
                     final IBuilding tavern = colony.getServerBuildingManager().getFirstBuildingMatching(b -> b.getBuildingType() == ModBuildings.tavern.get());
                     
-                    if (colony.getWorld().random.nextInt(100) <= BAD_VISITOR_CHANCE)
+                    if (colony.getWorld().getRandom().nextInt(100) <= BAD_VISITOR_CHANCE)
                     {
                         StatsUtil.trackStat(tavern, VISITORS_ABSCONDED, 1);
                         colony.getStatisticsManager().increment(VISITORS_ABSCONDED, colony.getDay());
@@ -210,7 +210,7 @@ public class RecruitmentInteraction extends ServerCitizenInteraction
     }
 
     @Override
-    public ResourceLocation getInteractionIcon()
+    public Identifier getInteractionIcon()
     {
         return icon;
     }

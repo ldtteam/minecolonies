@@ -5,7 +5,7 @@ import com.minecolonies.api.util.Log;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
@@ -30,7 +30,7 @@ public class ColonyEventDescriptionTypeRegistryEntry
     /**
      * The name of this registry.
      */
-    private final ResourceLocation registryName;
+    private final Identifier registryName;
 
     /**
      * Creates a new registry entry for the given function and registry name.
@@ -39,7 +39,7 @@ public class ColonyEventDescriptionTypeRegistryEntry
      * @param packetBufferEventCreator the event creator using a {@link RegistryFriendlyByteBuf}.
      * @param registryID               the registry id.
      */
-    public ColonyEventDescriptionTypeRegistryEntry(@NotNull final BiFunction<HolderLookup.Provider, CompoundTag, IColonyEventDescription> nbtEventCreator, @NotNull final Function<RegistryFriendlyByteBuf, IColonyEventDescription> packetBufferEventCreator, @NotNull final ResourceLocation registryID)
+    public ColonyEventDescriptionTypeRegistryEntry(@NotNull final BiFunction<HolderLookup.Provider, CompoundTag, IColonyEventDescription> nbtEventCreator, @NotNull final Function<RegistryFriendlyByteBuf, IColonyEventDescription> packetBufferEventCreator, @NotNull final Identifier registryID)
     {
         if (registryID.getPath().isEmpty())
         {
@@ -77,7 +77,7 @@ public class ColonyEventDescriptionTypeRegistryEntry
      * Get the set registry name.
      * @return the name.
      */
-    public ResourceLocation getRegistryName()
+    public Identifier getRegistryName()
     {
         return registryName;
     }

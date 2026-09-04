@@ -13,7 +13,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.loot.LootTableProvider;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantment;
@@ -397,7 +397,7 @@ public class DefaultEnchanterCraftingProvider extends CustomRecipeAndLootTablePr
                     .maxBuildingLevel(buildingLevel)
                     .inputs(tome)
                     .secondaryOutputs(Collections.singletonList(new ItemStack(Items.ENCHANTED_BOOK)))
-                    .lootTable(new ResourceLocation(MOD_ID, "recipes/" + ENCHANTER + buildingLevel))
+                    .lootTable(Identifier.fromNamespaceAndPath(MOD_ID, "recipes/" + ENCHANTER + buildingLevel))
                     .build(consumer);
         }
 
@@ -447,7 +447,7 @@ public class DefaultEnchanterCraftingProvider extends CustomRecipeAndLootTablePr
             for (int i = 0; i < levels.size(); i++)
             {
                 final int buildingLevel = i + 1;
-                builder.accept(table(new ResourceLocation(MOD_ID, "recipes/" + ENCHANTER + buildingLevel)), levels.get(i));
+                builder.accept(table(Identifier.fromNamespaceAndPath(MOD_ID, "recipes/" + ENCHANTER + buildingLevel)), levels.get(i));
             }
         }, LootContextParamSets.ALL_PARAMS));
     }

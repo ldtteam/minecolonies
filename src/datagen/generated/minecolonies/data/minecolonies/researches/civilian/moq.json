@@ -3,11 +3,11 @@
   "costs": [
     {
       "count": 1,
-      "item": "minecolonies:clipboard"
+      "ingredient": "minecolonies:clipboard"
     },
     {
       "count": 16,
-      "item": "minecraft:book"
+      "ingredient": "minecraft:book"
     }
   ],
   "effects": [

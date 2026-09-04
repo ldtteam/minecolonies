@@ -10,7 +10,7 @@ import com.minecolonies.core.tileentities.TileEntityColonyBuilding;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.WindowConstants.*;
@@ -32,7 +32,7 @@ public class WindowReactivateBuilding extends AbstractWindowSkeleton
      */
     public WindowReactivateBuilding(@NotNull final BlockPos pos)
     {
-        super(new ResourceLocation(Constants.MOD_ID, "gui/windowreactivatebuilding.xml"));
+        super(Identifier.fromNamespaceAndPath(Constants.MOD_ID, "gui/windowreactivatebuilding.xml"));
         this.pos = pos;
         registerButton(BUTTON_REACTIVATE, this::reactivateClicked);
         registerButton(BUTTON_CANCEL, this::cancelClicked);
@@ -40,7 +40,7 @@ public class WindowReactivateBuilding extends AbstractWindowSkeleton
 
         if (Minecraft.getInstance().level.getBlockEntity(pos) instanceof TileEntityColonyBuilding tileEntityColonyBuilding)
         {
-            final BuildingEntry buildingEntry = IBuildingRegistry.getInstance().get(tileEntityColonyBuilding.getBuildingName());
+            final BuildingEntry buildingEntry = IBuildingRegistry.getInstance().getValue(tileEntityColonyBuilding.getBuildingName());
             if (buildingEntry == ModBuildings.home.get() || buildingEntry == ModBuildings.tavern.get())
             {
                 findPaneOfTypeByID("text", Text.class).setText(Component.translatable("com.minecolonies.core.gui.reactivate.message.living", Component.translatable(buildingEntry.getTranslationKey())));

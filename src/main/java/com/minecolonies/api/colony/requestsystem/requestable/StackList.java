@@ -11,6 +11,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -195,7 +196,7 @@ public class StackList implements IConcreteDeliverable, INonExhaustiveDeliverabl
         @NotNull final ListTag neededResTagList = new ListTag();
         for (@NotNull final ItemStack resource : input.theStacks)
         {
-            neededResTagList.add(resource.saveOptional(provider));
+            neededResTagList.add(ItemStackUtils.serializeOptional(resource, provider));
         }
         compound.put(NBT_STACK_LIST, neededResTagList);
 
@@ -205,7 +206,7 @@ public class StackList implements IConcreteDeliverable, INonExhaustiveDeliverabl
 
         if (!ItemStackUtils.isEmpty(input.result))
         {
-            compound.put(NBT_RESULT, input.result.saveOptional(provider));
+            compound.put(NBT_RESULT, ItemStackUtils.serializeOptional(input.result, provider));
         }
         compound.putString(TAG_DESCRIPTION, input.description);
         compound.putInt(NBT_COUNT, input.getCount());
@@ -226,26 +227,26 @@ public class StackList implements IConcreteDeliverable, INonExhaustiveDeliverabl
     {
         final List<ItemStack> stacks = new ArrayList<>();
 
-        final ListTag neededResTagList = compound.getList(NBT_STACK_LIST, Tag.TAG_COMPOUND);
+        final ListTag neededResTagList = compound.getListOrEmpty(NBT_STACK_LIST);
         for (int i = 0; i < neededResTagList.size(); ++i)
         {
-            final CompoundTag neededRes = neededResTagList.getCompound(i);
-            stacks.add(ItemStack.parseOptional(provider, neededRes));
+            final CompoundTag neededRes = neededResTagList.getCompoundOrEmpty(i);
+            stacks.add(ItemStackUtils.parseOptional(provider, neededRes));
         }
 
-        final boolean matchMeta = compound.getBoolean(NBT_MATCHMETA);
-        final boolean matchNBT = compound.getBoolean(NBT_MATCHNBT);
-        final boolean matchOreDic = compound.getBoolean(NBT_MATCHOREDIC);
-        final ItemStack result = compound.contains(NBT_RESULT) ? ItemStackUtils.deserializeFromNBT(compound.getCompound(NBT_RESULT), provider) : ItemStackUtils.EMPTY;
-        final String desc = compound.contains(TAG_DESCRIPTION) ? compound.getString(TAG_DESCRIPTION) : REQUEST_SYSTEM_STACK_LIST;
+        final boolean matchMeta = compound.getBooleanOr(NBT_MATCHMETA, false);
+        final boolean matchNBT = compound.getBooleanOr(NBT_MATCHNBT, false);
+        final boolean matchOreDic = compound.getBooleanOr(NBT_MATCHOREDIC, false);
+        final ItemStack result = compound.contains(NBT_RESULT) ? ItemStackUtils.deserializeFromNBT(compound.getCompoundOrEmpty(NBT_RESULT), provider) : ItemStackUtils.EMPTY;
+        final String desc = compound.contains(TAG_DESCRIPTION) ? compound.getStringOr(TAG_DESCRIPTION, "") : REQUEST_SYSTEM_STACK_LIST;
         int count = stacks.isEmpty() ? 0 : stacks.get(0).getCount();
         int minCount = count;
         if (compound.contains(NBT_COUNT))
         {
-            count = compound.getInt(NBT_COUNT);
-            minCount = compound.getInt(NBT_MINCOUNT);
+            count = compound.getIntOr(NBT_COUNT, 0);
+            minCount = compound.getIntOr(NBT_MINCOUNT, 0);
         }
-        int leftOver = compound.getInt(NBT_LEFTOVER);
+        int leftOver = compound.getIntOr(NBT_LEFTOVER, 0);
 
         return new StackList(stacks, matchMeta, matchNBT, matchOreDic, result, desc, count, minCount, leftOver);
     }
@@ -313,7 +314,9 @@ public class StackList implements IConcreteDeliverable, INonExhaustiveDeliverabl
         {
             for (final ItemStack tempStack : theStacks)
             {
-                if (!Collections.disjoint(stack.getTags().toList(), tempStack.getTags().toList()))
+                if (!Collections.disjoint(
+                    BuiltInRegistries.ITEM.wrapAsHolder(stack.getItem()).tags().toList(),
+                    BuiltInRegistries.ITEM.wrapAsHolder(tempStack.getItem()).tags().toList()))
                 {
                     return true;
                 }
@@ -467,7 +470,7 @@ public class StackList implements IConcreteDeliverable, INonExhaustiveDeliverabl
                                                final int perStackCount)
     {
         // 1.21: RegistryAccess#registryOrThrow and Registries.ITEM are still valid.
-        final Registry<Item> itemReg = registryAccess.registryOrThrow(Registries.ITEM);
+        final Registry<Item> itemReg = registryAccess.lookupOrThrow(Registries.ITEM);
 
         // Use getTagOrEmpty so we don't have to deal with Optional<HolderSet.Named<Item>>.
         final Iterable<Holder<Item>> holders = itemReg.getTagOrEmpty(tag);

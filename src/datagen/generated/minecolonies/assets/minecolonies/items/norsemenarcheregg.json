@@ -1,0 +1,16 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "minecolonies:item/norsemenarcheregg",
+    "tints": [
+      {
+        "type": "minecraft:constant",
+        "value": 0
+      },
+      {
+        "type": "minecraft:constant",
+        "value": 32768
+      }
+    ]
+  }
+}

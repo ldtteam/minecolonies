@@ -4,7 +4,7 @@
 package com.minecolonies.core.client.model;
 
 import com.minecolonies.api.client.render.modeltype.CitizenModel;
-import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.client.render.modeltype.CitizenRenderState;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
@@ -12,7 +12,7 @@ import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.world.entity.Pose;
 import org.jetbrains.annotations.NotNull;
 
-public class MaleFarmerModel extends CitizenModel<AbstractEntityCitizen>
+public class MaleFarmerModel extends CitizenModel<CitizenRenderState>
 {
 
     public MaleFarmerModel(final ModelPart part)
@@ -76,10 +76,10 @@ public class MaleFarmerModel extends CitizenModel<AbstractEntityCitizen>
     }
 
     @Override
-    public void setupAnim(@NotNull final AbstractEntityCitizen entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
+    public void setupAnim(@NotNull final CitizenRenderState state)
     {
-        super.setupAnim(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
-        head.getChild("straw").visible = entity.getPose() != Pose.SLEEPING;
-        body.getChild("seedBox").visible = entity.getPose() != Pose.SLEEPING && isWorking(entity);
+        super.setupAnim(state);
+        head.getChild("straw").visible = state.hasPose(Pose.SLEEPING) == false;
+        body.getChild("seedBox").visible = state.hasPose(Pose.SLEEPING) == false && isWorking(state);
     }
 }

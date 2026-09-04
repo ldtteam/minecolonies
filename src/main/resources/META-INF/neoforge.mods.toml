@@ -18,7 +18,7 @@ issueTrackerURL="https://github.com/ldtteam/minecolonies/issues/new/choose" #opt
 modId="minecolonies" #mandatory
 
 # The version number of the mod
-version="${version}" #mandatory
+version="${file.jarVersion}" #mandatory
 
 # A display name for the mod
 displayName="MineColonies" #mandatory

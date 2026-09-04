@@ -10,7 +10,7 @@ import com.minecolonies.api.colony.buildings.modules.IItemListModuleView;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.core.client.gui.AbstractModuleWindow;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
@@ -61,7 +61,7 @@ public class ItemListModuleWindow extends AbstractModuleWindow<IItemListModuleVi
      * @param moduleView the assigned module view.
      * @param resource   window resource location.
      */
-    public ItemListModuleWindow(final IItemListModuleView moduleView, final ResourceLocation resource)
+    public ItemListModuleWindow(final IItemListModuleView moduleView, final Identifier resource)
     {
         super(moduleView, resource);
         this.isInverted = moduleView.isInverted();
@@ -138,7 +138,7 @@ public class ItemListModuleWindow extends AbstractModuleWindow<IItemListModuleVi
     private void updateResources()
     {
         final Predicate<ItemStack> filterPredicate = stack -> filter.isEmpty()
-                                                                || stack.getDescriptionId().toLowerCase(Locale.US).contains(filter.toLowerCase(Locale.US))
+                                                                || stack.getItem().getDescriptionId().toLowerCase(Locale.US).contains(filter.toLowerCase(Locale.US))
                                                                 || stack.getHoverName().getString().toLowerCase(Locale.US).contains(filter.toLowerCase(Locale.US));
         currentDisplayedList.clear();
         for (final ItemStorage storage : groupedItemList)

@@ -17,7 +17,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
-import net.minecraft.util.Tuple;
+import com.ldtteam.structurize.api.util.Tuple;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
@@ -135,7 +135,7 @@ public class BuildingBarracks extends AbstractBuilding
     public void onColonyTick(@NotNull final IColony colony)
     {
         super.onColonyTick(colony);
-        if (colony.getWorld().isClientSide)
+        if (colony.getWorld().isClientSide())
         {
             return;
         }
@@ -187,7 +187,7 @@ public class BuildingBarracks extends AbstractBuilding
     {
         super.deserializeNBT(provider, compound);
         towers.clear();
-        towers.addAll(NBTUtils.streamCompound(compound.getList(TAG_TOWERS, Tag.TAG_COMPOUND))
+        towers.addAll(NBTUtils.streamCompound(compound.getListOrEmpty(TAG_TOWERS))
                         .map(resultCompound -> BlockPosUtil.read(resultCompound, TAG_POS))
                         .collect(Collectors.toList()));
     }

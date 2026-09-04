@@ -41,8 +41,8 @@ public class BuildingBasedRequester implements IBuildingBasedRequester
 
     public static BuildingBasedRequester deserialize(@NotNull final HolderLookup.Provider provider, final IFactoryController controller, final CompoundTag compound)
     {
-        final ILocation location = controller.deserializeTag(provider, compound.getCompound(NBT_LOCATION));
-        final IToken<?> token = controller.deserializeTag(provider, compound.getCompound(NBT_ID));
+        final ILocation location = controller.deserializeTag(provider, compound.getCompoundOrEmpty(NBT_LOCATION));
+        final IToken<?> token = controller.deserializeTag(provider, compound.getCompoundOrEmpty(NBT_ID));
 
         return new BuildingBasedRequester(location, token);
     }

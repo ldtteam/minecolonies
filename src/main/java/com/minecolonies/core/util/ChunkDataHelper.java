@@ -9,7 +9,7 @@ import com.minecolonies.core.MineColonies;
 import com.minecolonies.core.colony.Colony;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.util.Tuple;
+import com.ldtteam.structurize.api.util.Tuple;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.chunk.LevelChunk;
@@ -47,7 +47,7 @@ public final class ChunkDataHelper
             final IColony colony = IColonyManager.getInstance().getColonyByDimension(closeColony, world.dimension());
             if (colony != null)
             {
-                colony.addLoadedChunk(ChunkPos.asLong(chunk.getPos().x, chunk.getPos().z), chunk);
+                colony.addLoadedChunk(chunk.getPos().pack(), chunk);
             }
         }
     }
@@ -66,7 +66,7 @@ public final class ChunkDataHelper
             final IColony colony = IColonyManager.getInstance().getColonyByDimension(closeColony, world.dimension());
             if (colony != null)
             {
-                colony.removeLoadedChunk(ChunkPos.asLong(chunk.getPos().x, chunk.getPos().z));
+                colony.removeLoadedChunk(chunk.getPos().pack());
             }
         }
     }
@@ -121,8 +121,8 @@ public final class ChunkDataHelper
     public static boolean canClaimChunksInRange(final Level w, final BlockPos pos, final int range)
     {
         final LevelChunk centralChunk = w.getChunkAt(pos);
-        final int chunkX = centralChunk.getPos().x;
-        final int chunkZ = centralChunk.getPos().z;
+        final int chunkX = centralChunk.getPos().x();
+        final int chunkZ = centralChunk.getPos().z();
 
         for (int i = chunkX - range; i <= chunkX + range; i++)
         {
@@ -161,7 +161,7 @@ public final class ChunkDataHelper
     {
         final ServerLevel world = colony.getWorld();
         final BlockPos colonyCenterCompare = new BlockPos(colony.getCenter().getX(), 0, colony.getCenter().getZ());
-        final ChunkPos colonyCenterChunk = new ChunkPos(colonyCenterCompare);
+        final ChunkPos colonyCenterChunk = ChunkPos.containing(colonyCenterCompare);
 
         final int chunkX = center.getX() >> 4;
         final int chunkZ = center.getZ() >> 4;
@@ -216,7 +216,7 @@ public final class ChunkDataHelper
         final int maxColonySize = MineColonies.getConfig().getServer().maxColonySize.get();
         final BlockPos colonyCenterCompare = new BlockPos(colony.getCenter().getX(), 0, colony.getCenter().getZ());
 
-        for (final ChunkPos chunk : ChunkPos.rangeClosed(new ChunkPos(corners.getA()), new ChunkPos(corners.getB())).toList())
+        for (final ChunkPos chunk : ChunkPos.rangeClosed(ChunkPos.containing(corners.getA()), ChunkPos.containing(corners.getB())).toList())
         {
             final BlockPos pos = chunk.getWorldPosition();
             if (maxColonySize != 0 && pos.distSqr(colonyCenterCompare) > Math.pow(maxColonySize * BLOCKS_PER_CHUNK, 2))
@@ -251,8 +251,8 @@ public final class ChunkDataHelper
     {
         final LevelChunk centralChunk = world.getChunkAt(center);
 
-        final int chunkXMax = centralChunk.getPos().x;
-        final int chunkZMax = centralChunk.getPos().z;
+        final int chunkXMax = centralChunk.getPos().x();
+        final int chunkZMax = centralChunk.getPos().z();
 
         for (int chunkPosX = chunkXMax - range; chunkPosX <= chunkXMax + range; chunkPosX++)
         {
@@ -300,7 +300,7 @@ public final class ChunkDataHelper
             if (forceOwnerChange)
             {
                 chunkClaimData.setOwningColony(id, chunk);
-                colony.addLoadedChunk(ChunkPos.asLong(chunk.getPos().x, chunk.getPos().z), chunk);
+                colony.addLoadedChunk(chunk.getPos().pack(), chunk);
             }
         }
         else
@@ -329,7 +329,7 @@ public final class ChunkDataHelper
       final Colony colony,
       final BlockPos buildingPos)
     {
-        final LevelChunk chunk = world.getChunk(chunkBlockPos.x, chunkBlockPos.z);
+        final LevelChunk chunk = world.getChunk(chunkBlockPos.x(), chunkBlockPos.z());
         IChunkClaimData chunkClaimData = IColonyManager.getInstance().getClaimData(world.dimension(), chunk.getPos());;
         if (chunkClaimData == null)
         {

@@ -26,7 +26,7 @@ import net.minecraft.commands.arguments.coordinates.Coordinates;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -95,9 +95,9 @@ public class CommandRaid implements IMCOPCommand
      */
     private String getRaidType(final CommandContext<CommandSourceStack> context) throws CommandSyntaxException
     {
-        final ResourceLocation raidType =
-            ResourceKeyArgument.resolveKey(context, RAID_TYPE_ARG, CommonMinecoloniesAPIImpl.COLONY_EVENT_TYPES, ERROR_INVALID_COLONY_EVENT_TYPE).getKey().location();
-        final ColonyEventTypeRegistryEntry colonyEventTypeRegistryEntry = IMinecoloniesAPI.getInstance().getColonyEventRegistry().get(raidType);
+        final Identifier raidType =
+            ResourceKeyArgument.resolveKey(context, RAID_TYPE_ARG, CommonMinecoloniesAPIImpl.COLONY_EVENT_TYPES, ERROR_INVALID_COLONY_EVENT_TYPE).getKey().identifier();
+        final ColonyEventTypeRegistryEntry colonyEventTypeRegistryEntry = IMinecoloniesAPI.getInstance().getColonyEventRegistry().getValue(raidType);
         if (colonyEventTypeRegistryEntry != null && colonyEventTypeRegistryEntry.isRaidEvent())
         {
             return raidType.getPath();
@@ -109,7 +109,7 @@ public class CommandRaid implements IMCOPCommand
     public final LiteralArgumentBuilder<CommandSourceStack> build()
     {
         final List<String> raidTimes = List.of(RAID_NOW, RAID_TONIGHT);
-        final List<ResourceLocation> raidTypes = new ArrayList<>();
+        final List<Identifier> raidTypes = new ArrayList<>();
         for (final ColonyEventTypeRegistryEntry colonyEventType : IMinecoloniesAPI.getInstance().getColonyEventRegistry())
         {
             if (colonyEventType.isRaidEvent())

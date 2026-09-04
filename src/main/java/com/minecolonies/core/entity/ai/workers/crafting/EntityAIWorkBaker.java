@@ -10,7 +10,7 @@ import com.minecolonies.api.util.StatsUtil;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingBaker;
 import com.minecolonies.core.colony.jobs.JobBaker;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 
 import org.jetbrains.annotations.NotNull;
@@ -28,7 +28,7 @@ public class EntityAIWorkBaker extends AbstractEntityAIRequestSmelter<JobBaker, 
      * Baking icon
      */
     private final static VisibleCitizenStatus BAKING =
-      new VisibleCitizenStatus(new ResourceLocation(Constants.MOD_ID, "textures/icons/work/baker.png"), "com.minecolonies.gui.visiblestatus.baker");
+      new VisibleCitizenStatus(Identifier.fromNamespaceAndPath(Constants.MOD_ID, "textures/icons/work/baker.png"), "com.minecolonies.gui.visiblestatus.baker");
 
     /**
      * Constructor for the Baker. Defines the tasks the bakery executes.

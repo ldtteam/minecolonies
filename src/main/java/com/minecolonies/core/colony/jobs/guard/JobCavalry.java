@@ -1,8 +1,9 @@
 package com.minecolonies.core.colony.jobs.guard;
+import com.minecolonies.api.util.NBTUtils;
 
 import com.minecolonies.core.colony.jobs.AbstractJobGuard;
 import com.minecolonies.core.util.citizenutils.CitizenItemUtils;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.core.component.DataComponents;
 import com.minecolonies.api.client.render.modeltype.ModModelTypes;
 import com.minecolonies.api.colony.ICitizenData;
@@ -80,7 +81,7 @@ public class JobCavalry extends AbstractJobGuard<JobCavalry>
     }
 
     @Override
-    public ResourceLocation getModel()
+    public Identifier getModel()
     {
         return ModModelTypes.KNIGHT_GUARD_ID;
     }
@@ -92,7 +93,7 @@ public class JobCavalry extends AbstractJobGuard<JobCavalry>
 
         if (myMount != null)
         {
-            compound.putUUID(TAG_MOUNT, myMount);
+            NBTUtils.putUUID(compound, TAG_MOUNT, myMount);
         }
 
         return compound;
@@ -102,7 +103,7 @@ public class JobCavalry extends AbstractJobGuard<JobCavalry>
     public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound)
     {
         super.deserializeNBT(provider, compound);
-        myMount = compound.contains(TAG_MOUNT) ? compound.getUUID(TAG_MOUNT) : null;
+        myMount = compound.contains(TAG_MOUNT) ? NBTUtils.getUUID(compound, TAG_MOUNT) : null;
     }
 
     /**

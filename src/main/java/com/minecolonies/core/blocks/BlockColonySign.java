@@ -1,4 +1,5 @@
 package com.minecolonies.core.blocks;
+import net.minecraft.server.level.ServerLevel;
 
 import com.minecolonies.api.blocks.AbstractBlockMinecolonies;
 import com.minecolonies.api.blocks.interfaces.ITickableBlockMinecolonies;
@@ -11,7 +12,7 @@ import com.minecolonies.core.items.ItemColonySign;
 import com.minecolonies.core.tileentities.TileEntityColonySign;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -68,14 +69,14 @@ public class BlockColonySign extends AbstractBlockMinecolonies<BlockColonySign> 
      */
     public BlockColonySign()
     {
-        super(Properties.of().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(BLOCK_HARDNESS, RESISTANCE).noCollission());
+        super(AbstractBlockMinecolonies.registrationProperties().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(BLOCK_HARDNESS, RESISTANCE).noCollision());
         this.registerDefaultState(this.defaultBlockState().setValue(CONNECTED, false));
     }
 
     @Override
-    public ResourceLocation getRegistryName()
+    public Identifier getRegistryName()
     {
-        return new ResourceLocation(Constants.MOD_ID, BLOCK_NAME);
+        return Identifier.fromNamespaceAndPath(Constants.MOD_ID, BLOCK_NAME);
     }
 
     @NotNull
@@ -88,7 +89,7 @@ public class BlockColonySign extends AbstractBlockMinecolonies<BlockColonySign> 
     @Override
     public void setPlacedBy(@NotNull final Level worldIn, @NotNull final BlockPos pos, final BlockState state, final LivingEntity placer, final ItemStack stack)
     {
-        if (worldIn.isClientSide)
+        if (worldIn.isClientSide())
         {
             super.setPlacedBy(worldIn, pos, state, placer, stack);
             return;
@@ -115,10 +116,10 @@ public class BlockColonySign extends AbstractBlockMinecolonies<BlockColonySign> 
     }
 
     @Override
-    public void onRemove(final BlockState currentState, final Level level, final BlockPos pos, final BlockState p_60518_, final boolean p_60519_)
+    public void affectNeighborsAfterRemoval(final BlockState currentState, final ServerLevel level, final BlockPos pos, final boolean movedByPiston)
     {
         BlockEntity tileEntity = level.getBlockEntity(pos);
-        if (!level.isClientSide && tileEntity instanceof TileEntityColonySign tileEntityColonySign)
+        if (!level.isClientSide() && tileEntity instanceof TileEntityColonySign tileEntityColonySign)
         {
             final IColony colony = IColonyManager.getInstance().getColonyByDimension(tileEntityColonySign.getColonyId(), level.dimension());
             if (colony != null)
@@ -126,13 +127,13 @@ public class BlockColonySign extends AbstractBlockMinecolonies<BlockColonySign> 
                 colony.getConnectionManager().removeConnectionNode(pos);
             }
         }
-        super.onRemove(currentState, level, pos, p_60518_, p_60519_);
+        super.affectNeighborsAfterRemoval(currentState, level, pos, movedByPiston);
     }
 
     @Override
     public RenderShape getRenderShape(final BlockState p_60550_)
     {
-        return RenderShape.ENTITYBLOCK_ANIMATED;
+        return RenderShape.MODEL;
     }
 
     @Override

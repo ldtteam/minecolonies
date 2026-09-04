@@ -40,11 +40,11 @@ public class CitizenMournHandler implements ICitizenMournHandler
     @Override
     public void read(final CompoundTag compound)
     {
-        isMourning = compound.getBoolean(TAG_MOURNING);
-        final ListTag tag = compound.getList(TAG_DECEASED, Tag.TAG_STRING);
+        isMourning = compound.getBooleanOr(TAG_MOURNING, false);
+        final ListTag tag = compound.getListOrEmpty(TAG_DECEASED);
         for (int i = 0; i < tag.size(); i++)
         {
-            deceasedCitizens.add(tag.getString(i));
+            deceasedCitizens.add(tag.getStringOr(i, ""));
         }
     }
 

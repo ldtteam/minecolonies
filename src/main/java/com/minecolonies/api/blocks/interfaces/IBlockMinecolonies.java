@@ -1,7 +1,7 @@
 package com.minecolonies.api.blocks.interfaces;
 
 import net.minecraft.core.Registry;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 
@@ -27,5 +27,5 @@ public interface IBlockMinecolonies<B extends IBlockMinecolonies<B>>
      * Get the registry name of the block.
      * @return the registry name.
      */
-    ResourceLocation getRegistryName();
+    Identifier getRegistryName();
 }

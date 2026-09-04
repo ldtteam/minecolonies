@@ -1,4 +1,5 @@
 package com.minecolonies.core.colony.permissions;
+import net.minecraft.core.component.DataComponents;
 
 import com.ldtteam.structurize.items.ItemScanTool;
 import com.ldtteam.structurize.placement.handlers.placement.PlacementHandlers.ContainerPlacementHandler;
@@ -31,7 +32,7 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.animal.horse.Llama;
+import net.minecraft.world.entity.animal.equine.Llama;
 import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
@@ -49,12 +50,13 @@ import net.neoforged.bus.api.ICancellableEvent;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.common.util.FakePlayer;
-import net.neoforged.neoforge.common.util.TriState;
+import net.minecraft.util.TriState;
 import net.neoforged.neoforge.event.VanillaGameEvent;
 import net.neoforged.neoforge.event.entity.item.ItemTossEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 import net.neoforged.neoforge.event.entity.player.*;
 import net.neoforged.neoforge.event.level.BlockEvent;
+import net.neoforged.neoforge.event.level.block.BreakBlockEvent;
 import net.neoforged.neoforge.event.level.ExplosionEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -106,7 +108,7 @@ public class ColonyPermissionEventHandler
      * @param event BlockEvent.PlaceEvent
      */
     @SubscribeEvent
-    public void on(final BlockEvent.EntityPlaceEvent event)
+    public void onEntityPlace(final BlockEvent.EntityPlaceEvent event)
     {
         final Action action = event.getPlacedBlock().getBlock() instanceof AbstractBlockHut ? Action.PLACE_HUTS : Action.PLACE_BLOCKS;
         if (MineColonies.getConfig().getServer().enableColonyProtection.get() && checkBlockEventDenied(event.getLevel(),
@@ -232,12 +234,12 @@ public class ColonyPermissionEventHandler
 
 
     /**
-     * BlockEvent.BreakEvent handler.
+     * BreakBlockEvent handler.
      *
      * @param event BlockEvent.BreakEvent
      */
     @SubscribeEvent
-    public void on(final BlockEvent.BreakEvent event)
+    public void onBlockBreak(final BreakBlockEvent event)
     {
         if (!(event.getPlayer().level() instanceof final ServerLevel world))
         {
@@ -289,7 +291,7 @@ public class ColonyPermissionEventHandler
         }
         else
         {
-            checkEventCancellation(Action.BREAK_BLOCKS, event.getPlayer(), event.getPlayer().getCommandSenderWorld(), event, event.getPos());
+            checkEventCancellation(Action.BREAK_BLOCKS, event.getPlayer(), event.getPlayer().level(), event, event.getPos());
         }
     }
 
@@ -299,7 +301,7 @@ public class ColonyPermissionEventHandler
      * @param event ExplosionEvent.Detonate
      */
     @SubscribeEvent
-    public void on(final ExplosionEvent.Detonate event)
+    public void onExplosionDetonate(final ExplosionEvent.Detonate event)
     {
         if (MineColonies.getConfig().getServer().turnOffExplosionsInColonies.get() == Explosions.DAMAGE_EVERYTHING)
         {
@@ -309,12 +311,12 @@ public class ColonyPermissionEventHandler
         final Level eventWorld = event.getLevel();
         final Predicate<BlockPos> getBlocksInColony = pos -> colony.isCoordInColony(eventWorld, pos);
         Predicate<Entity> getEntitiesInColony = entity -> (!(entity instanceof Enemy) || (entity instanceof Llama))
-                                                            && colony.isCoordInColony(entity.getCommandSenderWorld(), entity.blockPosition());
+                                                            && colony.isCoordInColony(entity.level(), entity.blockPosition());
         switch(MineColonies.getConfig().getServer().turnOffExplosionsInColonies.get())
         {
             case DAMAGE_NOTHING:
                 // if any entity is in colony -> remove from list
-                getEntitiesInColony = entity -> colony.isCoordInColony(entity.getCommandSenderWorld(), entity.blockPosition());
+                getEntitiesInColony = entity -> colony.isCoordInColony(entity.level(), entity.blockPosition());
                 // intentional fall-through to next case.
             case DAMAGE_PLAYERS:
                 // if non-mob or llama entity is in colony -> remove from list
@@ -343,7 +345,7 @@ public class ColonyPermissionEventHandler
      * @param event ExplosionEvent.Detonate
      */
     @SubscribeEvent
-    public void on(final ExplosionEvent.Start event)
+    public void onExplosionStart(final ExplosionEvent.Start event)
     {
         if (MineColonies.getConfig().getServer().enableColonyProtection.get()
               && MineColonies.getConfig().getServer().turnOffExplosionsInColonies.get() == Explosions.DAMAGE_NOTHING
@@ -395,12 +397,12 @@ public class ColonyPermissionEventHandler
                 }
 
                 final BlockEntity blockEntity = event.getLevel().getBlockEntity(event.getPos());
-                boolean isContainer = event.getLevel().getCapability(Capabilities.ItemHandler.BLOCK, event.getPos(), state, blockEntity, null) != null;
+                boolean isContainer = event.getLevel().getCapability(Capabilities.Item.BLOCK, event.getPos(), state, blockEntity, null) != null;
                 if (!isContainer)
                 {
                     for (Direction direction : Direction.values())
                     {
-                        if (event.getLevel().getCapability(Capabilities.ItemHandler.BLOCK, event.getPos(), state, blockEntity, direction) != null)
+                        if (event.getLevel().getCapability(Capabilities.Item.BLOCK, event.getPos(), state, blockEntity, direction) != null)
                         {
                             isContainer = true;
                             break;
@@ -421,7 +423,7 @@ public class ColonyPermissionEventHandler
                 }
 
                 final ItemStack stack = event.getItemStack();
-                if (ItemStackUtils.isEmpty(stack) || stack.getFoodProperties(event.getEntity()) != null)
+                if (ItemStackUtils.isEmpty(stack) || stack.get(DataComponents.FOOD) != null)
                 {
                     return;
                 }
@@ -479,15 +481,15 @@ public class ColonyPermissionEventHandler
      * @param event PlayerInteractEvent
      */
     @SubscribeEvent
-    public void on(final PlayerInteractEvent.EntityInteract event)
+    public void onPlayerEntityInteract(final PlayerInteractEvent.EntityInteract event)
     {
-        if (isFreeToInteractWith(null, event.getPos())
+        if ((isFreeToInteractWith(null, event.getPos()) || isFreeToInteractWith(null, event.getTarget().blockPosition()))
               && !colony.getPermissions().getRank(event.getEntity()).isHostile())
         {
             return;
         }
 
-        if (event.getEntity().getType().is(ModTags.freeToInteractWith))
+        if (event.getEntity().getType().builtInRegistryHolder().is(ModTags.freeToInteractWith))
         {
             return;
         }
@@ -534,10 +536,10 @@ public class ColonyPermissionEventHandler
             positionToCheck = player.blockPosition();
         }
         if (MineColonies.getConfig().getServer().enableColonyProtection.get()
-              && colony.isCoordInColony(player.getCommandSenderWorld(), positionToCheck)
+              && colony.isCoordInColony(player.level(), positionToCheck)
               && !colony.getPermissions().hasPermission(player, action))
         {
-            if (MineColonies.getConfig().getServer().pvp_mode.get() && !world.isClientSide && colony.isValidAttackingPlayer(playerIn))
+            if (MineColonies.getConfig().getServer().pvp_mode.get() && !world.isClientSide() && colony.isValidAttackingPlayer(playerIn))
             {
                 return false;
             }
@@ -551,29 +553,6 @@ public class ColonyPermissionEventHandler
     }
 
     /**
-     * PlayerInteractEvent.EntityInteractSpecific handler.
-     * <p>
-     * Check, if a player right clicked a entity. Deny if: - If the entity is in colony - player has not permission
-     *
-     * @param event PlayerInteractEvent
-     */
-    @SubscribeEvent
-    public void on(final PlayerInteractEvent.EntityInteractSpecific event)
-    {
-        if (isFreeToInteractWith(null, event.getPos()) && !colony.getPermissions().getRank(event.getEntity()).isHostile())
-        {
-            return;
-        }
-
-        if (event.getEntity().getType().is(ModTags.freeToInteractWith))
-        {
-            return;
-        }
-
-        checkEventCancellation(Action.RIGHTCLICK_ENTITY, event.getEntity(), event.getLevel(), event, event.getPos());
-    }
-
-    /**
      * ItemTossEvent handler.
      * <p>
      * Check, if a player tossed a block. Deny if: - If the tossing happens in the colony - player is hostile to colony
@@ -581,9 +560,9 @@ public class ColonyPermissionEventHandler
      * @param event ItemTossEvent
      */
     @SubscribeEvent
-    public void on(final ItemTossEvent event)
+    public void onItemToss(final ItemTossEvent event)
     {
-        if (checkEventCancellation(Action.TOSS_ITEM, event.getPlayer(), event.getPlayer().getCommandSenderWorld(), event, event.getPlayer().blockPosition()))
+        if (checkEventCancellation(Action.TOSS_ITEM, event.getPlayer(), event.getPlayer().level(), event, event.getPlayer().blockPosition()))
         {
             event.getPlayer().getInventory().add(event.getEntity().getItem());
         }
@@ -597,11 +576,11 @@ public class ColonyPermissionEventHandler
      * @param event ItemEntityPickupEvent
      */
     @SubscribeEvent
-    public void on(final ItemEntityPickupEvent.Pre event)
+    public void onItemEntityPickup(final ItemEntityPickupEvent.Pre event)
     {
         if (event.getPlayer().equals(event.getItemEntity().getOwner())) return;   // always allowed to pick up your own thrown items
 
-        checkEventCancellation(Action.PICKUP_ITEM, event.getPlayer(), event.getPlayer().getCommandSenderWorld(), event, event.getPlayer().blockPosition(), ev -> ((ItemEntityPickupEvent.Pre) ev).setCanPickup(TriState.FALSE));
+        checkEventCancellation(Action.PICKUP_ITEM, event.getPlayer(), event.getPlayer().level(), event, event.getPlayer().blockPosition(), ev -> ((ItemEntityPickupEvent.Pre) ev).setCanPickup(TriState.FALSE));
     }
 
     /**
@@ -612,14 +591,14 @@ public class ColonyPermissionEventHandler
      * @param event ItemEntityPickupEvent
      */
     @SubscribeEvent
-    public void on(final VanillaGameEvent event)
+    public void onVanillaGameEvent(final VanillaGameEvent event)
     {
         if (event.getVanillaEvent() == GameEvent.FLUID_PICKUP)
         {
             @Nullable BlockPos targetBlockPos = BlockPos.containing(event.getEventPosition());
             if (event.getContext().sourceEntity() instanceof  Player)
             {
-                checkEventCancellation(Action.FILL_BUCKET, (Player) event.getContext().sourceEntity(), event.getContext().sourceEntity().getCommandSenderWorld(), event, targetBlockPos);
+                checkEventCancellation(Action.FILL_BUCKET, (Player) event.getContext().sourceEntity(), event.getContext().sourceEntity().level(), event, targetBlockPos);
             }
         }
     }
@@ -632,9 +611,9 @@ public class ColonyPermissionEventHandler
      * @param event ItemEntityPickupEvent
      */
     @SubscribeEvent
-    public void on(final ArrowLooseEvent event)
+    public void onArrowLoose(final ArrowLooseEvent event)
     {
-        checkEventCancellation(Action.SHOOT_ARROW, event.getEntity(), event.getEntity().getCommandSenderWorld(), event, event.getEntity().blockPosition());
+        checkEventCancellation(Action.SHOOT_ARROW, event.getEntity(), event.getEntity().level(), event, event.getEntity().blockPosition());
     }
 
     /**
@@ -646,7 +625,7 @@ public class ColonyPermissionEventHandler
      * @param event
      */
     @SubscribeEvent
-    public void on(final LivingDamageEvent.Pre event)
+    public void onLivingDamagePre(final LivingDamageEvent.Pre event)
     {
         if (event.getEntity() instanceof ServerPlayer
               && event.getSource().getEntity() instanceof EntityCitizen
@@ -666,17 +645,17 @@ public class ColonyPermissionEventHandler
      * @param event ItemEntityPickupEvent
      */
     @SubscribeEvent
-    public void on(final AttackEntityEvent event)
+    public void onAttackEntity(final AttackEntityEvent event)
     {
         if (event.getTarget() instanceof Monster)
         {
             return;
         }
 
-        @NotNull final Player player = EntityUtils.getPlayerOfFakePlayer(event.getEntity(), event.getEntity().getCommandSenderWorld());
+        @NotNull final Player player = EntityUtils.getPlayerOfFakePlayer(event.getEntity(), event.getEntity().level());
 
         if (MineColonies.getConfig().getServer().enableColonyProtection.get()
-              && colony.isCoordInColony(player.getCommandSenderWorld(), player.blockPosition()))
+              && colony.isCoordInColony(player.level(), player.blockPosition()))
         {
             final Permissions perms = colony.getPermissions();
             if (event.getTarget() instanceof EntityCitizen)

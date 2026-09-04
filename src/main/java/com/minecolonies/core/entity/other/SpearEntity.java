@@ -3,19 +3,21 @@ package com.minecolonies.core.entity.other;
 import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.entity.mobs.ICustomAttackSound;
 import com.minecolonies.api.items.ModItems;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.projectile.AbstractArrow;
-import net.minecraft.world.entity.projectile.ThrownTrident;
+import net.minecraft.world.entity.projectile.arrow.AbstractArrow;
+import net.minecraft.world.entity.projectile.arrow.ThrownTrident;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
@@ -100,18 +102,21 @@ public class SpearEntity extends ThrownTrident implements ICustomAttackSound
 
         float damageAmount = BASE_DAMAGE;
         DamageSource damageSource = this.level().damageSources().source(SPEAR, this, ownerEntity == null ? this : ownerEntity);
-        if (targetEntity instanceof LivingEntity)
+        boolean damaged = false;
+        if (this.level() instanceof ServerLevel serverlevel)
         {
-            if (this.level() instanceof ServerLevel serverlevel)
+            if (targetEntity instanceof LivingEntity livingTarget)
             {
-                damageAmount += EnchantmentHelper.modifyDamage(serverlevel, this.weapon, targetEntity, damageSource, damageAmount);
+                damageAmount += EnchantmentHelper.modifyDamage(serverlevel, this.weapon, livingTarget, damageSource, damageAmount);
             }
+
+            damaged = targetEntity.hurtServer(serverlevel, damageSource, damageAmount);
         }
 
         this.dealtDamage = true;
-        if (targetEntity.hurt(damageSource, damageAmount))
+        if (damaged)
         {
-            if (targetEntity.getType() == EntityType.ENDERMAN)
+            if (targetEntity.getType() == EntityTypes.ENDERMAN)
             {
                 return;
             }
@@ -140,17 +145,17 @@ public class SpearEntity extends ThrownTrident implements ICustomAttackSound
     }
 
     @Override
-    public void readAdditionalSaveData(@NotNull CompoundTag nbt)
+    public void readAdditionalSaveData(@NotNull ValueInput input)
     {
-        super.readAdditionalSaveData(nbt);
-        this.dealtDamage = nbt.getBoolean(NBT_DEALT_DAMAGE);
+        super.readAdditionalSaveData(input);
+        this.dealtDamage = input.getBooleanOr(NBT_DEALT_DAMAGE, false);
     }
 
     @Override
-    public void addAdditionalSaveData(@NotNull CompoundTag nbt)
+    public void addAdditionalSaveData(@NotNull ValueOutput output)
     {
-        super.addAdditionalSaveData(nbt);
-        nbt.putBoolean(NBT_DEALT_DAMAGE, this.dealtDamage);
+        super.addAdditionalSaveData(output);
+        output.putBoolean(NBT_DEALT_DAMAGE, this.dealtDamage);
     }
 
     /**
@@ -202,13 +207,13 @@ public class SpearEntity extends ThrownTrident implements ICustomAttackSound
     }
 
     @Override
-    public boolean save(@NotNull CompoundTag nbt)
+    public boolean save(@NotNull ValueOutput output)
     {
         return false;
     }
 
     @Override
-    public void load(@NotNull CompoundTag nbt)
+    public void load(@NotNull ValueInput input)
     {
         discard();
     }

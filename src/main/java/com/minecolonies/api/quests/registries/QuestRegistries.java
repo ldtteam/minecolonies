@@ -9,7 +9,7 @@ import com.minecolonies.api.quests.IQuestTriggerTemplate;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.Registry;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import org.jetbrains.annotations.NotNull;
 
@@ -161,34 +161,34 @@ public class QuestRegistries
         }
     }
 
-    public static ResourceLocation ITEM_REWARD_ID         = new ResourceLocation(Constants.MOD_ID, "item");
-    public static ResourceLocation SKILL_REWARD_ID        = new ResourceLocation(Constants.MOD_ID, "skill");
-    public static ResourceLocation RESEARCH_REWARD_ID     = new ResourceLocation(Constants.MOD_ID, "research");
-    public static ResourceLocation RAID_REWARD_ID         = new ResourceLocation(Constants.MOD_ID, "raid");
-    public static ResourceLocation RELATIONSHIP_REWARD_ID = new ResourceLocation(Constants.MOD_ID, "relationship");
-    public static ResourceLocation HAPPINESS_REWARD_ID    = new ResourceLocation(Constants.MOD_ID, "happiness");
-    public static ResourceLocation UNLOCK_QUEST_REWARD_ID     = new ResourceLocation(Constants.MOD_ID, "unlockquest");
-    public static ResourceLocation QUEST_REPUTATION_REWARD_ID = new ResourceLocation(Constants.MOD_ID, "questreputation");
+    public static Identifier ITEM_REWARD_ID         = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "item");
+    public static Identifier SKILL_REWARD_ID        = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "skill");
+    public static Identifier RESEARCH_REWARD_ID     = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "research");
+    public static Identifier RAID_REWARD_ID         = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "raid");
+    public static Identifier RELATIONSHIP_REWARD_ID = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "relationship");
+    public static Identifier HAPPINESS_REWARD_ID    = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "happiness");
+    public static Identifier UNLOCK_QUEST_REWARD_ID     = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "unlockquest");
+    public static Identifier QUEST_REPUTATION_REWARD_ID = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "questreputation");
 
-    public static ResourceLocation DIALOGUE_OBJECTIVE_ID   = new ResourceLocation(Constants.MOD_ID, "dialogue");
-    public static ResourceLocation BREAKBLOCK_OBJECTIVE_ID = new ResourceLocation(Constants.MOD_ID, "breakblock");
-    public static ResourceLocation DELIVERY_OBJECTIVE_ID   = new ResourceLocation(Constants.MOD_ID, "delivery");
-    public static ResourceLocation KILLENTITY_OBJECTIVE_ID = new ResourceLocation(Constants.MOD_ID, "killentity");
-    public static ResourceLocation PLACEBLOCK_OBJECTIVE_ID = new ResourceLocation(Constants.MOD_ID, "placeblock");
-    public static ResourceLocation BUILD_BUILDING_OBJECTIVE_ID = new ResourceLocation(Constants.MOD_ID, "buildbuilding");
-    public static ResourceLocation RESEARCH_OBJECTIVE_ID = new ResourceLocation(Constants.MOD_ID, "research");
+    public static Identifier DIALOGUE_OBJECTIVE_ID   = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "dialogue");
+    public static Identifier BREAKBLOCK_OBJECTIVE_ID = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "breakblock");
+    public static Identifier DELIVERY_OBJECTIVE_ID   = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "delivery");
+    public static Identifier KILLENTITY_OBJECTIVE_ID = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "killentity");
+    public static Identifier PLACEBLOCK_OBJECTIVE_ID = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "placeblock");
+    public static Identifier BUILD_BUILDING_OBJECTIVE_ID = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "buildbuilding");
+    public static Identifier RESEARCH_OBJECTIVE_ID = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "research");
 
-    public static ResourceLocation STATE_TRIGGER_ID       = new ResourceLocation(Constants.MOD_ID, "state");
-    public static ResourceLocation RANDOM_TRIGGER_ID      = new ResourceLocation(Constants.MOD_ID, "random");
-    public static ResourceLocation CITIZEN_TRIGGER_ID     = new ResourceLocation(Constants.MOD_ID, "citizen");
-    public static ResourceLocation UNLOCK_TRIGGER_ID      = new ResourceLocation(Constants.MOD_ID, "unlock");
-    public static ResourceLocation QUEST_REPUTATION_TRIGGER_ID  = new ResourceLocation(Constants.MOD_ID, "questreputation");
-    public static ResourceLocation WORLD_DIFFICULTY_TRIGGER_ID  = new ResourceLocation(Constants.MOD_ID, "difficulty");
+    public static Identifier STATE_TRIGGER_ID       = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "state");
+    public static Identifier RANDOM_TRIGGER_ID      = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "random");
+    public static Identifier CITIZEN_TRIGGER_ID     = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "citizen");
+    public static Identifier UNLOCK_TRIGGER_ID      = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "unlock");
+    public static Identifier QUEST_REPUTATION_TRIGGER_ID  = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "questreputation");
+    public static Identifier WORLD_DIFFICULTY_TRIGGER_ID  = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "difficulty");
 
-    public static ResourceLocation DIALOGUE_ANSWER_ID = new ResourceLocation(Constants.MOD_ID, "dialogue");
-    public static ResourceLocation RETURN_ANSWER_ID   = new ResourceLocation(Constants.MOD_ID, "return");
-    public static ResourceLocation CANCEL_ANSWER_ID   = new ResourceLocation(Constants.MOD_ID, "cancel");
-    public static ResourceLocation GOTO_ANSWER_ID     = new ResourceLocation(Constants.MOD_ID, "advanceobjective");
+    public static Identifier DIALOGUE_ANSWER_ID = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "dialogue");
+    public static Identifier RETURN_ANSWER_ID   = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "return");
+    public static Identifier CANCEL_ANSWER_ID   = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "cancel");
+    public static Identifier GOTO_ANSWER_ID     = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "advanceobjective");
 
 
     public static DeferredHolder<RewardEntry, RewardEntry>  itemReward;

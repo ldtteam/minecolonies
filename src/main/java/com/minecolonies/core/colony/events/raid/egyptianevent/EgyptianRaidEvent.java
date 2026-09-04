@@ -14,7 +14,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -32,7 +32,7 @@ public class EgyptianRaidEvent extends HordeRaidEvent
     /**
      * This raids event id, registry entries use res locations as ids.
      */
-    public static final ResourceLocation EGYPTIAN_RAID_EVENT_TYPE_ID = new ResourceLocation(Constants.MOD_ID, "egyptian_raid");
+    public static final Identifier EGYPTIAN_RAID_EVENT_TYPE_ID = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "egyptian_raid");
 
     /**
      * Cooldown for the music, to not play it too much/not overlap with itself
@@ -45,7 +45,7 @@ public class EgyptianRaidEvent extends HordeRaidEvent
     }
 
     @Override
-    public ResourceLocation getEventTypeID()
+    public Identifier getEventTypeID()
     {
         return EGYPTIAN_RAID_EVENT_TYPE_ID;
     }

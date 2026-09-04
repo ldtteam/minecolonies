@@ -64,7 +64,7 @@ public class FurnaceUserModule extends AbstractBuildingModule implements IPersis
     @Override
     public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound)
     {
-        final ListTag furnaceTagList = compound.getList(TAG_FURNACES, Tag.TAG_INT_ARRAY);
+        final ListTag furnaceTagList = compound.getListOrEmpty(TAG_FURNACES);
         for (int i = 0; i < furnaceTagList.size(); ++i)
         {
             furnaces.add(NBTUtils.readBlockPos(furnaceTagList.get(i)));

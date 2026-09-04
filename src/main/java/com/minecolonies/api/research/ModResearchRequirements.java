@@ -4,7 +4,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.neoforged.neoforge.registries.DeferredHolder;
 
 /**
@@ -12,10 +12,10 @@ import net.neoforged.neoforge.registries.DeferredHolder;
  */
 public class ModResearchRequirements
 {
-    public static final ResourceLocation BUILDING_RESEARCH_REQ_ID            = new ResourceLocation(Constants.MOD_ID, "building");
-    public static final ResourceLocation BUILDING_ALTERNATES_RESEARCH_REQ_ID = new ResourceLocation(Constants.MOD_ID, "alternate-building");
-    public static final ResourceLocation BUILDING_SINGLE_RESEARCH_REQ_ID     = new ResourceLocation(Constants.MOD_ID, "single-building");
-    public static final ResourceLocation RESEARCH_RESEARCH_REQ_ID            = new ResourceLocation(Constants.MOD_ID, "research");
+    public static final Identifier BUILDING_RESEARCH_REQ_ID            = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "building");
+    public static final Identifier BUILDING_ALTERNATES_RESEARCH_REQ_ID = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "alternate-building");
+    public static final Identifier BUILDING_SINGLE_RESEARCH_REQ_ID     = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "single-building");
+    public static final Identifier RESEARCH_RESEARCH_REQ_ID            = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "research");
 
     public static DeferredHolder<ResearchRequirementEntry, ResearchRequirementEntry> buildingResearchRequirement;
     public static DeferredHolder<ResearchRequirementEntry, ResearchRequirementEntry> buildingAlternatesResearchRequirement;
@@ -53,7 +53,7 @@ public class ModResearchRequirements
         /**
          * The registry name for this entry.
          */
-        private final ResourceLocation registryName;
+        private final Identifier registryName;
 
         /**
          * Function to read this item from NBT.
@@ -72,7 +72,7 @@ public class ModResearchRequirements
          * @param readFromJson function to read this item from NBT.
          * @param readFromNBT  function to read this item from json.
          */
-        public ResearchRequirementEntry(final ResourceLocation registryName, final ReadFromNBTFunction readFromNBT, final ReadFromJsonFunction readFromJson)
+        public ResearchRequirementEntry(final Identifier registryName, final ReadFromNBTFunction readFromNBT, final ReadFromJsonFunction readFromJson)
         {
             this.registryName = registryName;
             this.readFromNBT = readFromNBT;
@@ -82,7 +82,7 @@ public class ModResearchRequirements
         /**
          * Get the registry name for this entry.
          */
-        public ResourceLocation getRegistryName()
+        public Identifier getRegistryName()
         {
             return registryName;
         }

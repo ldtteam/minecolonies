@@ -77,7 +77,7 @@ public class PendingConnectionNode extends ColonyConnectionNode
     public void read(@NotNull final CompoundTag compound)
     {
         super.read(compound);
-        this.connectionType = PendingConnectionType.values()[compound.getInt(TAG_CONNECTION_TYPE)];
+        this.connectionType = PendingConnectionType.values()[compound.getIntOr(TAG_CONNECTION_TYPE, 0)];
     }
 
     /**

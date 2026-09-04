@@ -12,7 +12,7 @@ import com.minecolonies.core.colony.Colony;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingTownHall;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.util.Tuple;
+import com.ldtteam.structurize.api.util.Tuple;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -55,7 +55,7 @@ public final class ConstructionTapeHelper
     public static void placeConstructionTape(@NotNull final IBuilding building)
     {
         ServerFutureProcessor.queueBlueprint(new ServerFutureProcessor.BlueprintProcessingData(StructurePacks.getBlueprintFuture(building.getStructurePack(),
-          building.getBlueprintPath(), building.getColony().getWorld().registryAccess()), building.getColony().getWorld(), (blueprint -> {
+          building.getBlueprintPath()), building.getColony().getWorld(), (blueprint -> {
             final Tuple<BlockPos, BlockPos> corners =
               ColonyUtils.calculateCorners(building.getPosition(), building.getColony().getWorld(), blueprint, building.getRotationMirror());
             building.setCorners(corners.getA(), corners.getB());

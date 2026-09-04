@@ -1,0 +1,16 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "minecolonies:item/shieldmaidenegg",
+    "tints": [
+      {
+        "type": "minecraft:constant",
+        "value": 0
+      },
+      {
+        "type": "minecraft:constant",
+        "value": 16777215
+      }
+    ]
+  }
+}

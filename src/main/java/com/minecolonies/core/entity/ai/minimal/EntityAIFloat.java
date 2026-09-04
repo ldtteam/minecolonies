@@ -9,6 +9,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
+import net.neoforged.neoforge.common.NeoForgeMod;
+import net.neoforged.neoforge.fluids.FluidType;
 
 /**
  * Custom float goal, which bumps less(only every 3 ticks) and does trigger escape pathfinding underwater
@@ -39,7 +41,8 @@ public class EntityAIFloat extends FloatGoal
     @Override
     public void tick()
     {
-        if (!owner.getEyeInFluidType().isAir() && owner.getEyeInFluidType().canSwim(owner))
+        final FluidType eyeFluidType = NeoForgeMod.WATER_TYPE.value();
+        if (owner.isEyeInFluid(eyeFluidType) && owner.canSwimInFluidType(eyeFluidType))
         {
             if (owner.level().getBlockState(BlockPos.containing(owner.getEyePosition()).above()).isAir())
             {

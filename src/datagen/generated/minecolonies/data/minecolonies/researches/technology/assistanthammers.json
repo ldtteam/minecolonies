@@ -3,7 +3,7 @@
   "costs": [
     {
       "count": 2,
-      "item": "minecraft:iron_block"
+      "ingredient": "minecraft:iron_block"
     }
   ],
   "effects": [

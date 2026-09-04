@@ -10,7 +10,7 @@ import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.network.messages.server.colony.citizen.AdjustSkillCitizenMessage;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -34,7 +34,7 @@ public class MainWindowCitizen extends AbstractWindowCitizen
      */
     public MainWindowCitizen(final ICitizenDataView citizen)
     {
-        super(citizen, new ResourceLocation(Constants.MOD_ID, "gui/citizen/main.xml"));
+        super(citizen, Identifier.fromNamespaceAndPath(Constants.MOD_ID, "gui/citizen/main.xml"));
 
         final Image statusIcon = findPaneOfTypeByID(STATUS_ICON, Image.class);
         if (citizen.getVisibleStatus() == null)
@@ -87,7 +87,7 @@ public class MainWindowCitizen extends AbstractWindowCitizen
 
         if (citizen.isFemale())
         {
-            findPaneOfTypeByID(WINDOW_ID_GENDER, Image.class).setImage(ResourceLocation.parse(FEMALE_SOURCE), false);
+            findPaneOfTypeByID(WINDOW_ID_GENDER, Image.class).setImage(Identifier.parse(FEMALE_SOURCE), false);
         }
     }
 

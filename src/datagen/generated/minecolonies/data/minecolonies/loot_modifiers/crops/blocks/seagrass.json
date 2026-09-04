@@ -12,5 +12,6 @@
       "loot_table_id": "minecraft:blocks/seagrass"
     }
   ],
+  "priority": 0,
   "table": "minecolonies:crops/blocks/seagrass"
 }

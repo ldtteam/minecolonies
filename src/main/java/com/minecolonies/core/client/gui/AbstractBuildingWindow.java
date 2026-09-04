@@ -8,7 +8,7 @@ import com.minecolonies.core.client.gui.modules.TabsWindowModule;
 import com.minecolonies.core.colony.buildings.views.AbstractBuildingView;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvents;
 
 import java.util.List;
@@ -35,7 +35,7 @@ public abstract class AbstractBuildingWindow<B extends IBuildingView> extends Ab
      * @param buildingView class extending {@link AbstractBuildingView}.
      * @param resource     window resource location.
      */
-    public AbstractBuildingWindow(final B buildingView, final ResourceLocation resource)
+    public AbstractBuildingWindow(final B buildingView, final Identifier resource)
     {
         this(null, buildingView, resource);
     }
@@ -47,7 +47,7 @@ public abstract class AbstractBuildingWindow<B extends IBuildingView> extends Ab
      * @param buildingView class extending {@link AbstractBuildingView}.
      * @param resource     window resource location.
      */
-    public AbstractBuildingWindow(final BOWindow parent, final B buildingView, final ResourceLocation resource)
+    public AbstractBuildingWindow(final BOWindow parent, final B buildingView, final Identifier resource)
     {
         super(parent, resource);
         this.buildingView = buildingView;
@@ -60,7 +60,7 @@ public abstract class AbstractBuildingWindow<B extends IBuildingView> extends Ab
 
             tabsWindowModule.renderTabButton(nextTabIndex++,
                 TabsWindowModule.TabImageSide.LEFT,
-                new ResourceLocation(Constants.MOD_ID, "textures/gui/modules/main.png"),
+                Identifier.fromNamespaceAndPath(Constants.MOD_ID, "textures/gui/modules/main.png"),
                 Component.translatable(LABEL_MAIN_TAB_NAME),
                 button -> buildingView.getWindow().open());
 
@@ -74,7 +74,7 @@ public abstract class AbstractBuildingWindow<B extends IBuildingView> extends Ab
 
                 tabsWindowModule.renderTabButton(nextTabIndex++,
                     TabsWindowModule.TabImageSide.LEFT,
-                    view.getIconResourceLocation(),
+                    view.getIconIdentifier(),
                     Optional.ofNullable(view.getDesc()).map(Component::copy).orElse(null),
                     button -> {
                         mc.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.BOOK_PAGE_TURN, 1.0F));

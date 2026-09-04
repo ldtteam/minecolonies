@@ -4,7 +4,7 @@ import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.core.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
@@ -17,7 +17,7 @@ public class CitizenSpawnedEvent extends AbstractCitizenEvent
     /**
      * This events id, registry entries use res locations as ids.
      */
-    public static final ResourceLocation CITIZEN_SPAWNED_EVENT_ID = new ResourceLocation(Constants.MOD_ID, "citizen_spawn");
+    public static final Identifier CITIZEN_SPAWNED_EVENT_ID = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "citizen_spawn");
 
     /**
      * Creates a new citizen spawned event.
@@ -39,7 +39,7 @@ public class CitizenSpawnedEvent extends AbstractCitizenEvent
     }
 
     @Override
-    public ResourceLocation getEventTypeId()
+    public Identifier getEventTypeId()
     {
         return CITIZEN_SPAWNED_EVENT_ID;
     }

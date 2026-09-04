@@ -4,11 +4,10 @@ import com.google.common.collect.ImmutableSet;
 import com.minecolonies.api.crafting.CompostRecipe;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.core.util.FurnaceRecipes;
-import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeManager;
@@ -53,7 +52,7 @@ public interface ICompatibilityManager
      *
      * @param buf deserialization buffer
      */
-    void deserialize(@NotNull final RegistryFriendlyByteBuf buf, final ClientLevel level);
+    void deserialize(@NotNull final RegistryFriendlyByteBuf buf, final Level level);
 
     /**
      * Gets the sapling matching a leaf.
@@ -146,7 +145,7 @@ public interface ICompatibilityManager
      * Get the set of all monsters.
      * @return the set.
      */
-    ImmutableSet<ResourceLocation> getAllMonsters();
+    ImmutableSet<Identifier> getAllMonsters();
 
     /**
      * Checks if a certain Block is an ore.

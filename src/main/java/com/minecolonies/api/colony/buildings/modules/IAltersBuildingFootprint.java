@@ -1,7 +1,7 @@
 package com.minecolonies.api.colony.buildings.modules;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.util.Tuple;
+import com.ldtteam.structurize.api.util.Tuple;
 
 /**
  * Interface for buildings with an extended footprint.

@@ -6,7 +6,7 @@ import com.ldtteam.blockui.views.ScrollingList;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -27,7 +27,7 @@ public class FamilyWindowCitizen extends AbstractWindowCitizen
      */
     public FamilyWindowCitizen(final ICitizenDataView citizen)
     {
-        super(citizen, new ResourceLocation(Constants.MOD_ID, "gui/citizen/family.xml"));
+        super(citizen, Identifier.fromNamespaceAndPath(Constants.MOD_ID, "gui/citizen/family.xml"));
         siblingList = findPaneOfTypeByID("siblings", ScrollingList.class);
         childrenList = findPaneOfTypeByID("children", ScrollingList.class);
     }

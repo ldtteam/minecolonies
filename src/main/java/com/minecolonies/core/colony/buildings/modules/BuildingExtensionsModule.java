@@ -58,16 +58,16 @@ public abstract class BuildingExtensionsModule extends AbstractBuildingModule im
     @Override
     public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound)
     {
-        shouldAssignManually = compound.getBoolean(TAG_ASSIGN_MANUALLY);
-        final ListTag listTag = compound.getList(TAG_BUILDING_EXTENSIONS, Tag.TAG_COMPOUND);
+        shouldAssignManually = compound.getBooleanOr(TAG_ASSIGN_MANUALLY, false);
+        final ListTag listTag = compound.getListOrEmpty(TAG_BUILDING_EXTENSIONS);
         for (int i = 0; i < listTag.size(); ++i)
         {
-            final CompoundTag tag = listTag.getCompound(i);
-            checkedExtensions.put(IBuildingExtension.ExtensionId.deserializeNBT(provider, tag.getCompound(TAG_ID)), compound.getInt(TAG_DAY));
+            final CompoundTag tag = listTag.getCompoundOrEmpty(i);
+            checkedExtensions.put(IBuildingExtension.ExtensionId.deserializeNBT(provider, tag.getCompoundOrEmpty(TAG_ID)), compound.getIntOr(TAG_DAY, 0));
         }
         if (compound.contains(TAG_CURRENT_EXTENSION))
         {
-            currentExtensionId = IBuildingExtension.ExtensionId.deserializeNBT(provider, compound.getCompound(TAG_CURRENT_EXTENSION));
+            currentExtensionId = IBuildingExtension.ExtensionId.deserializeNBT(provider, compound.getCompoundOrEmpty(TAG_CURRENT_EXTENSION));
         }
     }
 

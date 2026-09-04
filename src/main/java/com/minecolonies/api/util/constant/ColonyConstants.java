@@ -2,10 +2,8 @@ package com.minecolonies.api.util.constant;
 
 import com.minecolonies.api.colony.IColony;
 import net.minecraft.server.level.TicketType;
-import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.scores.Scoreboard;
 
-import java.util.Comparator;
 import java.util.Random;
 
 /**
@@ -27,12 +25,13 @@ public final class ColonyConstants
     /**
      * Constant string id of our ticket type.
      */
-    private static final String TICKET_ID = Constants.MOD_ID + ":" + "initial_chunkload";
-
     /**
-     * Specific ticket type for minecolonies tickets.
+     * Specific ticket type for minecolonies tickets.  NeoForge 26.2 freezes
+     * built-in registries before gameplay classes are first used, so this is
+     * populated by the ticket-type RegisterEvent rather than by a lazy static
+     * Registry.register call.
      */
-    public static final TicketType<ChunkPos> KEEP_LOADED_TYPE = TicketType.create(TICKET_ID, Comparator.comparingLong(ChunkPos::toLong));
+    public static TicketType KEEP_LOADED_TYPE;
 
     //  Settings
     /**

@@ -29,7 +29,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.FurnaceBlockEntity;
 import org.jetbrains.annotations.NotNull;
@@ -312,9 +312,9 @@ public final class StandardRequests
 
         @NotNull
         @Override
-        public ResourceLocation getDisplayIcon()
+        public Identifier getDisplayIcon()
         {
-            return new ResourceLocation("minecolonies", "textures/gui/citizen/delivery.png");
+            return Identifier.fromNamespaceAndPath("minecolonies", "textures/gui/citizen/delivery.png");
         }
     }
 
@@ -355,10 +355,10 @@ public final class StandardRequests
 
         @NotNull
         @Override
-        public ResourceLocation getDisplayIcon()
+        public Identifier getDisplayIcon()
         {
             // This can be just the delivery icon. For the user, it's no big deal.
-            return new ResourceLocation("minecolonies", "textures/gui/citizen/delivery.png");
+            return Identifier.fromNamespaceAndPath("minecolonies", "textures/gui/citizen/delivery.png");
         }
 
         @Override
@@ -485,9 +485,9 @@ public final class StandardRequests
 
         @NotNull
         @Override
-        public final ResourceLocation getDisplayIcon()
+        public final Identifier getDisplayIcon()
         {
-            return ResourceLocation.parse(getDisplayIconFile());
+            return Identifier.parse(getDisplayIconFile());
         }
 
         protected abstract String getDisplayIconFile();
@@ -766,9 +766,9 @@ public final class StandardRequests
             {
                 burnableExamples = ImmutableList.copyOf(IColonyManager.getInstance()
                                                           .getCompatibilityManager()
-                                                          .getListOfAllItems()
+                                                          .getFuel()
                                                           .stream()
-                                                          .filter(FurnaceBlockEntity::isFuel)
+                                                          .map(ItemStorage::getItemStack)
                                                           .collect(Collectors.toList()));
             }
 

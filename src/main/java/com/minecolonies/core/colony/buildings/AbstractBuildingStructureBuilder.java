@@ -10,7 +10,7 @@ import com.minecolonies.api.equipment.ModEquipmentTypes;
 import com.minecolonies.api.equipment.registry.EquipmentTypeEntry;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.Tuple;
+import com.ldtteam.structurize.api.util.Tuple;
 import com.minecolonies.core.colony.buildings.modules.BuildingModules;
 import com.minecolonies.core.colony.buildings.modules.BuildingResourcesModule;
 import com.minecolonies.core.colony.buildings.modules.WorkerBuildingModule;
@@ -104,7 +104,7 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuilding
         if (inventory)
         {
             final int hashCode = stack.getComponentsPatch().hashCode();
-            final String key = stack.getDescriptionId() + "-" + hashCode;
+            final String key = stack.getItem().getDescriptionId() + "-" + hashCode;
             if (getRequiredResources() != null && getRequiredResources().getResourceMap().containsKey(key))
             {
                 final int qtyToKeep = getRequiredResources().getResourceMap().get(key);
@@ -183,14 +183,14 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuilding
     }
 
     @Override
-    public Map<Predicate<ItemStack>, net.minecraft.util.Tuple<Integer, Boolean>> getRequiredItemsAndAmount()
+    public Map<Predicate<ItemStack>, com.ldtteam.structurize.api.util.Tuple<Integer, Boolean>> getRequiredItemsAndAmount()
     {
-        final Map<Predicate<ItemStack>, net.minecraft.util.Tuple<Integer, Boolean>> toKeep = new HashMap<>(super.getRequiredItemsAndAmount());
+        final Map<Predicate<ItemStack>, com.ldtteam.structurize.api.util.Tuple<Integer, Boolean>> toKeep = new HashMap<>(super.getRequiredItemsAndAmount());
 
         for (final BuildingBuilderResource stack : getModule(BuildingModules.BUILDING_RESOURCES).getNeededResources().values())
         {
             toKeep.put(itemstack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack.getItemStack(), itemstack),
-              new net.minecraft.util.Tuple<>(stack.getAmount(), true));
+              new com.ldtteam.structurize.api.util.Tuple<>(stack.getAmount(), true));
         }
 
         return toKeep;
@@ -215,7 +215,7 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuilding
         if (compound.contains(TAG_PROGRESS_POS))
         {
             progressPos = BlockPosUtil.read(compound, TAG_PROGRESS_POS);
-            progressStage = BuildingProgressStage.values()[compound.getInt(TAG_PROGRESS_STAGE)];
+            progressStage = BuildingProgressStage.values()[compound.getIntOr(TAG_PROGRESS_STAGE, 0)];
         }
 
         if (compound.contains(TAG_FLUIDS_REMOVE))
@@ -223,7 +223,7 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuilding
             fluidsToRemove.clear();
             ListTag fluidsToRemove = (ListTag) compound.get(TAG_FLUIDS_REMOVE);
             fluidsToRemove.forEach(fluidsRemove -> {
-                int y = ((CompoundTag) fluidsRemove).getInt(TAG_FLUIDS_REMOVE_Y);
+                int y = ((CompoundTag) fluidsRemove).getIntOr(TAG_FLUIDS_REMOVE_Y, 0);
                 ListTag positions = (ListTag) ((CompoundTag) fluidsRemove).get(TAG_FLUIDS_REMOVE_POSITIONS);
                 final List<BlockPos> fluids = new ArrayList<BlockPos>();
                 for (int i = 0; i < positions.size(); i++)
@@ -236,7 +236,7 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuilding
 
         if (compound.contains(TAG_WORK_ORDER))
         {
-            this.workOrderId = compound.getInt(TAG_WORK_ORDER);
+            this.workOrderId = compound.getIntOr(TAG_WORK_ORDER, 0);
         }
     }
 
@@ -313,7 +313,7 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuilding
     public boolean hasResourceInBucket(final ItemStack stack)
     {
         final int hashCode = stack.getComponentsPatch().hashCode();
-        final String key = stack.getDescriptionId() + "-" + hashCode;
+        final String key = stack.getItem().getDescriptionId() + "-" + hashCode;
         return getRequiredResources() != null && getRequiredResources().getResourceMap().containsKey(key);
     }
 

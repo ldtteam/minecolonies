@@ -2,7 +2,7 @@ package com.minecolonies.core.colony.jobs;
 
 import com.minecolonies.core.colony.buildings.modules.BuildingModules;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import com.minecolonies.api.client.render.modeltype.ModModelTypes;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
@@ -61,7 +61,7 @@ public class JobLumberjack extends AbstractJobCrafter<EntityAIWorkLumberjack, Jo
 
     @NotNull
     @Override
-    public ResourceLocation getModel()
+    public Identifier getModel()
     {
         return ModModelTypes.LUMBERJACK_ID;
     }
@@ -72,7 +72,7 @@ public class JobLumberjack extends AbstractJobCrafter<EntityAIWorkLumberjack, Jo
         super.deserializeNBT(provider, compound);
         if (compound.contains(TAG_TREE))
         {
-            tree = Tree.read(provider, compound.getCompound(TAG_TREE));
+            tree = Tree.read(provider, compound.getCompoundOrEmpty(TAG_TREE));
             if (!tree.isTree())
             {
                 tree = null;

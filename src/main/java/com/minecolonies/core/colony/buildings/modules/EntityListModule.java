@@ -10,7 +10,7 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
@@ -29,7 +29,7 @@ public class EntityListModule extends AbstractBuildingModule implements IEntityL
     /**
      * List of allowed items.
      */
-    private final Set<ResourceLocation> mobsAllowed = new HashSet<>();
+    private final Set<Identifier> mobsAllowed = new HashSet<>();
 
     /**
      * Unique id of this module.
@@ -51,13 +51,13 @@ public class EntityListModule extends AbstractBuildingModule implements IEntityL
     {
         if (compound.contains(id))
         {
-            compound = compound.getCompound(id);
+            compound = compound.getCompoundOrEmpty(id);
         }
 
-        final ListTag filterableList = compound.getList(TAG_MOBLIST, Tag.TAG_STRING);
+        final ListTag filterableList = compound.getListOrEmpty(TAG_MOBLIST);
         for (int i = 0; i < filterableList.size(); ++i)
         {
-            final ResourceLocation res = ResourceLocation.parse(filterableList.getString(i));
+            final Identifier res = Identifier.parse(filterableList.getStringOr(i, ""));
             if (BuiltInRegistries.ENTITY_TYPE.containsKey(res))
             {
                 mobsAllowed.add(res);
@@ -69,7 +69,7 @@ public class EntityListModule extends AbstractBuildingModule implements IEntityL
     public void serializeNBT(@NotNull final HolderLookup.Provider provider, CompoundTag compound)
     {
         @NotNull final ListTag filteredMobs = new ListTag();
-        for (@NotNull final ResourceLocation mob : mobsAllowed)
+        for (@NotNull final Identifier mob : mobsAllowed)
         {
             filteredMobs.add(StringTag.valueOf(mob.toString()));
         }
@@ -77,27 +77,27 @@ public class EntityListModule extends AbstractBuildingModule implements IEntityL
     }
 
     @Override
-    public void addEntity(final ResourceLocation item)
+    public void addEntity(final Identifier item)
     {
         mobsAllowed.add(item);
         markDirty();
     }
 
     @Override
-    public boolean isEntityInList(final ResourceLocation entity)
+    public boolean isEntityInList(final Identifier entity)
     {
         return mobsAllowed.contains(entity);
     }
 
     @Override
-    public void removeEntity(final ResourceLocation item)
+    public void removeEntity(final Identifier item)
     {
         mobsAllowed.remove(item);
         markDirty();
     }
 
     @Override
-    public ImmutableList<ResourceLocation> getList()
+    public ImmutableList<Identifier> getList()
     {
         return ImmutableList.copyOf(mobsAllowed);
     }
@@ -112,9 +112,9 @@ public class EntityListModule extends AbstractBuildingModule implements IEntityL
     public void serializeToView(@NotNull final RegistryFriendlyByteBuf buf)
     {
         buf.writeInt(mobsAllowed.size());
-        for (final ResourceLocation entity : mobsAllowed)
+        for (final Identifier entity : mobsAllowed)
         {
-            buf.writeResourceLocation(entity);
+            buf.writeIdentifier(entity);
         }
     }
 

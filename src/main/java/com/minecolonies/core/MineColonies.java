@@ -2,7 +2,7 @@ package com.minecolonies.core;
 
 import com.ldtteam.common.config.Configurations;
 import com.ldtteam.common.language.LanguageHandler;
-import com.ldtteam.structurize.api.TagManager;
+import com.ldtteam.structurize.util.TagManager;
 import com.ldtteam.structurize.storage.SurvivalBlueprintHandlers;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.advancements.AdvancementTriggers;
@@ -22,6 +22,7 @@ import com.minecolonies.api.loot.ModLootConditions;
 import com.minecolonies.api.sounds.ModSoundEvents;
 import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
 import com.minecolonies.api.util.IItemHandlerCapProvider;
+import com.minecolonies.api.util.capability.ItemHandlerResourceHandlerAdapter;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.SchematicTagConstants;
@@ -33,7 +34,6 @@ import com.minecolonies.core.blocks.BlockPlantationField;
 import com.minecolonies.core.blocks.huts.BlockHutGateHouse;
 import com.minecolonies.core.blocks.huts.BlockHutMiner;
 import com.minecolonies.core.blocks.huts.BlockHutSchool;
-import com.minecolonies.core.client.render.SpearItemTileEntityRenderer;
 import com.minecolonies.core.colony.crafting.CustomRecipeManagerMessage;
 import com.minecolonies.core.colony.requestsystem.init.RequestSystemInitializer;
 import com.minecolonies.core.colony.requestsystem.init.StandardFactoryControllerInitializer;
@@ -44,6 +44,7 @@ import com.minecolonies.core.debug.messages.DebugOutputMessage;
 import com.minecolonies.core.debug.messages.QueryCitizenAIHistoryMessage;
 import com.minecolonies.core.entity.mobs.EntityMercenary;
 import com.minecolonies.core.event.*;
+import com.minecolonies.core.gametest.MinecoloniesGameTestRegistrar;
 import com.minecolonies.core.network.messages.PermissionsMessage;
 import com.minecolonies.core.network.messages.client.*;
 import com.minecolonies.core.network.messages.client.colony.*;
@@ -71,8 +72,7 @@ import com.minecolonies.core.placementhandlers.main.SuppliesHandler;
 import com.minecolonies.core.placementhandlers.main.SurvivalHandler;
 import com.minecolonies.core.research.GlobalResearchTreeMessage;
 import com.minecolonies.core.structures.MineColoniesStructures;
-import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
-import net.minecraft.world.entity.animal.horse.Horse;
+import net.minecraft.world.entity.animal.equine.Horse;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.IEventBus;
@@ -82,11 +82,10 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.fml.event.lifecycle.FMLLoadCompleteEvent;
 import net.neoforged.fml.javafmlmod.FMLModContainer;
-import net.neoforged.neoforge.capabilities.Capabilities.ItemHandler;
+import net.neoforged.neoforge.capabilities.Capabilities.Item;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
-import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
-import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
 import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.DefaultDataComponentsBoundEvent;
 import net.neoforged.neoforge.event.TagsUpdatedEvent;
 import net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
@@ -135,7 +134,6 @@ public class MineColonies
         ModInteractionsInitializer.DEFERRED_REGISTER.register(modBus);
         ModResearchEffectInitializer.DEFERRED_REGISTER.register(modBus);
         ModLootConditions.DEFERRED_REGISTER.register(modBus);
-        ModItemsInitializer.DEFERRED_REGISTER.register(modBus);
         ModEquipmentTypes.DEFERRED_REGISTER.register(modBus);
 
         ModQuestInitializer.DEFERRED_REGISTER_OBJECTIVE.register(modBus);
@@ -150,8 +148,16 @@ public class MineColonies
 
         Consumer<TagsUpdatedEvent> onTagsLoaded = (event) -> ModTags.tagsLoaded = true;
         NeoForge.EVENT_BUS.addListener(onTagsLoaded);
+        forgeBus.addListener(DefaultDataComponentsBoundEvent.class, event -> {
+            if (event.shouldUpdateStaticData())
+            {
+                ModEquipmentTypes.initRegisterEquipmentTiers();
+            }
+        });
 
         forgeBus.register(EventHandler.class);
+        forgeBus.register(EconomyEventHandler.class);
+        forgeBus.register(QuestObjectiveEventHandler.class);
         forgeBus.register(FMLEventHandler.class);
         forgeBus.register(DataPackSyncEventHandler.ServerEvents.class);
         if (dist.isClient())
@@ -185,7 +191,13 @@ public class MineColonies
              }
         }
 
-        modBus.addListener(GatherDataHandler::dataGeneratorSetup);
+        modBus.addListener(GatherDataHandler::dataGeneratorSetupServer);
+        modBus.addListener(GatherDataHandler::dataGeneratorSetupClient);
+        if (Boolean.getBoolean("neoforge.enableGameTest")
+              || System.getProperty("forge.enabledGameTestNamespaces", "").contains(Constants.MOD_ID))
+        {
+            modBus.addListener(new MinecoloniesGameTestRegistrar());
+        }
 
         modBus.register(this.getClass());
 
@@ -198,8 +210,11 @@ public class MineColonies
 
         MineColoniesStructures.DEFERRED_REGISTRY_STRUCTURE.register(modBus);
 
-        SurvivalBlueprintHandlers.registerHandler(new SurvivalHandler());
-        SurvivalBlueprintHandlers.registerHandler(new SuppliesHandler());
+        if (dist.isClient())
+        {
+            SurvivalBlueprintHandlers.registerHandler(new SurvivalHandler());
+            SurvivalBlueprintHandlers.registerHandler(new SuppliesHandler());
+        }
 
         logIncompatibilities();
     }
@@ -222,7 +237,6 @@ public class MineColonies
 
         event.enqueueWork(ModLootConditions::init);
         event.enqueueWork(ModTags::init);
-        event.enqueueWork(ModEquipmentTypes::initRegisterEquipmentTiers);
     }
 
     /**
@@ -233,16 +247,24 @@ public class MineColonies
     {
         // only register LivingEntities that have our own capability provider
         // barbs (pirates, etc.) have cap registered automatically by forge
-        event.registerEntity(ItemHandler.ENTITY, ModEntities.CITIZEN, IItemHandlerCapProvider::getItemHandlerCap);
-        event.registerEntity(ItemHandler.ENTITY, ModEntities.VISITOR, IItemHandlerCapProvider::getItemHandlerCap);
+        event.registerEntity(Item.ENTITY, ModEntities.CITIZEN,
+          (entity, nothing) -> ItemHandlerResourceHandlerAdapter.of(entity.getItemHandlerCap()));
+        event.registerEntity(Item.ENTITY, ModEntities.VISITOR,
+          (entity, nothing) -> ItemHandlerResourceHandlerAdapter.of(entity.getItemHandlerCap()));
 
         // BUILDING includes types: WAREHOUSE, ENCHANTER, STASH
-        event.registerBlockEntity(ItemHandler.BLOCK, MinecoloniesTileEntities.BUILDING.get(), IItemHandlerCapProvider::getItemHandlerCap);
-        event.registerBlockEntity(ItemHandler.BLOCK, MinecoloniesTileEntities.ENCHANTER.get(), IItemHandlerCapProvider::getItemHandlerCap);
-        event.registerBlockEntity(ItemHandler.BLOCK, MinecoloniesTileEntities.RACK.get(), IItemHandlerCapProvider::getItemHandlerCap);
-        event.registerBlockEntity(ItemHandler.BLOCK, MinecoloniesTileEntities.GRAVE.get(), IItemHandlerCapProvider::getItemHandlerCap);
-        event.registerBlockEntity(ItemHandler.BLOCK, MinecoloniesTileEntities.WAREHOUSE.get(), IItemHandlerCapProvider::getItemHandlerCap);
-        event.registerBlockEntity(ItemHandler.BLOCK, MinecoloniesTileEntities.STASH.get(), IItemHandlerCapProvider::getItemHandlerCap);
+        event.registerBlockEntity(Item.BLOCK, MinecoloniesTileEntities.BUILDING.get(),
+          (blockEntity, direction) -> ItemHandlerResourceHandlerAdapter.of(blockEntity.getItemHandlerCap(direction)));
+        event.registerBlockEntity(Item.BLOCK, MinecoloniesTileEntities.ENCHANTER.get(),
+          (blockEntity, direction) -> ItemHandlerResourceHandlerAdapter.of(blockEntity.getItemHandlerCap(direction)));
+        event.registerBlockEntity(Item.BLOCK, MinecoloniesTileEntities.RACK.get(),
+          (blockEntity, direction) -> ItemHandlerResourceHandlerAdapter.of(blockEntity.getItemHandlerCap(direction)));
+        event.registerBlockEntity(Item.BLOCK, MinecoloniesTileEntities.GRAVE.get(),
+          (blockEntity, direction) -> ItemHandlerResourceHandlerAdapter.of(blockEntity.getItemHandlerCap(direction)));
+        event.registerBlockEntity(Item.BLOCK, MinecoloniesTileEntities.WAREHOUSE.get(),
+          (blockEntity, direction) -> ItemHandlerResourceHandlerAdapter.of(blockEntity.getItemHandlerCap(direction)));
+        event.registerBlockEntity(Item.BLOCK, MinecoloniesTileEntities.STASH.get(),
+          (blockEntity, direction) -> ItemHandlerResourceHandlerAdapter.of(blockEntity.getItemHandlerCap(direction)));
     }
 
     @SubscribeEvent
@@ -478,19 +500,6 @@ public class MineColonies
 
         // Item Setting message
         ItemSettingMessage.TYPE.register(registry);
-    }
-
-    @SubscribeEvent
-    static void onRegisterClientExtensions(RegisterClientExtensionsEvent event)
-    {
-        event.registerItem(new IClientItemExtensions() {
-            @NotNull
-            @Override
-            public BlockEntityWithoutLevelRenderer getCustomRenderer()
-            {
-                return new SpearItemTileEntityRenderer();
-            }
-        }, ModItems.spear);
     }
 
     /**

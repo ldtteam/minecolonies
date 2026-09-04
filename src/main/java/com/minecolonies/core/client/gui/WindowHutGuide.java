@@ -3,7 +3,7 @@ package com.minecolonies.core.client.gui;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.client.gui.huts.WindowHutBuilderModule;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingBuilder;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import static com.minecolonies.api.util.constant.WindowConstants.GUIDE_CLOSE;
 import static com.minecolonies.api.util.constant.WindowConstants.GUIDE_CONFIRM;
@@ -13,7 +13,7 @@ import static com.minecolonies.api.util.constant.WindowConstants.GUIDE_CONFIRM;
  */
 public class WindowHutGuide extends AbstractWindowSkeleton
 {
-    public static final ResourceLocation WINDOW_ID = new ResourceLocation(Constants.MOD_ID, "gui/windowhutguide.xml");
+    public static final Identifier WINDOW_ID = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "gui/windowhutguide.xml");
 
     /**
      * Color constants for builder list.

@@ -1,0 +1,38 @@
+{
+  "model": {
+    "type": "minecraft:select",
+    "cases": [
+      {
+        "model": {
+          "type": "minecraft:model",
+          "model": "minecolonies:item/spear_gui"
+        },
+        "when": [
+          "gui",
+          "ground",
+          "fixed",
+          "on_shelf"
+        ]
+      }
+    ],
+    "fallback": {
+      "type": "minecraft:condition",
+      "on_false": {
+        "type": "minecraft:special",
+        "base": "minecolonies:item/spear_in_hand",
+        "model": {
+          "type": "minecolonies:spear"
+        }
+      },
+      "on_true": {
+        "type": "minecraft:special",
+        "base": "minecolonies:item/spear_throwing",
+        "model": {
+          "type": "minecolonies:spear"
+        }
+      },
+      "property": "minecraft:using_item"
+    },
+    "property": "minecraft:display_context"
+  }
+}

@@ -1,4 +1,5 @@
 package com.minecolonies.core.compatibility;
+import net.minecraft.core.component.DataComponents;
 
 import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.colony.IColonyManager;
@@ -19,12 +20,14 @@ import com.minecolonies.core.colony.buildings.modules.AnimalHerdingModule;
 import com.minecolonies.core.colony.buildings.modules.SimpleCraftingModule;
 import com.minecolonies.core.colony.crafting.*;
 import com.minecolonies.core.util.SchemAnalyzerUtil;
+import net.minecraft.core.Holder;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.food.FoodProperties;
@@ -132,7 +135,7 @@ public class CraftingTagAuditor
         {
             writeItemData(writer, item);
 
-            item.getTags()
+            BuiltInRegistries.ITEM.wrapAsHolder(item.getItem()).tags()
                     .map(t -> t.location().toString())
                     .sorted()
                     .forEach(t ->
@@ -158,9 +161,9 @@ public class CraftingTagAuditor
         writer.newLine();
 
         for (final Map.Entry<ResourceKey<Block>, Block> entry : BuiltInRegistries.BLOCK.entrySet()
-                .stream().sorted(Comparator.comparing(e -> e.getKey().location().toString())).toList())
+                .stream().sorted(Comparator.comparing(e -> e.getKey().identifier().toString())).toList())
         {
-            writer.write(entry.getKey().location().toString());
+            writer.write(entry.getKey().identifier().toString());
             writer.write(',');
             writer.write('"');
             writer.write(Component.translatableEscape(entry.getValue().getDescriptionId()).getString().replace("\"", "\"\""));
@@ -186,26 +189,26 @@ public class CraftingTagAuditor
         writer.write("block,name,path,climbable,dangerous");
         writer.newLine();
 
-        for (final Map.Entry<ResourceKey<Block>, Block> entry : server.registryAccess().registryOrThrow(Registries.BLOCK).entrySet()
-                .stream().sorted(Comparator.comparing(e -> e.getKey().location().toString())).toList())
+        for (final Holder.Reference<Block> entry : server.registryAccess().lookupOrThrow(Registries.BLOCK)
+                .listElements().sorted(Comparator.comparing(item -> item.key().identifier().toString())).toList())
         {
-            writer.write(entry.getKey().location().toString());
+            writer.write(entry.getKey().identifier().toString());
             writer.write(',');
             writer.write('"');
-            writer.write(Component.translatable(entry.getValue().getDescriptionId()).getString().replace("\"", "\"\""));
+            writer.write(Component.translatable(entry.value().getDescriptionId()).getString().replace("\"", "\"\""));
             writer.write('"');
             writer.write(',');
-            if (entry.getValue().defaultBlockState().is(ModTags.pathingBlocks))
+            if (entry.value().defaultBlockState().is(ModTags.pathingBlocks))
             {
                 writer.write("path");
             }
             writer.write(',');
-            if (entry.getValue().defaultBlockState().is(ModTags.freeClimbBlocks))
+            if (entry.value().defaultBlockState().is(ModTags.freeClimbBlocks))
             {
                 writer.write("climb");
             }
             writer.write(',');
-            if (entry.getValue().defaultBlockState().is(ModTags.dangerousBlocks))
+            if (entry.value().defaultBlockState().is(ModTags.dangerousBlocks))
             {
                 writer.write("danger");
             }
@@ -219,18 +222,18 @@ public class CraftingTagAuditor
         writer.write("block,name,score,tier0,tier1,tier2,tier3,tier4,tier5,tier6");
         writer.newLine();
 
-        for (final Map.Entry<ResourceKey<Block>, Block> entry : server.registryAccess().registryOrThrow(Registries.BLOCK).entrySet()
-            .stream().sorted(Comparator.comparing(e -> e.getKey().location().toString())).toList())
+        for (final Holder.Reference<Block> entry : server.registryAccess().lookupOrThrow(Registries.BLOCK)
+            .listElements().sorted(Comparator.comparing(item -> item.key().identifier().toString())).toList())
         {
-            writer.write(entry.getKey().location().toString());
+            writer.write(entry.getKey().identifier().toString());
             writer.write(',');
             writer.write('"');
-            writer.write(Component.translatable(entry.getValue().getDescriptionId()).getString().replace("\"", "\"\""));
+            writer.write(Component.translatable(entry.value().getDescriptionId()).getString().replace("\"", "\"\""));
             writer.write('"');
             writer.write(',');
-            writer.write(String.valueOf(SchemAnalyzerUtil.getScoreFor(entry.getValue())));
+            writer.write(String.valueOf(SchemAnalyzerUtil.getScoreFor(entry.value())));
             writer.write(',');
-            final int tier = Math.max(0, Math.min(6, SchemAnalyzerUtil.getBlockTier(entry.getValue())));
+            final int tier = Math.max(0, Math.min(6, SchemAnalyzerUtil.getBlockTier(entry.value())));
             writer.write(",".repeat(tier));
             writer.write(tier == 0 ? "-" : "*".repeat(tier));
             writer.newLine();
@@ -243,17 +246,15 @@ public class CraftingTagAuditor
         writer.write("biome,name,tags...");
         writer.newLine();
 
-        final Registry<Biome> biomes = server.registryAccess().registry(Registries.BIOME).orElse(null);
-        if (biomes == null) { return; }
-
-        for (final ResourceLocation id : biomes.keySet().stream().sorted().toList())
+        final HolderLookup.RegistryLookup<Biome> biomes = server.registryAccess().lookupOrThrow(Registries.BIOME);
+        for (final Identifier id : biomes.listElementIds().map(ResourceKey::identifier).sorted().toList())
         {
             writer.write(id.toString());
             writer.write(',');
             writer.write('"');
             writer.write(Component.translatable(id.toLanguageKey("biome")).getString().replace("\"", "\"\""));
             writer.write('"');
-            biomes.getHolder(ResourceKey.create(biomes.key(), id)).ifPresent(holder ->
+            biomes.get(ResourceKey.create(Registries.BIOME, id)).ifPresent(holder ->
                     holder.tags()
                         .map(t -> t.location().toString())
                         .sorted()
@@ -452,7 +453,7 @@ public class CraftingTagAuditor
         {
             if (!ItemStackUtils.ISFOOD.test(item)) continue;
 
-            final FoodProperties properties = item.getItem().getFoodProperties(item, null);
+            final FoodProperties properties = item.get(DataComponents.FOOD);
             if (properties == null) continue;
 
             writeItemData(writer, item);
@@ -471,7 +472,7 @@ public class CraftingTagAuditor
             writer.write(',');
             writer.write(Double.toString(FULL_SATURATION / FoodUtils.getFoodValue(item, properties, 0)));
             writer.write(',');
-            writer.write('"' + item.getTags()
+            writer.write('"' + BuiltInRegistries.ITEM.wrapAsHolder(item.getItem()).tags()
                 .map(t -> t.location().toString())
                 .sorted()
                 .collect(Collectors.joining(",")) + '"');

@@ -3,15 +3,15 @@
   "costs": [
     {
       "count": 16,
-      "item": "minecraft:bamboo"
+      "ingredient": "minecraft:bamboo"
     },
     {
       "count": 16,
-      "item": "minecraft:cocoa_beans"
+      "ingredient": "minecraft:cocoa_beans"
     },
     {
       "count": 16,
-      "item": "minecraft:vine"
+      "ingredient": "minecraft:vine"
     }
   ],
   "effects": [

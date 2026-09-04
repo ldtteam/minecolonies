@@ -4,16 +4,17 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.crafting.ModCraftingTypes;
 import com.minecolonies.api.inventory.container.ContainerCraftingBrewingstand;
+import com.ldtteam.blockui.UiRenderMacros;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.core.colony.buildings.moduleviews.CraftingModuleView;
 import com.minecolonies.core.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.core.network.messages.server.colony.building.worker.AddRemoveRecipeMessage;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
@@ -31,7 +32,7 @@ import static com.minecolonies.api.util.constant.translation.BaseGameTranslation
  */
 public class WindowBrewingstandCrafting extends AbstractContainerScreen<ContainerCraftingBrewingstand>
 {
-    private static final ResourceLocation BREWING_STAND_LOCATION = ResourceLocation.withDefaultNamespace("textures/gui/container/brewing_stand.png");
+    private static final Identifier BREWING_STAND_LOCATION = Identifier.withDefaultNamespace("textures/gui/container/brewing_stand.png");
 
     /**
      * X offset of the button.
@@ -130,18 +131,22 @@ public class WindowBrewingstandCrafting extends AbstractContainerScreen<Containe
     }
 
     @Override
-    public void render(@NotNull final GuiGraphics stack, int x, int y, float z)
+    public void extractRenderState(@NotNull final GuiGraphicsExtractor stack, int x, int y, float z)
     {
-        super.render(stack, x, y, z);
-        this.renderTooltip(stack, x, y);
+        super.extractRenderState(stack, x, y, z);
+        // tooltip extraction is handled by AbstractContainerScreen;
     }
 
-    protected void renderBg(@NotNull final GuiGraphics stack, final float partialTicks, final int mouseX, final int mouseY)
+    @Override
+    public void extractBackground(@NotNull final GuiGraphicsExtractor stack, final int mouseX, final int mouseY, final float partialTicks)
     {
-        stack.blit(BREWING_STAND_LOCATION, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight);
+        super.extractBackground(stack, mouseX, mouseY, partialTicks);
+        UiRenderMacros.blit(stack, BREWING_STAND_LOCATION, this.leftPos, this.topPos,
+            this.imageWidth, this.imageHeight, 0, 0, 256, 256);
         int l = Mth.clamp((20 - 1) / 20, 0, 18);
         if (l > 0) {
-            stack.blit(BREWING_STAND_LOCATION, mouseX + 60, mouseY + 44, 176, 29, l, 4);
+            UiRenderMacros.blit(stack, BREWING_STAND_LOCATION, mouseX + 60, mouseY + 44,
+                l, 4, 176, 29, 256, 256);
         }
     }
 }

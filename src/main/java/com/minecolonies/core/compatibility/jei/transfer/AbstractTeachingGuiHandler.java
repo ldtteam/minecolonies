@@ -10,7 +10,7 @@ import mezz.jei.api.ingredients.ITypedIngredient;
 import mezz.jei.api.registration.IGuiHandlerRegistration;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.Rect2i;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
 public abstract class AbstractTeachingGuiHandler<W extends AbstractContainerScreen<?>> implements IGuiContainerHandler<W>, IGhostIngredientHandler<W>
 {
     @NotNull
-    private final Map<ResourceLocation, JobBasedRecipeCategory<?>> categories;
+    private final Map<Identifier, JobBasedRecipeCategory<?>> categories;
 
     protected AbstractTeachingGuiHandler(@NotNull final List<JobBasedRecipeCategory<?>> categories)
     {
@@ -57,7 +57,7 @@ public abstract class AbstractTeachingGuiHandler<W extends AbstractContainerScre
             final JobEntry jobEntry = moduleView.getJobEntry();
             if (jobEntry != null)
             {
-                final ResourceLocation uid = jobEntry.getKey();
+                final Identifier uid = jobEntry.getKey();
                 final JobBasedRecipeCategory<?> category = this.categories.get(uid);
                 if (category != null)
                 {

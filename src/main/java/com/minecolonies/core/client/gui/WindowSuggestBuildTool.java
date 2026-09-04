@@ -7,7 +7,7 @@ import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.network.messages.server.DirectPlaceMessage;
 import com.minecolonies.core.network.messages.server.SwitchBuildingWithToolMessage;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.item.ItemStack;
@@ -15,7 +15,8 @@ import net.minecraft.core.BlockPos;
 import net.neoforged.neoforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
-import static com.ldtteam.structurize.api.constants.Constants.GROUNDSTYLE_RELATIVE;
+import static com.ldtteam.structurize.api.util.constant.Constants.GROUNDSTYLE_RELATIVE;
+import static com.ldtteam.structurize.client.gui.WindowExtendedBuildTool.BLOCK_BLUEPRINT_REQUIREMENT;
 import static com.minecolonies.api.util.constant.TranslationConstants.WARNING_MISSING_BUILD_TOOL;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 
@@ -51,7 +52,7 @@ public class WindowSuggestBuildTool extends AbstractWindowSkeleton
      */
     public WindowSuggestBuildTool(@NotNull final BlockPos pos, @NotNull final BlockState state, @NotNull final ItemStack stack)
     {
-        super(new ResourceLocation(Constants.MOD_ID, "gui/windowsuggestbuildtool.xml"));
+        super(Identifier.fromNamespaceAndPath(Constants.MOD_ID, "gui/windowsuggestbuildtool.xml"));
         this.pos = pos;
         this.building = state;
         this.stack = stack;
@@ -77,7 +78,7 @@ public class WindowSuggestBuildTool extends AbstractWindowSkeleton
         if (InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(Minecraft.getInstance().player.getInventory()), ModItems.buildTool.get()) != -1)
         {
             new SwitchBuildingWithToolMessage(stack).sendToServer();
-            new WindowExtendedBuildTool(this.pos, GROUNDSTYLE_RELATIVE, mc.level.registryAccess()).open();
+            new WindowExtendedBuildTool(this.pos, GROUNDSTYLE_RELATIVE, null, BLOCK_BLUEPRINT_REQUIREMENT).open();
             return;
         }
         MessageUtils.format(WARNING_MISSING_BUILD_TOOL).sendTo(Minecraft.getInstance().player);

@@ -2,9 +2,9 @@ package com.minecolonies.api.colony.colonyEvents;
 
 import com.minecolonies.api.colony.IColony;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.neoforged.neoforge.common.util.INBTSerializable;
+import com.minecolonies.api.util.INBTSerializable;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -38,7 +38,7 @@ public interface IColonyEvent extends INBTSerializable<CompoundTag>
      *
      * @return the event type id.
      */
-    ResourceLocation getEventTypeID();
+    Identifier getEventTypeID();
 
     /**
      * Sets the colony

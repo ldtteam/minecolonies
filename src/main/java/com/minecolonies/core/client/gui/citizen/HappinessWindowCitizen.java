@@ -2,7 +2,7 @@ package com.minecolonies.core.client.gui.citizen;
 
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.util.constant.Constants;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 /**
  * BOWindow for the citizen.
@@ -16,7 +16,7 @@ public class HappinessWindowCitizen extends AbstractWindowCitizen
      */
     public HappinessWindowCitizen(final ICitizenDataView citizen)
     {
-        super(citizen, new ResourceLocation(Constants.MOD_ID, "gui/citizen/happiness.xml"));
+        super(citizen, Identifier.fromNamespaceAndPath(Constants.MOD_ID, "gui/citizen/happiness.xml"));
     }
 
     /**

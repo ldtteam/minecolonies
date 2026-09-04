@@ -1,10 +1,9 @@
 package com.minecolonies.api.client.render.modeltype;
 
-import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.MineColonies;
 import net.minecraft.client.Minecraft;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDateTime;
@@ -47,7 +46,7 @@ public interface ISimpleModelType extends IModelType
      * @param entityCitizen The citizen in question to get the path.
      * @return The path to the citizen.
      */
-    default ResourceLocation getTexture(@NotNull final AbstractEntityCitizen entityCitizen)
+    default Identifier getTexture(@NotNull final CitizenRenderState renderState)
     {
         if (cachedHalloweenStyle == null)
         {
@@ -63,36 +62,44 @@ public interface ISimpleModelType extends IModelType
             }
         }
 
-        String style = entityCitizen.getEntityData().get(DATA_STYLE);
+        String style = renderState.getCitizen() != null ? renderState.getCitizen().getEntityData().get(DATA_STYLE) : "default";
         if (!cachedHalloweenStyle.isEmpty())
         {
             style = cachedHalloweenStyle;
         }
 
-        final int moddedTextureId = (entityCitizen.getTextureId() % getNumTextures()) + 1;
+        final int moddedTextureId = (renderState.getCitizen().getTextureId() % getNumTextures()) + 1;
         final String textureIdentifier =
-          getName().getPath() + (entityCitizen.isFemale() ? "female" : "male") + moddedTextureId + entityCitizen.getEntityData().get(DATA_TEXTURE_SUFFIX);
-        final ResourceLocation modified = new ResourceLocation(Constants.MOD_ID, BASE_FOLDER + style + "/" + textureIdentifier + ".png");
+          getName().getPath() + (renderState.getCitizen().isFemale() ? "female" : "male") + moddedTextureId
+            + renderState.getCitizen().getEntityData().get(DATA_TEXTURE_SUFFIX);
+        final Identifier modified = Identifier.fromNamespaceAndPath(Constants.MOD_ID, BASE_FOLDER + style + "/" + textureIdentifier + ".png");
         if (Minecraft.getInstance().getResourceManager().getResource(modified).isPresent())
         {
             return modified;
         }
 
-        return new ResourceLocation(Constants.MOD_ID, BASE_FOLDER + DEFAULT_FOLDER + "/" + textureIdentifier + ".png");
+        return Identifier.fromNamespaceAndPath(Constants.MOD_ID, BASE_FOLDER + DEFAULT_FOLDER + "/" + textureIdentifier + ".png");
     }
 
-    default ResourceLocation getTextureIcon(@NotNull final AbstractEntityCitizen entityCitizen)
+    default Identifier getTextureIcon(@NotNull final CitizenRenderState renderState)
     {
-        String style = entityCitizen.getEntityData().get(DATA_STYLE);
+        String style = renderState.getCitizen() != null ? renderState.getCitizen().getEntityData().get(DATA_STYLE) : "default";
         if (cachedHalloweenStyle != null && !cachedHalloweenStyle.isEmpty())
         {
             style = cachedHalloweenStyle;
         }
 
-        final int moddedTextureId = (entityCitizen.getTextureId() % getNumTextures()) + 1;
+        final int moddedTextureId = (renderState.getCitizen().getTextureId() % getNumTextures()) + 1;
         final String textureIdentifier =
-          getTextureBase() + (entityCitizen.isFemale() ? "female" : "male") + moddedTextureId + entityCitizen.getEntityData()
-            .get(DATA_TEXTURE_SUFFIX);
-        return new ResourceLocation(Constants.MOD_ID, "textures/entity_icon/citizen/" + style + "/" + textureIdentifier + ".png");
+          getTextureBase() + (renderState.getCitizen().isFemale() ? "female" : "male") + moddedTextureId
+            + renderState.getCitizen().getEntityData().get(DATA_TEXTURE_SUFFIX);
+        return Identifier.fromNamespaceAndPath(Constants.MOD_ID, "textures/entity_icon/citizen/" + style + "/" + textureIdentifier + ".png");
+    }
+
+    default Identifier getTextureIcon(@NotNull final com.minecolonies.api.entity.citizen.AbstractEntityCitizen citizen)
+    {
+        final CitizenRenderState renderState = new CitizenRenderState();
+        renderState.setCitizen(citizen);
+        return getTextureIcon(renderState);
     }
 }

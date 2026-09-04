@@ -14,7 +14,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.PackOutput;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -54,7 +54,7 @@ public abstract class CustomRecipeProvider implements DataProvider
 
             final PackOutput.PathProvider pathProvider = this.packOutput.createPathProvider(PackOutput.Target.DATA_PACK, "crafterrecipes");
             final List<CompletableFuture<?>> futures = new ArrayList<>();
-            final Set<ResourceLocation> dupeKeyCheck = new HashSet<>();
+            final Set<Identifier> dupeKeyCheck = new HashSet<>();
 
             registerRecipes((recipe) ->
             {
@@ -86,7 +86,7 @@ public abstract class CustomRecipeProvider implements DataProvider
     {
         private final HolderLookup.Provider provider;
         private final JsonObject json = new JsonObject();
-        private final ResourceLocation id;
+        private final Identifier id;
         private Block intermediate = Blocks.AIR;
 
         public CustomRecipeBuilder(final String crafter, final String module, final String id,
@@ -95,7 +95,7 @@ public abstract class CustomRecipeProvider implements DataProvider
             this.provider = provider;
             this.json.addProperty(CustomRecipe.RECIPE_TYPE_PROP, CustomRecipe.RECIPE_TYPE_RECIPE);
             this.json.addProperty(CustomRecipe.RECIPE_CRAFTER_PROP, crafter + "_" + module);
-            this.id = new ResourceLocation(Constants.MOD_ID, crafter + "/" + id);
+            this.id = Identifier.fromNamespaceAndPath(Constants.MOD_ID, crafter + "/" + id);
         }
 
         @NotNull
@@ -121,7 +121,7 @@ public abstract class CustomRecipeProvider implements DataProvider
         }
 
         @NotNull
-        public CustomRecipeBuilder lootTable(@NotNull final ResourceLocation lootTable)
+        public CustomRecipeBuilder lootTable(@NotNull final Identifier lootTable)
         {
             this.json.addProperty(CustomRecipe.RECIPE_LOOTTABLE_PROP, lootTable.toString());
             return this;
@@ -164,7 +164,7 @@ public abstract class CustomRecipeProvider implements DataProvider
          * @param researchId the required research id.
          */
         @NotNull
-        public CustomRecipeBuilder minResearchId(@NotNull final ResourceLocation researchId)
+        public CustomRecipeBuilder minResearchId(@NotNull final Identifier researchId)
         {
             JsonElement ids = this.json.get(CustomRecipe.RECIPE_RESEARCHID_PROP);
             if (ids == null)
@@ -193,7 +193,7 @@ public abstract class CustomRecipeProvider implements DataProvider
          * @param researchId the excluded research id.
          */
         @NotNull
-        public CustomRecipeBuilder maxResearchId(@NotNull final ResourceLocation researchId)
+        public CustomRecipeBuilder maxResearchId(@NotNull final Identifier researchId)
         {
             JsonElement ids = this.json.get(CustomRecipe.RECIPE_EXCLUDED_RESEARCHID_PROP);
             if (ids == null)

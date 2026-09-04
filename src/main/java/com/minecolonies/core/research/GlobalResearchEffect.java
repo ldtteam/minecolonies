@@ -4,7 +4,7 @@ import com.minecolonies.api.research.ModResearchEffects;
 import com.minecolonies.api.research.IResearchEffect;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.contents.TranslatableContents;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -15,7 +15,7 @@ import java.util.List;
 public class GlobalResearchEffect implements IResearchEffect
 {
     /**
-     * The NBT tag for an individual effect's identifier, as a ResourceLocation.
+     * The NBT tag for an individual effect's identifier, as a Identifier.
      */
     private static final String TAG_ID = "id";
 
@@ -42,7 +42,7 @@ public class GlobalResearchEffect implements IResearchEffect
     /**
      * The unique effect Id.
      */
-    private final ResourceLocation id;
+    private final Identifier id;
 
     /**
      * The optional text description of the effect. If empty, a translation key will be derived from id.
@@ -73,7 +73,7 @@ public class GlobalResearchEffect implements IResearchEffect
      * @param effect        the effect's absolute strength.
      * @param displayEffect the effect's relative strength, for display purposes.
      */
-    public GlobalResearchEffect(final ResourceLocation id, final String name, final String subtitle, final double effect, final double displayEffect)
+    public GlobalResearchEffect(final Identifier id, final String name, final String subtitle, final double effect, final double displayEffect)
     {
         this.id = id;
         this.name = new TranslatableContents(name, null, List.of(displayEffect, effect, Math.round(displayEffect * 100), Math.round(effect * 100)).toArray());
@@ -89,11 +89,11 @@ public class GlobalResearchEffect implements IResearchEffect
      */
     public GlobalResearchEffect(final CompoundTag nbt)
     {
-        this.id = ResourceLocation.parse(nbt.getString(TAG_ID));
-        this.effect = nbt.getDouble(TAG_EFFECT);
-        this.displayEffect = nbt.getDouble(TAG_DISPLAY_EFFECT);
-        this.name = new TranslatableContents(nbt.getString(TAG_DESC), null, List.of(displayEffect, effect, Math.round(displayEffect * 100), Math.round(effect * 100)).toArray());
-        this.subtitle = new TranslatableContents(nbt.getString(TAG_SUBTITLE), null, TranslatableContents.NO_ARGS);
+        this.id = Identifier.parse(nbt.getStringOr(TAG_ID, ""));
+        this.effect = nbt.getDoubleOr(TAG_EFFECT, 0.0D);
+        this.displayEffect = nbt.getDoubleOr(TAG_DISPLAY_EFFECT, 0.0D);
+        this.name = new TranslatableContents(nbt.getStringOr(TAG_DESC, ""), null, List.of(displayEffect, effect, Math.round(displayEffect * 100), Math.round(effect * 100)).toArray());
+        this.subtitle = new TranslatableContents(nbt.getStringOr(TAG_SUBTITLE, ""), null, TranslatableContents.NO_ARGS);
     }
 
     @Override
@@ -103,7 +103,7 @@ public class GlobalResearchEffect implements IResearchEffect
     }
 
     @Override
-    public ResourceLocation getId()
+    public Identifier getId()
     {
         return this.id;
     }

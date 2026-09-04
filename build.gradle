@@ -1,5 +1,71 @@
-plugins {
-  id "org.sonarqube" version "3.0"
+tableau {
+    project {
+        group = "com.ldtteam"
+        publisher = "LDTTeam"
+        modId = "minecolonies"
+    }
+
+    maven {
+        publishAsLDTTeamMod()
+        publishLocally()
+        pom({
+            usingGnu3License()
+            usingGit()
+        })
+    }
 }
 
-apply from: 'https://raw.githubusercontent.com/ldtteam/OperaPublicaCreator/ng7/gradle/mod.gradle'
+tasks.withType(JavaCompile).configureEach {
+    options.compilerArgs.addAll(['-Xmaxerrs', '5000', '-Xmaxwarns', '5000'])
+}
+
+// The migrated API docs contain legacy HTML/entities and stale references that
+// are warnings under the MC 26.2 toolchain but otherwise block packaging.
+tasks.withType(Javadoc).configureEach {
+    options.addStringOption('Xdoclint:none', '-Xdoclint:none')
+}
+
+// NeoGradle 7.1.x does not strip @OnlyIn annotations that Vineflower adds back
+// during decompilation for MC 26.x. The NeoForm and UserDev patches expect them
+// removed before nested type declarations.
+tasks.matching { it.name == 'neoFormPatch' }.configureEach {
+    doFirst {
+        def decompileJar = project.file("build/neoForm/neoFormJoined26.2-2/steps/decompile/outputs.jar")
+        if (!decompileJar.exists()) return
+
+        def workDir = new File(project.buildDir, "onlyin-fix")
+        workDir.deleteDir()
+        workDir.mkdirs()
+
+        def zipTree = project.zipTree(decompileJar)
+        def javaFiles = []
+        zipTree.visit { details ->
+            def dest = new File(workDir, details.path)
+            if (details.directory) {
+                return
+            }
+            if (!dest.name.endsWith('.java')) {
+                return
+            }
+
+            dest.parentFile.mkdirs()
+            details.copyTo(dest)
+            javaFiles << dest
+        }
+
+        javaFiles.each { f ->
+            def text = f.text
+            def fixed = text.replaceAll(
+                /(?m)^( +)@OnlyIn\s*\([^)]*\)\n(\1(?:public |private |protected )?(?:static |final |abstract )?(?:class |interface |record |enum |@interface ))/,
+                '$2')
+            fixed = fixed.replaceAll(
+                /(?m)^(\}+)\n( +(?:public|private|protected)\s+(?:static\s+)?(?:class |interface |enum ))/,
+                '$1\n\n$2')
+            if (fixed != text) f.text = fixed
+        }
+
+        def ant = new groovy.ant.AntBuilder()
+        ant.jar(destfile: decompileJar.absolutePath, basedir: workDir, update: true)
+        workDir.deleteDir()
+    }
+}

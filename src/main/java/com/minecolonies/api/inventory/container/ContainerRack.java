@@ -11,7 +11,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.ClickType;
+import net.minecraft.world.inventory.ContainerInput;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.items.IItemHandler;
@@ -146,9 +146,9 @@ public class ContainerRack extends AbstractContainerMenu
     }
 
     @Override
-    public void clicked(int slotId, int dragType, @NotNull ClickType clickTypeIn, Player player)
+    public void clicked(int slotId, int dragType, @NotNull ContainerInput clickTypeIn, Player player)
     {
-        if (player.level().isClientSide || slotId >= inventory.getSlots() || slotId < 0)
+        if (player.level().isClientSide() || slotId >= inventory.getSlots() || slotId < 0)
         {
             super.clicked(slotId, dragType, clickTypeIn, player);
             return;

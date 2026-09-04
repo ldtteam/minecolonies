@@ -168,7 +168,7 @@ public class ReturnToStableGoal extends Goal
      */
     private void validateHomeStable()
     {
-        if (horse.level().isClientSide)
+        if (horse.level().isClientSide())
         {
             return;
         }
@@ -254,7 +254,7 @@ public class ReturnToStableGoal extends Goal
      */
     private boolean canStillRun()
     {
-        return !horse.level().isClientSide
+        return !horse.level().isClientSide()
                  && horse.getControllingPassenger() == null
                  && !horse.hasReservation()
                  && horse.getAnimalData() != null;

@@ -21,11 +21,11 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
-import net.minecraft.util.Tuple;
+import com.ldtteam.structurize.api.util.Tuple;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.alchemy.Potion;
@@ -162,7 +162,7 @@ public final class LootTableAnalyzer
         switch (type)
         {
             case "minecraft:item" -> {
-                final Item item = BuiltInRegistries.ITEM.get(ResourceLocation.parse(GsonHelper.getAsString(entryJson, "name")));
+                final Item item = BuiltInRegistries.ITEM.getValue(Identifier.parse(GsonHelper.getAsString(entryJson, "name")));
                 final float quality = GsonHelper.getAsFloat(entryJson, "quality", 0);
                 float modifier = 1.0F;
                 final JsonArray conditions = GsonHelper.getAsJsonArray(entryJson, "conditions", new JsonArray());
@@ -200,7 +200,7 @@ public final class LootTableAnalyzer
                 else
                 {
                     // loot table reference
-                    final ResourceLocation table = ResourceLocation.parse(value.getAsString());
+                    final Identifier table = Identifier.parse(value.getAsString());
                     tableDrops = toDrops(provider, ResourceKey.create(Registries.LOOT_TABLE, table));
                 }
 
@@ -289,7 +289,9 @@ public final class LootTableAnalyzer
         final AdventureData component = AdventureData.readFromItemStack(token);
         if (component != null)
         {
-            return toDrops(provider, component.entityType().getDefaultLootTable());
+            return component.entityType().getDefaultLootTable()
+                     .map(lootTableId -> toDrops(provider, lootTableId))
+                     .orElse(Collections.emptyList());
         }
         return Collections.emptyList();
     }
@@ -352,7 +354,7 @@ public final class LootTableAnalyzer
 
                     case "minecraft:set_potion":        // SetPotionFunction
                         final String id = GsonHelper.getAsString(function, "id");
-                        final Holder<Potion> potion = BuiltInRegistries.POTION.getHolder(ResourceLocation.tryParse(id)).orElse(null);
+                        final Holder<Potion> potion = BuiltInRegistries.POTION.get(Identifier.tryParse(id)).orElse(null);
                         if (potion != null)
                         {
                             stack.update(DataComponents.POTION_CONTENTS, PotionContents.EMPTY, potion, PotionContents::withPotion);

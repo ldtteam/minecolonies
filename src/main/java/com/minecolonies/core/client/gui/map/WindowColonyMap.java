@@ -5,7 +5,6 @@ import com.google.common.collect.Lists;
 import com.ldtteam.blockui.Pane;
 import com.ldtteam.blockui.PaneBuilders;
 import com.ldtteam.blockui.controls.*;
-import com.ldtteam.blockui.util.resloc.OutOfJarResourceLocation;
 import com.ldtteam.blockui.views.Box;
 import com.ldtteam.blockui.views.View;
 import com.ldtteam.blockui.views.ZoomDragView;
@@ -35,11 +34,11 @@ import com.minecolonies.core.network.messages.client.colony.ColonyListMessage;
 import com.minecolonies.core.network.messages.server.colony.OpenInventoryMessage;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.PlayerSkin;
+import net.minecraft.world.entity.player.PlayerSkin;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
@@ -201,7 +200,7 @@ public class WindowColonyMap extends AbstractWindowSkeleton
      */
     public WindowColonyMap(final boolean atTownHall, final ITownHallView building)
     {
-        super(new ResourceLocation(Constants.MOD_ID, "gui/map/windowcolonymap.xml"));
+        super(Identifier.fromNamespaceAndPath(Constants.MOD_ID, "gui/map/windowcolonymap.xml"));
         this.atTownHall = atTownHall;
         this.building = building;
         playerPos = Minecraft.getInstance().player.blockPosition();
@@ -333,28 +332,21 @@ public class WindowColonyMap extends AbstractWindowSkeleton
                     Image playerImage = findPaneOfTypeByID(player.getStringUUID(), Image.class);
                     if (playerImage == null)
                     {
-                        final ResourceLocation resourceLocation = Minecraft.getInstance().getSkinManager().getInsecureSkin(player.getGameProfile()).texture();
+                        final PlayerSkin skin = Minecraft.getInstance().getSkinManager().createLookup(player.getGameProfile(), true).get();
+                        final Identifier resourceLocation = skin.body().texturePath();
                         if (resourceLocation == null)
                         {
                             continue;
                         }
 
-
-                        OutOfJarResourceLocation.ofMinecraftSkin(Minecraft.getInstance(), player.getGameProfile(), PlayerSkin::texture)
-                            .thenAccept(resLoc ->
-                            {
-                                if (resLoc != null)
-                                {
-                                    Image localPlayerImage = new Image();
-                                    localPlayerImage.setID(player.getStringUUID());
-                                    localPlayerImage.setSize(16,16);
-                                    localPlayerImage.setImage(resLoc, 8,8,8,8);
-                                    dragView.addChild(localPlayerImage);
-                                    PaneBuilders.tooltipBuilder().hoverPane(localPlayerImage)
-                                        .append(Component.literal(player.getDisplayName().getString()))
-                                        .build();
-                                }
-                            });
+                        final Image localPlayerImage = new Image();
+                        localPlayerImage.setID(player.getStringUUID());
+                        localPlayerImage.setSize(16,16);
+                        localPlayerImage.setImage(resourceLocation, 8,8,8,8);
+                        dragView.addChild(localPlayerImage);
+                        PaneBuilders.tooltipBuilder().hoverPane(localPlayerImage)
+                            .append(Component.literal(player.getDisplayName().getString()))
+                            .build();
                     }
                     else
                     {
@@ -461,7 +453,7 @@ public class WindowColonyMap extends AbstractWindowSkeleton
     private void addCenterPos()
     {
         final Image citizenImage = new Image();
-        citizenImage.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/red_wax_home.png"), false);
+        citizenImage.setImage(Identifier.fromNamespaceAndPath(Constants.MOD_ID, "textures/gui/red_wax_home.png"), false);
         citizenImage.setSize(16, 16);
         putPaneTopLeftCornerAtWorldPos(citizenImage, playerPos);
 
@@ -520,7 +512,7 @@ public class WindowColonyMap extends AbstractWindowSkeleton
             if (playerResolvedRequests.size() > 0)
             {
                 statusImage = new Image();
-                statusImage.setImage(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "textures/icons/information.png"), false);
+                statusImage.setImage(Identifier.fromNamespaceAndPath(Constants.MOD_ID, "textures/icons/information.png"), false);
                 statusImage.setSize(STATUS_ICON_SIZE, STATUS_ICON_SIZE);
                 final BlockPos uiPos = worldPosToUIPos(buildingView.getPosition());
                 statusImage.setPosition(uiPos.getX() - uiBuilding.getWidth() / 2, uiPos.getY() - uiBuilding.getHeight() / 2);
@@ -636,7 +628,7 @@ public class WindowColonyMap extends AbstractWindowSkeleton
                 putPaneCenterAtWorldPos(citizenView, citizen.blockPosition());
 
                 final ButtonImage citizenImage = new ButtonImage();
-                citizenImage.setImage(((ISimpleModelType) IModelTypeRegistry.getInstance().getModelType(citizen.getModelType())).getTextureIcon(citizen));
+                  citizenImage.setImage(((ISimpleModelType) IModelTypeRegistry.getInstance().getModelType(citizen.getModelType())).getTextureIcon(citizen));
                 citizenImage.setSize(4, 4);
                 citizenImage.setID("citizen: " + data.getId());
                 registerButton(citizenImage.getID(), button -> {
@@ -672,7 +664,7 @@ public class WindowColonyMap extends AbstractWindowSkeleton
                 if (data.isSick())
                 {
                     final Image sickIcon = new Image();
-                    sickIcon.setImage(new ResourceLocation("minecolonies", "textures/icons/small_sick_icon.png"), false);
+                    sickIcon.setImage(Identifier.fromNamespaceAndPath("minecolonies", "textures/icons/small_sick_icon.png"), false);
                     sickIcon.setSize(4, 8);
                     sickIcon.setPosition(3,-3);
                     citizenView.addChild(sickIcon);
@@ -681,7 +673,7 @@ public class WindowColonyMap extends AbstractWindowSkeleton
                 else if (data.getSaturation() < LOW_SATURATION)
                 {
                     @NotNull final Image saturationIcon = new Image();
-                    saturationIcon.setImage(ResourceLocation.withDefaultNamespace("hud/food_empty"), false);
+                    saturationIcon.setImage(Identifier.withDefaultNamespace("hud/food_empty"), false);
                     saturationIcon.setSize(SATURATION_ICON_HEIGHT_WIDTH, SATURATION_ICON_HEIGHT_WIDTH);
                     saturationIcon.setSize(SATURATION_ICON_HEIGHT_WIDTH, SATURATION_ICON_HEIGHT_WIDTH);
                     saturationIcon.setPosition(3, -3);

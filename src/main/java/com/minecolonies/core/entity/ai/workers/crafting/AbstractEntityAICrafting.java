@@ -1,4 +1,6 @@
 package com.minecolonies.core.entity.ai.workers.crafting;
+import com.minecolonies.api.util.ItemStackUtils;
+import com.ldtteam.structurize.api.util.Tuple;
 
 import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.colony.buildings.IBuilding;
@@ -375,7 +377,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
         final List<ItemStorage> input = currentRecipeStorage.getCleanedInput();
         for (final ItemStorage inputStorage : input)
         {
-            final ItemStack container = inputStorage.getItemStack().getCraftingRemainingItem();
+            final ItemStack container = ItemStackUtils.getCraftingRemainder(inputStorage.getItemStack());
             boolean isToolOrContainer = true;
             final int remaining;
             if (!currentRecipeStorage.getCraftingToolsAndSecondaryOutputs().isEmpty()
@@ -468,7 +470,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
         {
             final Predicate<ItemStack> predicate = stack -> !ItemStackUtils.isEmpty(stack) && new Stack(stack, false).matches(inputStorage.getItemStack());
             final int invCount = InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), predicate) + getExtendedCount(inputStorage.getItemStack());
-            final ItemStack container = inputStorage.getItemStack().getCraftingRemainingItem();
+            final ItemStack container = ItemStackUtils.getCraftingRemainder(inputStorage.getItemStack());
             final int remaining;
             if (!currentRecipeStorage.getCraftingToolsAndSecondaryOutputs().isEmpty()
                   && ItemStackUtils.compareItemStackListIgnoreStackSize(currentRecipeStorage.getCraftingToolsAndSecondaryOutputs(), inputStorage.getItemStack(), false, true))

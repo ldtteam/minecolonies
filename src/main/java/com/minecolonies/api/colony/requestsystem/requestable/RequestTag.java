@@ -9,7 +9,7 @@ import com.minecolonies.api.util.constant.TypeConstants;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
@@ -211,7 +211,7 @@ public class RequestTag implements IDeliverable
         compound.putString(NBT_TAG, input.getTag().location().toString());
         if (!ItemStackUtils.isEmpty(input.getResult()))
         {
-            compound.put(NBT_RESULT, input.getResult().saveOptional(provider));
+            compound.put(NBT_RESULT, ItemStackUtils.serializeOptional(input.getResult(), provider));
         }
         compound.putInt(NBT_COUNT, input.getCount());
         compound.putInt(NBT_MINCOUNT, input.getMinimumCount());
@@ -220,7 +220,7 @@ public class RequestTag implements IDeliverable
 
     public static void serialize(final IFactoryController controller, final RegistryFriendlyByteBuf buffer, final RequestTag input)
     {
-        buffer.writeResourceLocation(input.getTag().location());
+        buffer.writeIdentifier(input.getTag().location());
         buffer.writeBoolean(!ItemStackUtils.isEmpty(input.getResult()));
 
         if (!ItemStackUtils.isEmpty(input.getResult()))
@@ -233,7 +233,7 @@ public class RequestTag implements IDeliverable
 
     public static RequestTag deserialize(final IFactoryController controller, final RegistryFriendlyByteBuf buffer)
     {
-        final TagKey<Item> theTag = ItemTags.create(buffer.readResourceLocation());
+        final TagKey<Item> theTag = ItemTags.create(buffer.readIdentifier());
         final ItemStack result = buffer.readBoolean() ? Utils.deserializeCodecMess(buffer) : ItemStack.EMPTY;
         final int count = buffer.readInt();
         final int minCount = buffer.readInt();
@@ -250,15 +250,15 @@ public class RequestTag implements IDeliverable
      */
     public static RequestTag deserialize(@NotNull final HolderLookup.Provider provider, final IFactoryController controller, final CompoundTag compound)
     {
-        final TagKey<Item> theTag = ItemTags.create(ResourceLocation.parse(compound.getString(NBT_TAG)));
-        final ItemStack result = compound.contains(NBT_RESULT) ? ItemStackUtils.deserializeFromNBT(compound.getCompound(NBT_RESULT), provider) : ItemStackUtils.EMPTY;
+        final TagKey<Item> theTag = ItemTags.create(Identifier.parse(compound.getStringOr(NBT_TAG, "")));
+        final ItemStack result = compound.contains(NBT_RESULT) ? ItemStackUtils.deserializeFromNBT(compound.getCompoundOrEmpty(NBT_RESULT), provider) : ItemStackUtils.EMPTY;
 
-        int count = compound.getInt("size");
+        int count = compound.getIntOr("size", 0);
         int minCount = count;
         if (compound.contains(NBT_COUNT))
         {
-            count = compound.getInt(NBT_COUNT);
-            minCount = compound.getInt(NBT_MINCOUNT);
+            count = compound.getIntOr(NBT_COUNT, 0);
+            minCount = compound.getIntOr(NBT_MINCOUNT, 0);
         }
         return new RequestTag(theTag, result, count, minCount);
     }

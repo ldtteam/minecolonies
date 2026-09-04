@@ -14,7 +14,7 @@ import com.minecolonies.core.colony.buildings.moduleviews.FieldsModuleView;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
@@ -98,7 +98,7 @@ public class FarmFieldsModuleWindow extends AbstractModuleWindow<FieldsModuleVie
      */
     public FarmFieldsModuleWindow(final FieldsModuleView moduleView)
     {
-        super(moduleView, new ResourceLocation(Constants.MOD_ID, "gui/layouthuts/layoutfarmfields.xml"));
+        super(moduleView, Identifier.fromNamespaceAndPath(Constants.MOD_ID, "gui/layouthuts/layoutfarmfields.xml"));
 
         registerButton(TAG_BUTTON_ASSIGNMENT_MODE, this::assignmentModeClicked);
         registerButton(TAG_BUTTON_ASSIGN, this::assignClicked);
@@ -242,13 +242,13 @@ public class FarmFieldsModuleWindow extends AbstractModuleWindow<FieldsModuleVie
     {
         if (isOn)
         {
-            button.setImage(ResourceLocation.parse(TEXTURE_ASSIGN_ON_NORMAL));
-            button.setImageDisabled(ResourceLocation.parse(TEXTURE_ASSIGN_ON_DISABLED));
+            button.setImage(Identifier.parse(TEXTURE_ASSIGN_ON_NORMAL));
+            button.setImageDisabled(Identifier.parse(TEXTURE_ASSIGN_ON_DISABLED));
         }
         else
         {
-            button.setImage(ResourceLocation.parse(TEXTURE_ASSIGN_OFF_NORMAL));
-            button.setImageDisabled(ResourceLocation.parse(TEXTURE_ASSIGN_OFF_DISABLED));
+            button.setImage(Identifier.parse(TEXTURE_ASSIGN_OFF_NORMAL));
+            button.setImageDisabled(Identifier.parse(TEXTURE_ASSIGN_OFF_DISABLED));
         }
     }
 }

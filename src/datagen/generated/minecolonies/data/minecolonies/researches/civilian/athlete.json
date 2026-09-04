@@ -3,7 +3,7 @@
   "costs": [
     {
       "count": 64,
-      "item": "minecraft:rabbit_foot"
+      "ingredient": "minecraft:rabbit_foot"
     }
   ],
   "effects": [

@@ -95,7 +95,7 @@ public class DirectPlaceMessage extends AbstractServerPlayMessage
     @Override
     protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player)
     {
-        final Level world = player.getCommandSenderWorld();
+        final Level world = player.level();
         final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld(world, pos);
         InventoryUtils.reduceStackInItemHandler(new InvWrapper(player.getInventory()), stack);
 
@@ -108,12 +108,12 @@ public class DirectPlaceMessage extends AbstractServerPlayMessage
                 return;
             }
 
-            player.getCommandSenderWorld().setBlockAndUpdate(pos, state);
+            player.level().setBlockAndUpdate(pos, state);
             if (world.getBlockEntity(pos) instanceof final TileEntityColonyBuilding hut)
             {
                 hut.setStructurePack(StructurePacks.selectedPack);
 
-                ServerFutureProcessor.queueBlueprint(new ServerFutureProcessor.BlueprintProcessingData(StructurePacks.findBlueprintFuture(StructurePacks.selectedPack.getName(), blueprint -> blueprint.getBlockState(blueprint.getPrimaryBlockOffset()).getBlock() == state.getBlock(), player.level().registryAccess()), world, (blueprint -> {
+                ServerFutureProcessor.queueBlueprint(new ServerFutureProcessor.BlueprintProcessingData(StructurePacks.findBlueprintFuture(StructurePacks.selectedPack.getName(), blueprint -> blueprint.getBlockState(blueprint.getPrimaryBlockOffset()).getBlock() == state.getBlock()), world, (blueprint -> {
                     if (blueprint == null)
                     {
                         return;

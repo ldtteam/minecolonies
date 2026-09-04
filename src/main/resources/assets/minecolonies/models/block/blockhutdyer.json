@@ -12,7 +12,7 @@
 		"12": "block/light_blue_concrete_powder",
 		"13": "block/light_blue_wool",
 		"2_0": "block/stripped_oak_log",
-		"transp": "map/map_icons",
+		"transp": "minecolonies:block/transparent",
 		"particle": "block/glass",
 		"3_0": "block/glass",
 		"3_1": "block/oak_log_top"

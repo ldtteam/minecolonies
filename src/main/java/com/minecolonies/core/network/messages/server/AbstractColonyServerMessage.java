@@ -9,7 +9,7 @@ import com.minecolonies.api.util.MessageUtils;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
@@ -69,14 +69,14 @@ public abstract class AbstractColonyServerMessage extends AbstractServerPlayMess
     @Override
     protected void toBytes(final RegistryFriendlyByteBuf buf)
     {
-        buf.writeUtf(dimensionId.location().toString());
+        buf.writeUtf(dimensionId.identifier().toString());
         buf.writeInt(colonyId);
     }
 
     protected AbstractColonyServerMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
     {
         super(buf, type);
-        this.dimensionId = ResourceKey.create(Registries.DIMENSION, ResourceLocation.parse(buf.readUtf(32767)));
+        this.dimensionId = ResourceKey.create(Registries.DIMENSION, Identifier.parse(buf.readUtf(32767)));
         this.colonyId = buf.readInt();
     }
 

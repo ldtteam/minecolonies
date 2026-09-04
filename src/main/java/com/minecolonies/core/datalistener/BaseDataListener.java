@@ -1,14 +1,19 @@
 package com.minecolonies.core.datalistener;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.gson.*;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.mojang.serialization.Codec;
+import net.minecraft.resources.FileToIdConverter;
+import net.minecraft.util.ExtraCodecs;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.core.datalistener.util.*;
 import com.minecolonies.core.util.GsonHelper;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JsonOps;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
 import net.minecraft.util.profiling.ProfilerFiller;
@@ -25,7 +30,7 @@ import static net.neoforged.neoforge.common.conditions.ConditionalOps.DEFAULT_CO
  *
  * @param <T> the type of entry.
  */
-public abstract class BaseDataListener<T> extends SimpleJsonResourceReloadListener
+public abstract class BaseDataListener<T> extends SimpleJsonResourceReloadListener<JsonElement>
 {
     /**
      * JSON keys.
@@ -33,10 +38,6 @@ public abstract class BaseDataListener<T> extends SimpleJsonResourceReloadListen
     private static final String KEY_REMOVE     = "remove";
     private static final String KEY_CONDITIONS = DEFAULT_CONDITIONS_KEY;
 
-    /**
-     * Gson instance
-     */
-    private static final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
 
     /**
      * The visual name in the logs for output regarding the loader.
@@ -46,7 +47,7 @@ public abstract class BaseDataListener<T> extends SimpleJsonResourceReloadListen
     /**
      * All parsed entries.
      */
-    private ImmutableMap<ResourceLocation, T> entries = ImmutableMap.of();
+    private ImmutableMap<Identifier, T> entries = ImmutableMap.of();
 
     /**
      * Default constructor.
@@ -55,24 +56,24 @@ public abstract class BaseDataListener<T> extends SimpleJsonResourceReloadListen
      */
     protected BaseDataListener(final String directory)
     {
-        super(GSON, directory);
+        super(ExtraCodecs.JSON, FileToIdConverter.json(directory));
         this.name = StringUtils.capitalize(directory.replaceAll("_", " "));
     }
 
     @Override
     protected final void apply(
-        @NotNull final Map<ResourceLocation, JsonElement> jsonElementMap,
+        @NotNull final Map<Identifier, JsonElement> jsonElementMap,
         @NotNull final ResourceManager resourceManager,
         @NotNull final ProfilerFiller profilerFiller)
     {
         Log.getLogger().info("[{} Loader]: Starting reload...", name);
 
         long start = System.nanoTime();
-        final Map<ResourceLocation, T> newEntries = new HashMap<>();
+        final Map<Identifier, T> newEntries = new HashMap<>();
         final Set<RemovalOrder> toRemove = new HashSet<>();
-        for (final Map.Entry<ResourceLocation, JsonElement> entry : jsonElementMap.entrySet())
+        for (final Map.Entry<Identifier, JsonElement> entry : jsonElementMap.entrySet())
         {
-            final ResourceLocation key = entry.getKey();
+            final Identifier key = entry.getKey();
             if (!entry.getValue().isJsonObject())
             {
                 logWarning(key, String.format("Entry is not a JSON object, found %s", entry.getValue().getClass()));
@@ -104,10 +105,10 @@ public abstract class BaseDataListener<T> extends SimpleJsonResourceReloadListen
             }
         }
 
-        final Iterator<ResourceLocation> iterator = newEntries.keySet().iterator();
+        final Iterator<Identifier> iterator = newEntries.keySet().iterator();
         while (iterator.hasNext())
         {
-            final ResourceLocation key = iterator.next();
+            final Identifier key = iterator.next();
             final boolean shouldRemove = toRemove.stream().anyMatch(order -> order.test(key));
             if (shouldRemove)
             {
@@ -126,7 +127,7 @@ public abstract class BaseDataListener<T> extends SimpleJsonResourceReloadListen
      * @param key    the resource key.
      * @param reason the failure reason.
      */
-    private void logWarning(final ResourceLocation key, final String reason)
+    private void logWarning(final Identifier key, final String reason)
     {
         Log.getLogger().warn("[{} Loader]: Problem loading entry with id {}: {}", name, key, reason);
     }
@@ -138,7 +139,7 @@ public abstract class BaseDataListener<T> extends SimpleJsonResourceReloadListen
      * @param object the resource value.
      * @return the list of removal order instances.
      */
-    private List<RemovalOrder> getRemovalOrders(final ResourceLocation key, final JsonObject object)
+    private List<RemovalOrder> getRemovalOrders(final Identifier key, final JsonObject object)
     {
         final List<RemovalOrder> orders = new ArrayList<>();
         final JsonArray remove = GsonHelper.getAsJsonArray(object, KEY_REMOVE, new JsonArray());
@@ -155,9 +156,9 @@ public abstract class BaseDataListener<T> extends SimpleJsonResourceReloadListen
                 {
                     orders.add(new ModRemovalorder(StringUtils.substringBefore(text, ":")));
                 }
-                if (ResourceLocation.tryParse(text) != null)
+                if (Identifier.tryParse(text) != null)
                 {
-                    orders.add(new SingleEntryRemovalOrder(ResourceLocation.tryParse(text)));
+                    orders.add(new SingleEntryRemovalOrder(Identifier.tryParse(text)));
                 }
             }
         }
@@ -191,14 +192,14 @@ public abstract class BaseDataListener<T> extends SimpleJsonResourceReloadListen
      * @return the mapping result.
      */
     @NotNull
-    protected abstract MappingResult<T> mapEntry(final ResourceLocation key, final JsonObject object);
+    protected abstract MappingResult<T> mapEntry(final Identifier key, final JsonObject object);
 
     /**
      * Get all entries for this listener.
      *
      * @return the map of entries.
      */
-    public Map<ResourceLocation, T> getEntries()
+    public Map<Identifier, T> getEntries()
     {
         return entries;
     }

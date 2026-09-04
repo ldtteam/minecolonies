@@ -1,6 +1,6 @@
 package com.minecolonies.api.util.constant;
 
-import net.minecraft.util.Tuple;
+import com.ldtteam.structurize.api.util.Tuple;
 
 /**
  * Constants used by the Guard AIs.

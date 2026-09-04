@@ -125,17 +125,17 @@ public class StandardRequestIdentitiesDataStore implements IRequestIdentitiesDat
         @Override
         public StandardRequestIdentitiesDataStore deserialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final CompoundTag nbt)
         {
-            final IToken<?> token = controller.deserializeTag(provider, nbt.getCompound(TAG_TOKEN));
-            final ListTag list = nbt.getList(TAG_LIST, Tag.TAG_COMPOUND);
+            final IToken<?> token = controller.deserializeTag(provider, nbt.getCompoundOrEmpty(TAG_TOKEN));
+            final ListTag list = nbt.getListOrEmpty(TAG_LIST);
 
             final BiMap<IToken<?>, IRequest<?>> map = HashBiMap.create();
             for (int i = 0; i < list.size(); i++)
             {
-                final CompoundTag tag = list.getCompound(i);
+                final CompoundTag tag = list.getCompoundOrEmpty(i);
                 try
                 {
-                    final IToken<?> id = controller.deserializeTag(provider, tag.getCompound(TAG_TOKEN));
-                    final IRequest<?> request = controller.deserializeTag(provider, tag.getCompound(TAG_REQUEST));
+                    final IToken<?> id = controller.deserializeTag(provider, tag.getCompoundOrEmpty(TAG_TOKEN));
+                    final IRequest<?> request = controller.deserializeTag(provider, tag.getCompoundOrEmpty(TAG_REQUEST));
                     map.put(id, request);
                 }
                 catch (final Exception ex)

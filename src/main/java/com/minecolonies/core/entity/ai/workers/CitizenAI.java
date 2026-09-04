@@ -242,7 +242,7 @@ public class CitizenAI implements IStateAI
         }
 
         // Work
-        if (citizen.isBaby() && citizen.getCitizenJobHandler().getColonyJob() instanceof JobPupil && citizen.level().getDayTime() % 24000 > NOON)
+        if (citizen.isBaby() && citizen.getCitizenJobHandler().getColonyJob() instanceof JobPupil && citizen.level().getOverworldClockTime() % 24000 > NOON)
         {
             citizen.setVisibleStatusIfNone(HOUSE);
             return CitizenAIState.IDLE;

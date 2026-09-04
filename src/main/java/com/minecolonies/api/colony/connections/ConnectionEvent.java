@@ -32,9 +32,9 @@ public record ConnectionEvent(int id, String name, ConnectionEventType connectio
 
     public static ConnectionEvent deserializeNBT(final CompoundTag compoundTag)
     {
-        return new ConnectionEvent(compoundTag.getInt(TAG_ID),
-            compoundTag.getString(TAG_NAME),
-            ConnectionEventType.values()[compoundTag.getInt(TAG_STATUS)]);
+        return new ConnectionEvent(compoundTag.getIntOr(TAG_ID, 0),
+            compoundTag.getStringOr(TAG_NAME, ""),
+            ConnectionEventType.values()[compoundTag.getIntOr(TAG_STATUS, 0)]);
     }
 
     public static ConnectionEvent deserializeByteBuf(final FriendlyByteBuf buf)

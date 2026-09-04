@@ -1,6 +1,6 @@
 package com.minecolonies.core.placementhandlers.main;
 
-import com.ldtteam.structurize.api.RotationMirror;
+import com.ldtteam.structurize.util.PlacementSettings;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.placement.StructurePlacementUtils;
 import com.ldtteam.structurize.storage.ISurvivalBlueprintHandler;
@@ -49,7 +49,7 @@ public class SuppliesHandler implements ISurvivalBlueprintHandler
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    public boolean canHandle(final Blueprint blueprint, final ClientLevel clientLevel, final Player player, final BlockPos blockPos, final RotationMirror rotMir)
+    public boolean canHandle(final Blueprint blueprint, final ClientLevel clientLevel, final Player player, final BlockPos blockPos, final PlacementSettings placementSettings)
     {
         return false;
     }
@@ -63,7 +63,7 @@ public class SuppliesHandler implements ISurvivalBlueprintHandler
             final Level world,
             final Player playerArg,
             final BlockPos blockPos,
-            final RotationMirror rotMir)
+            final PlacementSettings placementSettings)
     {
         if (clientPack || !StructurePacks.hasPack(packName))
         {
@@ -74,7 +74,7 @@ public class SuppliesHandler implements ISurvivalBlueprintHandler
 
         final ServerPlayer player = (ServerPlayer) playerArg;
 
-        blueprint.setRotationMirror(rotMir, world);
+        blueprint.setRotationMirror(placementSettings.getRotationMirror(), world);
 
         if (player.getStats().getValue(Stats.ITEM_USED.get(ModItems.supplyChest)) > 0 && !MineColonies.getConfig().getServer().allowInfiniteSupplyChests.get()
                 && !isFreeInstantPlacementMH(player) && !player.isCreative())
@@ -112,7 +112,8 @@ public class SuppliesHandler implements ISurvivalBlueprintHandler
 
             SoundUtils.playSuccessSound(player, player.blockPosition());
 
-            StructurePlacementUtils.loadAndPlaceStructureWithRotation(player.level(), blueprint, blockPos, rotMir, true, player);
+            StructurePlacementUtils.loadAndPlaceStructureWithRotation(
+              player.level(), blueprint, blockPos, placementSettings.getRotation(), placementSettings.getMirror(), true, player);
         }
         else
         {

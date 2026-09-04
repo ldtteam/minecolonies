@@ -7,7 +7,9 @@ import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -21,6 +23,11 @@ import net.neoforged.neoforge.registries.DeferredRegister;
  */
 public final class ModCreativeTabs
 {
+    private static void acceptSpawnEgg(final CreativeModeTab.Output output, final EntityType<?> type)
+    {
+        SpawnEggItem.byId(type).map(Holder::value).ifPresent(output::accept);
+    }
+
     public static final DeferredRegister<CreativeModeTab> TAB_REG = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, Constants.MOD_ID);
 
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> HUTS = TAB_REG.register("mchuts", () -> new CreativeModeTab.Builder(CreativeModeTab.Row.TOP, 1)
@@ -119,31 +126,31 @@ public final class ModCreativeTabs
           output.accept(ModItems.goldenBread);
           output.accept(ModItems.chorusBread);
 
-          if (SpawnEggItem.byId(ModEntities.CAMP_BARBARIAN) != null)
+          if (SpawnEggItem.byId(ModEntities.CAMP_BARBARIAN).isPresent())
           {
-                output.accept(SpawnEggItem.byId(ModEntities.CAMP_BARBARIAN));
-                output.accept(SpawnEggItem.byId(ModEntities.CAMP_ARCHERBARBARIAN));
-                output.accept(SpawnEggItem.byId(ModEntities.CAMP_CHIEFBARBARIAN));
+                acceptSpawnEgg(output, ModEntities.CAMP_BARBARIAN);
+                acceptSpawnEgg(output, ModEntities.CAMP_ARCHERBARBARIAN);
+                acceptSpawnEgg(output, ModEntities.CAMP_CHIEFBARBARIAN);
 
-                output.accept(SpawnEggItem.byId(ModEntities.CAMP_PIRATE));
-                output.accept(SpawnEggItem.byId(ModEntities.CAMP_ARCHERPIRATE));
-                output.accept(SpawnEggItem.byId(ModEntities.CAMP_CHIEFPIRATE));
+                acceptSpawnEgg(output, ModEntities.CAMP_PIRATE);
+                acceptSpawnEgg(output, ModEntities.CAMP_ARCHERPIRATE);
+                acceptSpawnEgg(output, ModEntities.CAMP_CHIEFPIRATE);
 
-                output.accept(SpawnEggItem.byId(ModEntities.CAMP_MUMMY));
-                output.accept(SpawnEggItem.byId(ModEntities.CAMP_ARCHERMUMMY));
-                output.accept(SpawnEggItem.byId(ModEntities.CAMP_PHARAO));
+                acceptSpawnEgg(output, ModEntities.CAMP_MUMMY);
+                acceptSpawnEgg(output, ModEntities.CAMP_ARCHERMUMMY);
+                acceptSpawnEgg(output, ModEntities.CAMP_PHARAO);
 
-                output.accept(SpawnEggItem.byId(ModEntities.CAMP_SHIELDMAIDEN));
-                output.accept(SpawnEggItem.byId(ModEntities.CAMP_NORSEMEN_ARCHER));
-                output.accept(SpawnEggItem.byId(ModEntities.CAMP_NORSEMEN_CHIEF));
+                acceptSpawnEgg(output, ModEntities.CAMP_SHIELDMAIDEN);
+                acceptSpawnEgg(output, ModEntities.CAMP_NORSEMEN_ARCHER);
+                acceptSpawnEgg(output, ModEntities.CAMP_NORSEMEN_CHIEF);
 
-                output.accept(SpawnEggItem.byId(ModEntities.CAMP_AMAZON));
-                output.accept(SpawnEggItem.byId(ModEntities.CAMP_AMAZONSPEARMAN));
-                output.accept(SpawnEggItem.byId(ModEntities.CAMP_AMAZONCHIEF));
+                acceptSpawnEgg(output, ModEntities.CAMP_AMAZON);
+                acceptSpawnEgg(output, ModEntities.CAMP_AMAZONSPEARMAN);
+                acceptSpawnEgg(output, ModEntities.CAMP_AMAZONCHIEF);
 
-                output.accept(SpawnEggItem.byId(ModEntities.CAMP_DROWNED_PIRATE));
-                output.accept(SpawnEggItem.byId(ModEntities.CAMP_DROWNED_ARCHERPIRATE));
-                output.accept(SpawnEggItem.byId(ModEntities.CAMP_DROWNED_CHIEFPIRATE));
+                acceptSpawnEgg(output, ModEntities.CAMP_DROWNED_PIRATE);
+                acceptSpawnEgg(output, ModEntities.CAMP_DROWNED_ARCHERPIRATE);
+                acceptSpawnEgg(output, ModEntities.CAMP_DROWNED_CHIEFPIRATE);
           }
 
       }).build());

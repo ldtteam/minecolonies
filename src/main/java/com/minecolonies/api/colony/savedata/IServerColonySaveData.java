@@ -75,11 +75,13 @@ public interface IServerColonySaveData
      */
     static IServerColonySaveData getOrComputeSaveData(final ServerLevel level)
     {
-        return level.getDataStorage().computeIfAbsent(ServerColonySaveData.FACTORY, ServerColonySaveData.NAME).setOverworld(level.dimension() == Level.OVERWORLD);
+        ServerColonySaveData.initializePersistenceProvider(level.registryAccess());
+        return level.getDataStorage().computeIfAbsent(ServerColonySaveData.TYPE).setOverworld(level.dimension() == Level.OVERWORLD);
     }
 
     static IServerColonySaveData getSaveData(final ServerLevel level)
     {
-        return level.getDataStorage().get(ServerColonySaveData.FACTORY, ServerColonySaveData.NAME);
+        ServerColonySaveData.initializePersistenceProvider(level.registryAccess());
+        return level.getDataStorage().get(ServerColonySaveData.TYPE);
     }
 }

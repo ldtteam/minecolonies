@@ -1,0 +1,16 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "minecolonies:item/drownedpirateegg",
+    "tints": [
+      {
+        "type": "minecraft:constant",
+        "value": 255
+      },
+      {
+        "type": "minecraft:constant",
+        "value": 16777215
+      }
+    ]
+  }
+}

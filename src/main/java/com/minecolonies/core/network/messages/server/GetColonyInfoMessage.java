@@ -79,7 +79,7 @@ public class GetColonyInfoMessage extends AbstractServerPlayMessage
         final IColony nextColony = IColonyManager.getInstance().getClosestColony(world, pos);
         if (IColonyManager.getInstance().isFarEnoughFromColonies(world, pos))
         {
-            final double spawnDistance = Math.sqrt(BlockPosUtil.getDistanceSquared2D(pos, world.getSharedSpawnPos()));
+            final double spawnDistance = Math.sqrt(BlockPosUtil.getDistanceSquared2D(pos, world.getLevelData().getRespawnData().pos()));
             if (spawnDistance < MineColonies.getConfig().getServer().minDistanceFromWorldSpawn.get())
             {
                 new OpenCantFoundColonyWarningMessage(Component.translatable("com.minecolonies.core.founding.tooclosetospawn", (int) (MineColonies.getConfig().getServer().minDistanceFromWorldSpawn.get() - spawnDistance)), pos, true).sendToPlayer(sender);

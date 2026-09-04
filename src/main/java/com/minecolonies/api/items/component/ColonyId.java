@@ -14,6 +14,7 @@ import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.Item;
+import net.minecraft.core.component.DataComponentGetter;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.TooltipProvider;
@@ -74,7 +75,7 @@ public record ColonyId(int id, ResourceKey<Level> dimension) implements TooltipP
     }
 
     @Override
-    public void addToTooltip(@NotNull final Item.TooltipContext context, @NotNull final Consumer<Component> tooltip, @NotNull final TooltipFlag flags)
+    public void addToTooltip(@NotNull final Item.TooltipContext context, @NotNull final Consumer<Component> tooltip, @NotNull final TooltipFlag flags, @NotNull final DataComponentGetter components)
     {
         final IColonyView colony = IMinecoloniesAPI.getInstance().getColonyManager().getColonyView(id(), dimension());
         final Component name = colony != null ? Component.literal(colony.getName()) : Component.translatable("item.minecolonies.hut.unknowncolony");

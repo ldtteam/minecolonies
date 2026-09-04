@@ -58,10 +58,10 @@ public class ColonyConnection
 
     public ColonyConnection deserializeNBT(final CompoundTag compoundTag)
     {
-        this.id = compoundTag.getInt(TAG_ID);
-        this.name = compoundTag.getString(TAG_NAME);
+        this.id = compoundTag.getIntOr(TAG_ID, 0);
+        this.name = compoundTag.getStringOr(TAG_NAME, "");
         this.pos = BlockPosUtil.read(compoundTag, TAG_POS);
-        this.diplomacyStatus = DiplomacyStatus.values()[compoundTag.getInt(TAG_STATUS)];
+        this.diplomacyStatus = DiplomacyStatus.values()[compoundTag.getIntOr(TAG_STATUS, 0)];
         return this;
     }
 

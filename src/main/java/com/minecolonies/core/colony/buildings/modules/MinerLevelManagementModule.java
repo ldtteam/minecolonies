@@ -58,21 +58,21 @@ public class MinerLevelManagementModule extends AbstractBuildingModule implement
     @Override
     public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound)
     {
-        startingLevelShaft = compound.getInt(TAG_STARTING_LEVEL);
-        currentLevel = compound.getInt(TAG_CURRENT_LEVEL);
-        final ListTag levelTagList = compound.getList(TAG_LEVELS, Tag.TAG_COMPOUND);
+        startingLevelShaft = compound.getIntOr(TAG_STARTING_LEVEL, 0);
+        currentLevel = compound.getIntOr(TAG_CURRENT_LEVEL, 0);
+        final ListTag levelTagList = compound.getListOrEmpty(TAG_LEVELS);
         for (int i = 0; i < levelTagList.size(); i++)
         {
-            this.levels.add(new MinerLevel(levelTagList.getCompound(i)));
+            this.levels.add(new MinerLevel(levelTagList.getCompoundOrEmpty(i)));
         }
 
         if (compound.contains(TAG_ACTIVE))
         {
-            activeNode = MineNode.createFromNBT(compound.getCompound(TAG_ACTIVE));
+            activeNode = MineNode.createFromNBT(compound.getCompoundOrEmpty(TAG_ACTIVE));
         }
         else if (compound.contains(TAG_OLD))
         {
-            oldNode = MineNode.createFromNBT(compound.getCompound(TAG_OLD));
+            oldNode = MineNode.createFromNBT(compound.getCompoundOrEmpty(TAG_OLD));
         }
     }
 

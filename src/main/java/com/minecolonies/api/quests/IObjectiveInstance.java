@@ -1,7 +1,7 @@
 package com.minecolonies.api.quests;
 
 import net.minecraft.nbt.CompoundTag;
-import net.neoforged.neoforge.common.util.INBTSerializable;
+import com.minecolonies.api.util.INBTSerializable;
 
 /**
  * Objective data type to take track of activities.

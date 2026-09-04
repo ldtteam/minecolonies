@@ -18,7 +18,7 @@ import com.minecolonies.core.tileentities.TileEntityDecorationController;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 
@@ -49,7 +49,7 @@ public class WindowDecorationController extends AbstractWindowSkeleton
      */
     public WindowDecorationController(final BlockPos b)
     {
-        super(new ResourceLocation(Constants.MOD_ID, "gui/windowdecorationcontroller.xml"));
+        super(Identifier.fromNamespaceAndPath(Constants.MOD_ID, "gui/windowdecorationcontroller.xml"));
         this.controller = (TileEntityDecorationController) world.getBlockEntity(b);
         registerButton(BUTTON_BUILD, this::buildClicked);
         registerButton(BUTTON_REPAIR, this::repairClicked);
@@ -87,7 +87,7 @@ public class WindowDecorationController extends AbstractWindowSkeleton
                 {
                     final String cleanedPackName = this.controller.getPackName().replace(Minecraft.getInstance().player.getUUID().toString(), "");
                     ClientFutureProcessor.queueBlueprint(new ClientFutureProcessor.BlueprintProcessingData(StructurePacks.getBlueprintFuture(cleanedPackName,
-                      StructurePacks.getStructurePack(cleanedPackName).getPath().resolve(this.controller.getBlueprintPath()), mc.level.registryAccess()), (blueprint -> {
+                      StructurePacks.getStructurePack(cleanedPackName).getPath().resolve(this.controller.getBlueprintPath())), (blueprint -> {
                         if (blueprint != null)
                         {
                             final BlockState blockState = blueprint.getBlockState(blueprint.getPrimaryBlockOffset());
@@ -102,7 +102,7 @@ public class WindowDecorationController extends AbstractWindowSkeleton
                     {
                         final String path = this.controller.getBlueprintPath().replace(level + ".blueprint", (level + 1) + ".blueprint");
                         ClientFutureProcessor.queueBlueprint(new ClientFutureProcessor.BlueprintProcessingData(StructurePacks.getBlueprintFuture(cleanedPackName,
-                          StructurePacks.getStructurePack(cleanedPackName).getPath().resolve(path), mc.level.registryAccess()),
+                          StructurePacks.getStructurePack(cleanedPackName).getPath().resolve(path)),
                           (blueprint -> {
                               if (blueprint != null)
                               {

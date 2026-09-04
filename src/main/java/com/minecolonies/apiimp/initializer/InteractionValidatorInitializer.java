@@ -345,7 +345,7 @@ public class InteractionValidatorInitializer
                        && ((BuildingBeekeeper) citizen.getWorkBuilding()).getModuleMatching(ItemListModule.class, m -> m.getId().equals(BUILDING_FLOWER_LIST)).getList().isEmpty());
 
         InteractionValidatorRegistry.registerStandardPredicate(Component.translatableEscape(COM_MINECOLONIES_COREMOD_ENTITY_CITIZEN_RAINING),
-          citizen -> citizen.getEntity().isPresent() && citizen.getEntity().get().getCommandSenderWorld().isRaining()
+          citizen -> citizen.getEntity().isPresent() && citizen.getEntity().get().level().isRaining()
                        && !citizen.getColony().getRaiderManager().isRaided()
                        && !citizen.getCitizenMournHandler().isMourning());
 

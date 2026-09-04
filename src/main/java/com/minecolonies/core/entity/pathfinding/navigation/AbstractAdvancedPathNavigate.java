@@ -1,6 +1,7 @@
 package com.minecolonies.core.entity.pathfinding.navigation;
 
 import com.minecolonies.api.colony.IColony;
+import com.ldtteam.structurize.api.util.Tuple;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.pathfinding.IPathJob;
 import com.minecolonies.api.entity.pathfinding.IStuckHandler;
@@ -140,7 +141,7 @@ public abstract class AbstractAdvancedPathNavigate extends GroundPathNavigation
     protected abstract PathResult<? extends IPathJob> walkToRandomPos(
       final int range,
       final double speed,
-      final net.minecraft.util.Tuple<BlockPos, BlockPos> corners);
+      final com.ldtteam.structurize.api.util.Tuple<BlockPos, BlockPos> corners);
 
     /**
      * Used to path towards a random pos within some restrictions
@@ -153,7 +154,7 @@ public abstract class AbstractAdvancedPathNavigate extends GroundPathNavigation
     protected abstract PathResult<PathJobRandomPos> walkToRandomPos(
         final int range,
         final double speed,
-        final net.minecraft.util.Tuple<BlockPos, BlockPos> corners, final boolean preferInside);
+        final com.ldtteam.structurize.api.util.Tuple<BlockPos, BlockPos> corners, final boolean preferInside);
 
     /**
      * Used to find a tree.

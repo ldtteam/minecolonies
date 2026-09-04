@@ -3,15 +3,15 @@
   "costs": [
     {
       "count": 8,
-      "item": "minecraft:rotten_flesh"
+      "ingredient": "minecraft:rotten_flesh"
     },
     {
       "count": 8,
-      "item": "minecraft:bone"
+      "ingredient": "minecraft:bone"
     },
     {
       "count": 8,
-      "item": "minecraft:spider_eye"
+      "ingredient": "minecraft:spider_eye"
     }
   ],
   "effects": [
@@ -20,7 +20,7 @@
       "level": 1
     }
   ],
-  "icon": "minecraft:chain",
+  "icon": "minecraft:iron_chain",
   "requirements": [
     {
       "type": "minecolonies:building",

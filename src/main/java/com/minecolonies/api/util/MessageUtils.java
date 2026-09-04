@@ -282,7 +282,7 @@ public class MessageUtils
         {
             for (Player player : players)
             {
-                player.displayClientMessage(create(), false);
+                player.sendSystemMessage(create());
             }
         }
 
@@ -297,7 +297,7 @@ public class MessageUtils
             {
                 if (player.distanceToSqr(pos.getX(), pos.getY(), pos.getZ()) < range * range)
                 {
-                    player.displayClientMessage(create(), false);
+                    player.sendSystemMessage(create());
                 }
             }
         }
@@ -401,7 +401,7 @@ public class MessageUtils
                     fullComponent = Component.literal("[" + colony.getName() + "] ").append(rootComponent);
                 }
 
-                player.displayClientMessage(fullComponent, false);
+                player.sendSystemMessage(fullComponent);
             }
         }
     }

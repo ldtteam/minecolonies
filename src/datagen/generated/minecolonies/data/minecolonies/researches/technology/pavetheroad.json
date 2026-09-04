@@ -3,7 +3,7 @@
   "costs": [
     {
       "count": 32,
-      "tag": "minecolonies:concrete"
+      "ingredient": "#minecolonies:concrete"
     }
   ],
   "effects": [

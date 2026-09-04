@@ -13,7 +13,7 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.client.gui.AbstractModuleWindow;
 import com.minecolonies.core.colony.buildings.moduleviews.SettingsModuleView;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.WindowConstants.LIST_SETTINGS;
@@ -33,7 +33,7 @@ public class SettingsModuleWindow extends AbstractModuleWindow<SettingsModuleVie
      */
     public SettingsModuleWindow(final SettingsModuleView moduleView)
     {
-        super(moduleView, new ResourceLocation(Constants.MOD_ID, "gui/layouthuts/layoutsettings.xml"));
+        super(moduleView, Identifier.fromNamespaceAndPath(Constants.MOD_ID, "gui/layouthuts/layoutsettings.xml"));
         settingsList = window.findPaneOfTypeByID(LIST_SETTINGS, ScrollingList.class);
     }
 

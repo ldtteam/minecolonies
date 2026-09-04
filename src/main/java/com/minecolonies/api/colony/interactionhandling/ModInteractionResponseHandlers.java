@@ -2,7 +2,7 @@ package com.minecolonies.api.colony.interactionhandling;
 
 import com.minecolonies.api.colony.interactionhandling.registry.InteractionResponseHandlerEntry;
 import com.minecolonies.api.util.constant.Constants;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.neoforged.neoforge.registries.DeferredHolder;
 
 /**
@@ -13,13 +13,13 @@ public final class ModInteractionResponseHandlers
     /**
      * List of IDs.
      */
-    public static final ResourceLocation STANDARD            = new ResourceLocation(Constants.MOD_ID, "standard");
-    public static final ResourceLocation SIMPLE_NOTIFICATION = new ResourceLocation(Constants.MOD_ID, "simplenotification");
-    public static final ResourceLocation POS                 = new ResourceLocation(Constants.MOD_ID, "pos");
-    public static final ResourceLocation REQUEST             = new ResourceLocation(Constants.MOD_ID, "request");
-    public static final ResourceLocation RECRUITMENT         = new ResourceLocation(Constants.MOD_ID, "recruitment");
-    public static final ResourceLocation QUEST               = new ResourceLocation(Constants.MOD_ID, "quest");
-    public static final ResourceLocation QUEST_ACTION        = new ResourceLocation(Constants.MOD_ID, "questaction");
+    public static final Identifier STANDARD            = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "standard");
+    public static final Identifier SIMPLE_NOTIFICATION = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "simplenotification");
+    public static final Identifier POS                 = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "pos");
+    public static final Identifier REQUEST             = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "request");
+    public static final Identifier RECRUITMENT         = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "recruitment");
+    public static final Identifier QUEST               = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "quest");
+    public static final Identifier QUEST_ACTION        = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "questaction");
 
     /**
      * List of entries.

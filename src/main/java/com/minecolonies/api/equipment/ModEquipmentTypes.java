@@ -10,9 +10,10 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.translation.ToolTranslationConstants;
 import com.minecolonies.apiimp.CommonMinecoloniesAPIImpl;
 import net.minecraft.core.Registry;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.*;
 import net.neoforged.neoforge.common.ItemAbilities;
@@ -59,7 +60,7 @@ public class ModEquipmentTypes
 
         pickaxe = register("pickaxe",
           builder -> builder.setDisplayName(Component.translatable(ToolTranslationConstants.TOOL_TYPE_PICKAXE))
-                       .setIsEquipment((itemStack, equipmentType) -> canPerformDefaultActions(itemStack, ItemAbilities.DEFAULT_PICKAXE_ACTIONS) || Compatibility.isTinkersTool(
+                       .setIsEquipment((itemStack, equipmentType) -> itemStack.is(ItemTags.PICKAXES) || Compatibility.isTinkersTool(
                          itemStack,
                          equipmentType))
                        .setEquipmentLevel(ModEquipmentTypes::vanillaToolLevel)
@@ -89,7 +90,7 @@ public class ModEquipmentTypes
 
         sword = register("sword",
           builder -> builder.setDisplayName(Component.translatable(ToolTranslationConstants.TOOL_TYPE_SWORD))
-                       .setIsEquipment((itemStack, equipmentType) -> canPerformDefaultActions(itemStack, ItemAbilities.DEFAULT_SWORD_ACTIONS)
+                       .setIsEquipment((itemStack, equipmentType) -> itemStack.is(ItemTags.SWORDS)
                                                                      || Compatibility.isTinkersWeapon(itemStack)
                                                                      || Compatibility.isCustomWeapon(itemStack))
                        .setEquipmentLevel(ModEquipmentTypes::vanillaToolLevel)
@@ -121,31 +122,31 @@ public class ModEquipmentTypes
 
         shield = register("shield",
           builder -> builder.setDisplayName(Component.translatable(ToolTranslationConstants.TOOL_TYPE_SHIELD))
-                       .setIsEquipment((itemStack, equipmentType) -> canPerformDefaultActions(itemStack, ItemAbilities.DEFAULT_SHIELD_ACTIONS))
+                       .setIsEquipment((itemStack, equipmentType) -> itemStack.getItem() instanceof ShieldItem)
                        .setEquipmentLevel((itemStack, equipmentType) -> Compatibility.getItemLevel(itemStack))
                   .build());
 
         helmet = register("helmet",
           builder -> builder.setDisplayName(Component.translatable(ToolTranslationConstants.TOOL_TYPE_HELMET))
-                       .setIsEquipment((itemStack, equipmentType) -> itemStack.getItem() instanceof ArmorItem armor && EquipmentSlot.HEAD.equals(armor.getEquipmentSlot()))
+                       .setIsEquipment((itemStack, equipmentType) -> ItemStackUtils.isArmorForSlot(itemStack, EquipmentSlot.HEAD))
                        .setEquipmentLevel((itemStack, equipmentType) -> Compatibility.getItemLevel(itemStack))
                   .build());
 
         leggings = register("leggings",
           builder -> builder.setDisplayName(Component.translatable(ToolTranslationConstants.TOOL_TYPE_LEGGINGS))
-                       .setIsEquipment((itemStack, equipmentType) -> itemStack.getItem() instanceof ArmorItem armor && EquipmentSlot.LEGS.equals(armor.getEquipmentSlot()))
+                       .setIsEquipment((itemStack, equipmentType) -> ItemStackUtils.isArmorForSlot(itemStack, EquipmentSlot.LEGS))
                        .setEquipmentLevel((itemStack, equipmentType) -> Compatibility.getItemLevel(itemStack))
                   .build());
 
         chestplate = register("chestplate",
           builder -> builder.setDisplayName(Component.translatable(ToolTranslationConstants.TOOL_TYPE_CHEST_PLATE))
-                       .setIsEquipment((itemStack, equipmentType) -> itemStack.getItem() instanceof ArmorItem armor && EquipmentSlot.CHEST.equals(armor.getEquipmentSlot()))
+                       .setIsEquipment((itemStack, equipmentType) -> ItemStackUtils.isArmorForSlot(itemStack, EquipmentSlot.CHEST))
                        .setEquipmentLevel((itemStack, equipmentType) -> Compatibility.getItemLevel(itemStack))
                   .build());
 
         boots = register("boots",
           builder -> builder.setDisplayName(Component.translatable(ToolTranslationConstants.TOOL_TYPE_BOOTS))
-                       .setIsEquipment((itemStack, equipmentType) -> itemStack.getItem() instanceof ArmorItem armor && EquipmentSlot.FEET.equals(armor.getEquipmentSlot()))
+                       .setIsEquipment((itemStack, equipmentType) -> ItemStackUtils.isArmorForSlot(itemStack, EquipmentSlot.FEET))
                        .setEquipmentLevel((itemStack, equipmentType) -> Compatibility.getItemLevel(itemStack))
                   .build());
 
@@ -189,7 +190,7 @@ public class ModEquipmentTypes
     private static DeferredHolder<EquipmentTypeEntry, EquipmentTypeEntry> register(final String id, final Consumer<EquipmentTypeEntry.Builder> consumer)
     {
         EquipmentTypeEntry.Builder equipmentType = new EquipmentTypeEntry.Builder()
-                                           .setRegistryName(new ResourceLocation(Constants.MOD_ID, id));
+                                           .setRegistryName(Identifier.fromNamespaceAndPath(Constants.MOD_ID, id));
         consumer.accept(equipmentType);
         return DEFERRED_REGISTER.register(id, equipmentType::build);
     }
@@ -260,11 +261,7 @@ public class ModEquipmentTypes
             {
                 final ItemStack dummy = new ItemStack(item);
 
-                if (item instanceof final TieredItem tiered)
-                {
-                    Compatibility.registerItemTierIfAbsent(item, tiered.getTier(), (int) tiered.getTier().getAttackDamageBonus());
-                }
-                else if (item instanceof ArmorItem)
+                if (ItemStackUtils.getEquippable(dummy) != null)
                 {
                     final int level = ItemStackUtils.getArmorLevel(dummy);
                     if (level > 0)
@@ -284,7 +281,7 @@ public class ModEquipmentTypes
                 {
                     Compatibility.registerItemTierIfAbsent(item, durabilityBasedLevel(dummy, shearsRef));
                 }
-                else if (canPerformDefaultActions(dummy, ItemAbilities.DEFAULT_SHIELD_ACTIONS))
+                else if (dummy.getItem() instanceof ShieldItem)
                 {
                     Compatibility.registerItemTierIfAbsent(item, durabilityBasedLevel(dummy, shieldRef));
                 }

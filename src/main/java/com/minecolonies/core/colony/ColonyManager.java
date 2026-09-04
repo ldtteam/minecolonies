@@ -430,7 +430,7 @@ public final class ColonyManager implements IColonyManager
     @Nullable
     public IColony getIColony(@NotNull final Level w, @NotNull final BlockPos pos)
     {
-        return w.isClientSide ? getColonyView(w, pos) : getColonyByPosFromWorld(w, pos);
+        return w.isClientSide() ? getColonyView(w, pos) : getColonyByPosFromWorld(w, pos);
     }
 
     @Override
@@ -472,7 +472,7 @@ public final class ColonyManager implements IColonyManager
     @Nullable
     public IColony getClosestIColony(@NotNull final Level w, @NotNull final BlockPos pos)
     {
-        return w.isClientSide ? getClosestColonyView(w, pos) : getClosestColony(w, pos);
+        return w.isClientSide() ? getClosestColonyView(w, pos) : getClosestColony(w, pos);
     }
 
     @Override
@@ -546,14 +546,14 @@ public final class ColonyManager implements IColonyManager
     @Nullable
     public IColony getIColonyByOwner(@NotNull final Level w, @NotNull final Player owner)
     {
-        return getIColonyByOwner(w, w.isClientSide ? owner.getUUID() : owner.getGameProfile().getId());
+        return getIColonyByOwner(w, w.isClientSide() ? owner.getUUID() : owner.nameAndId().id());
     }
 
     @Override
     @Nullable
     public IColony getIColonyByOwner(@NotNull final Level w, final UUID owner)
     {
-        return w.isClientSide ? getColonyViewByOwner(owner, w.dimension()) : getColonyByOwner(owner);
+        return w.isClientSide() ? getColonyViewByOwner(owner, w.dimension()) : getColonyByOwner(owner);
     }
 
     /**
@@ -636,10 +636,10 @@ public final class ColonyManager implements IColonyManager
     {
         if (compound.contains(TAG_COMPATABILITY_MANAGER))
         {
-            compatibilityManager.read(provider, compound.getCompound(TAG_COMPATABILITY_MANAGER));
+            compatibilityManager.read(provider, compound.getCompoundOrEmpty(TAG_COMPATABILITY_MANAGER));
         }
 
-        recipeManager.read(provider, compound.getCompound(RECIPE_MANAGER_TAG));
+        recipeManager.read(provider, compound.getCompoundOrEmpty(RECIPE_MANAGER_TAG));
     }
 
     @Override
@@ -662,7 +662,7 @@ public final class ColonyManager implements IColonyManager
     @Override
     public void onWorldTick(final @NotNull LevelTickEvent.Pre event)
     {
-        if (!event.getLevel().isClientSide)
+        if (!event.getLevel().isClientSide())
         {
             for (final IColony colony : getColonies(event.getLevel()))
             {
@@ -695,7 +695,7 @@ public final class ColonyManager implements IColonyManager
     @Override
     public void onWorldUnload(@NotNull final Level world)
     {
-        if (!world.isClientSide)
+        if (!world.isClientSide())
         {
             boolean hasColonies = false;
             for (@NotNull final IColony c : getColonies(world))
@@ -917,20 +917,20 @@ public final class ColonyManager implements IColonyManager
     public Map<ChunkPos, IChunkClaimData> getClaimData(final ResourceKey<Level> dimension)
     {
         final Map<Long, ChunkClaimData> map = this.chunkClaimData.computeIfAbsent(dimension, (k) -> new Long2ObjectOpenHashMap<>());
-        return Maps.asMap(map.keySet().stream().map(ChunkPos::new).collect(Collectors.toSet()),
-                p -> map.getOrDefault(p.toLong(), null));
+        return Maps.asMap(map.keySet().stream().map(ChunkPos::unpack).collect(Collectors.toSet()),
+                p -> map.getOrDefault(p.pack(), null));
     }
 
     @Nullable
     @Override
     public IChunkClaimData getClaimData(final ResourceKey<Level> dimension, final ChunkPos pos)
     {
-        return this.chunkClaimData.computeIfAbsent(dimension, (k) -> new Long2ObjectOpenHashMap<>()).getOrDefault(pos.toLong(), null);
+        return this.chunkClaimData.computeIfAbsent(dimension, (k) -> new Long2ObjectOpenHashMap<>()).getOrDefault(pos.pack(), null);
     }
 
     @Override
     public void addNewChunk(final Colony colony, final ChunkPos pos, final ChunkClaimData chunkClaimData)
     {
-        this.chunkClaimData.computeIfAbsent(colony.getDimension(), (k) -> new Long2ObjectOpenHashMap<>()).put(pos.toLong(), chunkClaimData);
+        this.chunkClaimData.computeIfAbsent(colony.getDimension(), (k) -> new Long2ObjectOpenHashMap<>()).put(pos.pack(), chunkClaimData);
     }
 }

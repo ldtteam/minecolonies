@@ -22,7 +22,9 @@ import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.server.packs.resources.ResourceManager;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
+import net.minecraft.resources.FileToIdConverter;
+import net.minecraft.util.ExtraCodecs;
 import net.minecraft.network.chat.Component;
 
 import java.util.Map;
@@ -32,7 +34,7 @@ import java.util.UUID;
 /**
  * Loads and listens to custom visitor data added
  */
-public class CustomVisitorListener extends SimpleJsonResourceReloadListener
+public class CustomVisitorListener extends SimpleJsonResourceReloadListener<JsonElement>
 {
     /**
      * Gson instance
@@ -66,15 +68,15 @@ public class CustomVisitorListener extends SimpleJsonResourceReloadListener
 
     public CustomVisitorListener()
     {
-        super(GSON, "visitors");
+        super(ExtraCodecs.JSON, FileToIdConverter.json("visitors"));
     }
 
     @Override
     protected void apply(
-      final Map<ResourceLocation, JsonElement> jsonElementMap, final ResourceManager resourceManager, final ProfilerFiller profiler)
+      final Map<Identifier, JsonElement> jsonElementMap, final ResourceManager resourceManager, final ProfilerFiller profiler)
     {
         visitorDataPack = ImmutableList.of();
-        for (final Map.Entry<ResourceLocation, JsonElement> entry : jsonElementMap.entrySet())
+        for (final Map.Entry<Identifier, JsonElement> entry : jsonElementMap.entrySet())
         {
             tryParse(entry);
         }
@@ -85,7 +87,7 @@ public class CustomVisitorListener extends SimpleJsonResourceReloadListener
      *
      * @param entry
      */
-    private void tryParse(final Map.Entry<ResourceLocation, JsonElement> entry)
+    private void tryParse(final Map.Entry<Identifier, JsonElement> entry)
     {
         try
         {

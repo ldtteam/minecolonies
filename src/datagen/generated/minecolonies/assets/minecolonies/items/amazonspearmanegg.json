@@ -1,0 +1,16 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "minecolonies:item/amazonspearmanegg",
+    "tints": [
+      {
+        "type": "minecraft:constant",
+        "value": 32768
+      },
+      {
+        "type": "minecraft:constant",
+        "value": 32768
+      }
+    ]
+  }
+}

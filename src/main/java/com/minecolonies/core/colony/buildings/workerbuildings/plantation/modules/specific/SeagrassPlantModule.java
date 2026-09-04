@@ -7,7 +7,7 @@ import com.minecolonies.api.equipment.registry.EquipmentTypeEntry;
 import com.minecolonies.core.colony.buildings.workerbuildings.plantation.modules.generic.BoneMealedPlantModule;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BoneMealItem;
 import net.minecraft.world.item.Item;
@@ -16,7 +16,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluids;
-import org.checkerframework.checker.nullness.qual.NonNull;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -47,7 +47,7 @@ public class SeagrassPlantModule extends BoneMealedPlantModule
     }
 
     @Override
-    public ResourceLocation getRequiredResearchEffect()
+    public Identifier getRequiredResearchEffect()
     {
         return PLANTATION_SEA;
     }
@@ -78,7 +78,7 @@ public class SeagrassPlantModule extends BoneMealedPlantModule
     }
 
     @Override
-    public @NonNull List<Item> getValidBonemeal()
+    public @NotNull List<Item> getValidBonemeal()
     {
         // Only base minecraft bonemeal has water growing capabilities.
         // Compost (by design) should not inherit this functionality.

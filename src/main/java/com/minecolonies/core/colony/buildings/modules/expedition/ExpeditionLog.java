@@ -1,11 +1,12 @@
 package com.minecolonies.core.colony.buildings.modules.expedition;
+import com.minecolonies.api.util.ItemStackUtils;
 
 import com.google.common.base.Enums;
 import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-import com.minecolonies.api.util.Tuple;
+import com.ldtteam.structurize.api.util.Tuple;
 import com.minecolonies.api.util.Utils;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -13,7 +14,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -252,7 +253,7 @@ public class ExpeditionLog
         final ListTag equipment = new ListTag();
         for (final ItemStack stack : this.equipment)
         {
-            equipment.add(stack.saveOptional(provider));
+            equipment.add(ItemStackUtils.serializeOptional(stack, provider));
         }
         compound.put(TAG_EQUIPMENT, equipment);
 
@@ -280,47 +281,47 @@ public class ExpeditionLog
      */
     public void deserializeNBT(@NotNull final HolderLookup.Provider provider, @NotNull final CompoundTag compound)
     {
-        this.status = Enums.getIfPresent(Status.class, compound.getString(TAG_STATUS)).or(Status.NONE);
-        this.id = compound.getInt(TAG_ID);
-        this.name = compound.getString(TAG_NAME);
+        this.status = Enums.getIfPresent(Status.class, compound.getStringOr(TAG_STATUS, "")).or(Status.NONE);
+        this.id = compound.getIntOr(TAG_ID, 0);
+        this.name = compound.getStringOr(TAG_NAME, "");
         if (this.name.isEmpty()) this.name = null;
 
         this.stats.clear();
-        final CompoundTag stats = compound.getCompound(TAG_STATS);
+        final CompoundTag stats = compound.getCompoundOrEmpty(TAG_STATS);
         for (final StatType stat : StatType.values())
         {
             final String key = stat.name().toLowerCase(Locale.US);
             if (stats.contains(key))
             {
-                this.stats.put(stat, stats.getDouble(key));
+                this.stats.put(stat, stats.getDoubleOr(key, 0.0D));
             }
         }
 
         this.equipment.clear();
-        final ListTag equipment = compound.getList(TAG_EQUIPMENT, Tag.TAG_COMPOUND);
+        final ListTag equipment = compound.getListOrEmpty(TAG_EQUIPMENT);
         for (int i = 0; i < equipment.size(); i++)
         {
-            this.equipment.add(ItemStack.parseOptional(provider, equipment.getCompound(i)));
+            this.equipment.add(ItemStackUtils.parseOptional(provider, equipment.getCompoundOrEmpty(i)));
         }
 
         this.mobs.clear();
-        final ListTag mobs = compound.getList(TAG_MOBS, Tag.TAG_COMPOUND);
+        final ListTag mobs = compound.getListOrEmpty(TAG_MOBS);
         for (int i = 0; i < mobs.size(); ++i)
         {
-            final CompoundTag mob = mobs.getCompound(i);
-            final ResourceLocation type = ResourceLocation.parse(mob.getString(TAG_TYPE));
-            final EntityType<?> entityType = BuiltInRegistries.ENTITY_TYPE.get(type);
+            final CompoundTag mob = mobs.getCompoundOrEmpty(i);
+            final Identifier type = Identifier.parse(mob.getStringOr(TAG_TYPE, ""));
+            final EntityType<?> entityType = BuiltInRegistries.ENTITY_TYPE.getValue(type);
             if (entityType != null)
             {
-                this.mobs.put(entityType, mob.getInt(TAG_COUNT));
+                this.mobs.put(entityType, mob.getIntOr(TAG_COUNT, 0));
             }
         }
 
         this.loot.clear();
-        final ListTag loot = compound.getList(TAG_LOOT, Tag.TAG_COMPOUND);
+        final ListTag loot = compound.getListOrEmpty(TAG_LOOT);
         for (int i = 0; i < loot.size(); i++)
         {
-            final ItemStorage storage = StandardFactoryController.getInstance().deserializeTag(provider, loot.getCompound(i));
+            final ItemStorage storage = StandardFactoryController.getInstance().deserializeTag(provider, loot.getCompoundOrEmpty(i));
             this.loot.put(storage, storage);
         }
     }

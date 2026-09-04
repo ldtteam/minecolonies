@@ -3,15 +3,15 @@
   "costs": [
     {
       "count": 64,
-      "item": "minecraft:paper"
+      "ingredient": "minecraft:paper"
     },
     {
       "count": 1,
-      "item": "minecolonies:ancienttome"
+      "ingredient": "minecolonies:ancienttome"
     },
     {
       "count": 64,
-      "item": "minecraft:lapis_lazuli"
+      "ingredient": "minecraft:lapis_lazuli"
     }
   ],
   "effects": [

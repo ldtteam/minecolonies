@@ -5,7 +5,7 @@ import com.minecolonies.core.colony.buildings.workerbuildings.BuildingUniversity
 
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -24,7 +24,7 @@ public interface ILocalResearchTree
      * @param branch the branch of the research.
      * @return the IResearch object.
      */
-    ILocalResearch getResearch(final ResourceLocation branch, final ResourceLocation id);
+    ILocalResearch getResearch(final Identifier branch, final Identifier id);
 
     /**
      * Add a research to the tree.
@@ -32,7 +32,7 @@ public interface ILocalResearchTree
      * @param research the research to add.
      * @param branch   the branch of the research.
      */
-    void addResearch(final ResourceLocation branch, final ILocalResearch research);
+    void addResearch(final Identifier branch, final ILocalResearch research);
 
     /**
      * Check if a branch already researched a level 6 research. This is important since only 1 of these can be researched for each branch.
@@ -40,7 +40,7 @@ public interface ILocalResearchTree
      * @param branch the branch to check.
      * @return true if so.
      */
-    boolean branchFinishedHighestLevel(final ResourceLocation branch);
+    boolean branchFinishedHighestLevel(final Identifier branch);
 
     /**
      * Get a list of all research in progress.
@@ -54,14 +54,14 @@ public interface ILocalResearchTree
      *
      * @return true if complete or if no such research is loaded, false if not completed.
      */
-     boolean hasCompletedResearch(final ResourceLocation researchId);
+     boolean hasCompletedResearch(final Identifier researchId);
 
     /**
      * Finish a research and remove it from the inProgress list.
      *
      * @param id the id of the research to finish.
      */
-    void finishResearch(final ResourceLocation id);
+    void finishResearch(final Identifier id);
 
     /**
      * Attempt to begin a research.
@@ -100,12 +100,12 @@ public interface ILocalResearchTree
      *
      * @return a copy of the completed list.
      */
-    List<ResourceLocation> getCompletedList();
+    List<Identifier> getCompletedList();
 
     /**
      * Check if a given research is complete.
      * @param location the unique id.
      * @return true if so.
      */
-    boolean isComplete(ResourceLocation location);
+    boolean isComplete(Identifier location);
 }

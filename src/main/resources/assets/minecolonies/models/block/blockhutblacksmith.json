@@ -1,6 +1,6 @@
 {
 	"credit": "Made with Blockbench",
-	"parent": "block/cube_all",
+	"parent": "block/block",
 	"ambientocclusion": false,
 	"textures": {
 		"1": "block/anvil",

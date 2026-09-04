@@ -10,7 +10,6 @@
       "translate": "advancements.minecolonies.max_fields.description"
     },
     "icon": {
-      "count": 1,
       "id": "minecolonies:blockhutfield"
     },
     "title": {

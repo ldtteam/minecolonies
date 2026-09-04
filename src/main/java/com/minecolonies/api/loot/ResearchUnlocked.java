@@ -7,13 +7,12 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
-import net.minecraft.world.level.storage.loot.predicates.LootItemConditionType;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -26,16 +25,16 @@ import java.util.Optional;
 public class ResearchUnlocked implements LootItemCondition
 {
     public static final MapCodec<ResearchUnlocked> CODEC = RecordCodecBuilder.mapCodec(builder -> builder
-        .group(ResourceLocation.CODEC.fieldOf("id").forGetter(r -> r.effectId),
+        .group(Identifier.CODEC.fieldOf("id").forGetter(r -> r.effectId),
             Codec.DOUBLE.optionalFieldOf("minStrength", Double.MIN_VALUE).forGetter(r -> r.minStrength),
           Codec.DOUBLE.optionalFieldOf("maxStrength", Double.MAX_VALUE).forGetter(r -> r.maxStrength))
         .apply(builder, ResearchUnlocked::new));
 
-    private final ResourceLocation effectId;
+    private final Identifier effectId;
     private final double minStrength;
     private final double maxStrength;
 
-    private ResearchUnlocked(@NotNull final ResourceLocation effectId, final double minStrength, final double maxStrength)
+    private ResearchUnlocked(@NotNull final Identifier effectId, final double minStrength, final double maxStrength)
     {
         this.effectId = effectId;
         this.minStrength = minStrength;
@@ -47,7 +46,7 @@ public class ResearchUnlocked implements LootItemCondition
      * @param effectId the research effect id
      * @return the condition
      */
-    public static LootItemCondition.Builder effect(@NotNull final ResourceLocation effectId)
+    public static LootItemCondition.Builder effect(@NotNull final Identifier effectId)
     {
         return effect(effectId, Double.MIN_VALUE);
     }
@@ -58,7 +57,7 @@ public class ResearchUnlocked implements LootItemCondition
      * @param strength the minimum required strength
      * @return the condition
      */
-    public static LootItemCondition.Builder effect(@NotNull final ResourceLocation effectId, final double strength)
+    public static LootItemCondition.Builder effect(@NotNull final Identifier effectId, final double strength)
     {
         return effect(effectId, strength, Double.MAX_VALUE);
     }
@@ -70,24 +69,24 @@ public class ResearchUnlocked implements LootItemCondition
      * @param maxStrength the maximum (exclusive) required strength
      * @return the condition
      */
-    public static LootItemCondition.Builder effect(@NotNull final ResourceLocation effectId, final double minStrength, final double maxStrength)
+    public static LootItemCondition.Builder effect(@NotNull final Identifier effectId, final double minStrength, final double maxStrength)
     {
         return () -> new ResearchUnlocked(effectId, minStrength, maxStrength);
     }
 
     @NotNull
     @Override
-    public LootItemConditionType getType()
+    public MapCodec<? extends LootItemCondition> codec()
     {
-        return ModLootConditions.researchUnlocked.get();
+        return CODEC;
     }
 
     @Override
     public boolean test(@NotNull final LootContext lootContext)
     {
-        return test(lootContext, lootContext.getParamOrNull(LootContextParams.ATTACKING_ENTITY))
-                .or(() -> test(lootContext, lootContext.getParamOrNull(LootContextParams.THIS_ENTITY)))
-                .or(() -> test(lootContext, lootContext.getParamOrNull(LootContextParams.ORIGIN)))
+        return test(lootContext, lootContext.getOptionalParameter(LootContextParams.ATTACKING_ENTITY))
+                .or(() -> test(lootContext, lootContext.getOptionalParameter(LootContextParams.THIS_ENTITY)))
+                .or(() -> test(lootContext, lootContext.getOptionalParameter(LootContextParams.ORIGIN)))
                 .orElse(false);
     }
 

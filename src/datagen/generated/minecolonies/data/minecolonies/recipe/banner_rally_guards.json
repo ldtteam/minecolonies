@@ -1,19 +1,10 @@
 {
   "type": "minecraft:crafting_shaped",
-  "category": "misc",
   "key": {
-    "A": {
-      "item": "minecraft:iron_sword"
-    },
-    "B": {
-      "item": "minecolonies:blockhutguardtower"
-    },
-    "C": {
-      "item": "minecraft:bow"
-    },
-    "X": {
-      "item": "minecraft:yellow_banner"
-    }
+    "A": "minecraft:iron_sword",
+    "B": "minecolonies:blockhutguardtower",
+    "C": "minecraft:bow",
+    "X": "minecraft:yellow_banner"
   },
   "pattern": [
     "AAA",
@@ -21,7 +12,6 @@
     "CCC"
   ],
   "result": {
-    "count": 1,
     "id": "minecolonies:banner_rally_guards"
   }
 }

@@ -1,6 +1,6 @@
 package com.minecolonies.core.colony.jobs;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import com.minecolonies.api.client.render.modeltype.ModModelTypes;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.core.entity.ai.workers.service.EntityAIWorkCook;
@@ -28,7 +28,7 @@ public class JobCook extends AbstractJob<EntityAIWorkCook, JobCook>
      */
     @NotNull
     @Override
-    public ResourceLocation getModel()
+    public Identifier getModel()
     {
         return ModModelTypes.COOK_ID;
     }

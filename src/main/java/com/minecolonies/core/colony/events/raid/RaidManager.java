@@ -1,6 +1,6 @@
 package com.minecolonies.core.colony.events.raid;
 
-import com.ldtteam.structurize.api.RotationMirror;
+import com.ldtteam.structurize.util.RotationMirror;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
@@ -43,7 +43,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.BiomeTags;
 import net.minecraft.util.Mth;
@@ -363,9 +363,9 @@ public class RaidManager implements IRaiderManager
             }
 
             // No rotation till spawners are moved into schematics
-            final RotationMirror shipRotMir = RotationMirror.of(Rotation.values()[colony.getWorld().random.nextInt(4)], Mirror.NONE);
+            final RotationMirror shipRotMir = RotationMirror.of(Rotation.values()[colony.getWorld().getRandom().nextInt(4)], Mirror.NONE);
             final Holder<Biome> biome = colony.getWorld().getBiome(colony.getCenter());
-            final int rand = colony.getWorld().random.nextInt(100);
+            final int rand = colony.getWorld().getRandom().nextInt(100);
             if (raidSettings.allowShips() && (raidSettings.raidType() == null && (biome.is(BiomeTags.IS_TAIGA) || rand < IGNORE_BIOME_CHANCE)
                 || Objects.equals(raidSettings.raidType(), NorsemenRaidEvent.NORSEMEN_RAID_EVENT_TYPE_ID.getPath()))
                 && ShipBasedRaiderUtils.canSpawnShipAt(colony, targetSpawnPoint, amount, shipRotMir, NorsemenShipRaidEvent.SHIP_NAME))
@@ -511,7 +511,7 @@ public class RaidManager implements IRaiderManager
         final BlockPos calcCenter = new BlockPos(locationSum.getX() / amount, locationSum.getY() / amount, locationSum.getZ() / amount);
 
         // Get a random point on a circle around the colony,far out for the direction
-        final int degree = colony.getWorld().random.nextInt(360);
+        final int degree = colony.getWorld().getRandom().nextInt(360);
         int x = (int) Math.round(500 * Math.cos(Math.toRadians(degree)));
         int z = (int) Math.round(500 * Math.sin(Math.toRadians(degree)));
         final BlockPos advanceTowards = calcCenter.offset(x, 0, z);
@@ -875,7 +875,7 @@ public class RaidManager implements IRaiderManager
             return true;
         }
 
-        return world.random.nextDouble() < 1.0 / (MineColonies.getConfig().getServer().averageNumberOfNightsBetweenRaids.get() - MineColonies.getConfig()
+        return world.getRandom().nextDouble() < 1.0 / (MineColonies.getConfig().getServer().averageNumberOfNightsBetweenRaids.get() - MineColonies.getConfig()
                                                                                                                                    .getServer().minimumNumberOfNightsBetweenRaids.get());
     }
 
@@ -891,7 +891,7 @@ public class RaidManager implements IRaiderManager
             final Object[] buildingArray = buildingList.toArray();
             if (buildingArray.length != 0)
             {
-                final int rand = colony.getWorld().random.nextInt(buildingArray.length);
+                final int rand = colony.getWorld().getRandom().nextInt(buildingArray.length);
                 final IBuilding building = (IBuilding) buildingArray[rand];
 
                 if (lastBuilding != null)
@@ -996,7 +996,7 @@ public class RaidManager implements IRaiderManager
     {
         if (compound.contains(TAG_RAIDABLE))
         {
-            setCanHaveRaiderEvents(compound.getBoolean(TAG_RAIDABLE));
+            setCanHaveRaiderEvents(compound.getBooleanOr(TAG_RAIDABLE, false));
         }
         else
         {
@@ -1005,20 +1005,20 @@ public class RaidManager implements IRaiderManager
 
         if (compound.contains(TAG_NIGHTS_SINCE_LAST_RAID))
         {
-            setNightsSinceLastRaid(compound.getInt(TAG_NIGHTS_SINCE_LAST_RAID));
+            setNightsSinceLastRaid(compound.getIntOr(TAG_NIGHTS_SINCE_LAST_RAID, 0));
         }
 
         if (compound.contains(TAG_RAID_DELAY))
         {
-            extraDaysToNextRaid = compound.getInt(TAG_RAID_DELAY);
+            extraDaysToNextRaid = compound.getIntOr(TAG_RAID_DELAY, 0);
         }
 
-        raidDifficulty = Mth.clamp(compound.getInt(TAG_RAID_DIFFICULTY), MIN_RAID_DIFFICULTY, MAX_RAID_DIFFICULTY);
+        raidDifficulty = Mth.clamp(compound.getIntOr(TAG_RAID_DIFFICULTY, 0), MIN_RAID_DIFFICULTY, MAX_RAID_DIFFICULTY);
 
         if (compound.contains(TAG_RAID_HISTORY))
         {
             raidHistories.clear();
-            ListTag nbtList = compound.getList(TAG_RAID_HISTORY, Tag.TAG_COMPOUND);
+            ListTag nbtList = compound.getListOrEmpty(TAG_RAID_HISTORY);
             for (final Tag tag : nbtList)
             {
                 raidHistories.add(RaidHistory.fromNBT((CompoundTag) tag));
@@ -1183,10 +1183,10 @@ public class RaidManager implements IRaiderManager
 
         private static RaidHistory fromNBT(final CompoundTag tag)
         {
-            RaidHistory history = new RaidHistory(tag.getInt(TAG_RAIDERAMOUNT), tag.getLong(TAG_RAIDTIME));
-            history.lostCitizens = tag.getInt(TAG_LOST_CITIZENS);
-            history.difficulty = tag.getDouble(TAG_DIFFICULTY);
-            ListTag nbtList = tag.getList(TAG_SPAWNINFO, Tag.TAG_COMPOUND);
+            RaidHistory history = new RaidHistory(tag.getIntOr(TAG_RAIDERAMOUNT, 0), tag.getLongOr(TAG_RAIDTIME, 0L));
+            history.lostCitizens = tag.getIntOr(TAG_LOST_CITIZENS, 0);
+            history.difficulty = tag.getDoubleOr(TAG_DIFFICULTY, 0.0D);
+            ListTag nbtList = tag.getListOrEmpty(TAG_SPAWNINFO);
             for (final Tag entry : nbtList)
             {
                 history.spawnData.add(RaidSpawnInfo.fromNBT((CompoundTag) entry));
@@ -1220,14 +1220,14 @@ public class RaidManager implements IRaiderManager
         /**
          * Id of the raid type
          */
-        public final ResourceLocation raidType;
+        public final Identifier raidType;
 
         /**
          * Position of the raid spawn
          */
         public final BlockPos spawnpos;
 
-        public RaidSpawnInfo(final ResourceLocation raidType, final BlockPos spawnpos)
+        public RaidSpawnInfo(final Identifier raidType, final BlockPos spawnpos)
         {
             this.raidType = raidType;
             this.spawnpos = spawnpos;
@@ -1245,7 +1245,7 @@ public class RaidManager implements IRaiderManager
 
         public static RaidSpawnInfo fromNBT(final CompoundTag tag)
         {
-            return new RaidSpawnInfo(ResourceLocation.parse(tag.getString(TAG_RAIDTYPE)), new BlockPos(tag.getInt("x"), tag.getInt("y"), tag.getInt("z")));
+            return new RaidSpawnInfo(Identifier.parse(tag.getStringOr(TAG_RAIDTYPE, "")), new BlockPos(tag.getIntOr("x", 0), tag.getIntOr("y", 0), tag.getIntOr("z", 0)));
         }
 
         public String toString()

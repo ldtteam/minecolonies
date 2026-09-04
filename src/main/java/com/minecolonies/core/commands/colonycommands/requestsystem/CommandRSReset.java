@@ -1,4 +1,5 @@
 package com.minecolonies.core.commands.colonycommands.requestsystem;
+import net.minecraft.server.permissions.Permissions;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.util.constant.translation.CommandTranslationConstants;
@@ -24,7 +25,7 @@ public class CommandRSReset implements IMCCommand
     {
         final IColony colony = ColonyIdArgument.getColony(context, COLONYID_ARG);
 
-        if (!context.getSource().hasPermission(OP_PERM_LEVEL) && !MineColonies.getConfig().getServer().canPlayerUseResetCommand.get())
+        if (!context.getSource().permissions().hasPermission(Permissions.COMMANDS_OWNER) && !MineColonies.getConfig().getServer().canPlayerUseResetCommand.get())
         {
             context.getSource().sendSuccess(() -> Component.translatableEscape(CommandTranslationConstants.COMMAND_DISABLED_IN_CONFIG), true);
             return 0;

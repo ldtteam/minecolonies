@@ -1,11 +1,17 @@
 package com.minecolonies.api.util;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.UUIDUtil;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.IntArrayTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.nbt.NbtOps;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.Optional;
+import java.util.UUID;
 
 import java.util.Iterator;
 import java.util.Spliterator;
@@ -42,7 +48,7 @@ public class NBTUtils
 
     public static BlockPos readBlockPos(@NotNull final CompoundTag compound, @NotNull final String name)
     {
-        int[] aint = compound.getIntArray(name);
+        int[] aint = compound.getIntArray(name).orElse(new int[0]);
         return aint.length == 3 ? new BlockPos(aint[0], aint[1], aint[2]) : null;
     }
 
@@ -55,6 +61,22 @@ public class NBTUtils
     public static Tag writeBlockPos(@NotNull final BlockPos pos)
     {
         return new IntArrayTag(new int[]{pos.getX(), pos.getY(), pos.getZ()});
+    }
+
+    public static void putUUID(@NotNull final CompoundTag compound, @NotNull final String name, @NotNull final UUID value)
+    {
+        compound.put(name, new IntArrayTag(UUIDUtil.uuidToIntArray(value)));
+    }
+
+    @Nullable
+    public static UUID getUUID(@NotNull final CompoundTag compound, @NotNull final String name)
+    {
+        final Tag tag = compound.get(name);
+        if (tag instanceof final IntArrayTag intArray && intArray.getAsIntArray().length == 4)
+        {
+            return UUIDUtil.uuidFromIntArray(intArray.getAsIntArray());
+        }
+        return null;
     }
 
     private static class TagListIterator implements Iterator<Tag>
@@ -74,7 +96,7 @@ public class NBTUtils
         @Override
         public Tag next()
         {
-            return list.getCompound(currentIndex++);
+            return list.getCompoundOrEmpty(currentIndex++);
         }
     }
 }

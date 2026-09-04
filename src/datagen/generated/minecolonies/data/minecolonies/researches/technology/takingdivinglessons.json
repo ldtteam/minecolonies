@@ -3,15 +3,15 @@
   "costs": [
     {
       "count": 16,
-      "item": "minecraft:kelp"
+      "ingredient": "minecraft:kelp"
     },
     {
       "count": 16,
-      "item": "minecraft:seagrass"
+      "ingredient": "minecraft:seagrass"
     },
     {
       "count": 16,
-      "item": "minecraft:sea_pickle"
+      "ingredient": "minecraft:sea_pickle"
     }
   ],
   "effects": [

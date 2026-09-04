@@ -21,8 +21,8 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 import java.io.IOException;
 import java.util.Locale;
 
-import static com.ldtteam.structurize.api.constants.Constants.BLUEPRINT_FOLDER;
-import static com.ldtteam.structurize.api.constants.Constants.SCANS_FOLDER;
+import static com.ldtteam.structurize.api.util.constant.Constants.BLUEPRINT_FOLDER;
+import static com.ldtteam.structurize.api.util.constant.Constants.SCANS_FOLDER;
 
 /**
  * Handles sendScanMessages.
@@ -59,8 +59,8 @@ public class SaveStructureNBTMessage extends AbstractClientPlayMessage
         try (ByteBufInputStream stream = new ByteBufInputStream(buffer))
         {
             final CompoundTag wrapperCompound = NbtIo.readCompressed(stream, NbtAccounter.unlimitedHeap());
-            compoundNBT = wrapperCompound.getCompound(TAG_SCHEMATIC);
-            fileName = wrapperCompound.getString(TAG_MILLIS);
+            compoundNBT = wrapperCompound.getCompoundOrEmpty(TAG_SCHEMATIC);
+            fileName = wrapperCompound.getStringOr(TAG_MILLIS, "");
         }
         catch (final RuntimeException e)
         {
@@ -102,8 +102,8 @@ public class SaveStructureNBTMessage extends AbstractClientPlayMessage
               StructurePacks.storeBlueprint(packName, compoundNBT, Minecraft.getInstance().gameDirectory.toPath()
                                                                   .resolve(BLUEPRINT_FOLDER)
                                                                   .resolve(Minecraft.getInstance().getUser().getName().toLowerCase(Locale.US))
-                                                                  .resolve(SCANS_FOLDER).resolve(fileName), player.registryAccess()));
-            player.displayClientMessage(Component.translatableEscape("Scan successfully saved as %s", fileName), false);
+                                                                  .resolve(SCANS_FOLDER).resolve(fileName)));
+            player.sendSystemMessage(Component.translatableEscape("Scan successfully saved as %s", fileName));
         }
     }
 }

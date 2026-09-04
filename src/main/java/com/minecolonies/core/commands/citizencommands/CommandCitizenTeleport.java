@@ -57,7 +57,8 @@ public class CommandCitizenTeleport implements IMCColonyOfficerCommand
 
         if (context.getSource().getLevel() == entityCitizen.level())
         {
-            entityCitizen.moveTo(targetPos.getX(), targetPos.getY(), targetPos.getZ(), entityCitizen.getViewYRot(1F), entityCitizen.getViewXRot(1F));
+            entityCitizen.setPos(targetPos.getX(), targetPos.getY(), targetPos.getZ());
+        entityCitizen.absSnapRotationTo(entityCitizen.getViewYRot(1F), entityCitizen.getViewXRot(1F));
             entityCitizen.getNavigation().stop();
         }
 

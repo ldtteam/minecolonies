@@ -14,7 +14,7 @@ import com.minecolonies.core.colony.buildings.moduleviews.MinerGuardAssignModule
 import com.minecolonies.core.colony.buildings.moduleviews.SettingsModuleView;
 import com.minecolonies.core.network.messages.server.colony.building.guard.GuardSetMinePosMessage;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,7 +40,7 @@ public class WindowMineGuardModule  extends AbstractModuleWindow<MinerGuardAssig
      */
     public WindowMineGuardModule(final MinerGuardAssignModuleView moduleView)
     {
-        super(moduleView, new ResourceLocation(Constants.MOD_ID, "gui/layouthuts/layoutguardlist.xml"));
+        super(moduleView, Identifier.fromNamespaceAndPath(Constants.MOD_ID, "gui/layouthuts/layoutguardlist.xml"));
         this.guardsList = findPaneOfTypeByID(LIST_GUARDS, ScrollingList.class);
         pullGuardsFromHut();
 

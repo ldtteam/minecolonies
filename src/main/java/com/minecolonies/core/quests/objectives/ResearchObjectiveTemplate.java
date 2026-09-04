@@ -13,7 +13,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -28,7 +28,7 @@ public class ResearchObjectiveTemplate extends DialogueObjectiveTemplateTemplate
     /**
      * The research to execute.
      */
-    private final ResourceLocation researchId;
+    private final Identifier researchId;
 
     /**
      * Next objective to go to, on fulfillment. -1 if final objective.
@@ -43,7 +43,7 @@ public class ResearchObjectiveTemplate extends DialogueObjectiveTemplateTemplate
      */
     public ResearchObjectiveTemplate(
       final int target,
-      final ResourceLocation researchId,
+      final Identifier researchId,
       final int nextObjective,
       final List<Integer> rewards)
     {
@@ -53,7 +53,7 @@ public class ResearchObjectiveTemplate extends DialogueObjectiveTemplateTemplate
     }
 
     @NotNull
-    private static DialogueElement buildDialogueTree(final ResourceLocation researchId)
+    private static DialogueElement buildDialogueTree(final Identifier researchId)
     {
         final IGlobalResearch research = IGlobalResearchTree.getInstance().getResearch(researchId);
 
@@ -77,7 +77,7 @@ public class ResearchObjectiveTemplate extends DialogueObjectiveTemplateTemplate
         JsonObject details = jsonObject.getAsJsonObject(DETAILS_KEY);
 
         final int target = details.get(TARGET_KEY).getAsInt();
-        final ResourceLocation researchId = ResourceLocation.parse(details.get(BUILDING_KEY).getAsString());
+        final Identifier researchId = Identifier.parse(details.get(BUILDING_KEY).getAsString());
 
         final int nextObj = details.has(NEXT_OBJ_KEY) ? details.get(NEXT_OBJ_KEY).getAsInt() : -1;
 

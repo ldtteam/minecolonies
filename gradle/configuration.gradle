@@ -1,16 +1,5 @@
 project.ext.customChangelogHeader = "\n" +
         "### Required Dependencies: \n" +
-        "- Structurize: ${project.structurize_version} (or above)\n" +
-        "- MultiPiston: ${project.multiPistonVersion} (or above)\n" +
-        "- BlockUI: ${project.blockUI_version} (or above)\n" +
-        "- Domum Ornamentum: ${project.domumOrnamentumVersion} (or above)\n" +
-        "\n" +
-        "### Optional Dependencies\n" +
-        "- JEI: ${project.jei_version} (or above)\n" +
-        "- Journeymap: ${project.jmapVersion} (or above)\n"
-
-if (project.hasProperty("dynamicTreesVersion")) {
-    project.ext.customChangelogHeader += "- Dynamic Trees: ${project.dynamicTreesVersion} (or above)\n"
-}
-
-project.ext.customChangelogHeader += "\n"
+        "- BlockUI: ${project.findProperty('blockUI_version') ?: '0.0.1-local'} (or above)\n" +
+        "- Domum Ornamentum: ${project.findProperty('domumOrnamentumVersion') ?: '1.0.0-local'} (or above)\n" +
+        "- Structurize: ${project.findProperty('structurize_version') ?: '0.0.1-local'} (or above)"

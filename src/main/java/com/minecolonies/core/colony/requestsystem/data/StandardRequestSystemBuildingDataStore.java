@@ -225,33 +225,33 @@ public class StandardRequestSystemBuildingDataStore implements IRequestSystemBui
         @Override
         public StandardRequestSystemBuildingDataStore deserialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final CompoundTag nbt) throws Throwable
         {
-            final IToken<?> token = controller.deserializeTag(provider, nbt.getCompound(TAG_TOKEN));
+            final IToken<?> token = controller.deserializeTag(provider, nbt.getCompoundOrEmpty(TAG_TOKEN));
             final Map<TypeToken<?>, Collection<IToken<?>>> openRequestsByRequestableType = new HashMap<>();
-            for (final Tag tag : nbt.getList(TAG_OPEN_REQUESTS_BY_TYPE, Tag.TAG_COMPOUND))
+            for (final Tag tag : nbt.getListOrEmpty(TAG_OPEN_REQUESTS_BY_TYPE))
             {
                 final CompoundTag compoundTag = (CompoundTag) tag;
-                openRequestsByRequestableType.put(controller.deserializeTag(provider, compoundTag.getCompound(TAG_TOKEN)), controller.deserializeList(provider, compoundTag.getList(TAG_LIST, Tag.TAG_COMPOUND)));
+                openRequestsByRequestableType.put(controller.deserializeTag(provider, compoundTag.getCompoundOrEmpty(TAG_TOKEN)), controller.deserializeList(provider, compoundTag.getListOrEmpty(TAG_LIST)));
             }
 
             final Int2ObjectMap<Collection<IToken<?>>> openRequestsByCitizen = new Int2ObjectOpenHashMap<>();
-            for (final Tag tag : nbt.getList(TAG_OPEN_REQUESTS_BY_CITIZEN, Tag.TAG_COMPOUND))
+            for (final Tag tag : nbt.getListOrEmpty(TAG_OPEN_REQUESTS_BY_CITIZEN))
             {
                 final CompoundTag compoundTag = (CompoundTag) tag;
-                openRequestsByCitizen.put(controller.deserializeTag(provider, compoundTag.getCompound(TAG_TOKEN)), controller.deserializeList(provider, compoundTag.getList(TAG_LIST, Tag.TAG_COMPOUND)));
+                openRequestsByCitizen.put(controller.deserializeTag(provider, compoundTag.getCompoundOrEmpty(TAG_TOKEN)), controller.deserializeList(provider, compoundTag.getListOrEmpty(TAG_LIST)));
             }
 
             final Int2ObjectMap<Collection<IToken<?>>> completedRequestsByCitizen = new Int2ObjectOpenHashMap<>();
-            for (final Tag tag : nbt.getList(TAG_COMPLETED_REQUESTS_BY_CITIZEN, Tag.TAG_COMPOUND))
+            for (final Tag tag : nbt.getListOrEmpty(TAG_COMPLETED_REQUESTS_BY_CITIZEN))
             {
                 final CompoundTag compoundTag = (CompoundTag) tag;
-                completedRequestsByCitizen.put(controller.deserializeTag(provider, compoundTag.getCompound(TAG_TOKEN)), controller.deserializeList(provider, compoundTag.getList(TAG_LIST, Tag.TAG_COMPOUND)));
+                completedRequestsByCitizen.put(controller.deserializeTag(provider, compoundTag.getCompoundOrEmpty(TAG_TOKEN)), controller.deserializeList(provider, compoundTag.getListOrEmpty(TAG_LIST)));
             }
 
             final Object2IntMap<IToken<?>> citizenByOpenRequest = new Object2IntOpenHashMap<>();
-            for (final Tag tag : nbt.getList(TAG_CITIZEN_BY_OPEN_REQUEST, Tag.TAG_COMPOUND))
+            for (final Tag tag : nbt.getListOrEmpty(TAG_CITIZEN_BY_OPEN_REQUEST))
             {
                 final CompoundTag compoundTag = (CompoundTag) tag;
-                citizenByOpenRequest.put(controller.deserializeTag(provider, compoundTag.getCompound(TAG_TOKEN)), controller.deserializeTag(provider, compoundTag.getCompound(TAG_VALUE)));
+                citizenByOpenRequest.put(controller.deserializeTag(provider, compoundTag.getCompoundOrEmpty(TAG_TOKEN)), controller.deserializeTag(provider, compoundTag.getCompoundOrEmpty(TAG_VALUE)));
             }
 
             return new StandardRequestSystemBuildingDataStore(token, openRequestsByRequestableType, openRequestsByCitizen, completedRequestsByCitizen, citizenByOpenRequest);

@@ -86,10 +86,10 @@ public class BuildingSchool extends AbstractBuilding
     public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound)
     {
         super.deserializeNBT(provider, compound);
-        final ListTag carpetTagList = compound.getList(NBT_CARPET, Tag.TAG_COMPOUND);
+        final ListTag carpetTagList = compound.getListOrEmpty(NBT_CARPET);
         for (int i = 0; i < carpetTagList.size(); ++i)
         {
-            final CompoundTag bedCompound = carpetTagList.getCompound(i);
+            final CompoundTag bedCompound = carpetTagList.getCompoundOrEmpty(i);
             final BlockPos pos = BlockPosUtil.read(bedCompound, TAG_POS);
             if (!carpet.contains(pos))
             {

@@ -3,8 +3,8 @@ package com.minecolonies.api.colony.colonyEvents.descriptions;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
-import net.neoforged.neoforge.common.util.INBTSerializable;
+import net.minecraft.resources.Identifier;
+import com.minecolonies.api.util.INBTSerializable;
 
 /**
  * Description for an event that happened in the colony.
@@ -16,7 +16,7 @@ public interface IColonyEventDescription extends INBTSerializable<CompoundTag>
      * 
      * @return this event types registry id.
      */
-    ResourceLocation getEventTypeId();
+    Identifier getEventTypeId();
 
     /**
      * Gets the name of this event type.

@@ -8,12 +8,6 @@
       "id": "minecraft:nether_quartz_ore"
     },
     {
-      "id": "minecraft:rotten_flesh"
-    },
-    {
-      "id": "minecraft:gold_nugget"
-    },
-    {
       "id": "minecraft:soul_sand"
     },
     {
@@ -21,24 +15,6 @@
     },
     {
       "id": "minecraft:soul_soil"
-    },
-    {
-      "id": "minecraft:porkchop"
-    },
-    {
-      "id": "minecraft:leather"
-    },
-    {
-      "id": "minecraft:gunpowder"
-    },
-    {
-      "id": "minecraft:ghast_tear"
-    },
-    {
-      "id": "minecraft:ender_pearl"
-    },
-    {
-      "id": "minecraft:magma_cream"
     }
   ],
   "crafter": "netherworker_custom",

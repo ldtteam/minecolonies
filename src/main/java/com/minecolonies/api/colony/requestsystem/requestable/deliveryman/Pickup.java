@@ -95,11 +95,11 @@ public class Pickup extends AbstractDeliverymanRequestable
     @NotNull
     public static Pickup deserialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final CompoundTag compound)
     {
-        final int priority = controller.deserializeTag(provider, compound.getCompound(NBT_PRIORITY));
+        final int priority = controller.deserializeTag(provider, compound.getCompoundOrEmpty(NBT_PRIORITY));
         final int day;
         if (compound.contains(NBT_DAY))
         {
-            day = controller.deserializeTag(provider, compound.getCompound(NBT_DAY));
+            day = controller.deserializeTag(provider, compound.getCompoundOrEmpty(NBT_DAY));
         }
         else
         {
@@ -109,7 +109,7 @@ public class Pickup extends AbstractDeliverymanRequestable
         final int qty;
         if (compound.contains(NBT_QTY))
         {
-            qty = controller.deserializeTag(provider, compound.getCompound(NBT_QTY));
+            qty = controller.deserializeTag(provider, compound.getCompoundOrEmpty(NBT_QTY));
         }
         else
         {

@@ -46,7 +46,7 @@ import com.minecolonies.core.entity.pathfinding.registry.PathNavigateRegistry;
 import com.minecolonies.core.research.GlobalResearchTree;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.neoforged.neoforge.registries.NewRegistryEvent;
 import net.neoforged.neoforge.registries.RegistryBuilder;
 import org.jetbrains.annotations.NotNull;
@@ -235,7 +235,7 @@ public class CommonMinecoloniesAPIImpl implements IMinecoloniesAPI
         colonyEventRegistry = event.create(syncedRegistry(COLONY_EVENT_TYPES));
         colonyEventDescriptionRegistry = event.create(syncedRegistry(COLONY_EVENT_DESC_TYPES));
         craftingTypeRegistry = event.create(syncedRegistry(CRAFTING_TYPES));
-        recipeTypeEntryRegistry = event.create(syncedRegistry(RECIPE_TYPE_ENTRIES, new ResourceLocation(Constants.MOD_ID, "classic")));
+        recipeTypeEntryRegistry = event.create(syncedRegistry(RECIPE_TYPE_ENTRIES, Identifier.fromNamespaceAndPath(Constants.MOD_ID, "classic")));
         researchRequirementRegistry = event.create(syncedRegistry(RESEARCH_REQUIREMENT_TYPES));
         researchEffectRegistry = event.create(syncedRegistry(RESEARCH_EFFECT_TYPES));
         questObjectiveRegistry = event.create(syncedRegistry(QUEST_OBJECTIVES));
@@ -249,16 +249,16 @@ public class CommonMinecoloniesAPIImpl implements IMinecoloniesAPI
 
     private static <T> ResourceKey<Registry<T>> key(final String registryName)
     {
-        return ResourceKey.createRegistryKey(new ResourceLocation(Constants.MOD_ID, registryName));
+        return ResourceKey.createRegistryKey(Identifier.fromNamespaceAndPath(Constants.MOD_ID, registryName));
     }
 
 
     private static <T> RegistryBuilder<T> syncedRegistry(final ResourceKey<Registry<T>> registryKey)
     {
-        return syncedRegistry(registryKey, new ResourceLocation(Constants.MOD_ID, "null"));
+        return syncedRegistry(registryKey, Identifier.fromNamespaceAndPath(Constants.MOD_ID, "null"));
     }
 
-    private static <T> RegistryBuilder<T> syncedRegistry(final ResourceKey<Registry<T>> registryKey, final ResourceLocation defaultKey)
+    private static <T> RegistryBuilder<T> syncedRegistry(final ResourceKey<Registry<T>> registryKey, final Identifier defaultKey)
     {
         return new RegistryBuilder<T>(registryKey).sync(true).defaultKey(defaultKey);
     }

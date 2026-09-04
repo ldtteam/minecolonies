@@ -3,7 +3,7 @@
   "costs": [
     {
       "count": 128,
-      "item": "minecraft:cookie"
+      "ingredient": "minecraft:cookie"
     }
   ],
   "effects": [

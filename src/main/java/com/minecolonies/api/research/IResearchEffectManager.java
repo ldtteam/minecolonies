@@ -1,6 +1,6 @@
 package com.minecolonies.api.research;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 /**
  * The manager of unlocked research effects of a given colony.
@@ -14,7 +14,7 @@ public interface IResearchEffectManager
      * @param id the id of the effect.
      * @return the strength of the effect, 1 by default for researches effects which do not have values configured, or zero if it isn't present.
      */
-    double getEffectStrength(final ResourceLocation id);
+    double getEffectStrength(final Identifier id);
 
     /**
      * Apply the effect to the research effects class.

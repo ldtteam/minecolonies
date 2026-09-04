@@ -11,7 +11,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -35,13 +35,13 @@ public final class BuildingExtensionDataManager
      */
     public static IBuildingExtension compoundToExtension(@NotNull final HolderLookup.Provider provider, final @NotNull CompoundTag compound)
     {
-        final ResourceLocation name = ResourceLocation.parse(compound.getString(TAG_EXTENSION_NAME));
+        final Identifier name = Identifier.parse(compound.getStringOr(TAG_EXTENSION_NAME, ""));
         final BlockPos position = BlockPosUtil.read(compound, TAG_EXTENSION_POSITION);
 
         final IBuildingExtension extension = resourceLocationToExtension(name, position);
         if (extension != null)
         {
-            extension.deserializeNBT(provider, compound.getCompound(TAG_EXTENSION_DATA));
+            extension.deserializeNBT(provider, compound.getCompoundOrEmpty(TAG_EXTENSION_DATA));
         }
         return extension;
     }
@@ -53,9 +53,9 @@ public final class BuildingExtensionDataManager
      * @param position  the position of the building extension.
      * @return the building extension instance.
      */
-    public static IBuildingExtension resourceLocationToExtension(final @NotNull ResourceLocation registryName, final @NotNull BlockPos position)
+    public static IBuildingExtension resourceLocationToExtension(final @NotNull Identifier registryName, final @NotNull BlockPos position)
     {
-        final BuildingExtensionEntry entry = BuildingExtensionRegistries.getBuildingExtensionRegistry().get(registryName);
+        final BuildingExtensionEntry entry = BuildingExtensionRegistries.getBuildingExtensionRegistry().getValue(registryName);
 
         if (entry == null)
         {

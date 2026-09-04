@@ -1,6 +1,7 @@
 package com.minecolonies.core.entity.pathfinding.navigation;
 
 import com.minecolonies.api.colony.IColony;
+import com.ldtteam.structurize.api.util.Tuple;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
@@ -21,6 +22,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -138,7 +140,6 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
         super(entity, world);
 
         entity.moveControl = new MovementHandler(entity);
-        this.nodeEvaluator = new WalkNodeEvaluator();
         this.nodeEvaluator.setCanPassDoors(true);
         getPathingOptions().setEnterDoors(true);
         this.nodeEvaluator.setCanOpenDoors(true);
@@ -216,7 +217,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
     protected PathResult<PathJobRandomPos> walkToRandomPos(
         final int range,
         final double speedFactor,
-        final net.minecraft.util.Tuple<BlockPos, BlockPos> corners)
+        final com.ldtteam.structurize.api.util.Tuple<BlockPos, BlockPos> corners)
     {
         return walkToRandomPos(range, speedFactor, corners, false);
     }
@@ -225,7 +226,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
     protected PathResult<PathJobRandomPos> walkToRandomPos(
         final int range,
         final double speedFactor,
-        final net.minecraft.util.Tuple<BlockPos, BlockPos> corners, final boolean preferInside)
+        final com.ldtteam.structurize.api.util.Tuple<BlockPos, BlockPos> corners, final boolean preferInside)
     {
         @NotNull final BlockPos start = PathfindingUtils.prepareStart(ourEntity);
 
@@ -281,7 +282,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
             if (dest != null && !WorldUtil.isBlockLoaded(ourEntity.level(), dest) && pathResult.getJob() instanceof IDestinationPathJob destinationPathJob &&
                 !WorldUtil.isBlockLoaded(ourEntity.level(), destinationPathJob.getDestination()))
             {
-                if (!FMLEnvironment.production)
+                if (!FMLEnvironment.isProduction())
                 {
                     Log.getLogger().info("Unloaded citizen:" + ourEntity + " trying to path into unloaded position at: " + dest, new Exception());
                 }
@@ -310,11 +311,11 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
                     if (ourEntity instanceof AbstractEntityCitizen citizen)
                     {
                         final BlockPos tpPos = citizen.getCitizenData().getHomePosition();
-                        ourEntity.moveTo(tpPos.getX(), tpPos.getY(), tpPos.getZ());
+                        ourEntity.snapTo(tpPos.getX(), tpPos.getY(), tpPos.getZ());
                         return null;
                     }
 
-                    ourEntity.moveTo(dest.getX(), dest.getY(), dest.getZ());
+                    ourEntity.snapTo(dest.getX(), dest.getY(), dest.getZ());
                 }
 
                 pauseTicks = 20 * 300;
@@ -472,7 +473,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
                 lastWantedPathIndex = path.getNextNodeIndex();
                 Vec3 vector3d2 = path.getNextEntityPos(mob);
                 tempPos.set(Mth.floor(vector3d2.x), Mth.floor(vector3d2.y), Mth.floor(vector3d2.z));
-                if (wantedPosition.empty() || ChunkPos.asLong(tempPos) == mob.chunkPosition().toLong() || WorldUtil.isEntityBlockLoaded(level, tempPos))
+                if (wantedPosition.empty() || ChunkPos.pack(tempPos) == mob.chunkPosition().pack() || WorldUtil.isEntityBlockLoaded(level, tempPos))
                 {
                     wantedPosition.set(vector3d2.x,
                         getSmartGroundY(this.level, tempPos, vector3d2.y),
@@ -564,7 +565,13 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
     @Override
     protected PathFinder createPathFinder(final int p_179679_1_)
     {
-        return null;
+        // Minecraft 26.2 invokes createPathFinder from PathNavigation's
+        // constructor and immediately configures the returned finder.  The
+        // async Minecolonies path jobs still own gameplay path creation, but a
+        // valid vanilla finder/evaluator is required for construction and for
+        // inherited navigation bookkeeping.
+        this.nodeEvaluator = new WalkNodeEvaluator();
+        return new PathFinder(this.nodeEvaluator, p_179679_1_);
     }
 
     @Override
@@ -961,7 +968,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
                     ? ((BaseRailBlock) blockstate.getBlock()).getRailDirection(blockstate, level, tempPos, null)
                     : RailShape.NORTH_SOUTH;
                 double yOffset = 0.0D;
-                if (railshape.isAscending())
+                if (railshape.isSlope())
                 {
                     yOffset = 0.5D;
                 }
@@ -972,7 +979,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
                 }
                 else
                 {
-                    MinecoloniesMinecart minecart = ModEntities.MINECART.create(level);
+                    MinecoloniesMinecart minecart = ModEntities.MINECART.create(level, EntitySpawnReason.EVENT);
                     final double x = pEx.x + 0.5D;
                     final double y = pEx.y + 0.625D + yOffset;
                     final double z = pEx.z + 0.5D;
@@ -985,7 +992,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
 
                     level.addFreshEntity(minecart);
                     minecart.setHurtDir(1);
-                    mob.startRiding(minecart, true);
+                    mob.startRiding(minecart, true, false);
                 }
                 spawnedPos = tempPos.immutable();
             }

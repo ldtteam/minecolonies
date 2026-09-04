@@ -2,7 +2,7 @@ package com.minecolonies.api.research;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.contents.TranslatableContents;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -20,9 +20,9 @@ public interface IResearchEffect
     /**
      * Getter for the ID of the effect.
      *
-     * @return the effect id as a ResourceLocation.
+     * @return the effect id as a Identifier.
      */
-    ResourceLocation getId();
+    Identifier getId();
 
     /**
      * Human-readable effect description, or a translation key.

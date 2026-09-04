@@ -1,8 +1,8 @@
 package com.minecolonies.core.placementhandlers;
 
 import com.google.common.collect.ImmutableList;
-import com.ldtteam.structurize.api.RotationMirror;
-import com.ldtteam.structurize.api.constants.Constants;
+import com.ldtteam.structurize.util.RotationMirror;
+import com.ldtteam.structurize.api.util.constant.Constants;
 import com.ldtteam.structurize.placement.IPlacementContext;
 import com.ldtteam.structurize.placement.handlers.placement.IPlacementHandler;
 import com.ldtteam.structurize.util.BlockUtils;
@@ -13,7 +13,7 @@ import net.minecraft.commands.arguments.blocks.BlockStateParser;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.util.Tuple;
+import com.ldtteam.structurize.api.util.Tuple;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
@@ -54,7 +54,7 @@ public class JigsawPlacementHandler implements IPlacementHandler
             {
                 try
                 {
-                    handleTileEntityPlacement(tileEntityData, world, pos, placementContext.getRotationMirror());
+                    handleTileEntityPlacement(tileEntityData, world, pos, placementContext.getRotationMirror().getRotationMirror());
                     blockState.getBlock().setPlacedBy(world, pos, blockState, null, BlockUtils.getItemStackFromBlockState(blockState));
                 }
                 catch (final Exception ex)
@@ -67,7 +67,7 @@ public class JigsawPlacementHandler implements IPlacementHandler
 
         if (tileEntityData != null && tileEntityData.contains("final_state"))
         {
-            final String stateString = tileEntityData.getString("final_state");
+            final String stateString = tileEntityData.getStringOr("final_state", "");
 
             BlockState finalState = Blocks.AIR.defaultBlockState();
 
@@ -109,7 +109,7 @@ public class JigsawPlacementHandler implements IPlacementHandler
             return ImmutableList.of(new ItemStack(Blocks.JIGSAW));
         }
 
-        final String stateString = tileEntityData.getString("final_state");
+        final String stateString = tileEntityData.getStringOr("final_state", "");
 
         BlockState finalState = Blocks.AIR.defaultBlockState();
 

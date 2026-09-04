@@ -11,7 +11,7 @@ import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.Tuple;
+import com.ldtteam.structurize.api.util.Tuple;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.api.util.constant.translation.RequestSystemTranslationConstants;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
@@ -21,6 +21,10 @@ import com.minecolonies.core.colony.buildings.modules.ItemListModule;
 import com.minecolonies.core.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.core.colony.jobs.AbstractJob;
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.block.AbstractFurnaceBlock;
+import net.minecraft.world.inventory.FurnaceMenu;
+import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -137,7 +141,7 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob<?, J>, B
                 final int countInResultSlot = ItemStackUtils.isEmpty(furnace.getItem(RESULT_SLOT)) ? 0 : furnace.getItem(RESULT_SLOT).getCount();
                 final int countInInputSlot = ItemStackUtils.isEmpty(furnace.getItem(SMELTABLE_SLOT)) ? 0 : furnace.getItem(SMELTABLE_SLOT).getCount();
 
-                if ((!furnace.isLit() && countInResultSlot > 0)
+                if ((!(furnace.getBlockState().getValue(AbstractFurnaceBlock.LIT)) && countInResultSlot > 0)
                       || countInResultSlot > RETRIEVE_SMELTABLE_IF_MORE_THAN
                       || (countInResultSlot > 0 && countInInputSlot == 0))
                 {
@@ -294,9 +298,12 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob<?, J>, B
                     final FurnaceBlockEntity furnace = (FurnaceBlockEntity) entity;
                     for (int i = 0; i < accelerationTicks; i++)
                     {
-                        if (furnace.isLit())
+                        if (furnace.getBlockState().getValue(AbstractFurnaceBlock.LIT))
                         {
-                            furnace.serverTick(world, pos, world.getBlockState(pos), furnace);
+                            if (world instanceof ServerLevel serverLevel)
+                            {
+                                furnace.serverTick(serverLevel, pos, world.getBlockState(pos), furnace);
+                            }
                         }
                     }
                 }

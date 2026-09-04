@@ -8,7 +8,7 @@ import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.colony.ColonyView;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Locale;
@@ -29,7 +29,7 @@ public class WindowTownHallNameEntry extends BOWindow implements ButtonHandler
      */
     public WindowTownHallNameEntry(final IColonyView c)
     {
-        super(new ResourceLocation(Constants.MOD_ID, "gui/townhall/windowtownhallnameentry.xml"));
+        super(Identifier.fromNamespaceAndPath(Constants.MOD_ID, "gui/townhall/windowtownhallnameentry.xml"));
         this.colony = c;
     }
 

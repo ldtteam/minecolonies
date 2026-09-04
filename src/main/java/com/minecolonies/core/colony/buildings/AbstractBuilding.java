@@ -4,7 +4,7 @@ import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.reflect.TypeToken;
-import com.ldtteam.structurize.api.RotationMirror;
+import com.ldtteam.structurize.util.RotationMirror;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.storage.StructurePacks;
 import com.minecolonies.api.MinecoloniesAPIProxy;
@@ -65,8 +65,8 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.Tuple;
+import net.minecraft.resources.Identifier;
+import com.ldtteam.structurize.api.util.Tuple;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -105,9 +105,9 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     /**
      * Breeding setting.
      */
-    public static final ISettingKey<BoolSetting> BREEDING = new SettingKey<>(BoolSetting.class, new ResourceLocation(MOD_ID, "breeding"));
+    public static final ISettingKey<BoolSetting> BREEDING = new SettingKey<>(BoolSetting.class, Identifier.fromNamespaceAndPath(MOD_ID, "breeding"));
 
-    public static final ISettingKey<BoolSetting> USE_SHEARS = new SettingKey<>(BoolSetting.class, new ResourceLocation(Constants.MOD_ID, "useshears"));
+    public static final ISettingKey<BoolSetting> USE_SHEARS = new SettingKey<>(BoolSetting.class, Identifier.fromNamespaceAndPath(Constants.MOD_ID, "useshears"));
 
     /**
      * Best possible standing pos score.
@@ -331,7 +331,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
         loadRequestSystemFromNBT(provider, compound);
         if (compound.contains(TAG_IS_BUILT))
         {
-            isBuilt = compound.getBoolean(TAG_IS_BUILT);
+            isBuilt = compound.getBooleanOr(TAG_IS_BUILT, false);
         }
         else if (getBuildingLevel() > 0)
         {
@@ -339,20 +339,20 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
         }
         if (compound.contains(TAG_CUSTOM_NAME))
         {
-            this.customName = compound.getString(TAG_CUSTOM_NAME);
+            this.customName = compound.getStringOr(TAG_CUSTOM_NAME, "");
         }
         if (compound.contains(TAG_PRESTIGE))
         {
-            this.prestige = compound.getInt(TAG_PRESTIGE);
+            this.prestige = compound.getIntOr(TAG_PRESTIGE, 0);
         }
 
         if (compound.contains(TAG_BUILDING_MODULES))
         {
             for (IPersistentModule module : getModulesByType(IPersistentModule.class))
             {
-                if (compound.getCompound(TAG_BUILDING_MODULES).contains(module.getProducer().key))
+                if (compound.getCompoundOrEmpty(TAG_BUILDING_MODULES).contains(module.getProducer().key))
                 {
-                    module.deserializeNBT(provider, compound.getCompound(TAG_BUILDING_MODULES).getCompound(module.getProducer().key));
+                    module.deserializeNBT(provider, compound.getCompoundOrEmpty(TAG_BUILDING_MODULES).getCompoundOrEmpty(module.getProducer().key));
                 }
                 else
                 {
@@ -471,8 +471,8 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
             return;
         }
 
-        final int min = colony.getWorld().getMinBuildHeight();
-        final int max = colony.getWorld().getMaxBuildHeight();
+        final int min = colony.getWorld().getMinY();
+        final int max = colony.getWorld().getMaxY();
         if (getCorners().getA().getY() >= max || getCorners().getB().getY() >= max)
         {
             MessageUtils.format(BUILDER_BUILDING_TOO_HIGH, max).sendTo(colony).forAllPlayers();
@@ -790,7 +790,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     @Override
     public void requestUpgrade(final Player player, final BlockPos builder)
     {
-        final ResourceLocation hutResearch = colony.getResearchManager().getResearchEffectIdFrom(this.getBuildingType().getBuildingBlock());
+        final Identifier hutResearch = colony.getResearchManager().getResearchEffectIdFrom(this.getBuildingType().getBuildingBlock());
 
         if (MinecoloniesAPIProxy.getInstance().getGlobalResearchTree().hasResearchEffect(hutResearch) &&
               colony.getResearchManager().getResearchEffects().getEffectStrength(hutResearch) < 1)
@@ -1006,7 +1006,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
 
         try
         {
-            final Blueprint blueprint = StructurePacks.getBlueprint(getStructurePack(), getBlueprintPath(), te.getLevel().registryAccess());
+            final Blueprint blueprint = StructurePacks.getBlueprint(getStructurePack(), getBlueprintPath());
             if (blueprint == null)
             {
                 setCorners(getPosition(), getPosition());
@@ -1318,7 +1318,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     {
         if (compound.contains(TAG_REQUESTOR_ID))
         {
-            this.requester = StandardFactoryController.getInstance().deserializeTag(provider, compound.getCompound(TAG_REQUESTOR_ID));
+            this.requester = StandardFactoryController.getInstance().deserializeTag(provider, compound.getCompoundOrEmpty(TAG_REQUESTOR_ID));
         }
         else
         {
@@ -1327,7 +1327,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
 
         if (compound.contains(TAG_RS_BUILDING_DATASTORE))
         {
-            this.rsDataStoreToken = StandardFactoryController.getInstance().deserializeTag(provider, compound.getCompound(TAG_RS_BUILDING_DATASTORE));
+            this.rsDataStoreToken = StandardFactoryController.getInstance().deserializeTag(provider, compound.getCompoundOrEmpty(TAG_RS_BUILDING_DATASTORE));
         }
         else
         {

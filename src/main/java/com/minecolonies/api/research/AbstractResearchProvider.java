@@ -11,11 +11,12 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.PackOutput;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
-import net.minecraft.util.Tuple;
+import com.ldtteam.structurize.api.util.Tuple;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.neoforged.neoforge.common.crafting.SizedIngredient;
 import org.jetbrains.annotations.NotNull;
 
@@ -54,7 +55,7 @@ public abstract class AbstractResearchProvider implements DataProvider
     /**
      * Creates a collection of Research Branches, holding the human-readable name and time multiplier.
      * Research Branches are optional: if no matching json is present, or no values set,
-     * the branch will default to its {@code ResourceLocation.getPath()}, at 1.0 research time.
+     * the branch will default to its {@code Identifier.getPath()}, at 1.0 research time.
      * @return  A collection of Research Branches, or Collection.EMPTY_LIST.
      */
     protected abstract Collection<ResearchBranch> getResearchBranchCollection();
@@ -138,11 +139,11 @@ public abstract class AbstractResearchProvider implements DataProvider
 
         for (Tuple<JsonObject, Tuple<String, String>> model : this.research)
         {
-            final Path target = researchesPath.json(new ResourceLocation(model.getB().getA(), model.getB().getB()));
+            final Path target = researchesPath.json(Identifier.fromNamespaceAndPath(model.getB().getA(), model.getB().getB()));
             futures[i++] = DataProvider.saveStable(cache, model.getA(), target);
         }
 
-        futures[i] = DataProvider.saveStable(cache, langJson, langPath.json(new ResourceLocation(Constants.MOD_ID, "default")));
+        futures[i] = DataProvider.saveStable(cache, langJson, langPath.json(Identifier.fromNamespaceAndPath(Constants.MOD_ID, "default")));
 
         return CompletableFuture.allOf(futures);
     }
@@ -175,7 +176,7 @@ public abstract class AbstractResearchProvider implements DataProvider
     public static class Research
     {
         final public JsonObject       json = new JsonObject();
-        final public ResourceLocation id;
+        final public Identifier id;
 
         /**
          * The university level of the research.
@@ -197,7 +198,7 @@ public abstract class AbstractResearchProvider implements DataProvider
          * @param id            A unique identifier.  Suggested path format is branch/name.json.
          * @param branch        A branch unique identifier.  This will determine the location of a branch JSON, if present.
          */
-        public Research(final ResourceLocation id, final ResourceLocation branch)
+        public Research(final Identifier id, final Identifier branch)
         {
             this.id = id;
             this.researchLevel = 1;
@@ -389,7 +390,7 @@ public abstract class AbstractResearchProvider implements DataProvider
          * @param texture  The location of the texture file to use as an icon.
          * @return this
          */
-        public Research setIcon(final ResourceLocation texture)
+        public Research setIcon(final Identifier texture)
         {
             this.json.addProperty("icon", texture.toString());
             return this;
@@ -405,11 +406,11 @@ public abstract class AbstractResearchProvider implements DataProvider
          * @param level        The required sum of levels across the colony.
          * @return this
          */
-        public Research addBuildingRequirement(final ResourceLocation buildingName, final int level)
+        public Research addBuildingRequirement(final Identifier buildingName, final int level)
         {
             final JsonArray reqArray = getRequirementsArray();
             final JsonObject req = new JsonObject();
-            req.addProperty("type", new ResourceLocation(Constants.MOD_ID, "building").toString());
+            req.addProperty("type", Identifier.fromNamespaceAndPath(Constants.MOD_ID, "building").toString());
             req.addProperty("building", buildingName.toString());
             req.addProperty("level", level);
             reqArray.add(req);
@@ -428,11 +429,11 @@ public abstract class AbstractResearchProvider implements DataProvider
          * @param level        The required sum of levels across the colony.
          * @return this
          */
-        public Research addSingleBuildingRequirement(final ResourceLocation buildingName, final int level)
+        public Research addSingleBuildingRequirement(final Identifier buildingName, final int level)
         {
             final JsonArray reqArray = getRequirementsArray();
             final JsonObject req = new JsonObject();
-            req.addProperty("type", new ResourceLocation(Constants.MOD_ID, "single-building").toString());
+            req.addProperty("type", Identifier.fromNamespaceAndPath(Constants.MOD_ID, "single-building").toString());
             req.addProperty("building", buildingName.toString());
             req.addProperty("level", level);
             reqArray.add(req);
@@ -452,13 +453,13 @@ public abstract class AbstractResearchProvider implements DataProvider
          * @param level         The level across the colony.
          * @return this
          */
-        public Research addAlternateBuildingRequirement(final List<ResourceLocation> buildingNames, final Integer level)
+        public Research addAlternateBuildingRequirement(final List<Identifier> buildingNames, final Integer level)
         {
             final JsonArray reqArray = getRequirementsArray();
             final JsonObject req = new JsonObject();
-            req.addProperty("type", new ResourceLocation(Constants.MOD_ID, "alternate-building").toString());
+            req.addProperty("type", Identifier.fromNamespaceAndPath(Constants.MOD_ID, "alternate-building").toString());
             final JsonArray buildingsArray = new JsonArray();
-            for (final ResourceLocation buildingName : buildingNames)
+            for (final Identifier buildingName : buildingNames)
             {
                 buildingsArray.add(buildingName.toString());
             }
@@ -477,7 +478,7 @@ public abstract class AbstractResearchProvider implements DataProvider
          * @param researchReq       The required research.
          * @return this
          */
-        public Research addResearchRequirement(final ResourceLocation researchReq)
+        public Research addResearchRequirement(final Identifier researchReq)
         {
             final JsonArray reqArray = getRequirementsArray();
             JsonObject req = new JsonObject();
@@ -497,7 +498,7 @@ public abstract class AbstractResearchProvider implements DataProvider
          * @param name         The human-readable name of the required research.
          * @return this
          */
-        public Research addResearchRequirement(final ResourceLocation researchReq, final String name)
+        public Research addResearchRequirement(final Identifier researchReq, final String name)
         {
             final JsonArray reqArray = getRequirementsArray();
             JsonObject req = new JsonObject();
@@ -533,7 +534,8 @@ public abstract class AbstractResearchProvider implements DataProvider
          */
         public Research addItemCost(final TagKey<Item> tag, final int count, final HolderLookup.Provider provider)
         {
-            return addItemCost(SizedIngredient.of(tag, count), provider);
+            return addItemCost(new SizedIngredient(
+                Ingredient.of(provider.lookupOrThrow(tag.registry()).getOrThrow(tag)), count), provider);
         }
 
         /**
@@ -578,11 +580,11 @@ public abstract class AbstractResearchProvider implements DataProvider
             final JsonElement itemJson;
             if (items.size() == 1)
             {
-                itemJson = Utils.serializeCodecMessToJson(SizedIngredient.FLAT_CODEC, provider, items.getFirst());
+                itemJson = Utils.serializeCodecMessToJson(SizedIngredient.NESTED_CODEC, provider, items.getFirst());
             }
             else
             {
-                itemJson = Utils.serializeCodecMessToJson(SizedIngredient.FLAT_CODEC.listOf(), provider, items);
+                itemJson = Utils.serializeCodecMessToJson(SizedIngredient.NESTED_CODEC.listOf(), provider, items);
             }
             costArray.add(itemJson);
 
@@ -618,7 +620,7 @@ public abstract class AbstractResearchProvider implements DataProvider
          * @param level     the strength of the research effect to apply on completion.
          * @return this
          */
-        public Research addEffect(final ResourceLocation effect, final int level)
+        public Research addEffect(final Identifier effect, final int level)
         {
             final JsonArray effects;
             if (this.json.has("effects") && this.json.get("effects").isJsonArray())
@@ -662,7 +664,7 @@ public abstract class AbstractResearchProvider implements DataProvider
             {
                 effects = new JsonArray();
             }
-            final ResourceLocation registryName = BuiltInRegistries.BLOCK.getKey(buildingBlock);
+            final Identifier registryName = BuiltInRegistries.BLOCK.getKey(buildingBlock);
             final JsonObject eff = new JsonObject();
             eff.addProperty("id", registryName.getNamespace() + ":effects/" + registryName.getPath());
             eff.addProperty("level", level);
@@ -672,7 +674,7 @@ public abstract class AbstractResearchProvider implements DataProvider
         }
 
         /**
-         * Sets the Research to be removed, for its own ResourceLocation.
+         * Sets the Research to be removed, for its own Identifier.
          * Prevents load (though not data gen) of all other settings.  Not compatible with other variants of setRemove.
          * @return this
          */
@@ -683,27 +685,27 @@ public abstract class AbstractResearchProvider implements DataProvider
         }
 
         /**
-         * Sets the Research JSON to remove a different individual research, by ResourceLocation.
+         * Sets the Research JSON to remove a different individual research, by Identifier.
          * Prevents load (though not data gen) of all other settings.  Not compatible with other variants of setRemove.
          * @param researchId  The target research.
          * @return this
          */
-        public Research setRemove(final ResourceLocation researchId)
+        public Research setRemove(final Identifier researchId)
         {
             this.json.addProperty("remove", researchId.toString());
             return this;
         }
 
         /**
-         * Sets the Research JSON to remove multiple individual research, by ResourceLocations.
+         * Sets the Research JSON to remove multiple individual research, by Identifiers.
          * Prevents load (though not data gen) of all other settings.  Not compatible with other variants of setRemove.
          * @param researchIds  The target research.
          * @return this
          */
-        public Research setRemove(final Collection<ResourceLocation> researchIds)
+        public Research setRemove(final Collection<Identifier> researchIds)
         {
             JsonArray removes = new JsonArray();
-            for(ResourceLocation rem : researchIds)
+            for(Identifier rem : researchIds)
             {
                 removes.add(rem.toString());
             }
@@ -730,7 +732,7 @@ public abstract class AbstractResearchProvider implements DataProvider
     public static class ResearchEffect
     {
         final public JsonObject       json = new JsonObject();
-        final public ResourceLocation id;
+        final public Identifier id;
         /**
          *  A Translated Name to add to the output language file.
          */
@@ -744,7 +746,7 @@ public abstract class AbstractResearchProvider implements DataProvider
          * Creates a new instances of a ResearchEffect.
          * @param id    A unique identifier.  Suggested path format is effects/name.json.
          */
-        public ResearchEffect(final ResourceLocation id)
+        public ResearchEffect(final Identifier id)
         {
             this.id = id;
             this.json.addProperty("effect", true);
@@ -757,8 +759,8 @@ public abstract class AbstractResearchProvider implements DataProvider
          */
         public ResearchEffect(final AbstractColonyBlock<?> buildingBlock)
         {
-            final ResourceLocation registryName = BuiltInRegistries.BLOCK.getKey(buildingBlock);
-            this.id = new ResourceLocation(registryName.getNamespace(), "effects/" + registryName.getPath());
+            final Identifier registryName = BuiltInRegistries.BLOCK.getKey(buildingBlock);
+            this.id = Identifier.fromNamespaceAndPath(registryName.getNamespace(), "effects/" + registryName.getPath());
             this.json.addProperty("effect", true);
         }
 
@@ -767,7 +769,7 @@ public abstract class AbstractResearchProvider implements DataProvider
          * @param id    A unique identifier.  Suggested path format is effects/name.json.
          * @param type  The type of the research effect.
          */
-        public ResearchEffect(final ResourceLocation id, final String type)
+        public ResearchEffect(final Identifier id, final String type)
         {
             this.id = id;
             this.json.addProperty("effect", true);
@@ -844,7 +846,7 @@ public abstract class AbstractResearchProvider implements DataProvider
     public static class ResearchBranch
     {
         final public JsonObject       json = new JsonObject();
-        final public ResourceLocation id;
+        final public Identifier id;
         /**
          *  A Translated Name to add to the output language file.
          */
@@ -858,7 +860,7 @@ public abstract class AbstractResearchProvider implements DataProvider
          * Creates a Research Branch.
          * @param id    A unique identifier.  Suggested path format is name.json.
          */
-        public ResearchBranch(final ResourceLocation id)
+        public ResearchBranch(final Identifier id)
         {
             this.id = id;
         }
@@ -966,7 +968,7 @@ public abstract class AbstractResearchProvider implements DataProvider
 
         /**
          * Sets the Research Branch JSON to remove all researches attached to its branch.
-         * Avoid use where stacking data packs are possible, as only last JSON for a ResourceLocation wins.
+         * Avoid use where stacking data packs are possible, as only last JSON for a Identifier wins.
          * Not compatible with other variants of setRemove.
          * @return this
          */
@@ -978,12 +980,12 @@ public abstract class AbstractResearchProvider implements DataProvider
         }
 
         /**
-         * Sets the Research Branch JSON to remove a different branch and all dependent researches, by ResourceLocation.
+         * Sets the Research Branch JSON to remove a different branch and all dependent researches, by Identifier.
          * Not compatible with other variants of setRemove.
          * @param branchId  The target research branch.
          * @return this
          */
-        public ResearchBranch setRemove(final ResourceLocation branchId)
+        public ResearchBranch setRemove(final Identifier branchId)
         {
             this.json.addProperty("base-time", 1.0);
             this.json.addProperty("remove", branchId.toString());
@@ -991,16 +993,16 @@ public abstract class AbstractResearchProvider implements DataProvider
         }
 
         /**
-         * Sets the Research JSON to remove different branches and all dependent researches, by ResourceLocation.
+         * Sets the Research JSON to remove different branches and all dependent researches, by Identifier.
          * Not compatible with other variants of setRemove.
          * @param branchIds  The target research branch.
          * @return this
          */
-        public ResearchBranch setRemove(final Collection<ResourceLocation> branchIds)
+        public ResearchBranch setRemove(final Collection<Identifier> branchIds)
         {
             this.json.addProperty("base-time", 1.0);
             final JsonArray removes = new JsonArray();
-            for(ResourceLocation rem : branchIds)
+            for(Identifier rem : branchIds)
             {
                 removes.add(rem.toString());
             }

@@ -6,7 +6,7 @@ import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.Tuple;
+import com.ldtteam.structurize.api.util.Tuple;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingLibrary;
 import com.minecolonies.core.colony.jobs.JobStudent;
 import com.minecolonies.core.datalistener.StudyItemListener;
@@ -164,7 +164,7 @@ public class EntityAIStudy extends AbstractEntityAISkill<JobStudent, BuildingLib
         // Use random item
         else
         {
-            final StudyItem chosenItem = availableItemKeys.get(world.random.nextInt(availableItems.size()));
+            final StudyItem chosenItem = availableItemKeys.get(world.getRandom().nextInt(availableItems.size()));
             final int chosenSlot = availableItems.get(chosenItem);
 
             worker.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(chosenItem.item(), 1));
@@ -173,7 +173,7 @@ public class EntityAIStudy extends AbstractEntityAISkill<JobStudent, BuildingLib
                 building.getModule(STATS_MODULE).increment(INT_LEVELED);
             }
             // Break item rand
-            if (world.random.nextInt(100) <= chosenItem.breakChance())
+            if (world.getRandom().nextInt(100) <= chosenItem.breakChance())
             {
                 data.getInventory().extractItem(chosenSlot, 1, false);
                 building.getModule(STATS_MODULE).increment(ITEM_USED + ";" + chosenItem.item().getDescriptionId());

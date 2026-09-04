@@ -12,7 +12,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtIo;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
@@ -96,24 +96,24 @@ public final class BackUpHelper
             {
                 for (int i = 1; i <= IColonyManager.getInstance().getTopColonyId() + 1; i++)
                 {
-                    @NotNull final File file = new File(saveDir, getFolderForDimension(dimensionType.location()) + String.format(FILENAME_COLONY, i));
-                    @NotNull final File fileDeleted = new File(saveDir, getFolderForDimension(dimensionType.location()) + String.format(FILENAME_COLONY_DELETED, i));
+                    @NotNull final File file = new File(saveDir, getFolderForDimension(dimensionType.identifier()) + String.format(FILENAME_COLONY, i));
+                    @NotNull final File fileDeleted = new File(saveDir, getFolderForDimension(dimensionType.identifier()) + String.format(FILENAME_COLONY_DELETED, i));
                     if (file.exists())
                     {
                         // mark existing files
                         if (IColonyManager.getInstance().getColonyByDimension(i, dimensionType) == null)
                         {
                             markColonyDeleted(i, dimensionType);
-                            addToZipFile(getFolderForDimension(dimensionType.location()) + String.format(FILENAME_COLONY_DELETED, i), zos, saveDir);
+                            addToZipFile(getFolderForDimension(dimensionType.identifier()) + String.format(FILENAME_COLONY_DELETED, i), zos, saveDir);
                         }
                         else
                         {
-                            addToZipFile(getFolderForDimension(dimensionType.location()) + String.format(FILENAME_COLONY, i), zos, saveDir);
+                            addToZipFile(getFolderForDimension(dimensionType.identifier()) + String.format(FILENAME_COLONY, i), zos, saveDir);
                         }
                     }
                     else if (fileDeleted.exists())
                     {
-                        addToZipFile(getFolderForDimension(dimensionType.location()) + String.format(FILENAME_COLONY_DELETED, i), zos, saveDir);
+                        addToZipFile(getFolderForDimension(dimensionType.identifier()) + String.format(FILENAME_COLONY_DELETED, i), zos, saveDir);
                     }
                 }
             }
@@ -205,7 +205,7 @@ public final class BackUpHelper
             for (int i = 1; i <= MAX_COLONY_LOAD && missingFilesInRow < 5; i++)
             {
                 // Check non-deleted files for colony id + dim
-                @NotNull final File file = new File(saveDir, getFolderForDimension(dimensionType.location()) + String.format(FILENAME_COLONY, i));
+                @NotNull final File file = new File(saveDir, getFolderForDimension(dimensionType.identifier()) + String.format(FILENAME_COLONY, i));
                 if (file.exists())
                 {
                     missingFilesInRow = 0;
@@ -345,7 +345,7 @@ public final class BackUpHelper
         {
             final CompoundTag colonyCompound = new CompoundTag();
             colony.write(colonyCompound, provider);
-            saveNBTToPath(new File(saveDir, getFolderForDimension(colony.getDimension().location()) + String.format(FILENAME_COLONY, colony.getID())), colonyCompound);
+            saveNBTToPath(new File(saveDir, getFolderForDimension(colony.getDimension().identifier()) + String.format(FILENAME_COLONY, colony.getID())), colonyCompound);
         }
     }
 
@@ -359,10 +359,10 @@ public final class BackUpHelper
     {
         @NotNull final File saveDir =
           new File(ServerLifecycleHooks.getCurrentServer().getWorldPath(LevelResource.ROOT).toFile(), FILENAME_MINECOLONIES_PATH);
-        final File toDelete = new File(saveDir, getFolderForDimension(dimensionID.location()) + String.format(FILENAME_COLONY, colonyID));
+        final File toDelete = new File(saveDir, getFolderForDimension(dimensionID.identifier()) + String.format(FILENAME_COLONY, colonyID));
         if (toDelete.exists())
         {
-            final String fileName = getFolderForDimension(dimensionID.location()) + String.format(FILENAME_COLONY_DELETED, colonyID);
+            final String fileName = getFolderForDimension(dimensionID.identifier()) + String.format(FILENAME_COLONY_DELETED, colonyID);
             final File oldFile = new File(saveDir, fileName);
             if (oldFile.exists())
             {
@@ -383,7 +383,7 @@ public final class BackUpHelper
         ServerLifecycleHooks.getCurrentServer().levelKeys().forEach(dimensionType -> {
             for (int i = 1; i <= IColonyManager.getInstance().getTopColonyId() + 1; i++)
             {
-                @NotNull final File file = new File(saveDir, getFolderForDimension(dimensionType.location()) + String.format(FILENAME_COLONY, i));
+                @NotNull final File file = new File(saveDir, getFolderForDimension(dimensionType.identifier()) + String.format(FILENAME_COLONY, i));
                 if (file.exists())
                 {
                     loadColonyBackup(i, dimensionType, false, false);
@@ -398,7 +398,7 @@ public final class BackUpHelper
      * @param location resource location
      * @return file name to look for
      */
-    private static String getFolderForDimension(final ResourceLocation location)
+    private static String getFolderForDimension(final Identifier location)
     {
         return location.getNamespace() + File.separator + location.getPath() + File.separator;
     }
@@ -414,13 +414,13 @@ public final class BackUpHelper
     public static void loadColonyBackup(final int colonyId, final ResourceKey<Level> dimension, boolean loadDeleted, boolean claimChunks)
     {
         @NotNull final File saveDir = new File(ServerLifecycleHooks.getCurrentServer().getWorldPath(LevelResource.ROOT).toFile(), FILENAME_MINECOLONIES_PATH);
-        @NotNull final File backupFile = new File(saveDir, getFolderForDimension(dimension.location()) + String.format(FILENAME_COLONY, colonyId));
+        @NotNull final File backupFile = new File(saveDir, getFolderForDimension(dimension.identifier()) + String.format(FILENAME_COLONY, colonyId));
         CompoundTag compound = loadNBTFromPath(backupFile);
         if (compound == null)
         {
             if (loadDeleted)
             {
-                compound = loadNBTFromPath(new File(saveDir, String.format(getFolderForDimension(dimension.location()) + String.format(FILENAME_COLONY_DELETED, colonyId))));
+                compound = loadNBTFromPath(new File(saveDir, String.format(getFolderForDimension(dimension.identifier()) + String.format(FILENAME_COLONY_DELETED, colonyId))));
             }
             if (compound == null)
             {
@@ -557,18 +557,18 @@ public final class BackUpHelper
             }
 
             // Save colony.dat backup
-            final File file = new File(saveDir, getFolderForDimension(colony.getDimension().location()) + String.format(FILENAME_COLONY, colony.getID()));
-            final File fileDeleted = new File(saveDir, getFolderForDimension(colony.getDimension().location()) + String.format(FILENAME_COLONY_DELETED, colony.getID()));
+            final File file = new File(saveDir, getFolderForDimension(colony.getDimension().identifier()) + String.format(FILENAME_COLONY, colony.getID()));
+            final File fileDeleted = new File(saveDir, getFolderForDimension(colony.getDimension().identifier()) + String.format(FILENAME_COLONY_DELETED, colony.getID()));
             if (file.exists())
             {
                 addFileToZipWithPath(
-                  minecoloniesZipDir + File.separator + getFolderForDimension(colony.getDimension().location()) + String.format(FILENAME_COLONY, colony.getID()), zos, file);
+                  minecoloniesZipDir + File.separator + getFolderForDimension(colony.getDimension().identifier()) + String.format(FILENAME_COLONY, colony.getID()), zos, file);
             }
 
             if (fileDeleted.exists())
             {
                 addFileToZipWithPath(
-                  minecoloniesZipDir + File.separator + getFolderForDimension(colony.getDimension().location()) + String.format(FILENAME_COLONY_DELETED, colony.getID()),
+                  minecoloniesZipDir + File.separator + getFolderForDimension(colony.getDimension().identifier()) + String.format(FILENAME_COLONY_DELETED, colony.getID()),
                   zos,
                   file);
             }

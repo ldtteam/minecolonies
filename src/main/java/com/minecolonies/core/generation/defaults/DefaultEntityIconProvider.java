@@ -4,13 +4,13 @@ import com.minecolonies.api.util.Log;
 import com.google.common.hash.Hashing;
 import com.google.common.hash.HashingOutputStream;
 import com.mojang.blaze3d.platform.NativeImage;
-import net.minecraft.Util;
+import net.minecraft.util.Util;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.PackOutput;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.PackLocationInfo;
 import net.minecraft.server.packs.PackResources;
 import net.minecraft.server.packs.PackType;
@@ -33,7 +33,7 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 import static com.minecolonies.api.util.constant.Constants.MOD_ID;
-import static net.minecraft.client.gui.components.PlayerFaceRenderer.*;
+import static net.minecraft.client.gui.components.PlayerFaceExtractor.*;
 
 /**
  * Datagen for entity_icon
@@ -54,7 +54,7 @@ public class DefaultEntityIconProvider implements DataProvider
         return "Default Citizen Icons";
     }
 
-    private static boolean IsEntitySkin(@NotNull final ResourceLocation id)
+    private static boolean IsEntitySkin(@NotNull final Identifier id)
     {
         return id.getPath().endsWith(".png") &&
                 (id.getPath().startsWith("textures/entity/citizen/") || id.getPath().startsWith("textures/entity/raiders/"));
@@ -75,8 +75,7 @@ public class DefaultEntityIconProvider implements DataProvider
             {
                 if (IsEntitySkin(id))
                 {
-                    final ResourceLocation iconId = new ResourceLocation(id.getNamespace(),
-                            id.getPath().replace("textures/entity/", "").replace(".png", ""));
+                    final Identifier iconId = Identifier.fromNamespaceAndPath(id.getNamespace(), id.getPath().replace("textures/entity/", "").replace(".png", ""));
                     icons.add(generateIcon(outputProvider, iconId, stream, cache));
                 }
             });
@@ -86,7 +85,7 @@ public class DefaultEntityIconProvider implements DataProvider
     }
 
     private CompletableFuture<?> generateIcon(@NotNull final PackOutput.PathProvider outputProvider,
-                                              @NotNull final ResourceLocation id,
+                                              @NotNull final Identifier id,
                                               @NotNull final IoSupplier<InputStream> inputSupplier,
                                               @NotNull final CachedOutput cache)
     {
@@ -118,28 +117,42 @@ public class DefaultEntityIconProvider implements DataProvider
 
         for (int i = 0; i < 16; ++i)
         {
-            icon.blendPixel(0, i, 0x80000000);
-            icon.blendPixel(15, i, 0x80000000);
+            icon.setPixel(0, i, blendAlpha(icon.getPixel(0, i)));
+            icon.setPixel(15, i, blendAlpha(icon.getPixel(15, i)));
 
             if (i > 0 && i < 15)
             {
-                icon.blendPixel(i, 0, 0x80000000);
-                icon.blendPixel(i, 15, 0x80000000);
+                icon.setPixel(i, 0, blendAlpha(icon.getPixel(i, 0)));
+                icon.setPixel(i, 15, blendAlpha(icon.getPixel(i, 15)));
             }
         }
 
         return icon;
     }
 
+    private static int blendAlpha(final int argb)
+    {
+        final int alpha = (argb >>> 24) * 0x80 / 255;
+        return (alpha << 24) | (argb & 0x00ffffff);
+    }
+
     private static void saveIcon(@NotNull final PackOutput.PathProvider outputProvider,
-                                 @NotNull final ResourceLocation id,
+                                 @NotNull final Identifier id,
                                  @NotNull final NativeImage icon,
                                  @NotNull final CachedOutput cache) throws IOException
     {
         final BufferedImage image;
-        try (final ByteArrayInputStream stream = new ByteArrayInputStream(icon.asByteArray()))
         {
-            image = ImageIO.read(stream);
+            final BufferedImage nativeImage = new BufferedImage(icon.getWidth(), icon.getHeight(), BufferedImage.TYPE_INT_ARGB);
+            final int[] pixels = icon.makePixelArray();
+            for (int y = 0; y < icon.getHeight(); y++)
+            {
+                for (int x = 0; x < icon.getWidth(); x++)
+                {
+                    nativeImage.setRGB(x, y, pixels[x + y * icon.getWidth()]);
+                }
+            }
+            image = nativeImage;
         }
 
         // convert to 24-bit, to reduce file size a bit

@@ -17,7 +17,7 @@ import com.minecolonies.core.network.messages.server.colony.WorkOrderChangeMessa
 import com.minecolonies.core.network.messages.server.colony.building.builder.BuilderSelectWorkOrderMessage;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -58,7 +58,7 @@ public class WorkOrderModuleWindow extends AbstractModuleWindow<WorkOrderListMod
      */
     public WorkOrderModuleWindow(final WorkOrderListModuleView moduleView)
     {
-        super(moduleView, new ResourceLocation(Constants.MOD_ID, "gui/layouthuts/layoutworkorders.xml"));
+        super(moduleView, Identifier.fromNamespaceAndPath(Constants.MOD_ID, "gui/layouthuts/layoutworkorders.xml"));
         registerButton(WORK_ORDER_SELECT, this::selectWorkOrder);
     }
 

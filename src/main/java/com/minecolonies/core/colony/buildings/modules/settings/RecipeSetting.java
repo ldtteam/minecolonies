@@ -18,7 +18,7 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.core.colony.buildings.moduleviews.CraftingModuleView;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
@@ -117,9 +117,9 @@ public class RecipeSetting implements ICraftingSetting
     }
 
     @Override
-    public ResourceLocation getLayoutItem()
+    public Identifier getLayoutItem()
     {
-        return new ResourceLocation("minecolonies", "gui/layouthuts/layoutcraftingsetting.xml");
+        return Identifier.fromNamespaceAndPath("minecolonies", "gui/layouthuts/layoutcraftingsetting.xml");
     }
 
     @OnlyIn(Dist.CLIENT)
@@ -167,7 +167,7 @@ public class RecipeSetting implements ICraftingSetting
         final IRecipeStorage stack = getValue(building);
         ButtonImage triggerButton = pane.findPaneOfTypeByID("trigger", ButtonImage.class);
         triggerButton.setEnabled(isActive((ISettingsModuleView) settingsModuleView));
-        triggerButton.setText(Component.translatable(stack.getPrimaryOutput().getDescriptionId()));
+        triggerButton.setText(Component.translatable(stack.getPrimaryOutput().getItem().getDescriptionId()));
         setHoverPane(key, triggerButton, settingsModuleView);
         pane.findPaneOfTypeByID("iconto", ItemIcon.class).setItem(stack.getPrimaryOutput());
         pane.findPaneOfTypeByID("iconfrom", ItemIcon.class).setItem(stack.getCleanedInput().get(0).getItemStack());

@@ -24,7 +24,7 @@
 		"17": "block/cauldron_side",
 		"18": "block/cauldron_top",
 		"20": "block/gold_block",
-		"transp": "map/map_icons",
+		"transp": "minecolonies:block/transparent",
 		"particle": "block/oak_planks"
 	},
 	"elements": [
@@ -621,7 +621,7 @@
     "second": {
       "render_type": "cutout",
       "textures": {
-        "19": "item/feather"
+        "19": "minecolonies:block_item/feather"
       },
       "elements": [
         {

@@ -14,9 +14,10 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import com.minecolonies.api.util.NBTUtils;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.nbt.Tag;
-import net.neoforged.neoforge.common.util.INBTSerializable;
+import com.minecolonies.api.util.INBTSerializable;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
@@ -124,7 +125,7 @@ public class TravellingManager implements ITravellingManager, INBTSerializable<C
     @Override
     public void deserializeNBT(HolderLookup.@NotNull Provider provider, final CompoundTag nbt)
     {
-        final ListTag travelerData = nbt.getList(NbtTagConstants.TRAVELER_DATA, Tag.TAG_COMPOUND);
+        final ListTag travelerData = nbt.getListOrEmpty(NbtTagConstants.TRAVELER_DATA);
         travelerDataMap.clear();
 
         for (Tag travelerDatum : travelerData)
@@ -206,7 +207,7 @@ public class TravellingManager implements ITravellingManager, INBTSerializable<C
         {
             final CompoundTag data = new CompoundTag();
             data.putInt(NbtTagConstants.TAG_CITIZEN, citizenId);
-            data.put(NbtTagConstants.TAG_TARGET, NbtUtils.writeBlockPos(target));
+            data.put(NbtTagConstants.TAG_TARGET, NBTUtils.writeBlockPos(target));
             data.putInt(NbtTagConstants.TAG_INITIAL_TRAVEL_TIME, initialTravelTime);
             data.putInt(NbtTagConstants.TAG_REMAINING_TRAVEL_TIME, remainingTravelTime);
             return data;
@@ -215,10 +216,11 @@ public class TravellingManager implements ITravellingManager, INBTSerializable<C
         @Override
         public void deserializeNBT(HolderLookup.@NotNull Provider provider, final CompoundTag nbt)
         {
-            this.citizenId = nbt.getInt(NbtTagConstants.TAG_CITIZEN);
-            this.target = NbtUtils.readBlockPos(nbt, NbtTagConstants.TAG_TARGET).orElse(BlockPos.ZERO);
-            this.initialTravelTime = nbt.getInt(NbtTagConstants.TAG_INITIAL_TRAVEL_TIME);
-            this.remainingTravelTime = nbt.getInt(NbtTagConstants.TAG_REMAINING_TRAVEL_TIME);
+            this.citizenId = nbt.getIntOr(NbtTagConstants.TAG_CITIZEN, 0);
+            final BlockPos readTarget = NBTUtils.readBlockPos(nbt, NbtTagConstants.TAG_TARGET);
+            this.target = readTarget == null ? BlockPos.ZERO : readTarget;
+            this.initialTravelTime = nbt.getIntOr(NbtTagConstants.TAG_INITIAL_TRAVEL_TIME, 0);
+            this.remainingTravelTime = nbt.getIntOr(NbtTagConstants.TAG_REMAINING_TRAVEL_TIME, 0);
         }
     }
 }

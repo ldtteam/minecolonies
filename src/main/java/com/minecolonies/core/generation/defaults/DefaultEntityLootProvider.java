@@ -5,7 +5,7 @@ import com.minecolonies.api.items.ModItems;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.loot.EntityLootSubProvider;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.item.Items;
@@ -159,13 +159,13 @@ public class DefaultEntityLootProvider extends EntityLootSubProvider
     private void registerLoot(@NotNull final EntityType<?> entity,
                               @NotNull final Consumer<LootPool.Builder> builder)
     {
-        final ResourceLocation entityId = BuiltInRegistries.ENTITY_TYPE.getKey(entity);
+        final Identifier entityId = BuiltInRegistries.ENTITY_TYPE.getKey(entity);
 
         final LootPool.Builder pool = LootPool.lootPool()
                 .setRolls(ConstantValue.exactly(1));
         builder.accept(pool);
 
-        add(entity, entity.getDefaultLootTable(), LootTable.lootTable().withPool(pool));
+        add(entity, entity.getDefaultLootTable().orElseThrow(), LootTable.lootTable().withPool(pool));
     }
 
     @Override

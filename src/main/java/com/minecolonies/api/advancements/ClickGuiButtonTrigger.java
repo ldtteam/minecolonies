@@ -2,11 +2,11 @@ package com.minecolonies.api.advancements;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.advancements.Criterion;
-import net.minecraft.advancements.critereon.ContextAwarePredicate;
-import net.minecraft.advancements.critereon.EntityPredicate;
-import net.minecraft.advancements.critereon.SimpleCriterionTrigger;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.advancements.triggers.Criterion;
+import net.minecraft.advancements.predicates.ContextAwarePredicate;
+import net.minecraft.advancements.predicates.entity.EntityPredicate;
+import net.minecraft.advancements.triggers.SimpleCriterionTrigger;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.NotNull;
 
@@ -21,7 +21,7 @@ public class ClickGuiButtonTrigger extends SimpleCriterionTrigger<ClickGuiButton
      * @param buttonId       the id of the button in blockui
      * @param windowResource the blockui window id to refer to
      */
-    public void trigger(final ServerPlayer player, final String buttonId, final ResourceLocation windowResource)
+    public void trigger(final ServerPlayer player, final String buttonId, final Identifier windowResource)
     {
         trigger(player, trigger -> trigger.test(buttonId, windowResource));
     }
@@ -33,12 +33,12 @@ public class ClickGuiButtonTrigger extends SimpleCriterionTrigger<ClickGuiButton
         return ClickGuiButtonTriggerInstance.CODEC;
     }
 
-    public record ClickGuiButtonTriggerInstance(Optional<ContextAwarePredicate> player, Optional<String> buttonId, Optional<ResourceLocation> windowResource) implements SimpleInstance
+    public record ClickGuiButtonTriggerInstance(Optional<ContextAwarePredicate> player, Optional<String> buttonId, Optional<Identifier> windowResource) implements SimpleInstance
     {
         public static final Codec<ClickGuiButtonTriggerInstance> CODEC = RecordCodecBuilder.create(builder -> builder
             .group(EntityPredicate.ADVANCEMENT_CODEC.optionalFieldOf("player").forGetter(ClickGuiButtonTriggerInstance::player),
               Codec.STRING.optionalFieldOf("button_id").forGetter(ClickGuiButtonTriggerInstance::buttonId),
-                ResourceLocation.CODEC.optionalFieldOf("window_resource_location").forGetter(ClickGuiButtonTriggerInstance::windowResource))
+                Identifier.CODEC.optionalFieldOf("window_resource_location").forGetter(ClickGuiButtonTriggerInstance::windowResource))
             .apply(builder, ClickGuiButtonTriggerInstance::new));
 
         public static Criterion<ClickGuiButtonTriggerInstance> clickGuiButton()
@@ -62,7 +62,7 @@ public class ClickGuiButtonTrigger extends SimpleCriterionTrigger<ClickGuiButton
          * @param buttonId       the button to be clicked to succeed
          * @param windowResource the window id of the button to be clicked
          */
-        public static Criterion<ClickGuiButtonTriggerInstance> clickGuiButton(final String buttonId, final ResourceLocation windowResource)
+        public static Criterion<ClickGuiButtonTriggerInstance> clickGuiButton(final String buttonId, final Identifier windowResource)
         {
             return AdvancementTriggers.CLICK_GUI_BUTTON.get()
                 .createCriterion(new ClickGuiButtonTriggerInstance(Optional.empty(),
@@ -77,7 +77,7 @@ public class ClickGuiButtonTrigger extends SimpleCriterionTrigger<ClickGuiButton
          * @param  windowResource the blockui window id to check
          * @return                whether the check succeeded
          */
-        public boolean test(final String buttonId, final ResourceLocation windowResource)
+        public boolean test(final String buttonId, final Identifier windowResource)
         {
             if (this.buttonId.isPresent() && this.windowResource.isPresent())
             {

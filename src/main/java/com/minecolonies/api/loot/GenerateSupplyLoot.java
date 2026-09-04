@@ -4,7 +4,6 @@ import com.minecolonies.core.MineColonies;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
-import net.minecraft.world.level.storage.loot.predicates.LootItemConditionType;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -28,9 +27,9 @@ public class GenerateSupplyLoot implements LootItemCondition
 
     @NotNull
     @Override
-    public LootItemConditionType getType()
+    public MapCodec<? extends LootItemCondition> codec()
     {
-        return ModLootConditions.generateSupplyLoot.get();
+        return CODEC;
     }
 
     @Override

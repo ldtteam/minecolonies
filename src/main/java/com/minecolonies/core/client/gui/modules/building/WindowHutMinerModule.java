@@ -12,7 +12,7 @@ import com.minecolonies.core.network.messages.server.colony.building.miner.Miner
 import com.minecolonies.core.network.messages.server.colony.building.miner.MinerSetLevelMessage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
@@ -44,7 +44,7 @@ public class WindowHutMinerModule extends AbstractModuleWindow<MinerLevelManagem
      */
     public WindowHutMinerModule(final MinerLevelManagementModuleView moduleView)
     {
-        super(moduleView, new ResourceLocation(Constants.MOD_ID, "gui/layouthuts/layoutminermodule.xml"));
+        super(moduleView, Identifier.fromNamespaceAndPath(Constants.MOD_ID, "gui/layouthuts/layoutminermodule.xml"));
         registerButton(BUTTON_REPAIR, this::repairClicked);
         registerButton(BUTTON_MINE_LEVEL, this::mineLevelClicked);
     }

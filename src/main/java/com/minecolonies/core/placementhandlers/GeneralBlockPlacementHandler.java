@@ -1,8 +1,8 @@
 package com.minecolonies.core.placementhandlers;
 
 import com.ldtteam.domumornamentum.block.decorative.PillarBlock;
-import com.ldtteam.structurize.api.ItemStackUtils;
-import com.ldtteam.structurize.api.constants.Constants;
+import com.ldtteam.structurize.api.util.ItemStackUtils;
+import com.ldtteam.structurize.api.util.constant.Constants;
 import com.ldtteam.structurize.placement.IPlacementContext;
 import com.ldtteam.structurize.placement.handlers.placement.IPlacementHandler;
 import com.ldtteam.structurize.util.BlockUtils;
@@ -12,7 +12,7 @@ import com.minecolonies.api.util.WorldUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.util.Tuple;
+import com.ldtteam.structurize.api.util.Tuple;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -90,7 +90,7 @@ public class GeneralBlockPlacementHandler implements IPlacementHandler
 
             try
             {
-                handleTileEntityPlacement(tileEntityData, world, pos, context.getRotationMirror());
+                handleTileEntityPlacement(tileEntityData, world, pos, context.getRotationMirror().getRotationMirror());
                 blockState.getBlock().setPlacedBy(world, pos, blockState, null, BlockUtils.getItemStackFromBlockState(blockState));
             }
             catch (final Exception ex)
@@ -117,7 +117,7 @@ public class GeneralBlockPlacementHandler implements IPlacementHandler
         }
         if (tileEntityData != null)
         {
-            itemList.addAll(ItemStackUtils.getItemStacksOfTileEntity(tileEntityData, blockState, world));
+            itemList.addAll(ItemStackUtils.getItemStacksOfTileEntity(tileEntityData, blockState));
         }
         itemList.removeIf(ItemStackUtils::isEmpty);
 

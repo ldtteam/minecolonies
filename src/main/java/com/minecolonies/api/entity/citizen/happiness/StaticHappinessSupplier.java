@@ -45,7 +45,7 @@ public class StaticHappinessSupplier implements IHappinessSupplierWrapper
     @Override
     public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag nbt)
     {
-        this.value = nbt.getDouble(TAG_VALUE);
+        this.value = nbt.getDoubleOr(TAG_VALUE, 0.0D);
     }
 
     @Override

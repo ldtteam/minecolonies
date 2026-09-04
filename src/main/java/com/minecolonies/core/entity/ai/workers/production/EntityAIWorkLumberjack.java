@@ -26,7 +26,7 @@ import com.minecolonies.core.util.WorkerUtil;
 import com.minecolonies.core.util.citizenutils.CitizenItemUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
@@ -135,7 +135,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
      * Searching icon
      */
     private final static VisibleCitizenStatus SEARCH =
-      new VisibleCitizenStatus(new ResourceLocation(Constants.MOD_ID, "textures/icons/work/lumberjack_search.png"), "com.minecolonies.gui.visiblestatus.lumberjack_search");
+      new VisibleCitizenStatus(Identifier.fromNamespaceAndPath(Constants.MOD_ID, "textures/icons/work/lumberjack_search.png"), "com.minecolonies.gui.visiblestatus.lumberjack_search");
 
     /**
      * Xp bonus per finished tree
@@ -648,7 +648,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
      */
     public boolean walkToTree(final BlockPos workAt)
     {
-        if (workFrom == null || world.getBlockState(workFrom.above()).is(BlockTags.SAPLINGS) || world.getBlockState(workFrom).is(BlockTags.SAPLINGS))
+        if (workFrom == null || isSapling(world.getBlockState(workFrom.above())) || isSapling(world.getBlockState(workFrom)))
         {
             workFrom = getWorkingPosition(workAt);
         }
@@ -802,9 +802,14 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
      */
     private boolean isOnSapling()
     {
-        return world.getBlockState(worker.blockPosition()).is(BlockTags.SAPLINGS)
-                 || world.getBlockState(worker.blockPosition().above()).is(BlockTags.SAPLINGS)
-                 || world.getBlockState(worker.blockPosition().below()).is(BlockTags.SAPLINGS);
+        return isSapling(world.getBlockState(worker.blockPosition()))
+                 || isSapling(world.getBlockState(worker.blockPosition().above()))
+                 || isSapling(world.getBlockState(worker.blockPosition().below()));
+    }
+
+    private static boolean isSapling(final BlockState state)
+    {
+        return state.is(ModTags.vanillaSaplings);
     }
 
     /**
@@ -817,7 +822,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
     {
         final BlockState worldState = world.getBlockState(location);
         final Block worldBlock = worldState.getBlock();
-        if (!(worldBlock instanceof AirBlock) && !(worldState.is(BlockTags.SAPLINGS)) && !worldState.canBeReplaced())
+        if (!(worldBlock instanceof AirBlock) && !isSapling(worldState) && !worldState.canBeReplaced())
         {
             return true;
         }

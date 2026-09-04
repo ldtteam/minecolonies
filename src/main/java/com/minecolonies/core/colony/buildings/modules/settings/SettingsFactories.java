@@ -17,7 +17,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -54,7 +54,7 @@ public class SettingsFactories
         @Override
         public T deserialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final CompoundTag nbt)
         {
-            return this.getNewInstance(nbt.getBoolean(TAG_VALUE), nbt.getBoolean(TAG_DEFAULT));
+            return this.getNewInstance(nbt.getBooleanOr(TAG_VALUE, false), nbt.getBooleanOr(TAG_DEFAULT, false));
         }
 
         @NotNull
@@ -152,12 +152,12 @@ public class SettingsFactories
         @Override
         public T deserialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final CompoundTag nbt)
         {
-            final int current = nbt.getInt(TAG_VALUE);
+            final int current = nbt.getIntOr(TAG_VALUE, 0);
             final List<String> settings = new ArrayList<>();
-            final ListTag list = nbt.getList(TAG_LIST, Tag.TAG_COMPOUND);
+            final ListTag list = nbt.getListOrEmpty(TAG_LIST);
             for (int i = 0; i < list.size(); i++)
             {
-                settings.add(list.getCompound(i).getString(TAG_VALUE));
+                settings.add(list.getCompoundOrEmpty(i).getStringOr(TAG_VALUE, ""));
             }
 
             return this.getNewInstance(settings, current);
@@ -265,8 +265,8 @@ public class SettingsFactories
         @Override
         public BlockSetting deserialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final CompoundTag nbt)
         {
-            final BlockItem value = (BlockItem) BuiltInRegistries.ITEM.get(ResourceLocation.parse(nbt.getString(TAG_VALUE)));
-            final BlockItem def = (BlockItem) BuiltInRegistries.ITEM.get(ResourceLocation.parse(nbt.getString(TAG_DEF)));
+            final BlockItem value = (BlockItem) BuiltInRegistries.ITEM.getValue(Identifier.parse(nbt.getStringOr(TAG_VALUE, "")));
+            final BlockItem def = (BlockItem) BuiltInRegistries.ITEM.getValue(Identifier.parse(nbt.getStringOr(TAG_DEF, "")));
             return this.getNewInstance(value, def);
         }
 
@@ -329,7 +329,7 @@ public class SettingsFactories
         @Override
         public T deserialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final CompoundTag nbt)
         {
-            return this.getNewInstance(nbt.getInt(TAG_VALUE), nbt.getInt(TAG_DEFAULT));
+            return this.getNewInstance(nbt.getIntOr(TAG_VALUE, 0), nbt.getIntOr(TAG_DEFAULT, 0));
         }
 
         @Override
@@ -633,9 +633,9 @@ public class SettingsFactories
             IToken<?> token = null;
             if (nbt.contains(TAG_TOKEN))
             {
-                token = StandardFactoryController.getInstance().deserializeTag(provider, nbt.getCompound(TAG_TOKEN));
+                token = StandardFactoryController.getInstance().deserializeTag(provider, nbt.getCompoundOrEmpty(TAG_TOKEN));
             }
-            final String moduleId = nbt.getString(TAG_MODULE);
+            final String moduleId = nbt.getStringOr(TAG_MODULE, "");
             return this.getNewInstance(token, moduleId);
         }
 

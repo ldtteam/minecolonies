@@ -2,10 +2,10 @@ package com.minecolonies.core.client.gui.containers;
 
 import com.minecolonies.api.inventory.container.ContainerBuildingInventory;
 import com.minecolonies.api.util.constant.Constants;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 
@@ -14,7 +14,7 @@ public class WindowBuildingInventory extends AbstractContainerScreen<ContainerBu
     /**
      * Texture res loc.
      */
-    private static final ResourceLocation TEXT = new ResourceLocation(Constants.MOD_ID, "textures/gui/generic_108.png");
+    private static final Identifier TEXT = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "textures/gui/generic_108.png");
 
     /**
      * Offset inside the texture to use.
@@ -43,36 +43,36 @@ public class WindowBuildingInventory extends AbstractContainerScreen<ContainerBu
 
     public WindowBuildingInventory(final ContainerBuildingInventory container, final Inventory playerInventory, final Component component)
     {
-        super(container, playerInventory, component);
+        super(container, playerInventory, component, 176, 114 + container.getSize() * 18);
         this.inventoryRows = container.getSize();
-        this.imageHeight = 114 + this.inventoryRows * 18;
     }
 
     @Override
-    public void render(@NotNull GuiGraphics matrixStack, int x, int y, float z)
+    public void extractRenderState(@NotNull GuiGraphicsExtractor matrixStack, int x, int y, float z)
     {
-        super.render(matrixStack, x, y, z);
-        this.renderTooltip(matrixStack, x, y);
+        super.extractRenderState(matrixStack, x, y, z);
+        // tooltip extraction is handled by AbstractContainerScreen;
     }
 
     /**
      * Draw the foreground layer for the GuiContainer (everything in front of the items)
      */
     @Override
-    protected void renderLabels(@NotNull final GuiGraphics stack, int mouseX, int mouseY)
+    protected void extractLabels(@NotNull final GuiGraphicsExtractor stack, int mouseX, int mouseY)
     {
-        stack.drawString(this.font, this.title.getString(), 8, 6, 4210752, false);
-        stack.drawString(this.font, this.playerInventoryTitle.getString(), 8, (this.imageHeight - 96 + 2), 4210752, false);
+        stack.text(this.font, this.title.getString(), 8, 6, 0xFF404040, false);
+        stack.text(this.font, this.playerInventoryTitle.getString(), 8, (this.imageHeight - 96 + 2), 0xFF404040, false);
     }
 
     /**
      * Draws the background layer of this container (behind the items).
      */
     @Override
-    protected void renderBg(@NotNull GuiGraphics stack, float partialTicks, int mouseX, int mouseY)
+    public void extractBackground(@NotNull final GuiGraphicsExtractor stack, final int mouseX, final int mouseY, final float partialTicks)
     {
-        int i = (this.width - this.imageWidth) / 2;
-        int j = (this.height - this.imageHeight) / 2;
+        super.extractBackground(stack, mouseX, mouseY, partialTicks);
+        final int i = this.leftPos;
+        final int j = this.topPos;
         stack.blit(TEXT, i, j, 0, 0, this.imageWidth, this.inventoryRows * SLOT_OFFSET + SLOT_OFFSET - 1, TEXTURE_SIZE, TEXTURE_SIZE);
         stack.blit(TEXT, i, j + this.inventoryRows * SLOT_OFFSET + SLOT_OFFSET - 1, 0,
           TEXTURE_OFFSET, this.imageWidth, TEXTURE_HEIGHT, TEXTURE_SIZE, TEXTURE_SIZE);

@@ -10,7 +10,7 @@ import com.minecolonies.api.crafting.registry.CraftingType;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.OptionalPredicate;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.loot.LootTable;
@@ -297,7 +297,7 @@ public interface ICraftingBuildingModule extends IBuildingModule
      */
     @Nullable
     @Deprecated
-    default ResourceLocation getUid()
+    default Identifier getUid()
     {
         final IJob<?> job = getCraftingJob();
         if (job == null) return null;
@@ -311,10 +311,10 @@ public interface ICraftingBuildingModule extends IBuildingModule
      * @return The unique id.
      */
     @NotNull
-    static ResourceLocation getUid(@NotNull final JobEntry job, @NotNull final String id)
+    static Identifier getUid(@NotNull final JobEntry job, @NotNull final String id)
     {
-        final ResourceLocation jobId = job.getKey();
-        return new ResourceLocation(jobId.getNamespace(), jobId.getPath() + "/" + id);
+        final Identifier jobId = job.getKey();
+        return Identifier.fromNamespaceAndPath(jobId.getNamespace(), jobId.getPath() + "/" + id);
     }
 
     /**

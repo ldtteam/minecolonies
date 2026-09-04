@@ -8,7 +8,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.loot.LootTableSubProvider;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -33,7 +33,7 @@ import static com.minecolonies.api.util.constant.Constants.MOD_ID;
 public class DefaultCropsLootProvider implements LootTableSubProvider
 {
     public static final ResourceKey<LootTable> DUNGEON_CROPS = ResourceKey.create(Registries.LOOT_TABLE,
-            ResourceLocation.fromNamespaceAndPath(MOD_ID, "crops/dungeon"));
+            Identifier.fromNamespaceAndPath(MOD_ID, "crops/dungeon"));
 
     private final HolderLookup.Provider provider;
 
@@ -47,19 +47,19 @@ public class DefaultCropsLootProvider implements LootTableSubProvider
     {
         final HolderLookup.RegistryLookup<Enchantment> enchantments = provider.lookupOrThrow(Registries.ENCHANTMENT);
 
-        final Map<ResourceLocation, List<MinecoloniesCropBlock>> cropDrops = new HashMap<>();
+        final Map<Identifier, List<MinecoloniesCropBlock>> cropDrops = new HashMap<>();
         for (final MinecoloniesCropBlock crop : ModBlocks.getCrops())
         {
             for (final Block source : crop.getDroppedFrom())
             {
-                cropDrops.computeIfAbsent(source.getLootTable().location(), t -> new ArrayList<>()).add(crop);
+                cropDrops.computeIfAbsent(source.getLootTable().orElseThrow().identifier(), t -> new ArrayList<>()).add(crop);
             }
         }
 
-        for (final Map.Entry<ResourceLocation, List<MinecoloniesCropBlock>> entry : cropDrops.entrySet())
+        for (final Map.Entry<Identifier, List<MinecoloniesCropBlock>> entry : cropDrops.entrySet())
         {
             // grass blocks have a lot of crops (both MineColonies and vanilla) so the base drop chance is reduced
-            final float chance = entry.getKey().equals(Blocks.SHORT_GRASS.getLootTable().location()) ? 0.001f : 0.01f;
+            final float chance = entry.getKey().equals(Blocks.SHORT_GRASS.getLootTable().orElseThrow().identifier()) ? 0.001f : 0.01f;
 
             final LootTable.Builder table = LootTable.lootTable();
             for (final MinecoloniesCropBlock crop : entry.getValue())
@@ -85,14 +85,14 @@ public class DefaultCropsLootProvider implements LootTableSubProvider
                                 .when(ModLootConditions.HAS_GOLDEN_HOE)
                                 .when(LootItemRandomChanceCondition.randomChance(chance * 2.5f)))
                         .otherwise(LootItem.lootTableItem(crop)
-                                .when(ModLootConditions.HAS_HOE
+                                .when(ModLootConditions.hasHoe()
                                         .and(ModLootConditions.HAS_NETHERITE_HOE.invert())
                                         .and(ModLootConditions.HAS_DIAMOND_HOE.invert())
                                         .and(ModLootConditions.HAS_IRON_HOE.invert())
                                         .and(ModLootConditions.HAS_GOLDEN_HOE.invert()))
                                 .when(LootItemRandomChanceCondition.randomChance(chance * 2f)))
                         .otherwise(LootItem.lootTableItem(crop)
-                                .when(ModLootConditions.HAS_HOE.invert())
+                                .when(ModLootConditions.hasHoe().invert())
                                 .when(LootItemRandomChanceCondition.randomChance(chance))));
                 table.withPool(pool);
             }
@@ -113,9 +113,9 @@ public class DefaultCropsLootProvider implements LootTableSubProvider
      * @param source the block that (when broken) has a chance to drop crops.
      * @return the loot table key.
      */
-    public static ResourceKey<LootTable> getCropSourceLootTable(@NotNull final ResourceLocation source)
+    public static ResourceKey<LootTable> getCropSourceLootTable(@NotNull final Identifier source)
     {
         return ResourceKey.create(Registries.LOOT_TABLE,
-                ResourceLocation.fromNamespaceAndPath(MOD_ID, "crops/" + source.getPath()));
+                Identifier.fromNamespaceAndPath(MOD_ID, "crops/" + source.getPath()));
     }
 }

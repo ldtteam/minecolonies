@@ -104,8 +104,7 @@ public class CommandCitizenList implements IMCColonyOfficerCommand
         for (final ICitizenData citizen : citizensPage)
         {
             context.getSource().sendSuccess(() -> Component.translatableEscape(COMMAND_CITIZEN_INFO, citizen.getId(), citizen.getName())
-                                              .setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
-                                                String.format(COMMAND_CITIZEN_INFO_SUGGESTED, citizen.getColony().getID(), citizen.getId())))), true);
+                                              .setStyle(Style.EMPTY.withClickEvent(new ClickEvent.RunCommand(String.format(COMMAND_CITIZEN_INFO_SUGGESTED, citizen.getColony().getID(), citizen.getId())))), true);
 
             citizen.getEntity().ifPresent(entityCitizen ->
             {
@@ -132,11 +131,11 @@ public class CommandCitizenList implements IMCColonyOfficerCommand
 
         final Component prevButton =
           Component.translatableEscape(CommandTranslationConstants.COMMAND_CITIZEN_LIST_PREVIOUS).setStyle(Style.EMPTY.withBold(true).withColor(ChatFormatting.GOLD).withClickEvent(
-            new ClickEvent(ClickEvent.Action.RUN_COMMAND, String.format(LIST_COMMAND_SUGGESTED, colonyId, prevPage))
+            new ClickEvent.RunCommand(String.format(LIST_COMMAND_SUGGESTED, colonyId, prevPage))
           ));
         final Component nextButton =
           Component.translatableEscape(CommandTranslationConstants.COMMAND_CITIZEN_LIST_NEXT).setStyle(Style.EMPTY.withBold(true).withColor(ChatFormatting.GOLD).withClickEvent(
-            new ClickEvent(ClickEvent.Action.RUN_COMMAND, String.format(LIST_COMMAND_SUGGESTED, colonyId, nextPage))
+            new ClickEvent.RunCommand(String.format(LIST_COMMAND_SUGGESTED, colonyId, nextPage))
           ));
 
         final MutableComponent beginLine = Component.translatableEscape(CommandTranslationConstants.COMMAND_CITIZEN_LIST_PAGE_LINE);

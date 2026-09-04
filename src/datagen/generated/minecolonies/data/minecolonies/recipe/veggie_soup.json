@@ -1,28 +1,14 @@
 {
   "type": "minecraft:crafting_shapeless",
-  "category": "misc",
   "ingredients": [
-    {
-      "item": "minecolonies:garlic"
-    },
-    {
-      "item": "minecolonies:garlic"
-    },
-    {
-      "item": "minecolonies:onion"
-    },
-    {
-      "item": "minecolonies:eggplant"
-    },
-    {
-      "item": "minecraft:carrot"
-    },
-    {
-      "item": "minecraft:bowl"
-    }
+    "minecolonies:garlic",
+    "minecolonies:garlic",
+    "minecolonies:onion",
+    "minecolonies:eggplant",
+    "minecraft:carrot",
+    "minecraft:bowl"
   ],
   "result": {
-    "count": 1,
     "id": "minecolonies:veggie_soup"
   }
 }

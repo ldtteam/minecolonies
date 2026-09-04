@@ -5,7 +5,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.data.loot.LootTableSubProvider;
 import com.minecolonies.api.items.ModItems;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
@@ -24,9 +24,9 @@ import static com.minecolonies.api.util.constant.Constants.MOD_ID;
  */
 public class DefaultRecipeLootProvider implements LootTableSubProvider
 {
-    public static final ResourceLocation LOOT_TABLE_GLASS_BOTTLE = new ResourceLocation(MOD_ID, "recipes/glass_bottle");
-    public static final ResourceLocation LOOT_TABLE_LARGE_BOTTLE = new ResourceLocation(MOD_ID, "recipes/large_bottle");
-    public static final ResourceLocation LOOT_TABLE_GRAVEL = new ResourceLocation(MOD_ID, "recipes/gravel");
+    public static final Identifier LOOT_TABLE_GLASS_BOTTLE = Identifier.fromNamespaceAndPath(MOD_ID, "recipes/glass_bottle");
+    public static final Identifier LOOT_TABLE_LARGE_BOTTLE = Identifier.fromNamespaceAndPath(MOD_ID, "recipes/large_bottle");
+    public static final Identifier LOOT_TABLE_GRAVEL = Identifier.fromNamespaceAndPath(MOD_ID, "recipes/gravel");
 
     public DefaultRecipeLootProvider(@NotNull final HolderLookup.Provider provider)
     {

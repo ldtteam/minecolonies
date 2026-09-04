@@ -4,7 +4,7 @@ import com.minecolonies.core.commands.commandTypes.IMCCommand;
 import com.minecolonies.core.commands.commandTypes.IMCOPCommand;
 import com.minecolonies.core.debug.DebugPlayerManager;
 import com.minecolonies.core.debug.messages.DebugEnableMessage;
-import com.mojang.authlib.GameProfile;
+import net.minecraft.server.players.NameAndId;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
@@ -24,7 +24,7 @@ public class CommandToggleDebug implements IMCOPCommand
     @Override
     public int onExecute(final CommandContext<CommandSourceStack> context)
     {
-        GameProfile profile;
+        NameAndId profile;
         try
         {
             profile = GameProfileArgument.getGameProfiles(context, PLAYERNAME_ARG).stream().findFirst().orElse(null);
@@ -34,18 +34,18 @@ public class CommandToggleDebug implements IMCOPCommand
             return 0;
         }
 
-        final boolean enabled = DebugPlayerManager.toggleDebugModeFor(profile.getId());
+        final boolean enabled = DebugPlayerManager.toggleDebugModeFor(profile.id());
 
         if (enabled)
         {
-            context.getSource().sendSuccess(() -> Component.literal("Enabled minecolonies debugging for:" + profile.getName()).withStyle(ChatFormatting.GREEN), true);
+            context.getSource().sendSuccess(() -> Component.literal("Enabled minecolonies debugging for:" + profile.name()).withStyle(ChatFormatting.GREEN), true);
         }
         else
         {
-            context.getSource().sendSuccess(() -> Component.literal("Disabled minecolonies debugging for:" + profile.getName()).withStyle(ChatFormatting.RED), true);
+            context.getSource().sendSuccess(() -> Component.literal("Disabled minecolonies debugging for:" + profile.name()).withStyle(ChatFormatting.RED), true);
         }
 
-        final ServerPlayer player = context.getSource().getServer().getPlayerList().getPlayer(profile.getId());
+        final ServerPlayer player = context.getSource().getServer().getPlayerList().getPlayer(profile.id());
         if (player != null)
         {
             if (enabled)

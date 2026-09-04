@@ -8,7 +8,7 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.core.blocks.schematic.BlockWaypoint;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.util.Tuple;
+import com.ldtteam.structurize.api.util.Tuple;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;

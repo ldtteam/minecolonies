@@ -17,7 +17,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.item.Item;
@@ -46,7 +46,7 @@ public class CustomRecipeManager
     /**
      * The map of loaded recipes by crafter.
      */
-    private final Map<String, Map<ResourceLocation, CustomRecipe>> recipeMap = new HashMap<>();
+    private final Map<String, Map<Identifier, CustomRecipe>> recipeMap = new HashMap<>();
 
     /**
      * The map of all loaded recipes by output.
@@ -57,7 +57,7 @@ public class CustomRecipeManager
      * The recipes that are marked for removal after loading all resource packs
      * This list will be processed on first access of the custom recipe list after load, and will be emptied.
      */
-    private final List<ResourceLocation> removedRecipes = new ArrayList<>();
+    private final List<Identifier> removedRecipes = new ArrayList<>();
 
     /**
      * The collection of related loot table drops (for informational purposes, not loot gen).
@@ -67,7 +67,7 @@ public class CustomRecipeManager
     /**
      * The collection of recipe templates, pending tag loading.
      */
-    private final Map<ResourceLocation, JsonObject> recipeTemplates = new HashMap<>();
+    private final Map<Identifier, JsonObject> recipeTemplates = new HashMap<>();
 
     private CustomRecipeManager()
     {
@@ -115,7 +115,7 @@ public class CustomRecipeManager
      * Remove recipe
      * @param toRemove
      */
-    public void removeRecipe(@NotNull final ResourceLocation toRemove)
+    public void removeRecipe(@NotNull final Identifier toRemove)
     {
         if(!removedRecipes.contains(toRemove))
         {
@@ -128,7 +128,7 @@ public class CustomRecipeManager
      * @param id           the resource id of the template.
      * @param templateJson the template content.
      */
-    public void addRecipeTemplate(@NotNull final ResourceLocation id,
+    public void addRecipeTemplate(@NotNull final Identifier id,
                                   @NotNull final JsonObject templateJson)
     {
         recipeTemplates.put(id, templateJson);
@@ -162,7 +162,7 @@ public class CustomRecipeManager
     /**
      * The complete list of custom recipes, by crafter.
      */
-    public Map<String, Map<ResourceLocation, CustomRecipe>> getAllRecipes()
+    public Map<String, Map<Identifier, CustomRecipe>> getAllRecipes()
     {
         return recipeMap;
     }
@@ -253,7 +253,7 @@ public class CustomRecipeManager
     {
         if (!removedRecipes.isEmpty())
         {
-            for (final ResourceLocation toRemove : removedRecipes)
+            for (final Identifier toRemove : removedRecipes)
             {
                 recipeMap.values().stream()
                     .filter(recipes -> recipes.containsKey(toRemove))
@@ -284,7 +284,7 @@ public class CustomRecipeManager
      */
     public void resolveTemplates(@NotNull final HolderLookup.Provider provider)
     {
-        for (final Map.Entry<ResourceLocation, JsonObject> templateEntry : recipeTemplates.entrySet())
+        for (final Map.Entry<Identifier, JsonObject> templateEntry : recipeTemplates.entrySet())
         {
             try
             {
@@ -311,7 +311,7 @@ public class CustomRecipeManager
         final List<Animal> animals = RecipeAnalyzer.createAnimals(level);
 
         final List<ResourceKey<LootTable>> lootIds = new ArrayList<>();
-        for (final Map<ResourceLocation, CustomRecipe> recipes : recipeMap.values())
+        for (final Map<Identifier, CustomRecipe> recipes : recipeMap.values())
         {
             for (final CustomRecipe recipe : recipes.values())
             {
@@ -327,7 +327,7 @@ public class CustomRecipeManager
         {
             for (final Block source : crop.getDroppedFrom())
             {
-                lootIds.add(source.getLootTable());
+                source.getLootTable().ifPresent(lootIds::add);
             }
         }
 
@@ -364,7 +364,7 @@ public class CustomRecipeManager
                 .filter(Objects::nonNull)   // just in case
                 .distinct()
                 .collect(Collectors.toConcurrentMap(Function.identity(),
-                        id -> LootTableAnalyzer.toDrops(level.getServer().reloadableRegistries().get(), id))));
+                        id -> LootTableAnalyzer.toDrops(level.getServer().reloadableRegistries().lookup(), id))));
     }
 
     /**
@@ -386,7 +386,7 @@ public class CustomRecipeManager
     private void serializeNetworkData(final RegistryFriendlyByteBuf recipeMgrFriendlyByteBuf)
     {
         recipeMgrFriendlyByteBuf.writeVarInt(recipeMap.size());
-        for (Map.Entry<String, Map<ResourceLocation, CustomRecipe>> crafter : recipeMap.entrySet())
+        for (Map.Entry<String, Map<Identifier, CustomRecipe>> crafter : recipeMap.entrySet())
         {
             recipeMgrFriendlyByteBuf.writeVarInt(crafter.getValue().size());
             for (CustomRecipe recipe : crafter.getValue().values())
@@ -398,7 +398,7 @@ public class CustomRecipeManager
         recipeMgrFriendlyByteBuf.writeVarInt(lootTables.size());
         for (final Map.Entry<ResourceKey<LootTable>, List<LootTableAnalyzer.LootDrop>> lootEntry : lootTables.entrySet())
         {
-            recipeMgrFriendlyByteBuf.writeResourceLocation(lootEntry.getKey().location());
+            recipeMgrFriendlyByteBuf.writeIdentifier(lootEntry.getKey().identifier());
             recipeMgrFriendlyByteBuf.writeVarInt(lootEntry.getValue().size());
             for (final LootTableAnalyzer.LootDrop drop : lootEntry.getValue())
             {
@@ -425,7 +425,7 @@ public class CustomRecipeManager
 
         for (int lootNum = buff.readVarInt(); lootNum > 0; --lootNum)
         {
-            final ResourceKey<LootTable> id = ResourceKey.create(Registries.LOOT_TABLE, buff.readResourceLocation());
+            final ResourceKey<LootTable> id = ResourceKey.create(Registries.LOOT_TABLE, buff.readIdentifier());
             int count = buff.readVarInt();
             final List<LootTableAnalyzer.LootDrop> drops = new ArrayList<>(count);
             for (; count > 0; --count)

@@ -94,22 +94,22 @@ public class StandardRetryingRequestResolverFactory implements IFactory<IRequest
     @Override
     public StandardRetryingRequestResolver deserialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final CompoundTag nbt)
     {
-        final Map<IToken<?>, Integer> assignments = NBTUtils.streamCompound(nbt.getList(NBT_TRIES, Tag.TAG_COMPOUND)).map(assignmentCompound -> {
-            IToken<?> token = controller.deserializeTag(provider, assignmentCompound.getCompound(NBT_TOKEN));
-            Integer tries = assignmentCompound.getInt(NBT_VALUE);
+        final Map<IToken<?>, Integer> assignments = NBTUtils.streamCompound(nbt.getListOrEmpty(NBT_TRIES)).map(assignmentCompound -> {
+            IToken<?> token = controller.deserializeTag(provider, assignmentCompound.getCompoundOrEmpty(NBT_TOKEN));
+            Integer tries = assignmentCompound.getIntOr(NBT_VALUE, 0);
 
             return new HashMap.SimpleEntry<>(token, tries);
         }).collect(Collectors.toMap(HashMap.SimpleEntry::getKey, HashMap.SimpleEntry::getValue));
 
-        final Map<IToken<?>, Integer> delays = NBTUtils.streamCompound(nbt.getList(NBT_DELAYS, Tag.TAG_COMPOUND)).map(assignmentCompound -> {
-            IToken<?> token = controller.deserializeTag(provider, assignmentCompound.getCompound(NBT_TOKEN));
-            Integer tries = assignmentCompound.getInt(NBT_VALUE);
+        final Map<IToken<?>, Integer> delays = NBTUtils.streamCompound(nbt.getListOrEmpty(NBT_DELAYS)).map(assignmentCompound -> {
+            IToken<?> token = controller.deserializeTag(provider, assignmentCompound.getCompoundOrEmpty(NBT_TOKEN));
+            Integer tries = assignmentCompound.getIntOr(NBT_VALUE, 0);
 
             return new HashMap.SimpleEntry<>(token, tries);
         }).collect(Collectors.toMap(HashMap.SimpleEntry::getKey, HashMap.SimpleEntry::getValue));
 
-        final IToken<?> token = controller.deserializeTag(provider, nbt.getCompound(NBT_TOKEN));
-        final ILocation location = controller.deserializeTag(provider, nbt.getCompound(NBT_LOCATION));
+        final IToken<?> token = controller.deserializeTag(provider, nbt.getCompoundOrEmpty(NBT_TOKEN));
+        final ILocation location = controller.deserializeTag(provider, nbt.getCompoundOrEmpty(NBT_LOCATION));
 
         final StandardRetryingRequestResolver retryingRequestResolver = new StandardRetryingRequestResolver(token, location);
         retryingRequestResolver.updateData(assignments, delays);

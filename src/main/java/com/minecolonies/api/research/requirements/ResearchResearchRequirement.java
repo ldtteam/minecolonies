@@ -8,7 +8,7 @@ import com.minecolonies.api.research.ModResearchRequirements;
 import com.minecolonies.core.util.GsonHelper;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 /**
  * Certain building research requirements.
@@ -28,7 +28,7 @@ public class ResearchResearchRequirement implements IResearchRequirement
     /**
      * The research id.
      */
-    private final ResourceLocation researchId;
+    private final Identifier researchId;
 
     /**
      * Create research based research requirement.
@@ -37,7 +37,7 @@ public class ResearchResearchRequirement implements IResearchRequirement
      */
     public ResearchResearchRequirement(final CompoundTag nbt)
     {
-        this.researchId = ResourceLocation.parse(nbt.getString(TAG_ID));
+        this.researchId = Identifier.parse(nbt.getStringOr(TAG_ID, ""));
     }
 
     /**
@@ -47,13 +47,13 @@ public class ResearchResearchRequirement implements IResearchRequirement
      */
     public ResearchResearchRequirement(final JsonObject json)
     {
-        this.researchId = GsonHelper.getAsResourceLocation(json, RESEARCH_REQUIRED_RESEARCH_PROP);
+        this.researchId = GsonHelper.getAsIdentifier(json, RESEARCH_REQUIRED_RESEARCH_PROP);
     }
 
     /**
      * @return the research identifier
      */
-    public ResourceLocation getResearchId()
+    public Identifier getResearchId()
     {
         return researchId;
     }

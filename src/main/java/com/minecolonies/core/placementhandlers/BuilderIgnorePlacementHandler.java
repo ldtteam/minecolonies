@@ -1,6 +1,6 @@
 package com.minecolonies.core.placementhandlers;
 
-import com.ldtteam.structurize.api.constants.Constants;
+import com.ldtteam.structurize.api.util.constant.Constants;
 import com.ldtteam.structurize.placement.IPlacementContext;
 import com.ldtteam.structurize.placement.handlers.placement.IPlacementHandler;
 import com.ldtteam.structurize.util.BlockUtils;
@@ -8,7 +8,7 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.WorldUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.util.Tuple;
+import com.ldtteam.structurize.api.util.Tuple;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.StructureBlock;
@@ -49,7 +49,7 @@ public class BuilderIgnorePlacementHandler implements IPlacementHandler
             {
                 try
                 {
-                    handleTileEntityPlacement(tileEntityData, world, pos, placementContext.getRotationMirror());
+                    handleTileEntityPlacement(tileEntityData, world, pos, placementContext.getRotationMirror().getRotationMirror());
                     blockState.getBlock().setPlacedBy(world, pos, blockState, null, BlockUtils.getItemStackFromBlockState(blockState));
                 }
                 catch (final Exception ex)

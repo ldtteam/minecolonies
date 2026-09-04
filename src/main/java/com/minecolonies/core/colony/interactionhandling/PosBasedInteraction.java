@@ -1,13 +1,13 @@
 package com.minecolonies.core.colony.interactionhandling;
 
-import com.ldtteam.structurize.api.BlockPosUtil;
+import com.ldtteam.structurize.api.util.BlockPosUtil;
 import com.minecolonies.api.colony.ICitizen;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.interactionhandling.IChatPriority;
 import com.minecolonies.api.colony.interactionhandling.IInteractionResponseHandler;
 import com.minecolonies.api.colony.interactionhandling.InteractionValidatorRegistry;
 import com.minecolonies.api.colony.interactionhandling.ModInteractionResponseHandlers;
-import com.minecolonies.api.util.Tuple;
+import com.ldtteam.structurize.api.util.Tuple;
 import com.minecolonies.api.util.WorldUtil;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;

@@ -11,9 +11,12 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.level.TicketType;
+import net.minecraft.world.entity.Relative;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Set;
 
 import static com.minecolonies.api.util.constant.translation.CommandTranslationConstants.COMMAND_COLONY_ID_NOT_FOUND;
 import static com.minecolonies.api.util.constant.translation.CommandTranslationConstants.COMMAND_TELEPORT_SUCCESS;
@@ -35,7 +38,7 @@ public final class TeleportHelper
 
     public static boolean teleportCitizen(final AbstractEntityCitizen citizen, final Level world, final BlockPos location)
     {
-        if (citizen == null || world == null || world.isClientSide)
+        if (citizen == null || world == null || world.isClientSide())
         {
             return false;
         }
@@ -53,12 +56,11 @@ public final class TeleportHelper
 
         citizen.getNavigation().stop();
         citizen.stopRiding();
-        citizen.moveTo(
+        citizen.setPos(
           spawnPoint.getX() + MIDDLE_BLOCK_OFFSET,
           spawnPoint.getY(),
-          spawnPoint.getZ() + MIDDLE_BLOCK_OFFSET,
-          citizen.getRotationYaw(),
-          citizen.getRotationPitch());
+          spawnPoint.getZ() + MIDDLE_BLOCK_OFFSET);
+        citizen.absSnapRotationTo(citizen.getRotationYaw(), citizen.getRotationPitch());
         return true;
     }
 
@@ -69,7 +71,7 @@ public final class TeleportHelper
      */
     public static void homeTeleport(@NotNull final ServerPlayer player)
     {
-        final IColony colony = IColonyManager.getInstance().getIColonyByOwner(player.getCommandSenderWorld(), player);
+        final IColony colony = IColonyManager.getInstance().getIColonyByOwner(player.level(), player);
         if (colony == null)
         {
             MessageUtils.format(COMMAND_COLONY_ID_NOT_FOUND).sendTo(player);
@@ -86,17 +88,25 @@ public final class TeleportHelper
     {
         BlockPos position = BlockPos.containing(player.getX(), 250, player.getZ()); //start at current position
 
-        position = BlockPosUtil.findLand(position, player.serverLevel());
+        final ServerLevel currentLevel = player.level();
+        position = BlockPosUtil.findLand(position, currentLevel);
 
-        ChunkPos chunkpos = new ChunkPos(position);
-        player.serverLevel().getChunkSource().addRegionTicket(TicketType.POST_TELEPORT, chunkpos, 1, player.getId());
+        ChunkPos chunkpos = ChunkPos.containing(position);
+        currentLevel.getChunkSource().addTicketWithRadius(TicketType.UNKNOWN, chunkpos, 1);
         player.stopRiding();
         if (player.isSleeping())
         {
             player.stopSleepInBed(true, true);
         }
 
-        player.teleportTo(player.serverLevel(), position.getX(), position.getY() + 2.0, position.getZ(), player.getYRot(), player.getXRot());
+        player.teleportTo(currentLevel,
+            position.getX(),
+            position.getY() + 2.0,
+            position.getZ(),
+            Set.of(),
+            player.getYRot(),
+            player.getXRot(),
+            false);
     }
 
     /**
@@ -151,7 +161,7 @@ public final class TeleportHelper
             }
         }
 
-        final ServerLevel world = player.getServer().getLevel(colony.getDimension());
+        final ServerLevel world = player.level().getServer().getLevel(colony.getDimension());
 
         position = BlockPosUtil.findAround(world,
           position,
@@ -164,15 +174,22 @@ public final class TeleportHelper
             return;
         }
 
-        ChunkPos chunkpos = new ChunkPos(position);
-        world.getChunkSource().addRegionTicket(TicketType.POST_TELEPORT, chunkpos, 1, player.getId());
+        ChunkPos chunkpos = ChunkPos.containing(position);
+        world.getChunkSource().addTicketWithRadius(TicketType.UNKNOWN, chunkpos, 1);
         player.stopRiding();
         if (player.isSleeping())
         {
             player.stopSleepInBed(true, true);
         }
 
-        player.teleportTo(world, position.getX(), position.getY(), position.getZ(), player.getYRot(), player.getXRot());
+        player.teleportTo(world,
+            position.getX(),
+            position.getY(),
+            position.getZ(),
+            Set.of(),
+            player.getYRot(),
+            player.getXRot(),
+            false);
         MessageUtils.format(COMMAND_TELEPORT_SUCCESS, colony.getName()).sendTo(player);
     }
 }

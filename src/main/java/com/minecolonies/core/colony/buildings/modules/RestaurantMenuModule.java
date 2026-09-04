@@ -22,7 +22,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import org.apache.logging.log4j.util.TriConsumer;
 import org.jetbrains.annotations.NotNull;
@@ -221,10 +221,10 @@ public class RestaurantMenuModule extends AbstractBuildingModule implements IPer
     public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound)
     {
         menu.clear();
-        final ListTag minimumStockTagList = compound.getList(TAG_MENU, Tag.TAG_COMPOUND);
+        final ListTag minimumStockTagList = compound.getListOrEmpty(TAG_MENU);
         for (int i = 0; i < minimumStockTagList.size(); i++)
         {
-            final ItemStack itemStack = ItemStack.parseOptional(provider, minimumStockTagList.getCompound(i));
+            final ItemStack itemStack = ItemStackUtils.parseOptional(provider, minimumStockTagList.getCompoundOrEmpty(i));
             if (FoodUtils.EDIBLE.test(itemStack))
             {
                 menu.add(new ItemStorage(itemStack));
@@ -238,7 +238,7 @@ public class RestaurantMenuModule extends AbstractBuildingModule implements IPer
         @NotNull final ListTag minimumStockTagList = new ListTag();
         for (final ItemStorage menuItem : menu)
         {
-            minimumStockTagList.add(menuItem.getItemStack().saveOptional(provider));
+            minimumStockTagList.add(ItemStackUtils.serializeOptional(menuItem.getItemStack(), provider));
         }
         compound.put(TAG_MENU, minimumStockTagList);
     }

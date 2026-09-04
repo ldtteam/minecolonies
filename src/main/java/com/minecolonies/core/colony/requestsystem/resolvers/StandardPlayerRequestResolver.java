@@ -72,7 +72,7 @@ public class StandardPlayerRequestResolver implements IPlayerRequestResolver
     @Override
     public boolean canResolveRequest(@NotNull final IRequestManager manager, final IRequest<?> requestToCheck)
     {
-        return !manager.getColony().getWorld().isClientSide;
+        return !manager.getColony().getWorld().isClientSide();
     }
 
     @Override

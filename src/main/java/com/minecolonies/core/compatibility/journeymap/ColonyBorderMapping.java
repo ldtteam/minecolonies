@@ -13,14 +13,14 @@ import it.unimi.dsi.fastutil.ints.AbstractInt2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectRBTreeMap;
 import it.unimi.dsi.fastutil.ints.IntRBTreeSet;
-import journeymap.api.v2.client.display.Context;
 import journeymap.api.v2.client.display.DisplayType;
 import journeymap.api.v2.client.display.PolygonOverlay;
 import journeymap.api.v2.client.model.MapPolygonWithHoles;
 import journeymap.api.v2.client.model.ShapeProperties;
 import journeymap.api.v2.client.model.TextProperties;
 import journeymap.api.v2.client.util.PolygonHelper;
-import net.minecraft.ChatFormatting;
+import journeymap.api.v2.common.Context;
+import net.minecraft.network.chat.TextColor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
@@ -255,7 +255,7 @@ public class ColonyBorderMapping
         private JourneymapOptions.BorderStyle minimapStyle = JourneymapOptions.BorderStyle.HIDDEN;
 
         private static final Codec<Set<ChunkPos>> CODEC_SET_CHUNKPOSLONG =
-                Codec.LONG.xmap(ChunkPos::new, ChunkPos::toLong)
+                Codec.LONG.xmap(ChunkPos::unpack, ChunkPos::pack)
                         .listOf().xmap(HashSet::new, ArrayList::new);
         static final Codec<ColonyBorderOverlay> CODEC =
                 RecordCodecBuilder.create(instance -> instance.group(
@@ -287,7 +287,7 @@ public class ColonyBorderMapping
         {
             this.dimension = dimension;
             this.id = id;
-            this.name = String.format("colony_%s_%d", dimension.location(), id);
+            this.name = String.format("colony_%s_%d", dimension.identifier(), id);
             this.chunks = new HashSet<>();
 
             this.fill = new ShapeProperties()
@@ -330,7 +330,10 @@ public class ColonyBorderMapping
                 final boolean permitted = colony.getPermissions().hasPermission(Minecraft.getInstance().player, Action.MAP_BORDER);
 
                 //noinspection ConstantConditions
-                changed |= updateInfo(colony.getName(), colony.getTeamColonyColor().getColor(), permitted, showColonyName);
+                changed |= updateInfo(colony.getName(),
+                                      TextColor.fromLegacyFormat(colony.getTeamColonyColor()).getValue(),
+                                      permitted,
+                                      showColonyName);
             }
             return changed;
         }
@@ -347,7 +350,7 @@ public class ColonyBorderMapping
             this.stroke.setStrokeColor(colour);
             this.text.setColor(colour);
             //noinspection ConstantConditions
-            this.text.setBackgroundColor(colour == ChatFormatting.BLACK.getColor() ? 0xDDDDDD : 0x000022);
+            this.text.setBackgroundColor(colour == TextColor.BLACK.getValue() ? 0xDDDDDD : 0x000022);
 
             this.colonyName = colonyName;
             this.permitted = permitted;

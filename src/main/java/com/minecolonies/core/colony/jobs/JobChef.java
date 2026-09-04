@@ -3,7 +3,7 @@ package com.minecolonies.core.colony.jobs;
 import com.minecolonies.core.entity.ai.workers.crafting.EntityAIWorkChef;
 import com.minecolonies.core.entity.citizen.EntityCitizen;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import com.minecolonies.api.client.render.modeltype.ModModelTypes;
 import com.minecolonies.api.colony.ICitizenData;
 import net.minecraft.sounds.SoundEvents;
@@ -26,7 +26,7 @@ public class JobChef extends AbstractJobCrafter<EntityAIWorkChef, JobChef>
 
     @NotNull
     @Override
-    public ResourceLocation getModel()
+    public Identifier getModel()
     {
         return ModModelTypes.COOK_ID;
     }

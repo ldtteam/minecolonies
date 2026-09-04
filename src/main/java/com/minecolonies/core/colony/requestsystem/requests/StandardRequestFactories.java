@@ -1,4 +1,5 @@
 package com.minecolonies.core.colony.requestsystem.requests;
+import com.minecolonies.api.util.ItemStackUtils;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.reflect.TypeToken;
@@ -1115,7 +1116,7 @@ public final class StandardRequestFactories
         compound.put(NBT_CHILDREN, childrenCompound);
 
         final ListTag deliveriesList = new ListTag();
-        request.getDeliveries().forEach(itemStack -> deliveriesList.add(itemStack.saveOptional(provider)));
+        request.getDeliveries().forEach(itemStack -> deliveriesList.add(ItemStackUtils.serializeOptional(itemStack, provider)));
 
         compound.put(NBT_DELIVERIES, deliveriesList);
 
@@ -1163,16 +1164,16 @@ public final class StandardRequestFactories
       final INBTToObjectConverter<T> typeDeserialization,
       final IObjectConstructor<T, R> objectConstructor)
     {
-        final IRequester requester = controller.deserializeTag(provider, compound.getCompound(NBT_REQUESTER));
-        final IToken<?> token = controller.deserializeTag(provider, compound.getCompound(NBT_TOKEN));
+        final IRequester requester = controller.deserializeTag(provider, compound.getCompoundOrEmpty(NBT_REQUESTER));
+        final IToken<?> token = controller.deserializeTag(provider, compound.getCompoundOrEmpty(NBT_TOKEN));
         final RequestState state = RequestState.deserialize((IntTag) compound.get(NBT_STATE));
-        final T requested = typeDeserialization.apply(provider, controller, compound.getCompound(NBT_REQUESTED));
+        final T requested = typeDeserialization.apply(provider, controller, compound.getCompoundOrEmpty(NBT_REQUESTED));
 
         final List<IToken<?>> childTokens = new ArrayList<>();
-        final ListTag childCompound = compound.getList(NBT_CHILDREN, Tag.TAG_COMPOUND);
+        final ListTag childCompound = compound.getListOrEmpty(NBT_CHILDREN);
         for (int i = 0; i < childCompound.size(); i++)
         {
-            childTokens.add(controller.deserializeTag(provider, childCompound.getCompound(i)));
+            childTokens.add(controller.deserializeTag(provider, childCompound.getCompoundOrEmpty(i)));
         }
 
         @SuppressWarnings(Suppression.LEFT_CURLY_BRACE) final R request = objectConstructor.construct(requested, token, requester, state);
@@ -1181,19 +1182,19 @@ public final class StandardRequestFactories
 
         if (compound.contains(NBT_PARENT))
         {
-            request.setParent(controller.deserializeTag(provider, compound.getCompound(NBT_PARENT)));
+            request.setParent(controller.deserializeTag(provider, compound.getCompoundOrEmpty(NBT_PARENT)));
         }
 
         if (compound.contains(NBT_RESULT))
         {
-            request.setResult(typeDeserialization.apply(provider, controller, compound.getCompound(NBT_RESULT)));
+            request.setResult(typeDeserialization.apply(provider, controller, compound.getCompoundOrEmpty(NBT_RESULT)));
         }
 
         if (compound.contains(NBT_DELIVERIES))
         {
             final ImmutableList.Builder<ItemStack> stackBuilder = ImmutableList.builder();
-            final ListTag deliveriesList = compound.getList(NBT_DELIVERIES, Tag.TAG_COMPOUND);
-            NBTUtils.streamCompound(deliveriesList).forEach(itemStackCompound -> stackBuilder.add(ItemStack.parseOptional(provider, itemStackCompound)));
+            final ListTag deliveriesList = compound.getListOrEmpty(NBT_DELIVERIES);
+            NBTUtils.streamCompound(deliveriesList).forEach(itemStackCompound -> stackBuilder.add(ItemStackUtils.parseOptional(provider, itemStackCompound)));
 
             request.overrideCurrentDeliveries(stackBuilder.build());
         }

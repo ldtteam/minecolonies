@@ -6,7 +6,7 @@ import com.minecolonies.core.generation.CustomRecipeProvider;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -47,9 +47,9 @@ public class DefaultConcreteMixerCraftingProvider extends CustomRecipeProvider
         for (final DyeColor color : DyeColor.values())
         {
             final String prefix = color.name().toLowerCase(Locale.US);
-            final Item powder = BuiltInRegistries.ITEM.get(ResourceLocation.parse(prefix + "_concrete_powder"));
-            final Item concrete = BuiltInRegistries.ITEM.get(ResourceLocation.parse(prefix + "_concrete"));
-            final Item dye = BuiltInRegistries.ITEM.get(ResourceLocation.parse(prefix + "_dye"));
+            final Item powder = BuiltInRegistries.ITEM.getValue(Identifier.parse(prefix + "_concrete_powder"));
+            final Item concrete = BuiltInRegistries.ITEM.getValue(Identifier.parse(prefix + "_concrete"));
+            final Item dye = BuiltInRegistries.ITEM.getValue(Identifier.parse(prefix + "_dye"));
 
             if (powder == null || concrete == null || dye == null)
             {

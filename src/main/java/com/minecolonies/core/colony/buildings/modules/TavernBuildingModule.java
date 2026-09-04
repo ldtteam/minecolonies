@@ -170,7 +170,7 @@ public class TavernBuildingModule extends AbstractBuildingModule implements IDef
         if (visitorData != null && !CustomVisitorListener.chanceCustomVisitors(visitorData))
         {
             visitorData.triggerInteraction(new RecruitmentInteraction(Component.translatable(
-                "com.minecolonies.coremod.gui.chat.recruitstory" + (building.getColony().getWorld().random.nextInt(MAX_STORY) + 1), visitorData.getName().split(" ")[0]),
+                "com.minecolonies.coremod.gui.chat.recruitstory" + (building.getColony().getWorld().getRandom().nextInt(MAX_STORY) + 1), visitorData.getName().split(" ")[0]),
                 ChatPriority.IMPORTANT));
         }
     }
@@ -246,10 +246,10 @@ public class TavernBuildingModule extends AbstractBuildingModule implements IDef
     @Override
     public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag nbt)
     {
-        final ListTag visitorlist = nbt.getList(TAG_VISITORS, TAG_COMPOUND);
+        final ListTag visitorlist = nbt.getListOrEmpty(TAG_VISITORS);
         for (final Tag data : visitorlist)
         {
-            final int id = ((CompoundTag) data).getInt(TAG_VISITOR_ID);
+            final int id = ((CompoundTag) data).getIntOr(TAG_VISITOR_ID, 0);
             final ICitizenData citizenData = building.getColony().getVisitorManager().getCivilian(id);
             if (citizenData != null)
             {
@@ -257,7 +257,7 @@ public class TavernBuildingModule extends AbstractBuildingModule implements IDef
                 citizenData.setHomeBuilding(building);
             }
         }
-        noVisitorTime = nbt.getInt(TAG_NOVISITTIME);
+        noVisitorTime = nbt.getIntOr(TAG_NOVISITTIME, 0);
     }
 
     /**
@@ -285,7 +285,7 @@ public class TavernBuildingModule extends AbstractBuildingModule implements IDef
 
         if (!positions.isEmpty())
         {
-            return positions.get(building.getColony().getWorld().random.nextInt(positions.size()));
+            return positions.get(building.getColony().getWorld().getRandom().nextInt(positions.size()));
         }
 
         return null;
@@ -319,7 +319,7 @@ public class TavernBuildingModule extends AbstractBuildingModule implements IDef
     {
         if (!getWorkPositions().isEmpty())
         {
-            return workPositions.get(building.getColony().getWorld().random.nextInt(workPositions.size()));
+            return workPositions.get(building.getColony().getWorld().getRandom().nextInt(workPositions.size()));
         }
         return null;
     }

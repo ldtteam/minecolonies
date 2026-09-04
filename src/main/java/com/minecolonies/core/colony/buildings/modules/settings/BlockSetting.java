@@ -14,7 +14,7 @@ import com.minecolonies.api.colony.buildings.modules.settings.ISettingsModuleVie
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
@@ -106,9 +106,9 @@ public class BlockSetting implements ISetting<BlockItem>
     }
 
     @Override
-    public ResourceLocation getLayoutItem()
+    public Identifier getLayoutItem()
     {
-        return new ResourceLocation("minecolonies", "gui/layouthuts/layoutblocksetting.xml");
+        return Identifier.fromNamespaceAndPath("minecolonies", "gui/layouthuts/layoutblocksetting.xml");
     }
 
     @OnlyIn(Dist.CLIENT)
@@ -218,7 +218,7 @@ public class BlockSetting implements ISetting<BlockItem>
         }
 
         @Override
-        public int getMinBuildHeight()
+        public int getMinY()
         {
             return Integer.MIN_VALUE;
         }

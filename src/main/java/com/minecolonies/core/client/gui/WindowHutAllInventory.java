@@ -17,7 +17,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -85,7 +85,7 @@ public class WindowHutAllInventory extends AbstractWindowSkeleton
      */
     public WindowHutAllInventory(final IBuildingView b, final BOWindow prev)
     {
-        super(new ResourceLocation(Constants.MOD_ID, "gui/windowhutallinventory.xml"));
+        super(Identifier.fromNamespaceAndPath(Constants.MOD_ID, "gui/windowhutallinventory.xml"));
         this.building = b;
         registerButton(BUTTON_SORT, this::setSortFlag);
         registerButton(BUTTON_BACK, this::back);
@@ -237,7 +237,7 @@ public class WindowHutAllInventory extends AbstractWindowSkeleton
             filterItems.add(storage);
         });
         final Predicate<ItemStorage> filterPredicate = stack -> filter.isEmpty()
-                                                                  || stack.getItemStack().getDescriptionId().toLowerCase(Locale.US).contains(filter.toLowerCase(Locale.US))
+                                                                  || stack.getItemStack().getItem().getDescriptionId().toLowerCase(Locale.US).contains(filter.toLowerCase(Locale.US))
                                                                   || getString(stack.getItemStack())
                                                                        .toLowerCase(Locale.US)
                                                                        .contains(filter.toLowerCase(Locale.US));
@@ -326,7 +326,7 @@ public class WindowHutAllInventory extends AbstractWindowSkeleton
                 final String name = resource.getItemStack().getHoverName().getString();
                 resourceLabel.setText(Component.literal(name.substring(0, Math.min(17, name.length()))));
                 final Text qtys = rowPane.findPaneOfTypeByID("quantities", Text.class);
-                if (!Screen.hasShiftDown())
+                if (!Minecraft.getInstance().hasShiftDown())
                 {
                     qtys.setText(Component.literal(Utils.format(resource.getAmount())));
                 }

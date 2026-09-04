@@ -47,7 +47,7 @@ public class ColonyAbandonOwnMessage extends AbstractServerPlayMessage
         if (colony != null)
         {
             colony.getPermissions().setOwnerAbandoned();
-            colony.getPermissions().addPlayer(player.getGameProfile(), colony.getPermissions().getRankOfficer());
+            colony.getPermissions().addPlayer(player.nameAndId(), colony.getPermissions().getRankOfficer());
             MessageUtils.format(MESSAGE_INFO_COLONY_ABANDON_SUCCESS).sendTo(player);
         }
         else

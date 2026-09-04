@@ -65,7 +65,7 @@ public class SmeltableOre implements INonExhaustiveDeliverable
 
         if (!ItemStackUtils.isEmpty(ore.result))
         {
-            compound.put(NBT_RESULT, ore.result.saveOptional(provider));
+            compound.put(NBT_RESULT, ItemStackUtils.serializeOptional(ore.result, provider));
         }
 
         return compound;
@@ -73,8 +73,8 @@ public class SmeltableOre implements INonExhaustiveDeliverable
 
     public static SmeltableOre deserialize(@NotNull final HolderLookup.Provider provider, final IFactoryController controller, final CompoundTag compound)
     {
-        final int count = compound.getInt(NBT_COUNT);
-        final ItemStack result = compound.contains(NBT_RESULT) ? ItemStackUtils.deserializeFromNBT(compound.getCompound(NBT_RESULT), provider) : ItemStackUtils.EMPTY;
+        final int count = compound.getIntOr(NBT_COUNT, 0);
+        final ItemStack result = compound.contains(NBT_RESULT) ? ItemStackUtils.deserializeFromNBT(compound.getCompoundOrEmpty(NBT_RESULT), provider) : ItemStackUtils.EMPTY;
 
         return new SmeltableOre(count, result);
     }

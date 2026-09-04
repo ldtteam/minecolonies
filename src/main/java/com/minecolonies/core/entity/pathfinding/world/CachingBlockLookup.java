@@ -99,7 +99,7 @@ public class CachingBlockLookup implements BlockGetter
             BlockState state = states[index];
             if (state == null)
             {
-                if (chunk == null || chunk.getPos().x != x >> 4 || chunk.getPos().z != z >> 4)
+                if (chunk == null || chunk.getPos().x() != x >> 4 || chunk.getPos().z() != z >> 4)
                 {
                     chunk = world.getChunk(x >> 4, z >> 4, ChunkStatus.FULL, false);
                 }
@@ -180,8 +180,8 @@ public class CachingBlockLookup implements BlockGetter
     }
 
     @Override
-    public int getMinBuildHeight()
+    public int getMinY()
     {
-        return world.getMinBuildHeight();
+        return world.getMinY();
     }
 }

@@ -1,6 +1,7 @@
 package com.minecolonies.core.entity.ai.workers.service;
 
 import com.minecolonies.api.colony.ICitizenData;
+import com.ldtteam.structurize.api.util.Tuple;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;

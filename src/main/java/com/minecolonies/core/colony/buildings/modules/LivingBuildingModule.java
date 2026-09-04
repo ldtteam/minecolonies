@@ -26,7 +26,7 @@ public class LivingBuildingModule extends AbstractAssignedCitizenModule implemen
         super.deserializeNBT(provider, compound);
         if (compound.contains(TAG_RESIDENTS))
         {
-            final int[] residentIds = compound.getIntArray(TAG_RESIDENTS);
+            final int[] residentIds = compound.getIntArray(TAG_RESIDENTS).orElse(new int[0]);
             for (final int citizenId : residentIds)
             {
                 final ICitizenData citizen = building.getColony().getCitizenManager().getCivilian(citizenId);
@@ -38,7 +38,7 @@ public class LivingBuildingModule extends AbstractAssignedCitizenModule implemen
         }
         else if (compound.contains(TAG_LIVING_RESIDENTS))
         {
-            final int[] residentIds = compound.getIntArray(TAG_LIVING_RESIDENTS);
+            final int[] residentIds = compound.getIntArray(TAG_RESIDENTS).orElse(new int[0]);
             for (final int citizenId : residentIds)
             {
                 final ICitizenData citizen = building.getColony().getCitizenManager().getCivilian(citizenId);

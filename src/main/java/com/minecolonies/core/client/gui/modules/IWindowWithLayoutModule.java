@@ -1,7 +1,7 @@
 package com.minecolonies.core.client.gui.modules;
 
 import com.ldtteam.blockui.Pane;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -23,5 +23,5 @@ public interface IWindowWithLayoutModule extends IWindowModule
      * @return the id of the layout file.
      */
     @NotNull
-    ResourceLocation getLayout();
+    Identifier getLayout();
 }

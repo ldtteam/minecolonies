@@ -3,7 +3,7 @@
   "costs": [
     {
       "count": 8,
-      "item": "minecraft:bone"
+      "ingredient": "minecraft:bone"
     }
   ],
   "effects": [

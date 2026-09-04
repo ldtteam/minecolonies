@@ -38,14 +38,16 @@ import com.minecolonies.core.items.ItemBannerRallyGuards;
 import com.minecolonies.core.network.messages.client.OpenSuggestionWindowMessage;
 import com.minecolonies.core.util.ChunkDataHelper;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.monster.Enemy;
-import net.minecraft.world.entity.monster.ZombieVillager;
+import net.minecraft.world.entity.monster.zombie.ZombieVillager;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
@@ -74,8 +76,9 @@ import net.neoforged.neoforge.event.entity.living.MobDespawnEvent;
 import net.neoforged.neoforge.event.entity.living.MobSpawnEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
-import net.neoforged.neoforge.event.level.BlockEvent;
+import net.neoforged.neoforge.event.level.block.BreakBlockEvent;
 import net.neoforged.neoforge.event.level.ChunkEvent;
+import net.neoforged.neoforge.event.level.BlockEvent;
 import net.neoforged.neoforge.event.level.LevelEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
@@ -120,13 +123,14 @@ public class EventHandler
     {
         if (!event.getLevel().isClientSide())
         {
-            if (MineColonies.getConfig().getServer().mobAttackCitizens.get() && event.getEntity() instanceof Mob && event.getEntity() instanceof Enemy && !(event.getEntity()
-              .getType()
-                .is(ModTags.mobAttackBlacklist))
+            if (MineColonies.getConfig().getServer().mobAttackCitizens.get() && event.getEntity() instanceof Mob && event.getEntity() instanceof Enemy && !BuiltInRegistries.ENTITY_TYPE.wrapAsHolder(event.getEntity().getType()).is(ModTags.mobAttackBlacklist)
                 && !(event.getEntity() instanceof AbstractFastMinecoloniesEntity))
             {
                 ((Mob) event.getEntity()).targetSelector.addGoal(6,
-                  new NearestAttackableTargetGoal<>((Mob) event.getEntity(), EntityCitizen.class, true, citizen -> !citizen.isInvisible()));
+                  new NearestAttackableTargetGoal<>((Mob) event.getEntity(),
+                    EntityCitizen.class,
+                    true,
+                    (citizen, level) -> !citizen.isInvisible()));
                 ((Mob) event.getEntity()).targetSelector.addGoal(7, new NearestAttackableTargetGoal<>((Mob) event.getEntity(), EntityMercenary.class, true));
             }
 
@@ -146,7 +150,7 @@ public class EventHandler
     @SubscribeEvent
     public static void onLootTableLoad(@NotNull final LootTableLoadEvent event)
     {
-        if (event.getName().equals(BuiltInLootTables.SIMPLE_DUNGEON.location()))
+        if (event.getName().equals(BuiltInLootTables.SIMPLE_DUNGEON.identifier()))
         {
             final LootPool.Builder pool = LootPool.lootPool();
             for (final MinecoloniesCropBlock crop : ModBlocks.getCrops())
@@ -197,7 +201,7 @@ public class EventHandler
         if (event.getEntity() instanceof ServerPlayer && !event.isCanceled())
         {
             final ServerPlayer player = (ServerPlayer) event.getEntity();
-            final LevelChunk oldChunk = player.level().getChunk(player.chunkPosition().x, player.chunkPosition().z);
+            final LevelChunk oldChunk = player.level().getChunk(player.chunkPosition().x(), player.chunkPosition().z());
             final int owningColony = ColonyUtils.getOwningColony(oldChunk);
 
             // Remove visiting/subscriber from old colony
@@ -225,7 +229,7 @@ public class EventHandler
         {
             final ServerPlayer player = (ServerPlayer) event.getEntity();
 
-            final LevelChunk newChunk = player.level().getChunk(player.chunkPosition().x, player.chunkPosition().z);
+            final LevelChunk newChunk = player.level().getChunk(player.chunkPosition().x(), player.chunkPosition().z());
 
             // Add visiting/subscriber to new colony
             final IColony newColony = IColonyManager.getInstance().getColonyByWorld(ColonyUtils.getOwningColony(newChunk), player.level());
@@ -258,7 +262,7 @@ public class EventHandler
 
         playerPositions.put(event.getEntity().getUUID(), chunkPos);
 
-        final LevelChunk chunk = world.getChunk(chunkPos.x, chunkPos.z);
+        final LevelChunk chunk = world.getChunk(chunkPos.x(), chunkPos.z());
 
         if (chunk.isEmpty())
         {
@@ -316,7 +320,7 @@ public class EventHandler
         }
 
         final BlockPos pos = BlockPos.containing(event.getX(), event.getY(), event.getZ());
-        if (event.getSpawnType() == MobSpawnType.SPAWNER || event.getLevel().isClientSide() || !WorldUtil.isEntityBlockLoaded(event.getLevel(), pos))
+        if (event.getSpawnType() == EntitySpawnReason.SPAWNER || event.getLevel().isClientSide() || !WorldUtil.isEntityBlockLoaded(event.getLevel(), pos))
         {
             return;
         }
@@ -357,7 +361,7 @@ public class EventHandler
             final ServerPlayer player = (ServerPlayer) event.getEntity();
             for (final IColony colony : IColonyManager.getInstance().getAllColonies())
             {
-                if (colony.getWorld() != null && colony.getPermissions().getRank(player).isColonyManager())
+                if (colony.getPermissions().getRank(player).isColonyManager())
                 {
                     colony.getPackageManager().addImportantColonyPlayer(player);
                     colony.getPackageManager().sendColonyViewPackets();
@@ -404,16 +408,16 @@ public class EventHandler
     {
         if (MineColonies.getConfig().getServer().pvp_mode.get() && newChunkPos != null)
         {
-            if (entityCitizen.level() == null || !WorldUtil.isEntityChunkLoaded(entityCitizen.level(), new ChunkPos(newChunkPos.x, newChunkPos.z)))
+            if (entityCitizen.level() == null || !WorldUtil.isEntityChunkLoaded(entityCitizen.level(), new ChunkPos(newChunkPos.x(), newChunkPos.z())))
             {
                 return;
             }
 
             if (entityCitizen.getCitizenJobHandler().getColonyJob() instanceof AbstractJobGuard)
             {
-                final Level world = entityCitizen.getCommandSenderWorld();
+                final Level world = entityCitizen.level();
 
-                final LevelChunk chunk = world.getChunk(newChunkPos.x, newChunkPos.z);
+                final LevelChunk chunk = world.getChunk(newChunkPos.x(), newChunkPos.z());
                 final int owningColony = ColonyUtils.getOwningColony(chunk);
                 if (owningColony != NO_COLONY_ID
                       && entityCitizen.getCitizenColonyHandler().getColonyId() != owningColony)
@@ -434,7 +438,7 @@ public class EventHandler
      * @param event the event.
      */
     @SubscribeEvent
-    public static void onBlockBreak(@NotNull final BlockEvent.BreakEvent event)
+    public static void onBlockBreak(@NotNull final BreakBlockEvent event)
     {
         if (event.getLevel().isClientSide() || !(event.getLevel() instanceof Level))
         {
@@ -449,11 +453,11 @@ public class EventHandler
             if (spawner instanceof SpawnerBlockEntity spawnerBE && spawnerBE.getSpawner().nextSpawnData != null)
             {
                 final IColony colony = IColonyManager.getInstance()
-                                         .getColonyByDimension(spawnerBE.getSpawner().nextSpawnData.getEntityToSpawn().getInt(TAG_COLONY_ID),
+                                         .getColonyByDimension(spawnerBE.getSpawner().nextSpawnData.getEntityToSpawn().getIntOr(TAG_COLONY_ID, 0),
                     world.dimension());
                 if (colony != null)
                 {
-                    colony.getEventManager().onTileEntityBreak(spawnerBE.getSpawner().nextSpawnData.getEntityToSpawn().getInt(TAG_EVENT_ID), spawner);
+                    colony.getEventManager().onTileEntityBreak(spawnerBE.getSpawner().nextSpawnData.getEntityToSpawn().getIntOr(TAG_EVENT_ID, 0), spawner);
                 }
             }
         }
@@ -534,7 +538,7 @@ public class EventHandler
                 if (!(player.isCreative() && player.isShiftKeyDown()))
                 {
                     final ItemStack stack = event.getItemStack();
-                    if (!stack.isEmpty() && !world.isClientSide)
+                    if (!stack.isEmpty() && !world.isClientSide())
                     {
                         new OpenSuggestionWindowMessage(
                             block.defaultBlockState().setValue(AbstractBlockHut.FACING, event.getEntity().getDirection()),
@@ -711,9 +715,9 @@ public class EventHandler
     public static void onEntityConverted(@NotNull final LivingConversionEvent.Pre event)
     {
         LivingEntity entity = event.getEntity();
-        if (entity instanceof ZombieVillager && event.getOutcome() == EntityType.VILLAGER)
+        if (entity instanceof ZombieVillager && event.getOutcome() == EntityTypes.VILLAGER)
         {
-            final Level world = entity.getCommandSenderWorld();
+            final Level world = entity.level();
             final IColony colony = IColonyManager.getInstance().getIColony(world, entity.blockPosition());
             if (colony != null && colony.getCommonBuildingManager().hasBuilding(ModBuildings.tavern.get().getRegistryName(), 1, false))
             {

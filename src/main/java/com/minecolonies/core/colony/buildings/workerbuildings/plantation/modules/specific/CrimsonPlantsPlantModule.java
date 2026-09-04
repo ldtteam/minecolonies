@@ -4,7 +4,7 @@ import com.minecolonies.api.colony.buildingextensions.IBuildingExtension;
 import com.minecolonies.api.equipment.ModEquipmentTypes;
 import com.minecolonies.api.equipment.registry.EquipmentTypeEntry;
 import com.minecolonies.core.colony.buildings.workerbuildings.plantation.modules.generic.BoneMealedPlantModule;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 
@@ -45,7 +45,7 @@ public class CrimsonPlantsPlantModule extends BoneMealedPlantModule
     }
 
     @Override
-    public ResourceLocation getRequiredResearchEffect()
+    public Identifier getRequiredResearchEffect()
     {
         return PLANTATION_NETHER;
     }

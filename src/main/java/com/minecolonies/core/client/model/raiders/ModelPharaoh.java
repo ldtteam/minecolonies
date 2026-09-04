@@ -1,8 +1,7 @@
 package com.minecolonies.core.client.model.raiders;
 
 import com.minecolonies.api.client.render.modeltype.EgyptianModel;
-import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMonster;
-import com.minecolonies.api.entity.mobs.egyptians.AbstractEntityEgyptianRaider;
+import com.minecolonies.api.client.render.modeltype.RaiderRenderState;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
@@ -12,7 +11,7 @@ import net.minecraft.util.Mth;
 /**
  * ModelPharaohMummy. Created using Tabula 7.0.0
  */
-public class ModelPharaoh extends EgyptianModel<AbstractEntityEgyptianRaider>
+public class ModelPharaoh extends EgyptianModel<RaiderRenderState>
 {
     private ModelPart bodyGoldenStrip;
     private ModelPart jaw;
@@ -157,11 +156,11 @@ public class ModelPharaoh extends EgyptianModel<AbstractEntityEgyptianRaider>
     }
 
     @Override
-    public void setupAnim(AbstractEntityMinecoloniesMonster entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
+    public void setupAnim(RaiderRenderState state)
     {
-        super.setupAnim(entityIn, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
+        super.setupAnim(state);
         this.bodyGoldenStrip.xRot = -Math.max(this.rightLeg.xRot, this.leftLeg.xRot);
-        this.jaw.xRot = 0.3F - 0.1F * sinPi(ageInTicks / 20.0F) % 2.0F;
-        this.jaw.yRot = 0.05F * sinPi((ageInTicks + 10.0F) / 20.0F) % 2.0F;
+        this.jaw.xRot = 0.3F - 0.1F * sinPi(state.ageInTicks / 20.0F) % 2.0F;
+        this.jaw.yRot = 0.05F * sinPi((state.ageInTicks + 10.0F) / 20.0F) % 2.0F;
     }
 }

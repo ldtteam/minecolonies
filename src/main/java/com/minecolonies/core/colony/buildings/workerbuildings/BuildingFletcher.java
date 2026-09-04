@@ -81,7 +81,9 @@ public class BuildingFletcher extends AbstractBuilding
             if (isRecipeAllowed.isPresent()) return isRecipeAllowed.get();
 
             final Item output = recipe.getPrimaryOutput().getItem();
-            return output instanceof ArrowItem || (output instanceof ArmorItem armorItem && recipe.getPrimaryOutput().has(DataComponents.DYED_COLOR) && armorItem.getMaterial() == ArmorMaterials.LEATHER);
+            final boolean isLeatherArmor = output == Items.LEATHER_HELMET || output == Items.LEATHER_CHESTPLATE
+                                             || output == Items.LEATHER_LEGGINGS || output == Items.LEATHER_BOOTS;
+            return output instanceof ArrowItem || (isLeatherArmor && recipe.getPrimaryOutput().has(DataComponents.DYED_COLOR));
         }
     }
 

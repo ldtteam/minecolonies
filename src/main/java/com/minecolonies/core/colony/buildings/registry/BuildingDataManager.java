@@ -16,7 +16,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.Block;
 import org.jetbrains.annotations.NotNull;
 
@@ -30,7 +30,7 @@ public class BuildingDataManager implements IBuildingDataManager
     @Override
     public IBuilding createFrom(final IColony colony, final CompoundTag compound, @NotNull final HolderLookup.Provider provider)
     {
-        final ResourceLocation type = ResourceLocation.parse(compound.getString(TAG_BUILDING_TYPE));
+        final Identifier type = Identifier.parse(compound.getStringOr(TAG_BUILDING_TYPE, ""));
         final BlockPos pos = BlockPosUtil.read(compound, TAG_LOCATION);
 
         IBuilding building = this.createFrom(colony, pos, type);
@@ -61,7 +61,7 @@ public class BuildingDataManager implements IBuildingDataManager
     }
 
     @Override
-    public IBuilding createFrom(final IColony colony, final BlockPos position, final ResourceLocation buildingName)
+    public IBuilding createFrom(final IColony colony, final BlockPos position, final Identifier buildingName)
     {
         final Optional<BuildingEntry> entry = IBuildingRegistry.getInstance().getOptional(buildingName);
         if (entry == null || entry.isEmpty())
@@ -79,8 +79,8 @@ public class BuildingDataManager implements IBuildingDataManager
     @Override
     public IBuildingView createViewFrom(final IColonyView colony, final BlockPos position, final RegistryFriendlyByteBuf networkBuffer)
     {
-        final ResourceLocation buildingName = ResourceLocation.parse(networkBuffer.readUtf(32767));
-        final BuildingEntry entry = IBuildingRegistry.getInstance().get(buildingName);
+        final Identifier buildingName = Identifier.parse(networkBuffer.readUtf(32767));
+        final BuildingEntry entry = IBuildingRegistry.getInstance().getValue(buildingName);
 
         if (entry == null)
         {

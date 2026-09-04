@@ -1,6 +1,6 @@
 {
   "credit": "created by:OddRobbia02 with Blockbench",
-  "parent": "block/cube_all",
+  "parent": "block/block",
   "ambientocclusion": false,
   "loader": "neoforge:composite",
   "textures": {
@@ -811,8 +811,8 @@
         "8": "block/stone_bricks",
         "9": "block/clay",
         "10": "block/terracotta",
-        "11": "item/brick",
-        "12": "item/clay_ball"
+        "11": "minecolonies:block_item/brick",
+        "12": "minecolonies:block_item/clay_ball"
       },
       "elements": [
         {

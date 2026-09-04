@@ -5,7 +5,7 @@ import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.jobs.IJobView;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.Objects;
 import java.util.function.BiFunction;
@@ -32,7 +32,7 @@ public final class JobEntry
     public static final class Builder
     {
         private Function<ICitizenData, IJob<?>> jobProducer;
-        private ResourceLocation                registryName;
+        private Identifier                registryName;
         private Supplier<BiFunction<IColonyView, ICitizenDataView, IJobView>> jobViewProducer;
 
         /**
@@ -65,7 +65,7 @@ public final class JobEntry
          * @param registryName The registry name.
          * @return The builder.
          */
-        public Builder setRegistryName(final ResourceLocation registryName)
+        public Builder setRegistryName(final Identifier registryName)
         {
             this.registryName = registryName;
             return this;
@@ -92,7 +92,7 @@ public final class JobEntry
     /**
      * The job key.
      */
-    private final ResourceLocation key;
+    private final Identifier key;
 
     /**
      * The producer for the {@link IJob}. Creates the job from a {@link ICitizenData} instance.
@@ -119,7 +119,7 @@ public final class JobEntry
     private JobEntry(
       final Function<ICitizenData, IJob<?>> jobProducer,
       final Supplier<BiFunction<IColonyView, ICitizenDataView, IJobView>> jobViewProducer,
-      final ResourceLocation key)
+      final Identifier key)
     {
         super();
         this.jobProducer = jobProducer;
@@ -134,7 +134,7 @@ public final class JobEntry
     }
 
 
-    public ResourceLocation getKey()
+    public Identifier getKey()
     {
         return key;
     }

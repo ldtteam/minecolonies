@@ -4,7 +4,7 @@
 package com.minecolonies.core.client.model;
 
 import com.minecolonies.api.client.render.modeltype.CitizenModel;
-import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.client.render.modeltype.CitizenRenderState;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
@@ -12,9 +12,8 @@ import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.world.entity.Pose;
 import org.jetbrains.annotations.NotNull;
 
-import static com.minecolonies.core.entity.ai.workers.production.agriculture.EntityAIWorkFlorist.RENDER_META_FLOWERS;
 
-public class FemaleFloristModel extends CitizenModel<AbstractEntityCitizen>
+public class FemaleFloristModel extends CitizenModel<CitizenRenderState>
 {
     public FemaleFloristModel(final ModelPart part)
     {
@@ -86,11 +85,11 @@ public class FemaleFloristModel extends CitizenModel<AbstractEntityCitizen>
 	}
 
     @Override
-    public void setupAnim(@NotNull final AbstractEntityCitizen entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
+    public void setupAnim(@NotNull final CitizenRenderState state)
     {
-        super.setupAnim(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
-        body.getChild("dress").visible = entity.getPose() != Pose.SLEEPING;
-        head.getChild("WoodsmanHat").visible = displayHat(entity);
-        head.getChild("WoodsmanHat").getChild("flowers").visible = entity.getRenderMetadata().contains(RENDER_META_FLOWERS);
+        super.setupAnim(state);
+        body.getChild("dress").visible = state.hasPose(Pose.SLEEPING) == false;
+        head.getChild("WoodsmanHat").visible = displayHat(state);
+        head.getChild("WoodsmanHat").getChild("flowers").visible = state.flowersVisible;
     }
 }

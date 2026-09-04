@@ -2,12 +2,12 @@ package com.minecolonies.core.client.render.worldevent;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-import com.ldtteam.structurize.api.RotationMirror;
+import com.ldtteam.structurize.util.RotationMirror;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.storage.StructurePacks;
 import com.ldtteam.structurize.storage.rendering.RenderingCache;
 import com.ldtteam.structurize.storage.rendering.types.BlueprintPreviewData;
-import com.ldtteam.structurize.storage.rendering.types.BoxPreviewData;
+import com.ldtteam.structurize.client.rendertask.tasks.BoxPreviewData;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.client.ModKeyMappings;
 import com.minecolonies.api.colony.ICitizenDataView;
@@ -27,7 +27,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.util.Tuple;
+import com.ldtteam.structurize.api.util.Tuple;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.phys.AABB;
 import org.apache.commons.lang3.concurrent.UncheckedExecutionException;
@@ -102,6 +102,10 @@ public class ColonyBlueprintRenderer
     public static void invalidateCache()
     {
         lastCacheRebuild = null;
+        // Pending loads belong to the previous desired set. Drop them with
+        // the cache invalidation so a blueprint that just completed cannot
+        // be reintroduced when its asynchronous load finishes.
+        pendingBoxes.clear();
     }
 
     /**
@@ -125,7 +129,7 @@ public class ColonyBlueprintRenderer
         {
             shouldRenderBlueprints = !shouldRenderBlueprints;
 
-            ctx.clientPlayer.playNotifySound(SoundEvents.NOTE_BLOCK_PLING.value(), SoundSource.NEUTRAL, 1.0F, shouldRenderBlueprints ? 0.75F : 0.25F);
+            ctx.clientPlayer.playSound(SoundEvents.NOTE_BLOCK_PLING.value(), 1.0F, shouldRenderBlueprints ? 0.75F : 0.25F);
         }
 
         if (!ctx.hasNearestColony())
@@ -186,15 +190,15 @@ public class ColonyBlueprintRenderer
         {
             final BoxRenderData buildingData = entry.getValue();
 
-            final BlockPos root = buildingData.box().pos1();
+            final BlockPos root = buildingData.box().getPos1();
             if (root != INVALID_POS)
             {
                 ctx.pushPoseCameraToPos(root);
-                ctx.renderLineBox(WorldEventContext.LINES_WITH_WIDTH, BlockPos.ZERO, buildingData.box().pos2().subtract(root), 0xFF0000FF, 3 * WorldEventContext.DEFAULT_LINE_WIDTH);
+                ctx.renderLineBox(WorldEventContext.LINES_WITH_WIDTH, BlockPos.ZERO, buildingData.box().getPos2().subtract(root), 0xFF0000FF, 3 * WorldEventContext.DEFAULT_LINE_WIDTH);
                 ctx.popPose();
             }
 
-            buildingData.box().anchor().ifPresent(pos ->
+            buildingData.box().getAnchor().ifPresent(pos ->
             {
                 if (ctx.clientPlayer.isShiftKeyDown())
                 {
@@ -326,7 +330,7 @@ public class ColonyBlueprintRenderer
 
     private static @NotNull BlueprintPreviewData makeBlueprintPreview(@NotNull final BlueprintCacheKey key, final HolderLookup.Provider provider)
     {
-        final Future<Blueprint> blueprintFuture = StructurePacks.getBlueprintFuture(key.packName(), key.path(), provider);
+        final Future<Blueprint> blueprintFuture = StructurePacks.getBlueprintFuture(key.packName(), key.path(), true);
 
         final BlueprintPreviewData blueprintPreviewData = new BlueprintPreviewData(false);
         blueprintPreviewData.setBlueprintFuture(blueprintFuture);

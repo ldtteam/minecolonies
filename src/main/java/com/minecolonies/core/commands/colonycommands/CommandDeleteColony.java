@@ -1,4 +1,5 @@
 package com.minecolonies.core.commands.colonycommands;
+import net.minecraft.server.permissions.Permissions;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
@@ -69,7 +70,7 @@ public class CommandDeleteColony implements IMCColonyOfficerCommand
      */
     private ClickEvent createClickEvent(final CommandContext<CommandSourceStack> context, final boolean confirm)
     {
-        return new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/" + context.getInput() + " " + confirm);
+        return new ClickEvent.RunCommand("/" + context.getInput() + " " + confirm);
     }
 
     /**
@@ -147,7 +148,7 @@ public class CommandDeleteColony implements IMCColonyOfficerCommand
     @Override
     public boolean checkPreCondition(final CommandContext<CommandSourceStack> context)
     {
-        if (!context.getSource().hasPermission(OP_PERM_LEVEL) && !MineColonies.getConfig().getServer().canPlayerUseDeleteColonyCommand.get())
+        if (!context.getSource().permissions().hasPermission(Permissions.COMMANDS_OWNER) && !MineColonies.getConfig().getServer().canPlayerUseDeleteColonyCommand.get())
         {
             context.getSource().sendSuccess(() -> Component.translatableEscape(CommandTranslationConstants.COMMAND_DISABLED_IN_CONFIG), true);
             return false;

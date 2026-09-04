@@ -1,7 +1,7 @@
 package com.minecolonies.api.entity.citizen;
 
 import com.minecolonies.api.util.constant.Constants;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -24,32 +24,32 @@ public class VisibleCitizenStatus
      * General public Icons
      */
     public final static VisibleCitizenStatus EAT         =
-      new VisibleCitizenStatus(new ResourceLocation(Constants.MOD_ID, "textures/icons/hungry.png"), MESSAGE_INFO_CITIZEN_STATUS_HUNGRY, true);
+      new VisibleCitizenStatus(Identifier.fromNamespaceAndPath(Constants.MOD_ID, "textures/icons/hungry.png"), MESSAGE_INFO_CITIZEN_STATUS_HUNGRY, true);
     public final static VisibleCitizenStatus HOUSE       =
-      new VisibleCitizenStatus(new ResourceLocation(Constants.MOD_ID, "textures/icons/house_big.png"), MESSAGE_INFO_CITIZEN_STATUS_IDLE, true);
+      new VisibleCitizenStatus(Identifier.fromNamespaceAndPath(Constants.MOD_ID, "textures/icons/house_big.png"), MESSAGE_INFO_CITIZEN_STATUS_IDLE, true);
     public final static VisibleCitizenStatus RAIDED      =
-      new VisibleCitizenStatus(new ResourceLocation(Constants.MOD_ID, "textures/icons/raid_icon.png"), MESSAGE_INFO_CITIZEN_STATUS_RAID, true);
+      new VisibleCitizenStatus(Identifier.fromNamespaceAndPath(Constants.MOD_ID, "textures/icons/raid_icon.png"), MESSAGE_INFO_CITIZEN_STATUS_RAID, true);
     public final static VisibleCitizenStatus MOURNING    =
-      new VisibleCitizenStatus(new ResourceLocation(Constants.MOD_ID, "textures/icons/mourning.png"), MESSAGE_INFO_CITIZEN_STATUS_MOURNING, true);
+      new VisibleCitizenStatus(Identifier.fromNamespaceAndPath(Constants.MOD_ID, "textures/icons/mourning.png"), MESSAGE_INFO_CITIZEN_STATUS_MOURNING, true);
     public final static VisibleCitizenStatus BAD_WEATHER =
-      new VisibleCitizenStatus(new ResourceLocation(Constants.MOD_ID, "textures/icons/bad_weather.png"), MESSAGE_INFO_CITIZEN_STATUS_RAINING, true);
+      new VisibleCitizenStatus(Identifier.fromNamespaceAndPath(Constants.MOD_ID, "textures/icons/bad_weather.png"), MESSAGE_INFO_CITIZEN_STATUS_RAINING, true);
     public final static VisibleCitizenStatus SLEEP       =
-      new VisibleCitizenStatus(new ResourceLocation(Constants.MOD_ID, "textures/icons/bed_icon.png"), MESSAGE_INFO_CITIZEN_STATUS_SLEEPING, true);
+      new VisibleCitizenStatus(Identifier.fromNamespaceAndPath(Constants.MOD_ID, "textures/icons/bed_icon.png"), MESSAGE_INFO_CITIZEN_STATUS_SLEEPING, true);
     public final static VisibleCitizenStatus SICK        =
-      new VisibleCitizenStatus(new ResourceLocation(Constants.MOD_ID, "textures/icons/small_sick_icon.png"), MESSAGE_INFO_CITIZEN_STATUS_SICK, true);
+      new VisibleCitizenStatus(Identifier.fromNamespaceAndPath(Constants.MOD_ID, "textures/icons/small_sick_icon.png"), MESSAGE_INFO_CITIZEN_STATUS_SICK, true);
     public final static VisibleCitizenStatus WORKING     =
-      new VisibleCitizenStatus(new ResourceLocation(Constants.MOD_ID, "textures/icons/working.png"), MESSAGE_INFO_CITIZEN_STATUS_WORKING);
+      new VisibleCitizenStatus(Identifier.fromNamespaceAndPath(Constants.MOD_ID, "textures/icons/working.png"), MESSAGE_INFO_CITIZEN_STATUS_WORKING);
 
     /**
      * The status ID
      */
     private final int id;
 
-    private final ResourceLocation icon;
+    private final Identifier icon;
     private final String           translationKey;
     private boolean                render;
 
-    public VisibleCitizenStatus(final ResourceLocation icon, final String translationKey)
+    public VisibleCitizenStatus(final Identifier icon, final String translationKey)
     {
         this.icon = icon;
         this.translationKey = translationKey;
@@ -63,7 +63,7 @@ public class VisibleCitizenStatus
         this.render = false;
     }
 
-    public VisibleCitizenStatus(final ResourceLocation icon, final String translationKey, final boolean render)
+    public VisibleCitizenStatus(final Identifier icon, final String translationKey, final boolean render)
     {
         this(icon, translationKey);
         this.render = render;
@@ -75,7 +75,7 @@ public class VisibleCitizenStatus
      *
      * @return icon texture location
      */
-    public ResourceLocation getIcon()
+    public Identifier getIcon()
     {
         return icon;
     }

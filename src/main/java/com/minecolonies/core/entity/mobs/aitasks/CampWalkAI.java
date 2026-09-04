@@ -10,7 +10,7 @@ import com.minecolonies.api.entity.pathfinding.IPathJob;
 import com.minecolonies.core.entity.pathfinding.navigation.EntityNavigationUtils;
 import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
 import net.minecraft.core.BlockPos;
-import net.minecraft.util.Tuple;
+import com.ldtteam.structurize.api.util.Tuple;
 
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 

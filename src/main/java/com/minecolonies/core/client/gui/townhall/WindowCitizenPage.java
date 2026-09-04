@@ -13,7 +13,7 @@ import com.minecolonies.core.network.messages.server.colony.citizen.RecallSingle
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Pose;
 import org.jetbrains.annotations.NotNull;
@@ -129,11 +129,11 @@ public class WindowCitizenPage extends AbstractWindowTownHall
 
         if (selectedCitizen.isFemale())
         {
-            findPaneOfTypeByID(WINDOW_ID_GENDER, Image.class).setImage(ResourceLocation.parse(FEMALE_SOURCE), false);
+            findPaneOfTypeByID(WINDOW_ID_GENDER, Image.class).setImage(Identifier.parse(FEMALE_SOURCE), false);
         }
         else
         {
-            findPaneOfTypeByID(WINDOW_ID_GENDER, Image.class).setImage(ResourceLocation.parse(MALE_SOURCE), false);
+            findPaneOfTypeByID(WINDOW_ID_GENDER, Image.class).setImage(Identifier.parse(MALE_SOURCE), false);
         }
 
         findPaneOfTypeByID(JOB_LABEL, Text.class).setText(selectedCitizen.getJobComponent().withStyle(ChatFormatting.BOLD));
@@ -146,7 +146,8 @@ public class WindowCitizenPage extends AbstractWindowTownHall
         if (selectedEntity != null && selectedEntity.getPose() == Pose.SLEEPING)
         {
             final EntityIcon entityIcon = findPaneOfTypeByID(ENTITY_ICON, EntityIcon.class);
-            entityIcon.setEntity(selectedEntity);
+            entityIcon.setEntityState(new EntityIcon.StaticState<>(
+                Minecraft.getInstance().getEntityRenderDispatcher().extractEntity(selectedEntity, Minecraft.getInstance().getDeltaTracker().getGameTimeDeltaPartialTick(true))));
             entityIcon.show();
         }
     }
@@ -253,19 +254,19 @@ public class WindowCitizenPage extends AbstractWindowTownHall
 
                 if (value > 1.0)
                 {
-                    image.setImage(ResourceLocation.parse(HAPPY_ICON), false);
+                    image.setImage(Identifier.parse(HAPPY_ICON), false);
                 }
                 else if (value == 1)
                 {
-                    image.setImage(ResourceLocation.parse(SATISFIED_ICON), false);
+                    image.setImage(Identifier.parse(SATISFIED_ICON), false);
                 }
                 else if (value > 0.75)
                 {
-                    image.setImage(ResourceLocation.parse(UNSATISFIED_ICON), false);
+                    image.setImage(Identifier.parse(UNSATISFIED_ICON), false);
                 }
                 else
                 {
-                    image.setImage(ResourceLocation.parse(UNHAPPY_ICON), false);
+                    image.setImage(Identifier.parse(UNHAPPY_ICON), false);
                 }
                 PaneBuilders.tooltipBuilder().hoverPane(label).append(Component.translatableEscape("com.minecolonies.coremod.gui.townhall.happiness.desc." + entry.getKey())).build();
             }

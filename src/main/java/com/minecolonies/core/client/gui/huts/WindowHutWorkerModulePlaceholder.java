@@ -4,7 +4,7 @@ import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.client.gui.AbstractWindowWorkerModuleBuilding;
 import com.minecolonies.core.colony.buildings.views.AbstractBuildingView;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 /**
  * BOWindow for worker. Placeholder for many different jobs.
@@ -20,6 +20,6 @@ public class WindowHutWorkerModulePlaceholder<B extends IBuildingView> extends A
      */
     public WindowHutWorkerModulePlaceholder(final B building)
     {
-        super(building, new ResourceLocation(Constants.MOD_ID, "gui/windowhutworkerplaceholder.xml"));
+        super(building, Identifier.fromNamespaceAndPath(Constants.MOD_ID, "gui/windowhutworkerplaceholder.xml"));
     }
 }

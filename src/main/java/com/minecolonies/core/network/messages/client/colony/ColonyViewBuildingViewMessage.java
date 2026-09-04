@@ -11,7 +11,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
@@ -64,7 +64,7 @@ public class ColonyViewBuildingViewMessage extends AbstractClientPlayMessage
         super(buf, type);
         colonyId = buf.readInt();
         buildingId = buf.readBlockPos();
-        dimension = ResourceKey.create(Registries.DIMENSION, ResourceLocation.parse(buf.readUtf(32767)));
+        dimension = ResourceKey.create(Registries.DIMENSION, Identifier.parse(buf.readUtf(32767)));
         buildingData = new RegistryFriendlyByteBuf(new FriendlyByteBuf(Unpooled.wrappedBuffer(buf.readByteArray())), buf.registryAccess());
     }
 
@@ -74,7 +74,7 @@ public class ColonyViewBuildingViewMessage extends AbstractClientPlayMessage
         buildingData.resetReaderIndex();
         buf.writeInt(colonyId);
         buf.writeBlockPos(buildingId);
-        buf.writeUtf(dimension.location().toString());
+        buf.writeUtf(dimension.identifier().toString());
         buf.writeByteArray(buildingData.array());
     }
 

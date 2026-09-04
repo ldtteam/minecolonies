@@ -1,10 +1,12 @@
 package com.minecolonies.core.blocks.decorative;
+import com.minecolonies.api.blocks.AbstractBlockMinecolonies;
+import net.minecraft.world.level.ScheduledTickAccess;
 
 import com.minecolonies.api.blocks.decorative.AbstractColonyFlagBanner;
 import com.minecolonies.api.util.constant.Constants;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.Blocks;
@@ -24,6 +26,8 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.ScheduledTickAccess;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.LevelReader;
 
 /**
@@ -42,9 +46,9 @@ public class BlockColonyFlagBanner extends AbstractColonyFlagBanner<BlockColonyF
     public BlockColonyFlagBanner()
     {
         super(DyeColor.WHITE,
-            Properties.of().mapColor(MapColor.WOOD)
+            AbstractBlockMinecolonies.registrationProperties().mapColor(MapColor.WOOD)
               .sound(SoundType.WOOD)
-                .noCollission()
+                .noCollision()
                 .strength(1F)
                 .sound(SoundType.WOOD));
     }
@@ -81,11 +85,11 @@ public class BlockColonyFlagBanner extends AbstractColonyFlagBanner<BlockColonyF
     }
 
     @Override
-    public BlockState updateShape(BlockState stateIn, Direction facing, BlockState facingState, LevelAccessor worldIn, BlockPos currentPos, BlockPos facingPos)
+    public BlockState updateShape(BlockState stateIn, LevelReader worldIn, ScheduledTickAccess ticks, BlockPos currentPos, Direction facing, BlockPos facingPos, BlockState facingState, RandomSource random)
     {
         return facing == Direction.DOWN && !stateIn.canSurvive(worldIn, currentPos)
                 ? Blocks.AIR.defaultBlockState()
-                : super.updateShape(stateIn, facing, facingState, worldIn, currentPos, facingPos);
+                : super.updateShape(stateIn, worldIn, ticks, currentPos, facing, facingPos, facingState, random);
     }
 
     @Override
@@ -106,8 +110,8 @@ public class BlockColonyFlagBanner extends AbstractColonyFlagBanner<BlockColonyF
     }
 
     @Override
-    public ResourceLocation getRegistryName()
+    public Identifier getRegistryName()
     {
-        return new ResourceLocation(Constants.MOD_ID, REGISTRY_NAME);
+        return Identifier.fromNamespaceAndPath(Constants.MOD_ID, REGISTRY_NAME);
     }
 }

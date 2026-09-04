@@ -1,6 +1,7 @@
 package com.minecolonies.core.client.gui;
 
 import com.ldtteam.blockui.controls.Text;
+import com.ldtteam.structurize.Network;
 import com.ldtteam.structurize.client.gui.AbstractBlueprintManipulationWindow;
 import com.ldtteam.structurize.client.gui.WindowSwitchPack;
 import com.ldtteam.structurize.network.messages.BuildToolPlacementMessage;
@@ -27,9 +28,9 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.ldtteam.structurize.api.constants.Constants.GROUNDSTYLE_LEGACY_CAMP;
-import static com.ldtteam.structurize.api.constants.Constants.GROUNDSTYLE_LEGACY_SHIP;
-import static com.ldtteam.structurize.api.constants.GUIConstants.BUTTON_SWITCH_STYLE;
+import static com.ldtteam.structurize.api.util.constant.Constants.GROUNDSTYLE_LEGACY_CAMP;
+import static com.ldtteam.structurize.api.util.constant.Constants.GROUNDSTYLE_LEGACY_SHIP;
+import static com.ldtteam.structurize.api.util.constant.GUIConstants.BUTTON_SWITCH_STYLE;
 import static com.minecolonies.api.util.constant.TranslationConstants.PARTIAL_WARNING_SUPPLY_BUILDING_ERROR;
 import static com.minecolonies.api.util.constant.TranslationConstants.WARNING_SUPPLY_BUILDING_BAD_BLOCKS;
 
@@ -104,7 +105,7 @@ public class WindowSupplies extends AbstractBlueprintManipulationWindow
         structurePack = StructurePacks.selectedPack;
 
         ClientFutureProcessor.queueBlueprint(new ClientFutureProcessor.BlueprintProcessingData(
-                StructurePacks.getBlueprintFuture(structurePack.getName(), "decorations/supplies/" + type + ".blueprint", mc.level.registryAccess()),
+                StructurePacks.getBlueprintFuture(structurePack.getName(), "decorations/supplies/" + type + ".blueprint"),
                 blueprint -> {
                     if (blueprint == null)
                     {
@@ -146,11 +147,11 @@ public class WindowSupplies extends AbstractBlueprintManipulationWindow
               placementErrorList,
               Minecraft.getInstance().player))
             {
-                new BuildToolPlacementMessage(handlerType, handlerId,
+                Network.getNetwork().sendToServer(new BuildToolPlacementMessage(handlerType, handlerId,
                           structurePack.getName(),
                           structurePack.getSubPath(previewData.getBlueprint().getFilePath().resolve(previewData.getBlueprint().getFileName() + ".blueprint")),
                     previewData.getPos(),
-                    previewData.getRotationMirror()).sendToServer();
+                    previewData.getRotationMirror().rotation(), previewData.getRotationMirror().mirror()));
                 cancelClicked();
                 return;
             }
@@ -162,11 +163,11 @@ public class WindowSupplies extends AbstractBlueprintManipulationWindow
               placementErrorList,
               Minecraft.getInstance().player))
             {
-                new BuildToolPlacementMessage(handlerType, handlerId,
+                Network.getNetwork().sendToServer(new BuildToolPlacementMessage(handlerType, handlerId,
                           structurePack.getName(),
                           structurePack.getSubPath(previewData.getBlueprint().getFilePath().resolve(previewData.getBlueprint().getFileName() + ".blueprint")),
                     previewData.getPos(),
-                    previewData.getRotationMirror()).sendToServer();
+                    previewData.getRotationMirror().rotation(), previewData.getRotationMirror().mirror()));
                 cancelClicked();
                 return;
             }

@@ -106,10 +106,10 @@ public class Horde
             return new Horde(5);
         }
 
-        Horde horde = new Horde(compound.getInt(TAG_HORDEINITSIZE));
-        horde.numberOfRaiders = compound.getInt(TAG_NUMBEROFRAIDERS);
-        horde.numberOfArchers = compound.getInt(TAG_NUMBEROFARCHERS);
-        horde.numberOfBosses = compound.getInt(TAG_NUMBEROFBOSSES);
+        Horde horde = new Horde(compound.getIntOr(TAG_HORDEINITSIZE, 0));
+        horde.numberOfRaiders = compound.getIntOr(TAG_NUMBEROFRAIDERS, 0);
+        horde.numberOfArchers = compound.getIntOr(TAG_NUMBEROFARCHERS, 0);
+        horde.numberOfBosses = compound.getIntOr(TAG_NUMBEROFBOSSES, 0);
         horde.hordeSize = horde.numberOfArchers + horde.numberOfRaiders + horde.numberOfBosses;
         return horde;
     }

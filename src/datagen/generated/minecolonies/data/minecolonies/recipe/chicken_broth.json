@@ -1,25 +1,12 @@
 {
   "type": "minecraft:crafting_shapeless",
-  "category": "misc",
   "ingredients": [
-    {
-      "item": "minecolonies:garlic"
-    },
-    {
-      "item": "minecolonies:onion"
-    },
-    {
-      "item": "minecraft:chicken"
-    },
-    {
-      "item": "minecraft:bowl"
-    },
-    {
-      "item": "minecraft:bowl"
-    },
-    {
-      "item": "minecolonies:large_water_bottle"
-    }
+    "minecolonies:garlic",
+    "minecolonies:onion",
+    "minecraft:chicken",
+    "minecraft:bowl",
+    "minecraft:bowl",
+    "minecolonies:large_water_bottle"
   ],
   "result": {
     "count": 2,

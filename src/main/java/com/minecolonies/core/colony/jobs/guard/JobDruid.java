@@ -7,7 +7,7 @@ import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.core.colony.jobs.AbstractJobGuard;
 import com.minecolonies.core.entity.ai.workers.guard.EntityAIDruid;
 import com.minecolonies.core.util.AttributeModifierUtils;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 
 import static com.minecolonies.api.util.constant.CitizenConstants.GUARD_HEALTH_MOD_LEVEL_NAME;
@@ -53,7 +53,7 @@ public class JobDruid extends AbstractJobGuard<JobDruid>
     }
 
     @Override
-    public ResourceLocation getModel()
+    public Identifier getModel()
     {
         return ModModelTypes.DRUID_ID;
     }

@@ -1,6 +1,6 @@
 package com.minecolonies.core.colony.workorders;
 
-import com.ldtteam.structurize.api.RotationMirror;
+import com.ldtteam.structurize.util.RotationMirror;
 import com.minecolonies.api.advancements.AdvancementTriggers;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
@@ -212,9 +212,9 @@ public class WorkOrderBuilding extends AbstractWorkOrder
     public void read(@NotNull final CompoundTag compound, final IWorkManager manager)
     {
         super.read(compound, manager);
-        customName = compound.getString(TAG_CUSTOM_NAME);
-        customParentName = compound.getString(TAG_CUSTOM_PARENT_NAME);
-        parentTranslationKey = compound.getString(TAG_PARENT_TRANSLATION_KEY);
+        customName = compound.getStringOr(TAG_CUSTOM_NAME, "");
+        customParentName = compound.getStringOr(TAG_CUSTOM_PARENT_NAME, "");
+        parentTranslationKey = compound.getStringOr(TAG_PARENT_TRANSLATION_KEY, "");
     }
 
     /**

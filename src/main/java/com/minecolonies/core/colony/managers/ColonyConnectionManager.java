@@ -622,7 +622,7 @@ public class ColonyConnectionManager implements IColonyConnectionManager
     @Override
     public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound)
     {
-        final ListTag connectionTagList = compound.getList(TAG_CONNECTIONS, Tag.TAG_COMPOUND);
+        final ListTag connectionTagList = compound.getListOrEmpty(TAG_CONNECTIONS);
         for (final Tag tag : connectionTagList)
         {
             final BlockPos pos = BlockPosUtil.read((CompoundTag) tag, TAG_POS);
@@ -631,7 +631,7 @@ public class ColonyConnectionManager implements IColonyConnectionManager
             colonyConnections.put(pos, connectionPoint);
         }
 
-        final ListTag connectedColonyTagList = compound.getList(TAG_COLONIES, Tag.TAG_COMPOUND);
+        final ListTag connectedColonyTagList = compound.getListOrEmpty(TAG_COLONIES);
         for (final Tag tag : connectedColonyTagList)
         {
             final ColonyConnection colonyConnectionData = new ColonyConnection().deserializeNBT((CompoundTag) tag);
@@ -639,21 +639,21 @@ public class ColonyConnectionManager implements IColonyConnectionManager
         }
 
         gateHouses.clear();
-        final ListTag gateHouseTagList = compound.getList(TAG_GATEHOUSES, Tag.TAG_COMPOUND);
+        final ListTag gateHouseTagList = compound.getListOrEmpty(TAG_GATEHOUSES);
         for (final Tag tag : gateHouseTagList)
         {
             gateHouses.add(BlockPosUtil.read((CompoundTag) tag, TAG_POS));
         }
 
         connectionEvents.clear();
-        final ListTag connectionEventList = compound.getList(TAG_CONNECTION_EVENTS, Tag.TAG_COMPOUND);
+        final ListTag connectionEventList = compound.getListOrEmpty(TAG_CONNECTION_EVENTS);
         for (final Tag tag : connectionEventList)
         {
             final ConnectionEvent connectionEventData = ConnectionEvent.deserializeNBT((CompoundTag) tag);
             connectionEvents.put(connectionEventData.id(), connectionEventData);
         }
 
-        final ListTag pendingConnectionTagList = compound.getList(TAG_PENDING, Tag.TAG_COMPOUND);
+        final ListTag pendingConnectionTagList = compound.getListOrEmpty(TAG_PENDING);
         for (final Tag tag : pendingConnectionTagList)
         {
             final BlockPos pos = BlockPosUtil.read((CompoundTag) tag, TAG_POS);
@@ -662,10 +662,10 @@ public class ColonyConnectionManager implements IColonyConnectionManager
             pendingColonyConnections.put(pos, colonyConnectionData);
         }
 
-        final ListTag diplomacyStatusTagList = compound.getList(TAG_DIPLOMACY, Tag.TAG_COMPOUND);
+        final ListTag diplomacyStatusTagList = compound.getListOrEmpty(TAG_DIPLOMACY);
         for (final Tag tag : diplomacyStatusTagList)
         {
-            diplomacyStatus.put(((CompoundTag)tag).getInt(TAG_COLONY_ID), DiplomacyStatus.values()[((CompoundTag)tag).getInt(TAG_STATUS)]);
+            diplomacyStatus.put(((CompoundTag)tag).getIntOr(TAG_COLONY_ID, 0), DiplomacyStatus.values()[((CompoundTag)tag).getIntOr(TAG_STATUS, 0)]);
         }
     }
 

@@ -13,9 +13,10 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.loot.LootTableProvider;
+import net.minecraft.server.packs.PackType;
 import net.minecraft.util.ProblemReporter;
 import net.minecraft.world.level.storage.loot.LootTable;
-import net.minecraft.world.level.storage.loot.ValidationContext;
+import net.minecraft.world.level.storage.loot.ValidationContextSource;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.neoforged.neoforge.common.data.BlockTagsProvider;
 import net.neoforged.neoforge.common.data.DatapackBuiltinEntriesProvider;
@@ -32,60 +33,67 @@ public class GatherDataHandler
      *
      * @param event event sent when you run the "runData" gradle task
      */
-    public static void dataGeneratorSetup(final GatherDataEvent event)
+    public static void dataGeneratorSetupServer(final GatherDataEvent.Server event)
     {
         final DataGenerator generator = event.getGenerator();
         RegistrySetBuilder enchRegBuilder = new RegistrySetBuilder().add(Registries.ENCHANTMENT, DefaultEnchantmentProvider::bootstrap);
         DatapackBuiltinEntriesProvider enchRegProvider = new DatapackBuiltinEntriesProvider(event.getGenerator().getPackOutput(), event.getLookupProvider(), enchRegBuilder, Set.of(Constants.MOD_ID, "minecraft"));
         generator.addProvider(true, enchRegProvider);
-        final CompletableFuture<HolderLookup.Provider> provider = enchRegProvider.getRegistryProvider().thenApply(p -> new DatagenLootTableManager(p, event.getExistingFileHelper()));
+        final CompletableFuture<HolderLookup.Provider> provider = enchRegProvider.getRegistryProvider()
+            .thenApply(p -> new DatagenLootTableManager(p, event.getResourceManager(PackType.SERVER_DATA)));
 
-        final BlockTagsProvider blockTagsProvider = new DefaultBlockTagsProvider(generator.getPackOutput(), provider, event.getExistingFileHelper());
+        final BlockTagsProvider blockTagsProvider = new DefaultBlockTagsProvider(generator.getPackOutput(), provider, provider);
 
-        generator.addProvider(event.includeClient(), new DefaultSoundProvider(generator.getPackOutput()));
-        generator.addProvider(event.includeClient(), new DefaultItemModelProvider(generator.getPackOutput(), event.getExistingFileHelper()));
-        generator.addProvider(event.includeClient(), new DefaultEntityIconProvider(generator));
-        generator.addProvider(event.includeClient(), new DefaultStoriesProvider(generator.getPackOutput()));
-        generator.addProvider(event.includeClient() && event.includeServer(), new QuestTranslationProvider(generator.getPackOutput()));
+        generator.addProvider(true, new DefaultSoundProvider(generator.getPackOutput()));
+        generator.addProvider(true, new DefaultItemModelProvider(generator.getPackOutput()));
+        generator.addProvider(true, new DefaultEntityIconProvider(generator));
+        generator.addProvider(true, new DefaultStoriesProvider(generator.getPackOutput()));
+        generator.addProvider(true, new QuestTranslationProvider(generator.getPackOutput()));
 
-        generator.addProvider(event.includeServer(), new DefaultDamageTypeProvider(generator.getPackOutput(), event.getExistingFileHelper(), provider));
-        generator.addProvider(event.includeServer(), new DefaultAdvancementsProvider(generator.getPackOutput(), provider, event.getExistingFileHelper()));
-        generator.addProvider(event.includeServer(), blockTagsProvider);
-        generator.addProvider(event.includeServer(), new DefaultItemTagsProvider(generator.getPackOutput(), provider, blockTagsProvider, event.getExistingFileHelper()));
-        generator.addProvider(event.includeServer(), new DefaultEntityTypeTagsProvider(generator.getPackOutput(), provider, event.getExistingFileHelper()));
-        generator.addProvider(event.includeServer(), new DefaultDamageTagsProvider(generator.getPackOutput(), provider, event.getExistingFileHelper()));
-        generator.addProvider(event.includeServer(), new DefaultResearchProvider(generator.getPackOutput(), provider));
-        generator.addProvider(event.includeServer(), new DefaultRecipeProvider(generator.getPackOutput(), provider));
-        generator.addProvider(event.includeServer(), new DefaultBiomeTagsProvider(generator.getPackOutput(), provider, event.getExistingFileHelper()));
-        generator.addProvider(event.includeServer(), new DefaultLootModifiersProvider(generator.getPackOutput(), provider));
-        generator.addProvider(event.includeServer(), new DefaultDataMapsProvider(generator.getPackOutput(), provider));
-        generator.addProvider(event.includeServer(), new DefaultRecruitmentItemsProvider(generator.getPackOutput()));
+        generator.addProvider(true, new DefaultDamageTypeProvider(generator.getPackOutput(), provider));
+        generator.addProvider(true, new DefaultAdvancementsProvider(generator.getPackOutput(), provider));
+        generator.addProvider(true, blockTagsProvider);
+        generator.addProvider(true, new DefaultItemTagsProvider(generator.getPackOutput(), provider, blockTagsProvider, provider));
+        generator.addProvider(true, new DefaultEntityTypeTagsProvider(generator.getPackOutput(), provider, provider));
+        generator.addProvider(true, new DefaultDamageTagsProvider(generator.getPackOutput(), provider, provider));
+        generator.addProvider(true, new DefaultResearchProvider(generator.getPackOutput(), provider));
+        generator.addProvider(true, new DefaultBiomeTagsProvider(generator.getPackOutput(), provider, provider));
+        generator.addProvider(true, new DefaultRecipeProvider.Runner(generator.getPackOutput(), provider));
+        generator.addProvider(true, new DefaultLootModifiersProvider(generator.getPackOutput(), provider));
+        generator.addProvider(true, new DefaultDataMapsProvider(generator.getPackOutput(), provider));
+        generator.addProvider(true, new DefaultRecruitmentItemsProvider(generator.getPackOutput()));
 
         // workers
-        generator.addProvider(event.includeServer(), new DefaultAlchemistCraftingProvider(generator.getPackOutput(), provider));
-        generator.addProvider(event.includeServer(), new DefaultBakerCraftingProvider(generator.getPackOutput(), provider));
-        generator.addProvider(event.includeServer(), new DefaultBlacksmithCraftingProvider(generator.getPackOutput(), provider));
-        generator.addProvider(event.includeServer(), new DefaultConcreteMixerCraftingProvider(generator.getPackOutput(), provider));
-        generator.addProvider(event.includeServer(), new DefaultChefCraftingProvider(generator.getPackOutput(), provider));
-        generator.addProvider(event.includeServer(), new DefaultCrusherCraftingProvider(generator.getPackOutput(), provider));
-        generator.addProvider(event.includeServer(), new DefaultDyerCraftingProvider(generator.getPackOutput(), provider));
-        generator.addProvider(event.includeServer(), new DefaultEnchanterCraftingProvider(generator.getPackOutput(), provider));
-        generator.addProvider(event.includeServer(), new DefaultFarmerCraftingProvider(generator.getPackOutput(), provider));
-        generator.addProvider(event.includeServer(), new LootTableProviders(generator.getPackOutput(), provider));
-        generator.addProvider(event.includeServer(), new DefaultFletcherCraftingProvider(generator.getPackOutput(), provider));
-        generator.addProvider(event.includeServer(), new DefaultGlassblowerCraftingProvider(generator.getPackOutput(), provider));
-        generator.addProvider(event.includeServer(), new DefaultLumberjackCraftingProvider(generator.getPackOutput(), provider));
-        generator.addProvider(event.includeServer(), new DefaultMechanicCraftingProvider(generator.getPackOutput(), provider));
-        generator.addProvider(event.includeServer(), new DefaultNetherWorkerLootProvider(generator.getPackOutput(), provider));
-        generator.addProvider(event.includeServer(), new DefaultPlanterCraftingProvider(generator.getPackOutput(), provider));
-        generator.addProvider(event.includeServer(), new DefaultSawmillCraftingProvider(generator.getPackOutput(), provider));
-        generator.addProvider(event.includeServer(), new DefaultSifterCraftingProvider(generator.getPackOutput(), provider));
-        generator.addProvider(event.includeServer(), new DefaultStonemasonCraftingProvider(generator.getPackOutput(), provider));
-        generator.addProvider(event.includeServer(), new DefaultStoneSmelteryCraftingProvider(generator.getPackOutput(), provider));
+        generator.addProvider(true, new DefaultAlchemistCraftingProvider(generator.getPackOutput(), provider));
+        generator.addProvider(true, new DefaultBakerCraftingProvider(generator.getPackOutput(), provider));
+        generator.addProvider(true, new DefaultBlacksmithCraftingProvider(generator.getPackOutput(), provider));
+        generator.addProvider(true, new DefaultConcreteMixerCraftingProvider(generator.getPackOutput(), provider));
+        generator.addProvider(true, new DefaultChefCraftingProvider(generator.getPackOutput(), provider));
+        generator.addProvider(true, new DefaultCrusherCraftingProvider(generator.getPackOutput(), provider));
+        generator.addProvider(true, new DefaultDyerCraftingProvider(generator.getPackOutput(), provider));
+        generator.addProvider(true, new DefaultEnchanterCraftingProvider(generator.getPackOutput(), provider));
+        generator.addProvider(true, new DefaultFarmerCraftingProvider(generator.getPackOutput(), provider));
+        generator.addProvider(true, new LootTableProviders(generator.getPackOutput(), provider));
+        generator.addProvider(true, new DefaultFletcherCraftingProvider(generator.getPackOutput(), provider));
+        generator.addProvider(true, new DefaultGlassblowerCraftingProvider(generator.getPackOutput(), provider));
+        generator.addProvider(true, new DefaultLumberjackCraftingProvider(generator.getPackOutput(), provider));
+        generator.addProvider(true, new DefaultMechanicCraftingProvider(generator.getPackOutput(), provider));
+        generator.addProvider(true, new DefaultNetherWorkerLootProvider(generator.getPackOutput(), provider));
+        generator.addProvider(true, new DefaultPlanterCraftingProvider(generator.getPackOutput(), provider));
+        generator.addProvider(true, new DefaultSawmillCraftingProvider(generator.getPackOutput(), provider));
+        generator.addProvider(true, new DefaultSifterCraftingProvider(generator.getPackOutput(), provider));
+        generator.addProvider(true, new DefaultStonemasonCraftingProvider(generator.getPackOutput(), provider));
+        generator.addProvider(true, new DefaultStoneSmelteryCraftingProvider(generator.getPackOutput(), provider));
 
-        generator.addProvider(event.includeServer(), new ItemNbtCalculator(generator.getPackOutput(), provider));
+        generator.addProvider(true, new ItemNbtCalculator(generator.getPackOutput(), provider));
 
         SchemFixerUtil.fixSchematics(provider);
+    }
+
+    public static void dataGeneratorSetupClient(final GatherDataEvent.Client event)
+    {
+        // MineColonies currently generates the complete pack from the server data run; retain the client hook so
+        // either NeoForge datagen target can be invoked without registering against the abstract base event.
     }
 
     // todo: move this back to SimpleLootTableProvider?
@@ -107,7 +115,7 @@ public class GatherDataHandler
         @Override
         protected void validate(
           final WritableRegistry<LootTable> writableregistry,
-          final ValidationContext validationcontext,
+          final ValidationContextSource validationcontext,
           final ProblemReporter.Collector problemreporter$collector)
         {
             // todo this might be a bit aggressive, someone should adjust this.
@@ -123,11 +131,11 @@ public class GatherDataHandler
 //                  {
 //                      public <T> T getElement(final LootDataId<T> id)
 //                      {
-//                          if (id.location().equals(BuiltInLootTables.FISHING_FISH) ||
-//                                id.location().equals(BuiltInLootTables.FISHING_JUNK) ||
-//                                id.location().equals(BuiltInLootTables.FISHING_TREASURE))
+//                          if (id.identifier().equals(BuiltInLootTables.FISHING_FISH) ||
+//                                id.identifier().equals(BuiltInLootTables.FISHING_JUNK) ||
+//                                id.identifier().equals(BuiltInLootTables.FISHING_TREASURE))
 //                          {
-//                              return id.type() == LootDataType.TABLE ? (T) map.getOrDefault(id.location(), LootTable.EMPTY) : null;
+//                              return id.type() == LootDataType.TABLE ? (T) map.getOrDefault(id.identifier(), LootTable.EMPTY) : null;
 //                          }
 //                          return validationcontext.resolver.getElement(id);
 //                      }

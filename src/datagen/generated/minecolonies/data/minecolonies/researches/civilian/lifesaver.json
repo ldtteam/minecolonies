@@ -3,7 +3,7 @@
   "costs": [
     {
       "count": 32,
-      "item": "minecraft:hay_block"
+      "ingredient": "minecraft:hay_block"
     }
   ],
   "effects": [

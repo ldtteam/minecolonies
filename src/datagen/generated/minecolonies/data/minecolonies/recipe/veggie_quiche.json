@@ -1,25 +1,12 @@
 {
   "type": "minecraft:crafting_shapeless",
-  "category": "misc",
   "ingredients": [
-    {
-      "item": "minecolonies:garlic"
-    },
-    {
-      "item": "minecolonies:durum"
-    },
-    {
-      "item": "minecolonies:onion"
-    },
-    {
-      "item": "minecolonies:butternut_squash"
-    },
-    {
-      "item": "minecolonies:butternut_squash"
-    },
-    {
-      "item": "minecolonies:large_water_bottle"
-    }
+    "minecolonies:garlic",
+    "minecolonies:durum",
+    "minecolonies:onion",
+    "minecolonies:butternut_squash",
+    "minecolonies:butternut_squash",
+    "minecolonies:large_water_bottle"
   ],
   "result": {
     "count": 2,

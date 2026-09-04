@@ -56,12 +56,12 @@ public class DruidCombatAI extends AttackMoveAI<EntityCitizen>
     /**
      * List of potential positive effects.
      */
-    private static final ImmutableList<Holder<MobEffect>> SUPPORT_EFFECTS = ImmutableList.of(MobEffects.DAMAGE_BOOST, MobEffects.SATURATION, MobEffects.HEAL, MobEffects.DAMAGE_RESISTANCE);
+    private static final ImmutableList<Holder<MobEffect>> SUPPORT_EFFECTS = ImmutableList.of(MobEffects.STRENGTH, MobEffects.SATURATION, MobEffects.INSTANT_HEALTH, MobEffects.RESISTANCE);
 
     /**
      * List of potential positive effects.
      */
-    private static final ImmutableList<Holder<MobEffect>> ADVERSE_EFFECTS = ImmutableList.of(MobEffects.MOVEMENT_SLOWDOWN, MobEffects.WEAKNESS);
+    private static final ImmutableList<Holder<MobEffect>> ADVERSE_EFFECTS = ImmutableList.of(MobEffects.SLOWNESS, MobEffects.WEAKNESS);
 
     /**
      * The xp per thrown potion
@@ -162,14 +162,14 @@ public class DruidCombatAI extends AttackMoveAI<EntityCitizen>
         }
 
         stack.set(DataComponents.POTION_CONTENTS, PotionContents.EMPTY.withEffectAdded((new MobEffectInstance(effect, time, gotMaterial ? 2 : 0))));
-        DruidPotionEntity.throwPotionAt(stack, target, user, user.getCommandSenderWorld(), POTION_VELOCITY, inaccuracy, predicate);
+        DruidPotionEntity.throwPotionAt(stack, target, user, user.level(), POTION_VELOCITY, inaccuracy, predicate);
 
         if (gotMaterial)
         {
             InventoryUtils.removeStackFromItemHandler(user.getCitizenData().getInventory(), new ItemStack(ModItems.magicpotion, 1), 1);
         }
 
-        this.instantEffect = effect.value().isInstantenous();
+        this.instantEffect = effect.value().isInstantaneous();
 
         user.setItemInHand(InteractionHand.MAIN_HAND, stack);
 
@@ -308,8 +308,8 @@ public class DruidCombatAI extends AttackMoveAI<EntityCitizen>
      */
     private boolean wasAffectedByDruid(final LivingEntity entity)
     {
-        return entity.hasEffect(MobEffects.MOVEMENT_SLOWDOWN) || entity.hasEffect(MobEffects.SATURATION) || entity.hasEffect(MobEffects.DAMAGE_BOOST)
-                 || entity.hasEffect(MobEffects.WEAKNESS) || entity.hasEffect(MobEffects.DAMAGE_RESISTANCE) || entity.hasEffect(MobEffects.HEAL);
+        return entity.hasEffect(MobEffects.SLOWNESS) || entity.hasEffect(MobEffects.SATURATION) || entity.hasEffect(MobEffects.STRENGTH)
+                 || entity.hasEffect(MobEffects.WEAKNESS) || entity.hasEffect(MobEffects.RESISTANCE) || entity.hasEffect(MobEffects.INSTANT_HEALTH);
     }
 
     @Override

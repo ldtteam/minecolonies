@@ -3,7 +3,7 @@
   "costs": [
     {
       "count": 16,
-      "item": "minecraft:enchanted_golden_apple"
+      "ingredient": "minecraft:enchanted_golden_apple"
     }
   ],
   "effects": [

@@ -1,6 +1,7 @@
 package com.minecolonies.core.entity.ai.workers.production.agriculture;
 
 import com.ldtteam.structurize.util.BlockUtils;
+import com.ldtteam.structurize.api.util.Tuple;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
@@ -547,7 +548,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman, B
      */
     private void throwRod()
     {
-        if (!world.isClientSide)
+        if (!world.isClientSide())
         {
             WorkerUtil.faceBlock(job.getWater().getA(), worker);
             world.playSound(null,
@@ -555,7 +556,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman, B
               SoundEvents.FISHING_BOBBER_THROW,
               SoundSource.NEUTRAL,
               0.5F,
-              (float) (0.4D / (this.world.random.nextFloat() * 0.4D + 0.8D)));
+              (float) (0.4D / (this.world.getRandom().nextFloat() * 0.4D + 0.8D)));
 
             this.entityFishHook = new NewBobberEntity(ModEntities.FISHHOOK, worker, worker.level(),
               EnchantmentHelper.getFishingLuckBonus((ServerLevel) worker.level(), worker.getMainHandItem(), worker),

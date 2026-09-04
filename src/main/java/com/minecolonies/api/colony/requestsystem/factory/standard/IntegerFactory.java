@@ -51,7 +51,7 @@ public class IntegerFactory implements IFactory<FactoryVoidInput, Integer>
     @Override
     public Integer deserialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final CompoundTag nbt)
     {
-        return nbt.getInt(NbtTagConstants.TAG_VALUE);
+        return nbt.getIntOr(NbtTagConstants.TAG_VALUE, 0);
     }
 
     @Override

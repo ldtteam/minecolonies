@@ -1,11 +1,11 @@
 package com.minecolonies.api.colony.buildings;
 
-import com.ldtteam.structurize.api.RotationMirror;
+import com.ldtteam.structurize.util.RotationMirror;
 import com.ldtteam.structurize.blockentities.interfaces.IBlueprintDataProviderBE;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.util.Tuple;
-import net.neoforged.neoforge.common.util.INBTSerializable;
+import com.ldtteam.structurize.api.util.Tuple;
+import com.minecolonies.api.util.INBTSerializable;
 import java.util.Set;
 
 public interface ISchematicProvider extends INBTSerializable<CompoundTag>

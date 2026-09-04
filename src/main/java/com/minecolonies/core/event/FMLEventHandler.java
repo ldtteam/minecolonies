@@ -4,10 +4,13 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.core.datalistener.*;
 import com.minecolonies.core.entity.pathfinding.Pathfinding;
 import com.minecolonies.core.util.BackUpHelper;
+import net.minecraft.core.component.DataComponentInitializers;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
-import net.neoforged.neoforge.event.AddReloadListenerEvent;
+import net.minecraft.resources.Identifier;
+import net.neoforged.neoforge.event.AddServerReloadListenersEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.server.ServerAboutToStartEvent;
 import net.neoforged.neoforge.event.server.ServerStartedEvent;
@@ -46,17 +49,29 @@ public class FMLEventHandler
     }
 
     @SubscribeEvent
-    public static void onAddReloadListenerEvent(@NotNull final AddReloadListenerEvent event)
+    public static void onAddServerReloadListenerEvent(@NotNull final AddServerReloadListenersEvent event)
     {
-        event.addListener(new CrafterRecipeListener());
-        event.addListener(new ResearchListener());
-        event.addListener(new CustomVisitorListener());
-        event.addListener(new CitizenNameListener());
-        event.addListener(new QuestJsonListener());
-        event.addListener(new ItemNbtListener());
-        event.addListener(StudyItemListener.INSTANCE);
-        event.addListener(new DiseasesListener());
-        event.addListener(new RecruitmentItemsListener());
+        /*
+         * Minecraft 26.2 applies default item components only after all reload
+         * listeners have completed.  Minecolonies' JSON listeners decode
+         * ItemStacks during that reload, so make the same pending component
+         * snapshot available before registering those listeners.  The vanilla
+         * reload completion still applies its snapshot afterwards (and emits
+         * DefaultDataComponentsBoundEvent), keeping the normal lifecycle intact.
+         */
+        BuiltInRegistries.DATA_COMPONENT_INITIALIZERS
+            .build(event.getServerResources().getRegistryLookup())
+            .forEach(DataComponentInitializers.PendingComponents::apply);
+
+        event.addListener(Identifier.fromNamespaceAndPath("minecolonies", "crafter_recipes"), new CrafterRecipeListener());
+        event.addListener(Identifier.fromNamespaceAndPath("minecolonies", "research"), new ResearchListener());
+        event.addListener(Identifier.fromNamespaceAndPath("minecolonies", "custom_visitors"), new CustomVisitorListener());
+        event.addListener(Identifier.fromNamespaceAndPath("minecolonies", "citizen_names"), new CitizenNameListener());
+        event.addListener(Identifier.fromNamespaceAndPath("minecolonies", "quests"), new QuestJsonListener());
+        event.addListener(Identifier.fromNamespaceAndPath("minecolonies", "item_nbt"), new ItemNbtListener());
+        event.addListener(Identifier.fromNamespaceAndPath("minecolonies", "study_items"), StudyItemListener.INSTANCE);
+        event.addListener(Identifier.fromNamespaceAndPath("minecolonies", "diseases"), new DiseasesListener());
+        event.addListener(Identifier.fromNamespaceAndPath("minecolonies", "recruitment_items"), new RecruitmentItemsListener());
     }
 
     @SubscribeEvent

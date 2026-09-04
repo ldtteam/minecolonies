@@ -8,7 +8,7 @@ import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
-import com.minecolonies.api.util.Tuple;
+import com.ldtteam.structurize.api.util.Tuple;
 import com.minecolonies.core.client.gui.citizen.RequestWindowCitizen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.HolderLookup;
@@ -127,7 +127,7 @@ public class RequestBasedInteraction extends ServerCitizenInteraction
     public void deserializeNBT(@NotNull final HolderLookup.Provider provider, @NotNull final CompoundTag compoundNBT)
     {
         super.deserializeNBT(provider, compoundNBT);
-        this.token = StandardFactoryController.getInstance().deserializeTag(provider, compoundNBT.getCompound(TOKEN_TAG));
+        this.token = StandardFactoryController.getInstance().deserializeTag(provider, compoundNBT.getCompoundOrEmpty(TOKEN_TAG));
     }
 
     @Override

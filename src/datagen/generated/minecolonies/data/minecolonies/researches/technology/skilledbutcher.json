@@ -3,15 +3,15 @@
   "costs": [
     {
       "count": 1,
-      "item": "minecraft:diamond_axe"
+      "ingredient": "minecraft:diamond_axe"
     },
     {
       "count": 1,
-      "item": "minecraft:enchanted_book"
+      "ingredient": "minecraft:enchanted_book"
     },
     {
       "count": 1,
-      "item": "minecraft:anvil"
+      "ingredient": "minecraft:anvil"
     }
   ],
   "effects": [

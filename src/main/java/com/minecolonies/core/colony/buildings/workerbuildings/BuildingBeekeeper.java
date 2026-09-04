@@ -23,11 +23,12 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
+import net.minecraft.tags.BlockItemTags;
 import net.minecraft.tags.ItemTags;
-import net.minecraft.util.Tuple;
+import com.ldtteam.structurize.api.util.Tuple;
 import net.minecraft.world.entity.animal.Animal;
-import net.minecraft.world.entity.animal.Bee;
+import net.minecraft.world.entity.animal.bee.Bee;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.NotNull;
@@ -47,7 +48,7 @@ public class BuildingBeekeeper extends AbstractBuilding
      * The beekeeper mode.
      */
     public static final ISettingKey<BeekeeperCollectionSetting> MODE =
-      new SettingKey<>(BeekeeperCollectionSetting.class, new ResourceLocation(com.minecolonies.api.util.constant.Constants.MOD_ID, "beekeeper"));
+      new SettingKey<>(BeekeeperCollectionSetting.class, Identifier.fromNamespaceAndPath(com.minecolonies.api.util.constant.Constants.MOD_ID, "beekeeper"));
 
     /**
      * Both setting options.
@@ -77,7 +78,7 @@ public class BuildingBeekeeper extends AbstractBuilding
         super(c, l);
         keepX.put(stack -> Items.SHEARS == stack.getItem(), new Tuple<>(1, true));
         keepX.put(stack -> Items.GLASS_BOTTLE == stack.getItem(), new Tuple<>(4, true));
-        keepX.put(stack -> stack.is(ItemTags.FLOWERS), new Tuple<>(STACKSIZE,true));
+        keepX.put(stack -> stack.is(BlockItemTags.FLOWERS.item()), new Tuple<>(STACKSIZE,true));
     }
 
     /**
@@ -107,7 +108,7 @@ public class BuildingBeekeeper extends AbstractBuilding
     public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound)
     {
         super.deserializeNBT(provider, compound);
-        final ListTag hiveTag = compound.getList(NbtTagConstants.TAG_HIVES, Tag.TAG_INT_ARRAY);
+        final ListTag hiveTag = compound.getListOrEmpty(NbtTagConstants.TAG_HIVES);
         for (Tag tag : hiveTag)
         {
             hives.add(NBTUtils.readBlockPos(tag));

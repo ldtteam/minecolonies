@@ -1,4 +1,7 @@
 package com.minecolonies.core.blocks;
+import com.minecolonies.api.blocks.AbstractBlockMinecolonies;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.InteractionResult;
 
 import com.minecolonies.api.blocks.AbstractBlockMinecoloniesGrave;
 import com.minecolonies.api.blocks.types.GraveType;
@@ -8,8 +11,7 @@ import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.core.tileentities.TileEntityGrave;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.constant.Constants;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -64,18 +66,18 @@ public class BlockMinecoloniesGrave extends AbstractBlockMinecoloniesGrave<Block
 
     public BlockMinecoloniesGrave()
     {
-        super(Properties.of().mapColor(MapColor.STONE).sound(SoundType.STONE).strength(BLOCK_HARDNESS, RESISTANCE));
+        super(AbstractBlockMinecolonies.registrationProperties().mapColor(MapColor.STONE).sound(SoundType.STONE).strength(BLOCK_HARDNESS, RESISTANCE));
         this.registerDefaultState(this.defaultBlockState().setValue(FACING, Direction.NORTH).setValue(VARIANT, GraveType.DEFAULT));
     }
 
     @Override
-    public ResourceLocation getRegistryName()
+    public Identifier getRegistryName()
     {
-        return new ResourceLocation(Constants.MOD_ID, BLOCK_NAME);
+        return Identifier.fromNamespaceAndPath(Constants.MOD_ID, BLOCK_NAME);
     }
 
     @Override
-    public boolean propagatesSkylightDown(final BlockState state, @NotNull final BlockGetter reader, @NotNull final BlockPos pos)
+    protected boolean propagatesSkylightDown(final BlockState state)
     {
         return false;
     }
@@ -141,7 +143,7 @@ public class BlockMinecoloniesGrave extends AbstractBlockMinecoloniesGrave<Block
     }
 
     @Override
-    public ItemInteractionResult useItemOn(
+    public InteractionResult useItemOn(
       final ItemStack stack,
       final BlockState state,
       final Level worldIn,
@@ -157,13 +159,13 @@ public class BlockMinecoloniesGrave extends AbstractBlockMinecoloniesGrave<Block
               && tileEntity instanceof TileEntityGrave)
         {
             final TileEntityGrave grave = (TileEntityGrave) tileEntity;
-            if (!worldIn.isClientSide)
+            if (!worldIn.isClientSide())
             {
                 ((ServerPlayer) player).openMenu(grave, buf -> buf.writeBlockPos(grave.getBlockPos()));
             }
-            return ItemInteractionResult.SUCCESS;
+            return InteractionResult.SUCCESS;
         }
-        return ItemInteractionResult.FAIL;
+        return InteractionResult.FAIL;
     }
 
     @Override
@@ -199,9 +201,9 @@ public class BlockMinecoloniesGrave extends AbstractBlockMinecoloniesGrave<Block
     }
 
     @Override
-    public void onRemove(BlockState state, @NotNull Level worldIn, @NotNull BlockPos pos, BlockState newState, boolean isMoving)
+    public void affectNeighborsAfterRemoval(BlockState state, @NotNull ServerLevel worldIn, @NotNull BlockPos pos, boolean movedByPiston)
     {
-        if (state.getBlock() != newState.getBlock())
+        if (!worldIn.isClientSide())
         {
             BlockEntity tileEntity = worldIn.getBlockEntity(pos);
             if (tileEntity instanceof TileEntityGrave tileEntityGrave)
@@ -214,7 +216,7 @@ public class BlockMinecoloniesGrave extends AbstractBlockMinecoloniesGrave<Block
                 worldIn.updateNeighbourForOutputSignal(pos, this);
             }
 
-            super.onRemove(state, worldIn, pos, newState, isMoving);
+            super.affectNeighborsAfterRemoval(state, worldIn, pos, movedByPiston);
         }
     }
 }

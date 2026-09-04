@@ -1,5 +1,6 @@
 package com.minecolonies.core.blocks.huts;
 
+import com.minecolonies.api.blocks.AbstractBlockMinecolonies;
 import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
@@ -18,7 +19,6 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
-import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -49,7 +49,7 @@ public class BlockHutTownHall extends AbstractBlockHut<BlockHutTownHall>
 {
     public BlockHutTownHall()
     {
-        super(Properties.of().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(HARDNESS, RESISTANCE));
+        super(AbstractBlockMinecolonies.registrationProperties().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(HARDNESS, RESISTANCE));
     }
 
     /**
@@ -132,7 +132,7 @@ public class BlockHutTownHall extends AbstractBlockHut<BlockHutTownHall>
     }
 
     @Override
-    public List<MutableComponent> getRequirements(final ClientLevel level, final BlockPos pos, final LocalPlayer player)
+    public List<MutableComponent> getRequirements(final Level level, final BlockPos pos, final Player player)
     {
         final List<MutableComponent> requirements = new ArrayList<>();
         if (InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(player.getInventory()), this) == -1)
@@ -179,7 +179,7 @@ public class BlockHutTownHall extends AbstractBlockHut<BlockHutTownHall>
      */
     @NotNull
     @Override
-    public ItemInteractionResult useItemOn(
+    public InteractionResult useItemOn(
       final ItemStack stack,
       final BlockState state,
       final Level worldIn,
@@ -191,7 +191,7 @@ public class BlockHutTownHall extends AbstractBlockHut<BlockHutTownHall>
        /*
         If the world is client, open the gui of the building
          */
-        if (worldIn.isClientSide)
+        if (worldIn.isClientSide())
         {
             @Nullable final IBuildingView building = IColonyManager.getInstance().getBuildingView(worldIn.dimension(), pos);
 
@@ -207,7 +207,7 @@ public class BlockHutTownHall extends AbstractBlockHut<BlockHutTownHall>
                 timeout = System.currentTimeMillis() + 1000;
             }
         }
-        return ItemInteractionResult.SUCCESS;
+        return InteractionResult.SUCCESS;
     }
 
     /**
@@ -226,7 +226,7 @@ public class BlockHutTownHall extends AbstractBlockHut<BlockHutTownHall>
         {
             IBuilding townHall = colony.getServerBuildingManager().getTownHall();
             
-            if (colony.getWorld() != null && !colony.getWorld().isClientSide)
+            if (colony.getWorld() != null && !colony.getWorld().isClientSide())
             {
                 MessageUtils.format(WARNING_DUPLICATE_TOWN_HALL, townHall.getPosition().toShortString()).sendTo(player);
             }

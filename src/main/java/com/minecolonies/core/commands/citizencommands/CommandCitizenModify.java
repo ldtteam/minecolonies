@@ -1,4 +1,5 @@
 package com.minecolonies.core.commands.citizencommands;
+import net.minecraft.server.permissions.Permissions;
 
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
@@ -58,17 +59,17 @@ public class CommandCitizenModify implements IMCColonyOfficerCommand
                         .then(IMCCommand.newLiteral("=")
                             .then(IMCCommand.newArgument(VALUE_ARG, DoubleArgumentType.doubleArg(0, MAX_SATURATION))
                                 .suggests((ctx, builder) -> SharedSuggestionProvider.suggest(List.of("0.0", String.valueOf(MAX_SATURATION)), builder))
-                                .executes(ctx -> adjust(ctx, citizen -> citizen.setSaturation(DoubleArgumentType.getDouble(ctx, VALUE_ARG)),
+                                .executes(ctx -> adjust(ctx, citizen -> citizen.setSaturation(ctx.getArgument(VALUE_ARG, Double.class)),
                                     citizen -> String.valueOf(citizen.getSaturation())))))
                         .then(IMCCommand.newLiteral("+")
                             .then(IMCCommand.newArgument(VALUE_ARG, DoubleArgumentType.doubleArg(0, MAX_SATURATION))
                                 .suggests((ctx, builder) -> SharedSuggestionProvider.suggest(List.of("1.0"), builder))
-                                .executes(ctx -> adjust(ctx, citizen -> citizen.increaseSaturation(DoubleArgumentType.getDouble(ctx, VALUE_ARG)),
+                                .executes(ctx -> adjust(ctx, citizen -> citizen.increaseSaturation(ctx.getArgument(VALUE_ARG, Double.class)),
                                     citizen -> String.valueOf(citizen.getSaturation())))))
                         .then(IMCCommand.newLiteral("-")
                             .then(IMCCommand.newArgument(VALUE_ARG, DoubleArgumentType.doubleArg(0, MAX_SATURATION))
                                 .suggests((ctx, builder) -> SharedSuggestionProvider.suggest(List.of("1.0"), builder))
-                                .executes(ctx -> adjust(ctx, citizen -> citizen.decreaseSaturation(DoubleArgumentType.getDouble(ctx, VALUE_ARG)),
+                                .executes(ctx -> adjust(ctx, citizen -> citizen.decreaseSaturation(ctx.getArgument(VALUE_ARG, Double.class)),
                                     citizen -> String.valueOf(citizen.getSaturation())))))
                     )));
     }
@@ -100,7 +101,7 @@ public class CommandCitizenModify implements IMCColonyOfficerCommand
                 return 0;
             }
 
-            if (!context.getSource().hasPermission(OP_PERM_LEVEL) && !MineColonies.getConfig().getServer().canPlayerUseModifyCitizensCommand.get())
+            if (!context.getSource().permissions().hasPermission(Permissions.COMMANDS_OWNER) && !MineColonies.getConfig().getServer().canPlayerUseModifyCitizensCommand.get())
             {
                 context.getSource().sendSuccess(() -> Component.translatable(CommandTranslationConstants.COMMAND_DISABLED_IN_CONFIG), true);
                 return 0;

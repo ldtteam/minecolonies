@@ -32,7 +32,7 @@ import com.minecolonies.core.entity.pathfinding.PathPointExtended;
 import com.minecolonies.core.entity.pathfinding.navigation.MinecoloniesAdvancedPathNavigate;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -43,16 +43,23 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityReference;
+import net.minecraft.world.entity.ConversionParams;
+import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.animal.Animal;
-import net.minecraft.world.entity.animal.horse.AbstractHorse;
-import net.minecraft.world.entity.animal.horse.Donkey;
-import net.minecraft.world.entity.animal.horse.Horse;
-import net.minecraft.world.entity.animal.horse.Mule;
-import net.minecraft.world.entity.animal.horse.Variant;
+import net.minecraft.world.entity.animal.equine.AbstractHorse;
+import net.minecraft.world.entity.animal.equine.Donkey;
+import net.minecraft.world.entity.animal.equine.Horse;
+import net.minecraft.world.entity.animal.equine.Mule;
+import net.minecraft.world.entity.animal.equine.Variant;
 import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.LadderBlock;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -205,7 +212,7 @@ public class CavalryHorseEntity extends Horse implements IManagedAnimal<CavalryH
         int colonyId = getColonyId();
 
         // if the entity is summoned into the world with an ops command rather than created by the stablemaster, this "autoregisters" the entity as a managed animal to the closest colony.
-        if (colonyId == 0 && !CompatibilityUtils.getWorldFromEntity(this).isClientSide)
+        if (colonyId == 0 && !CompatibilityUtils.getWorldFromEntity(this).isClientSide())
         {
             IColony colony = IColonyManager.getInstance().getClosestColony(level(), this.blockPosition());
 
@@ -223,7 +230,7 @@ public class CavalryHorseEntity extends Horse implements IManagedAnimal<CavalryH
             setColonyId(colonyId);
         }
 
-        if (CompatibilityUtils.getWorldFromEntity(this).isClientSide)
+        if (CompatibilityUtils.getWorldFromEntity(this).isClientSide())
         {
             animalColonyHandler.updateColonyClient();
 
@@ -364,7 +371,7 @@ public class CavalryHorseEntity extends Horse implements IManagedAnimal<CavalryH
     protected void addPassenger(@Nonnull Entity passenger)
     {
         super.addPassenger(passenger);
-        dropLeash(true, false);
+        dropLeash();
         lastDismountTime = -1;
     }
 
@@ -399,12 +406,6 @@ public class CavalryHorseEntity extends Horse implements IManagedAnimal<CavalryH
      * @param broadcastPacket whether to send a packet to clients
      * @param dropLeadItem whether to drop the lead item
      */
-    @Override
-    public void dropLeash(boolean broadcastPacket, boolean dropLeadItem)
-    {
-        super.dropLeash(broadcastPacket, dropLeadItem);
-    }
-
     /**
      * Returns the attachment point for the given passenger entity, taking into account the entity dimensions and the partial tick.
      * This method is overridden to lower the attachment point by {@link #SEATING_OFFSET} to line up with the saddle visuals.
@@ -488,7 +489,7 @@ public class CavalryHorseEntity extends Horse implements IManagedAnimal<CavalryH
     {
         super.tick();
 
-        if (level().isClientSide) return;
+        if (level().isClientSide()) return;
 
         if (hasReservation())
         {
@@ -635,7 +636,7 @@ public class CavalryHorseEntity extends Horse implements IManagedAnimal<CavalryH
      */
     public static CavalryHorseEntity createFromVanilla(IColony colony, Level level, AbstractHorse vanilla)
     {
-        if (level.isClientSide) return null;
+        if (level.isClientSide()) return null;
 
         // If already a CavalryHorseEntity, return it
         if (vanilla instanceof CavalryHorseEntity) return (CavalryHorseEntity) vanilla;
@@ -645,7 +646,7 @@ public class CavalryHorseEntity extends Horse implements IManagedAnimal<CavalryH
 
         // --- Snapshot generic AbstractHorse state ---
         final boolean wasTamed = vanilla.isTamed();
-        final UUID owner = vanilla.getOwnerUUID();
+        final EntityReference<LivingEntity> ownerReference = vanilla.getOwnerReference();
         final int temper = vanilla.getTemper();
         final double health = vanilla.getHealth();
         final String customName = vanilla.hasCustomName() ? vanilla.getName().getString() : null;
@@ -670,7 +671,11 @@ public class CavalryHorseEntity extends Horse implements IManagedAnimal<CavalryH
         Entity leashHolder = vanilla.getLeashHolder();
 
         // Convert to CavalryHorseEntity
-        CavalryHorseEntity cav = vanilla.convertTo(ModEntities.CAVALRY_HORSE, true);
+        CavalryHorseEntity cav = vanilla.convertTo(
+          ModEntities.CAVALRY_HORSE,
+          ConversionParams.single(vanilla, true, false),
+          EntitySpawnReason.CONVERSION,
+          converted -> {});
         if (cav == null) return null;
 
         IAnimalData animalData = colony.getAnimalManager().createAndRegisterAnimalData(cav);
@@ -705,15 +710,15 @@ public class CavalryHorseEntity extends Horse implements IManagedAnimal<CavalryH
         cav.setHealth((float) Math.min(health, maxHealth));
 
         // Re-apply AbstractHorse state
+        cav.setOwner(EntityReference.getLivingEntity(ownerReference, level));
         cav.setTamed(wasTamed);
-        cav.setOwnerUUID(owner);
         cav.setTemper(temper);
         cav.setPersistenceRequired();
 
         // Re-apply Horse-specific visuals
         if (variant != null)
         {
-            cav.setVariant(variant);
+            cav.setComponent(DataComponents.HORSE_VARIANT, variant);
         }
 
         // Name & leash
@@ -749,14 +754,9 @@ public class CavalryHorseEntity extends Horse implements IManagedAnimal<CavalryH
      * @return true if the damage was applied, false otherwise
      */
     @Override
-    public boolean hurt(@Nonnull DamageSource damageSource, float damageAmount)
+    public boolean hurtServer(@Nonnull ServerLevel level, @Nonnull DamageSource damageSource, float damageAmount)
     {
        
-        if (level().isClientSide)
-        {
-            return true;
-        }
-
         // Percentage of damage applied to combat cooldown
         float cooldownImpact = .40f;
 
@@ -777,7 +777,7 @@ public class CavalryHorseEntity extends Horse implements IManagedAnimal<CavalryH
         animalData.setCombatCooldown(combatCooldown);
         animalData.markDirty();
 
-        return super.hurt(damageSource, damageAmount);
+        return super.hurtServer(level, damageSource, damageAmount);
     }
 
     /**
@@ -786,14 +786,14 @@ public class CavalryHorseEntity extends Horse implements IManagedAnimal<CavalryH
      * stableDim: The dimension of the stable block, or null if not set.
      */
     @Override
-    public void addAdditionalSaveData(@Nonnull CompoundTag tag)
+    public void addAdditionalSaveData(@Nonnull ValueOutput output)
     {
-        super.addAdditionalSaveData(tag);
+        super.addAdditionalSaveData(output);
 
-        tag.putInt(NbtTagConstants.TAG_COLONY_ID, animalColonyHandler.getColonyId());
+        output.putInt(NbtTagConstants.TAG_COLONY_ID, animalColonyHandler.getColonyId());
         if (animalData != null)
         {
-            tag.putInt(NbtTagConstants.TAG_MANAGED_ANIMALID, getManagedAnimalId());
+            output.putInt(NbtTagConstants.TAG_MANAGED_ANIMALID, getManagedAnimalId());
         }
     }
 
@@ -810,18 +810,18 @@ public class CavalryHorseEntity extends Horse implements IManagedAnimal<CavalryH
      * Other persisted data is managed through the associated IAnimalData.
      */
     @Override
-    public void readAdditionalSaveData(@Nonnull CompoundTag tag)
+    public void readAdditionalSaveData(@Nonnull ValueInput input)
     {
-        super.readAdditionalSaveData(tag);
+        super.readAdditionalSaveData(input);
 
-        if (tag.contains(NbtTagConstants.TAG_COLONY_ID))
+        if (input.getInt(NbtTagConstants.TAG_COLONY_ID).isPresent())
         {
-            int colonyId = tag.getInt(NbtTagConstants.TAG_COLONY_ID);
+            int colonyId = input.getIntOr(NbtTagConstants.TAG_COLONY_ID, 0);
             setColonyId(colonyId);
 
-            if (tag.contains(NbtTagConstants.TAG_MANAGED_ANIMALID))
+            if (input.getInt(NbtTagConstants.TAG_MANAGED_ANIMALID).isPresent())
             {
-                setManagedAnimalId(tag.getInt(NbtTagConstants.TAG_MANAGED_ANIMALID));
+                setManagedAnimalId(input.getIntOr(NbtTagConstants.TAG_MANAGED_ANIMALID, 0));
             }
             else
             {

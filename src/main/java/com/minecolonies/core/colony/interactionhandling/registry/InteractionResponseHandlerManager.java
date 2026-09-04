@@ -9,7 +9,7 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.NbtTagConstants;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -22,11 +22,11 @@ public final class InteractionResponseHandlerManager implements IInteractionResp
     @Override
     public IInteractionResponseHandler createFrom(@NotNull final HolderLookup.Provider provider, @NotNull final ICitizen citizen, @NotNull final CompoundTag compound)
     {
-        final ResourceLocation handlerType =
+        final Identifier handlerType =
           compound.contains(NbtTagConstants.TAG_HANDLER_TYPE)
-            ? new ResourceLocation(Constants.MOD_ID, compound.getString(NbtTagConstants.TAG_HANDLER_TYPE))
+            ? Identifier.fromNamespaceAndPath(Constants.MOD_ID, compound.getStringOr(NbtTagConstants.TAG_HANDLER_TYPE, ""))
             : ModInteractionResponseHandlers.STANDARD;
-        final IInteractionResponseHandler handler = IInteractionResponseHandlerRegistry.getInstance().get(handlerType).getProducer().apply(citizen);
+        final IInteractionResponseHandler handler = IInteractionResponseHandlerRegistry.getInstance().getValue(handlerType).getProducer().apply(citizen);
         if (handler != null)
         {
             try

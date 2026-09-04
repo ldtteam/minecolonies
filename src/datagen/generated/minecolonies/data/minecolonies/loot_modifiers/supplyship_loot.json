@@ -46,5 +46,6 @@
       ]
     }
   ],
+  "priority": 0,
   "table": "minecolonies:chests/supplyship"
 }

@@ -14,7 +14,6 @@
       "translate": "advancements.minecolonies.build.barracks.description"
     },
     "icon": {
-      "count": 1,
       "id": "minecolonies:blockhutbarracks"
     },
     "title": {

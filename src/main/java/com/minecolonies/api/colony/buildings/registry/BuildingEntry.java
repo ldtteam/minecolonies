@@ -10,7 +10,7 @@ import com.minecolonies.api.colony.buildings.modules.IBuildingModule;
 import com.minecolonies.api.colony.buildings.modules.IBuildingModuleView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -31,7 +31,7 @@ public class BuildingEntry
     private final AbstractColonyBlock<?> buildingBlock;
 
     private final BiFunction<IColony, BlockPos, IBuilding> buildingProducer;
-    private final ResourceLocation registryName;
+    private final Identifier registryName;
 
     private List<ModuleProducer> buildingModuleProducers;
 
@@ -44,7 +44,7 @@ public class BuildingEntry
         private BiFunction<IColony, BlockPos, IBuilding>                   buildingProducer;
         private Supplier<BiFunction<IColonyView, BlockPos, IBuildingView>> buildingViewProducer;
         private List<ModuleProducer>                                       buildingModuleProducers = new ArrayList<>();
-        private ResourceLocation                                           registryName;
+        private Identifier                                           registryName;
 
         /**
          * Sets the block that represents this building.
@@ -88,7 +88,7 @@ public class BuildingEntry
          * @param registryName The name for the registry entry.
          * @return The builder.
          */
-        public Builder setRegistryName(final ResourceLocation registryName)
+        public Builder setRegistryName(final Identifier registryName)
         {
             this.registryName = registryName;
             return this;
@@ -165,7 +165,7 @@ public class BuildingEntry
     public List<ModuleProducer> getModuleProducers() { return buildingModuleProducers;}
 
     private BuildingEntry(
-      final ResourceLocation registryName,
+      final Identifier registryName,
       final AbstractColonyBlock<?> buildingBlock,
       final BiFunction<IColony, BlockPos, IBuilding> buildingProducer,
       final Supplier<BiFunction<IColonyView, BlockPos, IBuildingView>> buildingViewProducer,
@@ -183,7 +183,7 @@ public class BuildingEntry
      * Get the assigned registry name.
      * @return
      */
-    public ResourceLocation getRegistryName()
+    public Identifier getRegistryName()
     {
         return registryName;
     }

@@ -3,7 +3,7 @@ package com.minecolonies.core.network.messages.client;
 import com.ldtteam.common.network.AbstractClientPlayMessage;
 import com.ldtteam.common.network.AbstractServerPlayMessage;
 import com.ldtteam.common.network.PlayMessageType;
-import com.ldtteam.structurize.api.RotationMirror;
+import com.ldtteam.structurize.util.RotationMirror;
 import com.minecolonies.core.client.gui.WindowBuildDecoration;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.RegistryFriendlyByteBuf;

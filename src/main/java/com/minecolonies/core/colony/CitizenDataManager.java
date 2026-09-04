@@ -14,7 +14,7 @@ public class CitizenDataManager implements ICitizenDataManager
     @Override
     public ICitizenData createFromNBT(@NotNull final HolderLookup.Provider provider, @NotNull final CompoundTag compound, final IColony colony)
     {
-        final int id = compound.getInt(TAG_ID);
+        final int id = compound.getIntOr(TAG_ID, 0);
         final @NotNull CitizenData citizen = new CitizenData(id, colony);
         citizen.deserializeNBT(provider, compound);
         return citizen;

@@ -1,6 +1,6 @@
 package com.minecolonies.core.research;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +13,7 @@ public class ResearchEffectCategory
     /**
      * The unique effect identifier, used to apply the effect category, and to determine translation lookups.
      */
-    private final ResourceLocation effectId;
+    private final Identifier effectId;
 
     /**
      * The optional effect category name, uses for display purposes if present.  Overrides default translation lookups.
@@ -42,7 +42,7 @@ public class ResearchEffectCategory
      * @param effectName the display name of the effect category.
      * @param subtitle   the optional subtitle.
      */
-    public ResearchEffectCategory(final ResourceLocation effectId, final String effectName, final String subtitle, final List<Double> levels)
+    public ResearchEffectCategory(final Identifier effectId, final String effectName, final String subtitle, final List<Double> levels)
     {
         this.effectId = effectId;
         this.effectName = effectName;
@@ -91,9 +91,9 @@ public class ResearchEffectCategory
     /**
      * Gets the unique identifier of the effect.
      *
-     * @return the effect id, as a {@link ResourceLocation}.
+     * @return the effect id, as a {@link Identifier}.
      */
-    public ResourceLocation getId()
+    public Identifier getId()
     {
         return this.effectId;
     }

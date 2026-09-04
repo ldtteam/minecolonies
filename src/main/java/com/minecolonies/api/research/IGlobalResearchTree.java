@@ -5,7 +5,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.crafting.ItemStorage;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -36,7 +36,7 @@ public interface IGlobalResearchTree
      * @return the IGlobalResearch object.
      */
     @Nullable
-    IGlobalResearch getResearch(final ResourceLocation branch, final ResourceLocation id);
+    IGlobalResearch getResearch(final Identifier branch, final Identifier id);
 
     /**
      * Get the first research with a given id, on any branch.
@@ -45,14 +45,14 @@ public interface IGlobalResearchTree
      * @return the first matching IGlobalResearch object.
      */
     @Nullable
-    IGlobalResearch getResearch(final ResourceLocation id);
+    IGlobalResearch getResearch(final Identifier id);
 
     /**
      * Get an effect id for a particular research
      * @param id    the id of the research.
      * @return the effect id
      */
-    List<IResearchEffect> getEffectsForResearch(final @NotNull ResourceLocation id);
+    List<IResearchEffect> getEffectsForResearch(final @NotNull Identifier id);
 
     /**
      * Check if a research exists, by id.
@@ -61,7 +61,7 @@ public interface IGlobalResearchTree
      * @param branch the branch of the research.
      * @return true if the research exists, false if it does not.
      */
-    boolean hasResearch(final ResourceLocation branch, final ResourceLocation id);
+    boolean hasResearch(final Identifier branch, final Identifier id);
 
     /**
      * Check if a research exists, by id.
@@ -69,7 +69,7 @@ public interface IGlobalResearchTree
      * @param id     the id of the research.
      * @return true if the research exists, false if it does not.
      */
-    boolean hasResearch(final ResourceLocation id);
+    boolean hasResearch(final Identifier id);
 
     /**
      * Add a research to the tree.
@@ -78,28 +78,28 @@ public interface IGlobalResearchTree
      * @param branch   the branch of the research.
      * @param isDynamic  true if reloaded with world events (ie data packs, onWorldLoad), false if assigned statically once.
      */
-    void addResearch(final ResourceLocation branch, final IGlobalResearch research, final boolean isDynamic);
+    void addResearch(final Identifier branch, final IGlobalResearch research, final boolean isDynamic);
 
     /**
      * Add data for a research branch, used to contain translation texts, research speed, and other properties.
      * @param branchId    the branch Id.
      * @param branchData  the data.
      */
-    void addBranchData(final ResourceLocation branchId, final IGlobalResearchBranch branchData);
+    void addBranchData(final Identifier branchId, final IGlobalResearchBranch branchData);
 
     /**
      * Get the list of all branch ids.
      *
      * @return the list of branches.
      */
-    List<ResourceLocation> getBranches();
+    List<Identifier> getBranches();
 
     /**
      * Get the specific GlobalResearchBranch data for a specific branch id.
      *
      * @param branchId  the branch of the research
      */
-    IGlobalResearchBranch getBranchData(final ResourceLocation branchId);
+    IGlobalResearchBranch getBranchData(final Identifier branchId);
 
     /**
      * Resets all dynamically assigned research.
@@ -112,7 +112,7 @@ public interface IGlobalResearchTree
      * @param branch the branch it belongs to.
      * @return the list of research without parent.
      */
-    List<ResourceLocation> getPrimaryResearch(final ResourceLocation branch);
+    List<Identifier> getPrimaryResearch(final Identifier branch);
 
     /**
      * Get the list of researches that are intended to start automatically
@@ -132,7 +132,7 @@ public interface IGlobalResearchTree
      * @param id   the effect's identifier.
      * @return true if present, false if not registered.
      */
-    boolean hasResearchEffect(final ResourceLocation id);
+    boolean hasResearchEffect(final Identifier id);
 
     /**
      * Gets all research for a given research effect id, if any are present.
@@ -140,7 +140,7 @@ public interface IGlobalResearchTree
      * @return The set of researches for the effect, or null if no research has this effect.
      */
     @Nullable
-    Set<IGlobalResearch> getResearchForEffect(final ResourceLocation id);
+    Set<IGlobalResearch> getResearchForEffect(final Identifier id);
 
     /**
      * Checks if the research requirements are completed, for a given colony.

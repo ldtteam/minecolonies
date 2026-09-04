@@ -1,22 +1,11 @@
 {
   "type": "minecraft:crafting_shapeless",
-  "category": "misc",
   "ingredients": [
-    {
-      "item": "minecolonies:mint"
-    },
-    {
-      "item": "minecolonies:mint"
-    },
-    {
-      "item": "minecolonies:mint"
-    },
-    {
-      "item": "minecolonies:large_water_bottle"
-    },
-    {
-      "item": "minecraft:sugar"
-    }
+    "minecolonies:mint",
+    "minecolonies:mint",
+    "minecolonies:mint",
+    "minecolonies:large_water_bottle",
+    "minecraft:sugar"
   ],
   "result": {
     "count": 2,

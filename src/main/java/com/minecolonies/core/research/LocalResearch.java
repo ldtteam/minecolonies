@@ -6,7 +6,7 @@ import com.minecolonies.api.research.ILocalResearchTree;
 import com.minecolonies.api.research.IResearchEffect;
 import com.minecolonies.api.research.IResearchEffectManager;
 import com.minecolonies.api.research.util.ResearchState;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 /**
  * The implementation of the ILocalResearch interface which represents one type of research, stored in each colony.
@@ -26,12 +26,12 @@ public class LocalResearch implements ILocalResearch
     /**
      * The id of the research.
      */
-    private final ResourceLocation id;
+    private final Identifier id;
 
     /**
      * The research branch.
      */
-    private final ResourceLocation branch;
+    private final Identifier branch;
 
     /**
      * The progress of the research.
@@ -45,7 +45,7 @@ public class LocalResearch implements ILocalResearch
      * @param depth  the depth in the tree.
      * @param branch the branch it is on.
      */
-    public LocalResearch(final ResourceLocation id, final ResourceLocation branch, final int depth)
+    public LocalResearch(final Identifier id, final Identifier branch, final int depth)
     {
         this.id = id;
         this.depth = depth;
@@ -79,7 +79,7 @@ public class LocalResearch implements ILocalResearch
     }
 
     @Override
-    public ResourceLocation getId()
+    public Identifier getId()
     {
         return this.id;
     }
@@ -91,7 +91,7 @@ public class LocalResearch implements ILocalResearch
     }
 
     @Override
-    public ResourceLocation getBranch()
+    public Identifier getBranch()
     {
         return this.branch;
     }

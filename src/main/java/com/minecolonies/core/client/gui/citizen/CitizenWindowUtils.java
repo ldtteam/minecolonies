@@ -19,7 +19,7 @@ import com.minecolonies.core.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.core.entity.citizen.citizenhandlers.CitizenSkillHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -38,10 +38,10 @@ import static com.minecolonies.core.entity.citizen.citizenhandlers.CitizenExperi
  */
 public class CitizenWindowUtils
 {
-    public static final ResourceLocation HAPPINESS_ICONS_LOCATION = new ResourceLocation(Constants.MOD_ID, "textures/gui/citizen/icons.png");
-    public static final ResourceLocation SATURATION_ICON_EMPTY = new ResourceLocation(Constants.MOD_ID, "textures/gui/citizen/empty.png");
-    public static final ResourceLocation SATURATION_ICON_FULL  = new ResourceLocation(Constants.MOD_ID, "textures/gui/citizen/full.png");
-    public static final ResourceLocation SATURATION_ICON_HALF  = new ResourceLocation(Constants.MOD_ID, "textures/gui/citizen/half.png");
+    public static final Identifier HAPPINESS_ICONS_LOCATION = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "textures/gui/citizen/icons.png");
+    public static final Identifier SATURATION_ICON_EMPTY = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "textures/gui/citizen/empty.png");
+    public static final Identifier SATURATION_ICON_FULL  = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "textures/gui/citizen/full.png");
+    public static final Identifier SATURATION_ICON_HALF  = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "textures/gui/citizen/half.png");
 
     /**
      * Private con to hide public.
@@ -56,18 +56,18 @@ public class CitizenWindowUtils
      */
     private enum SmileyEnum
     {
-        EMPTY(new ResourceLocation(Constants.MOD_ID, "citizen/smiley/empty"), EMPTY_HEART_VALUE, null, null),
-        HALF_RED(new ResourceLocation(Constants.MOD_ID, "citizen/smiley/half"), RED_HEART_VALUE - 1, null, EMPTY),
-        RED(new ResourceLocation(Constants.MOD_ID, "citizen/smiley/full"), RED_HEART_VALUE, HALF_RED, EMPTY);
+        EMPTY(Identifier.fromNamespaceAndPath(Constants.MOD_ID, "citizen/smiley/empty"), EMPTY_HEART_VALUE, null, null),
+        HALF_RED(Identifier.fromNamespaceAndPath(Constants.MOD_ID, "citizen/smiley/half"), RED_HEART_VALUE - 1, null, EMPTY),
+        RED(Identifier.fromNamespaceAndPath(Constants.MOD_ID, "citizen/smiley/full"), RED_HEART_VALUE, HALF_RED, EMPTY);
 
         public final int happinessValue;
         public final SmileyEnum prevSmiley;
         public final SmileyEnum halfSmiley;
         public       boolean isHalfSmiley = false;
-        public final ResourceLocation Image;
+        public final Identifier Image;
 
         SmileyEnum(
-          final ResourceLocation heartImage, final int happinessValue,
+          final Identifier heartImage, final int happinessValue,
           final SmileyEnum halfSmiley, final SmileyEnum prevSmiley)
         {
             this.Image = heartImage;
@@ -86,28 +86,28 @@ public class CitizenWindowUtils
      */
     private enum HeartsEnum
     {
-        EMPTY(ResourceLocation.withDefaultNamespace("hud/heart/container"), EMPTY_HEART_VALUE, null, null),
+        EMPTY(Identifier.withDefaultNamespace("hud/heart/container"), EMPTY_HEART_VALUE, null, null),
 
-        HALF_RED(ResourceLocation.withDefaultNamespace("hud/heart/half"), RED_HEART_VALUE - 1, null, EMPTY),
-        RED(ResourceLocation.withDefaultNamespace("hud/heart/full"), RED_HEART_VALUE, HALF_RED, EMPTY),
+        HALF_RED(Identifier.withDefaultNamespace("hud/heart/half"), RED_HEART_VALUE - 1, null, EMPTY),
+        RED(Identifier.withDefaultNamespace("hud/heart/full"), RED_HEART_VALUE, HALF_RED, EMPTY),
 
-        HALF_GOLDEN(ResourceLocation.withDefaultNamespace("hud/heart/absorbing_half"), GOLDEN_HEART_VALUE - 1, null, RED),
-        GOLDEN(ResourceLocation.withDefaultNamespace("hud/heart/absorbing_full"), GOLDEN_HEART_VALUE, HALF_GOLDEN, RED),
+        HALF_GOLDEN(Identifier.withDefaultNamespace("hud/heart/absorbing_half"), GOLDEN_HEART_VALUE - 1, null, RED),
+        GOLDEN(Identifier.withDefaultNamespace("hud/heart/absorbing_full"), GOLDEN_HEART_VALUE, HALF_GOLDEN, RED),
 
-        HALF_GREEN(new ResourceLocation(Constants.MOD_ID, "citizen/heart/green_half"), GREEN_HEART_VALUE - 1, null, GOLDEN),
-        GREEN(new ResourceLocation(Constants.MOD_ID, "citizen/heart/green"), GREEN_HEART_VALUE, HALF_GREEN, GOLDEN),
+        HALF_GREEN(Identifier.fromNamespaceAndPath(Constants.MOD_ID, "citizen/heart/green_half"), GREEN_HEART_VALUE - 1, null, GOLDEN),
+        GREEN(Identifier.fromNamespaceAndPath(Constants.MOD_ID, "citizen/heart/green"), GREEN_HEART_VALUE, HALF_GREEN, GOLDEN),
 
-        HALF_BLUE(new ResourceLocation(Constants.MOD_ID, "citizen/heart/blue_half"), BLUE_HEART_VALUE - 1, null, GREEN),
-        BLUE(new ResourceLocation(Constants.MOD_ID, "citizen/heart/blue"), BLUE_HEART_VALUE, HALF_BLUE, GREEN);
+        HALF_BLUE(Identifier.fromNamespaceAndPath(Constants.MOD_ID, "citizen/heart/blue_half"), BLUE_HEART_VALUE - 1, null, GREEN),
+        BLUE(Identifier.fromNamespaceAndPath(Constants.MOD_ID, "citizen/heart/blue"), BLUE_HEART_VALUE, HALF_BLUE, GREEN);
 
         public final int              hpValue;
         public final HeartsEnum       prevHeart;
         public final HeartsEnum       halfHeart;
         public       boolean          isHalfHeart = false;
-        public final ResourceLocation Image;
+        public final Identifier Image;
 
         HeartsEnum(
-          final ResourceLocation heartImage, final int hpValue,
+          final Identifier heartImage, final int hpValue,
           final HeartsEnum halfHeart, final HeartsEnum prevHeart)
         {
             this.Image = heartImage;
@@ -421,7 +421,7 @@ public class CitizenWindowUtils
 
             if (value > 1.0)
             {
-                image.setImage(ResourceLocation.parse(HAPPY_ICON), false);
+                image.setImage(Identifier.parse(HAPPY_ICON), false);
                 PaneBuilders.tooltipBuilder()
                     .append(Component.translatableEscape(LABEL_HAPPINESS_POSITIVE))
                     .hoverPane(image)
@@ -429,7 +429,7 @@ public class CitizenWindowUtils
             }
             else if (value == 1)
             {
-                image.setImage(ResourceLocation.parse(SATISFIED_ICON), false);
+                image.setImage(Identifier.parse(SATISFIED_ICON), false);
                 PaneBuilders.tooltipBuilder()
                     .append(Component.translatableEscape(LABEL_HAPPINESS_NEUTRAL))
                     .hoverPane(image)
@@ -437,7 +437,7 @@ public class CitizenWindowUtils
             }
             else if (value > 0.75)
             {
-                image.setImage(ResourceLocation.parse(UNSATISFIED_ICON), false);
+                image.setImage(Identifier.parse(UNSATISFIED_ICON), false);
                 PaneBuilders.tooltipBuilder()
                     .append(Component.translatableEscape(LABEL_HAPPINESS_SLIGHTLY_NEGATIVE))
                     .hoverPane(image)
@@ -445,7 +445,7 @@ public class CitizenWindowUtils
             }
             else
             {
-                image.setImage(ResourceLocation.parse(UNHAPPY_ICON), false);
+                image.setImage(Identifier.parse(UNHAPPY_ICON), false);
                 PaneBuilders.tooltipBuilder()
                     .append(Component.translatableEscape(LABEL_HAPPINESS_NEGATIVE))
                     .hoverPane(image)
@@ -482,7 +482,7 @@ public class CitizenWindowUtils
             windowCitizen.findPaneOfTypeByID(PRIMARY_SKILL_LABEL, Text.class)
               .setText(Component.translatableEscape(PARTIAL_SKILL_NAME + primary.name().toLowerCase(Locale.US)).append(" (100% XP)"));
             windowCitizen.findPaneOfTypeByID(PRIMARY_SKILL_LABEL + IMAGE_APPENDIX, Image.class)
-              .setImage(ResourceLocation.parse(BASE_IMG_SRC + primary.name().toLowerCase(Locale.US) + ".png"), false);
+              .setImage(Identifier.parse(BASE_IMG_SRC + primary.name().toLowerCase(Locale.US) + ".png"), false);
 
             if (primary.getComplimentary() != null && primary.getAdverse() != null)
             {
@@ -490,20 +490,20 @@ public class CitizenWindowUtils
                   .setText(Component.translatableEscape(PARTIAL_SKILL_NAME + primary.getComplimentary().name().toLowerCase(Locale.US)).append(" ("
                                   + PRIMARY_DEPENDENCY_SHARE + "% XP)"));
                 windowCitizen.findPaneOfTypeByID(PRIMARY_SKILL_COM + IMAGE_APPENDIX, Image.class)
-                  .setImage(ResourceLocation.parse(BASE_IMG_SRC + primary.getComplimentary().name().toLowerCase(Locale.US) + ".png"), false);
+                  .setImage(Identifier.parse(BASE_IMG_SRC + primary.getComplimentary().name().toLowerCase(Locale.US) + ".png"), false);
 
                 windowCitizen.findPaneOfTypeByID(PRIMARY_SKILL_ADV, Text.class)
                   .setText(Component.translatableEscape(PARTIAL_SKILL_NAME + primary.getAdverse().name().toLowerCase(Locale.US)).append(" (-"
                                   + PRIMARY_DEPENDENCY_SHARE + "% XP)"));
                 windowCitizen.findPaneOfTypeByID(PRIMARY_SKILL_ADV + IMAGE_APPENDIX, Image.class)
-                  .setImage(ResourceLocation.parse(BASE_IMG_SRC + primary.getAdverse().name().toLowerCase(Locale.US) + ".png"), false);
+                  .setImage(Identifier.parse(BASE_IMG_SRC + primary.getAdverse().name().toLowerCase(Locale.US) + ".png"), false);
             }
 
             final Skill secondary = moduleView.getSecondarySkill();
             windowCitizen.findPaneOfTypeByID(SECONDARY_SKILL_LABEL, Text.class)
               .setText(Component.translatableEscape(PARTIAL_SKILL_NAME + secondary.name().toLowerCase(Locale.US)).append(" (50% XP)"));
             windowCitizen.findPaneOfTypeByID(SECONDARY_SKILL_LABEL + IMAGE_APPENDIX, Image.class)
-              .setImage(ResourceLocation.parse(BASE_IMG_SRC + secondary.name().toLowerCase(Locale.US) + ".png"), false);
+              .setImage(Identifier.parse(BASE_IMG_SRC + secondary.name().toLowerCase(Locale.US) + ".png"), false);
 
             if (secondary.getComplimentary() != null && secondary.getAdverse() != null)
             {
@@ -511,13 +511,13 @@ public class CitizenWindowUtils
                   .setText(Component.translatableEscape(PARTIAL_SKILL_NAME + secondary.getComplimentary().name().toLowerCase(Locale.US)).append(" ("
                                   + SECONDARY_DEPENDENCY_SHARE + "% XP)"));
                 windowCitizen.findPaneOfTypeByID(SECONDARY_SKILL_COM + IMAGE_APPENDIX, Image.class)
-                  .setImage(ResourceLocation.parse(BASE_IMG_SRC + secondary.getComplimentary().name().toLowerCase(Locale.US) + ".png"), false);
+                  .setImage(Identifier.parse(BASE_IMG_SRC + secondary.getComplimentary().name().toLowerCase(Locale.US) + ".png"), false);
 
                 windowCitizen.findPaneOfTypeByID(SECONDARY_SKILL_ADV, Text.class)
                   .setText(Component.translatableEscape(PARTIAL_SKILL_NAME + secondary.getAdverse().name().toLowerCase(Locale.US)).append(" (-"
                                   + SECONDARY_DEPENDENCY_SHARE + "% XP)"));
                 windowCitizen.findPaneOfTypeByID(SECONDARY_SKILL_ADV + IMAGE_APPENDIX, Image.class)
-                  .setImage(ResourceLocation.parse(BASE_IMG_SRC + secondary.getAdverse().name().toLowerCase(Locale.US) + ".png"), false);
+                  .setImage(Identifier.parse(BASE_IMG_SRC + secondary.getAdverse().name().toLowerCase(Locale.US) + ".png"), false);
             }
         }
         else

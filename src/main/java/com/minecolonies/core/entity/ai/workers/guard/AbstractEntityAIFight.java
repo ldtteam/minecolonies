@@ -16,7 +16,8 @@ import com.minecolonies.core.items.ItemSpear;
 import com.minecolonies.core.util.citizenutils.CitizenItemUtils;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.item.ArmorItem;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.world.item.equipment.Equippable;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
@@ -294,7 +295,8 @@ public abstract class AbstractEntityAIFight<J extends AbstractJobGuard<J>, B ext
 
                     equipment.add(item.getType());
                     final ItemStack current = worker.getInventoryCitizen().getArmorInSlot(item.getType());
-                    if (!current.isEmpty() && current.getItem() instanceof ArmorItem)
+                    final Equippable equippable = current.get(DataComponents.EQUIPPABLE);
+                    if (!current.isEmpty() && equippable != null)
                     {
                         final int currentLevel = item.getItemNeeded().getMiningLevel(current);
                         final int newLevel = item.getItemNeeded().getMiningLevel(worker.getInventoryCitizen().getStackInSlot(slot));

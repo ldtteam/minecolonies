@@ -10,7 +10,7 @@
 		"first": {
       "render_type": "solid",
 			"textures": {
-				"0": "entity/armorstand/wood",
+				"0": "entity/armorstand/armorstand",
 				"1": "block/target_side",
 				"2": "block/green_wool",
 				"3": "block/brown_wool",
@@ -234,8 +234,8 @@
 		"second": {
       "render_type": "cutout",
 			"textures": {
-				"7": "item/string",
-				"8": "item/arrow"
+				"7": "minecolonies:block_item/string",
+				"8": "minecolonies:block_item/arrow"
 			},
 			"elements": [
 				{

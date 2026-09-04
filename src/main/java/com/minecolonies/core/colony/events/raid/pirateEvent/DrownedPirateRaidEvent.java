@@ -16,7 +16,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.pathfinder.Path;
 import org.jetbrains.annotations.NotNull;
@@ -33,7 +33,7 @@ public class DrownedPirateRaidEvent extends AbstractShipRaidEvent
     /**
      * This raids event id, registry entries use res locations as ids.
      */
-    public static final ResourceLocation PIRATE_RAID_EVENT_TYPE_ID = new ResourceLocation(Constants.MOD_ID, "drowned_pirate_raid");
+    public static final Identifier PIRATE_RAID_EVENT_TYPE_ID = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "drowned_pirate_raid");
 
     /**
      * Ship description
@@ -62,7 +62,7 @@ public class DrownedPirateRaidEvent extends AbstractShipRaidEvent
     }
 
     @Override
-    public ResourceLocation getEventTypeID()
+    public Identifier getEventTypeID()
     {
         return PIRATE_RAID_EVENT_TYPE_ID;
     }
@@ -73,7 +73,7 @@ public class DrownedPirateRaidEvent extends AbstractShipRaidEvent
         status = EventStatus.PREPARING;
 
         ServerFutureProcessor.queueBlueprint(new ServerFutureProcessor.BlueprintProcessingData(StructurePacks.getBlueprintFuture(STORAGE_STYLE,
-          "decorations" + ShipBasedRaiderUtils.SHIP_FOLDER + shipSize.schematicPrefix + this.getShipDesc() + ".blueprint", colony.getWorld().registryAccess()), colony.getWorld(), (blueprint -> {
+          "decorations" + ShipBasedRaiderUtils.SHIP_FOLDER + shipSize.schematicPrefix + this.getShipDesc() + ".blueprint"), colony.getWorld(), (blueprint -> {
             blueprint.setRotationMirror(shipRotationMirror, colony.getWorld());
 
             if (spawnPathResult != null && spawnPathResult.isDone())

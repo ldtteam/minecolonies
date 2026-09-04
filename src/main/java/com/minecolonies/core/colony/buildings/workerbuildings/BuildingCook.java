@@ -196,10 +196,10 @@ public class BuildingCook extends AbstractBuilding
     {
         super.deserializeNBT(provider, compound);
         customers.clear();
-        ListTag listTag = compound.getList(TAG_CUSTOMER, Tag.TAG_INT);
+        ListTag listTag = compound.getListOrEmpty(TAG_CUSTOMER);
         for (int i = 0; i < listTag.size(); i++)
         {
-            customers.add(listTag.getInt(i));
+            customers.add(listTag.getIntOr(i, 0));
         }
     }
 

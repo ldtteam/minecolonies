@@ -47,8 +47,8 @@ public class Patient
      */
     public Patient(final CompoundTag patientCompound)
     {
-        this.id = patientCompound.getInt(TAG_ID);
-        this.state = PatientState.values()[patientCompound.getInt(TAG_STATUS)];
+        this.id = patientCompound.getIntOr(TAG_ID, 0);
+        this.state = PatientState.values()[patientCompound.getIntOr(TAG_STATUS, 0)];
     }
 
     /**

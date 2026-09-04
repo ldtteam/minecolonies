@@ -6,7 +6,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import com.minecolonies.api.colony.IColony;
 import net.minecraft.nbt.*;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 /**
  * Quest triggers are used to check if a colony fulfills certain conditions for a quest to be made available.
@@ -26,7 +26,7 @@ public interface IQuestTriggerTemplate
      * @param colony the colony the quest is in.
      * @return true if so.
      */
-    default ITriggerReturnData canTriggerQuest(final ResourceLocation questId, final IColony colony)
+    default ITriggerReturnData canTriggerQuest(final Identifier questId, final IColony colony)
     {
         return canTriggerQuest(colony);
     }
@@ -124,16 +124,16 @@ public interface IQuestTriggerTemplate
         // Full equals for string.
         if (nbtTag instanceof StringTag && ((JsonPrimitive) matchTag).isString())
         {
-            return nbtTag.getAsString().equals(matchTag.getAsString());
+            return ((StringTag) nbtTag).value().equals(((JsonPrimitive) matchTag).getAsString());
         }
         else if (nbtTag instanceof ByteTag && ((JsonPrimitive) matchTag).isBoolean())
         {
-            return (((ByteTag) nbtTag).getAsByte() == 0) != matchTag.getAsBoolean();
+            return (((ByteTag) nbtTag).byteValue() == 0) != ((JsonPrimitive) matchTag).getAsBoolean();
         }
         // Larger equals for numbers.
         else if (nbtTag instanceof NumericTag && ((JsonPrimitive) matchTag).isNumber())
         {
-            return ((NumericTag) nbtTag).getAsDouble() >= matchTag.getAsDouble();
+            return ((NumericTag) nbtTag).doubleValue() >= ((JsonPrimitive) matchTag).getAsDouble();
         }
         return false;
     }

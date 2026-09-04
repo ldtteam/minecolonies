@@ -3,7 +3,7 @@ package com.minecolonies.api.colony.buildings.modules;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.buildings.HiringMode;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -73,5 +73,5 @@ public interface IAssignmentModuleView extends IBuildingModuleView
      * If unlocked by research it returns a research requirement.
      * @return return null by default, otherwise String research effect key.
      */
-    default ResourceLocation getResearchRequirement() { return null;}
+    default Identifier getResearchRequirement() { return null;}
 }

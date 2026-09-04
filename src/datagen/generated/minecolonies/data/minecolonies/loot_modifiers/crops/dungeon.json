@@ -6,5 +6,6 @@
       "loot_table_id": "minecraft:chests/simple_dungeon"
     }
   ],
+  "priority": 0,
   "table": "minecolonies:crops/dungeon"
 }

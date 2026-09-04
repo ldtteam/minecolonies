@@ -6,7 +6,7 @@ import com.minecolonies.api.colony.buildingextensions.modules.IBuildingExtension
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import org.apache.commons.lang3.Validate;
 
@@ -22,20 +22,20 @@ import java.util.function.Function;
  */
 public class BuildingExtensionRegistries
 {
-    public static final ResourceLocation FARM_FIELD_ID                      = new ResourceLocation(Constants.MOD_ID, "farmfield");
-    public static final ResourceLocation PLANTATION_SUGAR_CANE_FIELD_ID     = new ResourceLocation(Constants.MOD_ID, "plantation_sugar_cane");
-    public static final ResourceLocation PLANTATION_CACTUS_FIELD_ID         = new ResourceLocation(Constants.MOD_ID, "plantation_cactus");
-    public static final ResourceLocation PLANTATION_BAMBOO_FIELD_ID         = new ResourceLocation(Constants.MOD_ID, "plantation_bamboo");
-    public static final ResourceLocation PLANTATION_COCOA_BEANS_FIELD_ID    = new ResourceLocation(Constants.MOD_ID, "plantation_cocoa_beans");
-    public static final ResourceLocation PLANTATION_VINES_FIELD_ID          = new ResourceLocation(Constants.MOD_ID, "plantation_vines");
-    public static final ResourceLocation PLANTATION_KELP_FIELD_ID           = new ResourceLocation(Constants.MOD_ID, "plantation_kelp");
-    public static final ResourceLocation PLANTATION_SEAGRASS_FIELD_ID       = new ResourceLocation(Constants.MOD_ID, "plantation_seagrass");
-    public static final ResourceLocation PLANTATION_SEA_PICKLES_FIELD_ID    = new ResourceLocation(Constants.MOD_ID, "plantation_sea_pickles");
-    public static final ResourceLocation PLANTATION_GLOWBERRIES_FIELD_ID    = new ResourceLocation(Constants.MOD_ID, "plantation_glowberries");
-    public static final ResourceLocation PLANTATION_WEEPING_VINES_FIELD_ID  = new ResourceLocation(Constants.MOD_ID, "plantation_weeping_vines");
-    public static final ResourceLocation PLANTATION_TWISTING_VINES_FIELD_ID = new ResourceLocation(Constants.MOD_ID, "plantation_twisting_vines");
-    public static final ResourceLocation PLANTATION_CRIMSON_PLANTS_FIELD_ID = new ResourceLocation(Constants.MOD_ID, "plantation_crimson_plants");
-    public static final ResourceLocation PLANTATION_WARPED_PLANTS_FIELD_ID  = new ResourceLocation(Constants.MOD_ID, "plantation_warped_plants");
+    public static final Identifier FARM_FIELD_ID                      = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "farmfield");
+    public static final Identifier PLANTATION_SUGAR_CANE_FIELD_ID     = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "plantation_sugar_cane");
+    public static final Identifier PLANTATION_CACTUS_FIELD_ID         = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "plantation_cactus");
+    public static final Identifier PLANTATION_BAMBOO_FIELD_ID         = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "plantation_bamboo");
+    public static final Identifier PLANTATION_COCOA_BEANS_FIELD_ID    = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "plantation_cocoa_beans");
+    public static final Identifier PLANTATION_VINES_FIELD_ID          = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "plantation_vines");
+    public static final Identifier PLANTATION_KELP_FIELD_ID           = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "plantation_kelp");
+    public static final Identifier PLANTATION_SEAGRASS_FIELD_ID       = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "plantation_seagrass");
+    public static final Identifier PLANTATION_SEA_PICKLES_FIELD_ID    = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "plantation_sea_pickles");
+    public static final Identifier PLANTATION_GLOWBERRIES_FIELD_ID    = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "plantation_glowberries");
+    public static final Identifier PLANTATION_WEEPING_VINES_FIELD_ID  = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "plantation_weeping_vines");
+    public static final Identifier PLANTATION_TWISTING_VINES_FIELD_ID = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "plantation_twisting_vines");
+    public static final Identifier PLANTATION_CRIMSON_PLANTS_FIELD_ID = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "plantation_crimson_plants");
+    public static final Identifier PLANTATION_WARPED_PLANTS_FIELD_ID  = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "plantation_warped_plants");
 
     public static DeferredHolder<BuildingExtensionEntry, BuildingExtensionEntry> farmField;
     public static DeferredHolder<BuildingExtensionEntry, BuildingExtensionEntry> plantationSugarCaneField;
@@ -72,7 +72,7 @@ public class BuildingExtensionRegistries
      */
     public static class BuildingExtensionEntry
     {
-        private final ResourceLocation                                                 registryName;
+        private final Identifier                                                 registryName;
         private final BiFunction<BuildingExtensionEntry, BlockPos, IBuildingExtension> extensionProducer;
         private final List<Function<IBuildingExtension, IBuildingExtensionModule>>     extensionModuleProducers;
 
@@ -80,7 +80,7 @@ public class BuildingExtensionRegistries
          * Default internal constructor.
          */
         private BuildingExtensionEntry(
-          final ResourceLocation registryName,
+          final Identifier registryName,
           final BiFunction<BuildingExtensionEntry, BlockPos, IBuildingExtension> extensionProducer,
           final List<Function<IBuildingExtension, IBuildingExtensionModule>> extensionModuleProducers)
         {
@@ -120,7 +120,7 @@ public class BuildingExtensionRegistries
          *
          * @return the resource location.
          */
-        public ResourceLocation getRegistryName()
+        public Identifier getRegistryName()
         {
             return registryName;
         }
@@ -154,7 +154,7 @@ public class BuildingExtensionRegistries
         public static class Builder
         {
             private final List<Function<IBuildingExtension, IBuildingExtensionModule>>     extensionModuleProducers = new ArrayList<>();
-            private       ResourceLocation                                                 registryName;
+            private       Identifier                                                 registryName;
             private       BiFunction<BuildingExtensionEntry, BlockPos, IBuildingExtension> extensionProducer;
 
             /**
@@ -163,7 +163,7 @@ public class BuildingExtensionRegistries
              * @param registryName The name for the registry entry.
              * @return The builder.
              */
-            public BuildingExtensionEntry.Builder setRegistryName(final ResourceLocation registryName)
+            public BuildingExtensionEntry.Builder setRegistryName(final Identifier registryName)
             {
                 this.registryName = registryName;
                 return this;

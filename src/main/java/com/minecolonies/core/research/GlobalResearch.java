@@ -10,7 +10,7 @@ import com.minecolonies.core.util.BuildingUtils;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.contents.TranslatableContents;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.common.crafting.SizedIngredient;
 import net.neoforged.neoforge.items.IItemHandler;
@@ -35,18 +35,18 @@ public class GlobalResearch implements IGlobalResearch
     /**
      * The id of the research.
      */
-    private final ResourceLocation id;
+    private final Identifier id;
 
     /**
      * The id of the parent research which has to be completed first.
      */
     @Nullable
-    private final ResourceLocation parent;
+    private final Identifier parent;
 
     /**
      * The research branch id.
      */
-    private final ResourceLocation branch;
+    private final Identifier branch;
 
     /**
      * The pre-localized name for the research.
@@ -101,7 +101,7 @@ public class GlobalResearch implements IGlobalResearch
     /**
      * List of children of research.
      */
-    private final List<ResourceLocation> children = new ArrayList<>();
+    private final List<Identifier> children = new ArrayList<>();
 
     /**
      * The requirement for this research.
@@ -125,9 +125,9 @@ public class GlobalResearch implements IGlobalResearch
      * @param immutable if the research can not be reset once unlocked.
      */
     public GlobalResearch(
-        final ResourceLocation id,
-        final @Nullable ResourceLocation parent,
-        final ResourceLocation branch,
+        final Identifier id,
+        final @Nullable Identifier parent,
+        final Identifier branch,
         final TranslatableContents name,
         final TranslatableContents subtitle,
         final int depth,
@@ -253,7 +253,7 @@ public class GlobalResearch implements IGlobalResearch
 
     @NotNull
     @Override
-    public ResourceLocation getId()
+    public Identifier getId()
     {
         return this.id;
     }
@@ -269,13 +269,13 @@ public class GlobalResearch implements IGlobalResearch
 
     @Nullable
     @Override
-    public ResourceLocation getParent()
+    public Identifier getParent()
     {
         return this.parent;
     }
 
     @Override
-    public ResourceLocation getBranch()
+    public Identifier getBranch()
     {
         return this.branch;
     }
@@ -325,7 +325,7 @@ public class GlobalResearch implements IGlobalResearch
     @Override
     public boolean hasResearchedChild(@NotNull final ILocalResearchTree localTree)
     {
-        for (final ResourceLocation child : this.children)
+        for (final Identifier child : this.children)
         {
             final IGlobalResearch childResearch = IGlobalResearchTree.getInstance().getResearch(branch, child);
             final ILocalResearch localResearch = localTree.getResearch(childResearch.getBranch(), childResearch.getId());
@@ -344,7 +344,7 @@ public class GlobalResearch implements IGlobalResearch
     }
 
     @Override
-    public void addChild(final ResourceLocation child)
+    public void addChild(final Identifier child)
     {
         this.children.add(child);
     }
@@ -372,7 +372,7 @@ public class GlobalResearch implements IGlobalResearch
     }
 
     @Override
-    public List<ResourceLocation> getChildren()
+    public List<Identifier> getChildren()
     {
         return this.children;
     }

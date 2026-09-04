@@ -15,7 +15,7 @@ import com.minecolonies.api.equipment.registry.EquipmentTypeEntry;
 import com.minecolonies.api.research.IGlobalResearchTree;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
-import com.minecolonies.api.util.Tuple;
+import com.ldtteam.structurize.api.util.Tuple;
 import com.minecolonies.api.util.Utils;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
@@ -23,7 +23,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.Item;
@@ -169,7 +169,7 @@ public class CustomRecipe
     /**
      * The recipe id for this instance, used for removal and lookup
      */
-    private ResourceLocation recipeId = null;
+    private Identifier recipeId = null;
 
     /**
      * The list of ItemStacks for input to the recipe
@@ -199,12 +199,12 @@ public class CustomRecipe
     /**
      * IDs of the required research (AND). Empty if none required
      */
-    private Set<ResourceLocation> researchIds = new HashSet<>();
+    private Set<Identifier> researchIds = new HashSet<>();
 
     /**
      * IDs of the exclusionary research (NAND). Empty if nothing excludes this recipe
      */
-    private Set<ResourceLocation> excludedResearchIds = new HashSet<>();
+    private Set<Identifier> excludedResearchIds = new HashSet<>();
 
     /**
      * The Minimum Level the building has to be for this recipe to be valid
@@ -255,7 +255,7 @@ public class CustomRecipe
      * @param recipeJson the json representing the recipe
      * @return new instance of CustomRecipe
      */
-    public static CustomRecipe parse(@NotNull final HolderLookup.Provider provider, @NotNull final ResourceLocation recipeId, @NotNull final JsonObject recipeJson)
+    public static CustomRecipe parse(@NotNull final HolderLookup.Provider provider, @NotNull final Identifier recipeId, @NotNull final JsonObject recipeJson)
     {
         final CustomRecipe recipe = new CustomRecipe();
         recipe.recipeId = recipeId;
@@ -291,13 +291,13 @@ public class CustomRecipe
 
         if (recipeJson.has(RECIPE_LOOTTABLE_PROP))
         {
-            recipe.lootTable = ResourceKey.create(Registries.LOOT_TABLE, ResourceLocation.parse(recipeJson.get(RECIPE_LOOTTABLE_PROP).getAsString()));
+            recipe.lootTable = ResourceKey.create(Registries.LOOT_TABLE, Identifier.parse(recipeJson.get(RECIPE_LOOTTABLE_PROP).getAsString()));
         }
 
         if (recipeJson.has(RECIPE_TOOL_PROP))
         {
             String resLoc = recipeJson.get(RECIPE_TOOL_PROP).getAsString();
-            recipe.requiredTool = ModEquipmentTypes.getRegistry().get(EquipmentTypeEntry.parseResourceLocation(resLoc));
+            recipe.requiredTool = ModEquipmentTypes.getRegistry().getValue(EquipmentTypeEntry.parseIdentifier(resLoc));
         }
 
         if (recipeJson.has(RECIPE_SECONDARY_PROP))
@@ -336,7 +336,7 @@ public class CustomRecipe
         }
         if (recipeJson.has(RECIPE_INTERMEDIATE_PROP))
         {
-            recipe.intermediate = BuiltInRegistries.BLOCK.get(ResourceLocation.parse(recipeJson.get(RECIPE_INTERMEDIATE_PROP).getAsString()));
+            recipe.intermediate = BuiltInRegistries.BLOCK.getValue(Identifier.parse(recipeJson.get(RECIPE_INTERMEDIATE_PROP).getAsString()));
         }
         else
         {
@@ -346,21 +346,21 @@ public class CustomRecipe
         if (researchIds != null && researchIds.isJsonArray())
         {
             recipe.researchIds.addAll(researchIds.getAsJsonArray().asList().stream()
-                    .map(json -> ResourceLocation.parse(json.getAsString())).toList());
+                    .map(json -> Identifier.parse(json.getAsString())).toList());
         }
         else if (researchIds != null)
         {
-            recipe.researchIds.add(ResourceLocation.parse(researchIds.getAsString()));
+            recipe.researchIds.add(Identifier.parse(researchIds.getAsString()));
         }
         final JsonElement excludedResearchIds = recipeJson.get(RECIPE_EXCLUDED_RESEARCHID_PROP);
         if (excludedResearchIds != null && excludedResearchIds.isJsonArray())
         {
             recipe.excludedResearchIds.addAll(excludedResearchIds.getAsJsonArray().asList().stream()
-                    .map(json -> ResourceLocation.parse(json.getAsString())).toList());
+                    .map(json -> Identifier.parse(json.getAsString())).toList());
         }
         else if (excludedResearchIds != null)
         {
-            recipe.excludedResearchIds.add(ResourceLocation.parse(excludedResearchIds.getAsString()));
+            recipe.excludedResearchIds.add(Identifier.parse(excludedResearchIds.getAsString()));
         }
         if(recipeJson.has(RECIPE_BUILDING_MIN_LEVEL_PROP))
         {
@@ -393,20 +393,20 @@ public class CustomRecipe
     @NotNull
     public static List<CustomRecipe> parseTemplate(
       @NotNull final HolderLookup.Provider provider,
-      @NotNull final ResourceLocation baseId,
+      @NotNull final Identifier baseId,
       @NotNull final JsonObject templateJson)
     {
         final List<CustomRecipe> recipes = new ArrayList<>();
 
-        final ResourceLocation tagId = ResourceLocation.parse(GsonHelper.getAsString(templateJson, RECIPE_TAG));
+        final Identifier tagId = Identifier.parse(GsonHelper.getAsString(templateJson, RECIPE_TAG));
         final JsonObject baseRecipeJson = GsonHelper.getAsJsonObject(templateJson, RECIPE_TYPE_RECIPE);
 
-        final Predicate<ResourceLocation> filter;
+        final Predicate<Identifier> filter;
         final JsonElement filterJson = templateJson.get(RECIPE_FILTER);
         if (filterJson != null && filterJson.isJsonObject())
         {
-            final Predicate<ResourceLocation> include = parseArrayOrStringFilter(filterJson.getAsJsonObject().get("include"), true);
-            final Predicate<ResourceLocation> exclude = parseArrayOrStringFilter(filterJson.getAsJsonObject().get("exclude"), false);
+            final Predicate<Identifier> include = parseArrayOrStringFilter(filterJson.getAsJsonObject().get("include"), true);
+            final Predicate<Identifier> exclude = parseArrayOrStringFilter(filterJson.getAsJsonObject().get("exclude"), false);
             filter = id -> include.test(id) && !exclude.test(id);
         }
         else
@@ -418,10 +418,10 @@ public class CustomRecipe
 
         for (final Holder<Item> item : BuiltInRegistries.ITEM.getTagOrEmpty(ItemTags.create(tagId)))
         {
-            final ResourceLocation itemId = item.unwrapKey().orElseThrow().location();
+            final Identifier itemId = item.unwrapKey().orElseThrow().identifier();
             if (!filter.test(itemId)) { continue; }
 
-            final ResourceLocation recipeId = new ResourceLocation(baseId.getNamespace(), baseId.getPath() + '/' + itemId.getNamespace() + '/' + itemId.getPath());
+            final Identifier recipeId = Identifier.fromNamespaceAndPath(baseId.getNamespace(), baseId.getPath() + '/' + itemId.getNamespace() + '/' + itemId.getPath());
             final JsonObject recipeJson = populateTemplate(baseId, baseRecipeJson, itemId, logStatus);
             if (recipeJson != null)
             {
@@ -433,7 +433,7 @@ public class CustomRecipe
     }
 
     @NotNull
-    private static Predicate<ResourceLocation> parseArrayOrStringFilter(@Nullable final JsonElement filterJson,
+    private static Predicate<Identifier> parseArrayOrStringFilter(@Nullable final JsonElement filterJson,
                                                                         final boolean defaultResult)
     {
         if (filterJson == null)
@@ -454,9 +454,9 @@ public class CustomRecipe
     }
 
     @Nullable
-    private static JsonObject populateTemplate(@NotNull final ResourceLocation templateId,
+    private static JsonObject populateTemplate(@NotNull final Identifier templateId,
                                                @NotNull final JsonObject baseRecipeJson,
-                                               @NotNull final ResourceLocation itemId,
+                                               @NotNull final Identifier itemId,
                                                final boolean logStatus)
     {
         final JsonObject recipeJson = baseRecipeJson.deepCopy();
@@ -552,7 +552,7 @@ public class CustomRecipe
     }
 
     private static Tuple<Boolean, String> populateTemplateItem(@Nullable final JsonObject obj,
-                                                               @NotNull final ResourceLocation itemId)
+                                                               @NotNull final Identifier itemId)
     {
         if (obj != null)
         {
@@ -581,8 +581,8 @@ public class CustomRecipe
      * @param secondaryOutput   The secondary outputs of the recipe. Most often items like buckets or tools.
      * @param altOutputs        Alternative outputs of the recipe.  Used to allow one taught recipe to result in multiple effective choices for the request system.
      */
-    public CustomRecipe(final String crafter, final int minBldgLevel, final int maxBldgLevel, final boolean mustExist, final boolean showTooltip, final ResourceLocation recipeId,
-      final Set<ResourceLocation> researchReqs, final Set<ResourceLocation> researchExcludes, @Nullable final ResourceKey<LootTable> lootTable, final EquipmentTypeEntry requiredTool,
+    public CustomRecipe(final String crafter, final int minBldgLevel, final int maxBldgLevel, final boolean mustExist, final boolean showTooltip, final Identifier recipeId,
+      final Set<Identifier> researchReqs, final Set<Identifier> researchExcludes, @Nullable final ResourceKey<LootTable> lootTable, final EquipmentTypeEntry requiredTool,
       final List<ItemStorage> inputs, final ItemStack primaryOutput, final List<ItemStack> secondaryOutput, final List<ItemStack> altOutputs, Block intermediate)
     {
         this.crafter = crafter;
@@ -615,7 +615,7 @@ public class CustomRecipe
      * Get the ID for this recipe
      * @return Recipe Resource Location
      */
-    public ResourceLocation getRecipeId()
+    public Identifier getRecipeId()
     {
         return recipeId;
     }
@@ -681,14 +681,14 @@ public class CustomRecipe
      * is valid.
      * @return The research IDs or empty if there is no such requirement.
      */
-    public Set<ResourceLocation> getRequiredResearchIds() { return this.researchIds; }
+    public Set<Identifier> getRequiredResearchIds() { return this.researchIds; }
 
     /**
      * Get the IDs of research after which this recipe is no longer valid.  All researches must be done before this
      * recipe is no longer valid.
      * @return The research IDs or empty if there is no such requirement.
      */
-    public Set<ResourceLocation> getExcludedResearchIds() { return this.excludedResearchIds; }
+    public Set<Identifier> getExcludedResearchIds() { return this.excludedResearchIds; }
 
     /**
      * Get the minimum (inclusive) building level required before this recipe is valid.
@@ -730,7 +730,7 @@ public class CustomRecipe
      * @param researchId    The id of the research to check for.
      * @param colony        The colony being checked against.
      */
-    private boolean isUnlockEffectResearched(ResourceLocation researchId, IColony colony)
+    private boolean isUnlockEffectResearched(Identifier researchId, IColony colony)
     {
         //Check first if the research effect exists.
         if (!IGlobalResearchTree.getInstance().hasResearchEffect(researchId) && !IGlobalResearchTree.getInstance().hasResearch(researchId))
@@ -766,7 +766,7 @@ public class CustomRecipe
         if(mustExist)
         {
             final IRecipeStorage compareStorage = this.getRecipeStorage();
-            final ResourceLocation recipeSource = this.getRecipeId();
+            final Identifier recipeSource = this.getRecipeId();
             for (final ICraftingBuildingModule module : building.getModulesByType(ICraftingBuildingModule.class))
             {
                 for (IToken<?> recipeToken : module.getRecipes())
@@ -879,15 +879,15 @@ public class CustomRecipe
     public void serialize(@NotNull final RegistryFriendlyByteBuf packetBuffer)
     {
         packetBuffer.writeUtf(getCrafter());
-        packetBuffer.writeResourceLocation(getRecipeStorage().getRecipeSource());
+        packetBuffer.writeIdentifier(getRecipeStorage().getRecipeSource());
         serializeIds(packetBuffer, getRequiredResearchIds());
         serializeIds(packetBuffer, getExcludedResearchIds());
         packetBuffer.writeBoolean(getLootTable() != null);
         if(getLootTable() != null)
         {
-            packetBuffer.writeResourceLocation(getLootTable().location());
+            packetBuffer.writeIdentifier(getLootTable().identifier());
         }
-        packetBuffer.writeResourceLocation(getRequiredTool().getRegistryName());
+        packetBuffer.writeIdentifier(getRequiredTool().getRegistryName());
         packetBuffer.writeVarInt(getMinBuildingLevel());
         packetBuffer.writeVarInt(getMaxBuildingLevel());
         packetBuffer.writeBoolean(getMustExist());
@@ -908,7 +908,7 @@ public class CustomRecipe
         {
             Utils.serializeCodecMess(packetBuffer, alts);
         }
-        packetBuffer.writeResourceLocation(BuiltInRegistries.BLOCK.getKey(getIntermediate()));
+        packetBuffer.writeIdentifier(BuiltInRegistries.BLOCK.getKey(getIntermediate()));
     }
 
     /**
@@ -919,19 +919,19 @@ public class CustomRecipe
     public static CustomRecipe deserialize(@NotNull final RegistryFriendlyByteBuf buffer)
     {
         final String crafter = buffer.readUtf();
-        final ResourceLocation recipeId = buffer.readResourceLocation();
-        final Set<ResourceLocation> researchReq = deserializeIds(buffer);
-        final Set<ResourceLocation> researchExclude = deserializeIds(buffer);
+        final Identifier recipeId = buffer.readIdentifier();
+        final Set<Identifier> researchReq = deserializeIds(buffer);
+        final Set<Identifier> researchExclude = deserializeIds(buffer);
         final ResourceKey<LootTable> lootTable;
         if(buffer.readBoolean())
         {
-            lootTable = ResourceKey.create(Registries.LOOT_TABLE, buffer.readResourceLocation());
+            lootTable = ResourceKey.create(Registries.LOOT_TABLE, buffer.readIdentifier());
         }
         else
         {
             lootTable = null;
         }
-        final EquipmentTypeEntry requiredTool = ModEquipmentTypes.getRegistry().get(buffer.readResourceLocation());
+        final EquipmentTypeEntry requiredTool = ModEquipmentTypes.getRegistry().getValue(buffer.readIdentifier());
         final int minBldgLevel = buffer.readVarInt();
         final int maxBldgLevel = buffer.readVarInt();
         final boolean mustExist = buffer.readBoolean();
@@ -953,7 +953,7 @@ public class CustomRecipe
             altOutputs.add(Utils.deserializeCodecMess(buffer));
         }
 
-        final Block intermediate = BuiltInRegistries.BLOCK.get(buffer.readResourceLocation());
+        final Block intermediate = BuiltInRegistries.BLOCK.getValue(buffer.readIdentifier());
 
         return new CustomRecipe(crafter, minBldgLevel, maxBldgLevel, mustExist, showTooltip, recipeId,
                 researchReq, researchExclude, lootTable, requiredTool,
@@ -961,32 +961,32 @@ public class CustomRecipe
     }
 
     /**
-     * Serialize a set of {@link ResourceLocation}.
+     * Serialize a set of {@link Identifier}.
      * @param buffer the buffer to serialize into.
      * @param ids    the set to be serialized.
      */
-    private static void serializeIds(@NotNull final RegistryFriendlyByteBuf buffer, @NotNull final Set<ResourceLocation> ids)
+    private static void serializeIds(@NotNull final RegistryFriendlyByteBuf buffer, @NotNull final Set<Identifier> ids)
     {
         buffer.writeVarInt(ids.size());
-        for (final ResourceLocation id : ids)
+        for (final Identifier id : ids)
         {
-            buffer.writeResourceLocation(id);
+            buffer.writeIdentifier(id);
         }
     }
 
     /**
-     * Deserialize a set of {@link ResourceLocation}.
+     * Deserialize a set of {@link Identifier}.
      * @param buffer the buffer to deserialize from.
      * @return       the deserialized set.
      */
-    private static Set<ResourceLocation> deserializeIds(@NotNull final RegistryFriendlyByteBuf buffer)
+    private static Set<Identifier> deserializeIds(@NotNull final RegistryFriendlyByteBuf buffer)
     {
-        final Set<ResourceLocation> ids = new HashSet<>();
+        final Set<Identifier> ids = new HashSet<>();
 
         final int size = buffer.readVarInt();
         for (int i = 0; i < size; ++i)
         {
-            ids.add(buffer.readResourceLocation());
+            ids.add(buffer.readIdentifier());
         }
 
         return Set.copyOf(ids);

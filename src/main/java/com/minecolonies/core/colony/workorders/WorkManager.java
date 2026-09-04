@@ -22,7 +22,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
-import net.minecraft.util.Tuple;
+import com.ldtteam.structurize.api.util.Tuple;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
@@ -254,10 +254,10 @@ public class WorkManager implements IWorkManager
         }
 
         //  Work Orders
-        final ListTag list = compound.getList(TAG_WORK_ORDERS, Tag.TAG_COMPOUND);
+        final ListTag list = compound.getListOrEmpty(TAG_WORK_ORDERS);
         for (int i = 0; i < list.size(); ++i)
         {
-            final CompoundTag orderCompound = list.getCompound(i);
+            final CompoundTag orderCompound = list.getCompoundOrEmpty(i);
             @Nullable final IServerWorkOrder o = AbstractWorkOrder.createFromNBT(orderCompound, this);
             if (o != null)
             {
@@ -343,7 +343,7 @@ public class WorkManager implements IWorkManager
     private boolean isWorkOrderWithinColony(final IWorkOrder order)
     {
         final Level world = colony.getWorld();
-        final Blueprint blueprint = StructurePacks.getBlueprint(order.getStructurePack(), order.getStructurePath(), world.registryAccess());
+        final Blueprint blueprint = StructurePacks.getBlueprint(order.getStructurePack(), order.getStructurePath());
         final Tuple<BlockPos, BlockPos> corners
           = ColonyUtils.calculateCorners(order.getLocation(),
           world,
@@ -367,7 +367,7 @@ public class WorkManager implements IWorkManager
                 if (!chunks.contains(pos))
                 {
                     chunks.add(pos);
-                    if (ColonyUtils.getOwningColony(world.getChunk(pos.x, pos.z)) != colony.getID())
+                    if (ColonyUtils.getOwningColony(world.getChunk(pos.x(), pos.z())) != colony.getID())
                     {
                         return false;
                     }

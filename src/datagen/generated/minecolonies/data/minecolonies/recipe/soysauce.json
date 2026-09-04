@@ -1,13 +1,9 @@
 {
   "type": "minecraft:crafting_shapeless",
-  "category": "misc",
   "ingredients": [
-    {
-      "item": "minecolonies:soybean"
-    }
+    "minecolonies:soybean"
   ],
   "result": {
-    "count": 1,
     "id": "minecolonies:soysauce"
   }
 }

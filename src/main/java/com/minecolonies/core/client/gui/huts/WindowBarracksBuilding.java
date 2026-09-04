@@ -14,7 +14,7 @@ import com.minecolonies.core.client.gui.WindowsBarracksSpies;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingBarracks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.NotNull;
 
@@ -83,7 +83,7 @@ public class WindowBarracksBuilding extends AbstractBuildingMainWindow<BuildingB
      */
     public WindowBarracksBuilding(final BuildingBarracks.View building)
     {
-        super(building, new ResourceLocation(Constants.MOD_ID, "gui/windowhutbarracks.xml"));
+        super(building, Identifier.fromNamespaceAndPath(Constants.MOD_ID, "gui/windowhutbarracks.xml"));
         view = building.getColony();
         positionsList = findPaneOfTypeByID(LIST_POSITIONS, ScrollingList.class);
         findPaneOfTypeByID(SPIES_BUTTON_ICON, ItemIcon.class).setItem(Items.GOLD_INGOT.getDefaultInstance());

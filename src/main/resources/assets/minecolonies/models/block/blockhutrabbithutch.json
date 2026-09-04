@@ -522,7 +522,7 @@
 		"second": {
       "render_type": "cutout",
 			"textures": {
-				"5": "item/carrot"
+				"5": "minecolonies:block_item/carrot"
 			},
 			"elements": [
 				{

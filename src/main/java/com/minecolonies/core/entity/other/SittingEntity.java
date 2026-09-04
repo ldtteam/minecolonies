@@ -1,19 +1,23 @@
 package com.minecolonies.core.entity.other;
 
+import net.minecraft.world.entity.EntitySpawnReason;
+
 import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.entity.other.AbstractFastMinecoloniesEntity;
 import com.minecolonies.api.util.EntityUtils;
 import com.minecolonies.api.util.LookHandler;
 import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.level.block.StairBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
@@ -33,6 +37,16 @@ public class SittingEntity extends Entity
      */
     int maxLifeTime = 100;
     private BlockPos sittingpos = BlockPos.ZERO;
+
+    @Override
+    protected void readAdditionalSaveData(final ValueInput input)
+    {
+    }
+
+    @Override
+    protected void addAdditionalSaveData(final ValueOutput output)
+    {
+    }
 
     /**
      * Set to track sitting entities in the world.
@@ -63,7 +77,7 @@ public class SittingEntity extends Entity
     /**
      * Do not let the entity be destroyed
      */
-    public boolean hurt(DamageSource source, float amount)
+    public boolean hurtServer(ServerLevel level, DamageSource source, float amount)
     {
         return false;
     }
@@ -74,18 +88,6 @@ public class SittingEntity extends Entity
     public boolean isPickable()
     {
         return false;
-    }
-
-    @Override
-    protected void readAdditionalSaveData(final CompoundTag compound)
-    {
-
-    }
-
-    @Override
-    protected void addAdditionalSaveData(final CompoundTag compound)
-    {
-
     }
 
     @Override
@@ -104,7 +106,7 @@ public class SittingEntity extends Entity
     @Override
     public void tick()
     {
-        if (this.level().isClientSide)
+        if (this.level().isClientSide())
         {
             return;
         }
@@ -126,7 +128,7 @@ public class SittingEntity extends Entity
     protected void addPassenger(Entity passenger)
     {
         super.addPassenger(passenger);
-        if (this.level().isClientSide)
+        if (this.level().isClientSide())
         {
             return;
         }
@@ -138,7 +140,7 @@ public class SittingEntity extends Entity
     protected void removePassenger(Entity passenger)
     {
         super.removePassenger(passenger);
-        if (this.level().isClientSide)
+        if (this.level().isClientSide())
         {
             return;
         }
@@ -214,7 +216,7 @@ public class SittingEntity extends Entity
         }
         existingSittingEntities.computeIfAbsent(entity.level().dimension(), k -> new HashSet<>()).add(pos);
 
-        final SittingEntity sittingEntity = (SittingEntity) ModEntities.SITTINGENTITY.create(entity.level());
+        final SittingEntity sittingEntity = (SittingEntity) ModEntities.SITTINGENTITY.create(entity.level(), EntitySpawnReason.EVENT);
 
         // Find the lowest box and sit on that
         final BlockState state = entity.level().getBlockState(pos);

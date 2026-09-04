@@ -1,6 +1,6 @@
 package com.minecolonies.core.colony.events.raid;
 
-import com.ldtteam.structurize.api.RotationMirror;
+import com.ldtteam.structurize.util.RotationMirror;
 import com.ldtteam.structurize.storage.ServerFutureProcessor;
 import com.ldtteam.structurize.storage.StructurePacks;
 import com.minecolonies.api.colony.ColonyState;
@@ -12,7 +12,7 @@ import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesRaider;
 import com.minecolonies.api.entity.mobs.RaiderMobUtils;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.MessageUtils.MessagePriority;
-import com.minecolonies.api.util.Tuple;
+import com.ldtteam.structurize.api.util.Tuple;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.api.util.constant.ColonyConstants;
 import com.minecolonies.core.colony.events.raid.pirateEvent.ShipBasedRaiderUtils;
@@ -25,6 +25,7 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
+import java.util.UUID;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerBossEvent;
 import net.minecraft.server.level.ServerPlayer;
@@ -93,7 +94,7 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
     /**
      * The raids visual raidbar
      */
-    protected final ServerBossEvent raidBar = new ServerBossEvent(Component.literal("Colony Raid"), BossEvent.BossBarColor.RED, BossEvent.BossBarOverlay.NOTCHED_10);
+    protected final ServerBossEvent raidBar = new ServerBossEvent(UUID.randomUUID(), Component.literal("Colony Raid"), BossEvent.BossBarColor.RED, BossEvent.BossBarOverlay.NOTCHED_10);
 
     /**
      * The ID of this raid
@@ -182,7 +183,7 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
         status = EventStatus.PREPARING;
 
         ServerFutureProcessor.queueBlueprint(new ServerFutureProcessor.BlueprintProcessingData(StructurePacks.getBlueprintFuture(STORAGE_STYLE,
-          "decorations" + ShipBasedRaiderUtils.SHIP_FOLDER + shipSize.schematicPrefix + this.getShipDesc() + ".blueprint", colony.getWorld().registryAccess()), colony.getWorld(), (blueprint -> {
+          "decorations" + ShipBasedRaiderUtils.SHIP_FOLDER + shipSize.schematicPrefix + this.getShipDesc() + ".blueprint"), colony.getWorld(), (blueprint -> {
             blueprint.setRotationMirror(shipRotationMirror, colony.getWorld());
 
             if (spawnPathResult != null && spawnPathResult.isDone())
@@ -525,23 +526,23 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
     @Override
     public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound)
     {
-        id = compound.getInt(TAG_EVENT_ID);
-        status = EventStatus.values()[compound.getInt(TAG_EVENT_STATUS)];
-        daysToGo = compound.getInt(TAG_DAYS_LEFT);
+        id = compound.getIntOr(TAG_EVENT_ID, 0);
+        status = EventStatus.values()[compound.getIntOr(TAG_EVENT_STATUS, 0)];
+        daysToGo = compound.getIntOr(TAG_DAYS_LEFT, 0);
 
-        @NotNull final ListTag spawnerListCompound = compound.getList(TAG_SPAWNERS, Tag.TAG_INT_ARRAY);
+        @NotNull final ListTag spawnerListCompound = compound.getListOrEmpty(TAG_SPAWNERS);
         for (int i = 0; i < spawnerListCompound.size(); i++)
         {
             spawners.add(NBTUtils.readBlockPos(spawnerListCompound.get(i)));
         }
 
-        maxSpawners = compound.getInt(TAG_SPAWNER_COUNT);
+        maxSpawners = compound.getIntOr(TAG_SPAWNER_COUNT, 0);
         spawnPoint = BlockPosUtil.read(compound, TAG_SPAWN_POS);
-        shipSize = ShipSize.values()[compound.getInt(TAG_SHIPSIZE)];
-        shipRotationMirror = RotationMirror.values()[compound.getByte(TAG_SHIP_ROTMIR)];
+        shipSize = ShipSize.values()[compound.getIntOr(TAG_SHIPSIZE, 0)];
+        shipRotationMirror = RotationMirror.values()[compound.getByteOr(TAG_SHIP_ROTMIR, (byte) 0)];
         wayPoints = BlockPosUtil.readPosListFromNBT(compound, TAG_WAYPOINT);
-        maxRaiderCount = compound.getInt(TAG_MAX_RAIDER_COUNT);
-        spawnerThresholdKillTracker = compound.getInt(TAG_RAIDER_THRESHOLD_TRACKER);
+        maxRaiderCount = compound.getIntOr(TAG_MAX_RAIDER_COUNT, 0);
+        spawnerThresholdKillTracker = compound.getIntOr(TAG_RAIDER_THRESHOLD_TRACKER, 0);
     }
 
     @Override

@@ -4,8 +4,9 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.neoforged.neoforge.capabilities.Capabilities.ItemHandler;
+import net.neoforged.neoforge.capabilities.Capabilities.Item;
 import net.neoforged.neoforge.items.IItemHandler;
+import com.minecolonies.api.util.capability.ItemHandlerResourceHandlerAdapter;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -40,7 +41,7 @@ public interface IItemHandlerCapProvider
 
     public static IItemHandlerCapProvider wrap(final BlockEntity blockEntity)
     {
-        return direction -> ItemHandler.BLOCK.getCapability(blockEntity.getLevel(), blockEntity.getBlockPos(), blockEntity.getBlockState(), blockEntity, direction);
+        return direction -> IItemHandler.of(Item.BLOCK.getCapability(blockEntity.getLevel(), blockEntity.getBlockPos(), blockEntity.getBlockState(), blockEntity, direction));
     }
 
     /**
@@ -48,12 +49,12 @@ public interface IItemHandlerCapProvider
      */
     public static IItemHandlerCapProvider wrap(final Entity entity, final boolean sided)
     {
-        return sided ? direction -> ItemHandler.ENTITY_AUTOMATION.getCapability(entity, direction) :
-            direction -> ItemHandler.ENTITY.getCapability(entity, null);
+        return sided ? direction -> IItemHandler.of(Item.ENTITY_AUTOMATION.getCapability(entity, direction)) :
+            direction -> IItemHandler.of(Item.ENTITY.getCapability(entity, null));
     }
 
     public static IItemHandlerCapProvider wrap(final ItemStack itemStack)
     {
-        return direction -> ItemHandler.ITEM.getCapability(itemStack, null);
+        return direction -> IItemHandler.of(Item.ITEM.getCapability(itemStack, null));
     }
 }

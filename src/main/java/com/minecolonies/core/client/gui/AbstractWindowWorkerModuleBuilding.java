@@ -8,7 +8,7 @@ import com.ldtteam.blockui.views.ScrollingList;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.util.MessageUtils;
-import com.minecolonies.api.util.Tuple;
+import com.ldtteam.structurize.api.util.Tuple;
 import com.minecolonies.core.colony.buildings.moduleviews.WorkerBuildingModuleView;
 import com.minecolonies.core.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.core.network.messages.server.colony.building.ChangeDeliveryPriorityMessage;
@@ -16,7 +16,7 @@ import com.minecolonies.core.network.messages.server.colony.building.ForcePickup
 import com.minecolonies.core.network.messages.server.colony.building.worker.RecallCitizenMessage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -82,7 +82,7 @@ public abstract class AbstractWindowWorkerModuleBuilding<B extends IBuildingView
      * @param building class extending {@link AbstractBuildingView}.
      * @param resource window resource location.
      */
-    protected AbstractWindowWorkerModuleBuilding(final B building, final ResourceLocation resource)
+    protected AbstractWindowWorkerModuleBuilding(final B building, final Identifier resource)
     {
         super(building, resource);
 

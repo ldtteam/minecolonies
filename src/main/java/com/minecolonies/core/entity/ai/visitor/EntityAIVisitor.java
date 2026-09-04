@@ -1,5 +1,7 @@
 package com.minecolonies.core.entity.ai.visitor;
 
+import com.minecolonies.core.entity.ai.combat.ServerDamageHelper;
+
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.entity.ai.statemachine.states.EntityState;
 import com.minecolonies.api.entity.ai.statemachine.states.IState;
@@ -18,6 +20,7 @@ import com.minecolonies.core.entity.visitor.VisitorCitizen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -124,7 +127,10 @@ public class EntityAIVisitor implements IState
         if (EntityNavigationUtils.walkToPos(citizen, target.blockPosition(), 2, false) && citizen.hasLineOfSight(target))
         {
             citizen.swing(InteractionHand.MAIN_HAND);
-            target.hurt(target.level().damageSources().source(DamageSourceKeys.VISITOR), 10.0f);
+            if (target instanceof final LivingEntity livingTarget)
+        {
+            ServerDamageHelper.apply(livingTarget, target.level().damageSources().source(DamageSourceKeys.VISITOR), 10.0f);
+        }
         }
 
         return false;

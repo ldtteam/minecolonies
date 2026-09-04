@@ -3,7 +3,7 @@
   "costs": [
     {
       "count": 16,
-      "item": "minecraft:string"
+      "ingredient": "minecraft:string"
     }
   ],
   "effects": [

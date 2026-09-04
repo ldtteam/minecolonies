@@ -1,6 +1,7 @@
 package com.minecolonies.core.colony.managers;
 
-import com.ldtteam.structurize.api.RotationMirror;
+import com.ldtteam.structurize.util.PlacementSettings;
+import com.ldtteam.structurize.util.RotationMirror;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.blueprints.v1.BlueprintTagUtils;
 import com.ldtteam.structurize.blueprints.v1.BlueprintUtil;
@@ -34,7 +35,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Optional;
 
-import static com.ldtteam.structurize.api.constants.Constants.BLUEPRINT_FOLDER;
+import static com.ldtteam.structurize.api.util.constant.Constants.BLUEPRINT_FOLDER;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
 /**
@@ -101,13 +102,13 @@ public class EventStructureManager implements IEventStructureManager
           .resolve(BLUEPRINT_FOLDER)
           .resolve(STRUCTURE_BACKUP_FOLDER)
           .resolve(Integer.toString(colony.getID()))
-          .resolve(colony.getDimension().location().getNamespace() + colony.getDimension().location().getPath())
+          .resolve(colony.getDimension().identifier().getNamespace() + colony.getDimension().identifier().getPath())
                                   .resolve(anchor.toString() + ".blueprint");
 
         final CompoundTag bp = BlueprintUtil.writeBlueprintToNBT(BlueprintUtil.createBlueprint(world, zeroPos, true,
                 (short) structure.getSizeX(), structure.getSizeY(), (short) structure.getSizeZ(), anchor.toString(), Optional.of(anchor)));
 
-        StructurePacks.storeBlueprint(STRUCTURE_BACKUP_FOLDER, bp, outputPath, world.registryAccess());
+        StructurePacks.storeBlueprint(STRUCTURE_BACKUP_FOLDER, bp, outputPath);
 
         backupSchematics.put(anchor, eventID);
 
@@ -134,11 +135,11 @@ public class EventStructureManager implements IEventStructureManager
                   .resolve(BLUEPRINT_FOLDER)
                   .resolve(STRUCTURE_BACKUP_FOLDER)
                   .resolve(Integer.toString(colony.getID()))
-                  .resolve(colony.getDimension().location().getNamespace() + colony.getDimension().location().getPath())
+                  .resolve(colony.getDimension().identifier().getNamespace() + colony.getDimension().identifier().getPath())
                   .resolve(entry.getKey().toString() + ".blueprint");
 
 
-                ServerFutureProcessor.queueBlueprint(new ServerFutureProcessor.BlueprintProcessingData(StructurePacks.getBlueprintFuture(STRUCTURE_BACKUP_FOLDER, backupPath, colony.getWorld().registryAccess()), colony.getWorld(), (blueprint -> {
+                ServerFutureProcessor.queueBlueprint(new ServerFutureProcessor.BlueprintProcessingData(StructurePacks.getBlueprintFuture(STRUCTURE_BACKUP_FOLDER, backupPath), colony.getWorld(), (blueprint -> {
 
                     if (blueprint == null)
                     {
@@ -146,7 +147,7 @@ public class EventStructureManager implements IEventStructureManager
                         return;
                     }
 
-                    final IStructureHandler structure = new CreativeStructureHandler(colony.getWorld(), entry.getKey(), blueprint, RotationMirror.NONE, true);
+                    final IStructureHandler structure = new CreativeStructureHandler(colony.getWorld(), entry.getKey(), blueprint, new PlacementSettings(RotationMirror.NONE.mirror(), RotationMirror.NONE.rotation()), true);
                     Manager.addToQueue(new PlaceStructureOperation(new StructurePlacer(structure), null));
 
                     try
@@ -171,14 +172,14 @@ public class EventStructureManager implements IEventStructureManager
         if (compound.contains(TAG_EVENT_STRUCTURE_MANAGER))
         {
             backupSchematics.clear();
-            final CompoundTag structureManagerCompound = compound.getCompound(TAG_EVENT_STRUCTURE_MANAGER);
-            final ListTag schematicTags = structureManagerCompound.getList(TAG_SCHEMATIC_LIST, Tag.TAG_COMPOUND);
+            final CompoundTag structureManagerCompound = compound.getCompoundOrEmpty(TAG_EVENT_STRUCTURE_MANAGER);
+            final ListTag schematicTags = structureManagerCompound.getListOrEmpty(TAG_SCHEMATIC_LIST);
 
             for (final Tag base : schematicTags)
             {
                 final CompoundTag tagCompound = (CompoundTag) base;
                 final BlockPos pos = BlockPosUtil.read(tagCompound, TAG_POS);
-                final int eventID = tagCompound.getInt(TAG_EVENT_ID);
+                final int eventID = tagCompound.getIntOr(TAG_EVENT_ID, 0);
                 if (eventManager.getEventByID(eventID) != null)
                 {
                     backupSchematics.put(pos, eventID);

@@ -1,5 +1,7 @@
 package com.minecolonies.core.entity.ai.workers.guard;
 
+import com.minecolonies.core.entity.ai.combat.ServerDamageHelper;
+
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.entity.ai.combat.CombatAIStates;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.ITickRateStateMachine;
@@ -30,13 +32,13 @@ import com.minecolonies.core.entity.pathfinding.pathjobs.PathJobMoveToLocation;
 import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
 import com.minecolonies.core.util.citizenutils.CitizenItemUtils;
 import net.minecraft.network.chat.contents.TranslatableContents;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.projectile.AbstractArrow;
+import net.minecraft.world.entity.projectile.arrow.AbstractArrow;
 import net.minecraft.world.item.ArrowItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
@@ -61,7 +63,7 @@ public class RangeCombatAI extends AttackMoveAI<EntityCitizen>
      * Visible combat icon
      */
     private final static VisibleCitizenStatus ARCHER_COMBAT =
-      new VisibleCitizenStatus(new ResourceLocation(Constants.MOD_ID, "textures/icons/work/archer_combat.png"), "com.minecolonies.gui.visiblestatus.archer_combat");
+      new VisibleCitizenStatus(Identifier.fromNamespaceAndPath(Constants.MOD_ID, "textures/icons/work/archer_combat.png"), "com.minecolonies.gui.visiblestatus.archer_combat");
 
     private final AbstractEntityAIGuard parentAI;
 
@@ -208,10 +210,6 @@ public class RangeCombatAI extends AttackMoveAI<EntityCitizen>
             }
 
             double damage = calculateDamage(arrow);
-            if (isMarksman())
-            {
-                arrow.shotFromCrossbow();
-            }
             arrow.setBaseDamage(damage);
 
             final float chance = HIT_CHANCE_DIVIDER / (user.getCitizenData().getCitizenSkillHandler().getLevel(Skill.Adaptability) + 1);
@@ -296,7 +294,8 @@ public class RangeCombatAI extends AttackMoveAI<EntityCitizen>
                             if (isMarksman())
                             {
                                 // Calculate true damage from reduced arrow damage.
-                                entityRayTraceResult.getEntity().hurt(user.level().damageSources().source(DamageSourceKeys.PIERCE, user), (float) arrow.getBaseDamage() * (float) marksManTrueDamageShare() * 10);
+                                if (!(entityRayTraceResult.getEntity() instanceof final LivingEntity piercedTarget)) { return true; }
+                            ServerDamageHelper.apply(piercedTarget, user.level().damageSources().source(DamageSourceKeys.PIERCE, user), (float) (arrow instanceof final CustomArrowEntity customArrow ? customArrow.getTrackedBaseDamage() : 2.0D) * (float) marksManTrueDamageShare() * 10);
                             }
 
                             return true;

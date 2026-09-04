@@ -9,10 +9,10 @@ import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.entity.citizen.citizenhandlers.*;
 import com.minecolonies.api.quests.IQuestGiver;
 import com.minecolonies.api.quests.IQuestParticipant;
-import com.minecolonies.api.util.Tuple;
+import com.ldtteam.structurize.api.util.Tuple;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -412,7 +412,7 @@ public interface ICitizenData extends ICivilianData, IQuestGiver, IQuestParticip
      * On completing a quest.
      * @param questId the id of the completed quest.
      */
-    void onQuestCompletion(ResourceLocation questId);
+    void onQuestCompletion(Identifier questId);
 
     /**
      * Trigger for server side interaction closing.

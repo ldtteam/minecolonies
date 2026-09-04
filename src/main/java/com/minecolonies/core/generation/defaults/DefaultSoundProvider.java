@@ -9,7 +9,7 @@ import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.PackOutput;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -49,11 +49,11 @@ public class DefaultSoundProvider implements DataProvider
                                    .resolve("mob")
                                    .resolve("citizen")
                                    .toFile();
-        final List<ResourceLocation> mainTypes = new ArrayList<>(ModJobs.getJobs());
+        final List<Identifier> mainTypes = new ArrayList<>(ModJobs.getJobs());
         mainTypes.remove(ModJobs.placeHolder.getId());
-        mainTypes.add(new ResourceLocation(Constants.MOD_ID, "unemployed"));
-        mainTypes.add(new ResourceLocation(Constants.MOD_ID, "visitor"));
-        mainTypes.add(new ResourceLocation(Constants.MOD_ID, "child"));
+        mainTypes.add(Identifier.fromNamespaceAndPath(Constants.MOD_ID, "unemployed"));
+        mainTypes.add(Identifier.fromNamespaceAndPath(Constants.MOD_ID, "visitor"));
+        mainTypes.add(Identifier.fromNamespaceAndPath(Constants.MOD_ID, "child"));
 
         if (soundFolder.isDirectory())
         {
@@ -77,7 +77,7 @@ public class DefaultSoundProvider implements DataProvider
                         soundList.add("minecolonies:mob/citizen/" + name + "/" + soundName.replace(".ogg", ""));
                     }
 
-                    for (final ResourceLocation job : mainTypes)
+                    for (final Identifier job : mainTypes)
                     {
                         for (final EventType event : EventType.values())
                         {

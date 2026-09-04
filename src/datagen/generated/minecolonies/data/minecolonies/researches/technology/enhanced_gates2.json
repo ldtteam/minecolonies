@@ -3,15 +3,15 @@
   "costs": [
     {
       "count": 64,
-      "item": "minecolonies:gate_iron"
+      "ingredient": "minecolonies:gate_iron"
     },
     {
       "count": 2,
-      "item": "minecolonies:ancienttome"
+      "ingredient": "minecolonies:ancienttome"
     },
     {
       "count": 32,
-      "item": "minecraft:obsidian"
+      "ingredient": "minecraft:obsidian"
     }
   ],
   "effects": [

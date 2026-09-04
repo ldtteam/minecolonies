@@ -4,12 +4,12 @@ import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.client.particle.*;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.particles.SimpleParticleType;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 /**
  * Custom particle for sleeping.
  */
-public class SleepingParticle extends TextureSheetParticle
+public class SleepingParticle extends SingleQuadParticle
 {
 
     /**
@@ -27,11 +27,11 @@ public class SleepingParticle extends TextureSheetParticle
     /**
      * The resourcelocation for the sleeping image.
      */
-    public static final ResourceLocation SLEEPING_TEXTURE = new ResourceLocation(Constants.MOD_ID, "particle/sleeping");
+    public static final Identifier SLEEPING_TEXTURE = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "particle/sleeping");
 
     public SleepingParticle(SpriteSet spriteSet, ClientLevel worldIn, double xCoordIn, double yCoordIn, double zCoordIn, double xSpeedIn, double ySpeedIn, double zSpeedIn)
     {
-        super(worldIn, xCoordIn, yCoordIn, zCoordIn, xSpeedIn, ySpeedIn, zSpeedIn);
+        super(worldIn, xCoordIn, yCoordIn, zCoordIn, xSpeedIn, ySpeedIn, zSpeedIn, spriteSet.get(worldIn.getRandom()));
 
         //this.setSprite(Minecraft.getInstance().getTextureMap().getSprite(SLEEPING_TEXTURE));
         setSpriteFromAge(spriteSet);
@@ -85,15 +85,15 @@ public class SleepingParticle extends TextureSheetParticle
     }
 
     @Override
-    public int getLightColor(float partialTick)
+    protected int getLightCoords(float partialTick)
     {
         return LIGHT_LEVEL;
     }
 
     @Override
-    public ParticleRenderType getRenderType()
+    public SingleQuadParticle.Layer getLayer()
     {
-        return ParticleRenderType.PARTICLE_SHEET_TRANSLUCENT;
+        return SingleQuadParticle.Layer.TRANSLUCENT;
     }
 
     public static class Factory implements ParticleProvider<SimpleParticleType>
@@ -106,7 +106,17 @@ public class SleepingParticle extends TextureSheetParticle
         }
 
         @Override
-        public Particle createParticle(SimpleParticleType particleType, ClientLevel world, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed)
+        public Particle createParticle(
+            final SimpleParticleType particleType,
+            final ClientLevel world,
+            final double x,
+            final double y,
+            final double z,
+            final double xSpeed,
+            final double ySpeed,
+            final double zSpeed,
+            final net.minecraft.util.RandomSource random
+        )
         {
             return new SleepingParticle(spriteSet, world, x, y, z, xSpeed, ySpeed, zSpeed);
         }

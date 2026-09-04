@@ -1,7 +1,8 @@
 package com.minecolonies.api.util;
 
-import com.ldtteam.structurize.api.Log;
-import com.ldtteam.structurize.api.RotationMirror;
+import com.ldtteam.structurize.api.util.Log;
+import com.ldtteam.structurize.util.PlacementSettings;
+import com.ldtteam.structurize.util.RotationMirror;
 import com.ldtteam.structurize.blockentities.interfaces.IBlueprintDataProviderBE;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.management.Manager;
@@ -58,7 +59,13 @@ public final class CreativeBuildingStructureHandler extends CreativeStructureHan
      */
     public CreativeBuildingStructureHandler(final Level world, final BlockPos pos, final Blueprint blueprint, final RotationMirror rotMir, final boolean fancyPlacement)
     {
-        super(world, pos, blueprint, rotMir, fancyPlacement);
+        super(world, pos, blueprint, new PlacementSettings(rotMir.mirror(), rotMir.rotation()), fancyPlacement);
+        setupBuilding();
+    }
+
+    public CreativeBuildingStructureHandler(final Level world, final BlockPos pos, final Blueprint blueprint, final PlacementSettings placementSettings, final boolean fancyPlacement)
+    {
+        super(world, pos, blueprint, placementSettings, fancyPlacement);
         setupBuilding();
     }
 
@@ -73,7 +80,13 @@ public final class CreativeBuildingStructureHandler extends CreativeStructureHan
      */
     public CreativeBuildingStructureHandler(final Level world, final BlockPos pos, final Future<Blueprint> blueprint, final RotationMirror rotMir, final boolean fancyPlacement)
     {
-        super(world, pos, blueprint, rotMir, fancyPlacement);
+        super(world, pos, blueprint, new PlacementSettings(rotMir.mirror(), rotMir.rotation()), fancyPlacement);
+        setupBuilding();
+    }
+
+    public CreativeBuildingStructureHandler(final Level world, final BlockPos pos, final Future<Blueprint> blueprint, final PlacementSettings placementSettings, final boolean fancyPlacement)
+    {
+        super(world, pos, blueprint, placementSettings, fancyPlacement);
         setupBuilding();
     }
 
@@ -102,8 +115,8 @@ public final class CreativeBuildingStructureHandler extends CreativeStructureHan
             final BlockEntity te = getWorld().getBlockEntity(worldPos);
             if (te instanceof IBlueprintDataProviderBE blueprintDataProviderBE)
             {
-                final CompoundTag tagData = teData.getCompound(TAG_BLUEPRINTDATA);
-                final String schematicPath = tagData.getString(TAG_NAME);
+                final CompoundTag tagData = teData.getCompoundOrEmpty(TAG_BLUEPRINTDATA);
+                final String schematicPath = tagData.getStringOr(TAG_NAME, "");
                 final String location = StructurePacks.getStructurePack(blueprint.getPackName()).getSubPath(Utils.resolvePath(blueprint.getFilePath(), schematicPath));
 
                 tagData.putString(TAG_NAME, location);

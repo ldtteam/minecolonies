@@ -7,22 +7,22 @@ import com.ldtteam.blockui.views.View;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.network.messages.client.colony.ColonyListMessage;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 /**
  * Represents a colony by size, returns the used image corresponding for each size.
  */
 public enum ColonySize
 {
-    SMALL(new ResourceLocation(Constants.MOD_ID, "gui/map/colonysmall.xml"), 25),
-    MEDIUM(new ResourceLocation(Constants.MOD_ID, "gui/map/colonymedium.xml"), 75),
-    LARGE(new ResourceLocation(Constants.MOD_ID, "gui/map/colonylarge.xml"), 5000);
+    SMALL(Identifier.fromNamespaceAndPath(Constants.MOD_ID, "gui/map/colonysmall.xml"), 25),
+    MEDIUM(Identifier.fromNamespaceAndPath(Constants.MOD_ID, "gui/map/colonymedium.xml"), 75),
+    LARGE(Identifier.fromNamespaceAndPath(Constants.MOD_ID, "gui/map/colonylarge.xml"), 5000);
 
-    private final ResourceLocation imagePath;
+    private final Identifier imagePath;
 
     private final int maxCitizens;
 
-    ColonySize(final ResourceLocation imagePath, final int maxCitizens)
+    ColonySize(final Identifier imagePath, final int maxCitizens)
     {
         this.imagePath = imagePath;
         this.maxCitizens = maxCitizens;

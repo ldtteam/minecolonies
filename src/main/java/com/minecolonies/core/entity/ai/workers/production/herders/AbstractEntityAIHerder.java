@@ -1,5 +1,7 @@
 package com.minecolonies.core.entity.ai.workers.production.herders;
 
+import com.minecolonies.core.entity.ai.combat.ServerDamageHelper;
+
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
@@ -558,7 +560,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
             worker.getMainHandItem().shrink(1);
             worker.getCitizenExperienceHandler().addExperience(XP_PER_ACTION);
             worker.level().broadcastEntityEvent(toFeed, (byte) 18);
-            toFeed.playSound(SoundEvents.GENERIC_EAT, 1.0F, 1.0F);
+            toFeed.playSound(SoundEvents.GENERIC_EAT.value(), 1.0F, 1.0F);
             CitizenItemUtils.removeHeldItem(worker);
             fedRecently.put(toFeed.getUUID(), worker.level().getGameTime());
 
@@ -790,7 +792,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
     {
         worker.swing(InteractionHand.MAIN_HAND); // visual only
         DamageSource ds = animal.level().damageSources().playerAttack(fakePlayer);
-        animal.hurt(ds, (float) getButcheringAttackDamage());
+        ServerDamageHelper.apply(animal, ds, (float) getButcheringAttackDamage());
         CitizenItemUtils.damageItemInHand(worker, InteractionHand.MAIN_HAND, 1);
     }
 

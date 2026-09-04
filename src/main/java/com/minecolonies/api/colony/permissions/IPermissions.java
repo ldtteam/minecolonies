@@ -1,6 +1,6 @@
 package com.minecolonies.api.colony.permissions;
 
-import com.mojang.authlib.GameProfile;
+import net.minecraft.server.players.NameAndId;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
@@ -141,7 +141,7 @@ public interface IPermissions
 
     boolean setPlayerRank(UUID id, Rank rank, Level world);
 
-    boolean addPlayer(@NotNull GameProfile gameprofile, Rank rank);
+    boolean addPlayer(@NotNull NameAndId gameprofile, Rank rank);
 
     /**
      * Get the rank of a UUID.

@@ -3,7 +3,7 @@
   "costs": [
     {
       "count": 16,
-      "item": "minecraft:chorus_fruit"
+      "ingredient": "minecraft:chorus_fruit"
     }
   ],
   "effects": [

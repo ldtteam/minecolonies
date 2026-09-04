@@ -1,22 +1,12 @@
 {
   "type": "minecraft:crafting_shapeless",
-  "category": "misc",
   "ingredients": [
-    {
-      "item": "minecolonies:tofu"
-    },
-    {
-      "item": "minecolonies:cooked_rice"
-    },
-    {
-      "item": "minecolonies:cooked_rice"
-    },
-    {
-      "item": "minecraft:dried_kelp"
-    }
+    "minecolonies:tofu",
+    "minecolonies:cooked_rice",
+    "minecolonies:cooked_rice",
+    "minecraft:dried_kelp"
   ],
   "result": {
-    "count": 1,
     "id": "minecolonies:rice_ball"
   }
 }

@@ -100,23 +100,22 @@ public class CommandListColonies implements IMCCommand
         {
             context.getSource().sendSuccess(() -> Component.literal(String.format(
                 ID_AND_NAME_TEXT, colony.getID(), colony.getName()) + " " + MAYOR_TEXT + colony.getPermissions().getOwnerName())
-                                                    .setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
-              String.format(COMMAND_COLONY_INFO, colony.getID())))), true);
+                                                    .setStyle(Style.EMPTY.withClickEvent(new ClickEvent.RunCommand(String.format(COMMAND_COLONY_INFO, colony.getID())))), true);
             final BlockPos center = colony.getCenter();
 
             final MutableComponent teleport = Component.literal("Citizens:" + colony.getCitizenManager().getCurrentCitizenCount() + " ")
                                                 .append(Component.literal(COORDINATES_TEXT + String.format(COORDINATES_XYZ, center.getX(), center.getY(), center.getZ()))
                                                           .setStyle(Style.EMPTY.withBold(true).withColor(ChatFormatting.GOLD).withClickEvent(
-                                                            new ClickEvent(ClickEvent.Action.RUN_COMMAND, TELEPORT_COMMAND + colony.getID()))));
+                                                            new ClickEvent.RunCommand(TELEPORT_COMMAND + colony.getID()))));
 
             context.getSource().sendSuccess(() -> teleport, true);
         }
 
         final Component prevButton = Component.literal(PREV_PAGE).setStyle(Style.EMPTY.withBold(true).withColor(ChatFormatting.GOLD).withClickEvent(
-          new ClickEvent(ClickEvent.Action.RUN_COMMAND, LIST_COMMAND_SUGGESTED + prevPage)));
+          new ClickEvent.RunCommand(LIST_COMMAND_SUGGESTED + prevPage)));
 
         final Component nextButton = Component.literal(NEXT_PAGE).setStyle(Style.EMPTY.withBold(true).withColor(ChatFormatting.GOLD).withClickEvent(
-          new ClickEvent(ClickEvent.Action.RUN_COMMAND, LIST_COMMAND_SUGGESTED + nextPage)
+          new ClickEvent.RunCommand(LIST_COMMAND_SUGGESTED + nextPage)
         ));
 
         final MutableComponent beginLine = Component.literal(PAGE_LINE);

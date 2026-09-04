@@ -1,5 +1,4 @@
 package com.minecolonies.core.items;
-
 import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.constant.TranslationConstants;
@@ -15,18 +14,19 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
-import net.minecraft.world.level.block.FarmBlock;
+import net.minecraft.world.level.block.FarmlandBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import org.jetbrains.annotations.NotNull;
-
 import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.function.Consumer;
 import java.util.List;
-
 /**
  * A custom item class for crop blocks.
  */
@@ -37,7 +37,6 @@ public class ItemCrop extends BlockItem
      */
     @Nullable
     private final TagKey<Biome> preferredBiome;
-
     /**
      * Creates a new Crop item.
      *
@@ -49,7 +48,6 @@ public class ItemCrop extends BlockItem
         super(cropBlock, builder.food(new FoodProperties.Builder().nutrition(1).saturationModifier(0.3F).build()));
         this.preferredBiome = preferredBiome;
     }
-
     @Override
     protected boolean canPlace(BlockPlaceContext ctx, @NotNull BlockState state)
     {
@@ -58,7 +56,7 @@ public class ItemCrop extends BlockItem
         {
             final BlockPos clickedPos = ctx.getClickedPos().below();
             final BlockState worldState = ctx.getLevel().getBlockState(clickedPos);
-            if (ctx.getLevel().isClientSide && (worldState.getBlock() instanceof MinecoloniesFarmland || worldState.getBlock() instanceof FarmBlock))
+            if (ctx.getLevel().isClientSide() && (worldState.getBlock() instanceof MinecoloniesFarmland || worldState.getBlock() instanceof FarmlandBlock))
             {
                 MessageUtils.format(Component.translatable("com.minecolonies.core.crop.cantplant")).sendTo(player);
             }
@@ -67,10 +65,11 @@ public class ItemCrop extends BlockItem
         CollisionContext collisioncontext = player == null ? CollisionContext.empty() : CollisionContext.of(player);
         return (!this.mustSurvive() || state.canSurvive(ctx.getLevel(), ctx.getClickedPos())) && ctx.getLevel().isUnobstructed(state, ctx.getClickedPos(), collisioncontext);
     }
-
     @Override
-    public void appendHoverText(@NotNull final ItemStack stack, @Nullable final TooltipContext ctx, @NotNull final List<Component> tooltip, @NotNull final TooltipFlag flagIn)
+    public void appendHoverText(@NotNull final ItemStack stack, @Nullable final TooltipContext ctx, @NotNull final TooltipDisplay display, Consumer<Component> tooltipConsumer, @NotNull final TooltipFlag flagIn)
+    
     {
+        final List<Component> tooltip = new ArrayList<>();
         tooltip.add(Component.translatable(TranslationConstants.CROP_TOOLTIP).withStyle(ChatFormatting.GRAY));
         if (preferredBiome != null && ctx.level() != null)
         {
@@ -85,8 +84,8 @@ public class ItemCrop extends BlockItem
             }
         }
         tooltip.add(Component.translatable(TranslationConstants.CROP_TOOLTIP_HOE).withStyle(ChatFormatting.DARK_AQUA).withStyle(ChatFormatting.ITALIC));
+        tooltip.forEach(tooltipConsumer);
     }
-
     /**
      * Check if this can planted in a given biome.
      * @param biome the biome to check.

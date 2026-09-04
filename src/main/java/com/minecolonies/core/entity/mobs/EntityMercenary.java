@@ -1,5 +1,7 @@
 package com.minecolonies.core.entity.mobs;
 
+import net.minecraft.world.entity.EntitySpawnReason;
+
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyRelated;
@@ -18,10 +20,10 @@ import com.minecolonies.core.entity.pathfinding.navigation.EntityNavigationUtils
 import com.minecolonies.core.entity.pathfinding.navigation.MinecoloniesAdvancedPathNavigate;
 import com.minecolonies.core.entity.pathfinding.proxy.GeneralEntityWalkToProxy;
 import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.util.Tuple;
+import com.ldtteam.structurize.api.util.Tuple;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
@@ -32,12 +34,14 @@ import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
-import net.minecraft.world.entity.animal.horse.Llama;
+import net.minecraft.world.entity.animal.equine.Llama;
 import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.npc.Npc;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
@@ -146,7 +150,12 @@ public class EntityMercenary extends AbstractFastMinecoloniesEntity implements N
         this.goalSelector.addGoal(0, new FloatGoal(this));
         this.goalSelector.addGoal(1, new EntityMercenaryAI(this));
         this.goalSelector.addGoal(4, new EntityAIInteractToggleAble(this, FENCE_TOGGLE, TRAP_TOGGLE, DOOR_TOGGLE));
-        this.targetSelector.addGoal(5, new NearestAttackableTargetGoal<>(this, Monster.class, 10, true, false, e -> e instanceof Enemy && !(e instanceof Llama)));
+        this.targetSelector.addGoal(5, new NearestAttackableTargetGoal<>(this,
+            Monster.class,
+            10,
+            true,
+            false,
+            (monster, level) -> monster instanceof Enemy && !(monster instanceof Llama)));
 
         setCustomNameVisible(true);
         this.setPersistenceRequired();
@@ -324,7 +333,7 @@ public class EntityMercenary extends AbstractFastMinecoloniesEntity implements N
     }
 
     @Override
-    public void addAdditionalSaveData(final CompoundTag compound)
+    public void addAdditionalSaveData(final ValueOutput compound)
     {
         compound.putLong(TAG_TIME, worldTimeAtSpawn);
         compound.putInt(TAG_COLONY_ID, this.colony == null ? 0 : colony.getID());
@@ -332,12 +341,12 @@ public class EntityMercenary extends AbstractFastMinecoloniesEntity implements N
     }
 
     @Override
-    public void readAdditionalSaveData(final CompoundTag compound)
+    public void readAdditionalSaveData(final ValueInput compound)
     {
-        worldTimeAtSpawn = compound.getLong(TAG_TIME);
-        if (compound.contains(TAG_COLONY_ID))
+        worldTimeAtSpawn = compound.getLongOr(TAG_TIME, 0L);
+        if (compound.getIntOr(TAG_COLONY_ID, 0) != 0)
         {
-            colonyId = compound.getInt(TAG_COLONY_ID);
+            colonyId = compound.getIntOr(TAG_COLONY_ID, 0);
             if (colonyId != 0)
             {
                 setColony(IColonyManager.getInstance().getColonyByWorld(colonyId, level()));
@@ -390,13 +399,13 @@ public class EntityMercenary extends AbstractFastMinecoloniesEntity implements N
     }
 
     @Override
-    public boolean hurt(final DamageSource source, final float damage)
+    public boolean hurtServer(final ServerLevel level, final DamageSource source, final float damage)
     {
         if (source.getEntity() instanceof LivingEntity)
         {
             this.setTarget((LivingEntity) source.getEntity());
         }
-        return super.hurt(source, damage);
+        return super.hurtServer(level, source, damage);
     }
 
     @Override
@@ -405,7 +414,10 @@ public class EntityMercenary extends AbstractFastMinecoloniesEntity implements N
         if (slapTimer == 0 && entityIn instanceof Player)
         {
             slapTimer = SLAP_INTERVAL;
-            entityIn.hurt(entityIn.level().damageSources().source(DamageSourceKeys.SLAP, this), 1.0f);
+            if (entityIn.level() instanceof ServerLevel serverLevel)
+            {
+                entityIn.hurtServer(serverLevel, entityIn.level().damageSources().source(DamageSourceKeys.SLAP, this), 1.0f);
+            }
             this.swing(InteractionHand.OFF_HAND);
         }
 
@@ -453,7 +465,7 @@ public class EntityMercenary extends AbstractFastMinecoloniesEntity implements N
     @Override
     public void aiStep()
     {
-        if (level() != null && !level().isClientSide)
+        if (level() != null && !level().isClientSide())
         {
             stateMachine.tick();
         }
@@ -496,7 +508,7 @@ public class EntityMercenary extends AbstractFastMinecoloniesEntity implements N
         final List<EntityMercenary> soldiers = new ArrayList<>();
         for (int i = 0; i < amountOfMercenaries; i++)
         {
-            final EntityMercenary merc = (EntityMercenary) ModEntities.MERCENARY.create(world);
+            final EntityMercenary merc = (EntityMercenary) ModEntities.MERCENARY.create(world, EntitySpawnReason.EVENT);
             merc.setColony(colony);
             merc.setPos(spawn.getX() + i, spawn.getY(), spawn.getZ());
             merc.setDoSpawnEvent();
@@ -505,7 +517,7 @@ public class EntityMercenary extends AbstractFastMinecoloniesEntity implements N
         }
 
         // spawn leader for the event.
-        final EntityMercenary merc = (EntityMercenary) ModEntities.MERCENARY.create(world);
+        final EntityMercenary merc = (EntityMercenary) ModEntities.MERCENARY.create(world, EntitySpawnReason.EVENT);
         merc.setColony(colony);
         merc.setPos(spawn.getX(), spawn.getY(), spawn.getZ() + 1);
         merc.setLeader(soldiers);

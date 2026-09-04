@@ -2,8 +2,9 @@ package com.minecolonies.core.generation.defaults;
 
 import com.minecolonies.api.enchants.ModEnchants;
 import com.minecolonies.api.items.ModTags;
-import net.minecraft.advancements.critereon.EntityPredicate;
-import net.minecraft.advancements.critereon.EntityTypePredicate;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.advancements.predicates.entity.EntityPredicate;
+import net.minecraft.advancements.predicates.entity.EntityTypePredicate;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.tags.ItemTags;
@@ -38,9 +39,9 @@ public class DefaultEnchantmentProvider
               new MultiplyValue(LevelBasedValue.perLevel(1.0f, 1.0f / 5.0f)),
               LootItemEntityPropertyCondition.hasProperties(
                 LootContext.EntityTarget.THIS,
-                EntityPredicate.Builder.entity().entityType(EntityTypePredicate.of(ModTags.raiders))
+                EntityPredicate.Builder.entity().entityType(EntityTypePredicate.of(context.lookup(Registries.ENTITY_TYPE), ModTags.raiders))
               )
-            ).build(ModEnchants.raiderDamage.location())
+            ).build(ModEnchants.raiderDamage.identifier())
         );
     }
 }

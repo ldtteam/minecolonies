@@ -1,5 +1,7 @@
 package com.minecolonies.core.entity.ai.workers.production.herders;
 
+import com.minecolonies.core.entity.ai.combat.ServerDamageHelper;
+
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.util.DamageSourceKeys;
@@ -8,7 +10,7 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingChickenHerder;
 import com.minecolonies.core.colony.jobs.JobChickenHerder;
 import com.minecolonies.core.util.citizenutils.CitizenItemUtils;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.animal.Animal;
 import org.jetbrains.annotations.NotNull;
@@ -25,7 +27,7 @@ public class EntityAIWorkChickenHerder extends AbstractEntityAIHerder<JobChicken
      * Get chicken icon
      */
     private final static VisibleCitizenStatus FIND_CHICKEN =
-      new VisibleCitizenStatus(new ResourceLocation(Constants.MOD_ID, "textures/icons/work/chickenherder.png"), "com.minecolonies.gui.visiblestatus.chickenherder");
+      new VisibleCitizenStatus(Identifier.fromNamespaceAndPath(Constants.MOD_ID, "textures/icons/work/chickenherder.png"), "com.minecolonies.gui.visiblestatus.chickenherder");
 
     /**
      * Creates the abstract part of the AI. Always use this constructor!
@@ -66,7 +68,7 @@ public class EntityAIWorkChickenHerder extends AbstractEntityAIHerder<JobChicken
 
             if (worker.getRandom().nextInt(1 + (ONE_HUNDRED_PERCENT - getSecondarySkillLevel()) / 5) <= 1)
             {
-                animal.hurt(world.damageSources().source(DamageSourceKeys.DEFAULT, worker), (float) getButcheringAttackDamage());
+                ServerDamageHelper.apply(animal, world.damageSources().source(DamageSourceKeys.DEFAULT, worker), (float) getButcheringAttackDamage());
                 CitizenItemUtils.damageItemInHand(worker, InteractionHand.MAIN_HAND, 1);
             }
         }

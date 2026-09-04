@@ -1,11 +1,10 @@
 package com.minecolonies.core.items;
 
-import com.ldtteam.structurize.component.ModDataComponents;
-import com.ldtteam.structurize.items.AbstractItemWithPosSelector.PosSelection;
+import com.ldtteam.structurize.items.AbstractItemWithPosSelector;
 import com.minecolonies.api.items.IBlockOverlayItem;
 import com.minecolonies.api.items.component.BuildingId;
 import com.minecolonies.api.util.MessageUtils;
-import com.minecolonies.api.util.Tuple;
+import com.ldtteam.structurize.api.util.Tuple;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingLumberjack;
 import com.minecolonies.core.entity.ai.workers.production.EntityAIWorkLumberjack;
 import net.minecraft.core.BlockPos;
@@ -40,14 +39,14 @@ public class ItemScepterLumberjack extends AbstractItemMinecolonies implements I
      */
     public ItemScepterLumberjack(final Properties properties)
     {
-        super("scepterlumberjack", properties.stacksTo(1).component(ModDataComponents.POS_SELECTION, PosSelection.EMPTY));
+        super("scepterlumberjack", properties.stacksTo(1));
     }
 
     @NotNull
     @Override
     public InteractionResult useOn(final UseOnContext context)
     {
-        if (context.getLevel().isClientSide)
+        if (context.getLevel().isClientSide())
         {
             return InteractionResult.FAIL;
         }
@@ -55,22 +54,14 @@ public class ItemScepterLumberjack extends AbstractItemMinecolonies implements I
         final ItemStack scepter = context.getPlayer().getItemInHand(context.getHand());
         MessageUtils.format(TOOL_LUMBERJACK_SCEPTER_POSITION_B_SET).sendTo(context.getPlayer());
 
-        PosSelection.updateItemStack(scepter, selection -> selection.setStartPos(context.getClickedPos()));
+        setSelection(scepter, context.getClickedPos(), null);
         storeRestrictedArea(context.getPlayer(), scepter, context.getLevel());
         return InteractionResult.FAIL;
     }
 
     @Override
-    public boolean canAttackBlock(@NotNull final BlockState state, @NotNull final Level world, @NotNull final BlockPos pos, @NotNull final Player player)
+    public boolean isCorrectToolForDrops(@NotNull final ItemStack stack, @NotNull final BlockState state)
     {
-        if (!world.isClientSide)
-        {
-            final ItemStack scepter = player.getMainHandItem();
-            MessageUtils.format(TOOL_LUMBERJACK_SCEPTER_POSITION_A_SET).sendTo(player);
-            PosSelection.updateItemStack(scepter, selection -> selection.setEndpos(pos));
-            storeRestrictedArea(player, scepter, world);
-        }
-
         return false;
     }
 
@@ -80,8 +71,8 @@ public class ItemScepterLumberjack extends AbstractItemMinecolonies implements I
 
     private void storeRestrictedArea(final Player player, final ItemStack scepter, final Level worldIn)
     {
-        final PosSelection component = PosSelection.readFromItemStack(scepter);
-        final Tuple<BlockPos, BlockPos> box = getBox(worldIn, scepter, component);
+        final Tuple<BlockPos, BlockPos> selection = AbstractItemWithPosSelector.getBounds(scepter);
+        final Tuple<BlockPos, BlockPos> box = getBox(worldIn, scepter, selection.getA(), selection.getB());
 
         if (box == null)
         {
@@ -123,9 +114,9 @@ public class ItemScepterLumberjack extends AbstractItemMinecolonies implements I
     @Override
     public List<OverlayBox> getOverlayBoxes(@NotNull final Level world, @NotNull final Player player, @NotNull ItemStack stack)
     {
-        final PosSelection component = PosSelection.readFromItemStack(stack);
+        final Tuple<BlockPos, BlockPos> selection = AbstractItemWithPosSelector.getBounds(stack);
         final BuildingId buildingId = BuildingId.readFromItemStack(stack);
-        final Tuple<BlockPos, BlockPos> box = getBox(world, stack, component);
+        final Tuple<BlockPos, BlockPos> box = getBox(world, stack, selection.getA(), selection.getB());
 
         if (buildingId.hasId())
         {
@@ -146,11 +137,21 @@ public class ItemScepterLumberjack extends AbstractItemMinecolonies implements I
     }
 
     @Nullable
-    private Tuple<BlockPos, BlockPos> getBox(@NotNull final Level world, final ItemStack stack, final PosSelection selection)
+    @NotNull
+    private void setSelection(final ItemStack stack, @Nullable final BlockPos start, @Nullable final BlockPos end)
     {
-        final BlockPos start = selection.startPos().orElse(null);
-        final BlockPos end = selection.endPos().orElse(null);
+        final Tuple<BlockPos, BlockPos> current = AbstractItemWithPosSelector.getBounds(stack);
+        AbstractItemWithPosSelector.setBounds(stack,
+          start == null ? current.getA() : start,
+          end == null ? current.getB() : end);
+    }
 
+    private Tuple<BlockPos, BlockPos> getBox(
+      @NotNull final Level world,
+      final ItemStack stack,
+      @Nullable final BlockPos start,
+      @Nullable final BlockPos end)
+    {
         if (world.isClientSide())
         {
             return new Tuple<>(start, end);

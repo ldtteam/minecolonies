@@ -3,7 +3,7 @@
   "costs": [
     {
       "count": 6,
-      "item": "minecraft:bookshelf"
+      "ingredient": "minecraft:bookshelf"
     }
   ],
   "effects": [

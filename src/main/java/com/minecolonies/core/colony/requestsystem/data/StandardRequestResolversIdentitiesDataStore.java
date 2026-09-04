@@ -18,7 +18,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.util.Tuple;
+import com.ldtteam.structurize.api.util.Tuple;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -118,15 +118,15 @@ public class StandardRequestResolversIdentitiesDataStore implements IRequestReso
         @Override
         public StandardRequestResolversIdentitiesDataStore deserialize(@NotNull final HolderLookup.Provider provider, @NotNull final IFactoryController controller, @NotNull final CompoundTag nbt)
         {
-            final IToken<?> token = controller.deserializeTag(provider, nbt.getCompound(TAG_TOKEN));
-            final ListTag list = nbt.getList(TAG_LIST, Tag.TAG_COMPOUND);
+            final IToken<?> token = controller.deserializeTag(provider, nbt.getCompoundOrEmpty(TAG_TOKEN));
+            final ListTag list = nbt.getListOrEmpty(TAG_LIST);
             final BiMap<IToken<?>, IRequestResolver<?>> biMap = HashBiMap.create();
 
             for (int i = 0; i < list.size(); i++)
             {
-                final CompoundTag mapCompound = list.getCompound(i);
-                final IToken<?> id = controller.deserializeTag(provider, mapCompound.getCompound(TAG_TOKEN));
-                final IRequestResolver<?> resolver = controller.deserializeTag(provider, mapCompound.getCompound(TAG_RESOLVER));
+                final CompoundTag mapCompound = list.getCompoundOrEmpty(i);
+                final IToken<?> id = controller.deserializeTag(provider, mapCompound.getCompoundOrEmpty(TAG_TOKEN));
+                final IRequestResolver<?> resolver = controller.deserializeTag(provider, mapCompound.getCompoundOrEmpty(TAG_RESOLVER));
                 if (resolver.isValid())
                 {
                     biMap.put(id, resolver);

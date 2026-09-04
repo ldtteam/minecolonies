@@ -40,6 +40,6 @@ public class RandomQuestTriggerTemplate implements IQuestTriggerTemplate
     public ITriggerReturnData canTriggerQuest(final IColony colony)
     {
         // Attempted once every 500 ticks.
-        return new BooleanTriggerReturnData(oneInChance > 0 && colony.getWorld().random.nextInt(oneInChance) < MAX_TICKRATE);
+        return new BooleanTriggerReturnData(oneInChance > 0 && colony.getWorld().getRandom().nextInt(oneInChance) < MAX_TICKRATE);
     }
 }

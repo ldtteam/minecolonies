@@ -40,7 +40,7 @@ public class CavalryStrollGoal extends WaterAvoidingRandomStrollGoal
     @Override
     public boolean canUse() 
     {
-        if (mob.level().isClientSide) return false;
+        if (mob.level().isClientSide()) return false;
 
         return isFreeToRoam() && super.canUse();
     }

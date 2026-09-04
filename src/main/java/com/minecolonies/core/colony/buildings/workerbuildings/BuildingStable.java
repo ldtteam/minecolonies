@@ -21,10 +21,10 @@ import com.minecolonies.core.colony.buildings.modules.settings.SettingKey;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.RandomSource;
-import net.minecraft.util.Tuple;
-import net.minecraft.world.entity.animal.horse.Horse;
+import com.ldtteam.structurize.api.util.Tuple;
+import net.minecraft.world.entity.animal.equine.Horse;
 import net.minecraft.world.item.Items;
 
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
@@ -54,7 +54,7 @@ public class BuildingStable extends AbstractBuildingGuards
      * Setting key for the patrol interval.
      */
     public static final ISettingKey<IntSetting> PATROL_INTERVAL =
-      new SettingKey<>(IntSetting.class, new ResourceLocation(com.minecolonies.api.util.constant.Constants.MOD_ID, "patrolinterval"));
+      new SettingKey<>(IntSetting.class, Identifier.fromNamespaceAndPath(com.minecolonies.api.util.constant.Constants.MOD_ID, "patrolinterval"));
 
     /**
      * The last time the guards patrolled from this stable.
@@ -149,7 +149,7 @@ public class BuildingStable extends AbstractBuildingGuards
     public void deserializeNBT(final HolderLookup.Provider provider, final CompoundTag compound)
     {
         super.deserializeNBT(provider, compound);
-        this.lastPatrolTime = compound.getLong(NBT_LAST_PATROL_TAG);
+        this.lastPatrolTime = compound.getLongOr(NBT_LAST_PATROL_TAG, 0L);
     }
 
     /**
@@ -271,7 +271,7 @@ public class BuildingStable extends AbstractBuildingGuards
         }
 
         final List<BlockPos> patrolPoints = targetBuilding.getLocationsFromTag(TAG_PATROL_POINT);
-        final RandomSource rand = getColony().getWorld().random;
+        final RandomSource rand = getColony().getWorld().getRandom();
 
         if (patrolPoints != null && !patrolPoints.isEmpty())
         {

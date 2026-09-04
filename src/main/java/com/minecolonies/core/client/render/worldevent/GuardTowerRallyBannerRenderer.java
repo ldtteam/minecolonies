@@ -28,7 +28,7 @@ public class GuardTowerRallyBannerRenderer
         for (final BlockPos guardTower : ItemBannerRallyGuards.getGuardTowerLocations(ctx.mainHandItem))
         {
             ctx.pushPoseCameraToPos(guardTower);
-            ctx.renderBlackLineBox(BlockPos.ZERO, BlockPos.ZERO, WorldEventContext.DEFAULT_LINE_WIDTH);
+            ctx.renderLineBoxWithShadow(BlockPos.ZERO, 0xFF000000, WorldEventContext.DEFAULT_LINE_WIDTH);
             ctx.popPose();
         }
     }

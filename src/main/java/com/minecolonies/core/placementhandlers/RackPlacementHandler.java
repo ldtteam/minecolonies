@@ -1,13 +1,13 @@
 package com.minecolonies.core.placementhandlers;
 
-import com.ldtteam.structurize.api.ItemStackUtils;
+import com.ldtteam.structurize.api.util.ItemStackUtils;
 import com.ldtteam.structurize.placement.IPlacementContext;
 import com.ldtteam.structurize.placement.handlers.placement.IPlacementHandler;
 import com.ldtteam.structurize.placement.handlers.placement.PlacementHandlers;
 import com.ldtteam.structurize.util.BlockUtils;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.core.blocks.BlockMinecoloniesRack;
-import net.minecraft.util.Tuple;
+import com.ldtteam.structurize.api.util.Tuple;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.item.ItemStack;
@@ -42,7 +42,7 @@ public class RackPlacementHandler implements IPlacementHandler
         world.setBlock(pos, blockState, UPDATE_FLAG);
         if (tileEntityData != null)
         {
-            handleTileEntityPlacement(tileEntityData, world, pos, placementContext.getRotationMirror());
+            handleTileEntityPlacement(tileEntityData, world, pos, placementContext.getRotationMirror().getRotationMirror());
         }
         return ActionProcessingResult.SUCCESS;
     }
@@ -62,7 +62,7 @@ public class RackPlacementHandler implements IPlacementHandler
         }
 
         itemList.add(BlockUtils.getItemStackFromBlockState(blockState));
-        for (final ItemStack stack : PlacementHandlers.getItemsFromTileEntity(tileEntityData, blockState, world))
+        for (final ItemStack stack : PlacementHandlers.getItemsFromTileEntity(tileEntityData, blockState))
         {
             if (!ItemStackUtils.isEmpty(stack))
             {

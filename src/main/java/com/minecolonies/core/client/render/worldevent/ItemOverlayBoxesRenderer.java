@@ -29,7 +29,7 @@ public class ItemOverlayBoxesRenderer
                 if (pos == null)
                 {
                     ctx.poseStack.pushPose();
-                    ctx.poseStack.translate(bounds.minX - ctx.cameraPosition.x(), bounds.minY - ctx.cameraPosition.y(), bounds.minZ - ctx.cameraPosition.z());
+                    ctx.poseStack.translate(bounds.minX, bounds.minY, bounds.minZ);
                     bounds = bounds.move(-bounds.minX, -bounds.minY, -bounds.minZ);
                 }
                 else
@@ -45,8 +45,8 @@ public class ItemOverlayBoxesRenderer
                 }
                 else
                 {
-                    if (pos != null) ctx.renderLineBox(WorldEventContext.LINES_WITH_WIDTH, BlockPos.ZERO, box.color(), box.width());
-                    if (bounds != null) ctx.renderLineAABB(WorldEventContext.LINES_WITH_WIDTH, bounds, box.color(), box.width());
+                    if (pos != null) ctx.renderLineBox(BlockPos.ZERO, box.color(), box.width());
+                    if (bounds != null) ctx.renderLineAABB(bounds, box.color(), box.width());
                 }
 
                 ctx.popPose();

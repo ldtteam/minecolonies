@@ -54,7 +54,7 @@ public class TypeTokenFactory implements IFactory<Class<?>, TypeToken<?>>
     {
         try
         {
-            return TypeToken.of(Class.forName(nbt.getString(NbtTagConstants.TAG_VALUE).replace("coremod", "core")));
+            return TypeToken.of(Class.forName(nbt.getStringOr(NbtTagConstants.TAG_VALUE, "").replace("coremod", "core")));
         }
         catch (ClassNotFoundException e)
         {

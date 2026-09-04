@@ -2,9 +2,9 @@ package com.minecolonies.api.quests;
 
 import com.minecolonies.api.colony.IColony;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Player;
-import net.neoforged.neoforge.common.util.INBTSerializable;
+import com.minecolonies.api.util.INBTSerializable;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -47,7 +47,7 @@ public interface IQuestInstance extends INBTSerializable<CompoundTag>
      * Get the quest id of the quest.
      * @return the id.
      */
-    ResourceLocation getId();
+    Identifier getId();
 
     /**
      * On deletion of the quest.

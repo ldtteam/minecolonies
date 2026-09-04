@@ -1,4 +1,11 @@
 {
+  "tag.item.c.foods": "Foods",
+  "tag.item.c.foods.bread": "Bread Foods",
+  "tag.item.c.foods.candy": "Candy Foods",
+  "tag.item.c.foods.cooked_meat": "Cooked Meat Foods",
+  "tag.item.c.foods.golden": "Golden Foods",
+  "tag.item.c.foods.soup": "Soup Foods",
+  "tag.item.c.foods.vegetable": "Vegetable Foods",
   "tag.item.minecolonies.baker_ingredient": "Baker Crafting Ingredients",
   "tag.item.minecolonies.baker_ingredient_excluded": "Baker Crafting Excluded Ingredients",
   "tag.item.minecolonies.baker_product": "Baker Crafting Products",

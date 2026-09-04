@@ -26,7 +26,7 @@ import com.minecolonies.core.colony.buildings.views.AbstractBuildingView;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.MapItem;
@@ -63,26 +63,26 @@ public class BuildingTownHall extends AbstractBuilding implements ITownHall
     /**
      * Citizen spawning.
      */
-    public static final ISettingKey<BoolSetting> MOVE_IN              = new SettingKey<>(BoolSetting.class, new ResourceLocation(MOD_ID, "kidspawn"));
+    public static final ISettingKey<BoolSetting> MOVE_IN              = new SettingKey<>(BoolSetting.class, Identifier.fromNamespaceAndPath(MOD_ID, "kidspawn"));
     /**
      * Enter leave messages.
      */
-    public static final ISettingKey<BoolSetting> ENTER_LEAVE_MESSAGES = new SettingKey<>(BoolSetting.class, new ResourceLocation(MOD_ID, "enterleave"));
+    public static final ISettingKey<BoolSetting> ENTER_LEAVE_MESSAGES = new SettingKey<>(BoolSetting.class, Identifier.fromNamespaceAndPath(MOD_ID, "enterleave"));
 
     /**
      * Automatic hiring mode.
      */
-    public static final ISettingKey<BoolSetting> AUTO_HIRING_MODE = new SettingKey<>(BoolSetting.class, new ResourceLocation(MOD_ID, "autohiring"));
+    public static final ISettingKey<BoolSetting> AUTO_HIRING_MODE = new SettingKey<>(BoolSetting.class, Identifier.fromNamespaceAndPath(MOD_ID, "autohiring"));
 
     /**
      * AUtomatic housing mode.
      */
-    public static final ISettingKey<BoolSetting> AUTO_HOUSING_MODE = new SettingKey<>(BoolSetting.class, new ResourceLocation(MOD_ID, "autohousing"));
+    public static final ISettingKey<BoolSetting> AUTO_HOUSING_MODE = new SettingKey<>(BoolSetting.class, Identifier.fromNamespaceAndPath(MOD_ID, "autohousing"));
 
     /**
      * Constructgion tape setting.
      */
-    public static final ISettingKey<BoolSetting> CONSTRUCTION_TAPE = new SettingKey<>(BoolSetting.class, new ResourceLocation(MOD_ID, "tape"));
+    public static final ISettingKey<BoolSetting> CONSTRUCTION_TAPE = new SettingKey<>(BoolSetting.class, Identifier.fromNamespaceAndPath(MOD_ID, "tape"));
 
     /**
      * Instantiates the building.
@@ -274,9 +274,9 @@ public class BuildingTownHall extends AbstractBuilding implements ITownHall
             final int colonyEventsSize = buf.readInt();
             for (int i = 0; i < colonyEventsSize; i++)
             {
-                final ResourceLocation eventTypeID = new ResourceLocation(MOD_ID, buf.readUtf());
+                final Identifier eventTypeID = Identifier.fromNamespaceAndPath(MOD_ID, buf.readUtf());
 
-                final ColonyEventDescriptionTypeRegistryEntry registryEntry = MinecoloniesAPIProxy.getInstance().getColonyEventDescriptionRegistry().get(eventTypeID);
+                final ColonyEventDescriptionTypeRegistryEntry registryEntry = MinecoloniesAPIProxy.getInstance().getColonyEventDescriptionRegistry().getValue(eventTypeID);
                 if (registryEntry == null)
                 {
                     Log.getLogger().warn("Event is missing registryEntry!:" + eventTypeID.getPath());

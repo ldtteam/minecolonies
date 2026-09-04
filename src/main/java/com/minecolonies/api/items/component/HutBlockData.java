@@ -8,6 +8,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.Item;
+import net.minecraft.core.component.DataComponentGetter;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.TooltipProvider;
@@ -47,7 +48,7 @@ public record HutBlockData(int level, boolean pastable) implements TooltipProvid
     }
 
     @Override
-    public void addToTooltip(@NotNull final Item.TooltipContext context, @NotNull final Consumer<Component> tooltip, @NotNull final TooltipFlag flags)
+    public void addToTooltip(@NotNull final Item.TooltipContext context, @NotNull final Consumer<Component> tooltip, @NotNull final TooltipFlag flags, @NotNull final DataComponentGetter components)
     {
         final Component level = Component.literal(String.valueOf(this.level)).withStyle(ChatFormatting.GOLD);
         tooltip.accept(Component.translatable("item.minecolonies.hut.level", level).withStyle(ChatFormatting.GREEN));

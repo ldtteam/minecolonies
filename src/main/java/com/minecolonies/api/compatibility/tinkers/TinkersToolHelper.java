@@ -101,43 +101,4 @@ public final class TinkersToolHelper extends TinkersToolProxy
     {
         return !ItemStackUtils.isEmpty(stack) && false;//ToolDamageUtil.isBroken(stack);
     }
-
-    /**
-     * Check if a certain item stack is a tinkers tool of the given tool type.
-     * @param stack the stack to check for.
-     * @param toolType the tool type.
-     * @return true if so.
-     */
-    @Override
-    public boolean isTinkersTool(@Nullable final ItemStack stack, final EquipmentTypeEntry toolType)
-    {
-        return false;
-        /*
-        if (ItemStackUtils.isEmpty(stack) || !(stack.getItem() instanceof ModifiableItem))
-        {
-            return false;
-        }
-
-        if (ToolType.AXE.equals(toolType) && stack.canPerformAction(ItemAbilities.AXE_DIG))
-        {
-            return true;
-        }
-
-        if (ToolType.SHOVEL.equals(toolType) && stack.canPerformAction(ItemAbilities.SHOVEL_DIG))
-        {
-            return true;
-        }
-
-        if (ToolType.PICKAXE.equals(toolType) && stack.canPerformAction(ItemAbilities.PICKAXE_DIG))
-        {
-            return true;
-        }
-
-        if (ToolType.HOE.equals(toolType))
-        {
-            return stack.canPerformAction(ItemAbilities.HOE_DIG);
-        }
-
-        return stack.is(TinkerTags.Items.HARVEST);*/
-    }
 }

@@ -3,7 +3,7 @@ package com.minecolonies.api.colony.guardtype;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.entity.citizen.Skill;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.function.Supplier;
 
@@ -50,7 +50,7 @@ public class GuardType
     /**
      * Unique registry name.
      */
-    private final ResourceLocation registryName;
+    private final Identifier registryName;
 
     /**
      * Constructor to create the type.
@@ -71,7 +71,7 @@ public class GuardType
       final Skill secondarySkill,
       final String workerSoundName,
       final Class<IJob<?>> clazz,
-      final ResourceLocation registryName)
+      final Identifier registryName)
     {
         super();
         this.jobEntry = jobEntry;
@@ -165,7 +165,7 @@ public class GuardType
         private Skill                           primarySkill;
         private Skill                           secondarySkill;
         private String                          workerSoundName;
-        private ResourceLocation                registryName;
+        private Identifier                registryName;
         private Class<IJob<?>>                  clazz;
 
         public Builder setJobEntry(final Supplier<JobEntry> jobEntry)
@@ -204,7 +204,7 @@ public class GuardType
             return this;
         }
 
-        public Builder setRegistryName(final ResourceLocation registryName)
+        public Builder setRegistryName(final Identifier registryName)
         {
             this.registryName = registryName;
             return this;

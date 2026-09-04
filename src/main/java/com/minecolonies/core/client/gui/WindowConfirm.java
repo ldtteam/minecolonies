@@ -3,7 +3,7 @@ package com.minecolonies.core.client.gui;
 import com.ldtteam.blockui.controls.Text;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 
@@ -20,7 +20,7 @@ public class WindowConfirm extends AbstractWindowSkeleton
      */
     public WindowConfirm(final AbstractWindowSkeleton parent, final Runnable action, final String title, final String warning)
     {
-        super(parent, new ResourceLocation(Constants.MOD_ID, "gui/windowconfirm.xml"));
+        super(parent, Identifier.fromNamespaceAndPath(Constants.MOD_ID, "gui/windowconfirm.xml"));
         registerButton(BUTTON_CONFIRM, this::close);
         registerButton(BUTTON_CANCEL, action);
         findPaneOfTypeByID(TITLE_LABEL, Text.class).setText(Component.translatable(title));

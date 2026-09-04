@@ -1,5 +1,4 @@
 package com.minecolonies.core.items;
-
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
@@ -18,6 +17,7 @@ import net.minecraft.network.chat.Style;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.item.context.UseOnContext;
@@ -25,12 +25,11 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
+import java.util.ArrayList;
+import java.util.function.Consumer;
 import java.util.List;
-
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
-
 /**
  * Class describing the colony sign item.
  */
@@ -45,7 +44,6 @@ public class ItemColonySign extends BlockItem
     {
         super(ModBlocks.blockColonySign, properties.stacksTo(STACKSIZE));
     }
-
     @Override
     public InteractionResult useOn(final UseOnContext ctx)
     {
@@ -55,20 +53,18 @@ public class ItemColonySign extends BlockItem
         {
             if (state.getBlock() == ModBlocks.blockHutGateHouse && entity instanceof TileEntityColonyBuilding buildingEntity)
             {
-                if (!ctx.getLevel().isClientSide)
+                if (!ctx.getLevel().isClientSide())
                 {
                     if (buildingEntity.getColony() == null)
                     {
                         MessageUtils.format(COM_MINECOLONIES_SIGN_NULL_COLONY).sendTo(ctx.getPlayer());
                         return InteractionResult.SUCCESS;
                     }
-
                     if (buildingEntity.getBuilding() != null && buildingEntity.getBuilding().getBuildingLevel() <= 0)
                     {
                         MessageUtils.format(COM_MINECOLONIES_SIGN_BAD_GATEHOUSE).sendTo(ctx.getPlayer());
                         return InteractionResult.SUCCESS;
                     }
-
                     // Attempt Connect two colonies.
                     final ColonyId colonyComponent = ColonyId.readFromItemStack(ctx.getItemInHand());
                     if (colonyComponent.hasColonyId() && colonyComponent.id() != buildingEntity.getColonyId())
@@ -79,17 +75,14 @@ public class ItemColonySign extends BlockItem
                             MessageUtils.format(COM_MINECOLONIES_SIGN_NULL_COLONY).sendTo(ctx.getPlayer());
                             return InteractionResult.SUCCESS;
                         }
-
                         if (!sourceColony.getPermissions().hasPermission(ctx.getPlayer(), Action.MANAGE_HUTS))
                         {
                             MessageUtils.format(COM_MINECOLONIES_SIGN_COLONY_NO_PERM, buildingEntity.getColony().getName()).sendTo(ctx.getPlayer());
                             return InteractionResult.SUCCESS;
                         }
-
                         sourceColony.getConnectionManager().attemptEstablishConnection(ctx.getClickedPos(), buildingEntity.getColony());
                         return InteractionResult.SUCCESS;
                     }
-
                     if (buildingEntity.getColony().getPermissions().hasPermission(ctx.getPlayer(), Action.MANAGE_HUTS))
                     {
                         buildingEntity.getColony().writeToItemStack(ctx.getItemInHand());
@@ -105,7 +98,7 @@ public class ItemColonySign extends BlockItem
             }
             else if (entity instanceof TileEntityColonySign signEntity)
             {
-                if (!ctx.getLevel().isClientSide)
+                if (!ctx.getLevel().isClientSide())
                 {
                     final IColony colony = IColonyManager.getInstance().getColonyByDimension(signEntity.getColonyId(), ctx.getLevel().dimension());
                     if (colony == null)
@@ -113,7 +106,6 @@ public class ItemColonySign extends BlockItem
                         MessageUtils.format(COM_MINECOLONIES_SIGN_NULL_COLONY).sendTo(ctx.getPlayer());
                         return InteractionResult.SUCCESS;
                     }
-
                     // Attempt connect two colonies.
                     final ColonyId colonyComponent = ColonyId.readFromItemStack(ctx.getItemInHand());
                     if (colonyComponent.hasColonyId() && colonyComponent.id() != signEntity.getColonyId())
@@ -124,17 +116,14 @@ public class ItemColonySign extends BlockItem
                             MessageUtils.format(COM_MINECOLONIES_SIGN_NULL_COLONY).sendTo(ctx.getPlayer());
                             return InteractionResult.SUCCESS;
                         }
-
                         if (!sourceColony.getPermissions().hasPermission(ctx.getPlayer(), Action.MANAGE_HUTS))
                         {
                             MessageUtils.format(COM_MINECOLONIES_SIGN_COLONY_NO_PERM, sourceColony.getName()).sendTo(ctx.getPlayer());
                             return InteractionResult.SUCCESS;
                         }
-
                         sourceColony.getConnectionManager().attemptEstablishConnection(ctx.getClickedPos(), colony);
                         return InteractionResult.SUCCESS;
                     }
-
                     if (colony.getPermissions().hasPermission(ctx.getPlayer(), Action.MANAGE_HUTS))
                     {
                         colony.writeToItemStack(ctx.getItemInHand());
@@ -149,10 +138,8 @@ public class ItemColonySign extends BlockItem
                 return InteractionResult.SUCCESS;
             }
         }
-
         return super.useOn(ctx);
     }
-
     @Override
     protected boolean canPlace(final BlockPlaceContext ctx, final BlockState state)
     {
@@ -160,18 +147,16 @@ public class ItemColonySign extends BlockItem
         {
             return false;
         }
-
         final ColonyId colonyComponent = ColonyId.readFromItemStack(ctx.getItemInHand());
         if (!colonyComponent.hasColonyId())
         {
-            if (ctx.getLevel().isClientSide)
+            if (ctx.getLevel().isClientSide())
             {
                 MessageUtils.format(COM_MINECOLONIES_NEED_COLONY).sendTo(ctx.getPlayer());
             }
             return false;
         }
-
-        if (!ctx.getLevel().isClientSide)
+        if (!ctx.getLevel().isClientSide())
         {
             final int colonyId = colonyComponent.id();
             final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyId, ctx.getLevel().dimension());
@@ -191,13 +176,13 @@ public class ItemColonySign extends BlockItem
                 return false;
             }
         }
-
         return true;
     }
-
     @Override
-    public void appendHoverText(@NotNull final ItemStack stack, @Nullable final TooltipContext tooltipContext, @NotNull final List<Component> tooltip, @NotNull final TooltipFlag flagIn)
+    public void appendHoverText(@NotNull final ItemStack stack, @Nullable final TooltipContext tooltipContext, @NotNull final TooltipDisplay display, Consumer<Component> tooltipConsumer, @NotNull final TooltipFlag flagIn)
+    
     {
+        final List<Component> tooltip = new ArrayList<>();
         final ColonyId colonyComponent = ColonyId.readFromItemStack(stack);
         if (colonyComponent.hasColonyId())
         {
@@ -205,11 +190,10 @@ public class ItemColonySign extends BlockItem
             colonyHint.setStyle(Style.EMPTY.withColor(ChatFormatting.DARK_BLUE));
             tooltip.add(colonyHint);
         }
-
         final MutableComponent guiHint = Component.translatable(TranslationConstants.COM_MINECOLONIES_CORE_COLONY_SIGN_TOOLTIP);
         guiHint.setStyle(Style.EMPTY.withColor(ChatFormatting.DARK_GREEN));
         tooltip.add(guiHint);
-
-        super.appendHoverText(stack, tooltipContext, tooltip, flagIn);
+        super.appendHoverText(stack, tooltipContext, TooltipDisplay.DEFAULT, tooltip::add, flagIn);
+        tooltip.forEach(tooltipConsumer);
     }
 }

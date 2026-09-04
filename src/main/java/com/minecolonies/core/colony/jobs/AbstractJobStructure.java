@@ -50,7 +50,7 @@ public abstract class AbstractJobStructure<AI extends AbstractAISkeleton<J>, J e
         super.deserializeNBT(provider, compound);
         if (compound.contains(TAG_WORK_ORDER) && workBuilding instanceof AbstractBuildingStructureBuilder abstractBuildingStructureBuilder)
         {
-            abstractBuildingStructureBuilder.setWorkOrderId(compound.getInt(TAG_WORK_ORDER));
+            abstractBuildingStructureBuilder.setWorkOrderId(compound.getIntOr(TAG_WORK_ORDER, 0));
         }
     }
 }

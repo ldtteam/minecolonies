@@ -69,12 +69,12 @@ public class ItemCompost extends AbstractItemMinecolonies
     {
         if (applyCompost(ctx.getItemInHand(), ctx.getLevel(), ctx.getClickedPos(), ctx.getPlayer()))
         {
-            if (!ctx.getLevel().isClientSide)
+            if (!ctx.getLevel().isClientSide())
             {
                 ctx.getLevel().levelEvent(LevelEvent.PARTICLES_AND_SOUND_PLANT_GROWTH, ctx.getClickedPos(), 0);
             }
 
-            return InteractionResult.sidedSuccess(ctx.getLevel().isClientSide);
+            return ctx.getLevel().isClientSide() ? InteractionResult.SUCCESS : InteractionResult.CONSUME;
         }
         return InteractionResult.PASS;
     }

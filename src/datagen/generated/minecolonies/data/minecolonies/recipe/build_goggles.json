@@ -1,22 +1,11 @@
 {
   "type": "minecraft:crafting_shaped",
-  "category": "misc",
   "key": {
-    "G": {
-      "item": "minecraft:glass_pane"
-    },
-    "I": {
-      "item": "minecraft:iron_ingot"
-    },
-    "L": {
-      "item": "minecraft:leather"
-    },
-    "N": {
-      "item": "minecraft:gold_nugget"
-    },
-    "T": {
-      "item": "structurize:sceptergold"
-    }
+    "G": "minecraft:glass_pane",
+    "I": "minecraft:iron_ingot",
+    "L": "minecraft:leather",
+    "N": "minecraft:gold_nugget",
+    "T": "structurize:sceptergold"
   },
   "pattern": [
     "NIN",
@@ -24,7 +13,6 @@
     "L L"
   ],
   "result": {
-    "count": 1,
     "id": "minecolonies:build_goggles"
   }
 }

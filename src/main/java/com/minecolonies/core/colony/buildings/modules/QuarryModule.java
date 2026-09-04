@@ -16,7 +16,7 @@ import com.minecolonies.core.util.BuildingUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.util.Tuple;
+import com.ldtteam.structurize.api.util.Tuple;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -80,10 +80,10 @@ public class QuarryModule extends AbstractAssignedCitizenModule implements IAssi
 
         if (compound.contains(getModuleSerializationIdentifier()))
         {
-            compound = compound.getCompound(getModuleSerializationIdentifier());
+            compound = compound.getCompoundOrEmpty(getModuleSerializationIdentifier());
         }
 
-        final int[] residentIds = compound.getIntArray(TAG_MINERS);
+        final int[] residentIds = compound.getIntArray(TAG_MINERS).orElse(new int[0]);
         for (final int citizenId : residentIds)
         {
             final ICitizenData citizen = building.getColony().getCitizenManager().getCivilian(citizenId);
@@ -92,7 +92,7 @@ public class QuarryModule extends AbstractAssignedCitizenModule implements IAssi
                 assignCitizen(citizen);
             }
         }
-        this.isFinished = compound.getBoolean(TAG_IS_FINISHED);
+        this.isFinished = compound.getBooleanOr(TAG_IS_FINISHED, false);
     }
 
     @Override
@@ -179,7 +179,7 @@ public class QuarryModule extends AbstractAssignedCitizenModule implements IAssi
     }
 
     @Override
-    public net.minecraft.util.Tuple<BlockPos, BlockPos> getAdditionalCorners()
+    public com.ldtteam.structurize.api.util.Tuple<BlockPos, BlockPos> getAdditionalCorners()
     {
         return new Tuple<>(new BlockPos(0, this.height, 0), new BlockPos(0, 0, 0));
     }

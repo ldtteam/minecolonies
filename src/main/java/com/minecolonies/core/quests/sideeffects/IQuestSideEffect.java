@@ -1,8 +1,8 @@
 package com.minecolonies.core.quests.sideeffects;
 
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
-import net.neoforged.neoforge.common.util.INBTSerializable;
+import net.minecraft.resources.Identifier;
+import com.minecolonies.api.util.INBTSerializable;
 
 public interface IQuestSideEffect extends INBTSerializable<CompoundTag>
 {
@@ -11,7 +11,7 @@ public interface IQuestSideEffect extends INBTSerializable<CompoundTag>
      *
      * @return res location id
      */
-    ResourceLocation getID();
+    Identifier getID();
 
     /**
      * Called on quest start

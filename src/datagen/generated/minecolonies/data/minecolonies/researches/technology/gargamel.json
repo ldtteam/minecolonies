@@ -3,11 +3,11 @@
   "costs": [
     {
       "count": 16,
-      "item": "minecraft:crimson_fungus"
+      "ingredient": "minecraft:crimson_fungus"
     },
     {
       "count": 16,
-      "item": "minecraft:warped_fungus"
+      "ingredient": "minecraft:warped_fungus"
     }
   ],
   "effects": [

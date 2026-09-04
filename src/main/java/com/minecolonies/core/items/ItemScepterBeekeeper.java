@@ -46,7 +46,7 @@ public class ItemScepterBeekeeper extends AbstractItemMinecolonies implements IB
     public InteractionResult useOn(final UseOnContext useContext)
     {
         // if server world, do nothing
-        if (useContext.getLevel().isClientSide)
+        if (useContext.getLevel().isClientSide())
         {
             return InteractionResult.FAIL;
         }

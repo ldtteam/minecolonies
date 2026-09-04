@@ -5,19 +5,19 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ChunkHolder;
 import net.minecraft.server.level.FullChunkStatus;
 import net.minecraft.server.level.ServerChunkCache;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.util.Tuple;
+import com.ldtteam.structurize.api.util.Tuple;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.ChunkPos;
-import net.minecraft.world.level.GameRules;
+import net.minecraft.world.level.gamerules.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
@@ -65,7 +65,7 @@ public class WorldUtil
     {
         if (world.getChunkSource() instanceof ServerChunkCache)
         {
-            final ChunkHolder holder = ((ServerChunkCache) world.getChunkSource()).chunkMap.getVisibleChunkIfPresent(ChunkPos.asLong(x, z));
+            final ChunkHolder holder = ((ServerChunkCache) world.getChunkSource()).chunkMap.getVisibleChunkIfPresent(ChunkPos.pack(x, z));
             if (holder != null)
             {
                 return holder.getFullStatus().isOrAfter(FullChunkStatus.FULL) && holder.getChunkIfPresent(ChunkStatus.FULL) != null;
@@ -86,7 +86,7 @@ public class WorldUtil
     {
         if (WorldUtil.isBlockLoaded(world, pos))
         {
-            world.getChunk(pos.getX() >> 4, pos.getZ() >> 4).setUnsaved(true);
+            world.getChunk(pos.getX() >> 4, pos.getZ() >> 4).markUnsaved();
             final BlockState state = world.getBlockState(pos);
             world.sendBlockUpdated(pos, state, state, 3);
         }
@@ -101,7 +101,7 @@ public class WorldUtil
      */
     public static boolean isChunkLoaded(final LevelAccessor world, final ChunkPos pos)
     {
-        return isChunkLoaded(world, pos.x, pos.z);
+        return isChunkLoaded(world, pos.x(), pos.z());
     }
 
     /**
@@ -165,7 +165,7 @@ public class WorldUtil
      */
     public static boolean isDayTime(final Level world)
     {
-        return world.getDayTime() % 24000 <= NIGHT;
+        return world.getOverworldClockTime() % 24000 <= NIGHT;
     }
 
     /**
@@ -176,7 +176,7 @@ public class WorldUtil
      */
     public static boolean isPastTime(final Level world, final int pastTime)
     {
-        return world.getDayTime() % 24000 <= pastTime;
+        return world.getOverworldClockTime() % 24000 <= pastTime;
     }
 
     /**
@@ -222,13 +222,9 @@ public class WorldUtil
     public static boolean isOfWorldType(@NotNull final Level world, @NotNull final ResourceKey<DimensionType> type)
     {
         RegistryAccess dynRegistries = world.registryAccess();
-        ResourceLocation loc = dynRegistries.registry(Registries.DIMENSION_TYPE).get().getKey(world.dimensionType());
+        Identifier loc = dynRegistries.lookupOrThrow(Registries.DIMENSION_TYPE).getResourceKey(world.dimensionType()).map(ResourceKey::identifier).orElse(null);
         if (loc == null)
         {
-            if (world.isClientSide)
-            {
-                return world.dimensionType().effectsLocation().equals(type.location());
-            }
             return false;
         }
         ResourceKey<DimensionType> regKey = ResourceKey.create(Registries.DIMENSION_TYPE, loc);
@@ -245,7 +241,7 @@ public class WorldUtil
      */
     public static boolean isPeaceful(@NotNull final Level world)
     {
-        return !world.getLevelData().getGameRules().getBoolean(GameRules.RULE_DOMOBSPAWNING) || world.getDifficulty().equals(Difficulty.PEACEFUL);
+        return !world.getServer().getGameRules().get(GameRules.SPAWN_MOBS) || world.getDifficulty().equals(Difficulty.PEACEFUL);
     }
 
     /**

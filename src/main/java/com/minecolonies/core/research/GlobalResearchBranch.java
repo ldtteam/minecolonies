@@ -5,7 +5,7 @@ import com.minecolonies.api.research.IGlobalResearchBranch;
 import com.minecolonies.api.research.ResearchBranchType;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.contents.TranslatableContents;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import static com.minecolonies.api.research.util.ResearchConstants.BASE_RESEARCH_TIME;
 
@@ -104,7 +104,7 @@ public class GlobalResearchBranch implements IGlobalResearchBranch
      * Creates a GlobalResearchBranch containing default values for a given BranchID.
      * @param id   The Branch's ResourceID.
      */
-    public GlobalResearchBranch(final ResourceLocation id)
+    public GlobalResearchBranch(final Identifier id)
     {
         if(id.getPath().isEmpty())
         {
@@ -128,7 +128,7 @@ public class GlobalResearchBranch implements IGlobalResearchBranch
      * @param id            The Branch's ResourceID.
      * @param researchJson  the Json containing research branch data.
      */
-    public GlobalResearchBranch(final ResourceLocation id, final JsonObject researchJson)
+    public GlobalResearchBranch(final Identifier id, final JsonObject researchJson)
     {
         // Research branches can have all, only some, or none of these traits.
         if (researchJson.has(RESEARCH_BRANCH_NAME_PROP) && researchJson.get(RESEARCH_BRANCH_NAME_PROP).isJsonPrimitive()
@@ -202,12 +202,12 @@ public class GlobalResearchBranch implements IGlobalResearchBranch
      */
     public GlobalResearchBranch(final CompoundTag nbt)
     {
-        this.name = new TranslatableContents(nbt.getString(RESEARCH_BRANCH_NAME_PROP), null, TranslatableContents.NO_ARGS);
-        this.subtitle = new TranslatableContents(nbt.getString(RESEARCH_SUBTITLE_PROP), null, TranslatableContents.NO_ARGS);
-        this.type = ResearchBranchType.valueOfTag(nbt.getString(RESEARCH_BRANCH_TYPE_PROP));
-        this.baseTime = nbt.getDouble(RESEARCH_BASE_TIME_PROP);
-        this.sortOrder = nbt.getInt(RESEARCH_SORT_PROP);
-        this.hidden = nbt.getBoolean(RESEARCH_HIDDEN_PROP);
+        this.name = new TranslatableContents(nbt.getStringOr(RESEARCH_BRANCH_NAME_PROP, ""), null, TranslatableContents.NO_ARGS);
+        this.subtitle = new TranslatableContents(nbt.getStringOr(RESEARCH_SUBTITLE_PROP, ""), null, TranslatableContents.NO_ARGS);
+        this.type = ResearchBranchType.valueOfTag(nbt.getStringOr(RESEARCH_BRANCH_TYPE_PROP, ""));
+        this.baseTime = nbt.getDoubleOr(RESEARCH_BASE_TIME_PROP, 0.0D);
+        this.sortOrder = nbt.getIntOr(RESEARCH_SORT_PROP, 0);
+        this.hidden = nbt.getBooleanOr(RESEARCH_HIDDEN_PROP, false);
     }
 
     @Override

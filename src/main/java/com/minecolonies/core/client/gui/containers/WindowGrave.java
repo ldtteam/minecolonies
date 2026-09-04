@@ -2,10 +2,10 @@ package com.minecolonies.core.client.gui.containers;
 
 import com.minecolonies.api.inventory.container.ContainerGrave;
 import com.minecolonies.api.util.constant.Constants;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.network.chat.Component;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
@@ -18,7 +18,7 @@ public class WindowGrave extends AbstractContainerScreen<ContainerGrave>
     /**
      * The resource LOCATION of the texture.
      */
-    private static final ResourceLocation CHEST_GUI_TEXTURE = new ResourceLocation(Constants.MOD_ID, "textures/gui/generic_108.png");
+    private static final Identifier CHEST_GUI_TEXTURE = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "textures/gui/generic_108.png");
 
     /**
      * The LOCATION of the additional styles.
@@ -87,38 +87,38 @@ public class WindowGrave extends AbstractContainerScreen<ContainerGrave>
 
     public WindowGrave(final ContainerGrave container, final Inventory playerInventory, final Component iTextComponent)
     {
-        super(container, playerInventory, iTextComponent);
+        final int graveRows = container.grave.getInventory().getSlots() / SLOTS_EACH_ROW;
+        final int imageWidth = 176 + Math.max(0, graveRows - SLOTS_EACH_ROW + 1) * (SLOTS_EACH_ROW + 1);
+        super(container, playerInventory, iTextComponent,
+            imageWidth,
+            Y_OFFSET + Math.min(SLOTS_EACH_ROW, graveRows) * SLOT_OFFSET);
         this.inv = container.grave.getInventory();
 
         this.inventoryRows = inv.getSlots() / SLOTS_EACH_ROW;
 
-        this.imageHeight = Y_OFFSET + Math.min(SLOTS_EACH_ROW, this.inventoryRows) * SLOT_OFFSET;
-        if (this.inventoryRows > SLOTS_EACH_ROW - 1)
-        {
-            this.imageWidth = this.imageWidth + (this.inventoryRows - SLOTS_EACH_ROW) * (SLOTS_EACH_ROW + 1);
-        }
     }
 
     /**
      * Draw the foreground layer for the GuiContainer (everything in front of the items)
      */
     @Override
-    protected void renderLabels(@NotNull final GuiGraphics stack, int mouseX, int mouseY)
+    protected void extractLabels(@NotNull final GuiGraphicsExtractor stack, int mouseX, int mouseY)
     {
-        stack.drawString(this.font, this.title.getString(), 8, 6, 4210752, false);
-        stack.drawString(this.font, this.playerInventoryTitle.getString(), 8, (this.imageHeight - (inventoryRows > 6 ? 110 : 94)), 4210752, false);
+        stack.text(this.font, this.title.getString(), 8, 6, 0xFF404040, false);
+        stack.text(this.font, this.playerInventoryTitle.getString(), 8, (this.imageHeight - (inventoryRows > 6 ? 110 : 94)), 0xFF404040, false);
     }
 
     /**
      * Draws the background layer of this container (behind the items).
      */
     @Override
-    protected void renderBg(@NotNull final GuiGraphics stack, final float partialTicks, final int mouseX, final int mouseY)
+    public void extractBackground(@NotNull final GuiGraphicsExtractor stack, final int mouseX, final int mouseY, final float partialTicks)
     {
-        final ResourceLocation loc = getCorrectTextureForSlots(inventoryRows);
+        super.extractBackground(stack, mouseX, mouseY, partialTicks);
+        final Identifier loc = getCorrectTextureForSlots(inventoryRows);
 
-        final int i = (this.width - this.imageWidth) / 2;
-        final int j = (this.height - this.imageHeight) / 2;
+        final int i = this.leftPos;
+        final int j = this.topPos;
 
         if (inventoryRows < SLOTS_EACH_ROW)
         {
@@ -147,7 +147,7 @@ public class WindowGrave extends AbstractContainerScreen<ContainerGrave>
      * @param inventoryRows the amount of rows.
      * @return the correct LOCATION.
      */
-    private static ResourceLocation getCorrectTextureForSlots(final int inventoryRows)
+    private static Identifier getCorrectTextureForSlots(final int inventoryRows)
     {
         if (inventoryRows <= GOOD_SIZE)
         {
@@ -155,14 +155,14 @@ public class WindowGrave extends AbstractContainerScreen<ContainerGrave>
         }
         else
         {
-            return new ResourceLocation(Constants.MOD_ID, String.format(LOCATION, Integer.toString(inventoryRows * SLOTS_EACH_ROW)));
+            return Identifier.fromNamespaceAndPath(Constants.MOD_ID, String.format(LOCATION, Integer.toString(inventoryRows * SLOTS_EACH_ROW)));
         }
     }
 
     @Override
-    public void render(@NotNull final GuiGraphics stack, int x, int y, float z)
+    public void extractRenderState(@NotNull final GuiGraphicsExtractor stack, int x, int y, float z)
     {
-        super.render(stack, x, y, z);
-        this.renderTooltip(stack, x, y);
+        super.extractRenderState(stack, x, y, z);
+        // tooltip extraction is handled by AbstractContainerScreen;
     }
 }

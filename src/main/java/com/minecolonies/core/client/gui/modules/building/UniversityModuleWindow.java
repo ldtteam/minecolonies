@@ -20,7 +20,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -42,15 +42,15 @@ public class UniversityModuleWindow extends AbstractModuleWindow<UniversityResea
      */
     public UniversityModuleWindow(final UniversityResearchModuleView moduleView)
     {
-        super(moduleView, new ResourceLocation(Constants.MOD_ID, "gui/layouthuts/layoutuniversity.xml"));
+        super(moduleView, Identifier.fromNamespaceAndPath(Constants.MOD_ID, "gui/layouthuts/layoutuniversity.xml"));
 
         registerButton(UNI_INV_RESEARCH, this::inventoryClicked);
 
-        final List<ResourceLocation> inputBranches = IGlobalResearchTree.getInstance().getBranches();
+        final List<Identifier> inputBranches = IGlobalResearchTree.getInstance().getBranches();
         inputBranches.sort(Comparator.comparingInt(branchId -> IGlobalResearchTree.getInstance().getBranchData(branchId).getSortOrder()));
-        final List<ResourceLocation> visibleBranches = new ArrayList<>();
+        final List<Identifier> visibleBranches = new ArrayList<>();
         final List<List<MutableComponent>> allReqs = new ArrayList<>();
-        for (final ResourceLocation branch : inputBranches)
+        for (final Identifier branch : inputBranches)
         {
             final List<MutableComponent> requirements = getHidingRequirementDesc(branch);
             if(requirements.isEmpty() || !IGlobalResearchTree.getInstance().getBranchData(branch).getHidden())
@@ -70,10 +70,10 @@ public class UniversityModuleWindow extends AbstractModuleWindow<UniversityResea
      * @param branch  The identifier for a branch.
      * @return An empty list if at least one primary research is visible, or a list of MutableComponents describing the dependencies for each hidden primary research.
      */
-    public List<MutableComponent> getHidingRequirementDesc(final ResourceLocation branch)
+    public List<MutableComponent> getHidingRequirementDesc(final Identifier branch)
     {
         final List<MutableComponent> requirements = new ArrayList<>();
-        for(final ResourceLocation primary : IGlobalResearchTree.getInstance().getPrimaryResearch(branch))
+        for(final Identifier primary : IGlobalResearchTree.getInstance().getPrimaryResearch(branch))
         {
             if(!IGlobalResearchTree.getInstance().getResearch(branch, primary).isHidden()
                  || IGlobalResearchTree.getInstance().isResearchRequirementsFulfilled(IGlobalResearchTree.getInstance().getResearch(branch, primary).getResearchRequirements(), buildingView.getColony()))
@@ -112,7 +112,7 @@ public class UniversityModuleWindow extends AbstractModuleWindow<UniversityResea
     {
         super.onButtonClicked(button);
 
-        final ResourceLocation id = button.getParent() == null ? null : ResourceLocation.tryParse(button.getParent().getID());
+        final Identifier id = button.getParent() == null ? null : Identifier.tryParse(button.getParent().getID());
         if (id != null && IGlobalResearchTree.getInstance().getBranches().contains(id))
         {
             new WindowResearchTree(id, buildingView, this).open();
@@ -140,10 +140,10 @@ public class UniversityModuleWindow extends AbstractModuleWindow<UniversityResea
 
     private static class ResearchListProvider implements ScrollingList.DataProvider
     {
-        private final List<ResourceLocation> branches;
+        private final List<Identifier> branches;
         private final List<List<MutableComponent>> requirements;
 
-        ResearchListProvider(List<ResourceLocation> branches, List<List<MutableComponent>> requirements)
+        ResearchListProvider(List<Identifier> branches, List<List<MutableComponent>> requirements)
         {
             this.branches = branches;
             this.requirements = requirements;

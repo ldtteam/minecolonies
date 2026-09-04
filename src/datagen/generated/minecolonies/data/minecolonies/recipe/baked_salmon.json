@@ -1,28 +1,13 @@
 {
   "type": "minecraft:crafting_shapeless",
-  "category": "misc",
   "ingredients": [
-    {
-      "item": "minecolonies:garlic"
-    },
-    {
-      "item": "minecolonies:garlic"
-    },
-    {
-      "item": "minecolonies:garlic"
-    },
-    {
-      "item": "minecolonies:onion"
-    },
-    {
-      "item": "minecolonies:onion"
-    },
-    {
-      "item": "minecraft:salmon"
-    },
-    {
-      "item": "minecraft:salmon"
-    }
+    "minecolonies:garlic",
+    "minecolonies:garlic",
+    "minecolonies:garlic",
+    "minecolonies:onion",
+    "minecolonies:onion",
+    "minecraft:salmon",
+    "minecraft:salmon"
   ],
   "result": {
     "count": 2,

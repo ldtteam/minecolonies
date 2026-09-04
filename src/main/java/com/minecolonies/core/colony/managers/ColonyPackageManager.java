@@ -114,13 +114,13 @@ public class ColonyPackageManager implements IColonyPackageManager
         {
             final ServerPlayer player = iterator.next();
 
-            if (!player.isAlive() || colony.getWorld() != player.level() || !WorldUtil.isChunkLoaded(player.level(), player.chunkPosition().x, player.chunkPosition().z))
+            if (!player.isAlive() || colony.getWorld() != player.level() || !WorldUtil.isChunkLoaded(player.level(), player.chunkPosition().x(), player.chunkPosition().z()))
             {
                 iterator.remove();
                 continue;
             }
 
-            final LevelChunk chunk = colony.getWorld().getChunk(player.chunkPosition().x, player.chunkPosition().z);
+            final LevelChunk chunk = colony.getWorld().getChunk(player.chunkPosition().x(), player.chunkPosition().z());
             if (chunk.isEmpty())
             {
                 iterator.remove();

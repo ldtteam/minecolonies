@@ -17,7 +17,7 @@ import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
@@ -36,7 +36,7 @@ public abstract class AbstractRequest<R extends IRequestable> implements IReques
     /**
      * Default display icon (none).
      */
-    public static final ResourceLocation MISSING = new ResourceLocation(Constants.MOD_ID, "missingno");
+    public static final Identifier MISSING = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "missingno");
 
     @NotNull
     private final IToken<?>       token;
@@ -429,7 +429,7 @@ public abstract class AbstractRequest<R extends IRequestable> implements IReques
 
     @NotNull
     @Override
-    public ResourceLocation getDisplayIcon()
+    public Identifier getDisplayIcon()
     {
         return MISSING;
     }

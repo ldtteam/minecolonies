@@ -21,11 +21,12 @@ import com.minecolonies.core.util.citizenutils.CitizenItemUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.BlockItemTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.animal.Animal;
-import net.minecraft.world.entity.animal.Bee;
+import net.minecraft.world.entity.animal.bee.Bee;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -406,7 +407,7 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
               .map(entity -> (Bee) entity)
               .filter(bee -> worker.position().distanceToSqr(bee.position()) <= 16.0D)
               .forEach(bee -> {
-                  bee.setRemainingPersistentAngerTime(400 + worker.getRandom().nextInt(400));
+                  bee.setPersistentAngerEndTime(worker.level().getGameTime() + 400 + worker.getRandom().nextInt(400));
                   bee.setLastHurtByMob(worker);
               });
         }
@@ -558,7 +559,7 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
      */
     public boolean equipBreedItem(final InteractionHand hand)
     {
-        if (checkIfRequestForTagExistOrCreateAsync(ItemTags.FLOWERS, NUM_OF_FLOWERS_TO_BREED))
+        if (checkIfRequestForTagExistOrCreateAsync(BlockItemTags.FLOWERS.item(), NUM_OF_FLOWERS_TO_BREED))
         {
             ItemListModule flowersModule = building.getModuleMatching(ItemListModule.class, m -> m.getId().equals(BUILDING_FLOWER_LIST));
             CitizenItemUtils

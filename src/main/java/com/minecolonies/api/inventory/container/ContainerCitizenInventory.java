@@ -7,10 +7,9 @@ import com.minecolonies.api.entity.ai.workers.util.GuardGearBuilder;
 import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.api.inventory.ModContainers;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -19,7 +18,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.inventory.Slot;
-import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.items.SlotItemHandler;
 import org.jetbrains.annotations.NotNull;
@@ -87,7 +85,7 @@ public class ContainerCitizenInventory extends AbstractContainerMenu
         this.playerInventory = inv;
 
         final IColony colony;
-        if (inv.player.level().isClientSide)
+        if (inv.player.level().isClientSide())
         {
             colony = IColonyManager.getInstance().getColonyView(colonyId, inv.player.level().dimension());
         }
@@ -106,7 +104,7 @@ public class ContainerCitizenInventory extends AbstractContainerMenu
         final BlockPos workBuilding;
 
         int workBuildingLevel = 0;
-        if (inv.player.level().isClientSide)
+        if (inv.player.level().isClientSide())
         {
             final ICitizenDataView data = ((IColonyView) colony).getCitizen(citizenId);
             this.entity = Optional.of(inv.player.level().getEntity(data.getEntityId()));
@@ -175,7 +173,7 @@ public class ContainerCitizenInventory extends AbstractContainerMenu
                             @Override
                             public void set(@NotNull final ItemStack stack)
                             {
-                                if (workBuilding != null && !playerInventory.player.level().isClientSide && !ItemStackUtils.isEmpty(stack))
+                                if (workBuilding != null && !playerInventory.player.level().isClientSide() && !ItemStackUtils.isEmpty(stack))
                                 {
                                     final IBuilding building = colony.getServerBuildingManager().getBuilding(workBuilding);
                                     final ICitizenData citizenData = colony.getCitizenManager().getCivilian(citizenId);
@@ -238,7 +236,7 @@ public class ContainerCitizenInventory extends AbstractContainerMenu
             @Override
             public void set(@NotNull final ItemStack stack)
             {
-                if (workBuilding != null && !playerInventory.player.level().isClientSide && !ItemStackUtils.isEmpty(stack))
+                if (workBuilding != null && !playerInventory.player.level().isClientSide() && !ItemStackUtils.isEmpty(stack))
                 {
                     final IBuilding building = colony.getServerBuildingManager().getBuilding(workBuilding);
                     final ICitizenData citizenData = colony.getCitizenManager().getCivilian(citizenId);
@@ -260,7 +258,7 @@ public class ContainerCitizenInventory extends AbstractContainerMenu
             @Override
             public boolean mayPlace(final @NotNull ItemStack stack)
             {
-                if (stack.getItem() instanceof ArmorItem armorItem && armorItem.getEquipmentSlot() == equipmentSlot)
+                if (ItemStackUtils.isArmorForSlot(stack, equipmentSlot))
                 {
                     for (final GuardGear gear : guardGear)
                     {
@@ -275,17 +273,16 @@ public class ContainerCitizenInventory extends AbstractContainerMenu
             }
 
             @Override
-            public Pair<ResourceLocation, ResourceLocation> getNoItemIcon()
+            public Identifier getNoItemIcon()
             {
-                final ResourceLocation icon = switch (equipmentSlot)
+                return switch (equipmentSlot)
                 {
                     case HEAD -> InventoryMenu.EMPTY_ARMOR_SLOT_HELMET;
                     case CHEST -> InventoryMenu.EMPTY_ARMOR_SLOT_CHESTPLATE;
                     case LEGS -> InventoryMenu.EMPTY_ARMOR_SLOT_LEGGINGS;
                     case FEET -> InventoryMenu.EMPTY_ARMOR_SLOT_BOOTS;
-                    default -> null;
+                    default -> throw new IllegalArgumentException("Non-armor equipment slot has no inventory icon: " + equipmentSlot);
                 };
-                return icon == null ? null : Pair.of(InventoryMenu.BLOCK_ATLAS, icon);
             }
         });
     }

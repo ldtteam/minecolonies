@@ -1,6 +1,6 @@
 package com.minecolonies.api.colony.buildings.modules;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.List;
 
@@ -14,7 +14,7 @@ public interface IEntityListModule
      *
      * @param item the entity to add.
      */
-    void addEntity(final ResourceLocation item);
+    void addEntity(final Identifier item);
 
     /**
      * Check if the entity is an allowed item.
@@ -22,21 +22,21 @@ public interface IEntityListModule
      * @param item the entity to check.
      * @return true if so.
      */
-    boolean isEntityInList(final ResourceLocation item);
+    boolean isEntityInList(final Identifier item);
 
     /**
      * Remove an entity from the list.
      *
      * @param item the item to remove.
      */
-    void removeEntity(final ResourceLocation item);
+    void removeEntity(final Identifier item);
 
     /**
      * Get a specific entitylist.
      *
      * @return a copy of the list at ID, or an empty list.
      */
-    List<ResourceLocation> getList();
+    List<Identifier> getList();
 
     /**
      * Get the string identifier of the list.

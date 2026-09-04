@@ -17,7 +17,7 @@ import com.minecolonies.core.network.messages.PermissionsMessage;
 import com.minecolonies.core.network.messages.server.colony.ChangeFreeToInteractBlockMessage;
 import com.minecolonies.core.network.messages.server.colony.building.GiveToolMessage;
 import net.minecraft.ChatFormatting;
-import net.minecraft.ResourceLocationException;
+import net.minecraft.IdentifierException;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.PlayerInfo;
 import net.minecraft.client.player.LocalPlayer;
@@ -26,7 +26,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.contents.TranslatableContents;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -147,7 +147,7 @@ public class WindowPermissionsPage extends AbstractWindowTownHall
         nonAddedPlayerList = new ArrayList<>();
         for (final PlayerInfo info : Minecraft.getInstance().player.connection.getOnlinePlayers())
         {
-            if (!buildingView.getColony().getPlayers().containsKey(info.getProfile().getId()))
+            if (!buildingView.getColony().getPlayers().containsKey(info.getProfile().id()))
             {
                 nonAddedPlayerList.add(info);
             }
@@ -179,7 +179,7 @@ public class WindowPermissionsPage extends AbstractWindowTownHall
             @Override
             public void updateElement(final int index, final Pane pane)
             {
-                String playerName = nonAddedPlayerList.get(index).getProfile().getName();
+                String playerName = nonAddedPlayerList.get(index).getProfile().name();
                 final Button button = pane.findPaneOfTypeByID(BUTTON_SELECT_PLAYER_LIST, Button.class);
                 button.setText(Component.literal(playerName));
                 button.setEnabled(true);
@@ -536,7 +536,7 @@ public class WindowPermissionsPage extends AbstractWindowTownHall
 
         try
         {
-            final Block block = BuiltInRegistries.BLOCK.get(ResourceLocation.parse(inputText));
+            final Block block = BuiltInRegistries.BLOCK.getValue(Identifier.parse(inputText));
 
             if (block != null && !block.defaultBlockState().isAir())
             {
@@ -544,7 +544,7 @@ public class WindowPermissionsPage extends AbstractWindowTownHall
                 new ChangeFreeToInteractBlockMessage(buildingView.getColony(), block, ChangeFreeToInteractBlockMessage.MessageType.ADD_BLOCK).sendToServer();
             }
         }
-        catch (final ResourceLocationException e)
+        catch (final IdentifierException e)
         {
             // Do nothing.
         }

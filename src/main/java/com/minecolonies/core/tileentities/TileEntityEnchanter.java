@@ -52,7 +52,7 @@ public class TileEntityEnchanter extends TileEntityColonyBuilding
     {
         super.tick();
 
-        if (!level.isClientSide)
+        if (!level.isClientSide())
         {
             return;
         }

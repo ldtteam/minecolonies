@@ -36,7 +36,7 @@ public abstract class AbstractEntityBarbarian extends AbstractEntityMinecolonies
     {
         final SoundEvent soundevent = this.getAmbientSound();
 
-        if (soundevent != null && level().random.nextInt(OUT_OF_ONE_HUNDRED) <= ONE)
+        if (soundevent != null && level().getRandom().nextInt(OUT_OF_ONE_HUNDRED) <= ONE)
         {
             this.playSound(soundevent, this.getSoundVolume(), this.getVoicePitch());
         }

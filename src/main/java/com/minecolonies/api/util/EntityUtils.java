@@ -269,19 +269,18 @@ public final class EntityUtils
 
         if (!isLivingAtSite(entity, x, y, z, TELEPORT_RANGE))
         {
-            BlockPos spawnPoint = getSpawnPoint(entity.getCommandSenderWorld(), new BlockPos(x,y,z));
+            BlockPos spawnPoint = getSpawnPoint(entity.level(), new BlockPos(x,y,z));
 
             if (spawnPoint == null)
             {
                 spawnPoint = new BlockPos(x, y, z);
             }
 
-            entity.moveTo(
+            entity.setPos(
               spawnPoint.getX() + MIDDLE_BLOCK_OFFSET,
               spawnPoint.getY(),
-              spawnPoint.getZ() + MIDDLE_BLOCK_OFFSET,
-              entity.getYRot(),
-              entity.getXRot());
+              spawnPoint.getZ() + MIDDLE_BLOCK_OFFSET);
+            entity.absSnapRotationTo(entity.getYRot(), entity.getXRot());
             return true;
         }
 
@@ -312,7 +311,7 @@ public final class EntityUtils
      */
     public static boolean isFlying(final LivingEntity target)
     {
-        return target != null && (target.hasImpulse || !target.onGround()) && target.fallDistance <= 0.1f && target.level().isEmptyBlock(target.blockPosition().below(2));
+        return target != null && (target.needsSync || !target.onGround()) && target.fallDistance <= 0.1f && target.level().isEmptyBlock(target.blockPosition().below(2));
     }
 
     /**
@@ -328,7 +327,7 @@ public final class EntityUtils
             }
             else
             {
-                return !localEntity.level().isClientSide || localEntity instanceof Player && ((Player) localEntity).isLocalPlayer();
+                return !localEntity.level().isClientSide() || localEntity instanceof Player && ((Player) localEntity).isLocalPlayer();
             }
         });
     }

@@ -1,4 +1,5 @@
 package com.minecolonies.core.colony;
+import com.minecolonies.api.util.NBTUtils;
 
 import java.lang.ref.WeakReference;
 import java.util.Optional;
@@ -133,7 +134,7 @@ public class AnimalData implements IAnimalData
      */
     public static IAnimalData loadAnimalFromNBT(final IColony colony, final CompoundTag nbt, final HolderLookup.@NotNull Provider provider)
     {
-        final IAnimalData data = new AnimalData(nbt.getInt(NbtTagConstants.TAG_ID), colony);
+        final IAnimalData data = new AnimalData(nbt.getIntOr(NbtTagConstants.TAG_ID, 0), colony);
         data.deserializeNBT(provider, nbt);
         return data;
     }
@@ -153,11 +154,11 @@ public class AnimalData implements IAnimalData
         BlockPosUtil.write(compoundNBT, NbtTagConstants.TAG_ANIMALHOME, homeBuilding != null ? homeBuilding.getID() : BlockPos.ZERO);
         compoundNBT.putFloat(NbtTagConstants.TAG_MAX_HEALTH, maxHealth);
         compoundNBT.putFloat(NbtTagConstants.TAG_COMBAT_COOLDOWN, getCombatCooldown());
-        compoundNBT.putUUID(NbtTagConstants.TAG_UUID, uuid != null ? uuid : UUID.randomUUID());
+        NBTUtils.putUUID(compoundNBT, NbtTagConstants.TAG_UUID, uuid != null ? uuid : UUID.randomUUID());
 
         if (owner != null)
         {
-            compoundNBT.putUUID(NbtTagConstants.TAG_OWNER, owner);
+            NBTUtils.putUUID(compoundNBT, NbtTagConstants.TAG_OWNER, owner);
         }
 
         return compoundNBT;
@@ -180,10 +181,10 @@ public class AnimalData implements IAnimalData
             homeBuilding = colony.getServerBuildingManager().getBuilding(homePos);
         }
 
-        maxHealth = nbtTagCompound.contains(NbtTagConstants.TAG_MAX_HEALTH) ? nbtTagCompound.getFloat(NbtTagConstants.TAG_MAX_HEALTH) : 0.0f;
-        setCombatCooldown(nbtTagCompound.contains(NbtTagConstants.TAG_COMBAT_COOLDOWN) ? nbtTagCompound.getFloat(NbtTagConstants.TAG_COMBAT_COOLDOWN) : 0.0f);
-        uuid = nbtTagCompound.contains(NbtTagConstants.TAG_UUID) ? nbtTagCompound.getUUID(NbtTagConstants.TAG_UUID) : UUID.randomUUID();
-        owner = nbtTagCompound.contains(NbtTagConstants.TAG_OWNER) ? nbtTagCompound.getUUID(NbtTagConstants.TAG_OWNER) : null;
+        maxHealth = nbtTagCompound.contains(NbtTagConstants.TAG_MAX_HEALTH) ? nbtTagCompound.getFloatOr(NbtTagConstants.TAG_MAX_HEALTH, 0.0F) : 0.0f;
+        setCombatCooldown(nbtTagCompound.contains(NbtTagConstants.TAG_COMBAT_COOLDOWN) ? nbtTagCompound.getFloatOr(NbtTagConstants.TAG_COMBAT_COOLDOWN, 0.0F) : 0.0f);
+        uuid = nbtTagCompound.contains(NbtTagConstants.TAG_UUID) ? NBTUtils.getUUID(nbtTagCompound, NbtTagConstants.TAG_UUID) : UUID.randomUUID();
+        owner = nbtTagCompound.contains(NbtTagConstants.TAG_OWNER) ? NBTUtils.getUUID(nbtTagCompound, NbtTagConstants.TAG_OWNER) : null;
     }
 
     /**

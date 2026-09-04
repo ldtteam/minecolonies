@@ -3,7 +3,7 @@
   "costs": [
     {
       "count": 16,
-      "item": "minecraft:nether_wart"
+      "ingredient": "minecraft:nether_wart"
     }
   ],
   "effects": [

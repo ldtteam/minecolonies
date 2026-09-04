@@ -7,6 +7,7 @@ import com.minecolonies.api.compatibility.Compatibility;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.crafting.ModCraftingTypes;
 import com.minecolonies.api.inventory.container.ContainerCrafting;
+import com.ldtteam.blockui.UiRenderMacros;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.core.client.gui.modules.building.WindowSelectRequest;
 import com.minecolonies.core.colony.buildings.moduleviews.CraftingModuleView;
@@ -14,12 +15,12 @@ import com.minecolonies.core.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.core.network.messages.server.SwitchRecipeCraftingTeachingMessage;
 import com.minecolonies.core.network.messages.server.colony.building.worker.AddRemoveRecipeMessage;
 import com.minecolonies.core.util.DomumOrnamentumUtils;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -37,9 +38,9 @@ import static com.minecolonies.api.util.constant.translation.BaseGameTranslation
  */
 public class WindowCrafting extends AbstractContainerScreen<ContainerCrafting>
 {
-    private static final ResourceLocation CRAFTING_TABLE_GUI_TEXTURES = new ResourceLocation(MOD_ID, "textures/gui/crafting2x2.png");
+    private static final Identifier CRAFTING_TABLE_GUI_TEXTURES = Identifier.fromNamespaceAndPath(MOD_ID, "textures/gui/crafting2x2.png");
 
-    private static final ResourceLocation CRAFTING_TABLE_GUI_TEXTURES3X3 = new ResourceLocation(MOD_ID, "textures/gui/crafting3x3.png");
+    private static final Identifier CRAFTING_TABLE_GUI_TEXTURES3X3 = Identifier.fromNamespaceAndPath(MOD_ID, "textures/gui/crafting3x3.png");
 
     /**
      * X offset of the button.
@@ -80,7 +81,7 @@ public class WindowCrafting extends AbstractContainerScreen<ContainerCrafting>
     /**
      * Color of the gui description.
      */
-    private static final int GUI_COLOR = 4_210_752;
+    private static final int GUI_COLOR = 0xFF404040;
 
     /**
      * X offset of the gui description.
@@ -206,7 +207,7 @@ public class WindowCrafting extends AbstractContainerScreen<ContainerCrafting>
 
     private void reopenWithRequest(@Nullable final IRequest<?> request)
     {
-        minecraft.setScreen(this);
+        minecraft.setScreenAndShow(this);
 
         final List<ItemStack> stacks = requestables.getOrDefault(request, new ArrayList<>());
         if (!stacks.isEmpty())
@@ -244,18 +245,19 @@ public class WindowCrafting extends AbstractContainerScreen<ContainerCrafting>
      * Draw the foreground layer for the GuiContainer (everything in front of the items)
      */
     @Override
-    protected void renderLabels(@NotNull final GuiGraphics stack, final int mouseX, final int mouseY)
+    protected void extractLabels(@NotNull final GuiGraphicsExtractor stack, final int mouseX, final int mouseY)
     {
-        stack.drawString(this.font, Component.translatableEscape("container.crafting").getString(), X_OFFSET, Y_OFFSET, GUI_COLOR, false);
+        stack.text(this.font, Component.translatableEscape("container.crafting").getString(), X_OFFSET, Y_OFFSET, GUI_COLOR, false);
     }
 
     /**
      * Draws the background layer of this container (behind the items).
      */
     @Override
-    protected void renderBg(@NotNull final GuiGraphics stack, final float partialTicks, final int mouseX, final int mouseY)
+    public void extractBackground(@NotNull final GuiGraphicsExtractor stack, final int mouseX, final int mouseY, final float partialTicks)
     {
-        final ResourceLocation texture;
+        super.extractBackground(stack, mouseX, mouseY, partialTicks);
+        final Identifier texture;
         if (completeCrafting)
         {
             texture = CRAFTING_TABLE_GUI_TEXTURES3X3;
@@ -264,13 +266,14 @@ public class WindowCrafting extends AbstractContainerScreen<ContainerCrafting>
         {
             texture = CRAFTING_TABLE_GUI_TEXTURES;
         }
-        stack.blit(texture, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight);
+        UiRenderMacros.blit(stack, texture, this.leftPos, this.topPos,
+            this.imageWidth, this.imageHeight, 0, 0, 256, 256);
     }
 
     @Override
-    public void render(@NotNull final GuiGraphics stack, int x, int y, float z)
+    public void extractRenderState(@NotNull final GuiGraphicsExtractor stack, int x, int y, float z)
     {
-        super.render(stack, x, y, z);
-        this.renderTooltip(stack, x, y);
+        super.extractRenderState(stack, x, y, z);
+        // tooltip extraction is handled by AbstractContainerScreen;
     }
 }

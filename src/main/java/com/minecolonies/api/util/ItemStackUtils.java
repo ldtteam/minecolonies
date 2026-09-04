@@ -1,6 +1,8 @@
 package com.minecolonies.api.util;
+import net.minecraft.core.component.DataComponents;
 
 import com.google.gson.JsonParser;
+import com.ldtteam.structurize.api.util.Tuple;
 import com.minecolonies.api.advancements.AdvancementTriggers;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
@@ -18,8 +20,9 @@ import com.minecolonies.api.items.ModTags;
 import com.minecolonies.core.items.ItemSpear;
 import com.minecolonies.core.util.AdvancementUtils;
 import com.mojang.datafixers.util.Pair;
+import com.mojang.serialization.DataResult;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
-import net.minecraft.client.resources.language.I18n;
+import net.minecraft.locale.Language;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.HolderSet;
@@ -27,9 +30,11 @@ import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtOps;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.Entity;
@@ -40,7 +45,9 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.entity.decoration.ItemFrame;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.equipment.Equippable;
 import net.minecraft.world.food.FoodProperties;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.Enchantments;
@@ -59,6 +66,7 @@ import java.util.*;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.minecolonies.api.items.ModTags.fungi;
 import static com.minecolonies.api.util.constant.Constants.*;
@@ -134,7 +142,7 @@ public final class ItemStackUtils
     public static final Predicate<ItemStack> IS_ANY_FOOD =
             stack ->
             {
-                final FoodProperties foodProperties = stack.getFoodProperties(null);
+                final FoodProperties foodProperties = stack.get(DataComponents.FOOD);
                 return ItemStackUtils.isNotEmpty(stack) && foodProperties != null && foodProperties.nutrition() > 0
                         && foodProperties.saturation() > 0;
             };
@@ -196,9 +204,17 @@ public final class ItemStackUtils
             }
             else if (entity instanceof ArmorStand)
             {
-                request.add(new ItemStorage(entity.getPickedResult(new EntityHitResult(placer))));
-                ((ArmorStand) entity).getArmorSlots().forEach(item -> request.add(new ItemStorage(item)));
-                ((ArmorStand) entity).getHandSlots().forEach(item -> request.add(new ItemStorage(item)));
+                request.add(new ItemStorage(entity.getPickResult()));
+                for (final EquipmentSlot slot : new EquipmentSlot[] {
+                    EquipmentSlot.FEET, EquipmentSlot.LEGS, EquipmentSlot.CHEST, EquipmentSlot.HEAD,
+                    EquipmentSlot.MAINHAND, EquipmentSlot.OFFHAND})
+                {
+                    final ItemStack item = ((ArmorStand) entity).getItemBySlot(slot);
+                    if (!ItemStackUtils.isEmpty(item))
+                    {
+                        request.add(new ItemStorage(item));
+                    }
+                }
             }
 
             /*
@@ -280,7 +296,7 @@ public final class ItemStackUtils
         }
         int maxLevel = 0;
 
-        for (Object2IntMap.Entry<Holder<Enchantment>> entry : itemStack.getTagEnchantments().entrySet())
+        for (Object2IntMap.Entry<Holder<Enchantment>> entry : itemStack.getEnchantments().entrySet())
         {
             final int level = entry.getIntValue();
             maxLevel = Math.max(level, maxLevel);
@@ -304,7 +320,13 @@ public final class ItemStackUtils
             return value;
         }
 
-        final EquipmentSlot targetEquipmentSlot = Optional.ofNullable(Equipable.get(itemStack)).map(Equipable::getEquipmentSlot).orElse(EquipmentSlot.MAINHAND);
+        final Equippable equippable = getEquippable(itemStack);
+        if (equippable == null)
+        {
+            return 5;
+        }
+
+        final EquipmentSlot targetEquipmentSlot = equippable.slot();
         final List<Item> armorItems = VANILLA_ARMOR_MAPPING.get(targetEquipmentSlot);
         if (armorItems == null)
         {
@@ -315,12 +337,18 @@ public final class ItemStackUtils
 
         for (final Item item : armorItems)
         {
-            if (item instanceof ArmorItem armorItem)
+            final ItemStack armorStack = new ItemStack(item);
+            final Equippable candidateEquippable = getEquippable(armorStack);
+            if (candidateEquippable != null && candidateEquippable.slot() == targetEquipmentSlot)
             {
-                final double armorValue = getArmorValue(armorItem.getDefaultInstance(), armorItem.getEquipmentSlot());
+                final double armorValue = getArmorValue(armorStack, targetEquipmentSlot);
                 if (targetArmorLevel <= armorValue)
                 {
-                    return VANILLA_ARMOR_DISTRIBUTION.get(armorItem);
+                    final Integer distribution = VANILLA_ARMOR_DISTRIBUTION.get(item);
+                    if (distribution != null)
+                    {
+                        return distribution;
+                    }
                 }
             }
         }
@@ -379,7 +407,7 @@ public final class ItemStackUtils
         int fortune = 0;
         if (tool.isEnchanted())
         {
-            return tool.getTagEnchantments().getLevel(Utils.getRegistryValue(Enchantments.FORTUNE, level));
+            return tool.getEnchantments().getLevel(Utils.getRegistryValue(Enchantments.FORTUNE, level));
         }
         return fortune;
     }
@@ -392,7 +420,9 @@ public final class ItemStackUtils
      */
     public static boolean doesItemServeAsWeapon(@NotNull final ItemStack stack)
     {
-        return stack.getItem() instanceof SwordItem || stack.getItem() instanceof DiggerItem || Compatibility.isTinkersWeapon(stack) || stack.getItem() instanceof ItemSpear;
+        return stack.is(ItemTags.SWORDS) || stack.is(ItemTags.PICKAXES) || stack.is(ItemTags.AXES)
+                 || stack.is(ItemTags.SHOVELS) || stack.is(ItemTags.HOES)
+                 || Compatibility.isTinkersWeapon(stack) || stack.getItem() instanceof ItemSpear;
     }
 
     /**
@@ -664,7 +694,82 @@ public final class ItemStackUtils
     @NotNull
     public static ItemStack deserializeFromNBT(@NotNull final CompoundTag compound, @NotNull final HolderLookup.Provider provider)
     {
-        return ItemStack.parseOptional(provider, compound);
+        return parseOptional(provider, compound);
+    }
+
+    /**
+     * Decode an optional item stack from registry-aware NBT.
+     *
+     * @param provider the persistence lookup context.
+     * @param compound previously serialized stack data.
+     * @return the decoded stack, or {@link ItemStack#EMPTY} when the payload is absent or invalid.
+     */
+    @NotNull
+    public static ItemStack parseOptional(@NotNull final HolderLookup.Provider provider, @NotNull final CompoundTag compound)
+    {
+        final DataResult<ItemStack> result =
+            ItemStack.OPTIONAL_CODEC.parse(provider.createSerializationContext(NbtOps.INSTANCE), compound);
+        return result.resultOrPartial(error -> Log.getLogger().warn("Could not decode item stack: {}", error)).orElse(ItemStack.EMPTY);
+    }
+
+    /**
+     * Encode an item stack as an optional registry-aware NBT compound.
+     *
+     * @param stack    the stack to serialize.
+     * @param provider the persistence lookup context.
+     * @return an empty compound for empty stacks, otherwise the encoded stack.
+     */
+    @NotNull
+    public static CompoundTag serializeOptional(@NotNull final ItemStack stack, @NotNull final HolderLookup.Provider provider)
+    {
+        if (stack.isEmpty())
+        {
+            return new CompoundTag();
+        }
+
+        final DataResult<Tag> result =
+            ItemStack.OPTIONAL_CODEC.encodeStart(provider.createSerializationContext(NbtOps.INSTANCE), stack);
+        return result.resultOrPartial(error -> Log.getLogger().warn("Could not encode item stack: {}", error))
+                 .map(tag -> tag instanceof CompoundTag compound ? compound : new CompoundTag())
+                 .orElseGet(CompoundTag::new);
+    }
+
+    /**
+     * Returns the equipment descriptor carried by an item, if any.
+     */
+    @Nullable
+    public static Equippable getEquippable(@NotNull final ItemStack stack)
+    {
+        return stack.get(DataComponents.EQUIPPABLE);
+    }
+
+    /**
+     * Returns whether an item is armor for the supplied slot under MC 26.2's component-based equipment model.
+     */
+    public static boolean isArmorForSlot(@NotNull final ItemStack stack, @NotNull final EquipmentSlot slot)
+    {
+        final Equippable equippable = getEquippable(stack);
+        return equippable != null && equippable.slot() == slot;
+    }
+
+    /**
+     * Creates the crafting remainder for a stack, using MC 26.2's immutable item templates.
+     */
+    @NotNull
+    public static ItemStack getCraftingRemainder(@NotNull final ItemStack stack)
+    {
+        final ItemStackTemplate remainder = stack.getItem().getCraftingRemainder();
+        return remainder == null ? ItemStack.EMPTY : remainder.create();
+    }
+
+    /**
+     * Gets representative stacks for vanilla and NeoForge custom ingredients.
+     */
+    @NotNull
+    public static ItemStack[] getIngredientStacks(@NotNull final Ingredient ingredient)
+    {
+        final Stream<Holder<Item>> holders = ingredient.items();
+        return holders.map(ItemStack::new).toArray(ItemStack[]::new);
     }
 
     /**
@@ -770,7 +875,7 @@ public final class ItemStackUtils
         final Item item;
         try
         {
-            item = BuiltInRegistries.ITEM.get(ResourceLocation.parse(itemId));
+            item = BuiltInRegistries.ITEM.getValue(Identifier.parse(itemId));
         }
         catch (Throwable t)
         {
@@ -811,7 +916,7 @@ public final class ItemStackUtils
      */
     @NotNull
     public static Tuple<Boolean, String> parseIdTemplate(@Nullable String itemId,
-                                                         @NotNull final ResourceLocation baseItemId)
+                                                         @NotNull final Identifier baseItemId)
     {
         if (itemId == null)
         {
@@ -828,7 +933,7 @@ public final class ItemStackUtils
             return baseItemId.getPath();
         });
 
-        return new Tuple<>(BuiltInRegistries.ITEM.containsKey(ResourceLocation.parse(itemId)), itemId);
+        return new Tuple<>(BuiltInRegistries.ITEM.containsKey(Identifier.parse(itemId)), itemId);
     }
 
     /**
@@ -854,7 +959,7 @@ public final class ItemStackUtils
         final Set<ItemStorage> allItems = new HashSet<>(IColonyManager.getInstance().getCompatibilityManager().getSetOfAllItems());
 
         // plus all items from the player's inventory not already listed (adds items with extra NBT)
-        for (final ItemStack stack : player.getInventory().items)
+        for (final ItemStack stack : player.getInventory().getNonEquipmentItems())
         {
             if (stack.isEmpty())
             {
@@ -944,19 +1049,19 @@ public final class ItemStackUtils
     @OnlyIn(Dist.CLIENT)
     public static Component getTranslatedName(@NotNull final SizedIngredient ingredient)
     {
-        if (ingredient.ingredient().hasNoItems())
+        if (ingredient.ingredient().isEmpty())
         {
             return Component.empty();
         }
 
-        final ItemStack[] items = ingredient.getItems();
+        final ItemStack[] items = getIngredientStacks(ingredient.ingredient());
         final Optional<TagKey<Item>> tag = getTagEquivalent(items);
 
         return Component.translatable("%sx %s", ingredient.count(), tag.map(t ->
         {
             final String standardKey = Tags.getTagTranslationKey(t);
             final String localKey = "com.minecolonies.coremod.research.tags." + t.location();
-            return I18n.exists(localKey) && !I18n.exists(standardKey)
+            return Language.getInstance().has(localKey) && !Language.getInstance().has(standardKey)
                     ? (Component) Component.translatable(localKey)
                     : Component.translatable("com.minecolonies.coremod.research.tags.other",
                             Component.translatableWithFallback(Tags.getTagTranslationKey(t), t.location().toString()));
@@ -964,10 +1069,10 @@ public final class ItemStackUtils
         {
             if (items.length == 1)
             {
-                return items[0].getItem().getDescription();
+                return items[0].getItem().getName(ItemStack.EMPTY);
             }
             return Component.translatable(String.join("/", Collections.nCopies(items.length, "%s")),
-                    Arrays.stream(items).map(ItemStack::getItem).map(Item::getDescription).toArray());
+                    Arrays.stream(items).map(ItemStack::getItem).map(item -> item.getName(ItemStack.EMPTY)).toArray());
         }));
     }
 
@@ -988,12 +1093,8 @@ public final class ItemStackUtils
         }
 
         return BuiltInRegistries.ITEM.getTags()
-                .filter(e ->
-                {
-                    HolderSet.Named<Item> tag = e.getSecond();
-                    return areEquivalent(tag, values);
-                })
-                .map(Pair::getFirst)
+                .filter(tag -> areEquivalent(tag, values))
+                .map(HolderSet.Named::key)
                 .findFirst();
     }
 
@@ -1039,9 +1140,8 @@ public final class ItemStackUtils
         }
         catch (final Exception e)
         {
-            Log.getLogger().warn("Could not get attribute value for '{}' on item '{}'", attribute.value().getDescriptionId(), itemStack.getDescriptionId(), e);
+            Log.getLogger().warn("Could not get attribute value for '{}' on item '{}'", attribute.value().getDescriptionId(), itemStack.getItem().getDescriptionId(), e);
             return 0;
         }
     }
 }
-

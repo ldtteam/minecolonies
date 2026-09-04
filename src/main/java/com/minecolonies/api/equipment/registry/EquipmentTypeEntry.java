@@ -3,7 +3,7 @@ package com.minecolonies.api.equipment.registry;
 import com.minecolonies.api.equipment.ModEquipmentTypes;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.function.BiFunction;
@@ -18,7 +18,7 @@ public final class EquipmentTypeEntry
     /**
      * The registry identifier for this equipment type.
      */
-    private final ResourceLocation registryName;
+    private final Identifier registryName;
 
     /**
      * The component for the human-readable name.
@@ -49,7 +49,7 @@ public final class EquipmentTypeEntry
       final Component displayName,
       final BiPredicate<ItemStack, EquipmentTypeEntry> isEquipment,
       final BiFunction<ItemStack, EquipmentTypeEntry, Integer> itemLevel,
-      final ResourceLocation registryName)
+      final Identifier registryName)
     {
         this.displayName = displayName;
         this.isEquipment = isEquipment;
@@ -65,10 +65,10 @@ public final class EquipmentTypeEntry
      * @param serialized the string representation of the equipment type
      * @return the correct resource location
      */
-    public static ResourceLocation parseResourceLocation(final String serialized)
+    public static Identifier parseIdentifier(final String serialized)
     {
-        ResourceLocation result = ResourceLocation.parse(serialized);
-        return parseResourceLocation(result);
+        Identifier result = Identifier.parse(serialized);
+        return parseIdentifier(result);
     }
 
     /**
@@ -79,11 +79,11 @@ public final class EquipmentTypeEntry
      * @param serialized A resource location read from nbt
      * @return the correct resource location
      */
-    public static ResourceLocation parseResourceLocation(final ResourceLocation serialized)
+    public static Identifier parseIdentifier(final Identifier serialized)
     {
         final String namespace = serialized.getNamespace().equals("minecraft") ? Constants.MOD_ID : serialized.getNamespace();
         final String path = serialized.getPath().isEmpty() ? ModEquipmentTypes.none.get().registryName.getPath() : serialized.getPath();
-        return new ResourceLocation(namespace, path);
+        return Identifier.fromNamespaceAndPath(namespace, path);
     }
 
     /**
@@ -91,7 +91,7 @@ public final class EquipmentTypeEntry
      *
      * @return the resource location
      */
-    public ResourceLocation getRegistryName()
+    public Identifier getRegistryName()
     {
         return registryName;
     }
@@ -136,7 +136,7 @@ public final class EquipmentTypeEntry
         /**
          * The registry identifier for this equipment type.
          */
-        private ResourceLocation registryName;
+        private Identifier registryName;
 
         /**
          * The component for the human-readable name.
@@ -161,7 +161,7 @@ public final class EquipmentTypeEntry
          * @param registryName The registry identifier
          * @return this
          */
-        public Builder setRegistryName(final ResourceLocation registryName)
+        public Builder setRegistryName(final Identifier registryName)
         {
             this.registryName = registryName;
             return this;

@@ -1,5 +1,7 @@
 package com.minecolonies.core.entity.ai.workers.guard;
 
+import com.minecolonies.core.entity.ai.combat.ServerDamageHelper;
+
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.compatibility.tinkers.TinkersToolHelper;
 import com.minecolonies.api.entity.ai.combat.CombatAIStates;
@@ -31,7 +33,7 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.network.protocol.game.ClientboundAnimatePacket;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
@@ -45,8 +47,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.AxeItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.SwordItem;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.block.entity.BannerPatternLayers;
 
@@ -70,7 +72,7 @@ public class MeleeCombatAI extends AttackMoveAI<EntityCitizen>
      * Combat icon
      */
     private final static VisibleCitizenStatus KNIGHT_COMBAT =
-      new VisibleCitizenStatus(new ResourceLocation(Constants.MOD_ID, "textures/icons/work/knight_combat.png"), "com.minecolonies.gui.visiblestatus.knight_combat");
+      new VisibleCitizenStatus(Identifier.fromNamespaceAndPath(Constants.MOD_ID, "textures/icons/work/knight_combat.png"), "com.minecolonies.gui.visiblestatus.knight_combat");
 
     /**
      * Knockback chance
@@ -221,12 +223,12 @@ public class MeleeCombatAI extends AttackMoveAI<EntityCitizen>
         if (isHuscarl())
         {
             double share = (50 + user.getCitizenData().getCitizenSkillHandler().getLevel(Skill.Adaptability) / 2.0) / 100.0;
-            target.hurt(target.level().damageSources().source(DamageSourceKeys.PIERCE, user), (float) damageToBeDealt * (float) share);
-            target.hurt(source, (float) damageToBeDealt * (float) (1.0 - share));
+            ServerDamageHelper.apply(target, target.level().damageSources().source(DamageSourceKeys.PIERCE, user), (float) damageToBeDealt * (float) share);
+            ServerDamageHelper.apply(target, source, (float) damageToBeDealt * (float) (1.0 - share));
         }
         else
         {
-            target.hurt(source, (float) damageToBeDealt);
+            ServerDamageHelper.apply(target, source, (float) damageToBeDealt);
         }
 
         target.setLastHurtByMob(user);
@@ -274,8 +276,10 @@ public class MeleeCombatAI extends AttackMoveAI<EntityCitizen>
                     livingentity.knockback(
                       2F,
                       Mth.sin(livingentity.getYRot() * ((float) Math.PI)),
-                      (-Mth.cos(livingentity.getYRot() * ((float) Math.PI))));
-                    livingentity.hurt(source, (float) (damageToBeDealt / entities.size()));
+                      (-Mth.cos(livingentity.getYRot() * ((float) Math.PI))),
+                      source,
+                      (float) damageToBeDealt);
+                    ServerDamageHelper.apply(livingentity, source, (float) (damageToBeDealt / entities.size()));
                 }
             }
 
@@ -320,7 +324,7 @@ public class MeleeCombatAI extends AttackMoveAI<EntityCitizen>
 
         if (ItemStackUtils.doesItemServeAsWeapon(heldItem))
         {
-            if (heldItem.getItem() instanceof SwordItem)
+            if (heldItem.is(ItemTags.SWORDS))
             {
                 addDmg += user.getAttribute(Attributes.ATTACK_DAMAGE).getValue();
             }
@@ -350,7 +354,8 @@ public class MeleeCombatAI extends AttackMoveAI<EntityCitizen>
         if (ColonyConstants.rand.nextDouble() > 1 / (1 + user.getCitizenColonyHandler().getColonyOrRegister().getResearchManager().getResearchEffects().getEffectStrength(GUARD_CRIT)))
         {
             addDmg *= 1.5;
-            ((ServerLevel) user.level()).getChunkSource().broadcastAndSend(user, new ClientboundAnimatePacket(target, 4));
+            final ServerLevel serverLevel = (ServerLevel) user.level();
+        serverLevel.getServer().getPlayerList().broadcast(null, target.getX(), target.getY(), target.getZ(), 64.0D, serverLevel.dimension(), new ClientboundAnimatePacket(target, 4));
         }
 
         return addDmg * MineColonies.getConfig().getServer().guardDamageMultiplier.get();

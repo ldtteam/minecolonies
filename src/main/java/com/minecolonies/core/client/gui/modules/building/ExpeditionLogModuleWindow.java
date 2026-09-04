@@ -3,7 +3,7 @@ package com.minecolonies.core.client.gui.modules.building;
 import com.ldtteam.blockui.controls.*;
 import com.ldtteam.blockui.views.View;
 import com.minecolonies.api.crafting.ItemStorage;
-import com.minecolonies.api.util.Tuple;
+import com.ldtteam.structurize.api.util.Tuple;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.core.client.gui.AbstractModuleWindow;
@@ -11,8 +11,13 @@ import com.minecolonies.core.client.gui.citizen.CitizenWindowUtils;
 import com.minecolonies.core.colony.buildings.modules.expedition.ExpeditionLog;
 import com.minecolonies.core.colony.buildings.moduleviews.ExpeditionLogModuleView;
 import com.minecolonies.core.network.messages.server.colony.building.MarkBuildingDirtyMessage;
+import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
+import net.minecraft.client.renderer.entity.EntityRenderer;
+import net.minecraft.client.renderer.entity.state.EntityRenderState;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -35,7 +40,7 @@ public class ExpeditionLogModuleWindow extends AbstractModuleWindow<ExpeditionLo
 
     public ExpeditionLogModuleWindow(@NotNull final ExpeditionLogModuleView module)
     {
-        super(module, new ResourceLocation(Constants.MOD_ID, "gui/layouthuts/layoutexpeditionlog.xml"));
+        super(module, Identifier.fromNamespaceAndPath(Constants.MOD_ID, "gui/layouthuts/layoutexpeditionlog.xml"));
     }
 
     @Override
@@ -148,7 +153,7 @@ public class ExpeditionLogModuleWindow extends AbstractModuleWindow<ExpeditionLo
                 child = new EntityIcon();
                 mobsView.addChild(child);
             }
-            child.setEntity(mobs.get(i).getA());
+            setEntityIcon(child, mobs.get(i).getA());
             child.setCount(mobs.get(i).getB());
             child.setSize(MOB_SIZE, MOB_SIZE);
             child.setPosition(MOB_SIZE * i + marginLeft, marginTop);
@@ -197,5 +202,15 @@ public class ExpeditionLogModuleWindow extends AbstractModuleWindow<ExpeditionLo
             child.setPosition(LOOT_GRID * column + marginLeft + 1, LOOT_GRID * row + marginTop + 1);
         }
         clearChildren(lootView, size);
+    }
+
+    private static <T extends Entity> void setEntityIcon(final EntityIcon icon, final EntityType<T> entityType)
+    {
+        final EntityRenderState template = new EntityRenderState();
+        template.entityType = entityType;
+        final EntityRenderer<?, ?> renderer = Minecraft.getInstance().getEntityRenderDispatcher().getRenderer(template);
+        @SuppressWarnings("unchecked") final EntityRenderer<Entity, EntityRenderState> typedRenderer =
+            (EntityRenderer<Entity, EntityRenderState>) renderer;
+        icon.setEntityState(new EntityIcon.StaticState<>(typedRenderer.createRenderState()));
     }
 }

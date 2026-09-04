@@ -4,38 +4,137 @@ import com.google.common.collect.Lists;
 import com.minecolonies.api.crafting.registry.ModRecipeSerializer;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.advancements.*;
-import net.minecraft.advancements.critereon.RecipeUnlockedTrigger;
+import net.minecraft.advancements.triggers.Criterion;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.data.recipes.RecipeBuilder;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeOutput;
+import net.minecraft.data.recipes.RecipeUnlockAdvancementBuilder;
 import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.*;
+import net.minecraft.world.item.ItemStackTemplate;
+import net.minecraft.world.item.crafting.CraftingRecipe;
+import net.minecraft.world.item.crafting.CraftingBookCategory;
+import net.minecraft.world.item.crafting.CraftingInput;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.NormalCraftingRecipe;
+import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.PlacementInfo;
+import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.ItemLike;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.Collections;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * A shapeless recipe that discards any remaining items.  Mainly intended for mixing things into bottles or bowls
  * without leaving extra empties behind, but can be used for other things too.
  */
-public class ZeroWasteRecipe extends ShapelessRecipe
+public class ZeroWasteRecipe extends NormalCraftingRecipe
 {
-    public ZeroWasteRecipe(@NotNull final ItemStack output,
-                           @NotNull final NonNullList<Ingredient> inputs)
+    public static final MapCodec<ZeroWasteRecipe> CODEC = RecordCodecBuilder.mapCodec(builder -> builder.group(
+        Recipe.CommonInfo.MAP_CODEC.forGetter(recipe -> recipe.commonInfo),
+        CraftingRecipe.CraftingBookInfo.MAP_CODEC.forGetter(recipe -> recipe.bookInfo),
+        ItemStackTemplate.CODEC.fieldOf("result").forGetter(recipe -> recipe.result),
+        Ingredient.CODEC.listOf(1, 9).fieldOf("ingredients").forGetter(recipe -> recipe.ingredients)
+    ).apply(builder, ZeroWasteRecipe::new));
+
+    public static final StreamCodec<RegistryFriendlyByteBuf, ZeroWasteRecipe> STREAM_CODEC = StreamCodec.composite(
+        Recipe.CommonInfo.STREAM_CODEC,
+        recipe -> recipe.commonInfo,
+        CraftingRecipe.CraftingBookInfo.STREAM_CODEC,
+        recipe -> recipe.bookInfo,
+        ItemStackTemplate.STREAM_CODEC,
+        recipe -> recipe.result,
+        Ingredient.CONTENTS_STREAM_CODEC.apply(ByteBufCodecs.list()),
+        recipe -> recipe.ingredients,
+        ZeroWasteRecipe::new
+    );
+
+    private final ItemStackTemplate result;
+    private final List<Ingredient> ingredients;
+    private final boolean simple;
+
+    public ZeroWasteRecipe(@NotNull final ItemStack output, @NotNull final NonNullList<Ingredient> inputs)
     {
-        super("", CraftingBookCategory.MISC, output, inputs);
+        this(
+            new Recipe.CommonInfo(true),
+            new CraftingRecipe.CraftingBookInfo(CraftingBookCategory.MISC, ""),
+            ItemStackTemplate.fromNonEmptyStack(output),
+            List.copyOf(inputs)
+        );
+    }
+
+    public ZeroWasteRecipe(
+        @NotNull final Recipe.CommonInfo commonInfo,
+        @NotNull final CraftingRecipe.CraftingBookInfo bookInfo,
+        @NotNull final ItemStackTemplate result,
+        @NotNull final List<Ingredient> inputs)
+    {
+        super(commonInfo, bookInfo);
+        this.result = result;
+        this.ingredients = inputs;
+        this.simple = this.ingredients.stream().allMatch(Ingredient::isSimple);
+    }
+
+    @Override
+    public boolean matches(@NotNull final CraftingInput input, @NotNull final net.minecraft.world.level.Level level)
+    {
+        if (input.ingredientCount() != this.ingredients.size())
+        {
+            return false;
+        }
+
+        if (!this.simple)
+        {
+            final List<ItemStack> nonEmptyItems = new ArrayList<>(input.ingredientCount());
+            for (final ItemStack stack : input.items())
+            {
+                if (!stack.isEmpty())
+                {
+                    nonEmptyItems.add(stack);
+                }
+            }
+            return net.neoforged.neoforge.common.util.RecipeMatcher.findMatches(nonEmptyItems, this.ingredients) != null;
+        }
+
+        return input.size() == 1 && this.ingredients.size() == 1
+            ? this.ingredients.getFirst().test(input.getItem(0))
+            : input.stackedContents().canCraft(this, null);
+    }
+
+    @Override
+    public ItemStack assemble(@NotNull final CraftingInput input)
+    {
+        return this.result.create();
+    }
+
+    @Override
+    protected PlacementInfo createPlacementInfo()
+    {
+        return PlacementInfo.create(this.ingredients);
+    }
+
+    @NotNull
+    @Override
+    public List<net.minecraft.world.item.crafting.display.RecipeDisplay> display()
+    {
+        return List.of(new net.minecraft.world.item.crafting.display.ShapelessCraftingRecipeDisplay(
+            this.ingredients.stream().map(Ingredient::display).toList(),
+            new net.minecraft.world.item.crafting.display.SlotDisplay.ItemStackSlotDisplay(this.result),
+            new net.minecraft.world.item.crafting.display.SlotDisplay.ItemSlotDisplay(net.minecraft.world.item.Items.CRAFTING_TABLE)
+        ));
     }
 
     @NotNull
@@ -49,70 +148,23 @@ public class ZeroWasteRecipe extends ShapelessRecipe
 
     @NotNull
     @Override
-    public RecipeSerializer<?> getSerializer()
+    public RecipeSerializer<? extends NormalCraftingRecipe> getSerializer()
     {
         return ModRecipeSerializer.ZeroWasteRecipeSerializer.get();
     }
 
-    public static class Serializer implements RecipeSerializer<ZeroWasteRecipe>
+    @NotNull
+    public List<Ingredient> ingredients()
     {
-        private static final MapCodec<ZeroWasteRecipe> CODEC = RecordCodecBuilder.mapCodec(
-                builder -> builder.group(
-                        ItemStack.STRICT_CODEC.fieldOf("result").forGetter(r -> r.getResultItem(null)),
-                        NonNullList.codecOf(Ingredient.CODEC_NONEMPTY)
-                                .fieldOf("ingredients")
-                                .forGetter(ShapelessRecipe::getIngredients)
-                ).apply(builder, ZeroWasteRecipe::new)
-        );
-        private static final StreamCodec<RegistryFriendlyByteBuf, ZeroWasteRecipe> STREAM_CODEC = StreamCodec.of(
-                Serializer::toNetwork, Serializer::fromNetwork
-        );
-
-        @NotNull
-        @Override
-        public MapCodec<ZeroWasteRecipe> codec()
-        {
-            return CODEC;
-        }
-
-        @NotNull
-        @Override
-        public StreamCodec<RegistryFriendlyByteBuf, ZeroWasteRecipe> streamCodec()
-        {
-            return STREAM_CODEC;
-        }
-
-        private static ZeroWasteRecipe fromNetwork(@NotNull final RegistryFriendlyByteBuf buf)
-        {
-            final int count = buf.readVarInt();
-            final NonNullList<Ingredient> inputs = NonNullList.withSize(count, Ingredient.EMPTY);
-            inputs.replaceAll(ingredient -> Ingredient.CONTENTS_STREAM_CODEC.decode(buf));
-            final ItemStack output = ItemStack.STREAM_CODEC.decode(buf);
-
-            return new ZeroWasteRecipe(output, inputs);
-        }
-
-        private static void toNetwork(@NotNull final RegistryFriendlyByteBuf buf,
-                                      @NotNull final ZeroWasteRecipe recipe)
-        {
-            buf.writeVarInt(recipe.getIngredients().size());
-            for (final Ingredient input : recipe.getIngredients())
-            {
-                Ingredient.CONTENTS_STREAM_CODEC.encode(buf, input);
-            }
-            ItemStack.STREAM_CODEC.encode(buf, recipe.getResultItem(null));
-        }
+        return this.ingredients;
     }
 
-    public static Builder build(@NotNull final RecipeCategory category,
-                                @NotNull final ItemLike output,
-                                final int count)
+    public static Builder build(@NotNull final RecipeCategory category, @NotNull final ItemLike output, final int count)
     {
-        return new Builder(category, new ItemStack(output, count));
+        return new Builder(category, new ItemStackTemplate(output.asItem(), count));
     }
 
-    public static Builder build(@NotNull final RecipeCategory category,
-                                @NotNull final ItemStack output)
+    public static Builder build(@NotNull final RecipeCategory category, @NotNull final ItemStack output)
     {
         return new Builder(category, output);
     }
@@ -120,12 +172,16 @@ public class ZeroWasteRecipe extends ShapelessRecipe
     public static class Builder implements RecipeBuilder
     {
         private final RecipeCategory category;
-        private final ItemStack output;
+        private final ItemStackTemplate output;
         private final List<Ingredient> ingredients = Lists.newArrayList();
-        private final Map<String, Criterion<?>> criteria = new LinkedHashMap<>();
+        private final RecipeUnlockAdvancementBuilder advancementBuilder = new RecipeUnlockAdvancementBuilder();
 
-        public Builder(@NotNull final RecipeCategory category,
-                       @NotNull final ItemStack output)
+        public Builder(@NotNull final RecipeCategory category, @NotNull final ItemStack output)
+        {
+            this(category, ItemStackTemplate.fromNonEmptyStack(output));
+        }
+
+        private Builder(@NotNull final RecipeCategory category, @NotNull final ItemStackTemplate output)
         {
             this.category = category;
             this.output = output;
@@ -133,7 +189,7 @@ public class ZeroWasteRecipe extends ShapelessRecipe
 
         public Builder requires(@NotNull final TagKey<Item> tag)
         {
-            return this.requires(Ingredient.of(tag));
+            return this.requires(Ingredient.of(BuiltInRegistries.ITEM.getOrThrow(tag)));
         }
 
         public Builder requires(@NotNull final ItemLike item)
@@ -167,46 +223,45 @@ public class ZeroWasteRecipe extends ShapelessRecipe
         @NotNull
         public Builder unlockedBy(@NotNull final String name, @NotNull final Criterion<?> criterion)
         {
-            this.criteria.put(name, criterion);
+            this.advancementBuilder.unlockedBy(name, criterion);
             return this;
         }
 
         @NotNull
         public Item getResult()
         {
-            return this.output.getItem();
+            return this.output.item().value();
         }
 
         @NotNull
         @Override
-        public RecipeBuilder group(@Nullable String group)
+        public RecipeBuilder group(final String group)
         {
             return this;
         }
 
-        public void save(@NotNull final RecipeOutput consumer, @NotNull final ResourceLocation id)
+        @NotNull
+        @Override
+        public ResourceKey<Recipe<?>> defaultId()
         {
-            this.ensureValid(id);
-
-            final ZeroWasteRecipe recipe = new ZeroWasteRecipe(this.output, NonNullList.copyOf(this.ingredients));
-
-            final Advancement.Builder advancementBuilder = consumer.advancement();
-            advancementBuilder
-                    .addCriterion("has_the_recipe", RecipeUnlockedTrigger.unlocked(id))
-                    .rewards(AdvancementRewards.Builder.recipe(id))
-                    .requirements(AdvancementRequirements.Strategy.OR);
-            this.criteria.forEach(advancementBuilder::addCriterion);
-            final AdvancementHolder advancement = advancementBuilder.build(id.withPrefix("recipes/" + this.category.getFolderName() + "/"));
-
-            consumer.accept(id, recipe, advancement);
+            return RecipeBuilder.getDefaultRecipeId(this.output);
         }
 
-        private void ensureValid(@NotNull final ResourceLocation id)
+        @Override
+        public void save(@NotNull final RecipeOutput consumer, @NotNull final ResourceKey<Recipe<?>> id)
         {
-            if (this.criteria.isEmpty())
-            {
-                throw new IllegalStateException("No way of obtaining recipe " + id);
-            }
+            final ZeroWasteRecipe recipe = new ZeroWasteRecipe(
+                RecipeBuilder.createCraftingCommonInfo(true),
+                RecipeBuilder.createCraftingBookInfo(this.category, null),
+                this.output,
+                List.copyOf(this.ingredients)
+            );
+            consumer.accept(id, recipe, this.advancementBuilder.build(consumer, id, this.category));
+        }
+
+        public void save(@NotNull final RecipeOutput consumer, @NotNull final Identifier id)
+        {
+            this.save(consumer, ResourceKey.create(Registries.RECIPE, id));
         }
     }
 }

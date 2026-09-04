@@ -3,7 +3,7 @@
   "costs": [
     {
       "count": 128,
-      "item": "minecraft:redstone"
+      "ingredient": "minecraft:redstone"
     }
   ],
   "effects": [

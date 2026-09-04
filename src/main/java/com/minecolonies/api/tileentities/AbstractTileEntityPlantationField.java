@@ -1,7 +1,7 @@
 package com.minecolonies.api.tileentities;
 
-import com.ldtteam.structurize.api.IRotatableBlockEntity;
-import com.ldtteam.structurize.api.RotationMirror;
+import com.ldtteam.structurize.api.util.IRotatableBlockEntity;
+import com.ldtteam.structurize.util.RotationMirror;
 import com.ldtteam.structurize.blockentities.interfaces.IBlueprintDataProviderBE;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildingextensions.registry.BuildingExtensionRegistries.BuildingExtensionEntry;

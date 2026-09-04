@@ -7,7 +7,7 @@ import com.minecolonies.api.util.Log;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.client.IItemDecorator;
@@ -19,7 +19,7 @@ public class ColonyMapDecorator implements IItemDecorator
     private        long        lastChange;
 
     @Override
-    public boolean render(GuiGraphics graphics, Font font, ItemStack stack, int xOffset, int yOffset)
+    public boolean render(GuiGraphicsExtractor graphics, Font font, ItemStack stack, int xOffset, int yOffset)
     {
         final long gametime = Minecraft.getInstance().level.getGameTime();
 
@@ -47,15 +47,11 @@ public class ColonyMapDecorator implements IItemDecorator
 
                     if (count > 0)
                     {
-                        final PoseStack ps = graphics.pose();
-                        ps.pushPose();
-                        ps.translate(0, 0, 500);
-                        graphics.drawCenteredString(font,
+                        graphics.centeredText(font,
                             Component.literal(count + ""),
                             xOffset + 15,
                             yOffset - 2,
                             0xFF4500 | (255 << 24));
-                        ps.popPose();
                         return true;
                     }
                 }

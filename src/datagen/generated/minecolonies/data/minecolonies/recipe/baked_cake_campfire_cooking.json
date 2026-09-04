@@ -3,11 +3,8 @@
   "category": "food",
   "cookingtime": 600,
   "experience": 0.35,
-  "ingredient": {
-    "item": "minecolonies:cake_batter"
-  },
+  "ingredient": "minecolonies:cake_batter",
   "result": {
-    "count": 1,
     "id": "minecraft:cake"
   }
 }

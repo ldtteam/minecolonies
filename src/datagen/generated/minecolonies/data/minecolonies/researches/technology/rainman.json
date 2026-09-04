@@ -3,7 +3,7 @@
   "costs": [
     {
       "count": 27,
-      "item": "minecraft:salmon_bucket"
+      "ingredient": "minecraft:salmon_bucket"
     }
   ],
   "effects": [

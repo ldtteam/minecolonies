@@ -11,7 +11,7 @@ import com.minecolonies.api.colony.buildings.modules.IPersistentModule;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.core.tileentities.TileEntityGrave;
 import com.minecolonies.core.tileentities.TileEntityNamedGrave;
-import com.minecolonies.api.util.Tuple;
+import com.ldtteam.structurize.api.util.Tuple;
 import com.minecolonies.api.util.WorldUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -63,10 +63,10 @@ public class GraveyardManagementModule extends AbstractBuildingModule implements
         restingCitizen.clear();
         if (compound.contains(TAG_RIP_CITIZEN_LIST))
         {
-            final ListTag ripCitizen = compound.getList(TAG_RIP_CITIZEN_LIST, TAG_STRING);
+            final ListTag ripCitizen = compound.getListOrEmpty(TAG_RIP_CITIZEN_LIST);
             for (int i = 0; i < ripCitizen.size(); i++)
             {
-                final String citizenName = ripCitizen.getString(i);
+                final String citizenName = ripCitizen.getStringOr(i, "");
                 restingCitizen.add(citizenName);
             }
         }
@@ -74,7 +74,7 @@ public class GraveyardManagementModule extends AbstractBuildingModule implements
         if (compound.contains(TAG_GRAVE_DATA))
         {
             lastGraveData = new GraveData();
-            lastGraveData.read(compound.getCompound(TAG_GRAVE_DATA));
+            lastGraveData.read(compound.getCompoundOrEmpty(TAG_GRAVE_DATA));
         }
         else lastGraveData = null;
     }

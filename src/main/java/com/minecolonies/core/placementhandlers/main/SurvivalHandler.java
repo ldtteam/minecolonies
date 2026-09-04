@@ -1,6 +1,6 @@
 package com.minecolonies.core.placementhandlers.main;
 
-import com.ldtteam.structurize.api.RotationMirror;
+import com.ldtteam.structurize.util.PlacementSettings;
 import com.ldtteam.structurize.blocks.interfaces.ILeveledBlueprintAnchorBlock;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.storage.ISurvivalBlueprintHandler;
@@ -64,7 +64,7 @@ public class SurvivalHandler implements ISurvivalBlueprintHandler
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    public boolean canHandle(final Blueprint blueprint, final ClientLevel clientLevel, final Player player, final BlockPos blockPos, final RotationMirror rotMir)
+    public boolean canHandle(final Blueprint blueprint, final ClientLevel clientLevel, final Player player, final BlockPos blockPos, final PlacementSettings placementSettings)
     {
         if (IMinecoloniesAPI.getInstance().getConfig().getServer().blueprintBuildMode.get())
         {
@@ -84,7 +84,7 @@ public class SurvivalHandler implements ISurvivalBlueprintHandler
       final Level world,
       final Player player,
       final BlockPos blockPos,
-      final RotationMirror rotMir)
+      final PlacementSettings placementSettings)
     {
         if (blueprint == null)
         {
@@ -94,7 +94,7 @@ public class SurvivalHandler implements ISurvivalBlueprintHandler
             return;
         }
 
-        blueprint.setRotationMirror(rotMir, world);
+        blueprint.setRotationMirror(placementSettings.getRotationMirror(), world);
         final BlockState anchor = blueprint.getBlockState(blueprint.getPrimaryBlockOffset());
 
         final IColony tempColony = IColonyManager.getInstance().getClosestColony(world, blockPos);
@@ -130,7 +130,7 @@ public class SurvivalHandler implements ISurvivalBlueprintHandler
 
         if (anchor.is(ModBlocks.blockPlantationField))
         {
-            new OpenPlantationFieldBuildWindowMessage(blockPos, packName, blueprintPath, rotMir).sendToPlayer((ServerPlayer) player);
+            new OpenPlantationFieldBuildWindowMessage(blockPos, packName, blueprintPath, placementSettings.getRotationMirror()).sendToPlayer((ServerPlayer) player);
         }
         if (anchor.getBlock() instanceof AbstractBlockHut<?> anchorBlock)
         {
@@ -168,7 +168,7 @@ public class SurvivalHandler implements ISurvivalBlueprintHandler
                   anchor,
                   player,
                   null,
-                  rotMir,
+                  placementSettings.getRotationMirror(),
                   packName,
                   blueprintPath);
                 try
@@ -205,8 +205,8 @@ public class SurvivalHandler implements ISurvivalBlueprintHandler
                         String newBlueprintPath = blueprintPath;
                         newBlueprintPath = newBlueprintPath.substring(0, newBlueprintPath.length() - 1);
                         newBlueprintPath += level;
-                        CreativeBuildingStructureHandler.loadAndPlaceStructureWithRotation(player.level(), StructurePacks.getBlueprintFuture(packName, newBlueprintPath, world.registryAccess()),
-                          blockPos, rotMir, true, (ServerPlayer) player);
+                        CreativeBuildingStructureHandler.loadAndPlaceStructureWithRotation(player.level(), StructurePacks.getBlueprintFuture(packName, newBlueprintPath),
+                          blockPos, placementSettings.getRotationMirror(), true, (ServerPlayer) player);
                         finishedUpgrade = true;
                     }
                 }
@@ -252,7 +252,7 @@ public class SurvivalHandler implements ISurvivalBlueprintHandler
                         ConstructionTapeHelper.placeConstructionTape(building.getCorners(), building.getColony());
                     }
 
-                    building.setRotationMirror(rotMir);
+                    building.setRotationMirror(placementSettings.getRotationMirror());
 
                     if (finishedUpgrade)
                     {
@@ -269,16 +269,16 @@ public class SurvivalHandler implements ISurvivalBlueprintHandler
                 int level = Utils.getBlueprintLevel(blueprint.getFileName());
                 if (level == -1)
                 {
-                    new OpenDecoBuildWindowMessage(blockPos, packName, blueprintPath, rotMir).sendToPlayer((ServerPlayer) player);
+                    new OpenDecoBuildWindowMessage(blockPos, packName, blueprintPath, placementSettings.getRotationMirror()).sendToPlayer((ServerPlayer) player);
                 }
                 else
                 {
-                    new OpenDecoBuildWindowMessage(blockPos, packName, blueprintPath.replace(level + ".blueprint", "1.blueprint"), rotMir).sendToPlayer((ServerPlayer) player);
+                    new OpenDecoBuildWindowMessage(blockPos, packName, blueprintPath.replace(level + ".blueprint", "1.blueprint"), placementSettings.getRotationMirror()).sendToPlayer((ServerPlayer) player);
                 }
             }
             else
             {
-                new OpenDecoBuildWindowMessage(blockPos, packName, blueprintPath, rotMir).sendToPlayer((ServerPlayer) player);
+                new OpenDecoBuildWindowMessage(blockPos, packName, blueprintPath, placementSettings.getRotationMirror()).sendToPlayer((ServerPlayer) player);
             }
         }
 
@@ -314,7 +314,7 @@ public class SurvivalHandler implements ISurvivalBlueprintHandler
                 final int chunkZ = z >> 4;
                 final ChunkPos pos = new ChunkPos(chunkX, chunkZ);
 
-                if (ColonyUtils.getOwningColony(world.getChunk(pos.x, pos.z)) != colony.getID())
+                if (ColonyUtils.getOwningColony(world.getChunk(pos.x(), pos.z())) != colony.getID())
                 {
                     return false;
                 }

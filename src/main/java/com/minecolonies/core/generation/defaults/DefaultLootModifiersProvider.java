@@ -57,20 +57,20 @@ public class DefaultLootModifiersProvider extends GlobalLootModifierProvider
         {
             for (final Block source : crop.getDroppedFrom())
             {
-                cropSources.add(source.getLootTable());
+                source.getLootTable().ifPresent(cropSources::add);
             }
         }
 
         for (final ResourceKey<LootTable> source : cropSources)
         {
-            final ResourceKey<LootTable> cropTable = DefaultCropsLootProvider.getCropSourceLootTable(source.location());
-            add(cropTable.location().getPath(),
-                    new AddTableLootModifier(new LootItemCondition[] { forLootTable(source).build() }, cropTable),
+            final ResourceKey<LootTable> cropTable = DefaultCropsLootProvider.getCropSourceLootTable(source.identifier());
+            add(cropTable.identifier().getPath(),
+                    new AddTableLootModifier(new LootItemCondition[] { forLootTable(source).build() }, 0, cropTable),
                     new ModLoadedCondition(MOD_ID));
         }
 
-        add(DUNGEON_CROPS.location().getPath(),
-                new AddTableLootModifier(new LootItemCondition[] { forLootTable(BuiltInLootTables.SIMPLE_DUNGEON).build() }, DUNGEON_CROPS));
+        add(DUNGEON_CROPS.identifier().getPath(),
+                new AddTableLootModifier(new LootItemCondition[] { forLootTable(BuiltInLootTables.SIMPLE_DUNGEON).build() }, 0, DUNGEON_CROPS));
     }
 
     /**
@@ -112,23 +112,21 @@ public class DefaultLootModifiersProvider extends GlobalLootModifierProvider
         );
 
         add("supplycamp_loot",
-                new AddTableLootModifier(new LootItemCondition[] { GenerateSupplyLoot.when().build(), forLootTables(campTables).build() },
-                ResourceKey.create(Registries.LOOT_TABLE, SUPPLY_CAMP_LT)));
+                new AddTableLootModifier(new LootItemCondition[] { GenerateSupplyLoot.when().build(), forLootTables(campTables).build() }, 0, ResourceKey.create(Registries.LOOT_TABLE, SUPPLY_CAMP_LT)));
 
         add("supplyship_loot",
-                new AddTableLootModifier(new LootItemCondition[] { GenerateSupplyLoot.when().build(), forLootTables(shipTables).build() },
-                ResourceKey.create(Registries.LOOT_TABLE, SUPPLY_SHIP_LT)));
+                new AddTableLootModifier(new LootItemCondition[] { GenerateSupplyLoot.when().build(), forLootTables(shipTables).build() }, 0, ResourceKey.create(Registries.LOOT_TABLE, SUPPLY_SHIP_LT)));
     }
 
     private static LootItemCondition.Builder forLootTable(@NotNull final ResourceKey<LootTable> table)
     {
-        return LootTableIdCondition.builder(table.location());
+        return LootTableIdCondition.builder(table.identifier());
     }
 
     private static LootItemCondition.Builder forLootTables(@NotNull final Collection<ResourceKey<LootTable>> tables)
     {
         return AnyOfCondition.anyOf(tables.stream()
-                .map(t -> LootTableIdCondition.builder(t.location()))
+                .map(t -> LootTableIdCondition.builder(t.identifier()))
                 .toArray(LootItemCondition.Builder[]::new));
     }
 }

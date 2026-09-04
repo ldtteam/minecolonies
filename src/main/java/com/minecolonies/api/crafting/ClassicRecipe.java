@@ -2,7 +2,7 @@ package com.minecolonies.api.crafting;
 
 import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.util.ItemStackUtils;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.ArrayList;
@@ -41,7 +41,7 @@ public class ClassicRecipe extends AbstractRecipeType<IRecipeStorage>
     }
 
     @Override
-    public ResourceLocation getId()
+    public Identifier getId()
     {
         return ModRecipeTypes.CLASSIC_ID;
     }

@@ -1,10 +1,7 @@
 {
   "type": "minecraft:crafting_shaped",
-  "category": "misc",
   "key": {
-    "M": {
-      "item": "minecolonies:large_soy_milk_bottle"
-    }
+    "M": "minecolonies:large_soy_milk_bottle"
   },
   "pattern": [
     "MMM",

@@ -1,16 +1,18 @@
 package com.minecolonies.core.entity.other;
 
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.projectile.Arrow;
+import net.minecraft.world.entity.projectile.arrow.Arrow;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.level.Level;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Predicate;
@@ -45,6 +47,11 @@ public class CustomArrowEntity extends Arrow
      */
     private Predicate<EntityHitResult> onHitCallback = null;
 
+    /**
+     * Mirrors the base-class damage whenever this entity changes it.
+     */
+    private double trackedBaseDamage = 2.0D;
+
     public CustomArrowEntity(final EntityType<? extends Arrow> type, final Level world)
     {
         super(type, world);
@@ -75,7 +82,7 @@ public class CustomArrowEntity extends Arrow
     @Override
     protected void onHitEntity(EntityHitResult traceResult)
     {
-        final double prevDamage = getBaseDamage();
+        final double prevDamage = this.trackedBaseDamage;
 
         // Reduce damage by motion before vanilla increases it by the same factor, so our damage stays.
         float f = (float) this.getDeltaMovement().length();
@@ -99,7 +106,10 @@ public class CustomArrowEntity extends Arrow
                 {
                     source = level().damageSources().arrow(this, shooter);
                 }
-                player.hurt(source, (float) getBaseDamage());
+                if (player.level() instanceof ServerLevel serverLevel)
+                {
+                    player.hurtServer(serverLevel, source, (float) this.trackedBaseDamage);
+                }
                 setBaseDamage(0);
             }
         }
@@ -132,31 +142,26 @@ public class CustomArrowEntity extends Arrow
         armorPiercePlayer = true;
     }
 
-    @Override
-    public boolean shouldFall()
+    public double getTrackedBaseDamage()
     {
-        if (this.inGround)
-        {
-            final AABB aabb = (new AABB(this.position(), this.position())).inflate(0.06D);
-            for(VoxelShape voxelshape : this.level().getBlockCollisions(null, aabb)) {
-                if (!voxelshape.isEmpty())
-                {
-                    return false;
-                }
-            }
-            return true;
-        }
-        return false;
+        return trackedBaseDamage;
     }
 
     @Override
-    public boolean save(@NotNull CompoundTag nbt)
+    public void setBaseDamage(final double baseDamage)
+    {
+        super.setBaseDamage(baseDamage);
+        this.trackedBaseDamage = baseDamage;
+    }
+
+    @Override
+    public boolean save(@NotNull ValueOutput output)
     {
         return false;
     }
 
     @Override
-    public void load(@NotNull CompoundTag nbt)
+    public void load(@NotNull ValueInput input)
     {
         discard();
     }

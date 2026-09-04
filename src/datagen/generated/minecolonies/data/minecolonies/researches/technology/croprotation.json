@@ -3,11 +3,11 @@
   "costs": [
     {
       "count": 32,
-      "item": "minecraft:sugar_cane"
+      "ingredient": "minecraft:sugar_cane"
     },
     {
       "count": 32,
-      "item": "minecraft:cactus"
+      "ingredient": "minecraft:cactus"
     }
   ],
   "effects": [

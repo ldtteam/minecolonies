@@ -12,11 +12,12 @@ import com.minecolonies.core.datalistener.QuestJsonListener;
 import com.minecolonies.core.network.messages.client.UpdateClientWithCompatibilityMessage;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.client.Minecraft;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.neoforge.client.event.RecipesUpdatedEvent;
+import net.neoforged.neoforge.client.event.RecipesReceivedEvent;
 import net.neoforged.neoforge.event.OnDatapackSyncEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import org.jetbrains.annotations.NotNull;
@@ -57,7 +58,7 @@ public class DataPackSyncEventHandler
         private static void discoverCompatLists(@NotNull final MinecraftServer server)
         {
             Log.getLogger().warn("Starting Compat Discovery");
-            IMinecoloniesAPI.getInstance().getColonyManager().getCompatibilityManager().getFurnaceRecipes().loadRecipes(server.getRecipeManager(), server.overworld());
+            IMinecoloniesAPI.getInstance().getColonyManager().getCompatibilityManager().getFurnaceRecipes().loadRecipes(server.getRecipeManager().getRecipes(), server.overworld());
             IMinecoloniesAPI.getInstance().getColonyManager().getCompatibilityManager().discover(server.getRecipeManager(), server.overworld());
             CustomRecipeManager.getInstance().resolveTemplates(server.registryAccess());
             CustomRecipeManager.getInstance().buildLootData(server.overworld());
@@ -132,9 +133,9 @@ public class DataPackSyncEventHandler
         @SubscribeEvent(priority = EventPriority.LOWEST)
         public static void sendOnLogin(final PlayerEvent.PlayerLoggedInEvent event)
         {
-            if (!event.getEntity().level().isClientSide && event.getEntity() instanceof ServerPlayer)
+            if (!event.getEntity().level().isClientSide() && event.getEntity() instanceof ServerPlayer)
             {
-                final MinecraftServer server = event.getEntity().getServer();
+                final MinecraftServer server = event.getEntity().level().getServer();
                 sendPackets((ServerPlayer) event.getEntity(), new UpdateClientWithCompatibilityMessage(server.registryAccess()));
             }
         }
@@ -170,12 +171,21 @@ public class DataPackSyncEventHandler
         /**
          * Fired when the recipes are synched to client.  This happens after the {@link OnDatapackSyncEvent}.
          *
-         * @param event {@link RecipesUpdatedEvent}
+         * @param event {@link RecipesReceivedEvent}
          */
         @SubscribeEvent
-        public static void onRecipesLoaded(@NotNull final RecipesUpdatedEvent event)
+        public static void onRecipesLoaded(@NotNull final RecipesReceivedEvent event)
         {
-            IColonyManager.getInstance().getCompatibilityManager().getFurnaceRecipes().loadRecipes(event.getRecipeManager(), Minecraft.getInstance().level);
+            IColonyManager.getInstance().getCompatibilityManager().getFurnaceRecipes().loadRecipes(event.getRecipeMap().values(), Minecraft.getInstance().level);
+        }
+
+        /**
+         * Applies compatibility data received from the server. Called only on the client, after the
+         * client world has received the synced registries and recipes.
+         */
+        public static void onCompatibilityMessage(@NotNull final RegistryFriendlyByteBuf buffer)
+        {
+            IColonyManager.getInstance().getCompatibilityManager().deserialize(buffer, Minecraft.getInstance().level);
         }
     }
 }

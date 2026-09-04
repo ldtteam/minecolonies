@@ -4,7 +4,7 @@ import com.minecolonies.api.equipment.registry.EquipmentTypeEntry;
 import com.minecolonies.api.util.OptionalPredicate;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
@@ -44,7 +44,7 @@ public interface IGenericRecipe
      * @return Null, or the original recipe id.
      */
     @Nullable
-    ResourceLocation getRecipeId();
+    Identifier getRecipeId();
 
     /**
      * Gets the primary output item of this recipe.

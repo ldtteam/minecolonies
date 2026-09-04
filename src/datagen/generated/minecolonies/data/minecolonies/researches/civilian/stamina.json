@@ -3,7 +3,7 @@
   "costs": [
     {
       "count": 1,
-      "item": "minecraft:carrot"
+      "ingredient": "minecraft:carrot"
     }
   ],
   "effects": [

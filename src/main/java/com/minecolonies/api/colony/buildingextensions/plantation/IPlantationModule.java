@@ -4,7 +4,7 @@ import com.minecolonies.api.colony.buildingextensions.modules.IBuildingExtension
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.equipment.registry.EquipmentTypeEntry;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -55,7 +55,7 @@ public interface IPlantationModule extends IBuildingExtensionModule
      *
      * @return the key of where to find the effect.
      */
-    ResourceLocation getRequiredResearchEffect();
+    Identifier getRequiredResearchEffect();
 
     /**
      * Core function for the planter module, is responsible for telling the AI what to do on the specific field.

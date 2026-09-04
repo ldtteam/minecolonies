@@ -1,6 +1,6 @@
 package com.minecolonies.api.util.constant;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import java.util.UUID;
 
 import static com.minecolonies.api.colony.ICitizenData.MAX_SATURATION;
@@ -186,28 +186,28 @@ public final class CitizenConstants
     /**
      * The Guard Building health modifier Name
      */
-    public static final ResourceLocation GUARD_HEALTH_MOD_BUILDING_NAME = new ResourceLocation(Constants.MOD_ID, "guardbuildinghp");
+    public static final Identifier GUARD_HEALTH_MOD_BUILDING_NAME = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "guardbuildinghp");
 
     /**
      * The Research health modifier name.
      */
-    public static final ResourceLocation RESEARCH_BONUS_MULTIPLIER = new ResourceLocation(Constants.MOD_ID, "researchspeedbonus");
+    public static final Identifier RESEARCH_BONUS_MULTIPLIER = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "researchspeedbonus");
 
     /**
      * The addition skill bonus speed modifier
      */
     public static final UUID SKILL_BONUS_ADD = UUID.fromString("e44226c1-dac3-441e-938e-3a94960f3675");
-    public static final ResourceLocation SKILL_BONUS_ADD_NAME = new ResourceLocation(Constants.MOD_ID, "skillspeedbonus");
+    public static final Identifier SKILL_BONUS_ADD_NAME = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "skillspeedbonus");
 
     /**
      * The Config guard health modifier name
      */
-    public static final ResourceLocation GUARD_HEALTH_MOD_CONFIG_NAME = new ResourceLocation(Constants.MOD_ID, "guardconfighp");
+    public static final Identifier GUARD_HEALTH_MOD_CONFIG_NAME = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "guardconfighp");
 
     /**
      * The guard's level based health bonus mod's name
      */
-    public static final ResourceLocation GUARD_HEALTH_MOD_LEVEL_NAME = new ResourceLocation(Constants.MOD_ID, "guardlevelhealth");
+    public static final Identifier GUARD_HEALTH_MOD_LEVEL_NAME = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "guardlevelhealth");
 
     /**
      * At this stack size or smaller the chance to dump is 50%.

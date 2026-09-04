@@ -124,7 +124,7 @@ public enum SurfaceType
               || (blockState.getBlock() == Blocks.SNOW && blockState.getValue(SnowLayerBlock.LAYERS) > 1)
               || block instanceof FloatingCarpetBlock
               || block instanceof CarpetBlock
-              || block instanceof WaterlilyBlock)
+              || block instanceof LilyPadBlock)
         {
             return SurfaceType.WALKABLE;
         }

@@ -63,7 +63,7 @@ public class BasicStateMachine<T extends IStateMachineTransition<S>, S extends I
     /**
      * State history allows tracking of state changes over time, enabled by default in dev
      */
-    private boolean     historyEnabled = !FMLEnvironment.production;
+    private boolean     historyEnabled = !FMLEnvironment.isProduction();
     private int         historyIndex   = -1;
     private Component[] stateHistory   = new Component[20];
 

@@ -3,8 +3,9 @@ package com.minecolonies.core.client.render;
 import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.client.renderer.entity.state.EntityRenderState;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -12,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * @param <T> the entity that shall sit.
  */
-public class RenderSitting<T extends Entity> extends EntityRenderer<T>
+public class RenderSitting<T extends Entity> extends EntityRenderer<T, EntityRenderState>
 {
     public RenderSitting(final EntityRendererProvider.Context context)
     {
@@ -20,9 +21,9 @@ public class RenderSitting<T extends Entity> extends EntityRenderer<T>
     }
 
     @Override
-    public @NotNull ResourceLocation getTextureLocation(final @NotNull T t)
+    public EntityRenderState createRenderState()
     {
-        return null;
+        return new EntityRenderState();
     }
 
     @Override

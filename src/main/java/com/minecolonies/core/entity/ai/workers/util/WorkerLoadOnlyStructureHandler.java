@@ -1,6 +1,6 @@
 package com.minecolonies.core.entity.ai.workers.util;
 
-import com.ldtteam.structurize.api.RotationMirror;
+import com.ldtteam.structurize.util.RotationMirror;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.minecolonies.api.util.LoadOnlyStructureHandler;
 import com.minecolonies.core.colony.buildings.AbstractBuildingStructureBuilder;

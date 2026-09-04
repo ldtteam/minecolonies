@@ -42,7 +42,7 @@ public abstract class AbstractColonyFlagBanner<B extends AbstractColonyFlagBanne
     @Override
     public void setPlacedBy(final Level worldIn, final @NotNull BlockPos pos, @NotNull BlockState state, @Nullable LivingEntity placer, @NotNull ItemStack stack)
     {
-        if (worldIn.isClientSide)
+        if (worldIn.isClientSide())
         {
             return;
         }

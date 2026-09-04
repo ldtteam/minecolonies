@@ -1,4 +1,6 @@
 package com.minecolonies.core.colony;
+import com.minecolonies.api.util.NBTUtils;
+import com.ldtteam.structurize.api.util.Tuple;
 
 import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.MinecoloniesAPIProxy;
@@ -44,7 +46,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.*;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
@@ -307,22 +309,22 @@ public class CitizenData implements ICitizenData
     /**
      * The list of available quests the citizen can give out.
      */
-    private final List<ResourceLocation> availableQuests = new ArrayList<>();
+    private final List<Identifier> availableQuests = new ArrayList<>();
 
     /**
      * The list of participating quests the citizen can give out.
      */
-    private final List<ResourceLocation> participatingQuests = new ArrayList<>();
+    private final List<Identifier> participatingQuests = new ArrayList<>();
 
     /**
      * Tracking quests the citizen was the quest giver in.
      */
-    private final List<ResourceLocation> finishedQuests = new ArrayList<>();
+    private final List<Identifier> finishedQuests = new ArrayList<>();
 
     /**
      * Tracking quests the citizen participated in.
      */
-    private final List<ResourceLocation> finishedQuestParticipation = new ArrayList<>();
+    private final List<Identifier> finishedQuestParticipation = new ArrayList<>();
 
     /**
      * The sound profile index.
@@ -1144,15 +1146,15 @@ public class CitizenData implements ICitizenData
         buf.writeUtf(parents.getB());
 
         buf.writeInt(availableQuests.size());
-        for (final ResourceLocation av : availableQuests)
+        for (final Identifier av : availableQuests)
         {
-            buf.writeResourceLocation(av);
+            buf.writeIdentifier(av);
         }
 
         buf.writeInt(participatingQuests.size());
-        for (final ResourceLocation av : participatingQuests)
+        for (final Identifier av : participatingQuests)
         {
-            buf.writeResourceLocation(av);
+            buf.writeIdentifier(av);
         }
 
         if (textureUUID == null)
@@ -1342,7 +1344,7 @@ public class CitizenData implements ICitizenData
 
         nbtTagCompound.put(TAG_NEW_SKILLS, citizenSkillHandler.write());
 
-        BlockPosUtil.write(nbtTagCompound, TAG_POS, getEntity().isPresent() ? getEntity().get().blockPosition() : lastPosition);
+        BlockPosUtil.write(nbtTagCompound, com.minecolonies.api.util.constant.NbtTagConstants.TAG_POS, getEntity().isPresent() ? getEntity().get().blockPosition() : lastPosition);
         if (nextRespawnPos != null)
         {
             BlockPosUtil.write(nbtTagCompound, TAG_RESPAWN_POS, nextRespawnPos);
@@ -1400,28 +1402,28 @@ public class CitizenData implements ICitizenData
         nbtTagCompound.putInt(TAG_LEISURE, this.leisureTime);
 
         @NotNull final ListTag avQuestNBT = new ListTag();
-        for (final ResourceLocation quest : availableQuests)
+        for (final Identifier quest : availableQuests)
         {
             avQuestNBT.add(StringTag.valueOf(quest.toString()));
         }
         nbtTagCompound.put(TAG_AV_QUESTS, avQuestNBT);
 
         @NotNull final ListTag partQuestNBT = new ListTag();
-        for (final ResourceLocation quest : participatingQuests)
+        for (final Identifier quest : participatingQuests)
         {
             partQuestNBT.add(StringTag.valueOf(quest.toString()));
         }
         nbtTagCompound.put(TAG_PART_QUESTS, partQuestNBT);
 
         @NotNull final ListTag finishedQuestNBT = new ListTag();
-        for (final ResourceLocation quest : finishedQuests)
+        for (final Identifier quest : finishedQuests)
         {
             finishedQuestNBT.add(StringTag.valueOf(quest.toString()));
         }
         nbtTagCompound.put(TAG_FINISHED_AV_QUESTS, finishedQuestNBT);
 
         @NotNull final ListTag finishedPartQuestNBT = new ListTag();
-        for (final ResourceLocation quest : finishedQuestParticipation)
+        for (final Identifier quest : finishedQuestParticipation)
         {
             finishedPartQuestNBT.add(StringTag.valueOf(quest.toString()));
         }
@@ -1429,7 +1431,7 @@ public class CitizenData implements ICitizenData
 
         if (textureUUID != null)
         {
-            nbtTagCompound.putUUID(TAG_TEXTURE_UUID, textureUUID);
+            NBTUtils.putUUID(nbtTagCompound, TAG_TEXTURE_UUID, textureUUID);
         }
         return nbtTagCompound;
     }
@@ -1437,15 +1439,15 @@ public class CitizenData implements ICitizenData
     @Override
     public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag nbtTagCompound)
     {
-        name = nbtTagCompound.getString(TAG_NAME);
-        female = nbtTagCompound.getBoolean(TAG_FEMALE);
-        paused = nbtTagCompound.getBoolean(TAG_PAUSED);
-        isChild = nbtTagCompound.getBoolean(TAG_CHILD);
-        textureId = nbtTagCompound.getInt(TAG_TEXTURE);
+        name = nbtTagCompound.getStringOr(TAG_NAME, "");
+        female = nbtTagCompound.getBooleanOr(TAG_FEMALE, false);
+        paused = nbtTagCompound.getBooleanOr(TAG_PAUSED, false);
+        isChild = nbtTagCompound.getBooleanOr(TAG_CHILD, false);
+        textureId = nbtTagCompound.getIntOr(TAG_TEXTURE, 0);
 
         if (nbtTagCompound.contains(TAG_SUFFIX))
         {
-            textureSuffix = nbtTagCompound.getString(TAG_SUFFIX);
+            textureSuffix = nbtTagCompound.getStringOr(TAG_SUFFIX, "");
         }
         else
         {
@@ -1454,34 +1456,34 @@ public class CitizenData implements ICitizenData
 
         if (nbtTagCompound.contains(TAG_SOUND_PROFILE))
         {
-            voiceProfile = nbtTagCompound.getInt(TAG_SOUND_PROFILE);
+            voiceProfile = nbtTagCompound.getIntOr(TAG_SOUND_PROFILE, 0);
         }
         else
         {
             voiceProfile = random.nextInt(NUM_SOUND_PROFILES);
         }
 
-        lastPosition = BlockPosUtil.read(nbtTagCompound, TAG_POS);
+        lastPosition = BlockPosUtil.read(nbtTagCompound, com.minecolonies.api.util.constant.NbtTagConstants.TAG_POS);
 
         if (nbtTagCompound.contains(TAG_RESPAWN_POS))
         {
             nextRespawnPos = BlockPosUtil.read(nbtTagCompound, TAG_RESPAWN_POS);
         }
 
-        citizenSkillHandler.read(nbtTagCompound.getCompound(TAG_NEW_SKILLS));
+        citizenSkillHandler.read(nbtTagCompound.getCompoundOrEmpty(TAG_NEW_SKILLS));
 
-        saturation = nbtTagCompound.getDouble(TAG_SATURATION);
+        saturation = nbtTagCompound.getDoubleOr(TAG_SATURATION, 0.0D);
 
         if (nbtTagCompound.contains("job"))
         {
-            setJob(IJobDataManager.getInstance().createFrom(this, nbtTagCompound.getCompound("job"), provider), true);
+            setJob(IJobDataManager.getInstance().createFrom(this, nbtTagCompound.getCompoundOrEmpty("job"), provider), true);
         }
 
         if (nbtTagCompound.contains(TAG_INVENTORY))
         {
             this.inventory.read(provider, nbtTagCompound);
-            this.inventory.setHeldItem(InteractionHand.MAIN_HAND, nbtTagCompound.getInt(TAG_HELD_ITEM_SLOT));
-            this.inventory.setHeldItem(InteractionHand.OFF_HAND, nbtTagCompound.getInt(TAG_OFFHAND_HELD_ITEM_SLOT));
+            this.inventory.setHeldItem(InteractionHand.MAIN_HAND, nbtTagCompound.getIntOr(TAG_HELD_ITEM_SLOT, 0));
+            this.inventory.setHeldItem(InteractionHand.OFF_HAND, nbtTagCompound.getIntOr(TAG_OFFHAND_HELD_ITEM_SLOT, 0));
         }
 
         if (name.isEmpty())
@@ -1492,18 +1494,18 @@ public class CitizenData implements ICitizenData
         if (nbtTagCompound.contains(TAG_ASLEEP))
         {
             bedPos = BlockPosUtil.read(nbtTagCompound, TAG_BEDS);
-            isAsleep = nbtTagCompound.getBoolean(TAG_ASLEEP);
+            isAsleep = nbtTagCompound.getBooleanOr(TAG_ASLEEP, false);
         }
 
         if (nbtTagCompound.contains(TAG_JUST_ATE))
         {
-            justAte = nbtTagCompound.getBoolean(TAG_JUST_ATE);
+            justAte = nbtTagCompound.getBooleanOr(TAG_JUST_ATE, false);
         }
 
         //  Citizen chat options.
         if (nbtTagCompound.contains(TAG_CHAT_OPTIONS))
         {
-            final ListTag handlerTagList = nbtTagCompound.getList(TAG_CHAT_OPTIONS, Tag.TAG_COMPOUND);
+            final ListTag handlerTagList = nbtTagCompound.getListOrEmpty(TAG_CHAT_OPTIONS);
             for (int i = 0; i < handlerTagList.size(); ++i)
             {
                 try
@@ -1511,7 +1513,7 @@ public class CitizenData implements ICitizenData
                     final ServerCitizenInteraction handler =
                         (ServerCitizenInteraction) MinecoloniesAPIProxy.getInstance()
                             .getInteractionResponseHandlerDataManager()
-                            .createFrom(provider, this, handlerTagList.getCompound(i).getCompound(TAG_CHAT_OPTION));
+                            .createFrom(provider, this, handlerTagList.getCompoundOrEmpty(i).getCompoundOrEmpty(TAG_CHAT_OPTION));
                     citizenChatOptions.put(handler.getId(), handler);
                 }
                 catch (final Exception ex)
@@ -1530,12 +1532,12 @@ public class CitizenData implements ICitizenData
         {
             citizenSkillHandler.init((int) citizenHappinessHandler.getHappiness(getColony(), this));
             final Map<String, Integer> levels = new HashMap<>();
-            final ListTag levelTagList = nbtTagCompound.getList(TAG_LEVEL_MAP, Tag.TAG_COMPOUND);
+            final ListTag levelTagList = nbtTagCompound.getListOrEmpty(TAG_LEVEL_MAP);
             for (int i = 0; i < levelTagList.size(); ++i)
             {
-                final CompoundTag levelExperienceAtJob = levelTagList.getCompound(i);
-                final String jobName = levelExperienceAtJob.getString(TAG_NAME);
-                final int level = Math.min(levelExperienceAtJob.getInt(TAG_LEVEL), MAX_CITIZEN_LEVEL);
+                final CompoundTag levelExperienceAtJob = levelTagList.getCompoundOrEmpty(i);
+                final String jobName = levelExperienceAtJob.getStringOr(TAG_NAME, "");
+                final int level = Math.min(levelExperienceAtJob.getIntOr(TAG_LEVEL, 0), MAX_CITIZEN_LEVEL);
                 levels.put(jobName, level);
             }
 
@@ -1551,60 +1553,60 @@ public class CitizenData implements ICitizenData
 
         if (nbtTagCompound.contains(TAG_JOB_STATUS))
         {
-            this.jobStatus = JobStatus.values()[nbtTagCompound.getInt(TAG_JOB_STATUS)];
+            this.jobStatus = JobStatus.values()[nbtTagCompound.getIntOr(TAG_JOB_STATUS, 0)];
         }
-        else if (nbtTagCompound.getBoolean(TAG_IDLE))
+        else if (nbtTagCompound.getBooleanOr(TAG_IDLE, false))
         {
             this.jobStatus = JobStatus.STUCK;
         }
 
-        final String parentA = nbtTagCompound.getString(TAG_PARENT_A);
-        final String parentB = nbtTagCompound.getString(TAG_PARENT_B);
+        final String parentA = nbtTagCompound.getStringOr(TAG_PARENT_A, "");
+        final String parentB = nbtTagCompound.getStringOr(TAG_PARENT_B, "");
 
         this.parents = new Tuple<>(parentA, parentB);
-        @NotNull final ListTag siblingsNBT = nbtTagCompound.getList(TAG_SIBLINGS, Tag.TAG_INT);
+        @NotNull final ListTag siblingsNBT = nbtTagCompound.getListOrEmpty(TAG_SIBLINGS);
         for (int i = 0; i < siblingsNBT.size(); i++)
         {
-            siblings.add(siblingsNBT.getInt(i));
+            siblings.add(siblingsNBT.getIntOr(i, 0));
         }
 
-        @NotNull final ListTag childrenNBT = nbtTagCompound.getList(TAG_CHILDREN, Tag.TAG_INT);
+        @NotNull final ListTag childrenNBT = nbtTagCompound.getListOrEmpty(TAG_CHILDREN);
         for (int i = 0; i < childrenNBT.size(); i++)
         {
-            children.add(childrenNBT.getInt(i));
+            children.add(childrenNBT.getIntOr(i, 0));
         }
 
-        partner = nbtTagCompound.getInt(TAG_PARTNER);
-        this.isWorking = nbtTagCompound.getBoolean(TAG_ACTIVE);
-        this.leisureTime = nbtTagCompound.getInt(TAG_LEISURE);
+        partner = nbtTagCompound.getIntOr(TAG_PARTNER, 0);
+        this.isWorking = nbtTagCompound.getBooleanOr(TAG_ACTIVE, false);
+        this.leisureTime = nbtTagCompound.getIntOr(TAG_LEISURE, 0);
 
-        @NotNull final ListTag availQuestNbt = nbtTagCompound.getList(TAG_AV_QUESTS, TAG_STRING);
+        @NotNull final ListTag availQuestNbt = nbtTagCompound.getListOrEmpty(TAG_AV_QUESTS);
         for (int i = 0; i < availQuestNbt.size(); i++)
         {
-            availableQuests.add(ResourceLocation.parse(availQuestNbt.getString(i)));
+            availableQuests.add(Identifier.parse(availQuestNbt.getStringOr(i, "")));
         }
 
-        @NotNull final ListTag partQuestsNbt = nbtTagCompound.getList(TAG_PART_QUESTS, TAG_STRING);
+        @NotNull final ListTag partQuestsNbt = nbtTagCompound.getListOrEmpty(TAG_PART_QUESTS);
         for (int i = 0; i < partQuestsNbt.size(); i++)
         {
-            participatingQuests.add(ResourceLocation.parse(partQuestsNbt.getString(i)));
+            participatingQuests.add(Identifier.parse(partQuestsNbt.getStringOr(i, "")));
         }
 
-        @NotNull final ListTag finQuestNbt = nbtTagCompound.getList(TAG_FINISHED_AV_QUESTS, TAG_STRING);
+        @NotNull final ListTag finQuestNbt = nbtTagCompound.getListOrEmpty(TAG_FINISHED_AV_QUESTS);
         for (int i = 0; i < finQuestNbt.size(); i++)
         {
-            finishedQuests.add(ResourceLocation.parse(finQuestNbt.getString(i)));
+            finishedQuests.add(Identifier.parse(finQuestNbt.getStringOr(i, "")));
         }
 
-        @NotNull final ListTag finPartQuestsNbt = nbtTagCompound.getList(TAG_FINISHED_PART_QUESTS, TAG_STRING);
+        @NotNull final ListTag finPartQuestsNbt = nbtTagCompound.getListOrEmpty(TAG_FINISHED_PART_QUESTS);
         for (int i = 0; i < finPartQuestsNbt.size(); i++)
         {
-            finishedQuestParticipation.add(ResourceLocation.parse(finPartQuestsNbt.getString(i)));
+            finishedQuestParticipation.add(Identifier.parse(finPartQuestsNbt.getStringOr(i, "")));
         }
 
         if (nbtTagCompound.contains(TAG_TEXTURE_UUID))
         {
-            this.textureUUID = nbtTagCompound.getUUID(TAG_TEXTURE_UUID);
+            this.textureUUID = NBTUtils.getUUID(nbtTagCompound, TAG_TEXTURE_UUID);
         }
     }
 
@@ -1852,7 +1854,7 @@ public class CitizenData implements ICitizenData
      */
     public static CitizenData loadFromNBT(final IColony colony, final CompoundTag nbt, @NotNull final HolderLookup.Provider provider)
     {
-        final CitizenData data = new CitizenData(nbt.getInt(TAG_ID), colony);
+        final CitizenData data = new CitizenData(nbt.getIntOr(TAG_ID, 0), colony);
         data.deserializeNBT(provider, nbt);
         return data;
     }
@@ -2064,20 +2066,20 @@ public class CitizenData implements ICitizenData
     }
 
     @Override
-    public void onQuestDeletion(final ResourceLocation questId)
+    public void onQuestDeletion(final Identifier questId)
     {
         this.availableQuests.remove(questId);
         this.participatingQuests.remove(questId);
     }
 
     @Override
-    public boolean isParticipantOfQuest(final ResourceLocation questId)
+    public boolean isParticipantOfQuest(final Identifier questId)
     {
         return this.availableQuests.contains(questId) || this.participatingQuests.contains(questId);
     }
 
     @Override
-    public void onQuestCompletion(final ResourceLocation questId)
+    public void onQuestCompletion(final Identifier questId)
     {
         if (this.availableQuests.contains(questId))
         {
@@ -2112,7 +2114,7 @@ public class CitizenData implements ICitizenData
     {
         if (uuid == null)
         {
-            uuid = UUID.nameUUIDFromBytes((getId() + ":" + getColony().getID() + ":" + getColony().getDimension().location()).getBytes());
+            uuid = UUID.nameUUIDFromBytes((getId() + ":" + getColony().getID() + ":" + getColony().getDimension().identifier()).getBytes());
         }
         return uuid;
     }

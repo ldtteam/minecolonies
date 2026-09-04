@@ -1,12 +1,13 @@
 package com.minecolonies.core.items;
 
 import com.ldtteam.structurize.Structurize;
+import com.ldtteam.structurize.client.rendertask.RenderTaskManager;
+import com.ldtteam.structurize.client.rendertask.tasks.BoxPreviewData;
+import com.ldtteam.structurize.client.rendertask.tasks.BoxPreviewRenderTask;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.blueprints.v1.BlueprintUtil;
-import com.ldtteam.structurize.component.ModDataComponents;
 import com.ldtteam.structurize.items.AbstractItemWithPosSelector;
-import com.ldtteam.structurize.storage.rendering.RenderingCache;
-import com.ldtteam.structurize.storage.rendering.types.BoxPreviewData;
+import com.ldtteam.structurize.util.ItemStackNbtHelper;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.items.component.Timestamp;
 import com.minecolonies.core.client.gui.WindowSchematicAnalyzer;
@@ -14,7 +15,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -23,11 +24,14 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.nbt.CompoundTag;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 
-import static com.ldtteam.structurize.api.constants.TranslationConstants.MAX_SCHEMATIC_SIZE_REACHED;
+import com.ldtteam.structurize.api.util.Tuple;
+
+import static com.ldtteam.structurize.api.util.constant.TranslationConstants.MAX_SCHEMATIC_SIZE_REACHED;
 
 /**
  * Item used to analyze schematics or selected blocks
@@ -56,9 +60,8 @@ public class ItemScanAnalyzer extends AbstractItemWithPosSelector
       final Item.Properties properties)
     {
         super(properties.durability(0)
-            .setNoRepair()
-            .rarity(Rarity.UNCOMMON)
-            .component(ModDataComponents.POS_SELECTION, PosSelection.EMPTY));
+            .setNoCombineRepair()
+            .rarity(Rarity.UNCOMMON));
     }
 
     /**
@@ -76,11 +79,16 @@ public class ItemScanAnalyzer extends AbstractItemWithPosSelector
      * {@inheritDoc}
      */
     @Override
-    public boolean canAttackBlock(final BlockState state, final Level worldIn, final BlockPos pos, final Player player)
+    public boolean canDestroyBlock(
+      final ItemStack selectedStack,
+      final BlockState state,
+      final Level worldIn,
+      final BlockPos pos,
+      @NotNull final LivingEntity entity)
     {
-        checkTimeout(player.getMainHandItem(), worldIn);
-        boolean result = super.canAttackBlock(state, worldIn, pos, player);
-        openAreaBox(player.getMainHandItem());
+        checkTimeout(entity.getMainHandItem(), worldIn);
+        boolean result = super.canDestroyBlock(selectedStack, state, worldIn, pos, entity);
+        openAreaBox(entity.getMainHandItem());
         return result;
     }
 
@@ -94,7 +102,7 @@ public class ItemScanAnalyzer extends AbstractItemWithPosSelector
     }
 
     @Override
-    public InteractionResultHolder<ItemStack> use(final Level worldIn, final Player playerIn, final InteractionHand handIn)
+    public InteractionResult use(final Level worldIn, final Player playerIn, final InteractionHand handIn)
     {
         checkTimeout(playerIn.getItemInHand(handIn), worldIn);
         return super.use(worldIn, playerIn, handIn);
@@ -103,15 +111,16 @@ public class ItemScanAnalyzer extends AbstractItemWithPosSelector
     @Override
     public InteractionResult onAirRightClick(final BlockPos start, final BlockPos end, final Level worldIn, final Player playerIn, final ItemStack itemStack)
     {
-        if (worldIn.isClientSide)
+        if (worldIn.isClientSide())
         {
             if (start != null && end != null && (!lastPos.equals(start) || !lastPos2.equals(end)))
             {
                 lastPos = start;
                 lastPos2 = end;
-                final PosSelection data = PosSelection.readFromItemStack(itemStack);
-
-                blueprint = saveStructure(worldIn, playerIn, AABB.encapsulatingFullBlocks(data.startPos().orElse(null), data.endPos().orElse(null)));
+                final Tuple<BlockPos, BlockPos> bounds = AbstractItemWithPosSelector.getBounds(itemStack);
+                blueprint = saveStructure(worldIn,
+                  playerIn,
+                  AABB.encapsulatingFullBlocks(bounds.getA(), bounds.getB()));
             }
 
             new WindowSchematicAnalyzer().open();
@@ -132,12 +141,13 @@ public class ItemScanAnalyzer extends AbstractItemWithPosSelector
      */
     private void openAreaBox(final ItemStack tool)
     {
-        final PosSelection component = PosSelection.readFromItemStack(tool);
-        final BlockPos start = component.startPos().orElse(null);
-        final BlockPos end = component.endPos().orElse(null);
+        final Tuple<BlockPos, BlockPos> bounds = AbstractItemWithPosSelector.getBounds(tool);
+        final BlockPos start = bounds.getA();
+        final BlockPos end = bounds.getB();
         if (start != null && end != null)
         {
-            RenderingCache.queue("analyzer", new BoxPreviewData(start, end, Optional.empty()));
+            RenderTaskManager.addRenderTask("analyzer",
+              new BoxPreviewRenderTask("selection", new BoxPreviewData(start, end, Optional.empty()), 60 * 10));
         }
     }
 
@@ -154,7 +164,10 @@ public class ItemScanAnalyzer extends AbstractItemWithPosSelector
         Timestamp.updateItemStack(stack, component -> {
             if (component.hasTime() && (level.getGameTime() - component.time()) > TIMEOUT_DELAY)
             {
-                PosSelection.EMPTY.writeToItemStack(stack);
+                final CompoundTag tag = ItemStackNbtHelper.getOrCreateCustomTag(stack);
+                tag.remove("structurize:start_pos");
+                tag.remove("structurize:end_pos");
+                ItemStackNbtHelper.setCustomTag(stack, tag);
             }
 
             return new Timestamp(level.getGameTime());
@@ -171,7 +184,7 @@ public class ItemScanAnalyzer extends AbstractItemWithPosSelector
     {
         if (box.getXsize() * box.getYsize() * box.getZsize() > Structurize.getConfig().getServer().schematicBlockLimit.get())
         {
-            player.displayClientMessage(Component.translatableEscape(MAX_SCHEMATIC_SIZE_REACHED, Structurize.getConfig().getServer().schematicBlockLimit.get()), false);
+            player.sendSystemMessage(Component.translatableEscape(MAX_SCHEMATIC_SIZE_REACHED, Structurize.getConfig().getServer().schematicBlockLimit.get()));
             return null;
         }
 

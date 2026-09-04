@@ -38,7 +38,7 @@ public final class ServerUtils
     {
         for (int i = 0; i < world.players().size(); ++i)
         {
-            if (id.equals((world.players().get(i)).getGameProfile().getId()))
+            if (id.equals((world.players().get(i)).nameAndId().id()))
             {
                 return world.players().get(i);
             }
@@ -67,7 +67,7 @@ public final class ServerUtils
             if (o instanceof Player)
             {
                 @NotNull final Player player = (Player) o;
-                if (ids.contains(player.getGameProfile().getId()))
+                if (ids.contains(player.nameAndId().id()))
                 {
                     players.add(player);
                     if (players.size() == ids.size())

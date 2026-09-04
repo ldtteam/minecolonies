@@ -36,12 +36,11 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.Tuple;
+import net.minecraft.resources.Identifier;
+import com.ldtteam.structurize.api.util.Tuple;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArrowItem;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -67,15 +66,15 @@ public abstract class AbstractBuildingGuards extends AbstractBuilding implements
      * Settings.
      */
     public static final ISettingKey<BoolSetting>       RETREAT      =
-      new SettingKey<>(BoolSetting.class, new ResourceLocation(com.minecolonies.api.util.constant.Constants.MOD_ID, "retreat"));
+      new SettingKey<>(BoolSetting.class, Identifier.fromNamespaceAndPath(com.minecolonies.api.util.constant.Constants.MOD_ID, "retreat"));
     public static final ISettingKey<BoolSetting>            HIRE_TRAINEE =
-      new SettingKey<>(BoolSetting.class, new ResourceLocation(com.minecolonies.api.util.constant.Constants.MOD_ID, "hiretrainee"));
+      new SettingKey<>(BoolSetting.class, Identifier.fromNamespaceAndPath(com.minecolonies.api.util.constant.Constants.MOD_ID, "hiretrainee"));
     public static final ISettingKey<GuardPatrolModeSetting> PATROL_MODE =
-      new SettingKey<>(GuardPatrolModeSetting.class, new ResourceLocation(com.minecolonies.api.util.constant.Constants.MOD_ID, "patrolmode"));
+      new SettingKey<>(GuardPatrolModeSetting.class, Identifier.fromNamespaceAndPath(com.minecolonies.api.util.constant.Constants.MOD_ID, "patrolmode"));
     public static final ISettingKey<GuardFollowModeSetting> FOLLOW_MODE =
-      new SettingKey<>(GuardFollowModeSetting.class, new ResourceLocation(com.minecolonies.api.util.constant.Constants.MOD_ID, "followmode"));
+      new SettingKey<>(GuardFollowModeSetting.class, Identifier.fromNamespaceAndPath(com.minecolonies.api.util.constant.Constants.MOD_ID, "followmode"));
     public static final ISettingKey<GuardTaskSetting>       GUARD_TASK  =
-      new SettingKey<>(GuardTaskSetting.class, new ResourceLocation(com.minecolonies.api.util.constant.Constants.MOD_ID, "guardtask"));
+      new SettingKey<>(GuardTaskSetting.class, Identifier.fromNamespaceAndPath(com.minecolonies.api.util.constant.Constants.MOD_ID, "guardtask"));
 
 
     //manual patroll. retreat, hire from training
@@ -165,18 +164,10 @@ public abstract class AbstractBuildingGuards extends AbstractBuilding implements
         keepX.put(itemStack -> ItemStackUtils.hasEquipmentLevel(itemStack, ModEquipmentTypes.bow.get(), TOOL_LEVEL_WOOD_OR_GOLD, getMaxEquipmentLevel()), new Tuple<>(1, true));
         keepX.put(itemStack -> !ItemStackUtils.isEmpty(itemStack) && ItemStackUtils.doesItemServeAsWeapon(itemStack), new Tuple<>(1, true));
 
-        keepX.put(itemStack -> !ItemStackUtils.isEmpty(itemStack)
-                                 && itemStack.getItem() instanceof ArmorItem
-                                 && ((ArmorItem) itemStack.getItem()).getEquipmentSlot() == EquipmentSlot.CHEST, new Tuple<>(1, true));
-        keepX.put(itemStack -> !ItemStackUtils.isEmpty(itemStack)
-                                 && itemStack.getItem() instanceof ArmorItem
-                                 && ((ArmorItem) itemStack.getItem()).getEquipmentSlot() == EquipmentSlot.HEAD, new Tuple<>(1, true));
-        keepX.put(itemStack -> !ItemStackUtils.isEmpty(itemStack)
-                                 && itemStack.getItem() instanceof ArmorItem
-                                 && ((ArmorItem) itemStack.getItem()).getEquipmentSlot() == EquipmentSlot.LEGS, new Tuple<>(1, true));
-        keepX.put(itemStack -> !ItemStackUtils.isEmpty(itemStack)
-                                 && itemStack.getItem() instanceof ArmorItem
-                                 && ((ArmorItem) itemStack.getItem()).getEquipmentSlot() == EquipmentSlot.FEET, new Tuple<>(1, true));
+        keepX.put(itemStack -> ItemStackUtils.isArmorForSlot(itemStack, EquipmentSlot.CHEST), new Tuple<>(1, true));
+        keepX.put(itemStack -> ItemStackUtils.isArmorForSlot(itemStack, EquipmentSlot.HEAD), new Tuple<>(1, true));
+        keepX.put(itemStack -> ItemStackUtils.isArmorForSlot(itemStack, EquipmentSlot.LEGS), new Tuple<>(1, true));
+        keepX.put(itemStack -> ItemStackUtils.isArmorForSlot(itemStack, EquipmentSlot.FEET), new Tuple<>(1, true));
 
         keepX.put(itemStack -> {
             if (ItemStackUtils.isEmpty(itemStack) || !(itemStack.getItem() instanceof ArrowItem))
@@ -222,10 +213,10 @@ public abstract class AbstractBuildingGuards extends AbstractBuilding implements
     {
         super.deserializeNBT(provider, compound);
 
-        final ListTag wayPointTagList = compound.getList(NBT_PATROL_TARGETS, Tag.TAG_COMPOUND);
+        final ListTag wayPointTagList = compound.getListOrEmpty(NBT_PATROL_TARGETS);
         for (int i = 0; i < wayPointTagList.size(); ++i)
         {
-            final CompoundTag blockAtPos = wayPointTagList.getCompound(i);
+            final CompoundTag blockAtPos = wayPointTagList.getCompoundOrEmpty(i);
             final BlockPos pos = BlockPosUtil.read(blockAtPos, NBT_TARGET);
             patrolTargets.add(pos);
         }
@@ -238,7 +229,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuilding implements
 
         if (compound.contains(NBT_PLAYER_UUID))
         {
-            followPlayerUUID = compound.getUUID(NBT_PLAYER_UUID);
+            followPlayerUUID = NBTUtils.getUUID(compound, NBT_PLAYER_UUID);
         }
 
     }
@@ -265,7 +256,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuilding implements
 
         if (followPlayerUUID != null)
         {
-            compound.putUUID(NBT_PLAYER_UUID, followPlayerUUID);
+            NBTUtils.putUUID(compound, NBT_PLAYER_UUID, followPlayerUUID);
         }
 
         return compound;
@@ -432,7 +423,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuilding implements
                     this.pathResult = null;
                 }
             }
-            else if (colony.getWorld().random.nextBoolean())
+            else if (colony.getWorld().getRandom().nextBoolean())
             {
                 final PathJobRandomPos job = new PathJobRandomPos(colony.getWorld(), lastPatrolPoint, 20, 40, null);
                 this.pathResult = job.getResult();

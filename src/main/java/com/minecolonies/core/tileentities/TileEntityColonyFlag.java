@@ -1,4 +1,5 @@
 package com.minecolonies.core.tileentities;
+import net.minecraft.nbt.CompoundTag;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
@@ -7,7 +8,8 @@ import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
 import com.minecolonies.api.util.Utils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.level.block.entity.BannerPatternLayers;
@@ -42,26 +44,23 @@ public class TileEntityColonyFlag extends BlockEntity
     }
 
     @Override
-    public void saveAdditional(CompoundTag compound, @NotNull final HolderLookup.Provider provider)
+    public void saveAdditional(ValueOutput compound)
     {
-        super.saveAdditional(compound, provider);
+        super.saveAdditional(compound);
 
-        compound.put(TAG_BANNER_PATTERNS, Utils.serializeCodecMess(BannerPatternLayers.CODEC, provider, this.patterns));
+        compound.store(TAG_BANNER_PATTERNS, BannerPatternLayers.CODEC, this.patterns);
 
         compound.putInt(TAG_COLONY_ID, colonyId);
     }
 
     @Override
-    public void loadAdditional(CompoundTag compound, @NotNull final HolderLookup.Provider provider)
+    public void loadAdditional(ValueInput compound)
     {
-        super.loadAdditional(compound, provider);
+        super.loadAdditional(compound);
 
-        if (compound.contains(TAG_BANNER_PATTERNS))
-        {
-            this.patterns = Utils.deserializeCodecMess(BannerPatternLayers.CODEC, provider, compound.get(TAG_BANNER_PATTERNS));
-        }
+        compound.read(TAG_BANNER_PATTERNS, BannerPatternLayers.CODEC).ifPresent(patterns -> this.patterns = patterns);
 
-        this.colonyId = compound.getInt(TAG_COLONY_ID);
+        this.colonyId = compound.getIntOr(TAG_COLONY_ID, 0);
 
         if(this.colonyId == -1 && this.hasLevel())
         {
@@ -81,12 +80,11 @@ public class TileEntityColonyFlag extends BlockEntity
     }
 
     @Override
-    public CompoundTag getUpdateTag(@NotNull final HolderLookup.Provider provider) { return this.saveWithId(provider); }
+    public CompoundTag getUpdateTag(@NotNull final HolderLookup.Provider provider) { return this.saveWithFullMetadata(provider); }
 
     @Override
-    public void onDataPacket(final Connection net, final ClientboundBlockEntityDataPacket packet, @NotNull final HolderLookup.Provider provider)
+    public void onDataPacket(final Connection net, final ValueInput compound)
     {
-        final CompoundTag compound = packet.getTag();
-        this.loadAdditional(compound, provider);
+        this.loadAdditional(compound);
     }
 }

@@ -10,7 +10,7 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Locale;
@@ -39,7 +39,7 @@ public class WindowHutNameEntry extends BOWindow implements ButtonHandler
      */
     public WindowHutNameEntry(final IBuildingView b)
     {
-        super(new ResourceLocation(Constants.MOD_ID, "gui/windowhutnameentry.xml"));
+        super(Identifier.fromNamespaceAndPath(Constants.MOD_ID, "gui/windowhutnameentry.xml"));
         this.building = b;
     }
 

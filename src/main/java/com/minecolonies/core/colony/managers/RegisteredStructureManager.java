@@ -136,17 +136,17 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
         final ListTag extensionsTagList;
         if (compound.contains(TAG_FIELDS))
         {
-            extensionsTagList = compound.getList(TAG_FIELDS, Tag.TAG_COMPOUND);
+            extensionsTagList = compound.getListOrEmpty(TAG_FIELDS);
         }
         else
         {
-            extensionsTagList = compound.getList(TAG_BUILDING_EXTENSIONS, Tag.TAG_COMPOUND);
+            extensionsTagList = compound.getListOrEmpty(TAG_BUILDING_EXTENSIONS);
         }
         for (int i = 0; i < extensionsTagList.size(); ++i)
         {
             try
             {
-                final CompoundTag extensionCompound = extensionsTagList.getCompound(i);
+                final CompoundTag extensionCompound = extensionsTagList.getCompoundOrEmpty(i);
                 final IBuildingExtension extension = BuildingExtensionDataManager.compoundToExtension(provider, extensionCompound);
                 if (extension != null)
                 {
@@ -160,10 +160,10 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
         }
 
         //  Buildings
-        final ListTag buildingTagList = compound.getList(TAG_BUILDINGS, Tag.TAG_COMPOUND);
+        final ListTag buildingTagList = compound.getListOrEmpty(TAG_BUILDINGS);
         for (int i = 0; i < buildingTagList.size(); ++i)
         {
-            final CompoundTag buildingCompound = buildingTagList.getCompound(i);
+            final CompoundTag buildingCompound = buildingTagList.getCompoundOrEmpty(i);
             @Nullable final IBuilding b = IBuildingDataManager.getInstance().createFrom(colony, buildingCompound, provider);
             if (b != null)
             {
@@ -174,11 +174,11 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
 
         if (compound.contains(TAG_LEISURE))
         {
-            final ListTag leisureTagList = compound.getList(TAG_LEISURE, Tag.TAG_COMPOUND);
+            final ListTag leisureTagList = compound.getListOrEmpty(TAG_LEISURE);
             final List<BlockPos> leisureSitesList = new ArrayList<>();
             for (int i = 0; i < leisureTagList.size(); ++i)
             {
-                final BlockPos pos = BlockPosUtil.read(leisureTagList.getCompound(i), TAG_POS);
+                final BlockPos pos = BlockPosUtil.read(leisureTagList.getCompoundOrEmpty(i), TAG_POS);
                 if (!leisureSitesList.contains(pos))
                 {
                     leisureSitesList.add(pos);

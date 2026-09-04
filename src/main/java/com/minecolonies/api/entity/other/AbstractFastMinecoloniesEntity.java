@@ -13,7 +13,7 @@ import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.entity.EntityTypeTest;
-import net.minecraft.world.level.portal.DimensionTransition;
+import net.minecraft.world.level.portal.TeleportTransition;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
@@ -34,11 +34,6 @@ public abstract class AbstractFastMinecoloniesEntity extends PathfinderMob imple
      * Random update variance for this entity, used to spread out updates equalls
      */
     public final int randomVariance = ColonyConstants.rand.nextInt(20);
-
-    /**
-     * Cache fluid state
-     */
-    private boolean isInFluid = false;
 
     /**
      * Cache fire state
@@ -189,7 +184,7 @@ public abstract class AbstractFastMinecoloniesEntity extends PathfinderMob imple
      */
     @Nullable
     @Override
-    public Entity changeDimension(final DimensionTransition dimensionTransition)
+    public Entity teleport(final TeleportTransition dimensionTransition)
     {
         return null;
     }
@@ -198,26 +193,6 @@ public abstract class AbstractFastMinecoloniesEntity extends PathfinderMob imple
     public boolean canSpawnSprintParticle()
     {
         return false;
-    }
-
-    @Override
-    public void updateFluidOnEyes()
-    {
-        if (tickCount % 20 == randomVariance)
-        {
-            super.updateFluidOnEyes();
-        }
-    }
-
-    @Override
-    protected boolean updateInWaterStateAndDoFluidPushing()
-    {
-        if (tickCount % 10 == randomVariance % 10)
-        {
-            isInFluid = super.updateInWaterStateAndDoFluidPushing();
-        }
-
-        return isInFluid;
     }
 
     @Override
@@ -254,12 +229,12 @@ public abstract class AbstractFastMinecoloniesEntity extends PathfinderMob imple
     }
 
     @Override
-    public boolean isInWaterRainOrBubble()
+    public boolean isInWaterOrRain()
     {
         // Used to extinguish fire, only check if on fire
-        if (getRemainingFireTicks() > 0 || level().isClientSide)
+        if (getRemainingFireTicks() > 0 || level().isClientSide())
         {
-            return super.isInWaterRainOrBubble();
+            return super.isInWaterOrRain();
         }
 
         return false;
@@ -269,7 +244,7 @@ public abstract class AbstractFastMinecoloniesEntity extends PathfinderMob imple
     public void updateFallFlying()
     {
         // Simplified updateFallflying to only set flags when they did change
-        if (!this.level().isClientSide && tickCount % 5 == randomVariance % 5)
+        if (!this.level().isClientSide() && tickCount % 5 == randomVariance % 5)
         {
             boolean flag = this.getSharedFlag(7);
             if (!flag || this.onGround() || this.isPassenger() || this.hasEffect(MobEffects.LEVITATION))
@@ -281,65 +256,38 @@ public abstract class AbstractFastMinecoloniesEntity extends PathfinderMob imple
     }
 
     @Override
-    protected void sendDebugPackets()
-    {
-    }
-
-    @Override
     public void setTicksFrozen(int p_146918_)
     {
 
     }
 
     @Override
-    public void updateSwimAmount()
-    {
-
-    }
-
-    /**
-     * Static Byte values to avoid frequent autoboxing
-     */
-    final Byte ENABLE  = 2;
-    final Byte DISABLE = 0;
-
-    @Override
     public void setShiftKeyDown(boolean enable)
     {
-        if (enable)
+        if (enable != isShiftKeyDown())
         {
-            this.entityData.set(DATA_SHARED_FLAGS_ID, ENABLE);
-        }
-        else
-        {
-            this.entityData.set(DATA_SHARED_FLAGS_ID, DISABLE);
+            super.setShiftKeyDown(enable);
         }
     }
 
     @Override
-    public boolean isShiftKeyDown()
-    {
-        return (this.entityData.get(DATA_SHARED_FLAGS_ID)).byteValue() == ENABLE.byteValue();
-    }
-
-    @Override
-    public void knockback(double power, double xRatio, double zRatio)
+    public void knockback(double power, double xRatio, double zRatio, DamageSource source, float damage)
     {
         if (level().getGameTime() - lastKnockBack > 20 * 3)
         {
             lastKnockBack = level().getGameTime();
-            super.knockback(power, xRatio, zRatio);
+            super.knockback(power, xRatio, zRatio, source, damage);
         }
     }
 
     @Override
-    public boolean hurt(final DamageSource dmgSource, final float dmg)
+    public boolean hurtServer(final ServerLevel level, final DamageSource dmgSource, final float dmg)
     {
         if (dmgSource.getEntity() instanceof AbstractFastMinecoloniesEntity otherFastMinecolEntity && otherFastMinecolEntity.getTeamId() == getTeamId())
         {
             return false;
         }
-        return super.hurt(dmgSource, dmg);
+        return super.hurtServer(level, dmgSource, dmg);
     }
 
     /**

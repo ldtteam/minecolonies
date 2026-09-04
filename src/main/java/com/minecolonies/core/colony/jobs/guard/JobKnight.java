@@ -4,7 +4,7 @@ import com.minecolonies.api.colony.jobs.IJobWithColonyFlag;
 import com.minecolonies.core.colony.jobs.AbstractJobGuard;
 import com.minecolonies.core.util.citizenutils.CitizenItemUtils;
 import net.minecraft.core.component.DataComponents;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import com.minecolonies.api.client.render.modeltype.ModModelTypes;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
@@ -71,7 +71,7 @@ public class JobKnight extends AbstractJobGuard<JobKnight> implements IJobWithCo
     }
 
     @Override
-    public ResourceLocation getModel()
+    public Identifier getModel()
     {
         return ModModelTypes.KNIGHT_GUARD_ID;
     }

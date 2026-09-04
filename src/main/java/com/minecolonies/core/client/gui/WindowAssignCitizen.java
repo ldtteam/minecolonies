@@ -19,7 +19,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -75,7 +75,7 @@ public class WindowAssignCitizen extends AbstractWindowSkeleton implements Butto
      */
     public WindowAssignCitizen(final IColonyView c, final LivingBuildingView building)
     {
-        super(new ResourceLocation(Constants.MOD_ID, "gui/windowassigncitizen.xml"));
+        super(Identifier.fromNamespaceAndPath(Constants.MOD_ID, "gui/windowassigncitizen.xml"));
         this.colony = c;
         this.building = building;
         unassignedCitizenList = findPaneOfTypeByID(UNASSIGNED_CITIZEN_LIST, ScrollingList.class);

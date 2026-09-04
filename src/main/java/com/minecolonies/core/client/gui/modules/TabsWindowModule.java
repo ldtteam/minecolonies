@@ -8,7 +8,7 @@ import com.ldtteam.blockui.views.View;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.client.gui.AbstractWindowSkeleton;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Random;
@@ -98,7 +98,7 @@ public class TabsWindowModule implements IWindowModule
      * @param icon    the icon to render in the tab.
      * @param handler the button handler.
      */
-    public void renderTabButton(int index, final TabImageSide side, final ResourceLocation icon, @Nullable final MutableComponent hoverText, final ButtonHandler handler)
+    public void renderTabButton(int index, final TabImageSide side, final Identifier icon, @Nullable final MutableComponent hoverText, final ButtonHandler handler)
     {
         final View view = new View();
         view.setID(icon.getPath() + "_view");
@@ -169,9 +169,9 @@ public class TabsWindowModule implements IWindowModule
          * @param random the random number generator instance.
          * @return the chosen resource location.
          */
-        public ResourceLocation getImage(final Random random)
+        public Identifier getImage(final Random random)
         {
-            return new ResourceLocation(Constants.MOD_ID, String.format("textures/gui/modules/tab_%s_side%s.png", side, random.nextInt(imageCount) + 1));
+            return Identifier.fromNamespaceAndPath(Constants.MOD_ID, String.format("textures/gui/modules/tab_%s_side%s.png", side, random.nextInt(imageCount) + 1));
         }
     }
 }

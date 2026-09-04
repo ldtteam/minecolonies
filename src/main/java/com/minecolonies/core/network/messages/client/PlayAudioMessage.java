@@ -4,21 +4,19 @@ import com.ldtteam.common.network.AbstractClientPlayMessage;
 import com.ldtteam.common.network.PlayMessageType;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.util.constant.Constants;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.sounds.SimpleSoundInstance;
-import net.minecraft.client.resources.sounds.SoundInstance;
 import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.function.BiConsumer;
 
 /**
  * Asks the client to play a specific music
@@ -30,8 +28,9 @@ public class PlayAudioMessage extends AbstractClientPlayMessage
     /**
      * The sound event to play.
      */
-    private final ResourceLocation soundEvent;
+    private final Identifier soundEvent;
     private final SoundSource      category;
+    private static volatile BiConsumer<PlayAudioMessage, Player> clientHandler = (message, player) -> { };
 
     /**
      * Create a play music message with a specific sound event.
@@ -52,7 +51,7 @@ public class PlayAudioMessage extends AbstractClientPlayMessage
     public PlayAudioMessage(final SoundEvent event, final SoundSource category)
     {
         super(TYPE);
-        this.soundEvent = event.getLocation();
+        this.soundEvent = event.location();
         this.category = category;
     }
 
@@ -60,23 +59,39 @@ public class PlayAudioMessage extends AbstractClientPlayMessage
     protected void toBytes(final RegistryFriendlyByteBuf buf)
     {
         buf.writeVarInt(category.ordinal());
-        buf.writeResourceLocation(soundEvent);
+        buf.writeIdentifier(soundEvent);
     }
 
     protected PlayAudioMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
     {
         super(buf, type);
         this.category = SoundSource.values()[buf.readVarInt()];
-        this.soundEvent = buf.readResourceLocation();
+        this.soundEvent = buf.readIdentifier();
     }
 
-    @OnlyIn(Dist.CLIENT)
     @Override
     protected void onExecute(final IPayloadContext ctxIn, final Player player)
     {
-        Minecraft.getInstance().getSoundManager().play(new SimpleSoundInstance(
-          soundEvent, category,
-            1.0F, 1.0F, RandomSource.create(), false, 0, SoundInstance.Attenuation.NONE, player.getX(), player.getY(), player.getZ(), true));
+        clientHandler.accept(this, player);
+    }
+
+    /**
+     * Installs the client-side playback implementation without making this
+     * common payload class load Minecraft's client sound classes on a server.
+     */
+    public static void setClientHandler(final BiConsumer<PlayAudioMessage, Player> handler)
+    {
+        clientHandler = Objects.requireNonNull(handler, "handler");
+    }
+
+    Identifier soundEventId()
+    {
+        return soundEvent;
+    }
+
+    SoundSource category()
+    {
+        return category;
     }
 
     /**

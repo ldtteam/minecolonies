@@ -12,7 +12,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.contents.TranslatableContents;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvents;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
@@ -41,7 +41,7 @@ public abstract class AbstractBuildingMainWindow<B extends IBuildingView> extend
      * @param buildingView Class extending {@link AbstractBuildingView}.
      * @param resource     window resource location.
      */
-    public AbstractBuildingMainWindow(final B buildingView, final ResourceLocation resource)
+    public AbstractBuildingMainWindow(final B buildingView, final Identifier resource)
     {
         super(buildingView, resource);
 
@@ -56,7 +56,10 @@ public abstract class AbstractBuildingMainWindow<B extends IBuildingView> extend
         Button buttonInfo = findPaneOfTypeByID(BUTTON_INFO, Button.class);
         if (buttonInfo != null)
         {
-            buttonInfo.setVisible(I18n.exists(PARTIAL_INFO_TEXT + buildingView.getBuildingType().getTranslationKey().replace("com.minecolonies.building.", "") + ".0"));
+            buttonInfo.setVisible(!I18n.get(PARTIAL_INFO_TEXT + buildingView.getBuildingType()
+                .getTranslationKey().replace("com.minecolonies.building.", "") + ".0")
+                .equals(PARTIAL_INFO_TEXT + buildingView.getBuildingType()
+                .getTranslationKey().replace("com.minecolonies.building.", "") + ".0"));
         }
     }
 

@@ -3,15 +3,15 @@
   "costs": [
     {
       "count": 64,
-      "item": "minecraft:gravel"
+      "ingredient": "minecraft:gravel"
     },
     {
       "count": 64,
-      "item": "minecraft:sand"
+      "ingredient": "minecraft:sand"
     },
     {
       "count": 64,
-      "item": "minecraft:clay"
+      "ingredient": "minecraft:clay"
     }
   ],
   "effects": [

@@ -10,7 +10,7 @@ import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.client.gui.AbstractWindowSkeleton;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -38,7 +38,7 @@ public class WindowQuestLog extends AbstractWindowSkeleton
      */
     public WindowQuestLog(final @NotNull IColonyView colonyView)
     {
-        super(new ResourceLocation(Constants.MOD_ID, "gui/windowquestlog.xml"));
+        super(Identifier.fromNamespaceAndPath(Constants.MOD_ID, "gui/windowquestlog.xml"));
         registerButton(BUTTON_QUEST_LOCATOR, this::locateCitizenClickedInternal);
 
         this.moduleMap.put("pageInProgress", new QuestModuleContainer<>(new WindowQuestLogInProgressQuestQuestModule(), colonyView, switchView, "pageInProgress"));

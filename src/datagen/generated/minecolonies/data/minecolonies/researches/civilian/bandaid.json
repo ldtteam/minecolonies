@@ -3,7 +3,7 @@
   "costs": [
     {
       "count": 1,
-      "item": "minecraft:golden_carrot"
+      "ingredient": "minecraft:golden_carrot"
     }
   ],
   "effects": [

@@ -12,7 +12,7 @@ import com.minecolonies.core.colony.buildings.views.LivingBuildingView;
 import com.minecolonies.core.network.messages.server.colony.building.RecallCitizenHutMessage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_LEVEL_0;
@@ -56,7 +56,7 @@ public class WindowHutLiving extends AbstractBuildingMainWindow<LivingBuildingVi
      */
     public WindowHutLiving(final LivingBuildingView building)
     {
-        super(building, new ResourceLocation(Constants.MOD_ID, "gui/windowhuthome.xml"));
+        super(building, Identifier.fromNamespaceAndPath(Constants.MOD_ID, "gui/windowhuthome.xml"));
 
         super.registerButton(BUTTON_ASSIGN, this::assignClicked);
         super.registerButton(BUTTON_RECALL, this::recallClicked);

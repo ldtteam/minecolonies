@@ -9,7 +9,7 @@ import com.minecolonies.core.entity.pathfinding.pathjobs.PathJobMoveCloseToXNear
 import com.minecolonies.core.entity.pathfinding.pathjobs.PathJobMoveToLocation;
 import com.minecolonies.core.entity.pathfinding.pathjobs.PathJobRandomPos;
 import net.minecraft.core.BlockPos;
-import net.minecraft.util.Tuple;
+import com.ldtteam.structurize.api.util.Tuple;
 import net.minecraft.world.entity.Mob;
 
 public class EntityNavigationUtils

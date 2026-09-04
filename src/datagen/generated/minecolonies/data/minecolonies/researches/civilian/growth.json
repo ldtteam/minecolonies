@@ -3,7 +3,7 @@
   "costs": [
     {
       "count": 256,
-      "item": "minecraft:cooked_chicken"
+      "ingredient": "minecraft:cooked_chicken"
     }
   ],
   "effects": [

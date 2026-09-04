@@ -1,4 +1,5 @@
 package com.minecolonies.core.tileentities;
+import net.minecraft.nbt.CompoundTag;
 
 import com.google.common.collect.ImmutableList;
 import com.ldtteam.domumornamentum.client.model.data.MaterialTextureData;
@@ -24,12 +25,13 @@ import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.datafix.fixes.References;
 import net.minecraft.world.Clearable;
 import net.minecraft.world.entity.player.Inventory;
@@ -43,7 +45,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.client.model.data.ModelData;
+import net.neoforged.neoforge.model.data.ModelData;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.ItemStackHandler;
 import org.jetbrains.annotations.NotNull;
@@ -94,25 +96,25 @@ public class TileEntityRack extends AbstractTileEntityRack implements IMateriall
     /**
      * Static texture mappings
      */
-    private static final List<ResourceLocation> textureMapping = ImmutableList.<ResourceLocation>builder()
-        .add(ResourceLocation.withDefaultNamespace("block/bricks"))
-        .add(ResourceLocation.withDefaultNamespace("block/sand"))
-        .add(ResourceLocation.withDefaultNamespace("block/orange_wool"))
-        .add(ResourceLocation.withDefaultNamespace("block/dirt"))
-        .add(ResourceLocation.withDefaultNamespace("block/obsidian"))
-        .add(ResourceLocation.withDefaultNamespace("block/polished_andesite"))
-        .add(ResourceLocation.withDefaultNamespace("block/andesite"))
-        .add(ResourceLocation.withDefaultNamespace("block/blue_wool")).build();
+    private static final List<Identifier> textureMapping = ImmutableList.<Identifier>builder()
+        .add(Identifier.withDefaultNamespace("block/bricks"))
+        .add(Identifier.withDefaultNamespace("block/sand"))
+        .add(Identifier.withDefaultNamespace("block/orange_wool"))
+        .add(Identifier.withDefaultNamespace("block/dirt"))
+        .add(Identifier.withDefaultNamespace("block/obsidian"))
+        .add(Identifier.withDefaultNamespace("block/polished_andesite"))
+        .add(Identifier.withDefaultNamespace("block/andesite"))
+        .add(Identifier.withDefaultNamespace("block/blue_wool")).build();
 
-    private static final List<ResourceLocation> secondarytextureMapping = ImmutableList.<ResourceLocation>builder()
-                                                                            .add(ResourceLocation.withDefaultNamespace("block/oak_log"))
-                                                                            .add(ResourceLocation.withDefaultNamespace("block/spruce_log"))
-                                                                            .add(ResourceLocation.withDefaultNamespace("block/birch_log"))
-                                                                            .add(ResourceLocation.withDefaultNamespace("block/jungle_log"))
-                                                                            .add(ResourceLocation.withDefaultNamespace("block/acacia_log"))
-                                                                            .add(ResourceLocation.withDefaultNamespace("block/dark_oak_log"))
-                                                                            .add(ResourceLocation.withDefaultNamespace("block/mangrove_log"))
-                                                                            .add(ResourceLocation.withDefaultNamespace("block/crimson_stem"))
+    private static final List<Identifier> secondarytextureMapping = ImmutableList.<Identifier>builder()
+                                                                            .add(Identifier.withDefaultNamespace("block/oak_log"))
+                                                                            .add(Identifier.withDefaultNamespace("block/spruce_log"))
+                                                                            .add(Identifier.withDefaultNamespace("block/birch_log"))
+                                                                            .add(Identifier.withDefaultNamespace("block/jungle_log"))
+                                                                            .add(Identifier.withDefaultNamespace("block/acacia_log"))
+                                                                            .add(Identifier.withDefaultNamespace("block/dark_oak_log"))
+                                                                            .add(Identifier.withDefaultNamespace("block/mangrove_log"))
+                                                                            .add(Identifier.withDefaultNamespace("block/crimson_stem"))
                                                                             .build();
 
     /**
@@ -300,7 +302,7 @@ public class TileEntityRack extends AbstractTileEntityRack implements IMateriall
     @Override
     public void updateItemStorage()
     {
-        if (level != null && !level.isClientSide)
+        if (level != null && !level.isClientSide())
         {
             final boolean beforeEmpty = content.isEmpty();
             updateContent();
@@ -396,61 +398,43 @@ public class TileEntityRack extends AbstractTileEntityRack implements IMateriall
     }
 
     @Override
-    public void loadAdditional(final CompoundTag compound, @NotNull final HolderLookup.Provider provider)
+    public void loadAdditional(final ValueInput compound)
     {
-        super.loadAdditional(compound, provider);
-        if (compound.contains(TAG_SIZE))
+        super.loadAdditional(compound);
+        if (compound.getInt(TAG_SIZE).isPresent())
         {
-            size = compound.getInt(TAG_SIZE);
+            size = compound.getIntOr(TAG_SIZE, 0);
             inventory = createInventory(DEFAULT_SIZE + size * SLOT_PER_LINE);
         }
 
-        final ListTag inventoryTagList = compound.getList(TAG_INVENTORY, TAG_COMPOUND);
-        for (int i = 0; i < inventoryTagList.size(); i++)
-        {
-            final CompoundTag compoundTag = inventoryTagList.getCompound(i);
-            if (!compoundTag.contains(TAG_EMPTY))
-            {
-                if (compoundTag.contains("Count"))
-                {
-                    CompoundTag fixedTag = DataFixerUtils.runDataFixer(compoundTag, References.ITEM_STACK, DataVersion.v1_20_1);
-                    inventory.setStackInSlot(i, ItemStack.parseOptional(provider, fixedTag));
-                }
-                else
-                {
-                    inventory.setStackInSlot(i, ItemStack.parseOptional(provider, compoundTag));
-                }
-            }
-        }
+        final int[] slotIndex = {0};
+        compound.listOrEmpty(TAG_INVENTORY, ItemStack.OPTIONAL_CODEC).forEach(stack ->
+          inventory.setStackInSlot(slotIndex[0]++, stack));
 
         updateContent();
 
-        this.inWarehouse = compound.getBoolean(TAG_IN_WAREHOUSE);
-        if (compound.contains(TAG_POS))
-        {
-            this.buildingPos = BlockPosUtil.read(compound, TAG_POS);
-        }
-        version = compound.getByte(TAG_VERSION);
+        this.inWarehouse = compound.getBooleanOr(TAG_IN_WAREHOUSE, false);
+        this.buildingPos = BlockPosUtil.read(compound, TAG_POS);
+        version = compound.getByteOr(TAG_VERSION, (byte) 0);
 
         invalidateCap();
 
-        if (level != null && level.isClientSide)
+        if (level != null && level.isClientSide())
         {
             refreshTextureCache();
         }
     }
 
     @Override
-    public void saveAdditional(final CompoundTag compound, @NotNull final HolderLookup.Provider provider)
+    public void saveAdditional(final ValueOutput compound)
     {
-        super.saveAdditional(compound, provider);
+        super.saveAdditional(compound);
         compound.putInt(TAG_SIZE, size);
-        @NotNull final ListTag inventoryTagList = new ListTag();
+        final ValueOutput.TypedOutputList<ItemStack> inventoryTagList = compound.list(TAG_INVENTORY, ItemStack.OPTIONAL_CODEC);
         for (int slot = 0; slot < inventory.getSlots(); slot++)
         {
-            inventoryTagList.add(inventory.getStackInSlot(slot).saveOptional(provider));
+            inventoryTagList.add(inventory.getStackInSlot(slot));
         }
-        compound.put(TAG_INVENTORY, inventoryTagList);
         compound.putBoolean(TAG_IN_WAREHOUSE, inWarehouse);
         BlockPosUtil.write(compound, TAG_POS, buildingPos);
         compound.putByte(TAG_VERSION, version);
@@ -466,19 +450,19 @@ public class TileEntityRack extends AbstractTileEntityRack implements IMateriall
     @Override
     public CompoundTag getUpdateTag(@NotNull final HolderLookup.Provider provider)
     {
-        return this.saveWithId(provider);
+        return this.saveWithFullMetadata(provider);
     }
 
     @Override
-    public void onDataPacket(final Connection net, final ClientboundBlockEntityDataPacket packet, @NotNull final HolderLookup.Provider provider)
+    public void onDataPacket(final Connection net, final ValueInput compound)
     {
-        this.loadAdditional(packet.getTag(), provider);
+        this.loadAdditional(compound);
     }
 
     @Override
-    public void handleUpdateTag(final CompoundTag tag, @NotNull final HolderLookup.Provider provider)
+    public void handleUpdateTag(final ValueInput compound)
     {
-        this.loadAdditional(tag, provider);
+        this.loadAdditional(compound);
     }
 
     @Override
@@ -594,7 +578,7 @@ public class TileEntityRack extends AbstractTileEntityRack implements IMateriall
      */
     private void refreshTextureCache()
     {
-        final Map<ResourceLocation, Block> resMap = new HashMap<>();
+        final Map<Identifier, Block> resMap = new HashMap<>();
         final int displayPerSlots = this.getInventory().getSlots() / 4;
         int index = 0;
         boolean update = false;
@@ -660,8 +644,8 @@ public class TileEntityRack extends AbstractTileEntityRack implements IMateriall
                     block = extraBlockQueue.poll();
                 }
 
-                final ResourceLocation secondaryResLoc = secondarytextureMapping.get(index);
-                if (!block.defaultBlockState().isSolidRender(EmptyBlockGetter.INSTANCE, BlockPos.ZERO))
+                final Identifier secondaryResLoc = secondarytextureMapping.get(index);
+                if (!block.defaultBlockState().isSolidRender())
                 {
                     resMap.put(secondaryResLoc, block);
                     block = Blocks.BARREL;
@@ -671,7 +655,7 @@ public class TileEntityRack extends AbstractTileEntityRack implements IMateriall
                     resMap.put(secondaryResLoc, Blocks.AIR);
                 }
 
-                final ResourceLocation resLoc = textureMapping.get(index);
+                final Identifier resLoc = textureMapping.get(index);
                 resMap.put(resLoc, block);
 
                 if (this.textureDataCache == null
@@ -698,8 +682,8 @@ public class TileEntityRack extends AbstractTileEntityRack implements IMateriall
                 block = extraBlockQueue.poll();
             }
 
-            final ResourceLocation secondaryResLoc = secondarytextureMapping.get(i);
-            if (block != Blocks.AIR && !block.defaultBlockState().isSolidRender(EmptyBlockGetter.INSTANCE, BlockPos.ZERO))
+            final Identifier secondaryResLoc = secondarytextureMapping.get(i);
+            if (block != Blocks.AIR && !block.defaultBlockState().isSolidRender())
             {
                 resMap.put(secondaryResLoc, block);
                 block = Blocks.BARREL;
@@ -709,7 +693,7 @@ public class TileEntityRack extends AbstractTileEntityRack implements IMateriall
                 resMap.put(secondaryResLoc, Blocks.AIR);
             }
 
-            final ResourceLocation resLoc = textureMapping.get(i);
+            final Identifier resLoc = textureMapping.get(i);
             resMap.put(resLoc, block);
 
             if (this.textureDataCache == null

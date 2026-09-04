@@ -8,7 +8,7 @@ import com.minecolonies.api.util.constant.NbtTagConstants;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import org.jetbrains.annotations.NotNull;
 
@@ -72,10 +72,10 @@ public class HappinessRegistry
      */
     public static IHappinessModifier loadFrom(@NotNull final HolderLookup.Provider provider, @NotNull final CompoundTag compound, final boolean persist)
     {
-        final ResourceLocation modifierType = compound.contains(NbtTagConstants.TAG_MODIFIER_TYPE)
-                                                ? ResourceLocation.parse(compound.getString(NbtTagConstants.TAG_MODIFIER_TYPE))
-                                                : new ResourceLocation(Constants.MOD_ID, "null");
-        final IHappinessModifier modifier = getHappinessTypeRegistry().get(modifierType).create();
+        final Identifier modifierType = compound.contains(NbtTagConstants.TAG_MODIFIER_TYPE)
+                                                ? Identifier.parse(compound.getStringOr(NbtTagConstants.TAG_MODIFIER_TYPE, ""))
+                                                : Identifier.fromNamespaceAndPath(Constants.MOD_ID, "null");
+        final IHappinessModifier modifier = getHappinessTypeRegistry().getValue(modifierType).create();
 
         if (modifier != null)
         {
@@ -127,21 +127,21 @@ public class HappinessRegistry
         }
     }
 
-    public static ResourceLocation STATIC_MODIFIER      = new ResourceLocation(Constants.MOD_ID, "static");
-    public static ResourceLocation EXPIRATION_MODIFIER  = new ResourceLocation(Constants.MOD_ID, "expiration");
-    public static ResourceLocation TIME_PERIOD_MODIFIER = new ResourceLocation(Constants.MOD_ID, "time");
+    public static Identifier STATIC_MODIFIER      = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "static");
+    public static Identifier EXPIRATION_MODIFIER  = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "expiration");
+    public static Identifier TIME_PERIOD_MODIFIER = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "time");
 
-    public static ResourceLocation SCHOOL_FUNCTION        = new ResourceLocation(Constants.MOD_ID, "school");
-    public static ResourceLocation SECURITY_FUNCTION      = new ResourceLocation(Constants.MOD_ID, "security");
-    public static ResourceLocation SOCIAL_FUNCTION        = new ResourceLocation(Constants.MOD_ID, "social");
-    public static ResourceLocation MYSTICAL_SITE_FUNCTION = new ResourceLocation(Constants.MOD_ID, "mystical");
+    public static Identifier SCHOOL_FUNCTION        = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "school");
+    public static Identifier SECURITY_FUNCTION      = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "security");
+    public static Identifier SOCIAL_FUNCTION        = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "social");
+    public static Identifier MYSTICAL_SITE_FUNCTION = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "mystical");
 
-    public static ResourceLocation HOUSING_FUNCTION      = new ResourceLocation(Constants.MOD_ID, "housing");
-    public static ResourceLocation UNEMPLOYMENT_FUNCTION = new ResourceLocation(Constants.MOD_ID, "unemployment");
-    public static ResourceLocation HEALTH_FUNCTION       = new ResourceLocation(Constants.MOD_ID, "health");
-    public static ResourceLocation IDLEATJOB_FUNCTION    = new ResourceLocation(Constants.MOD_ID, "idleatjob");
-    public static ResourceLocation SLEPTTONIGHT_FUNCTION = new ResourceLocation(Constants.MOD_ID, "slepttonight");
-    public static ResourceLocation FOOD_FUNCTION         = new ResourceLocation(Constants.MOD_ID, "food");
+    public static Identifier HOUSING_FUNCTION      = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "housing");
+    public static Identifier UNEMPLOYMENT_FUNCTION = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "unemployment");
+    public static Identifier HEALTH_FUNCTION       = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "health");
+    public static Identifier IDLEATJOB_FUNCTION    = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "idleatjob");
+    public static Identifier SLEPTTONIGHT_FUNCTION = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "slepttonight");
+    public static Identifier FOOD_FUNCTION         = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "food");
 
     public static DeferredHolder<HappinessFactorTypeEntry, HappinessFactorTypeEntry> staticHappinessModifier;
     public static DeferredHolder<HappinessFactorTypeEntry, HappinessFactorTypeEntry> expirationBasedHappinessModifier;

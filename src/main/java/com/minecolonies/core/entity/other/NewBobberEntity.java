@@ -4,7 +4,6 @@ import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.loot.ModLootTables;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -68,7 +67,6 @@ public class NewBobberEntity extends Projectile implements IEntityWithComplexSpa
     private NewBobberEntity(EntityType<? extends Projectile> type, Level level, int luck, int lure)
     {
         super(type, level);
-        this.noCulling = true;
         this.luck = Math.max(0, luck);
         this.lureSpeed = Math.max(0, lure);
     }
@@ -91,7 +89,7 @@ public class NewBobberEntity extends Projectile implements IEntityWithComplexSpa
         double d0 = citizen.getX() - (double)f3 * 0.3;
         double d1 = citizen.getEyeY();
         double d2 = citizen.getZ() - (double)f2 * 0.3;
-        this.moveTo(d0, d1, d2, f1, f);
+        this.snapTo(d0, d1, d2, f1, f);
         Vec3 vec3 = new Vec3((double)(-f3), (double)Mth.clamp(-(f5 / f4), -5.0F, 5.0F), (double)(-f2));
         double d3 = vec3.length();
         vec3 = vec3.multiply(
@@ -138,16 +136,6 @@ public class NewBobberEntity extends Projectile implements IEntityWithComplexSpa
         return distance < 4096.0D;
     }
 
-    @OnlyIn(Dist.CLIENT)
-    @Override
-    public void lerpTo(
-      final double x,
-      final double y,
-      final double z,
-      final float yaw,
-      final float pitch,
-      final int posRotationIncrements) { }
-
     @Override
     public void tick() {
         this.syncronizedRandom.setSeed(this.getUUID().getLeastSignificantBits() ^ this.level().getGameTime());
@@ -155,7 +143,7 @@ public class NewBobberEntity extends Projectile implements IEntityWithComplexSpa
         AbstractEntityCitizen citizen = (AbstractEntityCitizen) this.getOwner();
         if (citizen == null) {
             this.discard();
-        } else if (this.level().isClientSide || !this.shouldStopFishing(citizen)) {
+        } else if (this.level().isClientSide() || !this.shouldStopFishing(citizen)) {
             if (this.onGround()) {
                 this.life++;
                 if (this.life >= 1200) {
@@ -209,7 +197,7 @@ public class NewBobberEntity extends Projectile implements IEntityWithComplexSpa
                         d0 += Math.signum(d0) * 0.1;
                     }
 
-                    this.setDeltaMovement(vec3.x * 0.9, vec3.y - d0 * (double)this.random.nextFloat() * 0.2, vec3.z * 0.9);
+                    this.setDeltaMovement(vec3.x * 0.9, vec3.y - d0 * (double)this.getRandom().nextFloat() * 0.2, vec3.z * 0.9);
                     if (this.nibble <= 0 && this.timeUntilHooked <= 0) {
                         this.openWater = true;
                     } else {
@@ -225,7 +213,7 @@ public class NewBobberEntity extends Projectile implements IEntityWithComplexSpa
                             );
                         }
 
-                        if (!this.level().isClientSide) {
+                        if (!this.level().isClientSide()) {
                             this.catchingFish(blockpos);
                         }
                     } else {
@@ -283,7 +271,7 @@ public class NewBobberEntity extends Projectile implements IEntityWithComplexSpa
     protected void onHitEntity(EntityHitResult hitEntity)
     {
         super.onHitEntity(hitEntity);
-        if (!this.level().isClientSide) {
+        if (!this.level().isClientSide()) {
             this.setHookedEntity(hitEntity.getEntity());
         }
     }
@@ -306,12 +294,12 @@ public class NewBobberEntity extends Projectile implements IEntityWithComplexSpa
         ServerLevel serverlevel = (ServerLevel) this.level();
         int i = 1;
         BlockPos blockpos = p_37146_.above();
-        if (this.random.nextFloat() < 0.25F && this.level().isRainingAt(blockpos))
+        if (this.getRandom().nextFloat() < 0.25F && this.level().isRainingAt(blockpos))
         {
             i++;
         }
 
-        if (this.random.nextFloat() < 0.5F && !this.level().canSeeSky(blockpos))
+        if (this.getRandom().nextFloat() < 0.5F && !this.level().canSeeSky(blockpos))
         {
             i--;
         }
@@ -341,7 +329,7 @@ public class NewBobberEntity extends Projectile implements IEntityWithComplexSpa
                 BlockState blockstate = serverlevel.getBlockState(BlockPos.containing(d0, d1 - 1.0, d2));
                 if (blockstate.is(Blocks.WATER))
                 {
-                    if (this.random.nextFloat() < 0.15F)
+                    if (this.getRandom().nextFloat() < 0.15F)
                     {
                         serverlevel.sendParticles(ParticleTypes.BUBBLE, d0, d1 - 0.1F, d2, 1, (double) f1, 0.1, (double) f2, 0.0);
                     }
@@ -354,7 +342,7 @@ public class NewBobberEntity extends Projectile implements IEntityWithComplexSpa
             }
             else
             {
-                this.playSound(SoundEvents.FISHING_BOBBER_SPLASH, 0.25F, 1.0F + (this.random.nextFloat() - this.random.nextFloat()) * 0.4F);
+                this.playSound(SoundEvents.FISHING_BOBBER_SPLASH, 0.25F, 1.0F + (this.getRandom().nextFloat() - this.getRandom().nextFloat()) * 0.4F);
                 double d3 = this.getY() + 0.5;
                 serverlevel.sendParticles(
                   ParticleTypes.BUBBLE,
@@ -399,7 +387,7 @@ public class NewBobberEntity extends Projectile implements IEntityWithComplexSpa
                 f5 += (float) (60 - this.timeUntilLured) * 0.01F;
             }
 
-            if (this.random.nextFloat() < f5)
+            if (this.getRandom().nextFloat() < f5)
             {
                 float f6 = Mth.nextFloat(this.random, 0.0F, 360.0F) * (float) (Math.PI / 180.0);
                 float f7 = Mth.nextFloat(this.random, 25.0F, 60.0F);
@@ -409,7 +397,7 @@ public class NewBobberEntity extends Projectile implements IEntityWithComplexSpa
                 BlockState blockstate1 = serverlevel.getBlockState(BlockPos.containing(d4, d5 - 1.0, d6));
                 if (blockstate1.is(Blocks.WATER))
                 {
-                    serverlevel.sendParticles(ParticleTypes.SPLASH, d4, d5, d6, 2 + this.random.nextInt(2), 0.1F, 0.0, 0.1F, 0.0);
+                    serverlevel.sendParticles(ParticleTypes.SPLASH, d4, d5, d6, 2 + this.getRandom().nextInt(2), 0.1F, 0.0, 0.1F, 0.0);
                 }
             }
 
@@ -481,22 +469,10 @@ public class NewBobberEntity extends Projectile implements IEntityWithComplexSpa
         }
     }
 
-    @Override
-    public void addAdditionalSaveData(CompoundTag tag)
-    {
-
-    }
-
-    @Override
-    public void readAdditionalSaveData(CompoundTag tag)
-    {
-
-    }
-
     public int retrieve(ItemStack p_37157_)
     {
         AbstractEntityCitizen citizen = (AbstractEntityCitizen) this.getOwner();
-        if (!this.level().isClientSide && citizen != null && !this.shouldStopFishing(citizen))
+        if (!this.level().isClientSide() && citizen != null && !this.shouldStopFishing(citizen))
         {
             int i = 0;
             if (this.hookedEntity != null)
@@ -525,7 +501,7 @@ public class NewBobberEntity extends Projectile implements IEntityWithComplexSpa
                     double d2 = citizen.getZ() - this.getZ();
                     itementity.setDeltaMovement(d0 * 0.1, d1 * 0.1 + Math.sqrt(Math.sqrt(d0 * d0 + d1 * d1 + d2 * d2)) * 0.08, d2 * 0.1);
                     this.level().addFreshEntity(itementity);
-                    citizen.level().addFreshEntity(new ExperienceOrb(citizen.level(), citizen.getX(), citizen.getY() + 0.5, citizen.getZ() + 0.5, this.random.nextInt(6) + 1));
+                    citizen.level().addFreshEntity(new ExperienceOrb(citizen.level(), citizen.getX(), citizen.getY() + 0.5, citizen.getZ() + 0.5, this.getRandom().nextInt(6) + 1));
                 }
 
                 i = 1;
@@ -548,7 +524,7 @@ public class NewBobberEntity extends Projectile implements IEntityWithComplexSpa
     @Override
     public void handleEntityEvent(byte b)
     {
-        if (b == 31 && this.level().isClientSide && this.hookedEntity instanceof Player && ((Player)this.hookedEntity).isLocalPlayer())
+        if (b == 31 && this.level().isClientSide() && this.hookedEntity instanceof Player && ((Player)this.hookedEntity).isLocalPlayer())
         {
             this.pullEntity(this.hookedEntity);
         }

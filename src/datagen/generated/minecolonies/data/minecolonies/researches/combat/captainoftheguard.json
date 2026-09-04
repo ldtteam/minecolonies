@@ -3,7 +3,7 @@
   "costs": [
     {
       "count": 27,
-      "item": "minecraft:shield"
+      "ingredient": "minecraft:shield"
     }
   ],
   "effects": [

@@ -1,11 +1,14 @@
 package com.minecolonies.core.recipes;
+import net.minecraft.core.component.DataComponents;
 
 import com.minecolonies.apiimp.initializer.ModIngredientTypeInitializer;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.food.FoodProperties;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.neoforged.neoforge.common.crafting.ICustomIngredient;
@@ -68,7 +71,7 @@ public record FoodIngredient(@NotNull Optional<Integer> minHealing,
 
     private boolean matchesFood(@NotNull final ItemStack stack)
     {
-        @NotNull final FoodProperties food = Objects.requireNonNull(stack.getItem().getFoodProperties(stack, null));
+        @NotNull final FoodProperties food = Objects.requireNonNull(stack.get(DataComponents.FOOD));
         return minHealing.map(healing -> food.nutrition() >= healing).orElse(true) &&
                maxHealing.map(healing -> food.nutrition() < healing).orElse(true) &&
                minSaturation.map(saturation -> food.saturation() >= saturation).orElse(true) &&
@@ -88,11 +91,11 @@ public record FoodIngredient(@NotNull Optional<Integer> minHealing,
 
     @NotNull
     @Override
-    public Stream<ItemStack> getItems()
+    public Stream<Holder<Item>> items()
     {
         return BuiltInRegistries.ITEM.stream()
-                .map(ItemStack::new)
-                .filter(this::test);
+                .filter(item -> test(new ItemStack(item)))
+                .map(BuiltInRegistries.ITEM::wrapAsHolder);
     }
 
     @Override

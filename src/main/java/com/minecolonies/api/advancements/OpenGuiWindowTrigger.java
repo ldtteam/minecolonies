@@ -2,11 +2,11 @@ package com.minecolonies.api.advancements;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.advancements.Criterion;
-import net.minecraft.advancements.critereon.ContextAwarePredicate;
-import net.minecraft.advancements.critereon.EntityPredicate;
-import net.minecraft.advancements.critereon.SimpleCriterionTrigger;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.advancements.triggers.Criterion;
+import net.minecraft.advancements.predicates.ContextAwarePredicate;
+import net.minecraft.advancements.predicates.entity.EntityPredicate;
+import net.minecraft.advancements.triggers.SimpleCriterionTrigger;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.NotNull;
 
@@ -23,7 +23,7 @@ public class OpenGuiWindowTrigger extends SimpleCriterionTrigger<OpenGuiWindowTr
      * @param player         the player the check regards
      * @param windowResource the window id that was just opened
      */
-    public void trigger(final ServerPlayer player, final ResourceLocation windowResource)
+    public void trigger(final ServerPlayer player, final Identifier windowResource)
     {
         trigger(player, trigger -> trigger.test(windowResource));
     }
@@ -35,11 +35,11 @@ public class OpenGuiWindowTrigger extends SimpleCriterionTrigger<OpenGuiWindowTr
         return OpenGuiWindowTriggerInstance.CODEC;
     }
 
-    public record OpenGuiWindowTriggerInstance(Optional<ContextAwarePredicate> player, Optional<ResourceLocation> windowResource) implements SimpleInstance
+    public record OpenGuiWindowTriggerInstance(Optional<ContextAwarePredicate> player, Optional<Identifier> windowResource) implements SimpleInstance
     {
         public static final Codec<OpenGuiWindowTriggerInstance> CODEC = RecordCodecBuilder.create(builder -> builder
             .group(EntityPredicate.ADVANCEMENT_CODEC.optionalFieldOf("player").forGetter(OpenGuiWindowTriggerInstance::player),
-                ResourceLocation.CODEC.optionalFieldOf("window_resource_location").forGetter(OpenGuiWindowTriggerInstance::windowResource))
+                Identifier.CODEC.optionalFieldOf("window_resource_location").forGetter(OpenGuiWindowTriggerInstance::windowResource))
             .apply(builder, OpenGuiWindowTriggerInstance::new));
 
         public static Criterion<OpenGuiWindowTriggerInstance> openGuiWindow()
@@ -52,7 +52,7 @@ public class OpenGuiWindowTrigger extends SimpleCriterionTrigger<OpenGuiWindowTr
          * 
          * @param windowResource the window that has to be opened to succeed
          */
-        public static Criterion<OpenGuiWindowTriggerInstance> openGuiWindow(final ResourceLocation windowResource)
+        public static Criterion<OpenGuiWindowTriggerInstance> openGuiWindow(final Identifier windowResource)
         {
             return AdvancementTriggers.OPEN_GUI_WINDOW.get()
                 .createCriterion(new OpenGuiWindowTriggerInstance(Optional.empty(), Optional.ofNullable(windowResource)));
@@ -64,7 +64,7 @@ public class OpenGuiWindowTrigger extends SimpleCriterionTrigger<OpenGuiWindowTr
          * @param  windowResource the blockui window id that was just opened
          * @return                whether the check succeeded
          */
-        public boolean test(final ResourceLocation windowResource)
+        public boolean test(final Identifier windowResource)
         {
             return this.windowResource.map(resourceLocation -> resourceLocation.equals(windowResource)).orElse(true);
         }

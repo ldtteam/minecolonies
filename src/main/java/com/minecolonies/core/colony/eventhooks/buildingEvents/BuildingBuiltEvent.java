@@ -4,7 +4,7 @@ import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.core.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
@@ -17,7 +17,7 @@ public class BuildingBuiltEvent extends AbstractBuildingEvent
     /**
      * This events id, registry entries use res locations as ids.
      */
-    public static final ResourceLocation BUILDING_BUILT_EVENT_ID = new ResourceLocation(Constants.MOD_ID, "building_built");
+    public static final Identifier BUILDING_BUILT_EVENT_ID = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "building_built");
 
     /**
      * Creates a new building built event.
@@ -39,7 +39,7 @@ public class BuildingBuiltEvent extends AbstractBuildingEvent
     }
 
     @Override
-    public ResourceLocation getEventTypeId()
+    public Identifier getEventTypeId()
     {
         return BUILDING_BUILT_EVENT_ID;
     }

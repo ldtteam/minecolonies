@@ -20,7 +20,7 @@ import com.minecolonies.core.network.messages.server.ItemSettingMessage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Vec3i;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.*;
 import java.util.function.Supplier;
@@ -49,7 +49,7 @@ public class WindowClipBoard extends AbstractWindowSkeleton
      */
     public WindowClipBoard(final IColonyView colony, boolean showImportant)
     {
-        super(new ResourceLocation(Constants.MOD_ID, "gui/windowclipboard.xml"));
+        super(Identifier.fromNamespaceAndPath(Constants.MOD_ID, "gui/windowclipboard.xml"));
         this.showImportant = showImportant;
         this.requestTreeWindowModule = registerLayoutModule(ClipboardRequestTreeWindowModule::new, new ClipboardRequestTreeWindowModule.Options(colony, () -> this.showImportant), 16, 44);
 

@@ -1,5 +1,6 @@
 package com.minecolonies.core.items;
-
+import com.ldtteam.structurize.util.PlacementSettings;
+import com.ldtteam.structurize.util.RotationMirror;
 import com.ldtteam.structurize.blocks.ModBlocks;
 import com.ldtteam.structurize.placement.SimplePlacementContext;
 import com.ldtteam.structurize.placement.handlers.placement.IPlacementHandler;
@@ -33,10 +34,10 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
@@ -45,10 +46,9 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
 import java.util.ArrayList;
+import java.util.function.Consumer;
 import java.util.List;
-
 /**
  * Assistant Hammer item used to allow the player to assist the builder in building
  */
@@ -58,13 +58,11 @@ public class ItemAssistantHammer extends AbstractItemMinecolonies
      * The distance at which blocks can get placed from the clicked position
      */
     private int reach = 1;
-
     public ItemAssistantHammer(final String id, final Properties properties, final int reach)
     {
         super(id, properties);
         this.reach = reach;
     }
-
     /**
      * Called from both using it on air, or attacking a block
      *
@@ -74,12 +72,10 @@ public class ItemAssistantHammer extends AbstractItemMinecolonies
     {
         final Level level = player.level();
         final IColonyView view = IColonyManager.getInstance().getColonyView(level, interactPos);
-
         if (view == null || level == null || !view.getPermissions().hasPermission(player, Action.PLACE_BLOCKS))
         {
             return;
         }
-
         boolean unclaimed = true;
         for (final IWorkOrder workOrder : view.getWorkOrders())
         {
@@ -94,16 +90,13 @@ public class ItemAssistantHammer extends AbstractItemMinecolonies
                     workOrder.loadBlueprint(player.level(), b -> {});
                     return;
                 }
-
                 List<IPlacementHandler> handlers = new ArrayList<>(PlacementHandlers.handlers);
                 SolidPlaceholderPlacementHandler solidPlaceHolderHandler = new SolidPlaceholderPlacementHandler();
                 final IBuildingView building = view.getClientBuildingManager().getBuilding(workOrder.getClaimedBy());
-
                 if (building == null || !building.hasModuleView(BuildingModules.BUILDER_SETTINGS))
                 {
                     return;
                 }
-
                 solidPlaceHolderHandler.setReplacement(building
                     .getModuleView(BuildingModules.BUILDER_SETTINGS)
                     .getSetting(BuildingMiner.FILL_BLOCK)
@@ -111,23 +104,19 @@ public class ItemAssistantHammer extends AbstractItemMinecolonies
                     .getBlock()
                     .defaultBlockState());
                 handlers.add(0, solidPlaceHolderHandler);
-
                 final BuildAttemptResult buildAttemptResult = tryBuildingBlockNearby(player, view, workOrder, interactPos, handlers);
                 if (buildAttemptResult.areBlocksToBuildNearby() && !buildAttemptResult.didTryBuilding())
                 {
-                    player.displayClientMessage(Component.translatable("item.minecolonies.assistanthammer.noitems"), true);
+                    player.sendOverlayMessage(Component.translatable("item.minecolonies.assistanthammer.noitems"));
                 }
-
                 break;
             }
         }
-
         if (unclaimed)
         {
-            player.displayClientMessage(Component.translatable("item.minecolonies.assistanthammer.onlyactive"), true);
+            player.sendOverlayMessage(Component.translatable("item.minecolonies.assistanthammer.onlyactive"));
         }
     }
-
     /**
      * Tries to place a block on serverside
      * Sends a full inventory on failure, as client side does already the item logic
@@ -143,20 +132,18 @@ public class ItemAssistantHammer extends AbstractItemMinecolonies
             final BuildingProgressStage stage = workOrder.getStage();
             if (stage == BuildingProgressStage.CLEAR || stage == BuildingProgressStage.CLEAR_NON_SOLIDS)
             {
-                player.displayClientMessage(Component.translatable("item.minecolonies.assistanthammer.notcleared"), true);
+                player.sendOverlayMessage(Component.translatable("item.minecolonies.assistanthammer.notcleared"));
                 player.inventoryMenu.broadcastFullState();
                 return;
             }
-
             // Fallback incase the builder did not load it yet for reasons
             if (workOrder.getBlueprint() == null)
             {
                 workOrder.loadBlueprint(player.level(), b -> {});
-                player.displayClientMessage(Component.translatable("item.minecolonies.assistanthammer.notloaded"), true);
+                player.sendOverlayMessage(Component.translatable("item.minecolonies.assistanthammer.notloaded"));
                 player.inventoryMenu.broadcastFullState();
                 return;
             }
-
             List<IPlacementHandler> handlers = new ArrayList<>(PlacementHandlers.handlers);
             SolidPlaceholderPlacementHandler solidPlaceHolderHandler = new SolidPlaceholderPlacementHandler();
             solidPlaceHolderHandler.setReplacement(colony.getServerBuildingManager().getBuilding(workOrder.getClaimedBy())
@@ -166,46 +153,39 @@ public class ItemAssistantHammer extends AbstractItemMinecolonies
                 .getBlock()
                 .defaultBlockState());
             handlers.add(0, solidPlaceHolderHandler);
-
             final BuildAttemptResult buildAttemptResult = tryBuildingBlockNearby(player, colony, workOrder, interactPos, handlers);
             if (buildAttemptResult.areBlocksToBuildNearby() && !buildAttemptResult.didTryBuilding())
             {
-                player.displayClientMessage(Component.translatable("item.minecolonies.assistanthammer.noitems"), true);
+                player.sendOverlayMessage(Component.translatable("item.minecolonies.assistanthammer.noitems"));
                 player.inventoryMenu.broadcastFullState();
             }
-
             if (buildAttemptResult.areBlocksToBuildNearby() && buildAttemptResult.didTryBuilding() && !player.isCreative())
             {
                 player.getMainHandItem().hurtAndBreak(player.getMainHandItem().getItem().damageItem(player.getMainHandItem(), 1, player, s -> {}), player, EquipmentSlot.MAINHAND);
             }
         }
     }
-
     @Override
     public InteractionResult useOn(UseOnContext context)
     {
-        if (context.getLevel().isClientSide)
+        if (context.getLevel().isClientSide())
         {
             final BlockPos interactPos = context.getClickedPos().relative(context.getClickedFace());
             useOnBlock(context.getPlayer(), interactPos);
         }
-
         return InteractionResult.SUCCESS;
     }
-
     @NotNull
     @Override
-    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand)
+    public InteractionResult use(Level level, Player player, InteractionHand hand)
     {
-        if (level.isClientSide)
+        if (level.isClientSide())
         {
             final BlockPos interactPos = BlockPos.containing(player.getEyePosition().add(player.getLookAngle().multiply(3, 3, 3)));
             useOnBlock(player, interactPos);
         }
-
-        return InteractionResultHolder.success(player.getMainHandItem());
+        return InteractionResult.SUCCESS.heldItemTransformedTo(player.getMainHandItem());
     }
-
     /**
      * Tries to build a block nearby, checking preview positions
      *
@@ -223,8 +203,7 @@ public class ItemAssistantHammer extends AbstractItemMinecolonies
     {
         final BlockPos.MutableBlockPos workPos = new BlockPos.MutableBlockPos();
         boolean areBlocksToBuildNearby = false;
-        player.getCooldowns().addCooldown(this, 5);
-
+        player.getCooldowns().addCooldown(player.getMainHandItem(), 5);
         for (int currentDistance = 0; currentDistance <= reach; currentDistance++)
         {
             for (int x = -currentDistance; x <= currentDistance; x++)
@@ -238,12 +217,10 @@ public class ItemAssistantHammer extends AbstractItemMinecolonies
                         {
                             continue;
                         }
-
                         workPos.set(x + interactPos.getX(), y + interactPos.getY(), z + interactPos.getZ());
                         final BlockState levelState = player.level().getBlockState(workPos);
                         final BlockInfo blockInfo =
                             workOrder.getBlueprint().getBlockInfoAsMap().get(workPos.subtract(workOrder.getLocation()).offset(workOrder.getBlueprint().getPrimaryBlockOffset()));
-
                         if (blockInfo == null || blockInfo.getState() == null || blockInfo.getState().getBlock() == levelState.getBlock() || !(levelState.isAir()
                             || !levelState.getFluidState().isEmpty()) || blockInfo.getState().getBlock() == ModBlocks.blockSubstitution.get()
                             || blockInfo.getState().getBlock() == ModBlocks.blockFluidSubstitution.get()
@@ -251,42 +228,38 @@ public class ItemAssistantHammer extends AbstractItemMinecolonies
                         {
                             continue;
                         }
-
                         List<ItemStack> requiredItem = new ArrayList<>();
-
                         IPlacementHandler foundHandler = null;
                         for (final IPlacementHandler handler : handlers)
                         {
                             if (handler.canHandle(player.level(), BlockPos.ZERO, blockInfo.getState()))
                             {
-                                final List<ItemStack> itemList = handler.getRequiredItems(player.level(), workPos, blockInfo.getState(), blockInfo.getTileEntityData(), new SimplePlacementContext(true, workOrder.getRotationMirror()));
+                final RotationMirror rotationMirror = workOrder.getRotationMirror();
+                final List<ItemStack> itemList = handler.getRequiredItems(player.level(), workPos,
+                    blockInfo.getState(), blockInfo.getTileEntityData(),
+                    new SimplePlacementContext(true, new PlacementSettings(rotationMirror.mirror(), rotationMirror.rotation())));
                                 requiredItem.addAll(itemList);
-
                                 foundHandler = handler;
                                 break;
                             }
                         }
-
                         if (foundHandler == null)
                         {
                             requiredItem.add(BlockUtils.getItemStackFromBlockState(blockInfo.getState()));
                         }
-
                         // Only allow single block placement, no inventory, no free blocks
                         if (requiredItem.size() != 1)
                         {
                             continue;
                         }
-
                         areBlocksToBuildNearby = true;
                         boolean hasItems = true;
-
                         if (!player.isCreative())
                         {
                             for (final ItemStack required : requiredItem)
                             {
                                 boolean found = false;
-                                for (final ItemStack stack : player.getInventory().items)
+                                for (final ItemStack stack : player.getInventory().getNonEquipmentItems())
                                 {
                                     if (ItemStackUtils.compareItemStacksIgnoreStackSize(required, stack))
                                     {
@@ -294,30 +267,26 @@ public class ItemAssistantHammer extends AbstractItemMinecolonies
                                         break;
                                     }
                                 }
-
                                 if (!found)
                                 {
                                     hasItems = false;
                                 }
                             }
                         }
-
                         if (!hasItems)
                         {
                             continue;
                         }
-
                         final IPlacementHandler.ActionProcessingResult result = foundHandler.handle(colony.getWorld(),
                             workPos,
                             blockInfo.getState(),
                             blockInfo.getTileEntityData(),
-                            new SimplePlacementContext(true, workOrder.getRotationMirror()));
-
+                            new SimplePlacementContext(true, new PlacementSettings(
+                                workOrder.getRotationMirror().mirror(), workOrder.getRotationMirror().rotation())));
                         if (result == IPlacementHandler.ActionProcessingResult.DENY)
                         {
                             continue;
                         }
-
                         if (!colony.getWorld().isClientSide())
                         {
                             final IBuilding building = colony.getServerBuildingManager().getBuilding(workOrder.getLocation());
@@ -326,14 +295,12 @@ public class ItemAssistantHammer extends AbstractItemMinecolonies
                                 building.registerBlockPosition(blockInfo.getState(), workPos, colony.getWorld());
                             }
                         }
-
                         if (!player.isCreative())
                         {
                             InventoryUtils.removeStacksFromItemHandler(new InvWrapper(player.getInventory()), requiredItem);
                         }
-
                         // Server message
-                        if (colony.getWorld().isClientSide)
+                        if (colony.getWorld().isClientSide())
                         {
                             new PlayerAssistantBuildRequestMessage(colony, workOrder.getID(), interactPos).sendToServer();
                         }
@@ -344,7 +311,6 @@ public class ItemAssistantHammer extends AbstractItemMinecolonies
                             {
                                 building.getModule(BuildingModules.BUILDING_RESOURCES).reduceNeededResource(stack, 1);
                             }
-
                             if (ColonyConstants.rand.nextInt(20) == 0)
                             {
                                 final var buildingBuilder = colony.getServerBuildingManager().getBuilding(workOrder.getClaimedBy());
@@ -357,7 +323,6 @@ public class ItemAssistantHammer extends AbstractItemMinecolonies
                                 }
                             }
                         }
-
                         for (int i = 0; i < 50; ++i)
                         {
                             player.level().addParticle(new BlockParticleOption(ParticleTypes.BLOCK, blockInfo.getState()),
@@ -368,7 +333,6 @@ public class ItemAssistantHammer extends AbstractItemMinecolonies
                                 ColonyConstants.rand.nextGaussian() * 5,
                                 ColonyConstants.rand.nextGaussian() * 5);
                         }
-
                         // Small random hammer "clang" sound
                         if (player.level().isClientSide() && ColonyConstants.rand.nextInt(5) == 0)
                         {
@@ -380,7 +344,6 @@ public class ItemAssistantHammer extends AbstractItemMinecolonies
                                     (0.75f + ColonyConstants.rand.nextFloat(0.5f)) * 2,
                                     (0.9f + ColonyConstants.rand.nextFloat(0.2f)));
                         }
-
                         // placement sound of the block being placed, also heared by other players nearby
                         player.level()
                             .playSound(player,
@@ -389,16 +352,13 @@ public class ItemAssistantHammer extends AbstractItemMinecolonies
                                 SoundSource.BLOCKS,
                                 blockInfo.getState().getSoundType().getVolume() * (0.75f + ColonyConstants.rand.nextFloat(0.5f)) * 2,
                                 blockInfo.getState().getSoundType().getPitch() * (0.9f + ColonyConstants.rand.nextFloat(0.2f)));
-
                         return new BuildAttemptResult(true, true);
                     }
                 }
             }
         }
-
         return new BuildAttemptResult(areBlocksToBuildNearby, false);
     }
-
     /**
      * Build attempt result
      *
@@ -408,11 +368,13 @@ public class ItemAssistantHammer extends AbstractItemMinecolonies
     private record BuildAttemptResult(
         boolean areBlocksToBuildNearby,
         boolean didTryBuilding) {}
-
     @Override
-    public void appendHoverText(@NotNull final ItemStack stack, @Nullable final TooltipContext ctx, @NotNull final List<Component> tooltipList, @NotNull final TooltipFlag flagIn)
+    public void appendHoverText(@NotNull final ItemStack stack, @Nullable final TooltipContext ctx, @NotNull final TooltipDisplay display, Consumer<Component> tooltipConsumer, @NotNull final TooltipFlag flagIn)
+    
     {
-        tooltipList.add(Component.translatable("item.minecolonies.assistanthammer.reach", reach).withStyle(ChatFormatting.BLUE));
-        tooltipList.add(Component.translatable("item.minecolonies.assistanthammer.desc").withStyle(ChatFormatting.ITALIC).withStyle(ChatFormatting.GRAY));
+        final List<Component> tooltip = new ArrayList<>();
+        tooltip.add(Component.translatable("item.minecolonies.assistanthammer.reach", reach).withStyle(ChatFormatting.BLUE));
+        tooltip.add(Component.translatable("item.minecolonies.assistanthammer.desc").withStyle(ChatFormatting.ITALIC).withStyle(ChatFormatting.GRAY));
+        tooltip.forEach(tooltipConsumer);
     }
 }

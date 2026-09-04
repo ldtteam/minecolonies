@@ -23,7 +23,7 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -63,7 +63,7 @@ public class WorkerBuildingModule extends AbstractAssignedCitizenModule
     /**
      * Research requirement, default to null.
      */
-    private ResourceLocation researchRequirement = null;
+    private Identifier researchRequirement = null;
 
     public WorkerBuildingModule(
       final JobEntry entry,
@@ -85,7 +85,7 @@ public class WorkerBuildingModule extends AbstractAssignedCitizenModule
         final Skill secondary,
         final boolean canWorkingDuringRain,
         final Function<IBuilding, Integer> sizeLimit,
-        final ResourceLocation researchRequirement)
+        final Identifier researchRequirement)
     {
         this.jobEntry = entry;
         this.primary = primary;
@@ -124,10 +124,10 @@ public class WorkerBuildingModule extends AbstractAssignedCitizenModule
         super.deserializeNBT(provider, compound);
         if (compound.contains(TAG_WORKER))
         {
-            final ListTag workersTagList = compound.getList(TAG_WORKER, Tag.TAG_COMPOUND);
+            final ListTag workersTagList = compound.getListOrEmpty(TAG_WORKER);
             for (int i = 0; i < workersTagList.size(); ++i)
             {
-                final ICitizenData data = building.getColony().getCitizenManager().getCivilian(workersTagList.getCompound(i).getInt(TAG_WORKER_ID));
+                final ICitizenData data = building.getColony().getCitizenManager().getCivilian(workersTagList.getCompoundOrEmpty(i).getIntOr(TAG_WORKER_ID, 0));
                 if (data != null && data.getJob() != null && data.getJob().getJobRegistryEntry() == jobEntry)
                 {
                     assignCitizen(data);
@@ -136,8 +136,8 @@ public class WorkerBuildingModule extends AbstractAssignedCitizenModule
         }
         else if (compound.contains(getModuleSerializationIdentifier()))
         {
-            final CompoundTag jobCompound = compound.getCompound(jobEntry.getKey().toString());
-            final int[] residentIds = jobCompound.getIntArray(TAG_WORKING_RESIDENTS);
+            final CompoundTag jobCompound = compound.getCompoundOrEmpty(jobEntry.getKey().toString());
+            final int[] residentIds = jobCompound.getIntArray(TAG_WORKING_RESIDENTS).orElse(new int[0]);
             for (final int citizenId : residentIds)
             {
                 final ICitizenData citizen = building.getColony().getCitizenManager().getCivilian(citizenId);
@@ -149,7 +149,7 @@ public class WorkerBuildingModule extends AbstractAssignedCitizenModule
         }
         else
         {
-            final int[] residentIds = compound.getIntArray(TAG_WORKING_RESIDENTS);
+            final int[] residentIds = compound.getIntArray(TAG_WORKING_RESIDENTS).orElse(new int[0]);
             for (final int citizenId : residentIds)
             {
                 final ICitizenData citizen = building.getColony().getCitizenManager().getCivilian(citizenId);
@@ -200,7 +200,7 @@ public class WorkerBuildingModule extends AbstractAssignedCitizenModule
         buf.writeBoolean(researchRequirement != null);
         if (researchRequirement != null)
         {
-            buf.writeResourceLocation(researchRequirement);
+            buf.writeIdentifier(researchRequirement);
         }
     }
 

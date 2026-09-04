@@ -15,15 +15,16 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.LootTable;
-import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
+import net.minecraft.util.context.ContextKeySet;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.neoforged.neoforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
@@ -48,7 +49,7 @@ public class RecipeStorage implements IRecipeStorage
      * Where this recipe came from
      * For custom recipes, it's the id of the recipe
      */
-    private final ResourceLocation recipeSource;
+    private final Identifier recipeSource;
 
     /**
      * Input required for the recipe.
@@ -121,7 +122,7 @@ public class RecipeStorage implements IRecipeStorage
     /**
      * The loot parameter set definition
      */
-    public static final LootContextParamSet recipeLootParameters = (new LootContextParamSet.Builder())
+    public static final ContextKeySet recipeLootParameters = (new ContextKeySet.Builder())
                 .required(LootContextParams.ORIGIN)
                 .required(LootContextParams.THIS_ENTITY)
                 .required(LootContextParams.TOOL)
@@ -132,8 +133,8 @@ public class RecipeStorage implements IRecipeStorage
 
     public static class Builder
     {
-        private ResourceLocation recipeType = null;
-        private ResourceLocation recipeSource = null;
+        private Identifier recipeType = null;
+        private Identifier recipeSource = null;
         @NotNull private List<ItemStorage> input = List.of();
         @NotNull private ItemStack primaryOutput = ItemStack.EMPTY;
         @NotNull private List<ItemStack> alternateOutputs = List.of();
@@ -175,7 +176,7 @@ public class RecipeStorage implements IRecipeStorage
          * @param type What type of recipe this is. (ie: minecolonies:classic)
          * @return this
          */
-        public Builder withRecipeType(@Nullable final ResourceLocation type)
+        public Builder withRecipeType(@Nullable final Identifier type)
         {
             this.recipeType = type;
             return this;
@@ -186,7 +187,7 @@ public class RecipeStorage implements IRecipeStorage
          * @param id the source of this recipe (ie: minecolonies:crafter/recipename, "player name", "improvement", etc)
          * @return this
          */
-        public Builder withRecipeId(@Nullable final ResourceLocation id)
+        public Builder withRecipeId(@Nullable final Identifier id)
         {
             this.recipeSource = id;
             return this;
@@ -334,10 +335,10 @@ public class RecipeStorage implements IRecipeStorage
         this.lootTable = builder.lootTable;
         this.requiredTool = builder.requiredTool;
 
-        final ResourceLocation type = builder.recipeType != null ? builder.recipeType
+        final Identifier type = builder.recipeType != null ? builder.recipeType
                 : builder.alternateOutputs.isEmpty() ? ModRecipeTypes.CLASSIC_ID : ModRecipeTypes.MULTI_OUTPUT_ID;
         final Registry<RecipeTypeEntry> recipeTypes = MinecoloniesAPIProxy.getInstance().getRecipeTypeRegistry();
-        this.recipeType = recipeTypes.get(type).getHandlerProducer().apply(this);
+        this.recipeType = recipeTypes.getValue(type).getHandlerProducer().apply(this);
 
         this.processInputsAndTools(builder.secondaryOutputs);
     }
@@ -372,7 +373,7 @@ public class RecipeStorage implements IRecipeStorage
                 continue;
             }
 
-            final ItemStack container = inputItem.getItemStack().getCraftingRemainingItem();
+            final ItemStack container = ItemStackUtils.getCraftingRemainder(inputItem.getItemStack());
             if (secOutputs == null && !ItemStackUtils.isEmpty(container))
             {
                 container.setCount(inputItem.getAmount());
@@ -512,7 +513,7 @@ public class RecipeStorage implements IRecipeStorage
         }
         else
         {
-            final ItemStack container = stack.getCraftingRemainingItem();
+            final ItemStack container = ItemStackUtils.getCraftingRemainder(stack);
             if(ItemStackUtils.isEmpty(container) || !ItemStackUtils.compareItemStacksIgnoreStackSize(stack, container, false, !storage.ignoreNBT()))
             {
                 neededCount = storage.getAmount() * qty;
@@ -647,7 +648,7 @@ public class RecipeStorage implements IRecipeStorage
         {
             for (final ItemStorage stack : input)
             {
-                final ItemStack container = stack.getItemStack().getCraftingRemainingItem();
+                final ItemStack container = ItemStackUtils.getCraftingRemainder(stack.getItemStack());
                 if (!ItemStackUtils.isEmpty(container))
                 {
                     container.setCount(stack.getAmount());
@@ -685,7 +686,10 @@ public class RecipeStorage implements IRecipeStorage
             return null;
         }
 
-        final AbstractEntityCitizen citizen = (AbstractEntityCitizen) context.getParamOrNull(LootContextParams.THIS_ENTITY);
+        final Entity contextEntity = context.contextMap().getOptional(LootContextParams.THIS_ENTITY);
+        final AbstractEntityCitizen citizen = contextEntity instanceof AbstractEntityCitizen entityCitizen
+                ? entityCitizen
+                : null;
 
         for (final ItemStorage storage : getCleanedInput())
         {
@@ -859,7 +863,7 @@ public class RecipeStorage implements IRecipeStorage
     }
 
     @Override
-    public ResourceLocation getRecipeSource()
+    public Identifier getRecipeSource()
     {
         return recipeSource; 
     }

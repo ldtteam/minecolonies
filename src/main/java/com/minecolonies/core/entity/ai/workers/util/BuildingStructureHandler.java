@@ -2,6 +2,7 @@ package com.minecolonies.core.entity.ai.workers.util;
 
 import com.ldtteam.structurize.placement.structure.AbstractStructureHandler;
 import com.ldtteam.structurize.util.BlockUtils;
+import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
@@ -90,7 +91,7 @@ public class BuildingStructureHandler<J extends AbstractJobStructure<?, J>, B ex
         super(world,
             workOrder.getLocation(),
             workOrder.getBlueprint(),
-            workOrder.getRotationMirror());
+            new PlacementSettings(workOrder.getRotationMirror().mirror(), workOrder.getRotationMirror().rotation()));
         setupBuilding();
         this.workOrder = (IBuilderWorkOrder) workOrder;
         this.structureAI = entityAIStructure;
@@ -314,6 +315,12 @@ public class BuildingStructureHandler<J extends AbstractJobStructure<?, J>, B ex
     public BlockState getSolidBlockForPos(final BlockPos worldPos, final Function<BlockPos, @Nullable BlockState> virtualBlocks)
     {
         return structureAI.getSolidSubstitution(worldPos, virtualBlocks);
+    }
+
+    @Override
+    public BlockState getSolidBlockForPos(final BlockPos worldPos)
+    {
+        return getSolidBlockForPos(worldPos, null);
     }
 
     @Override

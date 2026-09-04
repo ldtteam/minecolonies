@@ -1,22 +1,11 @@
 {
   "type": "minecraft:crafting_shapeless",
-  "category": "misc",
   "ingredients": [
-    {
-      "item": "minecolonies:onion"
-    },
-    {
-      "item": "minecolonies:peas"
-    },
-    {
-      "item": "minecolonies:large_milk_bottle"
-    },
-    {
-      "item": "minecraft:bowl"
-    },
-    {
-      "item": "minecraft:bowl"
-    }
+    "minecolonies:onion",
+    "minecolonies:peas",
+    "minecolonies:large_milk_bottle",
+    "minecraft:bowl",
+    "minecraft:bowl"
   ],
   "result": {
     "count": 2,

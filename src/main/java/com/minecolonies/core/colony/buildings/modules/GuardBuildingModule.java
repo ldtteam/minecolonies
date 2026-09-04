@@ -15,7 +15,7 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.core.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.core.util.AttributeModifierUtils;
 import com.minecolonies.core.util.BuildingUtils;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.EquipmentSlot;
 import org.jetbrains.annotations.NotNull;
 
@@ -47,7 +47,7 @@ public class GuardBuildingModule extends WorkAtHomeBuildingModule implements IBu
         final GuardType type,
         final boolean canWorkingDuringRain,
         final Function<IBuilding, Integer> sizeLimit,
-        final ResourceLocation researchRequirement)
+        final Identifier researchRequirement)
     {
         super(type.getJobEntry().get(), type.getPrimarySkill(), type.getSecondarySkill(), canWorkingDuringRain, sizeLimit, researchRequirement);
     }

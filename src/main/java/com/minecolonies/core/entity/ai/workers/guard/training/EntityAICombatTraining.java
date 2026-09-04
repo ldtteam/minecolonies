@@ -1,5 +1,7 @@
 package com.minecolonies.core.entity.ai.workers.guard.training;
 
+import com.minecolonies.core.entity.ai.combat.ServerDamageHelper;
+
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
@@ -200,7 +202,7 @@ public class EntityAICombatTraining extends AbstractEntityAITraining<JobCombatTr
                 final int shieldSlot = InventoryUtils.findFirstSlotInItemHandlerWith(getInventory(), Items.SHIELD);
                 if (shieldSlot != -1)
                 {
-                    worker.playSound(SoundEvents.SHIELD_BLOCK, (float) BASIC_VOLUME, (float) SoundUtils.getRandomPitch(worker.getRandom()));
+                    worker.playSound(SoundEvents.SHIELD_BLOCK.value(), (float) BASIC_VOLUME, (float) SoundUtils.getRandomPitch(worker.getRandom()));
                     CitizenItemUtils.setHeldItem(worker, InteractionHand.OFF_HAND, shieldSlot);
                     worker.startUsingItem(InteractionHand.OFF_HAND);
                     worker.getLookControl().setLookAt(trainingPartner, (float) TURN_AROUND, (float) TURN_AROUND);
@@ -210,7 +212,7 @@ public class EntityAICombatTraining extends AbstractEntityAITraining<JobCombatTr
             {
                 worker.swing(InteractionHand.MAIN_HAND);
                 worker.playSound(SoundEvents.PLAYER_ATTACK_SWEEP, (float) BASIC_VOLUME, (float) SoundUtils.getRandomPitch(worker.getRandom()));
-                trainingPartner.hurt(world.damageSources().source(DamageSourceKeys.TRAINING, worker), 0.0F);
+                ServerDamageHelper.apply(trainingPartner, world.damageSources().source(DamageSourceKeys.TRAINING, worker), 0.0F);
                 CitizenItemUtils.damageItemInHand(worker, InteractionHand.MAIN_HAND, 1);
             }
             EntityNavigationUtils.walkAwayFrom(worker, trainingPartner.blockPosition(), 4, 1.0);
@@ -306,7 +308,7 @@ public class EntityAICombatTraining extends AbstractEntityAITraining<JobCombatTr
                   Items.SHIELD);
                 if (shieldSlot != -1)
                 {
-                    worker.playSound(SoundEvents.SHIELD_BLOCK, (float) BASIC_VOLUME, (float) SoundUtils.getRandomPitch(worker.getRandom()));
+                    worker.playSound(SoundEvents.SHIELD_BLOCK.value(), (float) BASIC_VOLUME, (float) SoundUtils.getRandomPitch(worker.getRandom()));
                     CitizenItemUtils.setHeldItem(worker, InteractionHand.OFF_HAND, shieldSlot);
                     worker.startUsingItem(InteractionHand.OFF_HAND);
                 }

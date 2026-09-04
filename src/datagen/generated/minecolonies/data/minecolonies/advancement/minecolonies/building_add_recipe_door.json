@@ -73,7 +73,6 @@
       "translate": "advancements.minecolonies.building_add_recipe_door.description"
     },
     "icon": {
-      "count": 1,
       "id": "minecraft:oak_door"
     },
     "title": {

@@ -3,7 +3,7 @@
   "costs": [
     {
       "count": 16,
-      "item": "minecolonies:blockminecoloniesrack"
+      "ingredient": "minecolonies:blockminecoloniesrack"
     }
   ],
   "effects": [

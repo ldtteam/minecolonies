@@ -1,6 +1,7 @@
 package com.minecolonies.core.tileentities;
 
 import com.minecolonies.api.inventory.InventoryCitizen;
+import com.ldtteam.structurize.api.util.Tuple;
 import com.minecolonies.api.tileentities.AbstractTileEntityRack;
 import com.minecolonies.api.tileentities.AbstractTileEntityWareHouse;
 import com.minecolonies.api.tileentities.MinecoloniesTileEntities;

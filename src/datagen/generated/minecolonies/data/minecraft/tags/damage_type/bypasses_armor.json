@@ -1,7 +1,16 @@
 {
   "values": [
-    "minecolonies:wakeywakey",
-    "minecolonies:guardpvp",
-    "minecolonies:pierce"
+    {
+      "id": "minecolonies:wakeywakey",
+      "required": false
+    },
+    {
+      "id": "minecolonies:guardpvp",
+      "required": false
+    },
+    {
+      "id": "minecolonies:pierce",
+      "required": false
+    }
   ]
 }

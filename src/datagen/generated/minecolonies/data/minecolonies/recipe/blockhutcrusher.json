@@ -1,19 +1,10 @@
 {
   "type": "minecraft:crafting_shaped",
-  "category": "misc",
   "key": {
-    "B": {
-      "item": "minecraft:iron_ingot"
-    },
-    "C": {
-      "item": "minecraft:cobblestone"
-    },
-    "T": {
-      "item": "structurize:sceptergold"
-    },
-    "X": {
-      "tag": "minecraft:planks"
-    }
+    "B": "minecraft:iron_ingot",
+    "C": "minecraft:cobblestone",
+    "T": "structurize:sceptergold",
+    "X": "#minecraft:planks"
   },
   "pattern": [
     "XTX",
@@ -21,7 +12,6 @@
     "XXX"
   ],
   "result": {
-    "count": 1,
     "id": "minecolonies:blockhutcrusher"
   }
 }

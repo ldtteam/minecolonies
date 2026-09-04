@@ -462,43 +462,43 @@ public class StandardRequestManager implements IStandardRequestManager
     {
         executeDeserializationStepOrMarkForUpdate(nbt,
           NBT_VERSION,
-          CompoundTag::getInt,
+          (tag, key) -> tag.getInt(key).orElseThrow(() -> new IllegalStateException("Missing integer value for " + key)),
           v -> version = v);
 
         executeDeserializationStepOrMarkForUpdate(nbt,
           NBT_DATASTORE,
-          CompoundTag::getCompound,
+          CompoundTag::getCompoundOrEmpty,
           c -> dataStoreManager = getFactoryController().deserializeTag(provider, c));
 
         executeDeserializationStepOrMarkForUpdate(nbt,
           NBT_ID_REQUEST_IDENTITIES,
-          CompoundTag::getCompound,
+          CompoundTag::getCompoundOrEmpty,
           c -> requestIdentitiesDataStoreId = getFactoryController().deserializeTag(provider, c));
         executeDeserializationStepOrMarkForUpdate(nbt,
           NBT_ID_REQUEST_RESOLVER_IDENTITIES,
-          CompoundTag::getCompound,
+          CompoundTag::getCompoundOrEmpty,
           c -> requestResolverIdentitiesDataStoreId = getFactoryController().deserializeTag(provider, c));
         executeDeserializationStepOrMarkForUpdate(nbt,
           NBT_ID_PROVIDER_ASSIGNMENTS,
-          CompoundTag::getCompound,
+          CompoundTag::getCompoundOrEmpty,
           c -> providerRequestResolverAssignmentDataStoreId = getFactoryController().deserializeTag(provider, c));
         executeDeserializationStepOrMarkForUpdate(nbt,
           NBT_ID_REQUEST_RESOLVER_ASSIGNMENTS,
-          CompoundTag::getCompound,
+          CompoundTag::getCompoundOrEmpty,
           c -> requestResolverRequestAssignmentDataStoreId = getFactoryController().deserializeTag(provider, c));
         executeDeserializationStepOrMarkForUpdate(nbt,
           NBT_ID_REQUESTABLE_TYPE_ASSIGNMENTS,
-          CompoundTag::getCompound,
+          CompoundTag::getCompoundOrEmpty,
           c -> requestableTypeRequestResolverAssignmentDataStoreId = getFactoryController().deserializeTag(provider, c));
 
         executeDeserializationStepOrMarkForUpdate(nbt,
           NBT_ID_PLAYER,
-          CompoundTag::getCompound,
+          CompoundTag::getCompoundOrEmpty,
           c -> playerRequestResolverId = getFactoryController().deserializeTag(provider, c));
 
         executeDeserializationStepOrMarkForUpdate(nbt,
           NBT_ID_RETRYING,
-          CompoundTag::getCompound,
+          CompoundTag::getCompoundOrEmpty,
           c -> retryingRequestResolverId = getFactoryController().deserializeTag(provider, c));
 
         if (dataStoreManager == null)

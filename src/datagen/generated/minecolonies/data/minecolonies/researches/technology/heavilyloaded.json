@@ -3,7 +3,7 @@
   "costs": [
     {
       "count": 256,
-      "item": "minecraft:emerald"
+      "ingredient": "minecraft:emerald"
     }
   ],
   "effects": [

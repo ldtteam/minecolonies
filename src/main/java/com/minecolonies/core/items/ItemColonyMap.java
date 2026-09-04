@@ -9,7 +9,6 @@ import com.minecolonies.api.util.constant.TranslationConstants;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -47,12 +46,12 @@ public class ItemColonyMap extends AbstractItemMinecolonies
         {
             buildingEntity.writeColonyToItemStack(colonymap);
 
-            if (!ctx.getLevel().isClientSide)
+            if (!ctx.getLevel().isClientSide())
             {
                 MessageUtils.format(COM_MINECOLONIES_MAP_COLONY_SET, buildingEntity.getColony().getName()).sendTo(ctx.getPlayer());
             }
         }
-        else if (ctx.getLevel().isClientSide)
+        else if (ctx.getLevel().isClientSide())
         {
             openWindow(colonymap, ctx.getLevel(), ctx.getPlayer());
         }
@@ -70,20 +69,20 @@ public class ItemColonyMap extends AbstractItemMinecolonies
      */
     @Override
     @NotNull
-    public InteractionResultHolder<ItemStack> use(
+    public InteractionResult use(
         final Level worldIn,
         final Player playerIn,
         final InteractionHand hand)
     {
         final ItemStack colonymap = playerIn.getItemInHand(hand);
 
-        if (!worldIn.isClientSide) {
-            return new InteractionResultHolder<>(InteractionResult.SUCCESS, colonymap);
+        if (!worldIn.isClientSide()) {
+            return InteractionResult.SUCCESS.heldItemTransformedTo(colonymap);
         }
 
         openWindow(colonymap, worldIn, playerIn);
 
-        return new InteractionResultHolder<>(InteractionResult.SUCCESS, colonymap);
+        return InteractionResult.SUCCESS.heldItemTransformedTo(colonymap);
     }
 
     /**
@@ -100,7 +99,7 @@ public class ItemColonyMap extends AbstractItemMinecolonies
         }
         else
         {
-            player.displayClientMessage(Component.translatableEscape(TranslationConstants.COM_MINECOLONIES_MAP_NEED_COLONY), true);
+            player.sendOverlayMessage(Component.translatableEscape(TranslationConstants.COM_MINECOLONIES_MAP_NEED_COLONY));
         }
     }
 }

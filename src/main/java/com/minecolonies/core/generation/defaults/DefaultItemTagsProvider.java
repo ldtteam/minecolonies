@@ -7,32 +7,39 @@ import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.TagConstants;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.PackOutput;
-import net.minecraft.data.tags.ItemTagsProvider;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.data.tags.TagAppender;
+import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.ItemTags;
+import net.minecraft.tags.TagEntry;
+import net.minecraft.tags.BlockItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.ItemLike;
+import net.minecraft.world.level.block.WeatheringCopperCollection;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.common.data.BlockTagsProvider;
-import net.neoforged.neoforge.common.data.ExistingFileHelper;
+import net.neoforged.neoforge.common.data.BlockTagCopyingItemTagProvider;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
 import static com.minecolonies.api.util.constant.Constants.MOD_ID;
 
 @SuppressWarnings("unchecked")
-public class DefaultItemTagsProvider extends ItemTagsProvider
+public class DefaultItemTagsProvider extends BlockTagCopyingItemTagProvider
 {
     private final PackOutput.PathProvider langPath;
     private JsonObject langJson;
@@ -41,9 +48,10 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
       @NotNull final PackOutput output,
       final CompletableFuture<HolderLookup.Provider> lookupProvider,
       @NotNull final BlockTagsProvider blockTagsProvider,
-      @Nullable final ExistingFileHelper existingFileHelper)
+      final CompletableFuture<HolderLookup.Provider> unusedLookupProvider)
     {
-        super(output, lookupProvider, blockTagsProvider.contentsGetter(), MOD_ID, existingFileHelper);
+        super(output, lookupProvider, blockTagsProvider.contentsGetter(), MOD_ID);
+        Objects.requireNonNull(unusedLookupProvider);
         langPath = output.createPathProvider(PackOutput.Target.RESOURCE_PACK, "lang");
     }
 
@@ -53,7 +61,7 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
     {
         langJson = new JsonObject();
         return super.run(output).thenCompose(r ->
-                DataProvider.saveStable(output, langJson, langPath.json(new ResourceLocation(Constants.MOD_ID, "tag.item"))));
+                DataProvider.saveStable(output, langJson, langPath.json(Identifier.fromNamespaceAndPath(Constants.MOD_ID, "tag.item"))));
     }
 
     /**
@@ -62,16 +70,119 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
     @Deprecated
     @NotNull
     @Override
-    protected IntrinsicTagAppender<Item> tag(@NotNull final TagKey<Item> tagKey)
+    protected ItemAppender tag(@NotNull final TagKey<Item> tagKey)
     {
-        return super.tag(tagKey);
+        return new ItemAppender(super.tag(tagKey));
     }
 
     @NotNull
-    protected IntrinsicTagAppender<Item> tag(@NotNull final TagKey<Item> tagKey, @NotNull final String description)
+    protected ItemAppender tag(@NotNull final TagKey<Item> tagKey, @NotNull final String description)
     {
         translate(tagKey, description);
-        return super.tag(tagKey);
+        return new ItemAppender(super.tag(tagKey));
+    }
+
+    private static ResourceKey<Item> key(final ItemLike item)
+    {
+        return BuiltInRegistries.ITEM.getResourceKey(item.asItem()).orElseThrow();
+    }
+
+    protected static final class ItemAppender implements TagAppender<Item>
+    {
+        private final TagAppender<Item> delegate;
+
+        private ItemAppender(@NotNull final TagAppender<Item> delegate)
+        {
+            this.delegate = delegate;
+        }
+
+        public ItemAppender add(final ItemLike... items)
+        {
+            for (final ItemLike item : items)
+            {
+                delegate.add(key(item));
+            }
+            return this;
+        }
+
+        public ItemAppender add(final WeatheringCopperCollection.ByState<Item> items)
+        {
+            items.forEach(item -> delegate.add(key(item)));
+            return this;
+        }
+
+        public ItemAppender addAllItems(final Collection<? extends ItemLike> items)
+        {
+            items.forEach(this::add);
+            return this;
+        }
+
+        public ItemAppender addTags(final TagKey<Item>... tags)
+        {
+            delegate.addTags(tags);
+            return this;
+        }
+
+        public ItemAppender addOptionalTags(final TagKey<Item>... tags)
+        {
+            delegate.addOptionalTags(tags);
+            return this;
+        }
+
+        public ItemAppender add(final ResourceKey<Item> element)
+        {
+            delegate.add(element);
+            return this;
+        }
+
+        public ItemAppender addOptional(final ResourceKey<Item> element)
+        {
+            delegate.addOptional(element);
+            return this;
+        }
+
+        public ItemAppender addTag(final TagKey<Item> tag)
+        {
+            delegate.addTag(tag);
+            return this;
+        }
+
+        public ItemAppender addOptionalTag(final TagKey<Item> tag)
+        {
+            delegate.addOptionalTag(tag);
+            return this;
+        }
+
+        public ItemAppender add(final TagEntry entry)
+        {
+            delegate.add(entry);
+            return this;
+        }
+
+        public ItemAppender replace(final boolean value)
+        {
+            delegate.replace(value);
+            return this;
+        }
+
+        public ItemAppender remove(final ResourceKey<Item> element)
+        {
+            delegate.remove(element);
+            return this;
+        }
+
+        public ItemAppender remove(final TagKey<Item> tag)
+        {
+            delegate.remove(tag);
+            return this;
+        }
+
+        @Override
+        public ItemAppender replace()
+        {
+            delegate.replace();
+            return this;
+        }
     }
 
     /**
@@ -118,8 +229,8 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
           .add(Items.CAKE, Items.MELON, Items.RABBIT_FOOT, Items.FERMENTED_SPIDER_EYE)
           .add(Items.MOSS_BLOCK, Items.MOSS_CARPET, Items.SHROOMLIGHT)
           .add(Items.NETHER_WART_BLOCK, Items.WARPED_WART_BLOCK, Items.NETHER_SPROUTS, Items.MANGROVE_ROOTS, Items.HANGING_ROOTS, Items.CRIMSON_ROOTS, Items.WARPED_ROOTS)
-          .addTags(Tags.Items.CROPS, Tags.Items.EGGS, ItemTags.FLOWERS, ItemTags.FISHES, ItemTags.LEAVES, ItemTags.WOOL)
-          .addTags(Tags.Items.FOODS_RAW_FISH, Tags.Items.FOODS_RAW_MEAT, Tags.Items.MUSHROOMS, ModTags.fungi);
+          .addTags(Tags.Items.CROPS, Tags.Items.EGGS, BlockItemTags.FLOWERS.item(), Tags.Items.FOODS_RAW_FISH, ItemTags.LEAVES, ItemTags.WOOL)
+          .addTags(Tags.Items.FOODS_RAW_MEAT, Tags.Items.MUSHROOMS, ModTags.fungi);
         tag(ModTags.compostables_rich, "Rich-Quality Compostables")
                 .add(Items.PODZOL, ModBlocks.blockCompostedDirt.asItem());
 
@@ -129,14 +240,14 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
         tag(ModTags.rawMeat, "Raw Meat").addTag(Tags.Items.FOODS_RAW_MEAT);
 
         // this tag is just for backwards compatibility and could be removed in a future Minecraft version
-        final TagKey<Item> shulkerBoxes = ItemTags.create(new ResourceLocation(MOD_ID, "shulker_boxes"));
+        final TagKey<Item> shulkerBoxes = ItemTags.create(Identifier.fromNamespaceAndPath(MOD_ID, "shulker_boxes"));
         tag(shulkerBoxes, "Shulker Boxes").addTag(Tags.Items.SHULKER_BOXES);
 
         // this tag is just for backwards compatibility and could be removed in a future Minecraft version
-        final TagKey<Item> glazedTerracotta = ItemTags.create(new ResourceLocation(MOD_ID, "glazed_terracotta"));
+        final TagKey<Item> glazedTerracotta = ItemTags.create(Identifier.fromNamespaceAndPath(MOD_ID, "glazed_terracotta"));
         tag(glazedTerracotta, "Glazed Terracotta").addTag(Tags.Items.GLAZED_TERRACOTTAS);
 
-        final TagKey<Item> storageBlocks = ItemTags.create(new ResourceLocation(MOD_ID, "storage_blocks"));
+        final TagKey<Item> storageBlocks = ItemTags.create(Identifier.fromNamespaceAndPath(MOD_ID, "storage_blocks"));
         tag(storageBlocks, "Storage Blocks")
           .addTag(Tags.Items.STORAGE_BLOCKS)
           .add(Items.BONE_BLOCK)
@@ -145,7 +256,7 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
           .add(Items.HONEY_BLOCK)
           .add(Items.HONEYCOMB_BLOCK)
           .add(Items.SNOW_BLOCK)
-          .add(Items.COPPER_BLOCK)
+          .add(Items.COPPER_BLOCK.weathering().unaffected())
           .add(Items.RAW_COPPER_BLOCK)
           .add(Items.RAW_GOLD_BLOCK)
           .add(Items.RAW_IRON_BLOCK);
@@ -247,7 +358,7 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
           .addTag(ModTags.crafterIngredient.get(TagConstants.CRAFTING_MECHANIC))
           .add(Items.BRICK, Items.NETHER_BRICK);
         tag(ModTags.crafterProduct.get(TagConstants.CRAFTING_BLACKSMITH), "Blacksmith Crafting Products")
-          .add(Items.SHEARS, Items.LIGHTNING_ROD, Items.MACE)
+          .add(Items.SHEARS, Items.LIGHTNING_ROD.weathering().unaffected(), Items.MACE)
           .addTags(Tags.Items.NUGGETS, Tags.Items.INGOTS);
         tag(ModTags.crafterProductExclusions.get(TagConstants.CRAFTING_BLACKSMITH), "Blacksmith Crafting Excluded Products")
           .addTag(ModTags.crafterProduct.get(TagConstants.CRAFTING_DYER))
@@ -339,7 +450,7 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
         com.ldtteam.domumornamentum.block.ModBlocks.getInstance().getExtraTopBlocks().stream()
           .filter(f -> f.getType().getColor() != null)
           .map(Block::asItem)
-          .forEach(item -> super.tag(ModTags.crafterProduct.get(TagConstants.CRAFTING_DYER)).add(item));
+          .forEach(item -> tag(ModTags.crafterProduct.get(TagConstants.CRAFTING_DYER), "Dyer Crafting Products").add(item));
 
         tag(ModTags.crafterIngredient.get(TagConstants.CRAFTING_FARMER), "Farmer Crafting Ingredients")
                 .add(Items.HAY_BLOCK)
@@ -406,7 +517,7 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
         tag(ModTags.crafterProduct.get(TagConstants.CRAFTING_MECHANIC), "Mechanic Crafting Products")
           .addTag(storageBlocks)
           .addTag(ItemTags.RAILS)
-          .addTag(ItemTags.BUTTONS)
+          .addTag(BlockItemTags.BUTTONS.item())
           .addTag(ItemTags.WOODEN_PRESSURE_PLATES)
           .add(Items.HEAVY_WEIGHTED_PRESSURE_PLATE)
           .add(Items.LIGHT_WEIGHTED_PRESSURE_PLATE)
@@ -439,10 +550,8 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
           .add(Items.SLIME_BALL)
           .add(Items.GLOW_ITEM_FRAME)
           .add(Items.SPYGLASS)
-          .add(Items.WAXED_COPPER_DOOR, Items.WAXED_COPPER_TRAPDOOR)
-          .add(Items.WAXED_EXPOSED_COPPER_DOOR, Items.WAXED_EXPOSED_COPPER_TRAPDOOR)
-          .add(Items.WAXED_OXIDIZED_COPPER_DOOR, Items.WAXED_OXIDIZED_COPPER_TRAPDOOR)
-          .add(Items.WAXED_WEATHERED_COPPER_DOOR, Items.WAXED_WEATHERED_COPPER_TRAPDOOR);
+          .add(Items.COPPER_DOOR.waxed())
+          .add(Items.COPPER_TRAPDOOR.waxed());
         tag(ModTags.crafterProductExclusions.get(TagConstants.CRAFTING_MECHANIC), "Mechanic Crafting Excluded Products")
           .add(Items.SPECTRAL_ARROW)
           .add(Items.HAY_BLOCK, Items.WHEAT)
@@ -492,17 +601,17 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
           .add(Items.DEEPSLATE, Items.CHISELED_DEEPSLATE, Items.COBBLED_DEEPSLATE, Items.POLISHED_DEEPSLATE)
           .add(Items.BLACKSTONE, Items.GILDED_BLACKSTONE)
           .add(Items.POLISHED_BLACKSTONE, Items.POLISHED_BLACKSTONE_BRICKS)
-          .add(Items.EXPOSED_COPPER, Items.OXIDIZED_COPPER, Items.WEATHERED_COPPER)
-          .add(Items.WAXED_COPPER_BLOCK, Items.WAXED_EXPOSED_COPPER, Items.WAXED_OXIDIZED_COPPER, Items.WAXED_WEATHERED_COPPER)
-          .add(Items.CUT_COPPER, Items.EXPOSED_CUT_COPPER, Items.OXIDIZED_CUT_COPPER, Items.WEATHERED_CUT_COPPER)
-          .add(Items.WAXED_CUT_COPPER, Items.WAXED_EXPOSED_CUT_COPPER, Items.WAXED_OXIDIZED_CUT_COPPER, Items.WAXED_WEATHERED_CUT_COPPER)
+          .add(Items.COPPER_BLOCK.weathering().exposed(), Items.COPPER_BLOCK.weathering().weathered(), Items.COPPER_BLOCK.weathering().oxidized())
+          .addAllItems(Items.COPPER_BLOCK.asList())
+          .add(Items.CUT_COPPER.weathering().unaffected(), Items.CUT_COPPER.weathering().exposed(), Items.CUT_COPPER.weathering().weathered(), Items.CUT_COPPER.weathering().oxidized())
+          .add(Items.CUT_COPPER.waxed())
           .add(Items.BASALT, Items.POLISHED_BASALT, Items.SMOOTH_BASALT, Items.TUFF)
           .addTags(ItemTags.TERRACOTTA, glazedTerracotta)
           .addTags(Tags.Items.STONES, Tags.Items.COBBLESTONES, Tags.Items.END_STONES)
           .addTags(Tags.Items.SANDSTONE_BLOCKS, ModTags.concreteItems)
           .addTags(com.ldtteam.domumornamentum.tag.ModTags.BRICK_ITEMS)
           .addTags(com.ldtteam.domumornamentum.tag.ModTags.EXTRA_BLOCK_ITEMS)
-          .addTags(ItemTags.STAIRS, ItemTags.SLABS, ItemTags.WALLS);
+          .addTags(BlockItemTags.STAIRS.item(), BlockItemTags.SLABS.item(), BlockItemTags.WALLS.item());
 
         tag(ModTags.crafterIngredientExclusions.get(TagConstants.CRAFTING_STONEMASON), "Stonemason Crafting Excluded Ingredients")
           .add(Items.STICK)
@@ -519,21 +628,21 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
           .add(Items.QUARTZ_BLOCK, Items.CHISELED_QUARTZ_BLOCK)
           .add(Items.QUARTZ_PILLAR)
           .add(Items.QUARTZ_BRICKS)
-          .add(Items.CUT_COPPER, Items.EXPOSED_CUT_COPPER, Items.OXIDIZED_CUT_COPPER, Items.WEATHERED_CUT_COPPER)
-          .add(Items.WAXED_COPPER_BLOCK, Items.WAXED_EXPOSED_COPPER, Items.WAXED_OXIDIZED_COPPER, Items.WAXED_WEATHERED_COPPER)
-          .add(Items.WAXED_CUT_COPPER, Items.WAXED_EXPOSED_CUT_COPPER, Items.WAXED_OXIDIZED_CUT_COPPER, Items.WAXED_WEATHERED_CUT_COPPER)
+          .add(Items.CUT_COPPER.weathering().unaffected(), Items.CUT_COPPER.weathering().exposed(), Items.CUT_COPPER.weathering().weathered(), Items.CUT_COPPER.weathering().oxidized())
+          .add(Items.COPPER_BLOCK.weathering().unaffected(), Items.COPPER_BLOCK.weathering().exposed(), Items.COPPER_BLOCK.weathering().weathered(), Items.COPPER_BLOCK.weathering().oxidized())
+          .add(Items.COPPER_BLOCK.waxed())
+          .add(Items.CUT_COPPER.waxed())
           .add(Items.MAGMA_BLOCK)
           .add(Items.SNOW)
           .addTag(com.ldtteam.domumornamentum.tag.ModTags.BRICK_ITEMS)
           .addTag(com.ldtteam.domumornamentum.tag.ModTags.EXTRA_BLOCK_ITEMS)
           .addTags(Tags.Items.STONES, Tags.Items.COBBLESTONES, Tags.Items.SANDSTONE_BLOCKS)
-          .addTags(ItemTags.STONE_BRICKS, ItemTags.SLABS, ItemTags.STAIRS, ItemTags.WALLS);
+          .addTags(BlockItemTags.STONE_BRICKS.item(), BlockItemTags.SLABS.item(), BlockItemTags.STAIRS.item(), BlockItemTags.WALLS.item());
 
         tag(ModTags.crafterProductExclusions.get(TagConstants.CRAFTING_STONEMASON), "Stonemason Crafting Excluded Products")
           .addTag(ModTags.crafterProduct.get(TagConstants.CRAFTING_MECHANIC))
           .addTag(ModTags.crafterProduct.get(TagConstants.CRAFTING_DYER))
           .addTag(ModTags.crafterProduct.get(TagConstants.CRAFTING_SAWMILL))
-          .addTag(ItemTags.TRIM_TEMPLATES)
           .add(Items.LECTERN, Items.PISTON, Items.NETHERITE_UPGRADE_SMITHING_TEMPLATE)
           .add(Items.PRISMARINE, Items.PRISMARINE_BRICKS)
           .add(paperExtras);
@@ -610,9 +719,9 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
         tag(ModTags.ignoreNBT, "Ignore NBT")
           .addTag(ItemTags.BANNERS);
 
-        super.tag(Tags.Items.FOODS).add(ModItems.getAllFoods());
+        tag(Tags.Items.FOODS, "Foods").add(ModItems.getAllFoods());
 
-        super.tag(Tags.Items.FOODS_BREAD)
+        tag(Tags.Items.FOODS_BREAD, "Bread Foods")
           .add(ModItems.milkyBread,
             ModItems.sugaryBread,
             ModItems.goldenBread,
@@ -625,22 +734,22 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
             ModItems.stew_trencher,
             ModItems.stuffed_pita);
 
-        super.tag(Tags.Items.FOODS_CANDY)
+        tag(Tags.Items.FOODS_CANDY, "Candy Foods")
           .add(ModItems.hand_pie)
           .add(ModItems.muffin);
 
-        super.tag(Tags.Items.FOODS_COOKED_MEAT)
+        tag(Tags.Items.FOODS_COOKED_MEAT, "Cooked Meat Foods")
           .add(ModItems.lamb_stew);
 
-        super.tag(Tags.Items.FOODS_GOLDEN)
+        tag(Tags.Items.FOODS_GOLDEN, "Golden Foods")
           .add(ModItems.goldenBread);
 
-        super.tag(Tags.Items.FOODS_SOUP)
+        tag(Tags.Items.FOODS_SOUP, "Soup Foods")
           .add(ModItems.cabochis)
           .add(ModItems.lamb_stew)
           .add(ModItems.pottage);
 
-        super.tag(Tags.Items.FOODS_VEGETABLE)
+        tag(Tags.Items.FOODS_VEGETABLE, "Vegetable Foods")
           .add(ModItems.cabochis)
           .add(ModItems.eggplant_dolma)
           .add(ModItems.pottage)

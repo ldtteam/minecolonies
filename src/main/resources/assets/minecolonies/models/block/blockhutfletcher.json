@@ -44,7 +44,7 @@
 			"parent": "block/block",
 			"textures": {
 				"9": "block/gray_wool",
-				"11": "models/armor/leather_layer_1",
+				"11": "entity/equipment/humanoid/leather",
 				"12": "block/oak_planks",
 				"13": "block/cyan_wool",
 				"14": "block/stripped_oak_log",
@@ -708,8 +708,8 @@
       "render_type": "cutout",
 			"parent": "block/block",
 			"textures": {
-				"transp": "map/map_icons",
-				"15": "item/string"
+				"transp": "minecolonies:block/transparent",
+				"15": "minecolonies:block_item/string"
 			},
 			"elements": [
 				{

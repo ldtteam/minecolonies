@@ -9,7 +9,7 @@ import com.minecolonies.core.debug.messages.DebugEnablePathfindingMessage;
 import com.minecolonies.core.debug.messages.QueryCitizenAIHistoryMessage;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.Objects;
 
@@ -30,7 +30,7 @@ public class DebugWindowCitizen extends AbstractWindowSkeleton
 
     public DebugWindowCitizen(final ICitizenDataView citizen)
     {
-        super(new ResourceLocation(Constants.MOD_ID, "gui/citizen/debug.xml"));
+        super(Identifier.fromNamespaceAndPath(Constants.MOD_ID, "gui/citizen/debug.xml"));
         if (Objects.equals(outputMessage, Component.empty()))
         {
             outputMessage = Component.literal("Enabled Citizen AI History!");

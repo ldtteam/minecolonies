@@ -1,10 +1,10 @@
 package com.minecolonies.core.items;
-
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.core.tileentities.TileEntityColonyFlag;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BannerPatternLayers;
+import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.BannerItem;
 import net.minecraft.world.item.ItemStack;
@@ -14,10 +14,10 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
-
 import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.function.Consumer;
 import java.util.List;
-
 /**
  * This item represents the colony flag banner, both wall and floor blocks.
  * Allows duplication of other banner pattern lists to its own default
@@ -28,12 +28,10 @@ public class ItemColonyFlagBanner extends BannerItem
     {
         this(ModBlocks.blockColonyBanner, ModBlocks.blockColonyWallBanner, properties.stacksTo(16));
     }
-
     public ItemColonyFlagBanner(Block standingBanner, Block wallBanner, Properties builder)
     {
         super(standingBanner, wallBanner, builder);
     }
-
     @NotNull
     @Override
     public InteractionResult useOn(UseOnContext context)
@@ -41,7 +39,6 @@ public class ItemColonyFlagBanner extends BannerItem
         // Duplicate the patterns of the banner that was clicked on
         BlockEntity te = context.getLevel().getBlockEntity(context.getClickedPos());
         ItemStack stack = context.getPlayer().getMainHandItem();
-
         if (te instanceof BannerBlockEntity || te instanceof TileEntityColonyFlag)
         {
             final BannerPatternLayers bannerPatternLayers;
@@ -53,19 +50,19 @@ public class ItemColonyFlagBanner extends BannerItem
             {
                 bannerPatternLayers = ((TileEntityColonyFlag) te).getPatterns();
             }
-
             stack.set(DataComponents.BANNER_PATTERNS, bannerPatternLayers);
             return InteractionResult.SUCCESS;
         }
         return super.useOn(context);
     }
-
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable TooltipContext ctx, List<Component> tooltip, TooltipFlag flagIn)
+    public void appendHoverText(ItemStack stack, @Nullable TooltipContext ctx, TooltipDisplay display, Consumer<Component> tooltipConsumer, TooltipFlag flagIn)
+    
     {
-        super.appendHoverText(stack, ctx, tooltip, flagIn);
-
+        final List<Component> tooltip = new ArrayList<>();
+        super.appendHoverText(stack, ctx, TooltipDisplay.DEFAULT, tooltip::add, flagIn);
         // Remove the base, as they have no translations (Mojang were lazy. Or maybe saving space?)
         if (tooltip.size() > 1) tooltip.remove(1);
+        tooltip.forEach(tooltipConsumer);
     }
 }

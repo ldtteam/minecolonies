@@ -40,9 +40,9 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.util.Tuple;
+import com.ldtteam.structurize.api.util.Tuple;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
@@ -76,7 +76,7 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
     /**
      * The recipemode of the crafter (either priority based, or warehouse stock baseD).
      */
-    public static final ISettingKey<CrafterRecipeSetting> RECIPE_MODE = new SettingKey<>(CrafterRecipeSetting.class, new ResourceLocation(com.minecolonies.api.util.constant.Constants.MOD_ID, "recipemode"));
+    public static final ISettingKey<CrafterRecipeSetting> RECIPE_MODE = new SettingKey<>(CrafterRecipeSetting.class, Identifier.fromNamespaceAndPath(com.minecolonies.api.util.constant.Constants.MOD_ID, "recipemode"));
 
     /**
      * The base chance for a recipe to be improved. This is modified by worker skill and the number of items crafted
@@ -199,7 +199,7 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
      */
     protected boolean isPreTaughtRecipe(
       final IRecipeStorage storage,
-      final Map<ResourceLocation, CustomRecipe> crafterRecipes)
+      final Map<Identifier, CustomRecipe> crafterRecipes)
     {
         final ItemStack one = storage.getPrimaryOutput();
         for (final CustomRecipe rec : crafterRecipes.values())
@@ -237,18 +237,18 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
     {
         if (compound.contains(getId()))
         {
-            compound = compound.getCompound(getId());
+            compound = compound.getCompoundOrEmpty(getId());
         }
 
         ListTag recipesTags = new ListTag();
         if (compound.contains(TAG_RECIPES))
         {
-            recipesTags = compound.getList(TAG_RECIPES, Tag.TAG_COMPOUND);
+            recipesTags = compound.getListOrEmpty(TAG_RECIPES);
         }
 
         for (int i = 0; i < recipesTags.size(); i++)
         {
-            final IToken<?> token = StandardFactoryController.getInstance().deserializeTag(provider, recipesTags.getCompound(i));
+            final IToken<?> token = StandardFactoryController.getInstance().deserializeTag(provider, recipesTags.getCompoundOrEmpty(i));
             if (!recipes.contains(token))
             {
                 recipes.add(token);
@@ -258,10 +258,10 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
 
         if (compound.contains(TAG_DISABLED_RECIPES))
         {
-            final ListTag disabledRecipeTag = compound.getList(TAG_DISABLED_RECIPES, Tag.TAG_COMPOUND);
+            final ListTag disabledRecipeTag = compound.getListOrEmpty(TAG_DISABLED_RECIPES);
             for (int i = 0; i < disabledRecipeTag.size(); i++)
             {
-                final IToken<?> token = StandardFactoryController.getInstance().deserializeTag(provider, disabledRecipeTag.getCompound(i));
+                final IToken<?> token = StandardFactoryController.getInstance().deserializeTag(provider, disabledRecipeTag.getCompoundOrEmpty(i));
                 if (!disabledRecipes.contains(token))
                 {
                     disabledRecipes.add(token);
@@ -295,7 +295,7 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
         {
             final List<IRecipeStorage> storages = new ArrayList<>();
             final List<IRecipeStorage> disabledStorages = new ArrayList<>();
-            final Map<ResourceLocation, CustomRecipe> crafterRecipes = CustomRecipeManager.getInstance().getAllRecipes().getOrDefault(getCustomRecipeKey(), Collections.emptyMap());
+            final Map<Identifier, CustomRecipe> crafterRecipes = CustomRecipeManager.getInstance().getAllRecipes().getOrDefault(getCustomRecipeKey(), Collections.emptyMap());
             for (final IToken<?> token : new ArrayList<>(recipes))
             {
                 final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);

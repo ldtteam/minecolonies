@@ -43,7 +43,7 @@ public class DefaultFletcherCraftingProvider extends CustomRecipeProvider
                 .build(consumer);
 
         recipe(FLETCHER, MODULE_CRAFTING, "string")
-                .inputs(List.of(new ItemStorage(new ItemStack(Items.WHITE_WOOL))))
+                .inputs(List.of(new ItemStorage(new ItemStack(Items.WOOL.white()))))
                 .result(new ItemStack(Items.STRING, 4))
                 .build(consumer);
     }

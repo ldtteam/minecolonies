@@ -1,0 +1,16 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "minecolonies:item/piratecaptainegg",
+    "tints": [
+      {
+        "type": "minecraft:constant",
+        "value": 16711680
+      },
+      {
+        "type": "minecraft:constant",
+        "value": 16776960
+      }
+    ]
+  }
+}

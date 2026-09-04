@@ -58,7 +58,7 @@ public class TileEntityStash extends TileEntityColonyBuilding
         {
             super.onContentsChanged(slot);
 
-            if (level != null && !level.isClientSide && IColonyManager.getInstance().isCoordinateInAnyColony(level, worldPosition))
+            if (level != null && !level.isClientSide() && IColonyManager.getInstance().isCoordinateInAnyColony(level, worldPosition))
             {
                 final IColony colony = IColonyManager.getInstance().getClosestColony(level, worldPosition);
                 if (colony != null)

@@ -21,6 +21,8 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
@@ -96,6 +98,21 @@ public final class BlockPosUtil
         coordsCompound.putInt("z", pos.getZ());
         compound.put(name, coordsCompound);
         return compound;
+    }
+
+    /**
+     * Writes a coordinate to the block-entity value-storage tree.
+     *
+     * @param output storage to write to.
+     * @param name   name of the child value.
+     * @param pos    coordinates to write.
+     */
+    public static void write(@NotNull final ValueOutput output, final String name, @NotNull final BlockPos pos)
+    {
+        final ValueOutput coords = output.child(name);
+        coords.putInt("x", pos.getX());
+        coords.putInt("y", pos.getY());
+        coords.putInt("z", pos.getZ());
     }
 
     /**
@@ -192,11 +209,25 @@ public final class BlockPosUtil
     @NotNull
     public static BlockPos read(@NotNull final CompoundTag compound, final String name)
     {
-        final CompoundTag coordsCompound = compound.getCompound(name);
-        final int x = coordsCompound.getInt("x");
-        final int y = coordsCompound.getInt("y");
-        final int z = coordsCompound.getInt("z");
+        final CompoundTag coordsCompound = compound.getCompoundOrEmpty(name);
+        final int x = coordsCompound.getIntOr("x", 0);
+        final int y = coordsCompound.getIntOr("y", 0);
+        final int z = coordsCompound.getIntOr("z", 0);
         return new BlockPos(x, y, z);
+    }
+
+    /**
+     * Reads a coordinate from the block-entity value-storage tree.
+     *
+     * @param input storage to read from.
+     * @param name  name of the child value.
+     * @return coordinates read from storage, or zero when absent.
+     */
+    @NotNull
+    public static BlockPos read(@NotNull final ValueInput input, final String name)
+    {
+        final ValueInput coords = input.childOrEmpty(name);
+        return new BlockPos(coords.getIntOr("x", 0), coords.getIntOr("y", 0), coords.getIntOr("z", 0));
     }
 
     /**
@@ -255,7 +286,7 @@ public final class BlockPosUtil
     public static List<BlockPos> readPosListFromNBT(final CompoundTag compoundNBT, final String tagname)
     {
         final List<BlockPos> result = new ArrayList<>();
-        ListTag listNBT = compoundNBT.getList(tagname, Tag.TAG_COMPOUND);
+        ListTag listNBT = compoundNBT.getListOrEmpty(tagname);
         for (int i = 0; i < listNBT.size(); i++)
         {
             result.add(readFromListNBT(listNBT, i));
@@ -274,10 +305,10 @@ public final class BlockPosUtil
     @NotNull
     public static BlockPos readFromListNBT(@NotNull final ListTag tagList, final int index)
     {
-        final CompoundTag coordsCompound = tagList.getCompound(index);
-        final int x = coordsCompound.getInt("x");
-        final int y = coordsCompound.getInt("y");
-        final int z = coordsCompound.getInt("z");
+        final CompoundTag coordsCompound = tagList.getCompoundOrEmpty(index);
+        final int x = coordsCompound.getIntOr("x", 0);
+        final int y = coordsCompound.getIntOr("y", 0);
+        final int z = coordsCompound.getIntOr("z", 0);
         return new BlockPos(x, y, z);
     }
 
@@ -374,9 +405,9 @@ public final class BlockPosUtil
     public static double getValidHeight(@NotNull final Vec3 position, @NotNull final Level world)
     {
         double returnHeight = position.y;
-        if (position.y < world.getMinBuildHeight())
+        if (position.y < world.getMinY())
         {
-            returnHeight = world.getMinBuildHeight();
+            returnHeight = world.getMinY();
         }
 
         while (returnHeight >= 1 && world.isEmptyBlock(new BlockPos(Mth.floor(position.x),

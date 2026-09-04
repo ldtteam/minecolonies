@@ -3,11 +3,11 @@
   "costs": [
     {
       "count": 16,
-      "item": "minecraft:white_wool"
+      "ingredient": "minecraft:white_wool"
     },
     {
       "count": 16,
-      "item": "minecraft:feather"
+      "ingredient": "minecraft:feather"
     }
   ],
   "effects": [

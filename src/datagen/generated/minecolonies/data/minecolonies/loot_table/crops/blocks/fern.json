@@ -2,7 +2,6 @@
   "type": "minecraft:block",
   "pools": [
     {
-      "bonus_rolls": 0.0,
       "conditions": [
         {
           "condition": "minecolonies:entity_in_biome_tag",
@@ -115,7 +114,15 @@
                     {
                       "condition": "minecraft:match_tool",
                       "predicate": {
-                        "items": "#minecraft:hoes"
+                        "items": [
+                          "minecraft:wooden_hoe",
+                          "minecraft:stone_hoe",
+                          "minecraft:copper_hoe",
+                          "minecraft:iron_hoe",
+                          "minecraft:golden_hoe",
+                          "minecraft:diamond_hoe",
+                          "minecraft:netherite_hoe"
+                        ]
                       }
                     },
                     {
@@ -171,7 +178,15 @@
                   "term": {
                     "condition": "minecraft:match_tool",
                     "predicate": {
-                      "items": "#minecraft:hoes"
+                      "items": [
+                        "minecraft:wooden_hoe",
+                        "minecraft:stone_hoe",
+                        "minecraft:copper_hoe",
+                        "minecraft:iron_hoe",
+                        "minecraft:golden_hoe",
+                        "minecraft:diamond_hoe",
+                        "minecraft:netherite_hoe"
+                      ]
                     }
                   }
                 },
@@ -188,7 +203,6 @@
       "rolls": 1.0
     },
     {
-      "bonus_rolls": 0.0,
       "conditions": [
         {
           "condition": "minecolonies:entity_in_biome_tag",
@@ -301,7 +315,15 @@
                     {
                       "condition": "minecraft:match_tool",
                       "predicate": {
-                        "items": "#minecraft:hoes"
+                        "items": [
+                          "minecraft:wooden_hoe",
+                          "minecraft:stone_hoe",
+                          "minecraft:copper_hoe",
+                          "minecraft:iron_hoe",
+                          "minecraft:golden_hoe",
+                          "minecraft:diamond_hoe",
+                          "minecraft:netherite_hoe"
+                        ]
                       }
                     },
                     {
@@ -357,7 +379,15 @@
                   "term": {
                     "condition": "minecraft:match_tool",
                     "predicate": {
-                      "items": "#minecraft:hoes"
+                      "items": [
+                        "minecraft:wooden_hoe",
+                        "minecraft:stone_hoe",
+                        "minecraft:copper_hoe",
+                        "minecraft:iron_hoe",
+                        "minecraft:golden_hoe",
+                        "minecraft:diamond_hoe",
+                        "minecraft:netherite_hoe"
+                      ]
                     }
                   }
                 },

@@ -2,7 +2,7 @@ package com.minecolonies.api.client.render.modeltype.registry;
 
 import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.client.render.modeltype.IModelType;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -30,9 +30,9 @@ public interface IModelTypeRegistry
     /**
      * Get the model type from the registry or null if it doesn't exist.
      *
-     * @param name The name of the model in ResourceLocation format.
+     * @param name The name of the model in Identifier format.
      * @return The model type or null if it doesn't exist.
      */
     @Nullable
-    IModelType getModelType(ResourceLocation name);
+    IModelType getModelType(Identifier name);
 }

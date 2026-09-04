@@ -200,11 +200,11 @@ public final class SoundUtils
               position.getZ(),
               (float) VOLUME * 2,
               (float) 1.0,
-              player.level().random.nextLong()));
+              player.level().getRandom().nextLong()));
         }
         else
         {
-            player.playNotifySound(SoundEvents.NOTE_BLOCK_BELL.value(), SoundSource.NEUTRAL, 1.0f, 1.0f);
+            player.playSound(SoundEvents.NOTE_BLOCK_BELL.value(), 1.0f, 1.0f);
         }
     }
 
@@ -224,11 +224,11 @@ public final class SoundUtils
               position.getZ(),
               (float) VOLUME * 2,
               (float) 0.3,
-              player.level().random.nextLong()));
+              player.level().getRandom().nextLong()));
         }
         else
         {
-            player.playNotifySound(SoundEvents.NOTE_BLOCK_DIDGERIDOO.value(), SoundSource.NEUTRAL, 1.0f, 0.3f);
+            player.playSound(SoundEvents.NOTE_BLOCK_DIDGERIDOO.value(), 1.0f, 0.3f);
         }
     }
 
@@ -291,7 +291,7 @@ public final class SoundUtils
         final SoundEvent event = citizenData.isFemale() ? CITIZEN_SOUND_EVENTS.get(jobDesc).get(type).get(citizenData.getVoiceProfile()).getB() : CITIZEN_SOUND_EVENTS.get(jobDesc).get(type).get(citizenData.getVoiceProfile()).getA();
         if (chance > rand.nextDouble() * ONE_HUNDRED)
         {
-            if (worldIn.isClientSide || !citizenData.getEntity().isPresent())
+            if (worldIn.isClientSide() || !citizenData.getEntity().isPresent())
             {
                 worldIn.playSound(null,
                   position,
@@ -360,6 +360,6 @@ public final class SoundUtils
           playerEntity.getZ(),
           16.0F * volume,
           pitch,
-          playerEntity.level().random.nextLong()));
+          playerEntity.level().getRandom().nextLong()));
     }
 }

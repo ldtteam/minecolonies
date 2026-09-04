@@ -6,7 +6,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.loot.LootTableProvider;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.entries.EmptyLootItem;
@@ -17,8 +17,9 @@ import net.minecraft.world.level.storage.loot.functions.SetItemCountFunction;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -33,7 +34,7 @@ public abstract class SimpleLootTableProvider extends LootTableProvider
     protected SimpleLootTableProvider(@NotNull final PackOutput output,
                                       @NotNull final CompletableFuture<HolderLookup.Provider> provider)
     {
-        super(output, new HashSet<>(), new ArrayList<>(), provider);
+        super(output, Set.of(), List.of(), provider);
     }
 
     /**
@@ -41,7 +42,7 @@ public abstract class SimpleLootTableProvider extends LootTableProvider
      * @param id the location.
      * @return the resource key.
      */
-    public static ResourceKey<LootTable> table(@NotNull final ResourceLocation id)
+    public static ResourceKey<LootTable> table(@NotNull final Identifier id)
     {
         return ResourceKey.create(Registries.LOOT_TABLE, id);
     }

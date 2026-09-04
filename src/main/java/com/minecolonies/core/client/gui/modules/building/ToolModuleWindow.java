@@ -7,7 +7,7 @@ import com.minecolonies.core.colony.buildings.moduleviews.ToolModuleView;
 import com.minecolonies.core.network.messages.server.colony.building.GiveToolMessage;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public class ToolModuleWindow extends AbstractModuleWindow<ToolModuleView>
 {
@@ -23,7 +23,7 @@ public class ToolModuleWindow extends AbstractModuleWindow<ToolModuleView>
      */
     public ToolModuleWindow(final ToolModuleView moduleView)
     {
-        super(moduleView,  new ResourceLocation(Constants.MOD_ID, "gui/layouthuts/layouttool.xml"));
+        super(moduleView,  Identifier.fromNamespaceAndPath(Constants.MOD_ID, "gui/layouthuts/layouttool.xml"));
 
         findPaneOfTypeByID("desc", Text.class).setText(Component.translatableEscape("com.minecolonies.coremod.gui.tooldesc." + BuiltInRegistries.ITEM.getKey(moduleView.getTool()).getPath()));
         registerButton(BUTTON_GIVE_TOOL, this::givePlayerScepter);

@@ -14,7 +14,7 @@ import com.minecolonies.core.client.gui.modules.IWindowWithLayoutModule;
 import com.minecolonies.core.network.messages.server.ClickGuiButtonTriggerMessage;
 import com.minecolonies.core.network.messages.server.OpenGuiWindowTriggerMessage;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -55,7 +55,7 @@ public abstract class AbstractWindowSkeleton extends BOWindow implements ButtonH
      *
      * @param resource window resource location.
      */
-    public AbstractWindowSkeleton(final ResourceLocation resource)
+    public AbstractWindowSkeleton(final Identifier resource)
     {
         this(null, resource);
     }
@@ -66,7 +66,7 @@ public abstract class AbstractWindowSkeleton extends BOWindow implements ButtonH
      * @param parent   the parent window.
      * @param resource window resource location.
      */
-    public AbstractWindowSkeleton(@Nullable final BOWindow parent, final ResourceLocation resource)
+    public AbstractWindowSkeleton(@Nullable final BOWindow parent, final Identifier resource)
     {
         super(resource);
         this.parent = parent;

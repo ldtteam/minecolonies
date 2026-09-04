@@ -5,7 +5,7 @@ import com.minecolonies.api.colony.colonyEvents.IColonyEvent;
 import com.minecolonies.api.util.Log;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.apache.commons.lang3.function.TriFunction;
 import org.jetbrains.annotations.NotNull;
 
@@ -24,7 +24,7 @@ public class ColonyEventTypeRegistryEntry
     /**
      * The registry id.
      */
-    private final ResourceLocation registryName;
+    private final Identifier registryName;
 
     /**
      * Whether this is a raid event or not.
@@ -37,7 +37,7 @@ public class ColonyEventTypeRegistryEntry
      * @param eventCreator the event creator.
      * @param registryID   the registry id.
      */
-    public ColonyEventTypeRegistryEntry(@NotNull final TriFunction<IColony, CompoundTag, HolderLookup.Provider, IColonyEvent> eventCreator, @NotNull final ResourceLocation registryID)
+    public ColonyEventTypeRegistryEntry(@NotNull final TriFunction<IColony, CompoundTag, HolderLookup.Provider, IColonyEvent> eventCreator, @NotNull final Identifier registryID)
     {
         this(eventCreator, registryID, false);
     }
@@ -51,7 +51,7 @@ public class ColonyEventTypeRegistryEntry
      */
     public ColonyEventTypeRegistryEntry(
         @NotNull final TriFunction<IColony, CompoundTag, HolderLookup.Provider, IColonyEvent> eventCreator,
-        @NotNull final ResourceLocation registryID,
+        @NotNull final Identifier registryID,
         final boolean isRaidEvent)
     {
         if (registryID.getPath().isEmpty())
@@ -81,7 +81,7 @@ public class ColonyEventTypeRegistryEntry
      *
      * @return the name.
      */
-    public ResourceLocation getRegistryName()
+    public Identifier getRegistryName()
     {
         return registryName;
     }

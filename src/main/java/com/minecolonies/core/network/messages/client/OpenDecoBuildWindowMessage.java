@@ -2,7 +2,7 @@ package com.minecolonies.core.network.messages.client;
 
 import com.ldtteam.common.network.AbstractServerPlayMessage;
 import com.ldtteam.common.network.PlayMessageType;
-import com.ldtteam.structurize.api.RotationMirror;
+import com.ldtteam.structurize.util.RotationMirror;
 import com.minecolonies.api.colony.workorders.WorkOrderType;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.network.messages.server.DecorationBuildRequestMessage;

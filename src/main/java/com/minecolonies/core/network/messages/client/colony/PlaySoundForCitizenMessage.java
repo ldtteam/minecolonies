@@ -10,7 +10,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.player.Player;
@@ -143,10 +143,10 @@ public class PlaySoundForCitizenMessage extends AbstractClientPlayMessage
     @Override
     protected void toBytes(final RegistryFriendlyByteBuf buf)
     {
-        buf.writeResourceLocation(this.soundEvent.getLocation());
+        buf.writeIdentifier(this.soundEvent.location());
         buf.writeInt(soundSource.ordinal());
         buf.writeBlockPos(pos);
-        buf.writeUtf(dimensionID.location().toString());
+        buf.writeUtf(dimensionID.identifier().toString());
         buf.writeFloat(volume);
         buf.writeFloat(pitch);
         buf.writeInt(length);
@@ -157,10 +157,10 @@ public class PlaySoundForCitizenMessage extends AbstractClientPlayMessage
     public PlaySoundForCitizenMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
     {
         super(buf, type);
-        this.soundEvent = BuiltInRegistries.SOUND_EVENT.get(buf.readResourceLocation());
+        this.soundEvent = BuiltInRegistries.SOUND_EVENT.getValue(buf.readIdentifier());
         this.soundSource = SoundSource.values()[buf.readInt()];
         this.pos = buf.readBlockPos();
-        this.dimensionID = ResourceKey.create(Registries.DIMENSION, ResourceLocation.parse(buf.readUtf(32767)));
+        this.dimensionID = ResourceKey.create(Registries.DIMENSION, Identifier.parse(buf.readUtf(32767)));
         this.volume = buf.readFloat();
         this.pitch = buf.readFloat();
         this.length = buf.readInt();

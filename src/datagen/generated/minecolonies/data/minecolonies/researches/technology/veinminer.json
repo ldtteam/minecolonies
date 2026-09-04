@@ -3,7 +3,7 @@
   "costs": [
     {
       "count": 32,
-      "tag": "minecraft:iron_ores"
+      "ingredient": "#minecraft:iron_ores"
     }
   ],
   "effects": [

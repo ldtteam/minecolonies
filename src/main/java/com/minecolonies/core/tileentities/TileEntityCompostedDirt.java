@@ -68,7 +68,7 @@ public class TileEntityCompostedDirt extends BlockEntity implements ITickable
     public void tick()
     {
         final Level world = this.getLevel();
-        if (!world.isClientSide && this.composted && ticker % TICKS_SECOND == 0)
+        if (!world.isClientSide() && this.composted && ticker % TICKS_SECOND == 0)
         {
             this.updateTick(world);
         }

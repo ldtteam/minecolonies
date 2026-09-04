@@ -9,7 +9,7 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.modules.IEntityListModuleView;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.client.gui.AbstractModuleWindow;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
@@ -46,12 +46,12 @@ public class EntityListModuleWindow extends AbstractModuleWindow<IEntityListModu
     /**
      * Grouped list that can be further filtered.
      */
-    private final List<ResourceLocation> groupedItemList;
+    private final List<Identifier> groupedItemList;
 
     /**
      * Grouped list after applying the current temporary filter.
      */
-    private final List<ResourceLocation> currentDisplayedList = new ArrayList<>();
+    private final List<Identifier> currentDisplayedList = new ArrayList<>();
 
     /**
      * Update delay.
@@ -63,7 +63,7 @@ public class EntityListModuleWindow extends AbstractModuleWindow<IEntityListModu
      */
     public EntityListModuleWindow(final IEntityListModuleView moduleView)
     {
-        super(moduleView, new ResourceLocation(Constants.MOD_ID, "gui/layouthuts/layoutfilterableentitylist.xml"));
+        super(moduleView, Identifier.fromNamespaceAndPath(Constants.MOD_ID, "gui/layouthuts/layoutfilterableentitylist.xml"));
         this.isInverted = moduleView.isInverted();
         this.id = moduleView.getId();
 
@@ -117,7 +117,7 @@ public class EntityListModuleWindow extends AbstractModuleWindow<IEntityListModu
     private void switchClicked(@NotNull final Button button)
     {
         final int row = resourceList.getListElementIndexByPane(button);
-        final ResourceLocation item = currentDisplayedList.get(row);
+        final Identifier item = currentDisplayedList.get(row);
         final boolean on = button.getText().equals(Component.translatableEscape(ON));
         final boolean add = (on && isInverted) || (!on && !isInverted);
         final IEntityListModuleView module = buildingView.getModuleViewMatching(IEntityListModuleView.class, view -> view.getId().equals(id));
@@ -149,9 +149,9 @@ public class EntityListModuleWindow extends AbstractModuleWindow<IEntityListModu
      */
     private void updateResources()
     {
-        final Predicate<ResourceLocation> filterPredicate = res -> filter.isEmpty() || BuiltInRegistries.ENTITY_TYPE.get(res).getDescription().getString().toLowerCase(Locale.US).contains(filter.toLowerCase(Locale.US)) || res.toString().toLowerCase(Locale.US).contains(filter.toLowerCase(Locale.US));
+        final Predicate<Identifier> filterPredicate = res -> filter.isEmpty() || BuiltInRegistries.ENTITY_TYPE.getValue(res).getDescription().getString().toLowerCase(Locale.US).contains(filter.toLowerCase(Locale.US)) || res.toString().toLowerCase(Locale.US).contains(filter.toLowerCase(Locale.US));
         currentDisplayedList.clear();
-        for (final ResourceLocation storage : groupedItemList)
+        for (final Identifier storage : groupedItemList)
         {
             if (filterPredicate.test(storage))
             {
@@ -211,9 +211,9 @@ public class EntityListModuleWindow extends AbstractModuleWindow<IEntityListModu
             @Override
             public void updateElement(final int index, @NotNull final Pane rowPane)
             {
-                final ResourceLocation resource = currentDisplayedList.get(index);
+                final Identifier resource = currentDisplayedList.get(index);
                 final Text resourceLabel = rowPane.findPaneOfTypeByID(RESOURCE_NAME, Text.class);
-                resourceLabel.setText(BuiltInRegistries.ENTITY_TYPE.get(resource).getDescription());
+                resourceLabel.setText(BuiltInRegistries.ENTITY_TYPE.getValue(resource).getDescription());
                 resourceLabel.setColors(WHITE);
                 final boolean isAllowedItem  = buildingView.getModuleViewMatching(IEntityListModuleView.class, view -> view.getId().equals(id)).isAllowedEntity(resource);
                 final Button switchButton = rowPane.findPaneOfTypeByID(BUTTON_SWITCH, Button.class);

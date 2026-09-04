@@ -7,7 +7,7 @@ import com.minecolonies.apiimp.CommonMinecoloniesAPIImpl;
 import com.minecolonies.core.colony.buildingextensions.FarmField;
 import com.minecolonies.core.colony.buildingextensions.PlantationField;
 import com.minecolonies.core.colony.buildings.workerbuildings.plantation.modules.specific.*;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Items;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -78,7 +78,7 @@ public final class ModBuildingExtensionsInitializer
         throw new IllegalStateException("Tried to initialize: ModBuildingExtensionsInitializer but this is a Utility class.");
     }
 
-    private static DeferredHolder<BuildingExtensionEntry, BuildingExtensionEntry> createEntry(ResourceLocation registryName, Consumer<BuildingExtensionEntry.Builder> builder)
+    private static DeferredHolder<BuildingExtensionEntry, BuildingExtensionEntry> createEntry(Identifier registryName, Consumer<BuildingExtensionEntry.Builder> builder)
     {
         BuildingExtensionEntry.Builder field = new BuildingExtensionEntry.Builder().setRegistryName(registryName);
         builder.accept(field);

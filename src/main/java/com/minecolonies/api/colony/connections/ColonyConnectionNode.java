@@ -127,7 +127,7 @@ public class ColonyConnectionNode
     {
         this.previousNode = BlockPosUtil.read(compound, TAG_PREV_POS);
         this.nextNode = BlockPosUtil.read(compound, TAG_NEXT_POS);
-        this.targetColonyId = compound.getInt(TAG_TARGET_COLONY_ID);
+        this.targetColonyId = compound.getIntOr(TAG_TARGET_COLONY_ID, 0);
     }
 
     /**

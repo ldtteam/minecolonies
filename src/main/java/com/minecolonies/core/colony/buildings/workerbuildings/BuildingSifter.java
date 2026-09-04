@@ -1,6 +1,7 @@
 package com.minecolonies.core.colony.buildings.workerbuildings;
 
 import com.minecolonies.api.colony.IColony;
+import com.ldtteam.structurize.api.util.Tuple;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
@@ -47,7 +48,7 @@ public class BuildingSifter extends AbstractBuilding
     {
         super(c, l);
 
-        keepX.put(stack -> stack.is(ModTags.meshes), new net.minecraft.util.Tuple<>(4, false));
+        keepX.put(stack -> stack.is(ModTags.meshes), new com.ldtteam.structurize.api.util.Tuple<>(4, false));
     }
 
     @NotNull
@@ -110,7 +111,7 @@ public class BuildingSifter extends AbstractBuilding
     {
         super.deserializeNBT(provider, compound);
 
-        this.currentDailyQuantity = compound.getInt(TAG_CURRENT_DAILY);
+        this.currentDailyQuantity = compound.getIntOr(TAG_CURRENT_DAILY, 0);
     }
 
     @Override

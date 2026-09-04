@@ -12,7 +12,7 @@ import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.StatsUtil;
-import com.minecolonies.api.util.Tuple;
+import com.ldtteam.structurize.api.util.Tuple;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.api.util.constant.translation.RequestSystemTranslationConstants;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
@@ -23,6 +23,10 @@ import com.minecolonies.core.colony.jobs.AbstractJobCrafter;
 import com.minecolonies.core.entity.ai.workers.AbstractEntityAIBasic;
 import com.minecolonies.core.util.citizenutils.CitizenItemUtils;
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.block.AbstractFurnaceBlock;
+import net.minecraft.world.inventory.FurnaceMenu;
+import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
@@ -131,9 +135,12 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
                 {
                     for (int i = 0; i < accelerationTicks; i++)
                     {
-                        if (furnace.isLit())
+                        if (furnace.getBlockState().getValue(AbstractFurnaceBlock.LIT))
                         {
-                            FurnaceBlockEntity.serverTick(furnace.getLevel(), entity.getBlockPos(), entity.getBlockState(), furnace);
+                            if (furnace.getLevel() instanceof ServerLevel serverLevel)
+                            {
+                                FurnaceBlockEntity.serverTick(serverLevel, entity.getBlockPos(), entity.getBlockState(), furnace);
+                            }
                         }
                     }
                 }
@@ -534,7 +541,7 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
         for (final BlockPos pos : building.getModule(FURNACE).getFurnaces())
         {
             final BlockEntity entity = world.getBlockEntity(pos);
-            if (entity instanceof FurnaceBlockEntity furnace && !furnace.isLit() && furnace.getItem(FUEL_SLOT).isEmpty())
+            if (entity instanceof FurnaceBlockEntity furnace && !(furnace.getBlockState().getValue(AbstractFurnaceBlock.LIT)) && furnace.getItem(FUEL_SLOT).isEmpty())
             {
                 return pos;
             }
@@ -554,7 +561,7 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
         for (final BlockPos pos : building.getModule(FURNACE).getFurnaces())
         {
             final BlockEntity entity = world.getBlockEntity(pos);
-            if (entity instanceof FurnaceBlockEntity furnace && (!furnace.isLit() || furnace.getItem(SMELTABLE_SLOT).isEmpty()))
+            if (entity instanceof FurnaceBlockEntity furnace && (!(furnace.getBlockState().getValue(AbstractFurnaceBlock.LIT)) || furnace.getItem(SMELTABLE_SLOT).isEmpty()))
             {
                 int countInResultSlot = 0;
                 if (!isEmpty(furnace.getItem(RESULT_SLOT)))
@@ -657,7 +664,7 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
                 final BlockEntity entity = world.getBlockEntity(pos);
                 if (entity instanceof FurnaceBlockEntity furnace)
                 {
-                    if (furnace.isLit() && !furnace.getItem(SMELTABLE_SLOT).isEmpty())
+                    if (furnace.getBlockState().getValue(AbstractFurnaceBlock.LIT) && !furnace.getItem(SMELTABLE_SLOT).isEmpty())
                     {
                         count += 1;
                     }

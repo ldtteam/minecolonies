@@ -11,7 +11,7 @@ import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
@@ -57,7 +57,7 @@ public class FloristRecipeCategory extends JobBasedRecipeCategory<FloristRecipeC
                           @NotNull final FloristRecipeCategory.FloristRecipe recipe,
                           @NotNull final IFocusGroup focuses)
     {
-        builder.addSlot(RecipeIngredientRole.CATALYST, WIDTH - 18, CITIZEN_Y - 20)
+        builder.addSlot(RecipeIngredientRole.INPUT, WIDTH - 18, CITIZEN_Y - 20)
                 .setSlotName("compost")
                 .setBackground(this.slot, -1, -1)
                 .addItemStack(new ItemStack(ModItems.compost));
@@ -92,7 +92,7 @@ public class FloristRecipeCategory extends JobBasedRecipeCategory<FloristRecipeC
     @Override
     public void draw(@NotNull final FloristRecipeCategory.FloristRecipe recipe,
                      @NotNull final IRecipeSlotsView recipeSlotsView,
-                     @NotNull final GuiGraphics stack,
+                     @NotNull final GuiGraphicsExtractor stack,
                      final double mouseX, final double mouseY)
     {
         super.draw(recipe, recipeSlotsView, stack, mouseX, mouseY);

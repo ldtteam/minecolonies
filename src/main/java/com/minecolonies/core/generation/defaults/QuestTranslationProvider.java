@@ -3,12 +3,12 @@ package com.minecolonies.core.generation.defaults;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.minecolonies.api.util.Log;
-import net.minecraft.Util;
+import net.minecraft.util.Util;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.PackOutput;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.PackLocationInfo;
 import net.minecraft.server.packs.PackResources;
 import net.minecraft.server.packs.PackType;
@@ -70,7 +70,7 @@ public class QuestTranslationProvider implements DataProvider
                     return;
                 }
 
-                final ResourceLocation questPath = new ResourceLocation(questId.getNamespace(), questId.getPath().replace(COLONY_QUESTS_DIR + "/", "").replace(".json", ""));
+                final Identifier questPath = Identifier.fromNamespaceAndPath(questId.getNamespace(), questId.getPath().replace(COLONY_QUESTS_DIR + "/", "").replace(".json", ""));
                 final String baseKey = questPath.getNamespace() + ".quests." + questPath.getPath().replace("/", ".");
                 final JsonObject langJson = new JsonObject();
 
@@ -123,7 +123,7 @@ public class QuestTranslationProvider implements DataProvider
         }
 
         final PackOutput.PathProvider langProvider = packOutput.createPathProvider(PackOutput.Target.RESOURCE_PACK, "lang");
-        final Path langFile = langProvider.file(new ResourceLocation(MOD_ID, "quests"), "json");
+        final Path langFile = langProvider.file(Identifier.fromNamespaceAndPath(MOD_ID, "quests"), "json");
         return DataProvider.saveStable(cache, langJson, langFile);
     }
 
@@ -145,7 +145,7 @@ public class QuestTranslationProvider implements DataProvider
 
     private void processObjective(final JsonObject langJson, final String baseKey, final JsonObject json)
     {
-        final ResourceLocation type = ResourceLocation.parse(json.get(TYPE).getAsString());
+        final Identifier type = Identifier.parse(json.get(TYPE).getAsString());
         if (type.equals(DIALOGUE_OBJECTIVE_ID))
         {
             langJson.addProperty(baseKey, json.get(TEXT_ID).getAsString());

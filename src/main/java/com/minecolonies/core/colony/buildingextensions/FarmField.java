@@ -1,4 +1,5 @@
 package com.minecolonies.core.colony.buildingextensions;
+import com.minecolonies.api.util.ItemStackUtils;
 
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.IColony;
@@ -13,7 +14,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -103,7 +104,7 @@ public class FarmField extends AbstractBuildingExtension
     public @NotNull CompoundTag serializeNBT(@NotNull final HolderLookup.Provider provider)
     {
         CompoundTag compound = super.serializeNBT(provider);
-        compound.put(TAG_SEED, seed.saveOptional(provider));
+        compound.put(TAG_SEED, ItemStackUtils.serializeOptional(seed, provider));
         compound.putIntArray(TAG_RADIUS, radii);
         compound.putString(TAG_STAGE, fieldStage.name());
         return compound;
@@ -113,9 +114,9 @@ public class FarmField extends AbstractBuildingExtension
     public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final @NotNull CompoundTag compound)
     {
         super.deserializeNBT(provider, compound);
-        setSeed(ItemStack.parseOptional(provider, compound.getCompound(TAG_SEED)));
-        radii = compound.getIntArray(TAG_RADIUS);
-        fieldStage = Stage.valueOf(compound.getString(TAG_STAGE));
+        setSeed(ItemStackUtils.parseOptional(provider, compound.getCompoundOrEmpty(TAG_SEED)));
+        radii = compound.getIntArray(TAG_RADIUS).orElse(new int[0]);
+        fieldStage = Stage.valueOf(compound.getStringOr(TAG_STAGE, ""));
     }
 
     @Override
@@ -238,13 +239,13 @@ public class FarmField extends AbstractBuildingExtension
      */
     public enum Stage
     {
-        EMPTY(new ResourceLocation("minecraft", "textures/item/iron_hoe.png")), 
-        HOED(new ResourceLocation("minecraft", "textures/item/wheat_seeds.png")), 
-        PLANTED(new ResourceLocation(Constants.MOD_ID, "textures/item/crops/durum.png"));
+        EMPTY(Identifier.fromNamespaceAndPath("minecraft", "textures/item/iron_hoe.png")),
+        HOED(Identifier.fromNamespaceAndPath("minecraft", "textures/item/wheat_seeds.png")),
+        PLANTED(Identifier.fromNamespaceAndPath(Constants.MOD_ID, "textures/item/crops/durum.png"));
 
-        protected final ResourceLocation stageIcon;
+        protected final Identifier stageIcon;
 
-        private Stage(ResourceLocation stageIcon)
+        private Stage(Identifier stageIcon)
         {
             this.stageIcon = stageIcon;
         }
@@ -254,14 +255,14 @@ public class FarmField extends AbstractBuildingExtension
          *
          * @return the status icon of the current stage.
          */
-        public ResourceLocation getStageIcon()
+        public Identifier getStageIcon()
         {
             return stageIcon;
         }
 
         /**
          * Gets the translatable text of the current stage in the farm field's progress.
-         * 
+         *
          * @return the translatable text of the current stage.
          */
         public Component getStageText()

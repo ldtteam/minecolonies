@@ -1,19 +1,10 @@
 {
   "type": "minecraft:crafting_shapeless",
-  "category": "misc",
   "ingredients": [
-    {
-      "item": "minecolonies:garlic"
-    },
-    {
-      "item": "minecraft:chicken"
-    },
-    {
-      "item": "minecraft:chicken"
-    },
-    {
-      "item": "minecolonies:nether_pepper"
-    }
+    "minecolonies:garlic",
+    "minecraft:chicken",
+    "minecraft:chicken",
+    "minecolonies:nether_pepper"
   ],
   "result": {
     "count": 2,

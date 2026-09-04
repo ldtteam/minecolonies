@@ -21,7 +21,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.Block;
@@ -131,9 +131,9 @@ public class ResearchManager implements IResearchManager
     }
 
     @Override
-    public ResourceLocation getResearchEffectIdFrom(Block block)
+    public Identifier getResearchEffectIdFrom(Block block)
     {
-        return new ResourceLocation(BuiltInRegistries.BLOCK.getKey(block).getNamespace(), "effects/" + BuiltInRegistries.BLOCK.getKey(block).getPath());
+        return Identifier.fromNamespaceAndPath(BuiltInRegistries.BLOCK.getKey(block).getNamespace(), "effects/" + BuiltInRegistries.BLOCK.getKey(block).getPath());
     }
 
     @Override

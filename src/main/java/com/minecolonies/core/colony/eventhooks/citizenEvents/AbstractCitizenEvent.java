@@ -75,7 +75,7 @@ public abstract class AbstractCitizenEvent implements ICitizenEventDescription
     public void deserializeNBT(@NotNull final HolderLookup.Provider provider, CompoundTag compound)
     {
         eventPos = BlockPosUtil.read(compound, TAG_EVENT_POS);
-        citizenName = compound.getString(TAG_CITIZEN_NAME);
+        citizenName = compound.getStringOr(TAG_CITIZEN_NAME, "");
     }
 
     @Override

@@ -10,16 +10,19 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.core.colony.buildings.modules.AnimalHerdingModule;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.animal.Animal;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -38,11 +41,24 @@ public final class RecipeAnalyzer
     public static Map<CraftingType, List<IGenericRecipe>> buildVanillaRecipesMap(@NotNull final RecipeManager recipeManager,
                                                                                  @NotNull final Level world)
     {
+        return buildVanillaRecipesMap(recipeManager.getRecipes(), world);
+    }
+
+    /**
+     * Build a map of client-visible vanilla recipes from synchronized recipe holders.
+     *
+     * @param recipeHolders the recipe holders synchronized to the client
+     * @param world the world, if available (some recipes need it)
+     * @return the recipe map
+     */
+    public static Map<CraftingType, List<IGenericRecipe>> buildVanillaRecipesMap(@NotNull final Collection<RecipeHolder<?>> recipeHolders,
+                                                                                 @NotNull final Level world)
+    {
         final ImmutableMap.Builder<CraftingType, List<IGenericRecipe>> builder = ImmutableMap.builder();
 
         for (final CraftingType type : MinecoloniesAPIProxy.getInstance().getCraftingTypeRegistry())
         {
-            final List<IGenericRecipe> recipes = type.findRecipes(recipeManager, world);
+            final List<IGenericRecipe> recipes = type.findRecipes(recipeHolders, world);
             builder.put(type, recipes);
         }
 
@@ -115,12 +131,12 @@ public final class RecipeAnalyzer
         {
             if (entityType.getCategory() != MobCategory.CREATURE) { continue; }
 
-            final ResourceLocation id = EntityType.getKey(entityType);
+            final Identifier id = EntityType.getKey(entityType);
 
             try
             {
                 // sadly there doesn't seem to be a better way to discover the actual classes for each type, because Java
-                final Entity entity = entityType.create(level);
+                final Entity entity = entityType.create(level, EntitySpawnReason.COMMAND);
                 if (entity instanceof Animal animal)
                 {
                     animals.add(animal);

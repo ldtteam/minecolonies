@@ -7,7 +7,7 @@ import com.minecolonies.api.equipment.ModEquipmentTypes;
 import com.minecolonies.core.tileentities.TileEntityGrave;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.Tuple;
+import com.ldtteam.structurize.api.util.Tuple;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
 import net.minecraft.core.BlockPos;
@@ -82,8 +82,8 @@ public class BuildingGraveyard extends AbstractBuilding
     public BuildingGraveyard(final IColony c, final BlockPos l)
     {
         super(c, l);
-        keepX.put(itemStack -> ItemStackUtils.hasEquipmentLevel(itemStack, ModEquipmentTypes.shovel.get(), TOOL_LEVEL_WOOD_OR_GOLD, getMaxEquipmentLevel()), new net.minecraft.util.Tuple<>(1, true));
-        keepX.put(itemStack -> itemStack.getItem() == Items.TOTEM_OF_UNDYING, new net.minecraft.util.Tuple<>(2, true));
+        keepX.put(itemStack -> ItemStackUtils.hasEquipmentLevel(itemStack, ModEquipmentTypes.shovel.get(), TOOL_LEVEL_WOOD_OR_GOLD, getMaxEquipmentLevel()), new com.ldtteam.structurize.api.util.Tuple<>(1, true));
+        keepX.put(itemStack -> itemStack.getItem() == Items.TOTEM_OF_UNDYING, new com.ldtteam.structurize.api.util.Tuple<>(2, true));
     }
 
     /**
@@ -132,12 +132,12 @@ public class BuildingGraveyard extends AbstractBuilding
         }
 
         visualGravePositions.clear();
-        final ListTag visualGraveTagList = compound.getList(TAG_VISUAL_GRAVES, Tag.TAG_COMPOUND);
+        final ListTag visualGraveTagList = compound.getListOrEmpty(TAG_VISUAL_GRAVES);
         for (int i = 0; i < visualGraveTagList.size(); ++i)
         {
-            final CompoundTag graveCompound = visualGraveTagList.getCompound(i);
+            final CompoundTag graveCompound = visualGraveTagList.getCompoundOrEmpty(i);
             final BlockPos graveLocation = BlockPosUtil.read(graveCompound, TAG_VISUAL_GRAVES_BLOCKPOS);
-            final Direction graveFacing = Direction.byName(graveCompound.getString(TAG_VISUAL_GRAVES_FACING));
+            final Direction graveFacing = Direction.byName(graveCompound.getStringOr(TAG_VISUAL_GRAVES_FACING, ""));
             visualGravePositions.add(new Tuple<>(graveLocation, graveFacing));
         }
     }

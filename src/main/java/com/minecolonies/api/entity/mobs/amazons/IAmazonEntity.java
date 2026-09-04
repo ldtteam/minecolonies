@@ -4,8 +4,10 @@ import com.minecolonies.api.util.IItemHandlerCapProvider;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.monster.Enemy;
-import net.neoforged.neoforge.capabilities.Capabilities.ItemHandler;
+import net.neoforged.neoforge.capabilities.Capabilities.Item;
 import net.neoforged.neoforge.items.IItemHandler;
+import net.neoforged.neoforge.transfer.ResourceHandler;
+import net.neoforged.neoforge.transfer.item.ItemResource;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -17,7 +19,7 @@ public interface IAmazonEntity extends Enemy, IItemHandlerCapProvider
     @Nullable
     default IItemHandler getItemHandlerCap(final Direction direction)
     {
-        // LivingEntities have cap registered by forge
-        return ItemHandler.ENTITY.getCapability((LivingEntity) this, null);
+        final ResourceHandler<ItemResource> handler = Item.ENTITY.getCapability((LivingEntity) this, null);
+        return handler == null ? null : IItemHandler.of(handler);
     }
 }

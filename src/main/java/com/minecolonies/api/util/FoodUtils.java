@@ -1,4 +1,5 @@
 package com.minecolonies.api.util;
+import net.minecraft.core.component.DataComponents;
 
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.buildings.IBuilding;
@@ -13,10 +14,10 @@ import com.minecolonies.core.tileentities.TileEntityRack;
 import com.minecolonies.api.items.ModTags;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.food.FoodProperties;
-import net.minecraft.world.item.HoneyBottleItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.component.UseRemainder;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 
@@ -69,9 +70,9 @@ public class FoodUtils
 
         if (buildingLevel < 3)
         {
-            return stack.getItem().getFoodProperties(stack, null) != null;
+            return stack.get(DataComponents.FOOD) != null;
         }
-        final FoodProperties foodProperties = stack.getItem().getFoodProperties(stack, null);
+        final FoodProperties foodProperties = stack.get(DataComponents.FOOD);
         return foodProperties != null && foodProperties.nutrition() >= buildingLevel + 1;
     }
 
@@ -82,7 +83,7 @@ public class FoodUtils
      */
     public static int getBuildingLevelForFood(final ItemStack resource)
     {
-        return Math.max(2, Math.min(resource.getFoodProperties(null).nutrition() - 1, MAX_BUILDING_LEVEL));
+        return Math.max(2, Math.min(resource.get(DataComponents.FOOD).nutrition() - 1, MAX_BUILDING_LEVEL));
     }
 
     /**
@@ -111,7 +112,7 @@ public class FoodUtils
      */
     public static double getFoodValue(final ItemStack foodStack, final AbstractEntityCitizen citizen)
     {
-        final FoodProperties itemFood = foodStack.getItem().getFoodProperties(foodStack, citizen);
+        final FoodProperties itemFood = foodStack.get(DataComponents.FOOD);
         final double researchBonus = citizen.getCitizenColonyHandler().getColonyOrRegister().getResearchManager().getResearchEffects().getEffectStrength(SATURATION);
         return getFoodValue(foodStack, itemFood, researchBonus);
     }
@@ -129,7 +130,7 @@ public class FoodUtils
             return foodItem.getTier();
         }
 
-        final FoodProperties foodValue = food.getFoodProperties(null);
+        final FoodProperties foodValue = food.get(DataComponents.FOOD);
         if (foodValue == null || foodValue.nutrition() < 12 || foodValue.saturation() < 0.8)
         {
             return 0;
@@ -395,19 +396,14 @@ public class FoodUtils
     public static ItemStack consumeFoodStack(final ItemStack foodStack,
                                              final AbstractEntityCitizen citizen)
     {
-        final FoodProperties food = foodStack.getFoodProperties(citizen);
+        final FoodProperties food = foodStack.get(DataComponents.FOOD);
         if (food != null)
         {
             final ItemStack consumedStack = foodStack.finishUsingItem(citizen.level(), citizen);
-            final Optional<ItemStack> returned = food.usingConvertsTo();
-            if (returned.isPresent())
+            final UseRemainder remainder = foodStack.get(DataComponents.USE_REMAINDER);
+            if (remainder != null)
             {
-                return returned.get().copy();
-            }
-            else if (foodStack.getItem() instanceof HoneyBottleItem)
-            {
-                // Special handling because vanilla doesn't use usingConvertsTo since it's stackable
-                return new ItemStack(Items.GLASS_BOTTLE);
+                return remainder.convertInto().create();
             }
             else if (consumedStack.getItem() != foodStack.getItem())
             {

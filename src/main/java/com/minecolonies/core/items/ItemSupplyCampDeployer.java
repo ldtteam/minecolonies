@@ -20,7 +20,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
-import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
@@ -58,7 +57,7 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies implements 
         {
             currentComponent.withRandomKey(ctx.getClickedPos().asLong()).writeToItemStack(ctx.getItemInHand());
         }
-        if (ctx.getLevel().isClientSide)
+        if (ctx.getLevel().isClientSide())
         {
             if (!MineColonies.getConfig().getServer().allowOtherDimColonies.get() && !WorldUtil.isOverworldType(ctx.getLevel()))
             {
@@ -73,7 +72,7 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies implements 
 
     @NotNull
     @Override
-    public InteractionResultHolder<ItemStack> use(final Level worldIn, final Player playerIn, final InteractionHand hand)
+    public InteractionResult use(final Level worldIn, final Player playerIn, final InteractionHand hand)
     {
         final ItemStack stack = playerIn.getItemInHand(hand);
         final SupplyData currentComponent = SupplyData.readFromItemStack(stack);
@@ -82,17 +81,17 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies implements 
             currentComponent.withRandomKey(playerIn.blockPosition().asLong()).writeToItemStack(stack);
         }
 
-        if (worldIn.isClientSide)
+        if (worldIn.isClientSide())
         {
             if (!MineColonies.getConfig().getServer().allowOtherDimColonies.get() && !WorldUtil.isOverworldType(worldIn))
             {
                 MessageUtils.format(CANT_PLACE_COLONY_IN_OTHER_DIM).sendTo(playerIn);
-                return new InteractionResultHolder<>(InteractionResult.FAIL, stack);
+                return InteractionResult.FAIL;
             }
             placeSupplyCamp(null, playerIn.getDirection(), stack, hand);
         }
 
-        return new InteractionResultHolder<>(InteractionResult.FAIL, stack);
+        return InteractionResult.FAIL;
     }
 
     /**

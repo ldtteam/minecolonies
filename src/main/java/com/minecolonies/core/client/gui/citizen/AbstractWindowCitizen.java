@@ -11,7 +11,7 @@ import com.minecolonies.core.debug.DebugPlayerManager;
 import com.minecolonies.core.debug.gui.DebugWindowCitizen;
 import com.minecolonies.core.network.messages.server.colony.OpenInventoryMessage;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 /**
  * BOWindow for the citizen.
@@ -31,7 +31,7 @@ public abstract class AbstractWindowCitizen extends AbstractWindowSkeleton
      * @param citizen citizen to bind the window to.
      * @param ui the xml res loc.
      */
-    public AbstractWindowCitizen(final ICitizenDataView citizen, final ResourceLocation ui)
+    public AbstractWindowCitizen(final ICitizenDataView citizen, final Identifier ui)
     {
         super(ui);
         this.colony = citizen.getColony();

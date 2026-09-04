@@ -5,12 +5,12 @@ import com.minecolonies.api.colony.jobs.IJobView;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenHappinessHandler;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenSkillHandler;
-import com.minecolonies.api.util.Tuple;
+import com.ldtteam.structurize.api.util.Tuple;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -158,7 +158,7 @@ public interface ICitizenDataView extends ICitizen
      *
      * @return resourcelocation
      */
-    ResourceLocation getStatusIcon();
+    Identifier getStatusIcon();
 
     /**
      * Get the visible citizen status
@@ -210,7 +210,7 @@ public interface ICitizenDataView extends ICitizen
      * Get the custom texture of the citizen.
      * @return the res location.
      */
-    ResourceLocation getCustomTexture();
+    Identifier getCustomTexture();
 
     /**
      * Force set the job view.

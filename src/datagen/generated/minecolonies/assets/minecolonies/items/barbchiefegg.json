@@ -1,0 +1,16 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "minecolonies:item/barbchiefegg",
+    "tints": [
+      {
+        "type": "minecraft:constant",
+        "value": 16753920
+      },
+      {
+        "type": "minecraft:constant",
+        "value": 16776960
+      }
+    ]
+  }
+}

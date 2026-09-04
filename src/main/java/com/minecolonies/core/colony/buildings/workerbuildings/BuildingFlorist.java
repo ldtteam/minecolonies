@@ -18,8 +18,9 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.nbt.Tag;
+import net.minecraft.tags.BlockItemTags;
 import net.minecraft.tags.ItemTags;
-import net.minecraft.util.Tuple;
+import com.ldtteam.structurize.api.util.Tuple;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
@@ -109,7 +110,7 @@ public class BuildingFlorist extends AbstractBuilding
     public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound)
     {
         super.deserializeNBT(provider, compound);
-        final ListTag compostBinTagList = compound.getList(TAG_PLANTGROUND, Tag.TAG_INT_ARRAY);
+        final ListTag compostBinTagList = compound.getListOrEmpty(TAG_PLANTGROUND);
         for (int i = 0; i < compostBinTagList.size(); ++i)
         {
             plantGround.add(NBTUtils.readBlockPos(compostBinTagList.get(i)));
@@ -176,7 +177,7 @@ public class BuildingFlorist extends AbstractBuilding
                          .collect(Collectors.toSet());
             case 2:
                 return IColonyManager.getInstance().getCompatibilityManager().getCopyOfPlantables().stream()
-                         .filter(itemStorage -> itemStorage.getItemStack().is(ItemTags.SMALL_FLOWERS))
+                         .filter(itemStorage -> itemStorage.getItemStack().is(BlockItemTags.SMALL_FLOWERS.item()))
                          .collect(Collectors.toSet());
             case 3:
             case 4:

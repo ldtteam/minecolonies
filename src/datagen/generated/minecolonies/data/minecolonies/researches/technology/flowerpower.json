@@ -3,7 +3,7 @@
   "costs": [
     {
       "count": 64,
-      "item": "minecolonies:compost"
+      "ingredient": "minecolonies:compost"
     }
   ],
   "effects": [

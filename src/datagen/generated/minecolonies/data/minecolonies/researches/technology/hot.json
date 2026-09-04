@@ -3,7 +3,7 @@
   "costs": [
     {
       "count": 4,
-      "item": "minecraft:lava_bucket"
+      "ingredient": "minecraft:lava_bucket"
     }
   ],
   "effects": [

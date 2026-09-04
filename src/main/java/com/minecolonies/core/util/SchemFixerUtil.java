@@ -1,7 +1,7 @@
 package com.minecolonies.core.util;
 
 import com.google.common.io.Files;
-import com.ldtteam.structurize.api.BlockPosUtil;
+import com.ldtteam.structurize.api.util.BlockPosUtil;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.blueprints.v1.BlueprintUtil;
 import com.minecolonies.api.util.Log;
@@ -82,7 +82,7 @@ public class SchemFixerUtil
                 try
                 {
                     CompoundTag compoundNBT = NbtIo.readCompressed(new ByteArrayInputStream(java.nio.file.Files.readAllBytes(blueprintFile.toPath())), NbtAccounter.unlimitedHeap());
-                    final Blueprint blueprint = BlueprintUtil.readBlueprintFromNBT(compoundNBT, provider.get());
+                    final Blueprint blueprint = BlueprintUtil.readBlueprintFromNBT(compoundNBT);
                     if (fixSchematicNameAndCorners(blueprint))
                     {
                         BlueprintUtil.writeToStream(new FileOutputStream(blueprintFile), blueprint);
@@ -126,7 +126,7 @@ public class SchemFixerUtil
         if (compoundNBT != null && compoundNBT.contains(TAG_BLUEPRINTDATA))
         {
             final CompoundTag schemDataCompound = (CompoundTag) compoundNBT.get(TAG_BLUEPRINTDATA);
-            final String name = schemDataCompound.getString(TAG_SCHEMATIC_NAME);
+            final String name = schemDataCompound.getStringOr(TAG_SCHEMATIC_NAME, "");
             if (name.contains("citizen") || name.contains("home"))
             {
                 blueprint.setName(blueprint.getName().replace("home", "residence"));

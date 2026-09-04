@@ -97,7 +97,7 @@ public class Journeymap
      */
     public Path getDataPath(final ResourceKey<Level> dimension)
     {
-        final String name = dimension.location().getPath();
+        final String name = dimension.identifier().getPath();
         return this.jmap.getDataPath(MOD_ID).toPath().resolve(name);
     }
 

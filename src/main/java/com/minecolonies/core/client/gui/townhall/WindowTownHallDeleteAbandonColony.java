@@ -14,7 +14,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvents;
 
 import static com.minecolonies.api.util.constant.WindowConstants.*;
@@ -39,7 +39,7 @@ public class WindowTownHallDeleteAbandonColony extends AbstractWindowSkeleton
 
     public WindowTownHallDeleteAbandonColony(final BlockPos pos, final String oldColonyName, final BlockPos oldColonyPos)
     {
-        super(new ResourceLocation(Constants.MOD_ID, "gui/townhall/windowdeleteabandoncolony.xml"));
+        super(Identifier.fromNamespaceAndPath(Constants.MOD_ID, "gui/townhall/windowdeleteabandoncolony.xml"));
         this.pos = pos;
         mc.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.BOOK_PAGE_TURN, 1.0F));
 

@@ -26,7 +26,7 @@ public class DebugPlayerManager
      */
     public static boolean hasDebugEnabled(final Player player)
     {
-        return !FMLEnvironment.production || debugPlayers.contains(player.getUUID());
+        return !FMLEnvironment.isProduction() || debugPlayers.contains(player.getUUID());
     }
 
     /**

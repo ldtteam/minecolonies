@@ -14,9 +14,13 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.DataResult;
 import net.minecraft.world.level.saveddata.SavedData;
+import net.minecraft.world.level.saveddata.SavedDataType;
+import net.minecraft.util.datafix.DataFixTypes;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -32,16 +36,21 @@ public class ServerColonySaveData extends SavedData implements IServerColonySave
     /**
      * World save data name.
      */
-    public static final String NAME = new ResourceLocation(Constants.MOD_ID, "colony_manager").toDebugFileName();
+    public static final String NAME = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "colony_manager").toDebugFileName();
+
+    private static volatile HolderLookup.Provider persistenceProvider;
 
     /**
-     * Worldsavedata factory.
+     * MC 26.2 saved data is codec-driven. Colony payloads remain NBT-backed, while the codec supplies the
+     * registry provider captured when the owning level opens its save data storage.
      */
-    public static final SavedData.Factory<ServerColonySaveData> FACTORY = new SavedData.Factory<>(ServerColonySaveData::new, (d,a) -> {
-        final ServerColonySaveData colonyManagerData = new ServerColonySaveData();
-        colonyManagerData.readNBT(a, d);
-        return colonyManagerData;
-    });
+    public static final SavedDataType<ServerColonySaveData> TYPE = new SavedDataType<>(
+        Identifier.withDefaultNamespace(NAME),
+        ServerColonySaveData::new,
+        CompoundTag.CODEC.comapFlatMap(
+            tag -> DataResult.success(decode(tag)),
+            data -> data.writeNBT(persistenceProvider(), new CompoundTag())),
+        DataFixTypes.SAVED_DATA_GAME_RULES);
 
     /**
      * The list of all colonies.
@@ -54,16 +63,31 @@ public class ServerColonySaveData extends SavedData implements IServerColonySave
      */
     private boolean overworld;
 
-    private ServerColonySaveData()
+    public ServerColonySaveData()
     {
 
     }
 
-    @NotNull
-    @Override
-    public CompoundTag save(final @NotNull CompoundTag tag, @NotNull final HolderLookup.Provider provider)
+    static HolderLookup.Provider persistenceProvider()
     {
-        return writeNBT(provider, tag);
+        final HolderLookup.Provider provider = persistenceProvider;
+        if (provider == null)
+        {
+            throw new IllegalStateException("Colony save-data registry provider was not initialized");
+        }
+        return provider;
+    }
+
+    private static ServerColonySaveData decode(@NotNull final CompoundTag compound)
+    {
+        final ServerColonySaveData data = new ServerColonySaveData();
+        data.readNBT(persistenceProvider(), compound);
+        return data;
+    }
+
+    public static void initializePersistenceProvider(@NotNull final HolderLookup.Provider provider)
+    {
+        persistenceProvider = provider;
     }
 
     @Override
@@ -147,7 +171,7 @@ public class ServerColonySaveData extends SavedData implements IServerColonySave
 
     private void readNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag inputTag)
     {
-        final CompoundTag compound = inputTag.getCompound(Constants.MOD_ID);
+        final CompoundTag compound = inputTag.getCompoundOrEmpty(Constants.MOD_ID);
 
         if (!compound.contains(TAG_COLONIES))
         {
@@ -157,37 +181,39 @@ public class ServerColonySaveData extends SavedData implements IServerColonySave
 
         // Load all colonies from Nbt
         Multimap<BlockPos, IColony> tempColonies = ArrayListMultimap.create();
-        for (final Tag tag : compound.getList(TAG_COLONIES, Tag.TAG_COMPOUND))
+        for (final Tag tag : compound.getListOrEmpty(TAG_COLONIES))
         {
-            final IColony colony = Colony.loadColony((CompoundTag) tag, null, provider);
-            if (colony != null)
+            if (tag instanceof final CompoundTag colonyTag)
             {
-                tempColonies.put(colony.getCenter(), colony);
-                colonies.add(colony);
+                final IColony colony = Colony.loadColony(colonyTag, null, provider);
+                if (colony != null)
+                {
+                    tempColonies.put(colony.getCenter(), colony);
+                    colonies.add(colony);
+                }
             }
         }
 
         if (compound.contains(TAG_COLONY_MANAGER))
         {
-            IColonyManager.getInstance().read(provider, compound.getCompound(TAG_COLONY_MANAGER));
+            IColonyManager.getInstance().read(provider, compound.getCompoundOrEmpty(TAG_COLONY_MANAGER));
             this.overworld = true;
         }
 
         // Check colonies for duplicates causing issues.
         for (final BlockPos pos : tempColonies.keySet())
         {
-            // Check if any position has more than one colony
             if (tempColonies.get(pos).size() > 1)
             {
                 Log.getLogger().warn("Detected duplicate colonies which are at the same position:");
                 for (final IColony colony : tempColonies.get(pos))
                 {
-                    Log.getLogger()
-                        .warn(
-                        "ID: " + colony.getID() + " name:" + colony.getName() + " citizens:" + colony.getCitizenManager().getCitizens().size() + " building count:" + colony
-                                                                                                                                                                        .getCommonBuildingManager()
-                                                                                                                                                                        .getBuildings()
-                                                                                                                                                                        .size());
+                    Log.getLogger().warn(
+                        "ID: {} name: {} citizens: {} buildings: {}",
+                        colony.getID(),
+                        colony.getName(),
+                        colony.getCitizenManager().getCitizens().size(),
+                        colony.getCommonBuildingManager().getBuildings().size());
                 }
                 Log.getLogger().warn("Check and remove all except one of the duplicated colonies above!");
             }

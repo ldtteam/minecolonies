@@ -1,5 +1,7 @@
 package com.minecolonies.core.entity.ai.combat;
 
+import com.minecolonies.core.entity.ai.combat.ServerDamageHelper;
+
 import com.minecolonies.api.entity.ai.combat.CombatAIStates;
 import com.minecolonies.api.entity.ai.combat.threat.IThreatTableEntity;
 import com.minecolonies.api.entity.ai.combat.threat.ThreatTableEntry;
@@ -181,7 +183,7 @@ public class AttackMoveAI<T extends Mob & IThreatTableEntity> extends TargetAI<T
      */
     protected void doAttack(final LivingEntity target)
     {
-        target.hurt(target.level().damageSources().source(DamageSourceKeys.DEFAULT, user), 5);
+        ServerDamageHelper.apply(target, target.level().damageSources().source(DamageSourceKeys.DEFAULT, user), 5);
         user.swing(InteractionHand.MAIN_HAND);
     }
 

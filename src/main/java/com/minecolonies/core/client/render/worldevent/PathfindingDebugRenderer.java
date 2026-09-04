@@ -1,12 +1,11 @@
 package com.minecolonies.core.client.render.worldevent;
 
-import com.ldtteam.structurize.util.WorldRenderMacros;
+import com.ldtteam.structurize.client.rendertask.util.WorldRenderMacros;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.core.entity.pathfinding.MNode;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Font;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
 import org.jetbrains.annotations.NotNull;
@@ -14,6 +13,7 @@ import org.joml.Matrix4f;
 
 import java.util.ConcurrentModificationException;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class PathfindingDebugRenderer
@@ -91,7 +91,7 @@ public class PathfindingDebugRenderer
     private static void debugDrawNode(final MNode n, final int argbColor, final WorldEventContext ctx)
     {
         ctx.poseStack.pushPose();
-        ctx.poseStack.translate(n.x + 0.375d - ctx.cameraPosition.x, n.y + 0.375d - ctx.cameraPosition.y, n.z + 0.375d - ctx.cameraPosition.z);
+        ctx.poseStack.translate(n.x + 0.375d, n.y + 0.375d, n.z + 0.375d);
 
         final Entity entity = Minecraft.getInstance().getCameraEntity();
         if (BlockPosUtil.distSqr(entity.blockPosition(), n.x, n.y, n.z) < 5d * 5d)
@@ -101,7 +101,7 @@ public class PathfindingDebugRenderer
 
         ctx.poseStack.scale(0.25F, 0.25F, 0.25F);
 
-        ctx.renderBox(WorldEventContext.COLORED_TRIANGLES, BlockPos.ZERO, BlockPos.ZERO, argbColor);
+        WorldRenderMacros.renderBox(ctx.bufferSource, ctx.poseStack, BlockPos.ZERO, BlockPos.ZERO, argbColor);
 
         if (n.parent != null)
         {
@@ -122,26 +122,14 @@ public class PathfindingDebugRenderer
 
     private static void renderDebugText(@NotNull final MNode n, final WorldEventContext ctx)
     {
-        final Font fontrenderer = ctx.mc.font;
-
         final String s1 = String.format("C: %.1f", n.getCost());
         final String s2 = String.format("H: %.1f", n.getHeuristic());
-        final int i = Math.max(fontrenderer.width(s1), fontrenderer.width(s2)) / 2;
-
-        ctx.poseStack.pushPose();
-        ctx.poseStack.translate(0.0F, 0.6F, 0.0F);
-
-        ctx.poseStack.mulPose(Minecraft.getInstance().getEntityRenderDispatcher().cameraOrientation());
-        ctx.poseStack.scale(0.014F, -0.014F, 0.014F);
-        final Matrix4f mat = ctx.poseStack.last().pose();
-
-        ctx.renderFillRectangle(-i - 1, -5, 0, 2 * i + 2, 17, 0x7f000000);
-
-        ctx.poseStack.translate(0.0F, -5F, -0.1F);
-        fontrenderer.drawInBatch(s1, -fontrenderer.width(s1) / 2.0f, 1, 0xFFFFFFFF, false, mat, ctx.bufferSource, Font.DisplayMode.NORMAL, 0, 15728880);
-        ctx.poseStack.translate(0.0F, 8F, -0.1F);
-        fontrenderer.drawInBatch(s2, -fontrenderer.width(s2) / 2.0f, 1, 0xFFFFFFFF, false, mat, ctx.bufferSource, Font.DisplayMode.NORMAL, 0, 15728880);
-
-        ctx.poseStack.popPose();
+        WorldRenderMacros.renderDebugText(
+            new BlockPos(n.x, n.y, n.z),
+            List.of(s1, s2),
+            ctx.poseStack,
+            true,
+            1,
+            ctx.bufferSource);
     }
 }

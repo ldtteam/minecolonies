@@ -10,7 +10,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.ClickType;
+import net.minecraft.world.inventory.ContainerInput;
 import net.minecraft.world.inventory.FurnaceResultSlot;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
@@ -217,14 +217,14 @@ public class ContainerCraftingFurnace extends AbstractContainerMenu
     }
 
     @Override
-    public void clicked(final int slotId, final int clickedButton, final ClickType mode, final Player playerIn)
+    public void clicked(final int slotId, final int clickedButton, final ContainerInput mode, final Player playerIn)
     {
         if (slotId >= 0 && slotId < FURNACE_SLOTS)
         {
             // 1 is shift-click
-            if (mode == ClickType.PICKUP
-                  || mode == ClickType.PICKUP_ALL
-                  || mode == ClickType.SWAP)
+            if (mode == ContainerInput.PICKUP
+                  || mode == ContainerInput.PICKUP_ALL
+                  || mode == ContainerInput.SWAP)
             {
                 final Slot slot = this.slots.get(slotId);
                 handleSlotClick(slot, this.getCarried());
@@ -277,7 +277,7 @@ public class ContainerCraftingFurnace extends AbstractContainerMenu
      */
     private void updateFurnaceOutput()
     {
-        if (!playerInventory.player.level().isClientSide)
+        if (!playerInventory.player.level().isClientSide())
         {
             final ServerPlayer player = (ServerPlayer) playerInventory.player;
             final ItemStack result = IMinecoloniesAPI.getInstance().getFurnaceRecipes().getSmeltingResult(furnaceInventory.getStackInSlot(0));

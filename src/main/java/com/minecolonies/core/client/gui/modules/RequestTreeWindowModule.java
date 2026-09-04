@@ -21,7 +21,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.items.wrapper.InvWrapper;
@@ -180,15 +180,15 @@ public abstract class RequestTreeWindowModule implements IWindowWithLayoutModule
 
     @Override
     @NotNull
-    public final ResourceLocation getLayout()
+    public final Identifier getLayout()
     {
-        return new ResourceLocation(Constants.MOD_ID, "gui/layouthuts/layoutrequeststree.xml");
+        return Identifier.fromNamespaceAndPath(Constants.MOD_ID, "gui/layouthuts/layoutrequeststree.xml");
     }
 
     @Override
     public void onUpdate()
     {
-        if (!Screen.hasShiftDown())
+        if (!Minecraft.getInstance().hasShiftDown())
         {
             lifeCount++;
         }
@@ -313,11 +313,6 @@ public abstract class RequestTreeWindowModule implements IWindowWithLayoutModule
     private void cancel(@NotNull final Button button)
     {
         final int row = resourceList.getListElementIndexByPane(button);
-        if (getCachedOpenRequests().isEmpty())
-        {
-            return;
-        }
-
         cancel(getCachedOpenRequests().get(row).request());
     }
 

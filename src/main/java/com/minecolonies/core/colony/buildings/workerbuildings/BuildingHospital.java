@@ -16,7 +16,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.util.Tuple;
+import com.ldtteam.structurize.api.util.Tuple;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BedBlock;
@@ -88,22 +88,22 @@ public class BuildingHospital extends AbstractBuilding
     public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag compound)
     {
         super.deserializeNBT(provider, compound);
-        final ListTag bedTagList = compound.getList(TAG_BEDS, Tag.TAG_COMPOUND);
+        final ListTag bedTagList = compound.getListOrEmpty(TAG_BEDS);
         for (int i = 0; i < bedTagList.size(); ++i)
         {
-            final CompoundTag bedCompound = bedTagList.getCompound(i);
+            final CompoundTag bedCompound = bedTagList.getCompoundOrEmpty(i);
             final BlockPos bedPos = BlockPosUtil.read(bedCompound, TAG_POS);
             if (!bedMap.containsKey(bedPos))
             {
-                bedMap.put(bedPos, bedCompound.getInt(TAG_ID));
+                bedMap.put(bedPos, bedCompound.getIntOr(TAG_ID, 0));
             }
         }
 
-        final ListTag patientTagList = compound.getList(TAG_PATIENTS, Tag.TAG_COMPOUND);
+        final ListTag patientTagList = compound.getListOrEmpty(TAG_PATIENTS);
         for (int i = 0; i < patientTagList.size(); ++i)
         {
-            final CompoundTag patientCompound = patientTagList.getCompound(i);
-            final int patientId = patientCompound.getInt(TAG_ID);
+            final CompoundTag patientCompound = patientTagList.getCompoundOrEmpty(i);
+            final int patientId = patientCompound.getIntOr(TAG_ID, 0);
             if (!patients.containsKey(patientId))
             {
                 patients.put(patientId, new Patient(patientCompound));

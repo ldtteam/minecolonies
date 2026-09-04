@@ -21,7 +21,10 @@ import com.minecolonies.core.entity.other.cavalry.CavalryHorseEntity;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.PathfinderMob;
-import net.minecraft.world.entity.projectile.*;
+import net.minecraft.world.entity.projectile.arrow.AbstractArrow;
+import net.minecraft.world.entity.projectile.arrow.Arrow;
+import net.minecraft.world.entity.projectile.arrow.ThrownTrident;
+import net.minecraft.world.entity.projectile.throwableitemprojectile.ThrownSplashPotion;
 
 import java.util.List;
 
@@ -75,7 +78,7 @@ public class ModEntities
 
     public static EntityType<? extends Arrow> MC_NORMAL_ARROW;
 
-    public static EntityType<? extends ThrownPotion> DRUID_POTION;
+    public static EntityType<? extends ThrownSplashPotion> DRUID_POTION;
 
     public static EntityType<? extends ThrownTrident> SPEAR;
 

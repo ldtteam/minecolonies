@@ -64,9 +64,9 @@ public abstract class AbstractHappinessModifier implements IHappinessModifier
     @Override
     public void read(@NotNull final HolderLookup.Provider provider, final CompoundTag compoundNBT, final boolean persist)
     {
-        this.id = compoundNBT.getString(TAG_ID);
-        this.weight = compoundNBT.getDouble(TAG_WEIGHT);
-        final CompoundTag supplierCompound = compoundNBT.getCompound(TAG_SUPPLIER);
+        this.id = compoundNBT.getStringOr(TAG_ID, "");
+        this.weight = compoundNBT.getDoubleOr(TAG_WEIGHT, 0.0D);
+        final CompoundTag supplierCompound = compoundNBT.getCompoundOrEmpty(TAG_SUPPLIER);
         if (supplierCompound.contains(TAG_ID))
         {
             supplier = new DynamicHappinessSupplier();

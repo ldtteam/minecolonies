@@ -13,7 +13,7 @@ import com.minecolonies.api.tileentities.AbstractTileEntityPlantationField;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.network.messages.server.PlantationFieldBuildRequestMessage;
 import net.minecraft.client.Minecraft;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -72,7 +72,7 @@ public class WindowPlantationField extends AbstractWindowSkeleton
      */
     public WindowPlantationField(final AbstractTileEntityPlantationField tileEntityPlantationField)
     {
-        super(new ResourceLocation(Constants.MOD_ID, "gui/windowplantationfield.xml"));
+        super(Identifier.fromNamespaceAndPath(Constants.MOD_ID, "gui/windowplantationfield.xml"));
         this.tileEntityPlantationField = tileEntityPlantationField;
         this.plants = tileEntityPlantationField.getPlantationFieldTypes().stream()
                         .flatMap(f -> f.getExtensionModuleProducers().stream().map(m -> m.apply(null)).filter(IPlantationModule.class::isInstance).map(m -> (IPlantationModule) m))

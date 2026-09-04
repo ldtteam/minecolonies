@@ -6,7 +6,7 @@ import com.minecolonies.core.colony.buildings.modules.expedition.ExpeditionLog;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -18,9 +18,9 @@ public class ExpeditionLogModule extends AbstractBuildingModule implements IPers
     private static final String TAG_LOG = "expedition";
 
     @NotNull private final ExpeditionLog log = new ExpeditionLog();
-    @Nullable private final ResourceLocation research;
+    @Nullable private final Identifier research;
 
-    public ExpeditionLogModule(@Nullable ResourceLocation research)
+    public ExpeditionLogModule(@Nullable Identifier research)
     {
         this.research = research;
     }
@@ -40,7 +40,7 @@ public class ExpeditionLogModule extends AbstractBuildingModule implements IPers
     @Override
     public void deserializeNBT(@NotNull final HolderLookup.Provider provider, @NotNull final CompoundTag compound)
     {
-        final CompoundTag log = compound.contains(TAG_LOG) ? compound.getCompound(TAG_LOG) : compound;
+        final CompoundTag log = compound.contains(TAG_LOG) ? compound.getCompoundOrEmpty(TAG_LOG) : compound;
         this.log.deserializeNBT(provider, log);
     }
 

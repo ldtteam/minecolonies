@@ -13,7 +13,7 @@ import io.netty.buffer.Unpooled;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
@@ -62,7 +62,7 @@ public class ColonyViewBuildingExtensionsUpdateMessage extends AbstractClientPla
     protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf)
     {
         buf.writeInt(colonyId);
-        buf.writeUtf(dimension.location().toString());
+        buf.writeUtf(dimension.identifier().toString());
         buf.writeInt(extensions.size());
         for (final IBuildingExtension extension : extensions.keySet())
         {
@@ -76,7 +76,7 @@ public class ColonyViewBuildingExtensionsUpdateMessage extends AbstractClientPla
     {
         super(buf, type);
         colonyId = buf.readInt();
-        dimension = ResourceKey.create(Registries.DIMENSION, ResourceLocation.parse(buf.readUtf(32767)));
+        dimension = ResourceKey.create(Registries.DIMENSION, Identifier.parse(buf.readUtf(32767)));
         extensions = new HashMap<>();
         final int extensionCount = buf.readInt();
         for (int i = 0; i < extensionCount; i++)

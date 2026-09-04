@@ -1,6 +1,6 @@
 package com.minecolonies.api.util;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
@@ -22,7 +22,7 @@ public final class TagUtils
      * @param resourceLocation the unique id.
      * @return the tag or an empty placeholder if not existant.
      */
-    public static TagKey<Item> getItem(final ResourceLocation resourceLocation)
+    public static TagKey<Item> getItem(final Identifier resourceLocation)
     {
         return ItemTags.create(resourceLocation);
     }
@@ -32,7 +32,7 @@ public final class TagUtils
      * @param resourceLocation the unique id.
      * @return the tag or an empty placeholder if not existant.
      */
-    public static TagKey<Block> getBlock(final ResourceLocation resourceLocation)
+    public static TagKey<Block> getBlock(final Identifier resourceLocation)
     {
         return BlockTags.create(resourceLocation);
     }

@@ -595,7 +595,7 @@
 			"parent": "block/block",
 			"textures": {
 				"5": "minecolonies:block/cloth-diamond",
-				"12": "item/shears",
+				"12": "minecolonies:block_item/shears",
 				"2_7": "block/glass"
 			},
 			"elements": [

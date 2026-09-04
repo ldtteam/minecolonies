@@ -7,7 +7,7 @@ import com.minecolonies.core.colony.buildings.workerbuildings.BuildingBuilder;
 import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.advancements.AdvancementProgress;
 import net.minecraft.client.Minecraft;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 
@@ -20,7 +20,7 @@ public class WindowHutBuilderModule extends AbstractWindowWorkerModuleBuilding<B
      * The advancement location.
      */
 
-    private static final ResourceLocation GUIDE_ADVANCEMENT = new ResourceLocation(Constants.MOD_ID, "minecolonies/check_out_guide");
+    private static final Identifier GUIDE_ADVANCEMENT = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "minecolonies/check_out_guide");
 
     /**
      * If the guide should be attempted to be opened.
@@ -45,7 +45,7 @@ public class WindowHutBuilderModule extends AbstractWindowWorkerModuleBuilding<B
      */
     public WindowHutBuilderModule(final BuildingBuilder.View building, final boolean needGuide)
     {
-        super(building, new ResourceLocation(Constants.MOD_ID, "gui/windowhutworkerplaceholder.xml"));
+        super(building, Identifier.fromNamespaceAndPath(Constants.MOD_ID, "gui/windowhutworkerplaceholder.xml"));
         this.needGuide = needGuide;
     }
 

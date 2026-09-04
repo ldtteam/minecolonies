@@ -4,7 +4,8 @@ import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMonster;
 import com.minecolonies.core.client.model.raiders.ModelChiefNorsemen;
 import com.minecolonies.core.event.ClientRegistryHandler;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
-import net.minecraft.resources.ResourceLocation;
+import com.minecolonies.api.client.render.modeltype.RaiderRenderState;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -15,7 +16,7 @@ public class RendererChiefNorsemen extends AbstractRendererNorsemen<AbstractEnti
     /**
      * Texture of the entity.
      */
-    private static final ResourceLocation TEXTURE = new ResourceLocation("minecolonies", "textures/entity/raiders/norsemen_chief.png");
+    private static final Identifier TEXTURE = Identifier.fromNamespaceAndPath("minecolonies", "textures/entity/raiders/norsemen_chief.png");
 
     /**
      * Constructor method for renderer
@@ -29,7 +30,7 @@ public class RendererChiefNorsemen extends AbstractRendererNorsemen<AbstractEnti
 
     @NotNull
     @Override
-    public ResourceLocation getTextureLocation(final AbstractEntityMinecoloniesMonster entity)
+    public Identifier getTextureLocation(RaiderRenderState entity)
     {
         return TEXTURE;
     }

@@ -8,17 +8,17 @@ import com.minecolonies.api.quests.IQuestManager;
 import com.minecolonies.api.quests.IQuestObjectiveTemplate;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.quests.objectives.*;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.neoforged.neoforge.event.level.BlockEvent;
+import net.neoforged.neoforge.event.level.block.BreakBlockEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -26,7 +26,6 @@ import java.util.*;
 /**
  * This class handles all permission checks on events and cancels them if needed.
  */
-@EventBusSubscriber(modid = Constants.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
 public class QuestObjectiveEventHandler
 {
     /**
@@ -37,7 +36,7 @@ public class QuestObjectiveEventHandler
     /**
      * Research objective tracker.
      */
-    private static final Map<ResourceLocation, Map<IColony, List<IQuestInstance>>> researchObjectives = new HashMap<>();
+    private static final Map<Identifier, Map<IColony, List<IQuestInstance>>> researchObjectives = new HashMap<>();
 
     /**
      * Mine block objective tracker.
@@ -55,12 +54,12 @@ public class QuestObjectiveEventHandler
     private static final Map<Block, Map<UUID, List<IQuestInstance>>> placeBlockObjectives = new HashMap<>();
 
     /**
-     * BlockEvent.BreakEvent handler.
+     * BreakBlockEvent handler.
      *
-     * @param event BlockEvent.BreakEvent
+     * @param event BreakBlockEvent
      */
     @SubscribeEvent(priority = EventPriority.LOWEST)
-    public static void on(final BlockEvent.BreakEvent event)
+    public static void on(final BreakBlockEvent event)
     {
         final LevelAccessor world = event.getLevel();
         if (world.isClientSide())
@@ -115,7 +114,7 @@ public class QuestObjectiveEventHandler
     /**
      * BlockEvent.Place handler.
      *
-     * @param event BlockEvent.BreakEvent
+     * @param event BreakBlockEvent
      */
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void on(final BlockEvent.EntityPlaceEvent event)
@@ -235,7 +234,7 @@ public class QuestObjectiveEventHandler
      * @param colony the colony the research happened in.
      * @param id the research id.
      */
-    public static void onResearchComplete(final IColony colony, final ResourceLocation id)
+    public static void onResearchComplete(final IColony colony, final Identifier id)
     {
         if (researchObjectives.containsKey(id))
         {
@@ -299,7 +298,7 @@ public class QuestObjectiveEventHandler
      * @param researchId the research to track.
      * @param colonyQuest the quest tracking it.
      */
-    public static void trackResearch(final ResourceLocation researchId, final IQuestInstance colonyQuest)
+    public static void trackResearch(final Identifier researchId, final IQuestInstance colonyQuest)
     {
         final Map<IColony, List<IQuestInstance>> currentMap = researchObjectives.getOrDefault(researchId, new HashMap<>());
         final List<IQuestInstance> objectives = currentMap.getOrDefault(colonyQuest.getColony(), new ArrayList<>());
@@ -313,7 +312,7 @@ public class QuestObjectiveEventHandler
      * @param researchId the research to stop tracking.
      * @param colonyQuest the quest tracking it.
      */
-    public static void stopTrackingResearch(final @NotNull ResourceLocation researchId, final @NotNull IQuestInstance colonyQuest)
+    public static void stopTrackingResearch(final @NotNull Identifier researchId, final @NotNull IQuestInstance colonyQuest)
     {
         researchObjectives.getOrDefault(researchId, new HashMap<>()).getOrDefault(colonyQuest.getColony(), new ArrayList<>()).remove(colonyQuest);
     }

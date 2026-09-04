@@ -1,7 +1,7 @@
 package com.minecolonies.core.entity.ai.workers.util;
 
 import com.google.common.collect.ImmutableList;
-import com.ldtteam.structurize.api.RotationMirror;
+import com.ldtteam.structurize.util.RotationMirror;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.Vec2i;
 import net.minecraft.nbt.CompoundTag;
@@ -106,26 +106,26 @@ public class MineNode
         final int z;
         if (hasDoubles)
         {
-            x = Mth.floor(compound.getDouble(TAG_X));
-            z = Mth.floor(compound.getDouble(TAG_Z));
+            x = Mth.floor(compound.getDoubleOr(TAG_X, 0.0D));
+            z = Mth.floor(compound.getDoubleOr(TAG_Z, 0.0D));
         }
         else
         {
-            x = compound.getInt(TAG_X);
-            z = compound.getInt(TAG_Z);
+            x = compound.getIntOr(TAG_X, 0);
+            z = compound.getIntOr(TAG_Z, 0);
         }
 
         NodeType style;
         try
         {
-            style = NodeType.valueOf(compound.getString(TAG_STYLE));
+            style = NodeType.valueOf(compound.getStringOr(TAG_STYLE, ""));
         }
         catch (final IllegalArgumentException ex)
         {
             style = NodeType.BEND_RIGHT;
         }
 
-        final NodeStatus status = NodeStatus.valueOf(compound.getString(TAG_STATUS));
+        final NodeStatus status = NodeStatus.valueOf(compound.getStringOr(TAG_STATUS, ""));
 
         Vec2i parent = null;
         if (compound.contains(TAG_PARENTX))
@@ -133,12 +133,12 @@ public class MineNode
             if (hasDoubles)
             {
                 parent = new Vec2i(
-                  Mth.floor(compound.getDouble(TAG_PARENTX)),
-                  Mth.floor(compound.getDouble(TAG_PARENTZ)));
+                  Mth.floor(compound.getDoubleOr(TAG_PARENTX, 0.0D)),
+                  Mth.floor(compound.getDoubleOr(TAG_PARENTZ, 0.0D)));
             }
             else
             {
-                parent = new Vec2i(compound.getInt(TAG_PARENTX), compound.getInt(TAG_PARENTZ));
+                parent = new Vec2i(compound.getIntOr(TAG_PARENTX, 0), compound.getIntOr(TAG_PARENTZ, 0));
             }
         }
 
@@ -152,7 +152,7 @@ public class MineNode
         node.setStatus(status);
         if (compound.contains(TAG_ROTATION_MIRROR))
         {
-            node.setRotationMirror(RotationMirror.values()[compound.getByte(TAG_ROTATION_MIRROR)]);
+            node.setRotationMirror(RotationMirror.values()[compound.getByteOr(TAG_ROTATION_MIRROR, (byte) 0)]);
         }
         return node;
     }

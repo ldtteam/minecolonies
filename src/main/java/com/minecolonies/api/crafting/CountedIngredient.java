@@ -1,18 +1,19 @@
 package com.minecolonies.api.crafting;
-
 import com.minecolonies.apiimp.initializer.ModIngredientTypeInitializer;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.core.Holder;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.neoforged.neoforge.common.crafting.ICustomIngredient;
 import net.neoforged.neoforge.common.crafting.IngredientType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Arrays;
 import java.util.stream.Stream;
+
 
 /**
  * An ingredient that can be used in a vanilla recipe to require more than one item in a particular input slot.
@@ -34,13 +35,13 @@ import java.util.stream.Stream;
 public record CountedIngredient(@NotNull Ingredient child, int count) implements ICustomIngredient
 {
     public static final MapCodec<CountedIngredient> CODEC = RecordCodecBuilder.mapCodec(builder -> builder
-        .group(Ingredient.CODEC_NONEMPTY.fieldOf("item").forGetter(CountedIngredient::child),
+        .group(Ingredient.CODEC.fieldOf("item").forGetter(CountedIngredient::child),
           ExtraCodecs.POSITIVE_INT.optionalFieldOf("count", 1).forGetter(CountedIngredient::count))
         .apply(builder, CountedIngredient::new));
 
     public CountedIngredient
     {
-        if (child == Ingredient.EMPTY || count <= 0) throw new IllegalArgumentException("Counted ingredient must have a child");
+        if (child.isEmpty() || count <= 0) throw new IllegalArgumentException("Counted ingredient must have a child");
     }
 
     /**
@@ -80,10 +81,8 @@ public record CountedIngredient(@NotNull Ingredient child, int count) implements
 
     @NotNull
     @Override
-    public Stream<ItemStack> getItems()
+    public Stream<Holder<Item>> items()
     {
-        return Arrays.stream(child.getItems())
-                .map(ItemStack::copy)
-                .peek(s -> s.setCount(this.count));
+        return child.items();
     }
 }

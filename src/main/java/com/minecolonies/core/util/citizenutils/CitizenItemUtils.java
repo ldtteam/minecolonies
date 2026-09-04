@@ -40,7 +40,7 @@ public class CitizenItemUtils
      */
     public static void tryPickupItemEntity(@NotNull final AbstractEntityCitizen citizen, @NotNull final ItemEntity itemEntity)
     {
-        if (!CompatibilityUtils.getWorldFromCitizen(citizen).isClientSide)
+        if (!CompatibilityUtils.getWorldFromCitizen(citizen).isClientSide())
         {
             if (itemEntity.hasPickUpDelay())
             {
@@ -164,7 +164,7 @@ public class CitizenItemUtils
         final Block block = blockState.getBlock();
         if (breakBlock)
         {
-            if (!CompatibilityUtils.getWorldFromCitizen(citizen).isClientSide)
+            if (!CompatibilityUtils.getWorldFromCitizen(citizen).isClientSide())
             {
                 new BlockParticleEffectMessage(blockPos, CompatibilityUtils.getWorldFromCitizen(citizen).getBlockState(blockPos), BlockParticleEffectMessage.BREAK_BLOCK)
                     .sendToTargetPoint((ServerLevel) citizen.level(), null, blockPos.getX(), blockPos.getY(), blockPos.getZ(), BLOCK_BREAK_SOUND_RANGE);
@@ -181,7 +181,7 @@ public class CitizenItemUtils
         }
         else
         {
-            if (!CompatibilityUtils.getWorldFromCitizen(citizen).isClientSide)
+            if (!CompatibilityUtils.getWorldFromCitizen(citizen).isClientSide())
             {
                 final BlockPos vector = blockPos.subtract(citizen.blockPosition());
                 final Direction facing = BlockPosUtil.directionFromDelta(vector.getX(), vector.getY(), vector.getZ()).getOpposite();
@@ -282,7 +282,11 @@ public class CitizenItemUtils
      */
     public static ItemEntity entityDropItem(@NotNull final AbstractEntityCitizen citizen, @NotNull final ItemStack itemstack)
     {
-        return citizen.spawnAtLocation(itemstack, 0.0F);
+        if (citizen.level() instanceof final ServerLevel serverLevel)
+        {
+            return citizen.spawnAtLocation(serverLevel, itemstack);
+        }
+        return null;
     }
 
     /**

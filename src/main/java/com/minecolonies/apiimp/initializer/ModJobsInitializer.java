@@ -9,7 +9,7 @@ import com.minecolonies.core.colony.jobs.guard.*;
 import com.minecolonies.core.colony.jobs.views.CrafterJobView;
 import com.minecolonies.core.colony.jobs.views.DefaultJobView;
 import com.minecolonies.core.colony.jobs.views.DmanJobView;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import java.util.function.Supplier;
@@ -341,7 +341,7 @@ public final class ModJobsInitializer
      */
     private static DeferredHolder<JobEntry, JobEntry> register(final DeferredRegister<JobEntry> deferredRegister, final String path, final Supplier<JobEntry> supplier)
     {
-        ModJobs.jobs.add(new ResourceLocation(Constants.MOD_ID, path));
+        ModJobs.jobs.add(Identifier.fromNamespaceAndPath(Constants.MOD_ID, path));
         return deferredRegister.register(path, supplier);
     }
 }

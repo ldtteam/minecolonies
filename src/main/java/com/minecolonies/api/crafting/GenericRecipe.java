@@ -8,7 +8,7 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.OptionalPredicate;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -43,7 +43,7 @@ public class GenericRecipe implements IGenericRecipe
     /** Generic recipe builder */
     public static class Builder
     {
-        @Nullable private ResourceLocation id;
+        @Nullable private Identifier id;
         private List<ItemStack> mainOutputs = List.of();
         private List<ItemStack> additionalOutputs = List.of();
         private List<List<ItemStack>> inputs = List.of();
@@ -81,7 +81,7 @@ public class GenericRecipe implements IGenericRecipe
          * @param id the recipe id.
          * @return this
          */
-        public Builder withRecipeId(@Nullable final ResourceLocation id)
+        public Builder withRecipeId(@Nullable final Identifier id)
         {
             this.id = id == null || id.getPath().isEmpty() ? null : id;
             return this;
@@ -342,13 +342,13 @@ public class GenericRecipe implements IGenericRecipe
         if (holder == null) return null;
 
         final Recipe<?> recipe = holder.value();
-        final List<List<ItemStack>> inputs = compactInputs(recipe.getIngredients().stream()
-                .map(ingredient -> Arrays.asList(ingredient.getItems()))
+        final List<List<ItemStack>> inputs = compactInputs(RecipeUtils.getIngredients(recipe).stream()
+                .map(ingredient -> Arrays.asList(ItemStackUtils.getIngredientStacks(ingredient)))
                 .toList());
 
         final Builder builder = builder()
-                .withRecipeId(holder.id())
-                .withOutput(recipe.getResultItem(world.registryAccess()))
+                .withRecipeId(holder.id().identifier())
+                .withOutput(RecipeUtils.getOutput(recipe, world))
                 .withAdditionalOutputs(calculateSecondaryOutputs(recipe, world))
                 .withInputs(inputs);
 
@@ -358,7 +358,7 @@ public class GenericRecipe implements IGenericRecipe
         }
         else
         {
-            builder.withGridSize(recipe.canCraftInDimensions(2, 2) ? 2 : 3);
+            builder.withGridSize(RecipeCraftingType.canCraftInDimensions(recipe, 2, 2) ? 2 : 3);
         }
 
         return builder.build();
@@ -372,7 +372,7 @@ public class GenericRecipe implements IGenericRecipe
         return storage == null ? null : builder(storage).build();
     }
 
-    @Nullable private final ResourceLocation id;
+    @Nullable private final Identifier id;
     private final List<ItemStack> mainOutputs;
     private final List<ItemStack> additionalOutputs;
     private final List<List<ItemStack>> inputs;
@@ -389,7 +389,7 @@ public class GenericRecipe implements IGenericRecipe
 
     @Override
     @Nullable
-    public ResourceLocation getRecipeId()
+    public Identifier getRecipeId()
     {
         return this.id;
     }
@@ -510,7 +510,7 @@ public class GenericRecipe implements IGenericRecipe
     {
         if (recipe instanceof final CraftingRecipe craftingRecipe)
         {
-            final List<Ingredient> inputs = recipe.getIngredients();
+            final List<Ingredient> inputs = RecipeUtils.getIngredients(recipe);
             final CraftingContainer inv = new TransientCraftingContainer(new AbstractContainerMenu(MenuType.CRAFTING, 0)
             {
                 @Override
@@ -528,7 +528,7 @@ public class GenericRecipe implements IGenericRecipe
             }, 3, 3);
             for (int slot = 0; slot < inputs.size(); ++slot)
             {
-                final ItemStack[] stacks = inputs.get(slot).getItems();
+                final ItemStack[] stacks = ItemStackUtils.getIngredientStacks(inputs.get(slot));
                 if (stacks.length > 0)
                 {
                     inv.setItem(slot, stacks[0].copy());

@@ -1,7 +1,7 @@
 package com.minecolonies.api.tileentities;
 
 import com.minecolonies.api.inventory.InventoryCitizen;
-import com.minecolonies.api.util.Tuple;
+import com.ldtteam.structurize.api.util.Tuple;
 import com.minecolonies.core.tileentities.TileEntityColonyBuilding;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.ItemStack;

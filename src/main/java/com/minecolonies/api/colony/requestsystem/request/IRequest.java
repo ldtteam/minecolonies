@@ -12,7 +12,7 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import net.minecraft.core.NonNullList;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -270,12 +270,12 @@ public interface IRequest<R extends IRequestable>
     List<ItemStack> getDisplayStacks();
 
     /**
-     * Method used to get a ResourceLocation that is displayed instead of the {@link #getDisplayStacks()}, when {@link #getDisplayStacks()} returns an empty list.
+     * Method used to get a Identifier that is displayed instead of the {@link #getDisplayStacks()}, when {@link #getDisplayStacks()} returns an empty list.
      *
-     * @return The ResourceLocation of the Image dat is displayed when their are no DisplayStacks.
+     * @return The Identifier of the Image dat is displayed when their are no DisplayStacks.
      */
     @NotNull
-    ResourceLocation getDisplayIcon();
+    Identifier getDisplayIcon();
 
     /**
      * Get a request of a specific type.

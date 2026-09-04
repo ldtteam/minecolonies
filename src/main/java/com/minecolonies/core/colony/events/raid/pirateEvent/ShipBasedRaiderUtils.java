@@ -1,7 +1,7 @@
 package com.minecolonies.core.colony.events.raid.pirateEvent;
 
 import com.google.common.collect.Lists;
-import com.ldtteam.structurize.api.RotationMirror;
+import com.ldtteam.structurize.util.RotationMirror;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.storage.StructurePacks;
 import com.minecolonies.api.colony.IColony;
@@ -134,7 +134,7 @@ public final class ShipBasedRaiderUtils
         final Level world = colony.getWorld();
         final String shipSize = ShipSize.getShipForRaiderAmount(raidLevel).schematicPrefix + shipName;
 
-        final Blueprint blueprint = StructurePacks.getBlueprint(STORAGE_STYLE, "decorations" + SHIP_FOLDER + shipSize + ".blueprint", colony.getWorld().registryAccess());
+        final Blueprint blueprint = StructurePacks.getBlueprint(STORAGE_STYLE, "decorations" + SHIP_FOLDER + shipSize + ".blueprint");
         blueprint.setRotationMirror(rotMir, world);
 
         return canPlaceShipAt(spawnPoint, blueprint, world, neededDepth) || canPlaceShipAt(spawnPoint.below(), blueprint, world, neededDepth);

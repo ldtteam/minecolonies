@@ -5,7 +5,7 @@ import com.minecolonies.api.colony.requestsystem.factory.IFactory;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.research.IGlobalResearch;
 import net.minecraft.network.chat.contents.TranslatableContents;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.Constants.PARAMS_GLOBAL_RESEARCH;
@@ -24,19 +24,19 @@ public interface IGlobalResearchFactory extends IFactory<FactoryVoidInput, IGlob
             throw new IllegalArgumentException("Unsupported context - Not correct number of parameters. Only " + PARAMS_GLOBAL_RESEARCH + " are allowed!");
         }
 
-        if (!(context[0] instanceof final ResourceLocation id))
+        if (!(context[0] instanceof final Identifier id))
         {
-            throw new IllegalArgumentException("Parameter 1 is supposed to be the ID property (ResourceLocation)!");
+            throw new IllegalArgumentException("Parameter 1 is supposed to be the ID property (Identifier)!");
         }
 
-        if (!(context[1] instanceof final ResourceLocation parent))
+        if (!(context[1] instanceof final Identifier parent))
         {
-            throw new IllegalArgumentException("Parameter 2 is supposed to be the parent property (ResourceLocation)!");
+            throw new IllegalArgumentException("Parameter 2 is supposed to be the parent property (Identifier)!");
         }
 
-        if (!(context[2] instanceof final ResourceLocation branch))
+        if (!(context[2] instanceof final Identifier branch))
         {
-            throw new IllegalArgumentException("Parameter 3 is supposed to be the branch property (ResourceLocation)!");
+            throw new IllegalArgumentException("Parameter 3 is supposed to be the branch property (Identifier)!");
         }
 
         if (!(context[3] instanceof final TranslatableContents name))
@@ -104,9 +104,9 @@ public interface IGlobalResearchFactory extends IFactory<FactoryVoidInput, IGlob
      * @return a new instance of research.
      */
     @NotNull IGlobalResearch getNewInstance(
-        final ResourceLocation id,
-        final ResourceLocation parent,
-        final ResourceLocation branch,
+        final Identifier id,
+        final Identifier parent,
+        final Identifier branch,
         final TranslatableContents name,
         final TranslatableContents subtitle,
         final int depth,

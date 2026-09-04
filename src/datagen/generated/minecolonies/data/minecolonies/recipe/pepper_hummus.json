@@ -1,25 +1,12 @@
 {
   "type": "minecraft:crafting_shapeless",
-  "category": "misc",
   "ingredients": [
-    {
-      "item": "minecolonies:bell_pepper"
-    },
-    {
-      "item": "minecolonies:bell_pepper"
-    },
-    {
-      "item": "minecolonies:garlic"
-    },
-    {
-      "item": "minecolonies:onion"
-    },
-    {
-      "item": "minecolonies:chickpea"
-    },
-    {
-      "item": "minecolonies:chickpea"
-    }
+    "minecolonies:bell_pepper",
+    "minecolonies:bell_pepper",
+    "minecolonies:garlic",
+    "minecolonies:onion",
+    "minecolonies:chickpea",
+    "minecolonies:chickpea"
   ],
   "result": {
     "count": 2,

@@ -122,7 +122,7 @@ public abstract class AbstractTileEntityRack extends BlockEntity implements Menu
      */
     public void updateWarehouseIfAvailable(final ItemStack stack)
     {
-        if (!ItemStackUtils.isEmpty(stack) && level != null && !level.isClientSide)
+        if (!ItemStackUtils.isEmpty(stack) && level != null && !level.isClientSide())
         {
             if (inWarehouse || !buildingPos.equals(BlockPos.ZERO))
             {

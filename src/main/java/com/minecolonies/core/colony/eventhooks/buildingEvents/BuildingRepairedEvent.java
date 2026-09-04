@@ -5,7 +5,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -17,7 +17,7 @@ public class BuildingRepairedEvent extends AbstractBuildingEvent
     /**
      * This events id, registry entries use res locations as ids.
      */
-    public static final ResourceLocation BUILDING_REPAIRED_EVENT_ID = new ResourceLocation(Constants.MOD_ID, "building_repaired");
+    public static final Identifier BUILDING_REPAIRED_EVENT_ID = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "building_repaired");
 
     /**
      * Creates a new building repaired event.
@@ -40,7 +40,7 @@ public class BuildingRepairedEvent extends AbstractBuildingEvent
     }
 
     @Override
-    public ResourceLocation getEventTypeId()
+    public Identifier getEventTypeId()
     {
         return BUILDING_REPAIRED_EVENT_ID;
     }

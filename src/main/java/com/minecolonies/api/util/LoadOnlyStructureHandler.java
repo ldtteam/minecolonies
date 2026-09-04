@@ -1,6 +1,8 @@
 package com.minecolonies.api.util;
 
-import com.ldtteam.structurize.api.RotationMirror;
+import com.ldtteam.structurize.util.PlacementSettings;
+import com.ldtteam.structurize.util.RotationMirror;
+import net.minecraft.world.level.block.Rotation;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.placement.structure.CreativeStructureHandler;
 import com.minecolonies.api.blocks.ModBlocks;
@@ -31,7 +33,7 @@ public class LoadOnlyStructureHandler extends CreativeStructureHandler
      */
     public LoadOnlyStructureHandler(final Level world, final BlockPos pos, final Future<Blueprint> blueprintFuture, final RotationMirror rotMir)
     {
-        super(world, pos, blueprintFuture, rotMir, true);
+        super(world, pos, blueprintFuture, toSettings(rotMir), true);
     }
 
     /**
@@ -44,7 +46,7 @@ public class LoadOnlyStructureHandler extends CreativeStructureHandler
      */
     public LoadOnlyStructureHandler(final Level world, final BlockPos pos, final Blueprint blueprint, final RotationMirror rotMir)
     {
-        super(world, pos, blueprint, rotMir, true);
+        super(world, pos, blueprint, toSettings(rotMir), true);
     }
 
     @Override
@@ -66,5 +68,10 @@ public class LoadOnlyStructureHandler extends CreativeStructureHandler
                  || itemStack.isEmpty()
                  || itemStack.is(ItemTags.LEAVES)
                  || itemStack.getItem() == new ItemStack(ModBlocks.blockDecorationPlaceholder, 1).getItem();
+    }
+
+    private static PlacementSettings toSettings(final RotationMirror rotMir)
+    {
+        return new PlacementSettings(rotMir.mirror(), rotMir.rotation());
     }
 }

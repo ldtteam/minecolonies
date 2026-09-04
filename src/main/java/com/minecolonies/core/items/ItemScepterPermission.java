@@ -1,5 +1,4 @@
 package com.minecolonies.core.items;
-
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.permissions.Action;
@@ -9,16 +8,17 @@ import com.minecolonies.api.items.component.PermissionMode;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.core.network.messages.server.colony.ChangeFreeToInteractBlockMessage;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
@@ -26,14 +26,12 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
 import java.util.ArrayList;
+import java.util.function.Consumer;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
 import static com.minecolonies.api.util.constant.translation.ToolTranslationConstants.*;
-
 /**
  * Permission scepter. used to add free to interact blocks or positions to the colonies permission list
  */
@@ -42,7 +40,6 @@ public class ItemScepterPermission extends AbstractItemMinecolonies implements I
     private static final int GREEN_OVERLAY = 0xFF00FF00;
     private static final int BLOCK_OVERLAY_RANGE_XZ = 32;
     private static final int BLOCK_OVERLAY_RANGE_Y = 6;
-
     /**
      * constructor.
      * <p>
@@ -54,7 +51,6 @@ public class ItemScepterPermission extends AbstractItemMinecolonies implements I
     {
         super("scepterpermission", properties.stacksTo(1).durability(2).component(ModDataComponents.PERMISSION_MODE, PermissionMode.EMPTY));
     }
-
     @NotNull
     private static InteractionResult handleAddBlockType(
       final Player playerIn,
@@ -64,8 +60,7 @@ public class ItemScepterPermission extends AbstractItemMinecolonies implements I
     {
         final BlockState blockState = iColonyView.getWorld().getBlockState(pos);
         final Block block = blockState.getBlock();
-
-        final ChangeFreeToInteractBlockMessage.MessageType type = Screen.hasControlDown()
+        final ChangeFreeToInteractBlockMessage.MessageType type = Minecraft.getInstance().hasControlDown()
                 ? ChangeFreeToInteractBlockMessage.MessageType.REMOVE_BLOCK
                 : ChangeFreeToInteractBlockMessage.MessageType.ADD_BLOCK;
         final ChangeFreeToInteractBlockMessage message = new ChangeFreeToInteractBlockMessage(
@@ -73,10 +68,8 @@ public class ItemScepterPermission extends AbstractItemMinecolonies implements I
           block,
           type);
         message.sendToServer();
-
         return InteractionResult.SUCCESS;
     }
-
     @NotNull
     private static InteractionResult handleAddLocation(
       final Player playerIn,
@@ -84,15 +77,13 @@ public class ItemScepterPermission extends AbstractItemMinecolonies implements I
       final BlockPos pos,
       final IColonyView iColonyView)
     {
-        final ChangeFreeToInteractBlockMessage.MessageType type = Screen.hasControlDown()
+        final ChangeFreeToInteractBlockMessage.MessageType type = Minecraft.getInstance().hasControlDown()
                 ? ChangeFreeToInteractBlockMessage.MessageType.REMOVE_BLOCK
                 : ChangeFreeToInteractBlockMessage.MessageType.ADD_BLOCK;
         final ChangeFreeToInteractBlockMessage message = new ChangeFreeToInteractBlockMessage(iColonyView, pos, type);
         message.sendToServer();
-
         return InteractionResult.SUCCESS;
     }
-
     /**
      * Used when clicking on block in world.
      *
@@ -102,7 +93,7 @@ public class ItemScepterPermission extends AbstractItemMinecolonies implements I
     @NotNull
     public InteractionResult useOn(final UseOnContext ctx)
     {
-        if (!ctx.getLevel().isClientSide)
+        if (!ctx.getLevel().isClientSide())
         {
             return InteractionResult.SUCCESS;
         }
@@ -114,7 +105,6 @@ public class ItemScepterPermission extends AbstractItemMinecolonies implements I
         }
         return handleItemAction(scepter, ctx.getPlayer(), ctx.getLevel(), ctx.getClickedPos(), iColonyView);
     }
-
     /**
      * Handles mid air use.
      *
@@ -125,22 +115,19 @@ public class ItemScepterPermission extends AbstractItemMinecolonies implements I
      */
     @Override
     @NotNull
-    public InteractionResultHolder<ItemStack> use(
+    public InteractionResult use(
       final Level worldIn,
       final Player playerIn,
       final InteractionHand hand)
     {
         final ItemStack scepter = playerIn.getItemInHand(hand);
-        if (worldIn.isClientSide)
+        if (worldIn.isClientSide())
         {
-            return new InteractionResultHolder<>(InteractionResult.SUCCESS, scepter);
+            return InteractionResult.SUCCESS.heldItemTransformedTo(scepter);
         }
-
         toggleItemMode(playerIn, scepter);
-
-        return new InteractionResultHolder<>(InteractionResult.SUCCESS, scepter);
+        return InteractionResult.SUCCESS.heldItemTransformedTo(scepter);
     }
-
     private static void toggleItemMode(final Player playerIn, final ItemStack stack)
     {
         switch (PermissionMode.readFromItemStack(stack))
@@ -155,7 +142,6 @@ public class ItemScepterPermission extends AbstractItemMinecolonies implements I
                 break;
         }
     }
-
     @NotNull
     @Override
     public List<OverlayBox> getOverlayBoxes(@NotNull final Level world, @NotNull final Player player, @NotNull final ItemStack stack)
@@ -166,7 +152,6 @@ public class ItemScepterPermission extends AbstractItemMinecolonies implements I
         {
             return boxes;
         }
-
         switch (PermissionMode.readFromItemStack(stack))
         {
             case BLOCK:
@@ -186,23 +171,22 @@ public class ItemScepterPermission extends AbstractItemMinecolonies implements I
                 }
                 break;
         }
-
         return boxes;
     }
-
     @Override
-    public void appendHoverText(@NotNull final ItemStack stack, @Nullable final TooltipContext ctx, @NotNull final List<Component> tooltip, @NotNull final TooltipFlag flags)
+    public void appendHoverText(@NotNull final ItemStack stack, @Nullable final TooltipContext ctx, @NotNull final TooltipDisplay display, Consumer<Component> tooltipConsumer, @NotNull final TooltipFlag flags)
+    
     {
+        final List<Component> tooltip = new ArrayList<>();
         final MutableComponent mode = switch (PermissionMode.readFromItemStack(stack))
         {
             case BLOCK -> Component.translatable(TOOL_PERMISSION_SCEPTER_MODE_BLOCK);
             case LOCATION -> Component.translatable(TOOL_PERMISSION_SCEPTER_MODE_LOCATION);
         };
         tooltip.add(Component.translatable(TOOL_PERMISSION_SCEPTER_MODE, mode.withStyle(ChatFormatting.YELLOW)));
-
-        super.appendHoverText(stack, ctx, tooltip, flags);
+        super.appendHoverText(stack, ctx, TooltipDisplay.DEFAULT, tooltip::add, flags);
+        tooltip.forEach(tooltipConsumer);
     }
-
     @NotNull
     private static InteractionResult handleItemAction(
       final ItemStack stack,
