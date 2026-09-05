@@ -415,6 +415,16 @@ public class ColonyBlueprintRenderer
             final AABB blueprintAABB = AABB.encapsulatingFullBlocks(zeroPos, zeroPos.offset(blueprint.getSizeX() - 1, blueprint.getSizeY() - 1, blueprint.getSizeZ() - 1))
                     .inflate(2 + MinecoloniesAPIProxy.getInstance().getConfig().getClient().neighborbuildingrange.get());
 
+            // Prefer the work order rotation so this matches the goggles.
+            final Map<BlockPos, RotationMirror> workOrderRotations = new HashMap<>();
+            for (final IWorkOrderView workOrder : ctx.nearestColony.getWorkOrders())
+            {
+                if (workOrder instanceof WorkOrderBuildingView)
+                {
+                    workOrderRotations.put(workOrder.getLocation(), workOrder.getRotationMirror());
+                }
+            }
+
             for (final IBuildingView buildingView : ctx.nearestColony.getClientBuildingManager().getBuildings().values())
             {
                 final BlockPos currentPosition = buildingView.getPosition();
@@ -435,7 +445,8 @@ public class ColonyBlueprintRenderer
                         schemPath = schemPath.substring(0, schemPath.length() - 1) + buildingView.getBuildingMaxLevel() + ".blueprint";
 
                         final String structurePack = buildingView.getStructurePack();
-                        final BlueprintCacheKey key = new BlueprintCacheKey(structurePack, schemPath, buildingView.getRotationMirror());
+                        final RotationMirror rotationMirror = workOrderRotations.getOrDefault(currentPosition, buildingView.getRotationMirror());
+                        final BlueprintCacheKey key = new BlueprintCacheKey(structurePack, schemPath, rotationMirror);
 
                         desired.put(currentPosition,
                             new PendingRenderData(key, currentPosition, 0,
