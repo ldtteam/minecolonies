@@ -15,6 +15,7 @@ public class JourneymapOptions
 {
     private final Option<BorderStyle> borderFullscreenStyle;
     private final Option<BorderStyle> borderMinimapStyle;
+    private final Option<BorderStyle> borderLoadedStyle;
     private final Option<Boolean> deathpoints;
     private final Option<Boolean> colonyname;
     private final Option<Boolean> colonistNameMinimap;
@@ -33,6 +34,7 @@ public class JourneymapOptions
 
         this.borderFullscreenStyle = new EnumOption<>(category, "borderFullscreenStyle", prefix + "borderfullscreenstyle", BorderStyle.FILLED).setSortOrder(100);
         this.borderMinimapStyle = new EnumOption<>(category, "borderMinimapStyle", prefix + "borderminimapstyle", BorderStyle.FRAMED).setSortOrder(101);
+        this.borderLoadedStyle = new EnumOption<>(category, "borderLoadedStyle", prefix + "borderloadedstyle", BorderStyle.HIDDEN).setSortOrder(102);
         this.deathpoints = new BooleanOption(category, "deathpoints", prefix + "deathpoints", true).setSortOrder(150);
         this.colonyname = new BooleanOption(category, "colonyname", prefix + "colonyname", true).setSortOrder(180);
         this.colonistNameMinimap = new BooleanOption(category, "colonistNameMinimap", prefix + "colonistnameminimap", true).setSortOrder(201);
@@ -53,6 +55,11 @@ public class JourneymapOptions
     public static BorderStyle getBorderMinimapStyle(@NotNull final Optional<JourneymapOptions> options)
     {
         return options.map(o -> o.borderMinimapStyle.get()).orElse(BorderStyle.FRAMED);
+    }
+
+    public static BorderStyle getBorderLoadedStyle(@NotNull final Optional<JourneymapOptions> options)
+    {
+        return options.map(o -> o.borderLoadedStyle.get()).orElse(BorderStyle.HIDDEN);
     }
 
     public static boolean getDeathpoints(@NotNull final Optional<JourneymapOptions> options)
