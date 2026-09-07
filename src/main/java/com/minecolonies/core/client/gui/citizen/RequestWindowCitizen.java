@@ -2,6 +2,7 @@ package com.minecolonies.core.client.gui.citizen;
 
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
+import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
@@ -80,7 +81,7 @@ public class RequestWindowCitizen extends AbstractWindowCitizen
         }
     }
 
-    private static class CitizenRequestTreeWindowModule extends RequestTreeWindowModule implements RequestTreeWindowModule.IRequestTreeSupportsFulfill
+    private static class CitizenRequestTreeWindowModule extends RequestTreeWindowModule
     {
         private final ICitizenDataView citizenDataView;
 
@@ -104,6 +105,19 @@ public class RequestWindowCitizen extends AbstractWindowCitizen
             this.buildingView = citizenDataView.getColony().getClientBuildingManager().getBuilding(citizenDataView.getWorkBuilding());
             this.isCreative = Minecraft.getInstance().player.isCreative();
             this.inventory = Minecraft.getInstance().player.getInventory();
+        }
+
+        @Override
+        public IToken<?> getRequesterId()
+        {
+            return buildingView.getId();
+        }
+
+        @NotNull
+        @Override
+        public ILocation getLocation()
+        {
+            return buildingView.getLocation();
         }
 
         @Override
@@ -139,6 +153,28 @@ public class RequestWindowCitizen extends AbstractWindowCitizen
                 }
             }
             return requests;
+        }
+
+        @Override
+        public boolean isFulfillable(final IRequest<?> request)
+        {
+            if (!(request.getRequest() instanceof IDeliverable deliverable))
+            {
+                return false;
+            }
+
+            if (request.hasParent() && !request.getRequester().getLocation().equals(this.getLocation()))
+            {
+                return false;
+            }
+
+            final RequestWrapper wrapper = getCachedOpenRequests().stream().filter(f -> f.request().getId().equals(request.getId())).findFirst().orElse(null);
+            if (wrapper == null)
+            {
+                return false;
+            }
+
+            return isCreative || InventoryUtils.hasItemInItemHandler(new InvWrapper(inventory), deliverable::matches);
         }
 
         @Override

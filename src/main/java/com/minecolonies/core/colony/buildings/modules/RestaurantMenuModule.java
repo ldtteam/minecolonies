@@ -16,13 +16,11 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.crafting.RecipeStorage;
 import com.minecolonies.api.util.*;
-import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import org.apache.logging.log4j.util.TriConsumer;
 import org.jetbrains.annotations.NotNull;
@@ -133,12 +131,11 @@ public class RestaurantMenuModule extends AbstractBuildingModule implements IPer
 
             for (final ItemStorage menuItem : menu)
             {
-                final ItemStack originalStack = menuItem.getItemStack().copy();
-                if (originalStack.isEmpty())
+                final ItemStack requestStack = menuItem.getItemStack().copy();
+                if (requestStack.isEmpty())
                 {
                     continue;
                 }
-                ItemStack requestStack = originalStack;
                 ItemStack rawStack = ItemStack.EMPTY;
                 if (canCook && MinecoloniesAPIProxy.getInstance().getFurnaceRecipes().getFirstSmeltingRecipeByResult(menuItem) instanceof RecipeStorage recipeStorage)
                 {
@@ -146,29 +143,44 @@ public class RestaurantMenuModule extends AbstractBuildingModule implements IPer
                     rawStack = recipeStorage.getInput().get(0).getItemStack().copy();
                 }
 
-                final int target = originalStack.getMaxStackSize() * getExpectedStock();
-                final int count = InventoryUtils.hasBuildingEnoughElseCount(this.building, new ItemStorage(originalStack, true), target);
-                final int rawCount = rawStack.isEmpty() ? 0 : InventoryUtils.hasBuildingEnoughElseCount(this.building, new ItemStorage(rawStack, true), target);
-                final int delta = target - count - rawCount;
-                if (MathUtils.RANDOM.nextBoolean() && !rawStack.isEmpty())
-                {
-                    requestStack = rawStack.copy();
-                }
+                final int target = requestStack.getMaxStackSize() * getExpectedStock();
+                int count = InventoryUtils.hasBuildingEnoughElseCount(this.building, new ItemStorage(requestStack, true), target);
+                count += rawStack.isEmpty() ? 0 : InventoryUtils.hasBuildingEnoughElseCount(this.building, new ItemStorage(rawStack, true), target);
+                final int delta = target - count;
+
                 final IToken<?> request = getMatchingRequest(requestStack, list);
-                if (delta > (building.getColony().getResearchManager().getResearchEffects().getEffectStrength(MIN_ORDER) > 0 ? target / 4 : 0))
+                final IToken<?> rawRequest = rawStack.isEmpty() ? null : getMatchingRequest(rawStack, list);
+
+                if (delta > (building.getColony().getResearchManager().getResearchEffects().getEffectStrength(MIN_ORDER) > 0 ? (requestStack.getMaxStackSize() / 4) : 0))
                 {
+                    final int qty = Math.min(STACKSIZE, Math.min(requestStack.getMaxStackSize(), delta));
                     if (request == null)
                     {
-                        final int qty = Math.min(STACKSIZE, Math.min(requestStack.getMaxStackSize(), delta));
                         final MinimumStack stack = new MinimumStack(requestStack, false, true, ItemStackUtils.EMPTY, qty, 1);
 
                         stack.setCanBeResolvedByBuilding(false);
                         building.createRequest(stack, true);
                     }
+                    else if (!rawStack.isEmpty()
+                        && rawRequest == null
+                        && colony.getRequestManager().getRequestForToken(request).getState().ordinal() < RequestState.IN_PROGRESS.ordinal())
+                    {
+                        final MinimumStack stack = new MinimumStack(rawStack, false, true, ItemStackUtils.EMPTY, qty, 1);
+
+                        stack.setCanBeResolvedByBuilding(false);
+                        building.createRequest(stack, true);
+                    }
                 }
-                else if (request != null && delta <= 0)
+                else if (delta <= 0)
                 {
-                    building.getColony().getRequestManager().updateRequestState(request, RequestState.CANCELLED);
+                    if (request != null)
+                    {
+                        building.getColony().getRequestManager().updateRequestState(request, RequestState.CANCELLED);
+                    }
+                    if (rawRequest != null)
+                    {
+                        building.getColony().getRequestManager().updateRequestState(rawRequest, RequestState.CANCELLED);
+                    }
                 }
             }
         }
