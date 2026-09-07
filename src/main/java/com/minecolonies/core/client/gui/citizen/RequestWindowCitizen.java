@@ -107,14 +107,12 @@ public class RequestWindowCitizen extends AbstractWindowCitizen
             this.inventory = Minecraft.getInstance().player.getInventory();
         }
 
-        @Override
         public IToken<?> getRequesterId()
         {
             return buildingView.getId();
         }
 
         @NotNull
-        @Override
         public ILocation getLocation()
         {
             return buildingView.getLocation();
