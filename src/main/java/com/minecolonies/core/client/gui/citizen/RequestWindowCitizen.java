@@ -81,7 +81,7 @@ public class RequestWindowCitizen extends AbstractWindowCitizen
         }
     }
 
-    private static class CitizenRequestTreeWindowModule extends RequestTreeWindowModule implements RequestTreeWindowModule.IRequestTreeSupportsFulfill
+    private static class CitizenRequestTreeWindowModule extends RequestTreeWindowModule
     {
         private final ICitizenDataView citizenDataView;
 
@@ -155,6 +155,7 @@ public class RequestWindowCitizen extends AbstractWindowCitizen
             return requests;
         }
 
+        @Override
         public boolean isFulfillable(final IRequest<?> request)
         {
             if (!(request.getRequest() instanceof IDeliverable deliverable))

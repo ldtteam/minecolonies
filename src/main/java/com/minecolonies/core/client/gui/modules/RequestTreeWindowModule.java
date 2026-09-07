@@ -5,13 +5,10 @@ import com.ldtteam.blockui.PaneBuilders;
 import com.ldtteam.blockui.controls.*;
 import com.ldtteam.blockui.views.ScrollingList;
 import com.minecolonies.api.colony.IColonyView;
-import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.request.RequestState;
-import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.requestable.IStackBasedTask;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
-import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.client.gui.AbstractWindowSkeleton;
@@ -25,7 +22,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -279,6 +275,15 @@ public abstract class RequestTreeWindowModule implements IWindowWithLayoutModule
     }
 
     /**
+     * Fulfills, needs to be implemented by windows that can do it.
+     * @param request the request to fulfill.
+     */
+    public void onFulfill(final @NotNull IRequest<?> request)
+    {
+        // Do nothing.
+    }
+
+    /**
      * Get the open requests for this module to handle.
      *
      * @return an immutable list containing it.
@@ -337,27 +342,25 @@ public abstract class RequestTreeWindowModule implements IWindowWithLayoutModule
      */
     private void onFulfill(@NotNull final Button button)
     {
-        if (!(this instanceof IRequestTreeSupportsFulfill fulfill))
-        {
-            return;
-        }
-
         final int row = resourceList.getListElementIndexByPane(button);
-
         if (getCachedOpenRequests().size() > row && row >= 0)
         {
             final IRequest<?> request = getCachedOpenRequests().get(row).request();
+            if (!isFulfillable(request))
+            {
+                return;
+            }
             try
             {
-                fulfill.onFulfill(request);
+                this.onFulfill(request);
             }
             catch (final Exception e)
             {
                 Log.getLogger().warn("Failed to fulfill request. This could happen by double clicking the fulfill button.", e);
             }
+            button.disable();
+            refreshOpenRequests();
         }
-        button.disable();
-        refreshOpenRequests();
     }
 
     /**
@@ -379,18 +382,6 @@ public abstract class RequestTreeWindowModule implements IWindowWithLayoutModule
     public final void openDetails(final IRequest<?> request)
     {
         new WindowRequestDetail(parent, request, colony.getID(), this).open();
-    }
-
-    /**
-     * Interface for setting that the request tree window supports fulfilling.
-     */
-    public interface IRequestTreeSupportsFulfill
-    {
-        void onFulfill(@NotNull final IRequest<?> request);
-
-        IToken<?> getRequesterId();
-
-        @NotNull ILocation getLocation();
     }
 
     /**
