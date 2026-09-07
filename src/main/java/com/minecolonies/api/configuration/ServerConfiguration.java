@@ -169,14 +169,14 @@ public class ServerConfiguration extends AbstractConfiguration
 
         swapToCategory(builder, "combat");
 
-        enableColonyRaids = defineBoolean(builder, "dobarbariansspawn", true);
-        raidDifficulty = defineInteger(builder, "barbarianhordedifficulty", DEFAULT_BARBARIAN_DIFFICULTY, MIN_BARBARIAN_DIFFICULTY, MAX_BARBARIAN_DIFFICULTY);
-        maxRaiders = defineInteger(builder, "maxBarbarianSize", 80, MIN_BARBARIAN_HORDE_SIZE, MAX_BARBARIAN_HORDE_SIZE);
-        raidersbreakblocks = defineBoolean(builder, "dobarbariansbreakthroughwalls", true);
+        enableColonyRaids = defineBoolean(builder, "enablecolonyraids", true);
+        raidDifficulty = defineInteger(builder, "raidDifficulty", DEFAULT_BARBARIAN_DIFFICULTY, MIN_BARBARIAN_DIFFICULTY, MAX_BARBARIAN_DIFFICULTY);
+        maxRaiders = defineInteger(builder, "maxRaiders", 80, MIN_BARBARIAN_HORDE_SIZE, MAX_BARBARIAN_HORDE_SIZE);
+        raidersbreakblocks = defineBoolean(builder, "raidersbreakblocks", true);
         averageNumberOfNightsBetweenRaids = defineInteger(builder, "averagenumberofnightsbetweenraids", 14, 1, 50);
         minimumNumberOfNightsBetweenRaids = defineInteger(builder, "minimumnumberofnightsbetweenraids", 10, 1, 30);
         mobAttackCitizens = defineBoolean(builder, "mobattackcitizens", true);
-        raidersbreakdoors = defineBoolean(builder, "shouldraiderbreakdoors", true);
+        raidersbreakdoors = defineBoolean(builder, "raidersbreakdoors", true);
         guardDamageMultiplier = defineDouble(builder, "guardDamageMultiplier", 1.0, 0.1, 15.0);
         guardHealthMult = defineDouble(builder, "guardhealthmult", 1.0, 0.1, 5.0);
         pvp_mode = defineBoolean(builder, "pvp_mode", false);

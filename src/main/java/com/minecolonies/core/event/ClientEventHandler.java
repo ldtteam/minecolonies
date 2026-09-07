@@ -16,6 +16,7 @@ import com.minecolonies.api.colony.buildings.modules.ICraftingBuildingModule;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.entity.other.AbstractFastMinecoloniesEntity;
 import com.minecolonies.api.research.IGlobalResearch;
 import com.minecolonies.api.util.FoodUtils;
 import com.minecolonies.api.util.InventoryUtils;
@@ -44,7 +45,11 @@ import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.item.*;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.DyeableLeatherItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.phys.HitResult;
 import net.minecraftforge.api.distmarker.Dist;
@@ -55,6 +60,7 @@ import net.minecraftforge.client.event.RenderLevelStageEvent;
 import net.minecraftforge.client.event.sound.PlaySoundEvent;
 import net.minecraftforge.common.util.Lazy;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
@@ -67,11 +73,11 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.Map.Entry;
 
-import static com.minecolonies.api.research.util.ResearchConstants.SATURATION;
 import static com.minecolonies.api.sounds.ModSoundEvents.CITIZEN_SOUND_EVENT_PREFIX;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.api.util.constant.translation.DebugTranslationConstants.*;
 import static com.minecolonies.core.colony.buildings.modules.BuildingModules.RESTAURANT_MENU;
+import static net.minecraftforge.eventbus.api.EventPriority.HIGHEST;
 
 /**
  * Used to handle client events.
@@ -96,6 +102,31 @@ public class ClientEventHandler
         if (event.level.isClientSide && event.phase == TickEvent.Phase.END && ColonyConstants.rand.nextInt(20) == 0)
         {
             WorldEventContext.INSTANCE.checkNearbyColony(event.level);
+        }
+    }
+
+    @SubscribeEvent(priority = HIGHEST)
+    public static void onEntityAdded(@NotNull final EntityJoinLevelEvent event)
+    {
+        // Makes the server the entity authority, and the client no longer rejects a new entity for an old potentially stale or desynced one
+        if (!(event.getLevel() instanceof ClientLevel clientLevel)
+            || !(event.getEntity() instanceof AbstractFastMinecoloniesEntity citizen))
+        {
+            return;
+        }
+
+        final List<Integer> duplicateIds = new ArrayList<>();
+        for (final Entity existing : clientLevel.entityStorage.getEntityGetter().getAll())
+        {
+            if (existing != citizen && existing.getUUID().equals(citizen.getUUID()))
+            {
+                duplicateIds.add(existing.getId());
+            }
+        }
+
+        for (final int duplicateId : duplicateIds)
+        {
+            clientLevel.removeEntity(duplicateId, Entity.RemovalReason.DISCARDED);
         }
     }
 
