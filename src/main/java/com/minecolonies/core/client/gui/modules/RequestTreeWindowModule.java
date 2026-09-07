@@ -215,7 +215,7 @@ public abstract class RequestTreeWindowModule implements IWindowWithLayoutModule
      *
      * @return the list of requests.
      */
-    private List<RequestWrapper> getCachedOpenRequests()
+    protected List<RequestWrapper> getCachedOpenRequests()
     {
         if (cachedOpenRequests == null)
         {
@@ -273,25 +273,9 @@ public abstract class RequestTreeWindowModule implements IWindowWithLayoutModule
      *
      * @param request the request to check if it's fulfillable
      */
-    public final boolean isFulfillable(final IRequest<?> request)
+    public boolean isFulfillable(final IRequest<?> request)
     {
-        if (!(this instanceof IRequestTreeSupportsFulfill requestTreeSupportsFulfill) || !(request.getRequest() instanceof IDeliverable deliverable))
-        {
-            return false;
-        }
-
-        if (request.hasParent() && !request.getRequester().getLocation().equals(requestTreeSupportsFulfill.getLocation()))
-        {
-            return false;
-        }
-
-        final RequestWrapper wrapper = getCachedOpenRequests().stream().filter(f -> f.request().getId().equals(request.getId())).findFirst().orElse(null);
-        if (wrapper == null)
-        {
-            return false;
-        }
-
-        return isCreative || InventoryUtils.hasItemInItemHandler(new InvWrapper(inventory), deliverable::matches);
+        return false;
     }
 
     /**
@@ -415,7 +399,7 @@ public abstract class RequestTreeWindowModule implements IWindowWithLayoutModule
      * @param request The request.
      * @param depth   The depth in the tree.
      */
-    private record RequestWrapper(
+    protected record RequestWrapper(
         IRequest<?> request,
         int depth)
     {}

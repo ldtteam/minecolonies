@@ -155,6 +155,27 @@ public class RequestWindowCitizen extends AbstractWindowCitizen
             return requests;
         }
 
+        public boolean isFulfillable(final IRequest<?> request)
+        {
+            if (!(request.getRequest() instanceof IDeliverable deliverable))
+            {
+                return false;
+            }
+
+            if (request.hasParent() && !request.getRequester().getLocation().equals(this.getLocation()))
+            {
+                return false;
+            }
+
+            final RequestWrapper wrapper = getCachedOpenRequests().stream().filter(f -> f.request().getId().equals(request.getId())).findFirst().orElse(null);
+            if (wrapper == null)
+            {
+                return false;
+            }
+
+            return isCreative || InventoryUtils.hasItemInItemHandler(new InvWrapper(inventory), deliverable::matches);
+        }
+
         @Override
         public void onFulfill(final @NotNull IRequest<?> request)
         {
