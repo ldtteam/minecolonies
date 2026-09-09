@@ -1,6 +1,9 @@
 package com.minecolonies.core.entity.ai.workers.builder;
 
+import com.ldtteam.structurize.placement.handlers.placement.IPlacementHandler;
+import com.ldtteam.structurize.placement.structure.IStructureHandler;
 import com.ldtteam.structurize.placement.StructurePlacer;
+import com.ldtteam.structurize.util.BlueprintPositionInfo;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.workorders.IWorkOrder;
@@ -135,6 +138,12 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
     }
 
     @Override
+    protected boolean shouldUseBottomUpClearing()
+    {
+        return BuildingBuilder.shouldClearFromBottomUp(building);
+    }
+
+    @Override
     public boolean isAfterDumpPickupAllowed()
     {
         return !checkForWorkOrder();
@@ -184,6 +193,12 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
             killMobs();
             building.setPurgedMobsToday(true);
         }
+    }
+
+    @Override
+    protected boolean skipClearing(final BlueprintPositionInfo info, final BlockPos pos, final IStructureHandler handler)
+    {
+        return super.skipClearing(info, pos, handler) || IPlacementHandler.doesWorldStateMatchBlueprintState(info.getBlockInfo(), pos, handler);
     }
 
     @Override
