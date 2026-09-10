@@ -138,47 +138,30 @@ public class CitizenArmorLayer<T extends AbstractEntityCitizen, M extends Humano
 
     private void renderArmorPiece(PoseStack poseStack, MultiBufferSource bufferSource, T citizen, EquipmentSlot equipmentSlot, int light, A armor, final ICitizenDataView citizenDataView)
     {
-        ItemStack itemstack = citizenDataView.getDisplayArmor(equipmentSlot);
-        if (itemstack.isEmpty())
-        {
-            itemstack = citizen.getItemBySlot(equipmentSlot);
-        }
-        Item armorItem = itemstack.getItem();
+        final ItemStack displayArmor = citizenDataView.getDisplayArmor(equipmentSlot);
+        final ItemStack itemstack = displayArmor.isEmpty() ? citizen.getItemBySlot(equipmentSlot) : displayArmor;
+        final Item armorItem = itemstack.getItem();
 
-        if (armorItem instanceof ArmorItem armoritem && !disabledFromRendering.contains(armorItem))
+        if (armorItem instanceof ArmorItem && !disabledFromRendering.contains(armorItem))
         {
             try
             {
-                if (citizenDataView.getDisplayArmor(equipmentSlot).isEmpty())
+                if (displayArmor.isEmpty())
                 {
                     super.renderArmorPiece(poseStack, bufferSource, citizen, equipmentSlot, light, armor);
                 }
-                else if (armoritem.getEquipmentSlot() == equipmentSlot)
+                else
                 {
-                    this.getParentModel().copyPropertiesTo(armor);
-                    this.setPartVisibility(armor, equipmentSlot);
-                    net.minecraft.client.model.Model model = getArmorModelHook(citizen, itemstack, equipmentSlot, armor);
-                    boolean flag = this.usesInnerModel(equipmentSlot);
-                    ArmorMaterial armormaterial = armoritem.getMaterial().value();
-
-                    int i = itemstack.is(ItemTags.DYEABLE) ? FastColor.ARGB32.opaque(DyedItemColor.getOrDefault(itemstack, -6265536)) : -1;
-
-                    for (ArmorMaterial.Layer armormaterial$layer : armormaterial.layers())
+                    final int index = equipmentSlot.getIndex();
+                    final ItemStack equipped = citizen.armorItems.get(index);
+                    citizen.armorItems.set(index, displayArmor);
+                    try
                     {
-                        int j = armormaterial$layer.dyeable() ? i : -1;
-                        var texture = net.neoforged.neoforge.client.ClientHooks.getArmorTexture(citizen, itemstack, armormaterial$layer, flag, equipmentSlot);
-                        this.renderModel(poseStack, bufferSource, light, model, j, texture);
+                        super.renderArmorPiece(poseStack, bufferSource, citizen, equipmentSlot, light, armor);
                     }
-
-                    ArmorTrim armortrim = itemstack.get(DataComponents.TRIM);
-                    if (armortrim != null)
+                    finally
                     {
-                        this.renderTrim(armoritem.getMaterial(), poseStack, bufferSource, light, armortrim, model, flag);
-                    }
-
-                    if (itemstack.hasFoil())
-                    {
-                        this.renderGlint(poseStack, bufferSource, light, model);
+                        citizen.armorItems.set(index, equipped);
                     }
                 }
             }
@@ -191,23 +174,5 @@ public class CitizenArmorLayer<T extends AbstractEntityCitizen, M extends Humano
                         ChatFormatting.RED));
             }
         }
-    }
-
-    private void renderModel(PoseStack poseStack, MultiBufferSource bufferSource, int light, net.minecraft.client.model.Model armorItem, int color, ResourceLocation armorResource) {
-        VertexConsumer vertexconsumer = bufferSource.getBuffer(RenderType.armorCutoutNoCull(armorResource));
-        armorItem.renderToBuffer(poseStack, vertexconsumer, light, OverlayTexture.NO_OVERLAY, color);
-    }
-
-    private void renderGlint(PoseStack poseStack, MultiBufferSource bufferSource, int light, net.minecraft.client.model.Model model)
-    {
-        model.renderToBuffer(poseStack, bufferSource.getBuffer(RenderType.armorEntityGlint()), light, OverlayTexture.NO_OVERLAY);
-    }
-
-    private void renderTrim(Holder<ArmorMaterial> armorMaterial, PoseStack p_289687_, MultiBufferSource p_289643_, int p_289683_, ArmorTrim p_289692_, net.minecraft.client.model.Model p_289663_, boolean p_289651_)
-    {
-        TextureAtlasSprite textureatlassprite = this.armorTrimAtlas
-                                                  .getSprite(p_289651_ ? p_289692_.innerTexture(armorMaterial) : p_289692_.outerTexture(armorMaterial));
-        VertexConsumer vertexconsumer = textureatlassprite.wrap(p_289643_.getBuffer(Sheets.armorTrimsSheet(p_289692_.pattern().value().decal())));
-        p_289663_.renderToBuffer(p_289687_, vertexconsumer, p_289683_, OverlayTexture.NO_OVERLAY);
     }
 }
