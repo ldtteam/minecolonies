@@ -83,7 +83,7 @@ public class CitizenFoodHandler implements ICitizenFoodHandler
     @Override
     public Item getLastEaten()
     {
-        return lastEatenFoods.peek();
+        return lastEatenFoods.poll();
     }
 
     @Override
