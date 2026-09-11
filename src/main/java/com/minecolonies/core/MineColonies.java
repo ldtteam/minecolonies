@@ -70,6 +70,7 @@ import com.minecolonies.core.placementhandlers.PlacementHandlerInitializer;
 import com.minecolonies.core.placementhandlers.main.SuppliesHandler;
 import com.minecolonies.core.placementhandlers.main.SurvivalHandler;
 import com.minecolonies.core.research.GlobalResearchTreeMessage;
+import com.minecolonies.core.structures.ColonyStructureRegistry;
 import com.minecolonies.core.structures.MineColoniesStructures;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.world.entity.animal.horse.Horse;
@@ -188,6 +189,7 @@ public class MineColonies
         modBus.addListener(GatherDataHandler::dataGeneratorSetup);
 
         modBus.register(this.getClass());
+        modBus.register(ColonyStructureRegistry.class);
 
         InteractionValidatorInitializer.init();
         switch (dist)

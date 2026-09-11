@@ -8,6 +8,7 @@ import net.neoforged.neoforge.common.ModConfigSpec.Builder;
 public class CommonConfiguration extends AbstractConfiguration
 {
     public final BooleanValue generateSupplyLoot;
+    public final BooleanValue spawnAbandonedColonies;
     public final BooleanValue rsEnableDebugLogging;
 
     /**
@@ -21,6 +22,7 @@ public class CommonConfiguration extends AbstractConfiguration
 
         createCategory("gameplay");
         generateSupplyLoot = defineBoolean("generatesupplyloot", true);
+        spawnAbandonedColonies = defineBoolean("spawnabandonedcolonies", true);
 
         swapToCategory("requestsystem");
 
