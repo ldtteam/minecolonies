@@ -11,6 +11,7 @@ import com.minecolonies.api.colony.IVisitorData;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IGuardBuilding;
 import com.minecolonies.api.colony.buildings.ModBuildings;
+import com.minecolonies.api.colony.claims.ClaimInfo;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.entity.ModEntities;
@@ -20,7 +21,9 @@ import com.minecolonies.api.entity.other.AbstractFastMinecoloniesEntity;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.loot.EntityInBiomeTag;
 import com.minecolonies.api.loot.ModLootConditions;
-import com.minecolonies.api.util.*;
+import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.MessageUtils;
+import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.MineColonies;
 import com.minecolonies.core.Network;
@@ -38,16 +41,10 @@ import com.minecolonies.core.colony.requestsystem.locations.EntityLocation;
 import com.minecolonies.core.commands.EntryPoint;
 import com.minecolonies.core.entity.citizen.EntityCitizen;
 import com.minecolonies.core.entity.mobs.EntityMercenary;
-import com.minecolonies.core.event.capabilityproviders.MinecoloniesChunkCapabilityProvider;
-import com.minecolonies.core.event.capabilityproviders.MinecoloniesWorldCapabilityProvider;
 import com.minecolonies.core.event.capabilityproviders.MinecoloniesWorldColonyManagerCapabilityProvider;
 import com.minecolonies.core.items.ItemBannerRallyGuards;
 import com.minecolonies.core.network.messages.client.OpenSuggestionWindowMessage;
-import com.minecolonies.core.network.messages.client.UpdateChunkCapabilityMessage;
-import com.minecolonies.core.network.messages.client.UpdateChunkRangeCapabilityMessage;
-import com.minecolonies.core.util.ChunkClientDataHelper;
 import com.minecolonies.core.util.ChunkDataHelper;
-import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -96,7 +93,6 @@ import java.time.Month;
 import java.util.*;
 
 import static com.minecolonies.api.research.util.ResearchConstants.SOFT_SHOES;
-import static com.minecolonies.api.util.constant.ColonyManagerConstants.NO_COLONY_ID;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_COLONY_ID;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_EVENT_ID;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
@@ -235,17 +231,6 @@ public class EventHandler
     }
 
     /**
-     * Event called to attach capabilities on a chunk.
-     *
-     * @param event the event.
-     */
-    @SubscribeEvent
-    public static void onAttachingCapabilitiesChunk(@NotNull final AttachCapabilitiesEvent<LevelChunk> event)
-    {
-        event.addCapability(new ResourceLocation(Constants.MOD_ID, "closecolony"), new MinecoloniesChunkCapabilityProvider());
-    }
-
-    /**
      * Event called to attach capabilities on the world.
      *
      * @param event the event.
@@ -253,7 +238,6 @@ public class EventHandler
     @SubscribeEvent
     public static void onAttachingCapabilitiesWorld(@NotNull final AttachCapabilitiesEvent<Level> event)
     {
-        event.addCapability(new ResourceLocation(Constants.MOD_ID, "chunkupdate"), new MinecoloniesWorldCapabilityProvider());
         event.addCapability(new ResourceLocation(Constants.MOD_ID, "colonymanager"), new MinecoloniesWorldColonyManagerCapabilityProvider(event.getObject().dimension() == Level.OVERWORLD));
     }
 
@@ -268,13 +252,6 @@ public class EventHandler
         if (event.getLevel() instanceof ServerLevel)
         {
             ChunkDataHelper.loadChunk((LevelChunk) event.getChunk(), (ServerLevel) event.getLevel());
-        }
-        else if (event.getLevel() instanceof ClientLevel)
-        {
-            if (event.getChunk() instanceof LevelChunk)
-            {
-                ChunkClientDataHelper.applyLate((LevelChunk) event.getChunk());
-            }
         }
     }
 
@@ -304,17 +281,13 @@ public class EventHandler
         {
             final ServerPlayer player = (ServerPlayer) event.getEntity();
             final LevelChunk oldChunk = player.level.getChunk(player.chunkPosition().x, player.chunkPosition().z);
-            final int owningColony = ColonyUtils.getOwningColony(oldChunk);
+            final IColony oldColony = IColonyManager.getInstance().getOwningColony(player.level, oldChunk);
 
             // Remove visiting/subscriber from old colony
-            if (owningColony != 0)
+            if (oldColony != null)
             {
-                final IColony oldColony = IColonyManager.getInstance().getColonyByWorld(owningColony, player.level);
-                if (oldColony != null)
-                {
-                    oldColony.removeVisitingPlayer(player);
-                    oldColony.getPackageManager().removeCloseSubscriber(player);
-                }
+                oldColony.removeVisitingPlayer(player);
+                oldColony.getPackageManager().removeCloseSubscriber(player);
             }
         }
     }
@@ -334,7 +307,7 @@ public class EventHandler
             final LevelChunk newChunk = player.level.getChunk(player.chunkPosition().x, player.chunkPosition().z);
 
             // Add visiting/subscriber to new colony
-            final IColony newColony = IColonyManager.getInstance().getColonyByWorld(ColonyUtils.getOwningColony(newChunk), player.level);
+            final IColony newColony = IColonyManager.getInstance().getOwningColony(player.level, newChunk);
             if (newColony != null)
             {
                 newColony.addVisitingPlayer(player);
@@ -374,44 +347,16 @@ public class EventHandler
 
         ChunkDataHelper.loadChunk(chunk, world);
 
-        Network.getNetwork()
-          .sendToPlayer(new UpdateChunkRangeCapabilityMessage(world,
-            chunkPos.x,
-            chunkPos.z,
-            8, true), (ServerPlayer) event.player);
-
-        final ChunkCapData chunkCapData = ColonyUtils.getChunkCapData(chunk);
-        Network.getNetwork().sendToPlayer(new UpdateChunkCapabilityMessage(chunkCapData), (ServerPlayer) event.player);
-
-        // Check if we get into a differently claimed chunk
-        if (chunkCapData.getOwningColony() != -1)
+        final IColony colony = IColonyManager.getInstance().getOwningColony(world, chunk);
+        if (colony != null)
         {
-            // Remove visiting/subscriber from old colony
-            final IColony colony = IColonyManager.getInstance().getColonyByWorld(chunkCapData.getOwningColony(), world);
-            if (colony != null)
-            {
-                colony.addVisitingPlayer(event.player);
-                colony.getPackageManager().addCloseSubscriber((ServerPlayer) event.player);
-            }
-        }
+            colony.addVisitingPlayer(event.player);
+            colony.getPackageManager().addCloseSubscriber((ServerPlayer) event.player);
 
-        // Alert nearby buildings of close player
-        if (chunkCapData.getOwningColony() != 0)
-        {
-            for (final Map.Entry<Integer, Set<BlockPos>> entry : chunkCapData.getAllClaimingBuildings().entrySet())
+            // Alert nearby buildings of close player
+            for (final IBuilding building : colony.getServerBuildingManager().getBuildings().values())
             {
-                final IColony newColony = IColonyManager.getInstance().getColonyByWorld(entry.getKey(), world);
-                if (newColony != null)
-                {
-                    for (final BlockPos buildingPos : entry.getValue())
-                    {
-                        IBuilding building = newColony.getServerBuildingManager().getBuilding(buildingPos);
-                        if (building != null)
-                        {
-                            building.onPlayerEnterNearby(event.player);
-                        }
-                    }
-                }
+                building.onPlayerEnterNearby(event.player);
             }
         }
     }
@@ -435,19 +380,21 @@ public class EventHandler
             return;
         }
 
-        final LevelChunk chunk = ((Level) event.getLevel()).getChunkAt(pos);
-        final int owningColony = ColonyUtils.getOwningColony(chunk);
-        if (owningColony == NO_COLONY_ID)
-        {
-            return;
-        }
-        final IColony newColony = IColonyManager.getInstance().getColonyByWorld(owningColony, (Level) event.getLevel());
+        final Level level = (Level) event.getLevel();
+        final long chunkPos = new ChunkPos(pos).toLong();
+        final IColony newColony = IColonyManager.getInstance().getOwningColony(level, chunkPos);
         if (newColony == null)
         {
             return;
         }
 
-        for (final BlockPos buildingPos : ColonyUtils.getAllClaimingBuildings(chunk).getOrDefault(owningColony, Collections.emptySet()))
+        final ClaimInfo claimInfo = IColonyManager.getInstance().getClaimInfo(level, chunkPos, newColony);
+        if (claimInfo == null)
+        {
+            return;
+        }
+
+        for (final BlockPos buildingPos : claimInfo.getClaimingBuildings())
         {
             final IBuilding building = newColony.getServerBuildingManager().getBuilding(buildingPos);
             if (building != null && building.getBuildingLevel() >= 1 && building.isInBuilding(pos))
@@ -528,15 +475,10 @@ public class EventHandler
                 final Level world = entityCitizen.getCommandSenderWorld();
 
                 final LevelChunk chunk = world.getChunk(newChunkPos.x, newChunkPos.z);
-                final int owningColony = ColonyUtils.getOwningColony(chunk);
-                if (owningColony != NO_COLONY_ID
-                      && entityCitizen.getCitizenColonyHandler().getColonyId() != owningColony)
+                final IColony colony = IColonyManager.getInstance().getOwningColony(world, chunk);
+                if (colony != null && entityCitizen.getCitizenColonyHandler().getColonyId() != colony.getID())
                 {
-                    final IColony colony = IColonyManager.getInstance().getColonyByWorld(owningColony, entityCitizen.level);
-                    if (colony != null)
-                    {
-                        colony.addGuardToAttackers(entityCitizen, ((IGuardBuilding) entityCitizen.getCitizenColonyHandler().getWorkBuilding()).getPlayerToFollowOrRally());
-                    }
+                    colony.addGuardToAttackers(entityCitizen, ((IGuardBuilding) entityCitizen.getCitizenColonyHandler().getWorkBuilding()).getPlayerToFollowOrRally());
                 }
             }
         }

@@ -1,7 +1,9 @@
 package com.minecolonies.core.commands.colonycommands;
 
-import com.minecolonies.api.colony.IChunkmanagerCapability;
-import com.minecolonies.api.util.Log;
+import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.claims.ClaimReason;
+import com.minecolonies.api.colony.claims.UnclaimReason;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.constant.translation.CommandTranslationConstants;
 import com.minecolonies.core.MineColonies;
@@ -17,9 +19,6 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 
-import static com.minecolonies.api.util.constant.ColonyManagerConstants.UNABLE_TO_FIND_WORLD_CAP_TEXT;
-import static com.minecolonies.api.util.constant.Constants.CHUNKS_TO_CLAIM_THRESHOLD;
-import static com.minecolonies.core.MineColonies.CHUNK_STORAGE_UPDATE_CAP;
 import static com.minecolonies.core.commands.CommandArgumentNames.*;
 
 public class CommandClaimChunks implements IMCOPCommand
@@ -53,20 +52,25 @@ public class CommandClaimChunks implements IMCOPCommand
         // Added/removed
         final boolean add = BoolArgumentType.getBool(context, ADD_ARG);
 
-        final IChunkmanagerCapability chunkManager = sender.level.getCapability(CHUNK_STORAGE_UPDATE_CAP, null).resolve().orElse(null);
-        if (chunkManager == null)
+        final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, sender.level.dimension());
+        if (colony == null)
         {
-            Log.getLogger().error(UNABLE_TO_FIND_WORLD_CAP_TEXT, new Exception());
+            MessageUtils.format(CommandTranslationConstants.COMMAND_COLONY_ID_NOT_FOUND, colonyID).sendTo((Player) sender);
             return 0;
         }
 
-        if (chunkManager.getAllChunkStorages().size() > CHUNKS_TO_CLAIM_THRESHOLD)
+        for (final long chunkPos : ChunkDataHelper.getChunksInRange(sender.blockPosition(), range))
         {
-            MessageUtils.format(CommandTranslationConstants.COMMAND_CLAIM_MAX_CHUNKS).sendTo((Player) sender);
-            return 0;
+            if (add)
+            {
+                IColonyManager.getInstance().tryClaimChunkForColony(colony.getWorld(), chunkPos, colony, ClaimReason.forced());
+            }
+            else
+            {
+                IColonyManager.getInstance().unclaimChunkForColony(colony.getWorld(), chunkPos, colony, UnclaimReason.forced());
+            }
         }
 
-        ChunkDataHelper.staticClaimInRange(colonyID, add, sender.blockPosition(), range, sender.level, true);
         if (add)
         {
             MessageUtils.format(CommandTranslationConstants.COMMAND_CLAIM_SUCCESS).sendTo((Player) sender);

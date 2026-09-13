@@ -42,8 +42,6 @@ import net.minecraftforge.registries.IForgeRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
-
 import static com.minecolonies.api.util.constant.BuildingConstants.DEACTIVATED;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 
@@ -194,13 +192,13 @@ public abstract class AbstractColonyBlock<B extends AbstractColonyBlock<B>> exte
             final BlockEntity entity = worldIn.getBlockEntity(pos);
             if (entity instanceof final TileEntityColonyBuilding te && te.getPositionedTags().containsKey(BlockPos.ZERO) && te.getPositionedTags().get(BlockPos.ZERO).contains(DEACTIVATED))
             {
-                if (building == null && ColonyUtils.getOwningColony(chunk) == 0)
+                if (building == null && IColonyManager.getInstance().getOwningColony(worldIn, chunk) == null)
                 {
                     MessageUtils.format(MISSING_COLONY).sendTo(player);
                     return InteractionResult.FAIL;
                 }
 
-                if (building == null && ColonyUtils.getAllClaimingBuildings(chunk).values().stream().flatMap(Collection::stream).noneMatch(p -> p.equals(pos)))
+                if (building == null)
                 {
                     IColonyManager.getInstance().openReactivationWindow(pos);
                     return InteractionResult.SUCCESS;

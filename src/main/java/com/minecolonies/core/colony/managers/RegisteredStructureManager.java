@@ -7,31 +7,35 @@ import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.IAnimalData;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.buildingextensions.IBuildingExtension;
 import com.minecolonies.api.colony.buildingextensions.registry.BuildingExtensionRegistries;
 import com.minecolonies.api.colony.buildings.*;
 import com.minecolonies.api.colony.buildings.registry.IBuildingDataManager;
 import com.minecolonies.api.colony.buildings.workerbuildings.ITownHall;
 import com.minecolonies.api.colony.buildings.workerbuildings.IWareHouse;
-import com.minecolonies.api.colony.buildingextensions.IBuildingExtension;
+import com.minecolonies.api.colony.claims.ClaimInfo;
+import com.minecolonies.api.colony.claims.UnclaimReason;
 import com.minecolonies.api.colony.managers.interfaces.IRegisteredStructureManager;
 import com.minecolonies.api.eventbus.events.colony.buildings.BuildingAddedModEvent;
 import com.minecolonies.api.eventbus.events.colony.buildings.BuildingRemovedModEvent;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
-import com.minecolonies.api.util.*;
+import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.NBTUtils;
+import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.core.MineColonies;
 import com.minecolonies.core.Network;
-import com.minecolonies.core.blocks.huts.BlockHutTavern;
-import com.minecolonies.core.blocks.huts.BlockHutTownHall;
 import com.minecolonies.core.colony.Colony;
+import com.minecolonies.core.colony.buildingextensions.registry.BuildingExtensionDataManager;
 import com.minecolonies.core.colony.buildings.BuildingMysticalSite;
-import com.minecolonies.core.colony.buildings.modules.BuildingModules;
 import com.minecolonies.core.colony.buildings.modules.BuildingExtensionsModule;
+import com.minecolonies.core.colony.buildings.modules.BuildingModules;
 import com.minecolonies.core.colony.buildings.modules.LivingBuildingModule;
 import com.minecolonies.core.colony.buildings.workerbuildings.*;
-import com.minecolonies.core.colony.buildingextensions.registry.BuildingExtensionDataManager;
 import com.minecolonies.core.event.QuestObjectiveEventHandler;
-import com.minecolonies.core.network.messages.client.colony.ColonyViewBuildingViewMessage;
 import com.minecolonies.core.network.messages.client.colony.ColonyViewBuildingExtensionsUpdateMessage;
+import com.minecolonies.core.network.messages.client.colony.ColonyViewBuildingViewMessage;
 import com.minecolonies.core.network.messages.client.colony.ColonyViewRemoveBuildingMessage;
 import com.minecolonies.core.tileentities.TileEntityDecorationController;
 import net.minecraft.core.BlockPos;
@@ -40,6 +44,7 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.chunk.LevelChunk;
@@ -374,6 +379,40 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
         }
 
         removedBuildings.forEach(IBuilding::destroy);
+
+        releaseStaleClaims(colony);
+    }
+
+    /**
+     * Releases claims left behind by buildings that no longer exist. This can only happen if a building was removed without
+     * going through the normal {@link IBuilding#destroy()} path (for example, a crash mid-operation) &mdash; that path already
+     * unclaims its own chunks, so this is just a regular check for anything that slipped through. Forced claims (admin
+     * command, initial colony radius) are never touched here, since they aren't tied to a building in the first place.
+     *
+     * @param colony the colony to check.
+     */
+    private void releaseStaleClaims(@NotNull final IColony colony)
+    {
+        final Level world = colony.getWorld();
+        for (final long chunkPos : colony.getClaimedChunks())
+        {
+            final ClaimInfo claimInfo = IColonyManager.getInstance().getClaimInfo(world, chunkPos, colony);
+            if (claimInfo == null)
+            {
+                continue;
+            }
+
+            for (final BlockPos buildingPos : new HashSet<>(claimInfo.getClaimingBuildings()))
+            {
+                if (!buildings.containsKey(buildingPos))
+                {
+                    Log.getLogger()
+                        .warn("Colony:" + colony.getID() + " releasing a stale claim on chunk " + new ChunkPos(chunkPos)
+                            + " left behind by building at " + buildingPos + ", which no longer exists.");
+                    IColonyManager.getInstance().unclaimChunkForColony(world, chunkPos, colony, UnclaimReason.building(buildingPos));
+                }
+            }
+        }
     }
 
     @Override
@@ -485,8 +524,11 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
     @Override
     public boolean keepChunkColonyLoaded(final LevelChunk chunk)
     {
-        final Set<BlockPos> capList = ColonyUtils.getAllClaimingBuildings(chunk).get(colony.getID());
-        return capList != null && capList.size() >= MineColonies.getConfig().getServer().colonyLoadStrictness.get();
+        final long chunkPos = chunk.getPos().toLong();
+        final int strictness = MineColonies.getConfig().getServer().colonyLoadStrictness.get();
+
+        final ClaimInfo claimInfo = IColonyManager.getInstance().getClaimInfo(colony.getWorld(), chunkPos, colony);
+        return claimInfo != null && claimInfo.getClaimingBuildings().size() >= strictness;
     }
 
     @Override

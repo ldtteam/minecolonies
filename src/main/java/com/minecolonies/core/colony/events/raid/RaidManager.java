@@ -3,6 +3,7 @@ package com.minecolonies.core.colony.events.raid;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.colonyEvents.EventStatus;
 import com.minecolonies.api.colony.colonyEvents.IColonyEvent;
@@ -62,7 +63,6 @@ import static com.minecolonies.api.util.BlockPosUtil.DOUBLE_AIR_POS_SELECTOR;
 import static com.minecolonies.api.util.BlockPosUtil.SOLID_AIR_POS_SELECTOR;
 import static com.minecolonies.api.util.constant.ColonyConstants.BIG_HORDE_SIZE;
 import static com.minecolonies.api.util.constant.ColonyConstants.SMALL_HORDE_SIZE;
-import static com.minecolonies.api.util.constant.ColonyManagerConstants.NO_COLONY_ID;
 import static com.minecolonies.api.util.constant.Constants.DEFAULT_BARBARIAN_DIFFICULTY;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.api.util.constant.HappinessConstants.RAIDWITHOUTDEATH;
@@ -633,8 +633,8 @@ public class RaidManager implements IRaiderManager
      */
     private boolean isOtherColony(final int x, final int z)
     {
-        final int owningColonyId = ColonyUtils.getOwningColony(colony.getWorld().getChunk(x >> 4, z >> 4));
-        return owningColonyId != NO_COLONY_ID && owningColonyId != colony.getID();
+        final IColony owningColony = IColonyManager.getInstance().getOwningColony(colony.getWorld(), colony.getWorld().getChunk(x >> 4, z >> 4));
+        return owningColony != null && owningColony.getID() != colony.getID();
     }
 
     /**

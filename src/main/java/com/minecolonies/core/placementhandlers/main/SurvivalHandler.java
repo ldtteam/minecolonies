@@ -315,7 +315,8 @@ public class SurvivalHandler implements ISurvivalBlueprintHandler
                 final int chunkZ = z >> 4;
                 final ChunkPos pos = new ChunkPos(chunkX, chunkZ);
 
-                if (ColonyUtils.getOwningColony(world.getChunk(pos.x, pos.z)) != colony.getID())
+                final IColony owningColony = IColonyManager.getInstance().getOwningColony(world, world.getChunk(pos.x, pos.z));
+                if (owningColony == null || owningColony.getID() != colony.getID())
                 {
                     return false;
                 }

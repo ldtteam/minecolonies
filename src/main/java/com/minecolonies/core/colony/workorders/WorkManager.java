@@ -5,6 +5,7 @@ import com.ldtteam.structurize.storage.StructurePacks;
 import com.minecolonies.api.advancements.AdvancementTriggers;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.workorders.IBuilderWorkOrder;
 import com.minecolonies.api.colony.workorders.IServerWorkOrder;
@@ -368,7 +369,8 @@ public class WorkManager implements IWorkManager
                 if (!chunks.contains(pos))
                 {
                     chunks.add(pos);
-                    if (ColonyUtils.getOwningColony(world.getChunk(pos.x, pos.z)) != colony.getID())
+                    final IColony owningColony = IColonyManager.getInstance().getOwningColony(world, world.getChunk(pos.x, pos.z));
+                    if (owningColony == null || owningColony.getID() != colony.getID())
                     {
                         return false;
                     }

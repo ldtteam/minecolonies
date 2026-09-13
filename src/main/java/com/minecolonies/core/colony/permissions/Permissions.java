@@ -1,10 +1,11 @@
 package com.minecolonies.core.colony.permissions;
 
 import com.minecolonies.api.IMinecoloniesAPI;
+import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.permissions.*;
 import com.minecolonies.api.eventbus.events.colony.ColonyPlayerRankChangedModEvent;
 import com.minecolonies.api.network.PacketUtils;
-import com.minecolonies.api.util.ColonyUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.Utils;
 import com.minecolonies.core.colony.Colony;
@@ -830,8 +831,8 @@ public class Permissions implements IPermissions
                 {
                     // Check claim
                     final LevelChunk chunk = world.getChunk(playerEntity.chunkPosition().x, playerEntity.chunkPosition().z);
-                    final int owningColonyId = ColonyUtils.getOwningColony(chunk);
-                    if (owningColonyId == colony.getID() && world.dimension() == colony.getDimension())
+                    final IColony owningColony = IColonyManager.getInstance().getOwningColony(world, chunk);
+                    if (owningColony != null && owningColony.getID() == colony.getID() && world.dimension() == colony.getDimension())
                     {
                         colony.getPackageManager().addCloseSubscriber(playerEntity);
                         colony.getPackageManager().updateSubscribers();

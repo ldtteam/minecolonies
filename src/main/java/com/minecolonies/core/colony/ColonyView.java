@@ -23,7 +23,6 @@ import com.minecolonies.api.network.IMessage;
 import com.minecolonies.api.quests.IQuestManager;
 import com.minecolonies.api.research.IResearchManager;
 import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.api.util.ColonyUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.Network;
@@ -188,6 +187,7 @@ public final class ColonyView implements IColonyView
      */
     private boolean   spiesEnabled;
     private Set<Long> ticketedChunks = new HashSet<>();
+    private Set<Long> claimedChunks  = new HashSet<>();
 
     /**
      * The texture style of the colony citizens.
@@ -377,6 +377,19 @@ public final class ColonyView implements IColonyView
             buf.writeInt(-1);
         }
 
+        if (hasNewSubscribers || colony.isClaimsDirty())
+        {
+            buf.writeInt(colony.getClaimedChunks().size());
+            for (final long pos : colony.getClaimedChunks())
+            {
+                buf.writeLong(pos);
+            }
+        }
+        else
+        {
+            buf.writeInt(-1);
+        }
+
         final CompoundTag graveTag = new CompoundTag();
         colony.getGraveManager().write(graveTag);
         buf.writeNbt(graveTag);     // this could be more efficient, but it should usually be short anyway
@@ -552,6 +565,25 @@ public final class ColonyView implements IColonyView
     public Set<Long> getTicketedChunks()
     {
         return ticketedChunks;
+    }
+
+    @Nullable
+    @Override
+    public Integer getForceLoadTimer()
+    {
+        return null;
+    }
+
+    @Override
+    public Set<Long> getClaimedChunks()
+    {
+        return claimedChunks;
+    }
+
+    @Override
+    public void markClaimsDirty()
+    {
+
     }
 
     @Override
@@ -742,6 +774,29 @@ public final class ColonyView implements IColonyView
             for (int i = 0; i < ticketChunkCount; i++)
             {
                 ticketedChunks.add(buf.readLong());
+            }
+        }
+
+        final int claimedChunkCount = buf.readInt();
+        if (claimedChunkCount != -1)
+        {
+            final Set<Long> oldClaimedChunks = claimedChunks;
+            claimedChunks = new HashSet<>(claimedChunkCount);
+            for (int i = 0; i < claimedChunkCount; i++)
+            {
+                claimedChunks.add(buf.readLong());
+            }
+
+            if (world.isClientSide() && IColonyManager.getInstance() instanceof ColonyManager colonyManager)
+            {
+                for (final long chunkPos : oldClaimedChunks)
+                {
+                    colonyManager.invalidateOwningColonyView(dimensionId, chunkPos);
+                }
+                for (final long chunkPos : claimedChunks)
+                {
+                    colonyManager.invalidateOwningColonyView(dimensionId, chunkPos);
+                }
             }
         }
 
@@ -1009,7 +1064,8 @@ public final class ColonyView implements IColonyView
     public boolean isCoordInColony(@NotNull final Level w, @NotNull final BlockPos pos)
     {
         final LevelChunk chunk = w.getChunkAt(pos);
-        return ColonyUtils.getOwningColony(chunk) == this.getID();
+        final IColony owningColony = IColonyManager.getInstance().getOwningColony(w, chunk);
+        return owningColony != null && owningColony.getID() == this.getID();
     }
 
     @Override

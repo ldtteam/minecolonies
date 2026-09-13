@@ -3,8 +3,6 @@ package com.minecolonies.core.util;
 import com.google.common.io.Files;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
-import com.minecolonies.api.colony.buildings.IBuilding;
-import com.minecolonies.api.util.ColonyUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.core.colony.Colony;
 import net.minecraft.core.BlockPos;
@@ -450,32 +448,15 @@ public final class BackUpHelper
             if (claimChunks)
             {
                 final LevelChunk chunk = ((LevelChunk) colonyWorld.getChunk(loadedColony.getCenter()));
-                if (ColonyUtils.getOwningColony(chunk) != colonyId)
+                final IColony owningColony = IColonyManager.getInstance().getOwningColony(colonyWorld, chunk);
+                if (owningColony == null || owningColony.getID() != colonyId)
                 {
-                    reclaimChunks(loadedColony);
+                    colonyWorld.getCapability(COLONY_MANAGER_CAP, null).ifPresent(cap -> cap.reclaimChunks(loadedColony));
                 }
             }
         }
 
         Log.getLogger().warn("Successfully restored colony:" + colonyId);
-    }
-
-    /**
-     * Reclaims chunks for a colony
-     *
-     * @param colony
-     */
-    public static void reclaimChunks(final IColony colony)
-    {
-        ChunkDataHelper.claimColonyChunks(colony.getWorld(), true, colony.getID(), colony.getCenter());
-        for (final IBuilding building : colony.getServerBuildingManager().getBuildings().values())
-        {
-            ChunkDataHelper.claimBuildingChunks(colony,
-              true,
-              building.getPosition(),
-              building.getClaimRadius(building.getBuildingLevel()),
-              building.getCorners());
-        }
     }
 
     /**
