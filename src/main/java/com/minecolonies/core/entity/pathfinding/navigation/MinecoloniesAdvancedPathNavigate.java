@@ -762,8 +762,9 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
             final double diffY = Math.abs(this.mob.getY() - nextY);
             final double diffZ = Math.abs(this.mob.getZ() - nextZ);
 
+            final PathPointExtended previous = getPreviousNode();
             // Ladder entry needs more exact position tracking, we want to center the citizen before doing movement in another axis
-            if (getNextNode().isOnLadder() && getPreviousNode() == null || !getPreviousNode().isOnLadder())
+            if (previous == null || !previous.isOnLadder() || previous.y == getNextNode().y)
             {
                 if (diffX < 0.2 && diffZ < 0.2)
                 {
@@ -787,29 +788,17 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
             // Scaling ladder, move
             else
             {
-                final PathPointExtended afterNext = getNextNextNode();
-                if (diffX < 0.5 && diffZ < 0.5 && diffY < 0.1)
+                // Ladder direction
+                final boolean up = previous.y < nextY;
+                if (diffX < 0.5 && diffZ < 0.5)
                 {
-                    if (reached != null)
+                    if (up && ourEntity.getY() >= nextY || !up && ourEntity.getY() <= nextY)
                     {
-                        reached.add(getNextNode().asBlockPos());
-                        PathfindingUtils.syncDebugReachedPositions(reached, pathResult.getDebugWatchers());
-                    }
-
-                    if (afterNext == null || !afterNext.isOnLadder())
-                    {
-                        final PathPointExtended previous = getPreviousNode();
-                        if (previous != null)
+                        if (reached != null)
                         {
-                            final boolean up = previous.y < nextY;
-                            if (up && ourEntity.getY() > nextY || !up && ourEntity.getY() < nextY)
-                            {
-                                this.path.setNextNodeIndex(path.getNextNodeIndex() + 1);
-                            }
+                            reached.add(getNextNode().asBlockPos());
+                            PathfindingUtils.syncDebugReachedPositions(reached, pathResult.getDebugWatchers());
                         }
-                    }
-                    else
-                    {
                         this.path.setNextNodeIndex(path.getNextNodeIndex() + 1);
                     }
                 }
@@ -820,6 +809,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
                 }
 
                 //  Ladder Workaround
+                final PathPointExtended afterNext = getNextNextNode();
                 if (getNextNode().isOnLadder() && afterNext != null && (getNextNode().y != afterNext.y || mob.getY() > getNextNode().y))
                 {
                     return doLadderMovement();
@@ -1337,7 +1327,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
     {
         return stuckHandler.getStuckLevel() >= 3;
     }
-
+// TODO: Replace with custom node advancing, when advancing the path we set previous current and next as variables
     /**
      * Gets the next node, which is the node the entity is currently moving towards
      *
