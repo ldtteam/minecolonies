@@ -127,7 +127,8 @@ public interface IAnimalData extends INBTSerializable<CompoundTag>
     public float getCombatCooldown();
 
     /**
-     * Sets the combat cooldown of the animal.
+     * Sets the combat cooldown of the animal. Zero is completely ready, higher
+     * values represent equipment or morale damage that can result in unreadiness.
      * 
      * @param newCooldown the new combat cooldown of the animal
      */

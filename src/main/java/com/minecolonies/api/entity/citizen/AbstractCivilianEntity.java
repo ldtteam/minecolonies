@@ -3,8 +3,8 @@ package com.minecolonies.api.entity.citizen;
 import com.minecolonies.api.colony.ICivilianData;
 import com.minecolonies.api.entity.other.AbstractFastMinecoloniesEntity;
 import com.minecolonies.api.entity.other.MinecoloniesMinecart;
+import com.minecolonies.core.entity.other.ICitizenJobMount;
 import com.minecolonies.core.entity.other.SittingEntity;
-import com.minecolonies.core.entity.other.cavalry.CavalryHorseEntity;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
@@ -159,7 +159,7 @@ public abstract class AbstractCivilianEntity extends AbstractFastMinecoloniesEnt
     @Override
     public boolean startRiding(final @NotNull Entity entity, final boolean force)
     {
-        if (entity instanceof SittingEntity || entity instanceof MinecoloniesMinecart || entity instanceof CavalryHorseEntity)
+        if (entity instanceof SittingEntity || entity instanceof MinecoloniesMinecart || entity instanceof ICitizenJobMount)
         {
             return super.startRiding(entity, force);
         }
