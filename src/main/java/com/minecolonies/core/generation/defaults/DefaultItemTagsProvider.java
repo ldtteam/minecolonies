@@ -221,7 +221,9 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
 
         tag(ModTags.leather)
           .add(Items.SADDLE)
-          .add(Items.LEATHER);
+          .add(Items.LEATHER)
+          .add(Items.LEATHER_HORSE_ARMOR)
+          .add(Items.ARMADILLO_SCUTE);
 
         final Item[] paperExtras = getDomumExtra(ExtraBlockType.BASE_PAPER, ExtraBlockType.LIGHT_PAPER);
 

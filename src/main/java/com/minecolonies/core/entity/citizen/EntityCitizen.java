@@ -34,6 +34,7 @@ import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.sounds.EventType;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.MessageUtils.MessagePriority;
+import com.minecolonies.api.util.constant.GuardConstants;
 import com.minecolonies.api.util.constant.HappinessConstants;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.api.util.constant.TypeConstants;
@@ -55,6 +56,7 @@ import com.minecolonies.core.entity.ai.workers.AbstractEntityAIBasic;
 import com.minecolonies.core.entity.ai.workers.CitizenAI;
 import com.minecolonies.core.entity.ai.workers.guard.AbstractEntityAIGuard;
 import com.minecolonies.core.entity.citizen.citizenhandlers.*;
+import com.minecolonies.core.entity.other.ICitizenJobMount;
 import com.minecolonies.core.entity.other.cavalry.CavalryHorseEntity;
 import com.minecolonies.core.entity.pathfinding.navigation.EntityNavigationUtils;
 import com.minecolonies.core.entity.pathfinding.navigation.MovementHandler;
@@ -120,7 +122,6 @@ import static com.minecolonies.api.util.constant.StatisticsConstants.DEATH;
 import static com.minecolonies.api.util.constant.Suppression.INCREMENT_AND_DECREMENT_OPERATORS_SHOULD_NOT_BE_USED_IN_A_METHOD_CALL_OR_MIXED_WITH_OTHER_OPERATORS_IN_AN_EXPRESSION;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.core.entity.ai.minimal.EntityAIInteractToggleAble.*;
-import static com.minecolonies.api.util.constant.GuardConstants.CAVALRY_RANGED_DAMAGE_VULNERABILITY;
 
 /**
  * The Class used to represent the citizen entities.
@@ -1355,18 +1356,13 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
         // For cavalry, allocate some of the damage to the horse.
         if (citizenJobHandler.getColonyJob() instanceof JobCavalry cav && citizenData != null)
         {
-            if (this.getVehicle() instanceof CavalryHorseEntity horse) 
+            final Entity mount = this.getVehicle();
+            if (mount instanceof ICitizenJobMount)
             {
-                if (damageSource.is(DamageTypeTags.IS_PROJECTILE))
-                {
-                    // Horses take more damage from fire, so increase the split.
-                    damageInc *= CAVALRY_RANGED_DAMAGE_VULNERABILITY;
-                }
-
                 float horseSplit = cav.getMountDamageSplit() * damageInc;
                 damageInc = damageInc - horseSplit;
 
-                horse.hurt(damageSource, horseSplit);
+                mount.hurt(damageSource, horseSplit);
             }
         }
 
@@ -1378,7 +1374,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
                 if (damageSource.is(DamageTypeTags.IS_PROJECTILE))
                 {
                     // Cavalry take more damage from projectiles.
-                    damageInc *= CAVALRY_RANGED_DAMAGE_VULNERABILITY;
+                    damageInc *= GuardConstants.CAVALRY_RANGED_DAMAGE_VULNERABILITY;
                 }
 
                 float horseSplit = cav.getMountDamageSplit() * damageInc;
