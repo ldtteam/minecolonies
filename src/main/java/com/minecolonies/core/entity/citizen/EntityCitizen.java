@@ -34,6 +34,7 @@ import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.sounds.EventType;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.MessageUtils.MessagePriority;
+import com.minecolonies.api.util.constant.GuardConstants;
 import com.minecolonies.api.util.constant.HappinessConstants;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.api.util.constant.TypeConstants;
@@ -56,6 +57,7 @@ import com.minecolonies.core.entity.ai.workers.CitizenAI;
 import com.minecolonies.core.entity.ai.workers.guard.AbstractEntityAIGuard;
 import com.minecolonies.core.entity.citizen.citizenhandlers.*;
 import com.minecolonies.core.entity.other.ICitizenJobMount;
+import com.minecolonies.core.entity.other.cavalry.CavalryHorseEntity;
 import com.minecolonies.core.entity.pathfinding.navigation.EntityNavigationUtils;
 import com.minecolonies.core.entity.pathfinding.navigation.MovementHandler;
 import com.minecolonies.core.event.EventHandler;
@@ -1372,7 +1374,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
                 if (damageSource.is(DamageTypeTags.IS_PROJECTILE))
                 {
                     // Cavalry take more damage from projectiles.
-                    damageInc *= CAVALRY_RANGED_DAMAGE_VULNERABILITY;
+                    damageInc *= GuardConstants.CAVALRY_RANGED_DAMAGE_VULNERABILITY;
                 }
 
                 float horseSplit = cav.getMountDamageSplit() * damageInc;

@@ -1,6 +1,5 @@
 package com.minecolonies.core.entity.other.cavalry;
 
-import java.util.HashSet;
 import java.util.UUID;
 import javax.annotation.Nonnull;
 
@@ -42,6 +41,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
@@ -109,7 +109,8 @@ public class CavalryHorseEntity extends Horse implements IManagedAnimal<CavalryH
     /**
      * Attribute modifier used to apply the colony's mount health research to this horse.
      */
-    private static final String MOUNT_HEALTH_RESEARCH_MODIFIER = "minecolonies.mount_health_research";
+    private static final ResourceLocation MOUNT_HEALTH_RESEARCH_MODIFIER =
+        ResourceLocation.fromNamespaceAndPath("minecolonies", "mount_health_research");
 
     /**
      * The animal colony handler.
@@ -785,9 +786,9 @@ public class CavalryHorseEntity extends Horse implements IManagedAnimal<CavalryH
 
         for (final AttributeModifier modifier : healthAttribute.getModifiers())
         {
-            if (MOUNT_HEALTH_RESEARCH_MODIFIER.equals(modifier.getName()))
+            if (MOUNT_HEALTH_RESEARCH_MODIFIER.equals(modifier.id()))
             {
-                return Double.compare(modifier.getAmount(), expectedBonus) != 0;
+                return Double.compare(modifier.amount(), expectedBonus) != 0;
             }
         }
 
@@ -814,20 +815,14 @@ public class CavalryHorseEntity extends Horse implements IManagedAnimal<CavalryH
             .getResearchEffects()
             .getEffectStrength(ResearchConstants.MOUNT_HEALTH);
 
-        for (final AttributeModifier modifier : new HashSet<>(healthAttribute.getModifiers()))
-        {
-            if (MOUNT_HEALTH_RESEARCH_MODIFIER.equals(modifier.getName()))
-            {
-                healthAttribute.removeModifier(modifier);
-            }
-        }
+        healthAttribute.removeModifier(MOUNT_HEALTH_RESEARCH_MODIFIER);
 
         if (expectedBonus > 0.0D)
         {
             healthAttribute.addPermanentModifier(new AttributeModifier(
                 MOUNT_HEALTH_RESEARCH_MODIFIER,
                 expectedBonus,
-                AttributeModifier.Operation.MULTIPLY_BASE));
+                AttributeModifier.Operation.ADD_MULTIPLIED_BASE));
         }
 
         if (getHealth() > getMaxHealth())

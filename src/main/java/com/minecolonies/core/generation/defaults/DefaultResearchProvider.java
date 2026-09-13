@@ -902,8 +902,8 @@ public class DefaultResearchProvider extends AbstractResearchProvider
                                           .setTranslatedName("Mounted Combat")
                                           .setTranslatedSubtitle("Not just two empty halves of coconut.")
                                           .setIcon(ModBlocks.blockHutStable.asItem())
-                                          .addItemCost(Items.SADDLE, 1)
-                                          .addItemCost(Items.LEAD, 1)
+                                          .addItemCost(Items.SADDLE, 1, provider)
+                                          .addItemCost(Items.LEAD, 1, provider)
                                           .addEffect(ModBuildings.stable.get().getBuildingBlock(), 1)
                                           .addToList(r);
 
@@ -1069,8 +1069,8 @@ public class DefaultResearchProvider extends AbstractResearchProvider
           .setIcon(Items.RED_MUSHROOM)
           .addBuildingRequirement(new ResourceLocation(Constants.MOD_ID, ModBuildings.STABLE_ID), 2)
           .addBuildingRequirement(new ResourceLocation(Constants.MOD_ID, ModBuildings.HOSPITAL_ID), 2)
-          .addItemCost(Items.RED_MUSHROOM, 8)
-          .addItemCost(Items.WARPED_FUNGUS, 8)
+          .addItemCost(Items.RED_MUSHROOM, 8, provider)
+          .addItemCost(Items.WARPED_FUNGUS, 8, provider)
           .addEffect(MOUNT_HEALTH, 1)
           .addToList(r);
 
@@ -1079,8 +1079,8 @@ public class DefaultResearchProvider extends AbstractResearchProvider
           .setTranslatedSubtitle("Sugar cubes are beneath them.")
           .setIcon(Items.HAY_BLOCK)
           .addBuildingRequirement(new ResourceLocation(Constants.MOD_ID, ModBuildings.STABLE_ID), 3)
-          .addItemCost(Items.HAY_BLOCK, 2)
-          .addItemCost(Items.APPLE, 8)
+          .addItemCost(Items.HAY_BLOCK, 2, provider)
+          .addItemCost(Items.APPLE, 8, provider)
           .addEffect(MOUNT_HEALTH, 2)
           .addToList(r);
 
@@ -1089,8 +1089,8 @@ public class DefaultResearchProvider extends AbstractResearchProvider
           .setTranslatedSubtitle("War horse, warhead...")
           .setIcon(Items.GOLDEN_APPLE)
           .addBuildingRequirement(new ResourceLocation(Constants.MOD_ID, ModBuildings.STABLE_ID), 4)
-          .addItemCost(Items.GOLDEN_APPLE, 4)
-          .addItemCost(Items.GOLDEN_CARROT, 4)
+          .addItemCost(Items.GOLDEN_APPLE, 4, provider)
+          .addItemCost(Items.GOLDEN_CARROT, 4, provider)
           .addEffect(MOUNT_HEALTH, 3)
           .addToList(r);
 
@@ -1099,8 +1099,8 @@ public class DefaultResearchProvider extends AbstractResearchProvider
           .setTranslatedSubtitle("They will go down in history.")
           .setIcon(Items.NETHER_STAR)
           .addBuildingRequirement(new ResourceLocation(Constants.MOD_ID, ModBuildings.STABLE_ID), 5)
-          .addItemCost(Items.NETHER_STAR, 1)
-          .addItemCost(Items.BLACK_BANNER, 1)
+          .addItemCost(Items.NETHER_STAR, 1, provider)
+          .addItemCost(Items.BLACK_BANNER, 1, provider)
           .addEffect(MOUNT_HEALTH, 4)
           .addToList(r);
 
@@ -1110,8 +1110,8 @@ public class DefaultResearchProvider extends AbstractResearchProvider
           .setIcon(Items.LEATHER_HORSE_ARMOR)
           .addBuildingRequirement(new ResourceLocation(Constants.MOD_ID, ModBuildings.STABLE_ID), 3)
           .addBuildingRequirement(new ResourceLocation(Constants.MOD_ID, ModBuildings.BLACKSMITH_ID), 3)
-          .addItemCost(Items.LEATHER_HORSE_ARMOR, 8)
-          .addItemCost(Items.IRON_INGOT, 5)
+          .addItemCost(Items.LEATHER_HORSE_ARMOR, 8, provider)
+          .addItemCost(Items.IRON_INGOT, 5, provider)
           .addEffect(MOUNT_ARMOR, 1)
           .addToList(r);
 
@@ -1121,8 +1121,8 @@ public class DefaultResearchProvider extends AbstractResearchProvider
           .setIcon(Items.IRON_HORSE_ARMOR)
           .addBuildingRequirement(new ResourceLocation(Constants.MOD_ID, ModBuildings.STABLE_ID), 4)
           .addBuildingRequirement(new ResourceLocation(Constants.MOD_ID, ModBuildings.BLACKSMITH_ID), 4)
-          .addItemCost(Items.IRON_HORSE_ARMOR, 1)
-          .addItemCost(Items.GOLD_INGOT, 5)
+          .addItemCost(Items.IRON_HORSE_ARMOR, 1, provider)
+          .addItemCost(Items.GOLD_INGOT, 5, provider)
           .addEffect(MOUNT_ARMOR, 2)
           .addToList(r);
 
@@ -1132,8 +1132,8 @@ public class DefaultResearchProvider extends AbstractResearchProvider
           .setIcon(Items.GOLDEN_HORSE_ARMOR)
           .addBuildingRequirement(new ResourceLocation(Constants.MOD_ID, ModBuildings.STABLE_ID), 5)
           .addBuildingRequirement(new ResourceLocation(Constants.MOD_ID, ModBuildings.BLACKSMITH_ID), 5)
-          .addItemCost(Items.GOLDEN_HORSE_ARMOR, 1)
-          .addItemCost(Items.DIAMOND, 5)
+          .addItemCost(Items.GOLDEN_HORSE_ARMOR, 1, provider)
+          .addItemCost(Items.DIAMOND, 5, provider)
           .addEffect(MOUNT_ARMOR, 3)
           .addToList(r);
 
@@ -1143,8 +1143,8 @@ public class DefaultResearchProvider extends AbstractResearchProvider
           .setIcon(Items.DIAMOND_HORSE_ARMOR)
           .addBuildingRequirement(new ResourceLocation(Constants.MOD_ID, ModBuildings.STABLE_ID), 5)
           .addBuildingRequirement(new ResourceLocation(Constants.MOD_ID, ModBuildings.BLACKSMITH_ID), 5)
-          .addItemCost(Items.DIAMOND_HORSE_ARMOR, 1)
-          .addItemCost(Items.NETHERITE_INGOT, 5)
+          .addItemCost(Items.DIAMOND_HORSE_ARMOR, 1, provider)
+          .addItemCost(Items.NETHERITE_INGOT, 5, provider)
           .addEffect(MOUNT_ARMOR, 4)
           .addToList(r);
 
