@@ -1,6 +1,7 @@
 package com.minecolonies.core.colony.buildings.moduleviews;
 
 import com.ldtteam.blockui.views.BOWindow;
+import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.buildings.modules.AbstractBuildingModuleView;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.client.gui.modules.building.GraveyardManagementWindow;
@@ -32,6 +33,12 @@ public class GraveyardManagementModuleView extends AbstractBuildingModuleView
     @NotNull
     private List<String> restingCitizen = new ArrayList<>();
 
+    /**
+     * Contains the burial plot positions registered from this graveyard's schematic.
+     */
+    @NotNull
+    private List<BlockPos> gravePlotPositions = new ArrayList<>();
+
     @Override
     public void deserialize(@NotNull final FriendlyByteBuf buf)
     {
@@ -48,6 +55,13 @@ public class GraveyardManagementModuleView extends AbstractBuildingModuleView
         for (int i = 1; i <= sizeRIP; i++)
         {
             restingCitizen.add(buf.readUtf());
+        }
+
+        gravePlotPositions = new ArrayList<>();
+        final int gravePlotCount = buf.readInt();
+        for (int i = 0; i < gravePlotCount; i++)
+        {
+            gravePlotPositions.add(buf.readBlockPos());
         }
     }
 
@@ -105,5 +119,33 @@ public class GraveyardManagementModuleView extends AbstractBuildingModuleView
     public List<String> getRestingCitizen()
     {
         return Collections.unmodifiableList(restingCitizen);
+    }
+
+    /**
+     * Get the total number of burial plots provided by this graveyard's schematic.
+     *
+     * @return the total number of burial plots.
+     */
+    public int getTotalGravePlotCount()
+    {
+        return gravePlotPositions.size();
+    }
+
+    /**
+     * Count the burial plots currently occupied by named graves.
+     *
+     * @return the number of occupied burial plots.
+     */
+    public int getFilledGravePlotCount()
+    {
+        int filledGravePlots = 0;
+        for (final BlockPos gravePlotPosition : gravePlotPositions)
+        {
+            if (colonyView.getWorld().getBlockState(gravePlotPosition).getBlock() == ModBlocks.blockNamedGrave)
+            {
+                filledGravePlots++;
+            }
+        }
+        return filledGravePlots;
     }
 }
