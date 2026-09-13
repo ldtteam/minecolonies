@@ -699,10 +699,16 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
                 final IBuilding warehouse = job.getColony().getServerBuildingManager().getBuilding(closestWarehouse);
                 for (final Map.Entry<ItemStorage, Integer> output : job.getSecondaryOutputs().entrySet())
                 {
-                    warehouse.createRequest(new Delivery(building.getLocation(),
-                        warehouse.getLocation(),
-                        output.getKey().getItemStack().copyWithCount(output.getValue()),
-                        MAX_BUILDING_PRIORITY), true);
+                    int value = output.getValue();
+                    while (value > 0)
+                    {
+                        final int deliveryValue = Math.min(output.getKey().getItem().getMaxStackSize(), value);
+                        warehouse.createRequest(new Delivery(building.getLocation(),
+                            warehouse.getLocation(),
+                            output.getKey().getItemStack().copyWithCount(deliveryValue),
+                            MAX_BUILDING_PRIORITY), true);
+                        value -= deliveryValue;
+                    }
                 }
             }
             job.getSecondaryOutputs().clear();
