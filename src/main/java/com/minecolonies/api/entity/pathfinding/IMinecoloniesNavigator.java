@@ -68,4 +68,9 @@ public interface IMinecoloniesNavigator
      * @return
      */
     IStuckHandler<MinecoloniesAdvancedPathNavigate> getStuckHandler();
+
+    /**
+     * Updates the saved node references
+     */
+    void updateNodeReferences();
 }

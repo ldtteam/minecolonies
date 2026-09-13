@@ -1315,10 +1315,8 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
         return true;
     }
 
-    /**
-     * Updates the saved node references
-     */
-    private void updateNodeReferences()
+    @Override
+    public void updateNodeReferences()
     {
         final int currentIndex = path.getNextNodeIndex();
         final int pathLength = path.getNodeCount();
