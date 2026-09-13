@@ -110,6 +110,11 @@ public class SettingsModule extends AbstractBuildingModule implements IPersisten
         {
             settings.put(settingKey, value);
             value.onUpdate(building, sender);
+
+            if (settingKey.equals(TavernBuildingModule.MUSIC_VOLUME) && building.hasModule(BuildingModules.TAVERN_VISITOR))
+            {
+                building.getModule(BuildingModules.TAVERN_VISITOR).onMusicVolumeChanged();
+            }
         }
     }
 
