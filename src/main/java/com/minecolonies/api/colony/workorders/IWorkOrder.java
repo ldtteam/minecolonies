@@ -10,10 +10,19 @@ import net.minecraft.world.phys.AABB;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Comparator;
 import java.util.function.Consumer;
 
 public interface IWorkOrder
 {
+    /**
+     * Orders work orders by their user-selected priority, with a stable tie-breaker.
+     */
+    Comparator<IWorkOrder> WORK_ORDER_COMPARATOR = Comparator
+        .comparingInt(IWorkOrder::getPriority)
+        .reversed()
+        .thenComparingInt(IWorkOrder::getID);
+
     /**
      * Get the ID of the work order.
      *
