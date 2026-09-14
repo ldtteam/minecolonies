@@ -1,0 +1,30 @@
+{
+  "branch": "minecolonies:combat",
+  "costs": [
+    {
+      "count": 4,
+      "item": "minecraft:golden_apple"
+    },
+    {
+      "count": 4,
+      "item": "minecraft:golden_carrot"
+    }
+  ],
+  "effects": [
+    {
+      "id": "minecolonies:effects/mounthealth",
+      "level": 3
+    }
+  ],
+  "icon": "minecraft:golden_apple",
+  "parentResearch": "minecolonies:combat/healthdiet",
+  "requirements": [
+    {
+      "type": "minecolonies:building",
+      "building": "minecolonies:stable",
+      "level": 4
+    }
+  ],
+  "researchLevel": 5,
+  "subtitle": "com.minecolonies.research.combat.exerciseregimen.subtitle"
+}

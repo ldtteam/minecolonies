@@ -1,0 +1,35 @@
+{
+  "branch": "minecolonies:combat",
+  "costs": [
+    {
+      "count": 1,
+      "item": "minecraft:golden_horse_armor"
+    },
+    {
+      "count": 5,
+      "item": "minecraft:diamond"
+    }
+  ],
+  "effects": [
+    {
+      "id": "minecolonies:effects/mountarmor",
+      "level": 3
+    }
+  ],
+  "icon": "minecraft:golden_horse_armor",
+  "parentResearch": "minecolonies:combat/improvedbarding",
+  "requirements": [
+    {
+      "type": "minecolonies:building",
+      "building": "minecolonies:stable",
+      "level": 5
+    },
+    {
+      "type": "minecolonies:building",
+      "building": "minecolonies:blacksmith",
+      "level": 5
+    }
+  ],
+  "researchLevel": 5,
+  "subtitle": "com.minecolonies.research.combat.advancedbarding.subtitle"
+}
