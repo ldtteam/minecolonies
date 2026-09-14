@@ -519,12 +519,7 @@ public class BuildingModules
       new BuildingEntry.ModuleProducer<>("tavern_visitor", TavernBuildingModule::new, null);
     public static final BuildingEntry.ModuleProducer<SettingsModule, SettingsModuleView> TAVERN_SETTINGS =
       new BuildingEntry.ModuleProducer<>("tavern_settings", () -> new SettingsModule()
-        .with(TavernBuildingModule.MUSIC_VOLUME, new StringSetting(List.of(
-          TavernBuildingModule.MUSIC_VOLUME_OFF,
-          TavernBuildingModule.MUSIC_VOLUME_25,
-          TavernBuildingModule.MUSIC_VOLUME_50,
-          TavernBuildingModule.MUSIC_VOLUME_75,
-          TavernBuildingModule.MUSIC_VOLUME_100), 3)),
+        .with(TavernBuildingModule.PLAYMUSIC, new BoolSetting(true)),
         () -> SettingsModuleView::new);
 
     public static final BuildingEntry.ModuleProducer<SettingsModule,SettingsModuleView> TOWNHALL_SETTINGS  =

@@ -17,8 +17,8 @@ import com.minecolonies.api.util.MathUtils;
 import com.minecolonies.api.util.StatsUtil;
 import com.minecolonies.core.Network;
 import com.minecolonies.core.client.gui.huts.WindowHutLiving;
+import com.minecolonies.core.colony.buildings.modules.settings.BoolSetting;
 import com.minecolonies.core.colony.buildings.modules.settings.SettingKey;
-import com.minecolonies.core.colony.buildings.modules.settings.StringSetting;
 import com.minecolonies.core.colony.buildings.views.LivingBuildingView;
 import com.minecolonies.core.colony.interactionhandling.RecruitmentInteraction;
 import com.minecolonies.core.datalistener.CustomVisitorListener;
@@ -29,10 +29,8 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.protocol.game.ClientboundStopSoundPacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -45,7 +43,6 @@ import java.util.Map;
 
 import static com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickRateConstants.MAX_TICKRATE;
 import static com.minecolonies.api.util.constant.Constants.MAX_STORY;
-import static com.minecolonies.api.util.constant.Constants.MOD_ID;
 import static com.minecolonies.api.util.constant.Constants.TAG_COMPOUND;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_VISITORS;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_WORK;
@@ -56,24 +53,8 @@ import static com.minecolonies.api.util.constant.StatisticsConstants.NEW_VISITOR
  */
 public class TavernBuildingModule extends AbstractBuildingModule implements IDefinesCoreBuildingStatsModule, IBuildingEventsModule, IPersistentModule, ITickingModule
 {
-    /** Tavern music volume setting. */
-    public static final ISettingKey<StringSetting> MUSIC_VOLUME =
-      new SettingKey<>(StringSetting.class, new ResourceLocation(MOD_ID, "tavern_music_volume"));
-
-    /** Translation key for muted tavern music. */
-    public static final String MUSIC_VOLUME_OFF = "com.minecolonies.coremod.setting.tavern_music_volume.off";
-
-    /** Translation key for 25 percent tavern music volume. */
-    public static final String MUSIC_VOLUME_25 = "com.minecolonies.coremod.setting.tavern_music_volume.25";
-
-    /** Translation key for 50 percent tavern music volume. */
-    public static final String MUSIC_VOLUME_50 = "com.minecolonies.coremod.setting.tavern_music_volume.50";
-
-    /** Translation key for 75 percent tavern music volume. */
-    public static final String MUSIC_VOLUME_75 = "com.minecolonies.coremod.setting.tavern_music_volume.75";
-
-    /** Translation key for full tavern music volume. */
-    public static final String MUSIC_VOLUME_100 = "com.minecolonies.coremod.setting.tavern_music_volume.100";
+    public static final ISettingKey<BoolSetting>       PLAYMUSIC      =
+      new SettingKey<>(BoolSetting.class, new ResourceLocation(com.minecolonies.api.util.constant.Constants.MOD_ID, "playmusic"));
 
     /**
      * Schematic name
@@ -127,103 +108,41 @@ public class TavernBuildingModule extends AbstractBuildingModule implements IDef
     @Override
     public void onPlayerEnterBuilding(final Player player)
     {
-        if (musicCooldown <= 0 && building.getBuildingLevel() > 0 && !building.getColony().isDay())
+        boolean musicToggle = building.getSettingValueOrDefault(PLAYMUSIC, true);
+
+        if (musicToggle && musicCooldown <= 0 && building.getBuildingLevel() > 0 && !building.getColony().isDay())
         {
-            final float volume = getMusicVolume(building.getSettingValueOrDefault(MUSIC_VOLUME, MUSIC_VOLUME_75));
-            if (volume <= 0.0f)
+            int count = 0;
+            BlockPos avg = BlockPos.ZERO;
+            for (final Integer id : externalCitizens)
+            {
+                final IVisitorData data = building.getColony().getVisitorManager().getVisitor(id);
+                if (data != null)
+                {
+                    if (!data.getSittingPosition().equals(BlockPos.ZERO))
+                    {
+                        count++;
+                        avg = avg.offset(data.getSittingPosition());
+                    }
+                }
+            }
+
+            if (count < 2)
+
             {
                 return;
             }
 
-            final BlockPos musicPosition = getMusicPosition();
-            if (musicPosition == null)
-            {
-                return;
-            }
+            avg = new BlockPos(avg.getX() / count, avg.getY() / count, avg.getZ() / count);
+            final PlayMusicAtPosMessage message = new PlayMusicAtPosMessage(TavernSounds.tavernTheme, avg, building.getColony().getWorld(), 0.7f, 1.0f);
+            for (final ServerPlayer curPlayer : building.getColony().getPackageManager().getCloseSubscribers())
 
-            playMusic(musicPosition, volume);
+            {
+                Network.getNetwork().sendToPlayer(message, curPlayer);
+
+            }
             musicCooldown = TWENTY_MINUTES;
         }
-    }
-
-    /**
-     * Applies a changed Tavern volume to any recently triggered Tavern music.
-     * The current track is stopped by sound ID so unrelated music is unaffected.
-     */
-    public void onMusicVolumeChanged()
-    {
-        for (final ServerPlayer curPlayer : building.getColony().getPackageManager().getCloseSubscribers())
-        {
-            curPlayer.connection.send(new ClientboundStopSoundPacket(TavernSounds.tavernTheme.getLocation(), SoundSource.MUSIC));
-        }
-
-        if (musicCooldown <= 0 || building.getColony().isDay())
-        {
-            return;
-        }
-
-        final float volume = getMusicVolume(building.getSettingValueOrDefault(MUSIC_VOLUME, MUSIC_VOLUME_75));
-        final BlockPos musicPosition = getMusicPosition();
-        if (volume > 0.0f && musicPosition != null)
-        {
-            playMusic(musicPosition, volume);
-        }
-    }
-
-    /**
-     * Finds the average position of the seated visitors used as the Tavern music source.
-     *
-     * @return the music source position, or {@code null} when fewer than two visitors are seated
-     */
-    @Nullable
-    private BlockPos getMusicPosition()
-    {
-        int count = 0;
-        BlockPos average = BlockPos.ZERO;
-        for (final Integer id : externalCitizens)
-        {
-            final IVisitorData data = building.getColony().getVisitorManager().getVisitor(id);
-            if (data != null && !data.getSittingPosition().equals(BlockPos.ZERO))
-            {
-                count++;
-                average = average.offset(data.getSittingPosition());
-            }
-        }
-
-        return count < 2 ? null : new BlockPos(average.getX() / count, average.getY() / count, average.getZ() / count);
-    }
-
-    /**
-     * Sends Tavern music playback to nearby colony subscribers.
-     *
-     * @param position the positional sound source
-     * @param volume the Tavern's base playback volume
-     */
-    private void playMusic(final BlockPos position, final float volume)
-    {
-        final PlayMusicAtPosMessage message = new PlayMusicAtPosMessage(TavernSounds.tavernTheme, position, building.getColony().getWorld(), volume, 1.0f);
-        for (final ServerPlayer curPlayer : building.getColony().getPackageManager().getCloseSubscribers())
-        {
-            Network.getNetwork().sendToPlayer(message, curPlayer);
-        }
-    }
-
-    /**
-     * Converts the persisted tavern music setting into the base playback volume.
-     *
-     * @param settingValue the selected setting translation key
-     * @return the base playback volume from zero to one
-     */
-    public static float getMusicVolume(final String settingValue)
-    {
-        return switch (settingValue)
-        {
-            case MUSIC_VOLUME_OFF -> 0.0f;
-            case MUSIC_VOLUME_25 -> 0.25f;
-            case MUSIC_VOLUME_50 -> 0.5f;
-            case MUSIC_VOLUME_100 -> 1.0f;
-            default -> 0.75f;
-        };
     }
 
     @Override
