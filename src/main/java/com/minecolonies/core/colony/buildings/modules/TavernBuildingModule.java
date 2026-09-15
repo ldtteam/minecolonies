@@ -128,7 +128,6 @@ public class TavernBuildingModule extends AbstractBuildingModule implements IDef
             }
 
             if (count < 2)
-
             {
                 return;
             }
