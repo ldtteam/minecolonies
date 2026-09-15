@@ -81,6 +81,14 @@ public class CitizenFoodHandler implements ICitizenFoodHandler
     }
 
     @Override
+    public void clearLastEaten()
+    {
+        lastEatenFoods.clear();
+        citizenData.markDirty(TICKS_SECOND);
+        dirty = true;
+    }
+
+    @Override
     public Item getLastEaten()
     {
         return lastEatenFoods.poll();
