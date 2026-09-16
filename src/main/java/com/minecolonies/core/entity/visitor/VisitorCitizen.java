@@ -518,7 +518,11 @@ public class VisitorCitizen extends AbstractEntityCitizen
                 if (colonyView != null)
                 {
                     this.citizenDataView = colonyView.getVisitor(citizenId);
-                    getEntityData().set(DATA_STYLE, colonyView.getTextureStyleId());
+                    final String textureStyle = colonyView.getTextureStyleId();
+                    if (textureStyle != null)
+                    {
+                        getEntityData().set(DATA_STYLE, textureStyle);
+                    }
                 }
             }
         }
