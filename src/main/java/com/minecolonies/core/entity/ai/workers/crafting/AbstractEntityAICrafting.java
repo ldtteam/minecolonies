@@ -702,7 +702,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
                     int value = output.getValue();
                     while (value > 0)
                     {
-                        final int deliveryValue = Math.min(output.getKey().getItem().getMaxStackSize(), value);
+                        final int deliveryValue = Math.min(output.getKey().getItemStack().getMaxStackSize(), value);
                         warehouse.createRequest(new Delivery(building.getLocation(),
                             warehouse.getLocation(),
                             output.getKey().getItemStack().copyWithCount(deliveryValue),
