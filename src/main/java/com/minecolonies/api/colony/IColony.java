@@ -20,9 +20,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.CapabilityManager;
-import net.minecraftforge.common.capabilities.CapabilityToken;
 import net.minecraftforge.event.TickEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -34,8 +31,6 @@ import java.util.*;
  */
 public interface IColony
 {
-    Capability<IColonyTagCapability> CLOSE_COLONY_CAP = CapabilityManager.get(new CapabilityToken<>() {});
-
     void onWorldLoad(@NotNull Level w);
 
     void onWorldUnload(@NotNull Level w);
@@ -408,6 +403,28 @@ public interface IColony
      * @return set of positions
      */
     Set<Long> getTicketedChunks();
+
+    /**
+     * How many more ticks the colony will keep its force-load tickets before dropping all of them.
+     *
+     * @return ticks remaining, or null if the colony isn't currently force-loading anything.
+     */
+    @Nullable
+    Integer getForceLoadTimer();
+
+    /**
+     * Get the set of chunk positions this colony currently claims.
+     *
+     * @return set of positions, as {@code ChunkPos.asLong(x, z)}.
+     */
+    Set<Long> getClaimedChunks();
+
+    /**
+     * Marks this colony's claims as changed, so the next sync sends the client an updated list of claimed chunks. Called by
+     * {@code IColonyManagerCapability} itself whenever this colony's claims change, including when it's a side effect of
+     * another colony's action (for example, losing a chunk to another colony's force-claim).
+     */
+    void markClaimsDirty();
 
     /**
      * Set the texture style of the colony.

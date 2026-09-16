@@ -16,6 +16,12 @@ public final class NbtTagConstants
     public static final String TAG_BUILDING            = "building";
     public static final String TAG_BUILDINGS_CLAIM     = "buildingsClaim";
     public static final String TAG_BUILDINGS_UNCLAIM   = "buildingUnclaim";
+    public static final String TAG_CLAIM_COLONIES      = "claimColonies";
+    public static final String TAG_CLAIMS              = "claims";
+    public static final String TAG_CLAIM_CHUNK         = "chunkPos";
+    public static final String TAG_CLAIM_FORCED        = "forced";
+    public static final String TAG_CLAIM_CENTER        = "center";
+    public static final String TAG_CLAIM_BUILDINGS     = "claimBuildings";
     public static final String TAG_CITIZENS            = "citizens";
     public static final String TAG_VISITORS            = "visitors";
     public static final String TAG_WORK                = "work";

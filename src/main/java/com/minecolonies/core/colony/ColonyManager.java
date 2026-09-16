@@ -1,5 +1,8 @@
 package com.minecolonies.core.colony;
 
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.ICitizenData;
@@ -8,6 +11,9 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
+import com.minecolonies.api.colony.claims.ClaimInfo;
+import com.minecolonies.api.colony.claims.ClaimReason;
+import com.minecolonies.api.colony.claims.UnclaimReason;
 import com.minecolonies.api.colony.permissions.ColonyPlayer;
 import com.minecolonies.api.compatibility.CompatibilityManager;
 import com.minecolonies.api.compatibility.ICompatibilityManager;
@@ -18,7 +24,6 @@ import com.minecolonies.api.eventbus.events.colony.ColonyDeletedModEvent;
 import com.minecolonies.api.eventbus.events.colony.ColonyViewUpdatedModEvent;
 import com.minecolonies.api.sounds.SoundManager;
 import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.api.util.ColonyUtils;
 import com.minecolonies.api.util.DamageSourceKeys;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.core.MineColonies;
@@ -62,6 +67,20 @@ public final class ColonyManager implements IColonyManager
      */
     @NotNull
     private final Map<ResourceKey<Level>, ColonyList<IColonyView>> colonyViews = new HashMap<>();
+
+    /**
+     * Client-side cache of a chunk -> the colony view claiming it, one per dimension, so windows/screens that ask "who owns
+     * this chunk" repeatedly (e.g. every frame) don't have to rescan every known colony view each time. If a chunk isn't in
+     * the cache yet, we look it up and store the result the first time it's asked for.
+     * {@link #invalidateOwningColonyView(ResourceKey, long)} clears the entry for a chunk whenever a colony view's
+     * claims actually change, so this can never go stale in a way that matters.
+     * <p>
+     * The value is wrapped in {@code Optional} only because Guava's cache doesn't allow storing null (an unclaimed chunk
+     * would otherwise have nothing to store). This is purely an internal detail of the cache and never shows up outside
+     * this class.
+     */
+    @NotNull
+    private final Map<ResourceKey<Level>, LoadingCache<Long, Optional<IColonyView>>> owningColonyViewCaches = new HashMap<>();
 
     /**
      * Recipemanager of this server.
@@ -111,11 +130,10 @@ public final class ColonyManager implements IColonyManager
 
         if (colony.getWorld() == null)
         {
-            Log.getLogger().error("Unable to claim chunks because of the missing world in the colony, please report this to the mod authors!", new Exception());
+            Log.getLogger().error("Newly created colony has no world set, please report this to the mod authors!", new Exception());
             return null;
         }
 
-        ChunkDataHelper.claimColonyChunks(colony.getWorld(), true, colony.getID(), colony.getCenter());
         return colony;
     }
 
@@ -156,7 +174,6 @@ public final class ColonyManager implements IColonyManager
 
         try
         {
-            ChunkDataHelper.claimColonyChunks(world, false, id, colony.getCenter());
             Log.getLogger().info("Removing citizens for " + id);
             for (final ICitizenData citizenData : new ArrayList<>(colony.getCitizenManager().getCitizens()))
             {
@@ -224,7 +241,16 @@ public final class ColonyManager implements IColonyManager
     {
         if (colonyViews.containsKey(dimension))
         {
-            colonyViews.get(dimension).remove(id);
+            final ColonyList<IColonyView> colonies = colonyViews.get(dimension);
+            final IColonyView removed = colonies.get(id);
+            colonies.remove(id);
+            if (removed != null)
+            {
+                for (final long chunkPos : removed.getClaimedChunks())
+                {
+                    invalidateOwningColonyView(dimension, chunkPos);
+                }
+            }
         }
     }
 
@@ -293,12 +319,12 @@ public final class ColonyManager implements IColonyManager
             return null;
         }
         final LevelChunk centralChunk = w.getChunkAt(pos);
-        final int id = ColonyUtils.getOwningColony(centralChunk);
-        if (id == NO_COLONY_ID)
+        final IColony colony = getOwningColony(w, centralChunk);
+        if (colony == null)
         {
             return null;
         }
-        return getColonyByWorld(id, w);
+        return getColonyByWorld(colony.getID(), w);
     }
 
     @Override
@@ -334,6 +360,130 @@ public final class ColonyManager implements IColonyManager
             return Collections.emptyList();
         }
         return cap.getColonies();
+    }
+
+    @Nullable
+    @Override
+    public IColony getOwningColony(@NotNull final Level world, final long chunkPos)
+    {
+        if (world.isClientSide())
+        {
+            return owningColonyViewCache(world.dimension()).getUnchecked(chunkPos).orElse(null);
+        }
+
+        final IColonyManagerCapability cap = world.getCapability(COLONY_MANAGER_CAP, null).resolve().orElse(null);
+        if (cap == null)
+        {
+            Log.getLogger().warn(MISSING_WORLD_CAP_MESSAGE);
+            return null;
+        }
+        return cap.getOwningColony(chunkPos);
+    }
+
+    /**
+     * Gets (creating if needed) the owning-colony-view cache for a dimension.
+     *
+     * @param dimension the dimension.
+     * @return the cache.
+     */
+    @NotNull
+    private LoadingCache<Long, Optional<IColonyView>> owningColonyViewCache(@NotNull final ResourceKey<Level> dimension)
+    {
+        return owningColonyViewCaches.computeIfAbsent(dimension,
+            k -> CacheBuilder.newBuilder().build(CacheLoader.from(chunkPos -> findOwningColonyView(dimension, chunkPos))));
+    }
+
+    /**
+     * Scans every colony view known in a dimension for one claiming the given chunk. Only called by the cache when it doesn't
+     * already have an answer for this chunk.
+     *
+     * @param dimension the dimension.
+     * @param chunkPos  the chunk position, as {@code ChunkPos.asLong(x, z)}.
+     * @return the owning colony view, if any.
+     */
+    @NotNull
+    private Optional<IColonyView> findOwningColonyView(@NotNull final ResourceKey<Level> dimension, final long chunkPos)
+    {
+        final ColonyList<IColonyView> colonies = colonyViews.get(dimension);
+        if (colonies == null)
+        {
+            return Optional.empty();
+        }
+
+        for (final IColonyView colony : colonies.getCopyAsList())
+        {
+            if (colony.getClaimedChunks().contains(chunkPos))
+            {
+                return Optional.of(colony);
+            }
+        }
+        return Optional.empty();
+    }
+
+    /**
+     * Clears the cached owning-colony-view answer for a chunk, in a dimension. Must be called whenever a colony view's claimed
+     * chunks change, so the cache never returns a stale answer for that chunk.
+     *
+     * @param dimension the dimension.
+     * @param chunkPos  the chunk position, as {@code ChunkPos.asLong(x, z)}.
+     */
+    void invalidateOwningColonyView(@NotNull final ResourceKey<Level> dimension, final long chunkPos)
+    {
+        final LoadingCache<Long, Optional<IColonyView>> cache = owningColonyViewCaches.get(dimension);
+        if (cache != null)
+        {
+            cache.invalidate(chunkPos);
+        }
+    }
+
+    @Override
+    public boolean tryClaimChunkForColony(@NotNull final Level world, final long chunkPos, @NotNull final IColony requester, @NotNull final ClaimReason reason)
+    {
+        final IColonyManagerCapability cap = world.getCapability(COLONY_MANAGER_CAP, null).resolve().orElse(null);
+        if (cap == null)
+        {
+            Log.getLogger().warn(MISSING_WORLD_CAP_MESSAGE);
+            return false;
+        }
+        return cap.tryClaimChunk(chunkPos, requester.getID(), reason);
+    }
+
+    @Override
+    public void unclaimChunkForColony(@NotNull final Level world, final long chunkPos, @NotNull final IColony owner, @NotNull final UnclaimReason reason)
+    {
+        final IColonyManagerCapability cap = world.getCapability(COLONY_MANAGER_CAP, null).resolve().orElse(null);
+        if (cap == null)
+        {
+            Log.getLogger().warn(MISSING_WORLD_CAP_MESSAGE);
+            return;
+        }
+        cap.unclaimChunk(chunkPos, owner.getID(), reason);
+    }
+
+    @NotNull
+    @Override
+    public Set<Long> getClaimedChunks(@NotNull final Level world, @NotNull final IColony colony)
+    {
+        final IColonyManagerCapability cap = world.getCapability(COLONY_MANAGER_CAP, null).resolve().orElse(null);
+        if (cap == null)
+        {
+            Log.getLogger().warn(MISSING_WORLD_CAP_MESSAGE);
+            return Collections.emptySet();
+        }
+        return cap.getClaimedChunks(colony.getID());
+    }
+
+    @Nullable
+    @Override
+    public ClaimInfo getClaimInfo(@NotNull final Level world, final long chunkPos, @NotNull final IColony colony)
+    {
+        final IColonyManagerCapability cap = world.getCapability(COLONY_MANAGER_CAP, null).resolve().orElse(null);
+        if (cap == null)
+        {
+            Log.getLogger().warn(MISSING_WORLD_CAP_MESSAGE);
+            return null;
+        }
+        return cap.getClaimInfo(chunkPos, colony.getID());
     }
 
     @Override
@@ -424,12 +574,12 @@ public final class ColonyManager implements IColonyManager
     {
         final LevelChunk centralChunk = w.getChunkAt(pos);
 
-        final int id = ColonyUtils.getOwningColony(centralChunk);
-        if (id == 0)
+        final IColony colony = getOwningColony(w, centralChunk);
+        if (colony == null)
         {
             return null;
         }
-        return getColonyView(id, w.dimension());
+        return getColonyView(colony.getID(), w.dimension());
     }
 
     @Override
@@ -449,10 +599,10 @@ public final class ColonyManager implements IColonyManager
         }
 
         final LevelChunk chunk = w.getChunkAt(pos);
-        final int owningColony = ColonyUtils.getOwningColony(chunk);
-        if (owningColony != NO_COLONY_ID)
+        final IColony owningColony = getOwningColony(w, chunk);
+        if (owningColony != null)
         {
-            return getColonyView(owningColony, w.dimension());
+            return getColonyView(owningColony.getID(), w.dimension());
         }
 
         @Nullable IColonyView closestColony = null;
@@ -481,10 +631,10 @@ public final class ColonyManager implements IColonyManager
     public IColony getClosestColony(@NotNull final Level w, @NotNull final BlockPos pos)
     {
         final LevelChunk chunk = w.getChunkAt(pos);
-        final int owningColony = ColonyUtils.getOwningColony(chunk);
-        if (owningColony != NO_COLONY_ID)
+        final IColony owningColony = getOwningColony(w, chunk);
+        if (owningColony != null)
         {
-            return getColonyByWorld(owningColony, w);
+            return getColonyByWorld(owningColony.getID(), w);
         }
 
         @Nullable IColony closestColony = null;
@@ -618,6 +768,7 @@ public final class ColonyManager implements IColonyManager
             {
                 //  Player has left the game, clear the Colony View cache
                 colonyViews.clear();
+                owningColonyViewCaches.clear();
             }
 
 
@@ -661,9 +812,20 @@ public final class ColonyManager implements IColonyManager
             }
             capLoaded = false;
 
+            final IColonyManagerCapability cap = world.getCapability(COLONY_MANAGER_CAP, null).resolve().orElse(null);
             for (@NotNull final IColony c : getColonies(world))
             {
                 c.onWorldLoad(world);
+
+                // TODO: Remove on next version
+                // A colony with no claims at all can only be a pre-refactor save that predates claim data existing (or,
+                // in principle, a colony that somehow lost all its claims outright). Its world couldn't be set yet back
+                // when claims were loaded from NBT, so the rebuild had to wait until now.
+                if (cap != null && cap.getClaimedChunks(c.getID()).isEmpty())
+                {
+                    cap.reclaimChunks(c);
+                    Log.getLogger().info("Data migration: Reclaiming chunks for colony {}", c.getID());
+                }
             }
 
             IMinecoloniesAPI.getInstance().getEventBus().post(new ColonyManagerLoadedModEvent(this));
@@ -837,7 +999,7 @@ public final class ColonyManager implements IColonyManager
     public boolean isCoordinateInAnyColony(@NotNull final Level world, final BlockPos pos)
     {
         final LevelChunk centralChunk = world.getChunkAt(pos);
-        return ColonyUtils.getOwningColony(centralChunk) != NO_COLONY_ID;
+        return getOwningColony(world, centralChunk) != null;
     }
 
     @Override
@@ -871,5 +1033,6 @@ public final class ColonyManager implements IColonyManager
     public void resetColonyViews()
     {
         colonyViews.clear();
+        owningColonyViewCaches.clear();
     }
 }

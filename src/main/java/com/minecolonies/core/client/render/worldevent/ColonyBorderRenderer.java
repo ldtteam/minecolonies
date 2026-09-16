@@ -4,7 +4,6 @@ import com.ldtteam.structurize.client.rendertask.util.WorldRenderMacros;
 import com.ldtteam.structurize.items.ModItems;
 import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.colony.IColonyView;
-import com.minecolonies.core.MineColonies;
 import com.minecolonies.core.util.MutableChunkPos;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;
@@ -16,13 +15,10 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.world.level.ChunkPos;
-import net.minecraft.world.level.chunk.LevelChunk;
 
 import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
-
-import static com.minecolonies.api.colony.IColony.CLOSE_COLONY_CAP;
 
 public class ColonyBorderRenderer
 {
@@ -55,26 +51,12 @@ public class ColonyBorderRenderer
             final BufferBuilder bufferbuilder = Tesselator.getInstance().getBuilder();
             final int nearestColonyId = ctx.nearestColony.getID();
             final int playerRenderDist = Math.max(ctx.clientRenderDist - RENDER_DIST_THRESHOLD, 2);
-            final int range = Math.max(ctx.clientRenderDist, MineColonies.getConfig().getServer().maxColonySize.get());
 
-            for (int chunkX = -range; chunkX <= range; chunkX++)
+            for (final long chunkPosLong : ctx.nearestColony.getClaimedChunks())
             {
-                for (int chunkZ = -range; chunkZ <= range; chunkZ++)
-                {
-                    final LevelChunk chunk = ctx.clientLevel.getChunk(playerChunkPos.x + chunkX, playerChunkPos.z + chunkZ);
-                    if (chunk.isEmpty()) { continue; }
-                    final ChunkPos chunkPos = chunk.getPos();
-
-                    chunk.getCapability(CLOSE_COLONY_CAP, null).ifPresent(cap -> coloniesMap.put(chunkPos, cap.getOwningColony()));
-                    if (ctx.nearestColony.getTicketedChunks().contains(chunkPos.toLong()))
-                    {
-                        chunkticketsMap.put(chunkPos, nearestColonyId);
-                    }
-                    else
-                    {
-                        chunkticketsMap.put(chunkPos, 0);
-                    }
-                }
+                final ChunkPos chunkPos = new ChunkPos(chunkPosLong);
+                coloniesMap.put(chunkPos, nearestColonyId);
+                chunkticketsMap.put(chunkPos, ctx.nearestColony.getTicketedChunks().contains(chunkPosLong) ? nearestColonyId : 0);
             }
 
             if (colonies != null)

@@ -10,7 +10,6 @@ import com.minecolonies.api.entity.CustomGoalSelector;
 import com.minecolonies.api.entity.ai.combat.threat.IThreatTableEntity;
 import com.minecolonies.api.entity.pathfinding.registry.IPathNavigateRegistry;
 import com.minecolonies.api.items.IChiefSwordItem;
-import com.minecolonies.api.util.ColonyUtils;
 import com.minecolonies.api.util.DamageSourceKeys;
 import com.minecolonies.core.entity.pathfinding.navigation.AbstractAdvancedPathNavigate;
 import com.minecolonies.core.entity.pathfinding.navigation.PathingStuckHandler;
@@ -34,7 +33,6 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 
-import static com.minecolonies.api.util.constant.ColonyManagerConstants.NO_COLONY_ID;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.core.colony.events.raid.RaiderConstants.*;
 
@@ -356,10 +354,9 @@ public abstract class AbstractEntityMinecoloniesRaider extends AbstractEntityMin
     private void onEnterChunk(final ChunkPos newChunkPos)
     {
         final LevelChunk chunk = colony.getWorld().getChunk(newChunkPos.x, newChunkPos.z);
-        final int owningColonyId = ColonyUtils.getOwningColony(chunk);
-        if (owningColonyId != NO_COLONY_ID && colony.getID() != owningColonyId)
+        final IColony tempColony = IColonyManager.getInstance().getOwningColony(colony.getWorld(), chunk);
+        if (tempColony != null && colony.getID() != tempColony.getID())
         {
-            final IColony tempColony = IColonyManager.getInstance().getColonyByWorld(owningColonyId, level);
             tempColony.getRaiderManager().setPassThroughRaid();
         }
     }
