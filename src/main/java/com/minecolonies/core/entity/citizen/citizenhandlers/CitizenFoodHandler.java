@@ -68,7 +68,7 @@ public class CitizenFoodHandler implements ICitizenFoodHandler
     @Override
     public void addLastEaten(final Item item)
     {
-        lastEatenFoods.add(item);
+        lastEatenFoods.offer(item);
         citizenData.markDirty(TICKS_SECOND);
         dirty = true;
         if (lastEatenFoods.size() >= FOOD_QUEUE_SIZE)
@@ -83,7 +83,12 @@ public class CitizenFoodHandler implements ICitizenFoodHandler
     @Override
     public Item getLastEaten()
     {
-        return lastEatenFoods.poll();
+        Item last = null;
+        for (final Item food : lastEatenFoods)
+        {
+            last = food;
+        }
+        return last;
     }
 
     @Override
