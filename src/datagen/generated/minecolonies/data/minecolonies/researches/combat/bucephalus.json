@@ -1,0 +1,30 @@
+{
+  "branch": "minecolonies:combat",
+  "costs": [
+    {
+      "count": 1,
+      "item": "minecraft:nether_star"
+    },
+    {
+      "count": 1,
+      "item": "minecraft:black_banner"
+    }
+  ],
+  "effects": [
+    {
+      "id": "minecolonies:effects/mounthealth",
+      "level": 4
+    }
+  ],
+  "icon": "minecraft:nether_star",
+  "parentResearch": "minecolonies:combat/exerciseregimen",
+  "requirements": [
+    {
+      "type": "minecolonies:building",
+      "building": "minecolonies:stable",
+      "level": 5
+    }
+  ],
+  "researchLevel": 6,
+  "subtitle": "com.minecolonies.research.combat.bucephalus.subtitle"
+}
