@@ -26,6 +26,11 @@ public interface ICitizenFoodHandler
     void addLastEaten(Item item);
 
     /**
+     * Forget every food item the citizen has eaten, as if they had never eaten.
+     */
+    void clearLastEaten();
+
+    /**
      * Get the last eaten food item.
      * @return the last eaten item.
      */
