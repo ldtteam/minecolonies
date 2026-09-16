@@ -12,7 +12,7 @@
           "type": "minecraft:item",
           "name": "minecolonies:large_empty_bottle",
           "quality": 1,
-          "weight": 0
+          "weight": 100
         }
       ],
       "rolls": 1.0

@@ -1,0 +1,35 @@
+{
+  "branch": "minecolonies:combat",
+  "costs": [
+    {
+      "count": 8,
+      "item": "minecraft:red_mushroom"
+    },
+    {
+      "count": 8,
+      "item": "minecraft:warped_fungus"
+    }
+  ],
+  "effects": [
+    {
+      "id": "minecolonies:effects/mounthealth",
+      "level": 1
+    }
+  ],
+  "icon": "minecraft:red_mushroom",
+  "parentResearch": "minecolonies:combat/mountedcombat",
+  "requirements": [
+    {
+      "type": "minecolonies:building",
+      "building": "minecolonies:stable",
+      "level": 2
+    },
+    {
+      "type": "minecolonies:building",
+      "building": "minecolonies:hospital",
+      "level": 2
+    }
+  ],
+  "researchLevel": 3,
+  "subtitle": "com.minecolonies.research.combat.ivermectin.subtitle"
+}

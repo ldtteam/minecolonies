@@ -435,8 +435,6 @@ public class AnimalManager implements IAnimalManager
         Set<ServerPlayer> players = new HashSet<>(newSubscribers);
         players.addAll(closeSubscribers);
 
-        Log.getLogger().info("Sending {} animal packets to {} players.", toSend.size(), players.size());
-
         new ColonyViewAnimalViewDataMessage(colony, toSend, refresh).sendToPlayer(players);
     }
 }

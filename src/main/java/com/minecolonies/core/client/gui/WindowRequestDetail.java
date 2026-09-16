@@ -193,12 +193,9 @@ public class WindowRequestDetail extends AbstractWindowSkeleton implements Butto
     @Override
     public void onButtonClicked(@NotNull final Button button)
     {
-        if (button.getID().equals(REQUEST_FULFILL))
+        if (button.getID().equals(REQUEST_FULFILL) && requestTreeWindowModule.isFulfillable(request))
         {
-            if (requestTreeWindowModule instanceof final RequestTreeWindowModule.IRequestTreeSupportsFulfill requestTreeSupportsFulfill)
-            {
-                requestTreeSupportsFulfill.onFulfill(request);
-            }
+            requestTreeWindowModule.onFulfill(request);
             this.window.close();
         }
         else if (button.getID().equals(REQUEST_CANCEL))
