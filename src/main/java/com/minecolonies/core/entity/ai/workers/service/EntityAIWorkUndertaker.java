@@ -187,6 +187,11 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
 
         @Nullable final BlockPos gravePos = buildingGraveyard.getGraveToWorkOn();
 
+        if (gravePos == null)
+        {
+            return IDLE;
+        }
+
         // Still moving to the block
         if (walkWithProxy(gravePos, 3))
         {

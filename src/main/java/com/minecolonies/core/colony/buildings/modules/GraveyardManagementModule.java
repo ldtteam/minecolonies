@@ -7,7 +7,6 @@ import com.minecolonies.api.colony.GraveData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.modules.AbstractBuildingModule;
 import com.minecolonies.api.colony.buildings.modules.IBuildingEventsModule;
-import com.minecolonies.api.colony.buildings.modules.IBuildingModule;
 import com.minecolonies.api.colony.buildings.modules.IPersistentModule;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.eventbus.events.colony.citizens.CitizenBuriedModEvent;
@@ -41,7 +40,7 @@ import static com.minecolonies.api.util.constant.Constants.TAG_STRING;
 /**
  * The graveyard list module.
  */
-public class GraveyardManagementModule extends AbstractBuildingModule implements IBuildingModule, IPersistentModule, IBuildingEventsModule
+public class GraveyardManagementModule extends AbstractBuildingModule implements IPersistentModule, IBuildingEventsModule
 {
     /**
      * The tag to store the list of resting citizen in this graveyard
