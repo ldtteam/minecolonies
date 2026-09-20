@@ -23,8 +23,6 @@ import net.minecraft.world.entity.animal.Rabbit;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Items;
 
-import java.util.List;
-
 import static com.minecolonies.api.research.util.ResearchConstants.HUSCARL;
 import static com.minecolonies.api.research.util.ResearchConstants.MARKSMAN;
 import static com.minecolonies.api.util.constant.BuildingConstants.BUILDING_FLOWER_LIST;
