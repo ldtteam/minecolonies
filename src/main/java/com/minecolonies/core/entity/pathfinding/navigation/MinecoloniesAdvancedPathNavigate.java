@@ -1305,7 +1305,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
             path.advance();
             updateNodeReferences();
 
-            if (isTracking)
+            if (isTracking && previousNode() != null)
             {
                 PathfindingUtils.syncDebugReachedPositions(new BlockPos(previousNode().x, previousNode().y, previousNode().z), pathResult.getDebugWatchers());
             }
