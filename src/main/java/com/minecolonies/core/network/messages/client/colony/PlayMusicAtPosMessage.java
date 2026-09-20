@@ -90,7 +90,7 @@ public class PlayMusicAtPosMessage extends AbstractClientPlayMessage
     {
         if (player.level().dimension() == dimensionID)
         {
-            player.level().playSound(player, pos.getX(), pos.getY(), pos.getZ(), soundEvent, SoundSource.AMBIENT, volume, pitch);
+            player.level().playSound(player, pos.getX(), pos.getY(), pos.getZ(), soundEvent, SoundSource.RECORDS, volume, pitch);
         }
     }
 }
