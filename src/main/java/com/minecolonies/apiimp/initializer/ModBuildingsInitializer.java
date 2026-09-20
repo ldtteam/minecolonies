@@ -526,6 +526,7 @@ public final class ModBuildingsInitializer
           .addBuildingModuleProducer(TAVERN_VISITOR)
           .addBuildingModuleProducer(BED)
           .addBuildingModuleProducer(STATS_MODULE)
+          .addBuildingModuleProducer(TAVERN_SETTINGS)
           .createBuildingEntry());
 
         ModBuildings.mechanic = DEFERRED_REGISTER.register(ModBuildings.MECHANIC_ID, () -> new BuildingEntry.Builder()
