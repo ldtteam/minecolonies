@@ -70,7 +70,12 @@ public class CommandCitizenModify implements IMCColonyOfficerCommand
                                 .suggests((ctx, builder) -> SharedSuggestionProvider.suggest(List.of("1.0"), builder))
                                 .executes(ctx -> adjust(ctx, citizen -> citizen.decreaseSaturation(DoubleArgumentType.getDouble(ctx, VALUE_ARG)),
                                     citizen -> String.valueOf(citizen.getSaturation())))))
-                    )));
+                    )
+                    .then(IMCCommand.newLiteral("foodHistory")
+                        .then(IMCCommand.newLiteral("clear")
+                            .executes(ctx -> adjust(ctx, citizen -> citizen.getCitizenFoodHandler().clearLastEaten(),
+                                citizen -> String.valueOf(citizen.getCitizenFoodHandler().getLastEatenFoods().size())))))
+                    ));
     }
 
     private int adjust(

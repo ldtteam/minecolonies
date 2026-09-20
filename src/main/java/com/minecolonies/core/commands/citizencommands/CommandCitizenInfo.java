@@ -136,7 +136,7 @@ public class CommandCitizenInfo implements IMCColonyOfficerCommand
                 lastEaten = lastEaten + stack.getHoverName().getString() + ", ";
             }
 
-            final String lastEatenCompiled = lastEaten.substring(0, lastEaten.length() - 2);
+            final String lastEatenCompiled = lastEaten.isEmpty() ? "" : lastEaten.substring(0, lastEaten.length() - 2);
 
             context.getSource()
                 .sendSuccess(() -> Component.translatable(CommandTranslationConstants.COMMAND_CITIZEN_INFO_FOOD,
