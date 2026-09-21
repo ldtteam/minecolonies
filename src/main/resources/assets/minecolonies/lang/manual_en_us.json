@@ -644,6 +644,7 @@
   "com.minecolonies.coremod.job.undertaker": "Undertaker",
   "com.minecolonies.coremod.gui.workerhuts.graveyard.graves": "Graves to retrieve",
   "com.minecolonies.coremod.gui.workerhuts.graveyard.rip": "Citizens buried here",
+  "com.minecolonies.coremod.gui.workerhuts.graveyard.plotsfilled": "%s of %s Plots Filled",
 
   "com.minecolonies.coremod.gui.direction.north": "North",
   "com.minecolonies.coremod.gui.direction.north.short": "N",
@@ -2156,6 +2157,7 @@
   "block.minecolonies.blockhutstable": "Stable",
   "block.minecolonies.blockhutstable.name": "Stable",
   "com.minecolonies.coremod.gui.maintab": "Main",
+  "com.minecolonies.coremod.setting.minecolonies:playmusic": "Play Music at Night",
   "com.minecolonies.coremod.setting.minecolonies:producedirt": "Produce Dirt:",
   "com.minecolonies.coremod.setting.minecolonies:breeding": "Breeding:",
   "com.minecolonies.coremod.setting.minecolonies:feeding": "Feeding:",
