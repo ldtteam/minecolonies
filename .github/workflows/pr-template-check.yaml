@@ -1,0 +1,14 @@
+name: PR Template Check
+
+on:
+  pull_request_target:
+    types:
+      - opened
+
+permissions:
+  pull-requests: write
+  issues: write
+
+jobs:
+  check-template:
+    uses: ldtteam/.github/.github/workflows/pr-template-check.yaml@master
