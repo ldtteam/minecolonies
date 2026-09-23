@@ -117,8 +117,7 @@ public class MovementHandler extends MoveControl
             final BlockPos blockpos = this.mob.blockPosition();
             final BlockState blockstate = this.mob.level.getBlockState(blockpos);
 
-            if (PathfindingUtils.isWater(mob.level, mob.blockPosition(), blockstate, blockstate.getFluidState())
-                  && PathfindingUtils.isWater(mob.level, mob.blockPosition().above(), null, null))
+            if (!blockstate.getFluidState().isEmpty() && PathfindingUtils.isWater(mob.level, mob.blockPosition().above(), null, null))
             {
                 if (yDif != 0.0D)
                 {
