@@ -2232,9 +2232,15 @@ public class InventoryUtils
         while (index != -1)
         {
             final int localCount = Math.min(totalCount, handler.getStackInSlot(index).getCount());
-            if (transferXOfItemStackIntoNextFreeSlotInItemHandler(handler, index, localCount, targetHandler))
+            final boolean transferred = transferXOfItemStackIntoNextFreeSlotInItemHandler(handler, index, localCount, targetHandler);
+
+            if (transferred)
             {
                 totalCount -= localCount;
+            }
+            else
+            {
+                return false;
             }
 
             if (totalCount <= 0)
