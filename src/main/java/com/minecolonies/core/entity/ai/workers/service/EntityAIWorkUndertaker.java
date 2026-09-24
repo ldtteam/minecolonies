@@ -440,7 +440,7 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
     private IAIState buryCitizen()
     {
         @Nullable final BuildingGraveyard buildingGraveyard = building;
-        final GraveyardManagementModule module = buildingGraveyard.getFirstModuleOccurance(GraveyardManagementModule.class);
+        final GraveyardManagementModule module = buildingGraveyard.getModule(GraveyardManagementModule.class);
 
         if (checkForToolOrWeapon(ModEquipmentTypes.shovel.get()) || module.getLastGraveData() == null)
         {
@@ -455,10 +455,16 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
 
         if (burialPos == null || burialPos.getA() == null)
         {
+            final String citizenName = module.getLastGraveData().getCitizenName();
+
             // couldn't find a place to dig a grave
-            MessageUtils.forCitizen(worker, Component.translatable(MESSAGE_INFO_CITIZEN_UNDERTAKER_GRAVEYARD_NO_SPACE, module.getLastGraveData().getCitizenName()))
+            MessageUtils.forCitizen(worker, Component.translatable(MESSAGE_INFO_CITIZEN_UNDERTAKER_GRAVEYARD_NO_SPACE, citizenName))
               .sendTo(worker.getCitizenColonyHandler().getColonyOrRegister().getMessagePlayerEntities());
-            return IDLE;
+
+            module.setLastGraveData(null);
+            burialPos = null;
+
+            return INVENTORY_FULL;
         }
 
         if (walkWithProxy(burialPos.getA(), 4))
