@@ -5,8 +5,6 @@ import com.ldtteam.structurize.util.LanguageHandler;
 import com.ldtteam.structurize.util.TagManager;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.advancements.AdvancementTriggers;
-import com.minecolonies.api.colony.IChunkmanagerCapability;
-import com.minecolonies.api.colony.IColonyTagCapability;
 import com.minecolonies.api.configuration.Configuration;
 import com.minecolonies.api.crafting.CountedIngredient;
 import com.minecolonies.api.creativetab.ModCreativeTabs;
@@ -74,8 +72,6 @@ import static com.minecolonies.api.util.constant.SchematicTagConstants.*;
 @Mod(Constants.MOD_ID)
 public class MineColonies
 {
-    public static final Capability<IChunkmanagerCapability> CHUNK_STORAGE_UPDATE_CAP = CapabilityManager.get(new CapabilityToken<>() {});
-
     public static final Capability<IColonyManagerCapability> COLONY_MANAGER_CAP = CapabilityManager.get(new CapabilityToken<>() {});
 
     /**
@@ -205,8 +201,6 @@ public class MineColonies
     @SubscribeEvent
     public static void registerCaps(final RegisterCapabilitiesEvent event)
     {
-        event.register(IColonyTagCapability.class);
-        event.register(IChunkmanagerCapability.class);
         event.register(IColonyManagerCapability.class);
     }
 
