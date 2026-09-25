@@ -1387,7 +1387,8 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
         if (!block.isAir())
         {
             final VoxelShape shape = block.getCollisionShape(world, tempWorldPos.set(x, y, z));
-            if (!pathingOptions.canPassDanger() && ShapeUtil.max(shape, Direction.Axis.Y) < 0.5 && PathfindingUtils.isDangerous(cachedBlockLookup.getBlockState(x, y - 1, z)))
+            final BlockState below = cachedBlockLookup.getBlockState(x, y - 1, z);
+            if (!pathingOptions.canPassDanger(below) && ShapeUtil.max(shape, Direction.Axis.Y) < 0.5 && PathfindingUtils.isDangerous(below))
             {
                 return false;
             }
@@ -1453,7 +1454,7 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
                              || !block.getBlock().properties.hasCollision;
                 }
             }
-            else if (!pathingOptions.canPassDanger() && PathfindingUtils.isDangerous(block))
+            else if (!pathingOptions.canPassDanger(block) && PathfindingUtils.isDangerous(block))
             {
                 return false;
             }
