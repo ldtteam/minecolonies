@@ -55,7 +55,7 @@ public enum SurfaceType
 
         if (PathfindingUtils.isDangerous(blockState))
         {
-            if (pathingOptions != null && pathingOptions.canPassDanger())
+            if (pathingOptions != null && pathingOptions.canPassDanger(blockState))
             {
                 if (ShapeUtil.isEmpty(blockState.getCollisionShape(world, pos)))
                 {
@@ -83,9 +83,10 @@ public enum SurfaceType
 
         final VoxelShape shape = blockState.getCollisionShape(world, pos);
         final double maxShapeY = ShapeUtil.max(shape, Direction.Axis.Y);
-        if (maxShapeY < 0.5 && PathfindingUtils.isDangerous(world.getBlockState(pos.below())))
+        final BlockState below = world.getBlockState(pos.below());
+        if (maxShapeY < 0.5 && PathfindingUtils.isDangerous(below))
         {
-            if (pathingOptions != null && pathingOptions.canPassDanger())
+            if (pathingOptions != null && pathingOptions.canPassDanger(below))
             {
                 return SurfaceType.WALKABLE;
             }

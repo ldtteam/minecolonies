@@ -1,5 +1,9 @@
 package com.minecolonies.core.entity.pathfinding;
 
+import java.util.function.Predicate;
+
+import net.minecraft.world.level.block.state.BlockState;
+
 /**
  * Configuration values for pathing, used by pathjobs and normally set through the navigator
  */
@@ -113,6 +117,7 @@ public class PathingOptions
      * Whether to path through dangerous blocks.
      */
     private boolean canPassDanger = false;
+    private Predicate<BlockState> passDangerPredicate = state -> false;
 
     /**
      * Whether the entity can walk underwater.
@@ -220,6 +225,29 @@ public class PathingOptions
     {
         return canPassDanger;
     }
+
+    /**
+     * Given a block state, can the pathfinding pass through this state-specific danger?
+     * @param state block state to test
+     * @return true if passable
+     */
+    public boolean canPassDanger(final BlockState state)
+    {
+        return canPassDanger() || passDangerPredicate.test(state);
+    }
+
+    /**
+     * Establish a block state predicate that allows dangerous passage.
+     * @param predicate Allowed state
+     * @return this
+     */
+    public PathingOptions withPassDangerPredicate(
+        final Predicate<BlockState> predicate)
+    {
+        this.passDangerPredicate = predicate;
+        return this;
+    }
+
     public boolean canWalkUnderWater()
     {
         return walkUnderWater;
@@ -386,6 +414,7 @@ public class PathingOptions
         canOpenDoors = pathingOptions.canOpenDoors;
         canClimbAdvanced = pathingOptions.canClimbAdvanced;
         canPassDanger = pathingOptions.canPassDanger;
+        passDangerPredicate = pathingOptions.passDangerPredicate;
         randomnessFactor = pathingOptions.randomnessFactor;
         walkUnderWater = pathingOptions.walkUnderWater;
         canDrop = pathingOptions.canDrop;
