@@ -1,4 +1,4 @@
-package com.minecolonies.core.compatibility.journeymap;
+package com.minecolonies.core.compatibility.journeymap.v6;
 
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.IColony;
@@ -9,13 +9,13 @@ import com.minecolonies.api.util.ColonyUtils;
 import com.minecolonies.core.MineColonies;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import journeymap.client.api.display.Context;
-import journeymap.client.api.display.DisplayType;
-import journeymap.client.api.display.PolygonOverlay;
-import journeymap.client.api.model.MapPolygonWithHoles;
-import journeymap.client.api.model.ShapeProperties;
-import journeymap.client.api.model.TextProperties;
-import journeymap.client.api.util.PolygonHelper;
+import journeymap.api.v2.common.Context;
+import journeymap.api.v2.client.display.DisplayType;
+import journeymap.api.v2.client.display.PolygonOverlay;
+import journeymap.api.v2.client.model.MapPolygonWithHoles;
+import journeymap.api.v2.client.model.ShapeProperties;
+import journeymap.api.v2.client.model.TextProperties;
+import journeymap.api.v2.client.util.PolygonHelper;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
@@ -214,10 +214,10 @@ public class ColonyBorderMapping
 
         private boolean dirty = false;
         private boolean permitted = true;
-        private String colonyName = "";
+        private String                        colonyName      = "";
         private JourneymapOptions.BorderStyle fullscreenStyle = JourneymapOptions.BorderStyle.HIDDEN;
-        private JourneymapOptions.BorderStyle minimapStyle = JourneymapOptions.BorderStyle.HIDDEN;
-        private JourneymapOptions.BorderStyle loadedStyle = JourneymapOptions.BorderStyle.HIDDEN;
+        private JourneymapOptions.BorderStyle minimapStyle    = JourneymapOptions.BorderStyle.HIDDEN;
+        private JourneymapOptions.BorderStyle loadedStyle     = JourneymapOptions.BorderStyle.HIDDEN;
 
         private static final Codec<Set<ChunkPos>> CODEC_SET_CHUNKPOSLONG =
                 Codec.LONG.xmap(ChunkPos::new, ChunkPos::toLong)
@@ -282,8 +282,7 @@ public class ColonyBorderMapping
                     .setScale(2f)
                     .setFontShadow(true);
 
-            this.noText = new TextProperties()
-                    .setActiveUIs(EnumSet.noneOf(Context.UI.class));
+            this.noText = new TextProperties().setActiveUIs();
         }
 
         /** Add or remove chunks from this overlay */
@@ -407,9 +406,9 @@ public class ColonyBorderMapping
                             final ShapeProperties shape = JourneymapOptions.BorderStyle.FILLED.equals(fullscreenStyle)
                                     ? this.fill : this.stroke;
 
-                            final PolygonOverlay overlay = new PolygonOverlay(MOD_ID, String.format("%s_%s", this.name, ++index), this.dimension, shape, polygon);
+                            final PolygonOverlay overlay = new PolygonOverlay(MOD_ID, this.dimension, shape, polygon);
                             overlay.setOverlayGroupName(this.name)
-                                    .setActiveUIs(EnumSet.of(Context.UI.Fullscreen, Context.UI.Webmap))
+                                    .setActiveUIs(Context.UI.Fullscreen, Context.UI.Webmap)
                                     .setTextProperties(this.text)
                                     .setLabel(this.colonyName);
                             this.overlays.add(overlay);
@@ -422,9 +421,9 @@ public class ColonyBorderMapping
                             final ShapeProperties shape = JourneymapOptions.BorderStyle.FILLED.equals(minimapStyle)
                                     ? this.fill : this.stroke;
 
-                            final PolygonOverlay mini = new PolygonOverlay(MOD_ID, String.format("%s_%s", this.name, ++index), this.dimension, shape, polygon);
+                            final PolygonOverlay mini = new PolygonOverlay(MOD_ID, this.dimension, shape, polygon);
                             mini.setOverlayGroupName(this.name)
-                                    .setActiveUIs(EnumSet.of(Context.UI.Minimap))
+                                    .setActiveUIs(Context.UI.Minimap)
                                     .setTextProperties(this.noText);
                             this.overlays.add(mini);
                             jmap.show(mini);
@@ -447,9 +446,9 @@ public class ColonyBorderMapping
                             final ShapeProperties shape = JourneymapOptions.BorderStyle.FILLED.equals(loadedStyle)
                                 ? this.loadedFill : this.loadedStroke;
 
-                            final PolygonOverlay overlay = new PolygonOverlay(MOD_ID, String.format("L_%s_%s", this.name, ++index), this.dimension, shape, polygon);
+                            final PolygonOverlay overlay = new PolygonOverlay(MOD_ID, this.dimension, shape, polygon);
                             overlay.setOverlayGroupName(this.name)
-                                .setActiveUIs(EnumSet.of(Context.UI.Fullscreen, Context.UI.Webmap))
+                                .setActiveUIs(Context.UI.Fullscreen, Context.UI.Webmap)
                                 .setTextProperties(this.text);
                             if (JourneymapOptions.BorderStyle.HIDDEN.equals(fullscreenStyle))
                             {
