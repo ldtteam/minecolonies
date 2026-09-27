@@ -10,9 +10,6 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
-import java.util.HashSet;
-import java.util.Set;
-
 /**
  * Message to sync the reached positions over to the client for rendering.
  */
@@ -21,30 +18,30 @@ public class SyncPathReachedMessage extends AbstractClientPlayMessage
     public static final PlayMessageType<?> TYPE = PlayMessageType.forClient(Constants.MOD_ID, "sync_path_reached", SyncPathReachedMessage::new);
 
     /**
-     * Set of reached positions.
+     * Reached position.
      */
-    public final Set<BlockPos> reached;
+    public BlockPos reached = null;
 
     /**
      * Create the message to send a set of positions over to the client side.
      *
      */
-    public SyncPathReachedMessage(final Set<BlockPos> reached)
+    public SyncPathReachedMessage(final BlockPos reached)
     {
         super(TYPE);
-        this.reached = new HashSet<>(reached);
+        this.reached = reached;
     }
 
     @Override
     protected void toBytes(final RegistryFriendlyByteBuf buf)
     {
-        buf.writeCollection(reached, RegistryFriendlyByteBuf::writeBlockPos);
+        buf.writeBlockPos(reached);
     }
 
     protected SyncPathReachedMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
     {
         super(buf, type);
-        reached = buf.readCollection(HashSet::new, RegistryFriendlyByteBuf::readBlockPos);
+        reached = (buf.readBlockPos());
     }
 
     @Override
@@ -52,12 +49,9 @@ public class SyncPathReachedMessage extends AbstractClientPlayMessage
     {
         for (final MNode node : PathfindingDebugRenderer.lastDebugNodesPath)
         {
-            for (final BlockPos reachedPos : reached)
+            if (reached.getX() == node.x && reached.getY() == node.y && reached.getZ() == node.z)
             {
-                if (reachedPos.getX() == node.x && reachedPos.getY() == node.y && reachedPos.getZ() == node.z)
-                {
-                    node.setReachedByWorker(true);
-                }
+                node.setReachedByWorker(true);
             }
         }
     }

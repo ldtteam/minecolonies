@@ -515,6 +515,10 @@ public class BuildingModules
       new BuildingEntry.ModuleProducer<>("tavern_living", TavernLivingBuildingModule::new, () -> LivingBuildingModuleView::new);
     public static final BuildingEntry.ModuleProducer<TavernBuildingModule, IBuildingModuleView>       TAVERN_VISITOR =
       new BuildingEntry.ModuleProducer<>("tavern_visitor", TavernBuildingModule::new, null);
+    public static final BuildingEntry.ModuleProducer<SettingsModule, SettingsModuleView> TAVERN_SETTINGS =
+      new BuildingEntry.ModuleProducer<>("tavern_settings", () -> new SettingsModule()
+        .with(TavernBuildingModule.PLAYMUSIC, new BoolSetting(true)),
+        () -> SettingsModuleView::new);
 
     public static final BuildingEntry.ModuleProducer<SettingsModule,SettingsModuleView> TOWNHALL_SETTINGS  =
       new BuildingEntry.ModuleProducer<>("townhall_settings", () -> new SettingsModule()

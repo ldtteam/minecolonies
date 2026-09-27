@@ -206,15 +206,26 @@ public class EntityAIEatTask implements IStateAI
             return EAT;
         }
 
-        final ICitizenFoodHandler foodHandler = citizenData.getCitizenFoodHandler();
-        if (eatenFood.isEmpty() && restaurant != null)
-        {
-            foodHandler.addLastEaten(foodStack.getItem());
-        }
-        eatenFood.add(foodStack.getItem());
-
         ItemStackUtils.consumeFood(foodStack, citizen, null);
         citizen.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
+        final ICitizenFoodHandler foodHandler = citizenData.getCitizenFoodHandler();
+
+        if (restaurant == null)
+        {
+            // Allow citizens to eat leftovers in their hut/apples/etc with less guilt!
+            if (foodHandler.getLastEaten() != foodStack.getItem() || MathUtils.RANDOM.nextInt(10) == 0)
+            {
+                foodHandler.addLastEaten(foodStack.getItem());
+            }
+        }
+        else
+        {
+            if (eatenFood.isEmpty())
+            {
+                foodHandler.addLastEaten(foodStack.getItem());
+            }
+            eatenFood.add(foodStack.getItem());
+        }
 
         if (citizenData.getSaturation() < FULL_SATURATION && !citizenData.getInventory().getStackInSlot(foodSlot).isEmpty())
         {
