@@ -133,3 +133,7 @@ file="META-INF/accesstransformer.cfg"
     modId="mctier_engine"
     type="discouraged"
     reason="Usage of mixins repeatedly breaks compatibility with Minecolonies, for support, removal of this mod is required"
+[[dependencies.minecolonies]]
+    modId="colonyautopilot"
+    type="discouraged"
+    reason="Usage of mixins repeatedly breaks compatibility with Minecolonies, for support, removal of this mod is required"
