@@ -1,4 +1,4 @@
-package com.minecolonies.core.compatibility.journeymap;
+package com.minecolonies.core.compatibility.journeymap.v5;
 
 import journeymap.client.api.option.*;
 import net.minecraft.ChatFormatting;
