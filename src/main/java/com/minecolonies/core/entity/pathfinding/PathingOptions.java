@@ -1,6 +1,7 @@
 package com.minecolonies.core.entity.pathfinding;
 
-import java.util.function.Predicate;
+import java.util.HashSet;
+import java.util.Set;
 
 import net.minecraft.world.level.block.state.BlockState;
 
@@ -116,8 +117,25 @@ public class PathingOptions
     /**
      * Whether to path through dangerous blocks.
      */
-    private boolean canPassDanger = false;
-    private Predicate<BlockState> passDangerPredicate = state -> false;
+    private DangerMode dangerMode = DangerMode.DEFAULT;
+
+    /**
+     * What blocks are considered dangerous, when the danger mode is 'NUANCE'
+     */
+    private final Set<BlockState> dangerousBlocks = new HashSet<>();
+
+    /**
+     * DEFAULT - standard blocks are treated as dangerous and avoided.
+     * NONE - all blocks are considered safe.
+     * NUANCE - a set of dangerous blocks should be provided to the pathing options and used to determine danger.
+     * DangerMode
+     */
+    public enum DangerMode
+    {
+        DEFAULT,
+        NONE,
+        NUANCE;
+    }
 
     /**
      * Whether the entity can walk underwater.
@@ -216,35 +234,71 @@ public class PathingOptions
         this.enterGates = enterGates;
     }
 
-    public void setPassDanger(final boolean danger)
+    public void setDangerMode(final DangerMode dangerMode)
     {
-        this.canPassDanger = danger;
+        this.dangerMode = dangerMode;
     }
 
-    public boolean canPassDanger()
+    /**
+     * For 'NUANCE' danger mode, indicate what blocks are considered dangerous.
+     * @param specifyDangerousBlocks Set of dangerous blocks.
+     */
+    public void setDangerousBlocks(final Set<BlockState> specifyDangerousBlocks)
     {
-        return canPassDanger;
+        this.dangerousBlocks.clear();
+
+        if (specifyDangerousBlocks != null)
+        {
+            this.dangerousBlocks.addAll(specifyDangerousBlocks);
+        }
+    }
+
+    /**
+     * Is this the current danger mode?
+     * @param dangerMode Danger mode to test against.
+     * @return
+     */
+    public boolean isDangerMode(final DangerMode dangerMode)
+    {
+        return (this.dangerMode.equals(dangerMode));
     }
 
     /**
      * Given a block state, can the pathfinding pass through this state-specific danger?
-     * @param state block state to test
+     * @param block block state to test
      * @return true if passable
      */
-    public boolean canPassDanger(final BlockState state)
+    public boolean canPassDanger(final BlockState block)
     {
-        return canPassDanger() || passDangerPredicate.test(state);
+        return !isDangerousToPath(block);
     }
 
     /**
-     * Establish a block state predicate that allows dangerous passage.
-     * @param predicate Allowed state
+     * Is the block in question dangerous given these path options?
+     * @param block 
+     * @return
+     */
+    public boolean isDangerousToPath(final BlockState block)
+    {
+        if (dangerMode == DangerMode.NONE) return false;
+
+        if (dangerMode == DangerMode.DEFAULT) return PathfindingUtils.isDangerous(block);
+
+        return dangerousBlocks.contains(block);
+    }
+
+    /**
+     * Establish what danger mode is used.
+     * @param mode Mode for treating dangerous blocks
+     * @param specifyDangerousBlocks Where mode is 'NUANCE', specify blocks that constitute danger.
      * @return this
      */
-    public PathingOptions withPassDangerPredicate(
-        final Predicate<BlockState> predicate)
+    public PathingOptions withDangerMode(
+        final DangerMode mode, Set<BlockState> specifyDangerousBlocks)
     {
-        this.passDangerPredicate = predicate;
+        this.dangerMode = mode;
+        setDangerousBlocks(specifyDangerousBlocks);
+
         return this;
     }
 
@@ -413,8 +467,9 @@ public class PathingOptions
         enterGates = pathingOptions.enterGates;
         canOpenDoors = pathingOptions.canOpenDoors;
         canClimbAdvanced = pathingOptions.canClimbAdvanced;
-        canPassDanger = pathingOptions.canPassDanger;
-        passDangerPredicate = pathingOptions.passDangerPredicate;
+        dangerMode = pathingOptions.dangerMode;
+        dangerousBlocks.clear();
+        dangerousBlocks.addAll(pathingOptions.dangerousBlocks);
         randomnessFactor = pathingOptions.randomnessFactor;
         walkUnderWater = pathingOptions.walkUnderWater;
         canDrop = pathingOptions.canDrop;

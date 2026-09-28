@@ -14,6 +14,7 @@ import com.minecolonies.api.entity.pathfinding.registry.IPathNavigateRegistry;
 import com.minecolonies.api.sounds.RaiderSounds;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.MathUtils;
+import com.minecolonies.core.entity.pathfinding.PathingOptions.DangerMode;
 import com.minecolonies.core.entity.pathfinding.navigation.AbstractAdvancedPathNavigate;
 import com.minecolonies.core.entity.pathfinding.navigation.PathingStuckHandler;
 import net.minecraft.core.BlockPos;
@@ -183,7 +184,7 @@ public abstract class AbstractEntityMinecoloniesMonster extends AbstractFastMine
             newNavigator.getPathingOptions().setCanOpenDoors(true);
             newNavigator.getPathingOptions().withDropCost(1D);
             newNavigator.getPathingOptions().withJumpCost(1D);
-            newNavigator.getPathingOptions().setPassDanger(true);
+            newNavigator.getPathingOptions().setDangerMode(DangerMode.NONE);
             PathingStuckHandler stuckHandler = PathingStuckHandler.createStuckHandler();
 
             if (MinecoloniesAPIProxy.getInstance().getConfig().getServer().raidersbreakblocks.get())

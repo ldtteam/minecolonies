@@ -4,6 +4,7 @@ import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesRaider;
 import com.minecolonies.api.entity.mobs.RaiderType;
 import com.minecolonies.api.entity.pathfinding.registry.IPathNavigateRegistry;
+import com.minecolonies.core.entity.pathfinding.PathingOptions.DangerMode;
 import com.minecolonies.core.entity.pathfinding.navigation.AbstractAdvancedPathNavigate;
 import com.minecolonies.core.entity.pathfinding.navigation.PathingStuckHandler;
 import net.minecraft.sounds.SoundEvents;
@@ -79,7 +80,7 @@ public abstract class AbstractDrownedEntityPirateRaider extends AbstractEntityMi
             this.navigation = newNavigator;
             newNavigator.setSwimSpeedFactor(getSwimSpeedFactor());
             newNavigator.setSpeedModifier(0.5);
-            newNavigator.getPathingOptions().withStartSwimCost(0.0D).withSwimCost(0.0D).withDivingCost(0.0D).withCanEnterDoors(true).withCanEnterGates(true).withDropCost(0.0D).withJumpCost(0.0D).withWalkUnderWater(true).withNonLadderClimbableCost(0.0D).setPassDanger(true);
+            newNavigator.getPathingOptions().withStartSwimCost(0.0D).withSwimCost(0.0D).withDivingCost(0.0D).withCanEnterDoors(true).withCanEnterGates(true).withDropCost(0.0D).withJumpCost(0.0D).withWalkUnderWater(true).withNonLadderClimbableCost(0.0D).setDangerMode(DangerMode.NONE);
             PathingStuckHandler stuckHandler = PathingStuckHandler.createStuckHandler()
                                                  .withTakeDamageOnStuck(0.4f)
                                                  .withBuildLeafBridges()
