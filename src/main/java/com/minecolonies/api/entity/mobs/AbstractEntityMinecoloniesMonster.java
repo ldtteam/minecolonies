@@ -184,7 +184,7 @@ public abstract class AbstractEntityMinecoloniesMonster extends AbstractFastMine
             newNavigator.getPathingOptions().setCanOpenDoors(true);
             newNavigator.getPathingOptions().withDropCost(1D);
             newNavigator.getPathingOptions().withJumpCost(1D);
-            newNavigator.getPathingOptions().setDangerMode(DangerMode.NONE);
+            newNavigator.getPathingOptions().setDangerMode(DangerMode.LAVA_ONLY);
             PathingStuckHandler stuckHandler = PathingStuckHandler.createStuckHandler();
 
             if (MinecoloniesAPIProxy.getInstance().getConfig().getServer().raidersbreakblocks.get())

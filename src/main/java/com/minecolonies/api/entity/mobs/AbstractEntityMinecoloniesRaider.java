@@ -181,7 +181,7 @@ public abstract class AbstractEntityMinecoloniesRaider extends AbstractEntityMin
             newNavigator.getPathingOptions().setEnterDoors(true);
             newNavigator.getPathingOptions().withDropCost(1D);
             newNavigator.getPathingOptions().withJumpCost(1D);
-            newNavigator.getPathingOptions().setDangerMode(DangerMode.NONE);
+            newNavigator.getPathingOptions().setDangerMode(DangerMode.LAVA_ONLY);
             PathingStuckHandler stuckHandler = PathingStuckHandler.createStuckHandler()
                 .withTakeDamageOnStuck(0.4f)
                 .withBuildLeafBridges()

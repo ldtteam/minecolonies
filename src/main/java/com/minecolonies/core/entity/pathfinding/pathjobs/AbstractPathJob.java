@@ -1471,6 +1471,11 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
                     return true;
                 }
 
+                if (PathfindingUtils.isLavaState(block))
+                {
+                    return pathingOptions.canPassDanger(block);
+                }
+
                 if (ShapeUtil.isEmpty(shape) || ShapeUtil.max(shape, Direction.Axis.Y) <= 0.1
                     && !PathfindingUtils.isLiquid((block)) && (block.getBlock() != Blocks.SNOW || block.getValue(SnowLayerBlock.LAYERS) == 1))
                 {

@@ -126,6 +126,7 @@ public class PathingOptions
 
     /**
      * DEFAULT - standard blocks are treated as dangerous and avoided.
+     * LAVA_ONLY - only lava blocks are treated as dangerous (compatible with previous "canPassDanger = true")
      * NONE - all blocks are considered safe.
      * NUANCE - a set of dangerous blocks should be provided to the pathing options and used to determine danger.
      * DangerMode
@@ -133,6 +134,7 @@ public class PathingOptions
     public enum DangerMode
     {
         DEFAULT,
+        LAVA_ONLY,
         NONE,
         NUANCE;
     }
@@ -281,6 +283,8 @@ public class PathingOptions
     public boolean isDangerousToPath(final BlockState block)
     {
         if (dangerMode == DangerMode.NONE) return false;
+
+        if (dangerMode == DangerMode.LAVA_ONLY) return PathfindingUtils.isLavaState(block);
 
         if (dangerMode == DangerMode.DEFAULT) return PathfindingUtils.isDangerous(block);
 

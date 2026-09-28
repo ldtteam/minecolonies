@@ -47,7 +47,7 @@ public enum SurfaceType
      * @param world world used for collision-shape evaluation
      * @param blockState state being evaluated
      * @param pos position of the state
-     * @param pathingOptions applicable pathing options, or null for default behavior
+     * @param pathingOptions applicable pathing options
      * @param dropIfEmpty whether an allowed dangerous state with no collision should be considered dropable
      * @return an immediate surface type, or null when normal evaluation should continue
      */
@@ -60,16 +60,25 @@ public enum SurfaceType
             {
                 return SurfaceType.NOT_PASSABLE;
             }
+
+            return null;
         }
-        else if (pathingOptions.isDangerousToPath(blockState))
+
+        if (pathingOptions.isDangerousToPath(blockState))
         {
             return SurfaceType.NOT_PASSABLE;
         }
-        else if (!pathingOptions.isDangerMode(DangerMode.DEFAULT) && PathfindingUtils.isDangerous(blockState))
-        {
-            boolean isEmpty = ShapeUtil.isEmpty(blockState.getCollisionShape(world, pos));
 
-            if (dropIfEmpty && isEmpty)
+        // If lava isn't dangerous, we can walk on it...
+        if (PathfindingUtils.isLavaState(blockState))
+        {
+            return SurfaceType.WALKABLE;
+        }
+
+        // Normally dangerous, but potentially allowable due to pathing options.
+        if (!pathingOptions.isDangerMode(DangerMode.DEFAULT) && PathfindingUtils.isDangerous(blockState))
+        {
+            if (dropIfEmpty && ShapeUtil.isEmpty(blockState.getCollisionShape(world, pos)))
             {
                 return SurfaceType.DROPABLE;
             }
@@ -141,11 +150,6 @@ public enum SurfaceType
         if (PathfindingUtils.isWater(world, pos, blockState, fluid))
         {
             return SurfaceType.WALKABLE;
-        }
-
-        if (PathfindingUtils.isLava(world, pos, blockState, fluid))
-        {
-            return SurfaceType.NOT_PASSABLE;
         }
 
         if (block instanceof AbstractBlockMinecoloniesConstructionTape || block instanceof SignBlock || block instanceof VineBlock)
