@@ -7,7 +7,7 @@ project.ext.customChangelogHeader = "\n" +
         "\n" +
         "### Optional Dependencies\n" +
         "- JEI: ${project.jei_version} (or above)\n" +
-        "- Journeymap: ${project.jmapVersion} (or above)\n"
+        "- Journeymap: ${project.jmapVersionRangeText}\n"
 
 if (project.hasProperty("dynamicTreesVersion")) {
     project.ext.customChangelogHeader += "- Dynamic Trees: ${project.dynamicTreesVersion} (or above)\n"
