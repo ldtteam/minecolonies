@@ -1,0 +1,12 @@
+{
+  "texture": "8ade3cbb-7552-496f-8783-3655bd94c93b",
+  "citizensuffix": "_w",
+  "name": "Akhula of Akhea",
+  "chance": 0.901,
+  "storylangkey": "com.minecolonies.coremod.gui.chat.shiny",
+  "recruitcost": "minecraft:tropical_fish",
+  "recruitcostcount": 10,
+  "gender": "male",
+  "primaryskill": "Adaptability",
+  "secondaryskill": "Stamina"
+}

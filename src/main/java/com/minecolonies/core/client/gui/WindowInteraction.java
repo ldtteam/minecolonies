@@ -102,7 +102,7 @@ public class WindowInteraction extends AbstractWindowSkeleton
         handler.onOpened(Minecraft.getInstance().player);
         final Box group = findPaneOfTypeByID(RESPONSE_BOX_ID, Box.class);
         group.getChildren().clear();
-        int y = 0;
+        int y = BUTTON_HEIGHT;
         int x = 0;
         final Text chatText = findPaneOfTypeByID(CHAT_LABEL_ID, Text.class);
         chatText.setTextAlignment(Alignment.TOP_LEFT);
@@ -118,7 +118,7 @@ public class WindowInteraction extends AbstractWindowSkeleton
             int buttonHeight = BUTTON_HEIGHT;
             if (textLen > BUTTON_LENGTH - 4)
             {
-                buttonHeight = 2 * BUTTON_HEIGHT;
+                buttonHeight = (int) (1.5 * BUTTON_HEIGHT);
             }
 
             button.setSize(BUTTON_LENGTH, buttonHeight);
@@ -137,7 +137,7 @@ public class WindowInteraction extends AbstractWindowSkeleton
             if (x + button.getWidth() >= group.getWidth())
             {
                 x = 0;
-                y += BUTTON_Y_BUFFER + 2 * BUTTON_HEIGHT;
+                y += BUTTON_Y_BUFFER + BUTTON_HEIGHT;
             }
             responseIndex++;
         }
