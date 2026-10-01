@@ -749,7 +749,8 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
             return;
         }
 
-        final int structureRotation = structureState.getValue(AbstractBlockHut.FACING).get2DDataValue();
+        final Mirror mirror = rotationMirror == null ? Mirror.NONE : rotationMirror.mirror();
+        final int structureRotation = mirror.mirror(structureState.getValue(AbstractBlockHut.FACING)).get2DDataValue();
         final int worldRotation = level.getBlockState(this.getPosition()).getValue(AbstractBlockHut.FACING).get2DDataValue();
 
         final int rotation;
@@ -762,7 +763,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
             rotation = 4 + worldRotation - structureRotation;
         }
 
-        rotationMirror = RotationMirror.of(Rotation.values()[rotation], rotationMirror == null ? Mirror.NONE : rotationMirror.mirror());
+        rotationMirror = RotationMirror.of(Rotation.values()[rotation], mirror);
         blueprint.setRotationMirror(rotationMirror, level);
     }
 
