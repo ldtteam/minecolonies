@@ -99,11 +99,10 @@ public class RecruitmentInteraction extends ServerCitizenInteraction
         final ButtonImage recruitButton = window.findPaneOfTypeByID(BUTTON_RESPONSE_ID + 2, ButtonImage.class);
         final Box group = window.findPaneOfTypeByID(RESPONSE_BOX_ID, Box.class);
 
-
         if (recruitButton != null && dataView instanceof IVisitorViewData visitorViewData)
         {
             final ItemStack recruitCost = visitorViewData.getRecruitCost();
-            final IColonyView colony = (IColonyView) dataView.getColony();
+            final IColonyView colony = dataView.getColony();
 
             window.findPaneOfTypeByID(CHAT_LABEL_ID, Text.class).setText(PaneBuilders.textBuilder()
                 .append(Component.literal(dataView.getName() + ": "))
