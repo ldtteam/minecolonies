@@ -1,18 +1,17 @@
 package com.minecolonies.core.util;
 
-import com.ldtteam.domumornamentum.block.IMateriallyTexturedBlock;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.util.BlockInfo;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.equipment.EquipmentTypeBlockResolver;
 import com.minecolonies.api.equipment.ModEquipmentTypes;
 import com.minecolonies.api.equipment.registry.EquipmentTypeEntry;
 import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.EntityUtils;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
 import com.minecolonies.core.colony.buildings.modules.SettingsModule;
@@ -23,16 +22,11 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.MoverType;
-import net.minecraft.world.item.DiggerItem;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.item.Tier;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.GlazedTerracottaBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.entity.SignBlockEntity;
@@ -40,13 +34,9 @@ import net.minecraft.world.level.block.entity.SignText;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.IForgeShearable;
-import net.minecraftforge.common.TierSortingRegistry;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import static com.minecolonies.api.util.constant.CitizenConstants.MOVE_MINIMAL;
 import static com.minecolonies.api.util.constant.CitizenConstants.ROTATION_MOVEMENT;
@@ -69,32 +59,9 @@ public final class WorkerUtil
      */
     private static final String LEVEL_SIGN_TEXT      = "level_placeholder";
 
-    /**
-     * List of tools to test blocks against, used for finding right tool.
-     */
-    public static List<Tuple<EquipmentTypeEntry, ItemStack>> tools;
-
     private WorkerUtil()
     {
         //Hide default constructor.
-    }
-
-    /**
-     * Gets or initializes the test tool list.
-     *
-     * @return the list of possible tools.
-     */
-    public static List<Tuple<EquipmentTypeEntry, ItemStack>> getOrInitTestTools()
-    {
-        if (tools == null)
-        {
-            tools = new ArrayList<>();
-            tools.add(new Tuple<>(ModEquipmentTypes.hoe.get(), new ItemStack(Items.NETHERITE_HOE)));
-            tools.add(new Tuple<>(ModEquipmentTypes.shovel.get(), new ItemStack(Items.NETHERITE_SHOVEL)));
-            tools.add(new Tuple<>(ModEquipmentTypes.axe.get(), new ItemStack(Items.NETHERITE_AXE)));
-            tools.add(new Tuple<>(ModEquipmentTypes.pickaxe.get(), new ItemStack(Items.NETHERITE_PICKAXE)));
-        }
-        return tools;
     }
 
     /**
@@ -148,23 +115,7 @@ public final class WorkerUtil
 
         if (blockHardness > 0f)
         {
-            for (final Tuple<EquipmentTypeEntry, ItemStack> tool : getOrInitTestTools())
-            {
-                if (tool.getB() != null && tool.getB().getItem() instanceof DiggerItem)
-                {
-                    if (state.getBlock() instanceof IMateriallyTexturedBlock materiallyTexturedBlock)
-                    {
-                        if (materiallyTexturedBlock.isCorrectToolForDrops(state, tool.getB(), level, pos))
-                        {
-                            return tool.getA();
-                        }
-                    }
-                    if (tool.getB().isCorrectToolForDrops(state))
-                    {
-                        return tool.getA();
-                    }
-                }
-            }
+            return EquipmentTypeBlockResolver.getEquipmentTypeForBlock(state, level, pos);
         }
 
         return ModEquipmentTypes.none.get();
@@ -174,27 +125,13 @@ public final class WorkerUtil
      * Get the correct havestlevel for a certain block. We need this because minecraft has a lot of blocks which have strange or no required harvestlevel.
      *
      * @param target the target block.
+     * @param level  the level the block is in.
+     * @param pos    the position of the block.
      * @return the required harvestLevel.
      */
-    public static int getCorrectHarvestLevelForBlock(final BlockState target)
+    public static int getCorrectHarvestLevelForBlock(final BlockState target, final BlockGetter level, final BlockPos pos)
     {
-        int required = 0;
-        final List<Tier> tiers = TierSortingRegistry.getSortedTiers();
-        for (final Tier tier : tiers) {
-            TagKey<Block> tag = tier.getTag();
-            if (tag != null && target.is(tag))
-            {
-                required = tier.getLevel();
-                break;
-            }
-        }
-
-        if (required < 0
-              || target.getBlock() instanceof GlazedTerracottaBlock)
-        {
-            return 0;
-        }
-        return required;
+        return EquipmentTypeBlockResolver.getRequiredEquipmentLevelForBlock(target, level, pos);
     }
 
     /**

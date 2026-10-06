@@ -1,7 +1,6 @@
 package com.minecolonies.api.equipment;
 
 import com.minecolonies.api.IMinecoloniesAPI;
-import com.minecolonies.api.compatibility.Compatibility;
 import com.minecolonies.api.equipment.registry.EquipmentTypeEntry;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.util.ItemStackUtils;
@@ -9,8 +8,13 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.translation.ToolTranslationConstants;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.*;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.common.TierSortingRegistry;
 import net.minecraftforge.common.ToolAction;
 import net.minecraftforge.common.ToolActions;
 import net.minecraftforge.registries.DeferredRegister;
@@ -18,6 +22,7 @@ import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.RegistryObject;
 
 import java.util.Set;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
 
 /**
@@ -55,46 +60,36 @@ public class ModEquipmentTypes
 
         pickaxe = register("pickaxe",
             builder -> builder.setDisplayName(Component.translatable(ToolTranslationConstants.TOOL_TYPE_PICKAXE))
-                .setIsEquipment((itemStack, equipmentType) -> canPerformDefaultActions(itemStack, ToolActions.DEFAULT_PICKAXE_ACTIONS) || Compatibility.isTinkersTool(itemStack,
-                    equipmentType))
+                .setIsEquipment((itemStack, equipmentType) -> canPerformDefaultActions(itemStack, ToolActions.DEFAULT_PICKAXE_ACTIONS))
                 .setEquipmentLevel(ModEquipmentTypes::vanillaToolLevel)
+                .setBlockRequirement(vanillaBlockRequirement(BlockTags.MINEABLE_WITH_PICKAXE))
                 .build());
 
         shovel = register("shovel",
             builder -> builder.setDisplayName(Component.translatable(ToolTranslationConstants.TOOL_TYPE_SHOVEL))
-                .setIsEquipment((itemStack, equipmentType) -> canPerformDefaultActions(itemStack, ToolActions.DEFAULT_SHOVEL_ACTIONS) || Compatibility.isTinkersTool(itemStack,
-                    equipmentType))
+                .setIsEquipment((itemStack, equipmentType) -> canPerformDefaultActions(itemStack, ToolActions.DEFAULT_SHOVEL_ACTIONS))
                 .setEquipmentLevel(ModEquipmentTypes::vanillaToolLevel)
+                .setBlockRequirement(vanillaBlockRequirement(BlockTags.MINEABLE_WITH_SHOVEL))
                 .build());
 
         axe = register("axe",
             builder -> builder.setDisplayName(Component.translatable(ToolTranslationConstants.TOOL_TYPE_AXE))
-                .setIsEquipment((itemStack, equipmentType) -> canPerformDefaultActions(itemStack, ToolActions.DEFAULT_AXE_ACTIONS) || Compatibility.isTinkersTool(itemStack,
-                    equipmentType))
+                .setIsEquipment((itemStack, equipmentType) -> canPerformDefaultActions(itemStack, ToolActions.DEFAULT_AXE_ACTIONS))
                 .setEquipmentLevel(ModEquipmentTypes::vanillaToolLevel)
+                .setBlockRequirement(vanillaBlockRequirement(BlockTags.MINEABLE_WITH_AXE))
                 .build());
 
         hoe = register("hoe",
             builder -> builder.setDisplayName(Component.translatable(ToolTranslationConstants.TOOL_TYPE_HOE))
-                .setIsEquipment((itemStack, equipmentType) -> canPerformDefaultActions(itemStack, ToolActions.DEFAULT_HOE_ACTIONS) || Compatibility.isTinkersTool(itemStack,
-                    equipmentType))
+                .setIsEquipment((itemStack, equipmentType) -> canPerformDefaultActions(itemStack, ToolActions.DEFAULT_HOE_ACTIONS))
                 .setEquipmentLevel(ModEquipmentTypes::vanillaToolLevel)
+                .setBlockRequirement(vanillaBlockRequirement(BlockTags.MINEABLE_WITH_HOE))
                 .build());
 
         sword = register("sword",
             builder -> builder.setDisplayName(Component.translatable(ToolTranslationConstants.TOOL_TYPE_SWORD))
-                .setIsEquipment((itemStack, equipmentType) -> canPerformDefaultActions(itemStack, ToolActions.DEFAULT_SWORD_ACTIONS) || Compatibility.isTinkersWeapon(itemStack))
-                .setEquipmentLevel((itemStack, equipmentType) -> {
-                    if (Compatibility.isTinkersWeapon(itemStack))
-                    {
-                        return Compatibility.getToolLevel(itemStack);
-                    }
-                    else if (itemStack.getItem() instanceof final TieredItem tieredItem)
-                    {
-                        return tieredItem.getTier().getLevel();
-                    }
-                    return -1;
-                })
+                .setIsEquipment((itemStack, equipmentType) -> canPerformDefaultActions(itemStack, ToolActions.DEFAULT_SWORD_ACTIONS))
+                .setEquipmentLevel(ModEquipmentTypes::vanillaToolLevel)
                 .build());
 
         bow = register("bow",
@@ -196,15 +191,38 @@ public class ModEquipmentTypes
      */
     public static int vanillaToolLevel(final ItemStack itemStack, final EquipmentTypeEntry equipmentType)
     {
-        if (Compatibility.isTinkersTool(itemStack, equipmentType))
-        {
-            return Compatibility.getToolLevel(itemStack);
-        }
-        else if (itemStack.getItem() instanceof final TieredItem tieredItem)  // most tools
+        if (itemStack.getItem() instanceof final TieredItem tieredItem)
         {
             return tieredItem.getTier().getLevel();
         }
         return -1;
+    }
+
+    /**
+     * Build a block-requirement function for a vanilla digger-style equipment type: correct for blocks in
+     * the given mineable tag, with the required level being the lowest registered tier whose tag-ordering
+     * allows harvesting the block.
+     *
+     * @param mineableTag the tag of blocks this equipment type can be used on.
+     * @return the block-requirement function.
+     */
+    private static BiFunction<BlockState, EquipmentTypeEntry, Integer> vanillaBlockRequirement(final TagKey<Block> mineableTag)
+    {
+        return (state, equipmentType) -> {
+            if (!state.is(mineableTag))
+            {
+                return null;
+            }
+
+            for (final Tier tier : TierSortingRegistry.getSortedTiers())
+            {
+                if (TierSortingRegistry.isCorrectTierForDrops(tier, state))
+                {
+                    return Math.max(tier.getLevel(), 0);
+                }
+            }
+            return 0;
+        };
     }
 
     /**

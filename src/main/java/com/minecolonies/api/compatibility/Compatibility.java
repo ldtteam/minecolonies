@@ -4,7 +4,7 @@ import com.minecolonies.api.compatibility.dynamictrees.DynamicTreeProxy;
 import com.minecolonies.api.compatibility.resourcefulbees.IBeehiveCompat;
 import com.minecolonies.api.compatibility.tinkers.SlimeTreeProxy;
 import com.minecolonies.api.compatibility.tinkers.TinkersToolProxy;
-import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.equipment.ModEquipmentTypes;
 import com.minecolonies.api.equipment.registry.EquipmentTypeEntry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
@@ -38,9 +38,6 @@ public final class Compatibility
     public static SlimeTreeProxy   tinkersSlimeCompat = new SlimeTreeProxy();
     public static TinkersToolProxy tinkersCompat      = new TinkersToolProxy();
     public static DynamicTreeProxy dynamicTreesCompat = new DynamicTreeProxy();
-
-    private static final Map<ResourceLocation, Map<ItemStorage, Integer>>         customEquipmentTypeLevels    = new HashMap<>();
-    private static final Map<ResourceLocation, List<CustomEquipmentTypeFunction>> customEquipmentTypeFunctions = new HashMap<>();
 
     /**
      * This method checks if block is slime block.
@@ -283,34 +280,6 @@ public final class Compatibility
     }
 
     /**
-     * Get a custom equipment level for the given equipment type and item stack.
-     *
-     * @param equipmentType the equipment type to look up.
-     * @param stack         the item stack to check.
-     * @return the registered level, or null if no custom level exists for this combination.
-     */
-    @Nullable
-    public static Integer getCustomEquipmentLevel(final ResourceLocation equipmentType, final ItemStack stack)
-    {
-        final Integer customLevel = customEquipmentTypeLevels.getOrDefault(equipmentType, Collections.emptyMap()).get(new ItemStorage(stack));
-        if (customLevel != null)
-        {
-            return customLevel;
-        }
-
-        for (final CustomEquipmentTypeFunction function : customEquipmentTypeFunctions.getOrDefault(equipmentType, Collections.emptyList()))
-        {
-            final Integer functionCustomLevel = function.getLevel(stack);
-            if (functionCustomLevel != null)
-            {
-                return functionCustomLevel;
-            }
-        }
-
-        return null;
-    }
-
-    /**
      * Register a specific item with a fixed equipment level for the given equipment type.
      * Always overwrites any existing entry — intended for mod compat hooks.
      *
@@ -321,14 +290,11 @@ public final class Compatibility
     @SuppressWarnings("unused") // Mod compat API
     public static void registerCustomEquipmentLevel(@NotNull final ResourceLocation equipmentType, @NotNull final Item item, final int level)
     {
-        customEquipmentTypeLevels.compute(equipmentType, (key, value) -> {
-            if (value == null)
-            {
-                value = new HashMap<>();
-            }
-            value.put(new ItemStorage(new ItemStack(item)), level);
-            return value;
-        });
+        final EquipmentTypeEntry entry = ModEquipmentTypes.getRegistry().getValue(equipmentType);
+        if (entry != null)
+        {
+            entry.registerCustomLevelFunction(item, level);
+        }
     }
 
     /**
@@ -342,14 +308,11 @@ public final class Compatibility
     @SuppressWarnings("unused") // Mod compat API
     public static void registerCustomEquipmentLevel(@NotNull final ResourceLocation equipmentType, @NotNull final CustomEquipmentTypeFunction function)
     {
-        customEquipmentTypeFunctions.compute(equipmentType, (key, value) -> {
-            if (value == null)
-            {
-                value = new ArrayList<>();
-            }
-            value.add(function);
-            return value;
-        });
+        final EquipmentTypeEntry entry = ModEquipmentTypes.getRegistry().getValue(equipmentType);
+        if (entry != null)
+        {
+            entry.registerCustomLevelFunction(function::getLevel);
+        }
     }
 
     /**

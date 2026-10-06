@@ -1370,7 +1370,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
     private void requestTool(@NotNull final BlockState target, final BlockPos pos)
     {
         final EquipmentTypeEntry toolType = WorkerUtil.getBestToolForBlock(target, target.getDestroySpeed(world, pos), building, world, pos);
-        final int required = WorkerUtil.getCorrectHarvestLevelForBlock(target);
+        final int required = WorkerUtil.getCorrectHarvestLevelForBlock(target, world, pos);
         if (building.getMaxEquipmentLevel() < required && worker.getCitizenData() != null)
         {
             worker.getCitizenData().triggerInteraction(new PosBasedInteraction(
@@ -1414,7 +1414,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
     protected int getMostEfficientTool(@NotNull final BlockState target, final BlockPos pos)
     {
         final EquipmentTypeEntry toolType = WorkerUtil.getBestToolForBlock(target, target.getDestroySpeed(world, pos), building, world, pos);
-        final int required = WorkerUtil.getCorrectHarvestLevelForBlock(target);
+        final int required = WorkerUtil.getCorrectHarvestLevelForBlock(target, world, pos);
 
         if (toolType == ModEquipmentTypes.none.get())
         {
