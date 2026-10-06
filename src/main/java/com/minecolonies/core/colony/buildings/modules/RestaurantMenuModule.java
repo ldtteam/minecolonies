@@ -163,7 +163,7 @@ public class RestaurantMenuModule extends AbstractBuildingModule implements IPer
                     }
                     else if (!rawStack.isEmpty()
                         && rawRequest == null
-                        && colony.getRequestManager().getRequestForToken(request).getState().ordinal() < RequestState.IN_PROGRESS.ordinal())
+                        && colony.getRequestManager().getRequestForToken(request).getState().ordinal() <= RequestState.IN_PROGRESS.ordinal())
                     {
                         final MinimumStack stack = new MinimumStack(rawStack, false, true, ItemStackUtils.EMPTY, qty, 1);
 
