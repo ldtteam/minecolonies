@@ -1,7 +1,6 @@
 package com.minecolonies.core.colony.buildings.workerbuildings.plantation.modules.specific;
 
 import com.minecolonies.api.colony.buildingextensions.IBuildingExtension;
-import com.minecolonies.api.equipment.ModEquipmentTypes;
 import com.minecolonies.api.equipment.registry.EquipmentTypeEntry;
 import com.minecolonies.core.colony.buildings.workerbuildings.plantation.modules.generic.DownwardsGrowingPlantModule;
 import net.minecraft.resources.ResourceLocation;
@@ -72,8 +71,9 @@ public class WeepingVinesPlantModule extends DownwardsGrowingPlantModule
     }
 
     @Override
+    @Nullable
     public EquipmentTypeEntry getRequiredTool()
     {
-        return ModEquipmentTypes.none.get();
+        return null;
     }
 }

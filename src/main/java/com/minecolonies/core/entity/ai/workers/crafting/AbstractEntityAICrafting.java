@@ -14,7 +14,6 @@ import com.minecolonies.api.crafting.RecipeStorage;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
-import com.minecolonies.api.equipment.ModEquipmentTypes;
 import com.minecolonies.api.util.*;
 import com.minecolonies.core.Network;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
@@ -352,7 +351,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
             return INVENTORY_FULL;
         }
 
-        if (currentRecipeStorage.getRequiredTool() != ModEquipmentTypes.none.get())
+        if (currentRecipeStorage.getRequiredTool() != null)
         {
             if (checkForToolOrWeapon(currentRecipeStorage.getRequiredTool()))
             {
@@ -528,7 +527,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
         job.setProgress(job.getProgress() + 1);
 
         int toolSlot = -1;
-        if (currentRecipeStorage.getRequiredTool() != ModEquipmentTypes.none.get())
+        if (currentRecipeStorage.getRequiredTool() != null)
         {
             toolSlot = InventoryUtils.findFirstSlotInItemHandlerWith(worker.getInventoryCitizen(), stack -> currentRecipeStorage.getRequiredTool().checkIsEquipment(stack));
         }

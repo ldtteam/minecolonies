@@ -10,8 +10,10 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jetbrains.annotations.Nullable;
 
 import java.time.Duration;
+import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -21,9 +23,10 @@ import java.util.concurrent.ExecutionException;
 public final class EquipmentTypeBlockResolver
 {
     /**
-     * Cache of the resolved block requirement for a given block state.
+     * Cache of the resolved block requirement for a given block state. Empty when no registered equipment
+     * type is correct for the block.
      */
-    private static final LoadingCache<BlockState, BlockRequirement> REQUIREMENT_CACHE = CacheBuilder.newBuilder()
+    private static final LoadingCache<BlockState, Optional<BlockRequirement>> REQUIREMENT_CACHE = CacheBuilder.newBuilder()
         .expireAfterAccess(Duration.ofMinutes(10))
         .build(CacheLoader.from(EquipmentTypeBlockResolver::resolveRequirement));
 
@@ -40,11 +43,12 @@ public final class EquipmentTypeBlockResolver
      * @param level the level the block is in, used to resolve addon blocks whose correct tool depends on
      *              more than just the block state (e.g. Domum Ornamentum's materially-textured blocks).
      * @param pos   the position of the block.
-     * @return the equipment type to use, or {@link ModEquipmentTypes#none} if none is correct for this block.
+     * @return the equipment type to use, or null if no registered equipment type is correct for this block.
      */
+    @Nullable
     public static EquipmentTypeEntry getEquipmentTypeForBlock(final BlockState state, final BlockGetter level, final BlockPos pos)
     {
-        return getUnchecked(resolveMaterialState(state, level, pos)).equipmentType();
+        return getUnchecked(resolveMaterialState(state, level, pos)).map(BlockRequirement::equipmentType).orElse(null);
     }
 
     /**
@@ -54,14 +58,14 @@ public final class EquipmentTypeBlockResolver
      * @param state the block state to resolve the required level for.
      * @param level the level the block is in, see {@link #getEquipmentTypeForBlock(BlockState, BlockGetter, BlockPos)}.
      * @param pos   the position of the block.
-     * @return the required equipment level.
+     * @return the required equipment level, or -1 if no registered equipment type is correct for this block.
      */
     public static int getRequiredEquipmentLevelForBlock(final BlockState state, final BlockGetter level, final BlockPos pos)
     {
-        return getUnchecked(resolveMaterialState(state, level, pos)).requiredLevel();
+        return getUnchecked(resolveMaterialState(state, level, pos)).map(BlockRequirement::requiredLevel).orElse(-1);
     }
 
-    private static BlockRequirement getUnchecked(final BlockState state)
+    private static Optional<BlockRequirement> getUnchecked(final BlockState state)
     {
         try
         {
@@ -73,16 +77,16 @@ public final class EquipmentTypeBlockResolver
         }
     }
 
-    private static BlockRequirement resolveRequirement(final BlockState state)
+    private static Optional<BlockRequirement> resolveRequirement(final BlockState state)
     {
         for (final EquipmentTypeEntry equipmentType : ModEquipmentTypes.getRegistry())
         {
             if (equipmentType.isCorrectForBlock(state))
             {
-                return new BlockRequirement(equipmentType, equipmentType.getRequiredLevelForBlock(state));
+                return Optional.of(new BlockRequirement(equipmentType, equipmentType.getRequiredLevelForBlock(state)));
             }
         }
-        return new BlockRequirement(ModEquipmentTypes.none.get(), 0);
+        return Optional.empty();
     }
 
     /**

@@ -2,7 +2,6 @@ package com.minecolonies.api.crafting;
 
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
-import com.minecolonies.api.equipment.ModEquipmentTypes;
 import com.minecolonies.api.equipment.registry.EquipmentTypeEntry;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.OptionalPredicate;
@@ -47,7 +46,7 @@ public class GenericRecipe implements IGenericRecipe
         private int gridSize = 1;
         private Block intermediate = Blocks.AIR;
         private ResourceLocation   lootTable = null;
-        private EquipmentTypeEntry requiredTool = ModEquipmentTypes.none.get();
+        @Nullable private EquipmentTypeEntry requiredTool = null;
         private EntityType<?>      requiredEntity = null;
         private Supplier<List<Component>> restrictions = List::of;
         private int levelSort = -1;
@@ -196,10 +195,10 @@ public class GenericRecipe implements IGenericRecipe
 
         /**
          * Set the tool required to craft this recipe.
-         * @param requiredTool the tool entry.
+         * @param requiredTool the tool entry, or null if no tool is required.
          * @return this
          */
-        public Builder withRequiredTool(@NotNull EquipmentTypeEntry requiredTool)
+        public Builder withRequiredTool(@Nullable EquipmentTypeEntry requiredTool)
         {
             this.requiredTool = requiredTool;
             return this;
@@ -375,7 +374,7 @@ public class GenericRecipe implements IGenericRecipe
     private final int gridSize;
     private final Block intermediate;
     @Nullable private final ResourceLocation   lootTable;
-    private final EquipmentTypeEntry requiredTool;
+    @Nullable private final EquipmentTypeEntry requiredTool;
     @Nullable private final EntityType<?>      requiredEntity;
     private final Supplier<List<Component>> restrictions;
     private final int levelSort;
@@ -472,7 +471,7 @@ public class GenericRecipe implements IGenericRecipe
     @Override
     public ResourceLocation getLootTable() { return this.lootTable; }
 
-    @NotNull
+    @Nullable
     @Override
     public EquipmentTypeEntry getRequiredTool()
     {

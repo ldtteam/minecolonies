@@ -1,12 +1,12 @@
 package com.minecolonies.core.colony.buildings.workerbuildings.plantation.modules.specific;
 
 import com.minecolonies.api.colony.buildingextensions.IBuildingExtension;
-import com.minecolonies.api.equipment.ModEquipmentTypes;
 import com.minecolonies.api.equipment.registry.EquipmentTypeEntry;
 import com.minecolonies.core.colony.buildings.workerbuildings.plantation.modules.generic.BoneMealedPlantModule;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
+import org.jetbrains.annotations.Nullable;
 
 import static com.minecolonies.api.research.util.ResearchConstants.PLANTATION_NETHER;
 
@@ -51,8 +51,9 @@ public class WarpedPlantsPlantModule extends BoneMealedPlantModule
     }
 
     @Override
+    @Nullable
     public EquipmentTypeEntry getRequiredTool()
     {
-        return ModEquipmentTypes.none.get();
+        return null;
     }
 }

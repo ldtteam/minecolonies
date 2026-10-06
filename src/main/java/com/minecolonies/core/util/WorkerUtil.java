@@ -104,8 +104,9 @@ public final class WorkerUtil
      *
      * @param state         the target BlockState.
      * @param blockHardness the hardness.
-     * @return the toolType to use.
+     * @return the toolType to use, or null if no tool is required.
      */
+    @Nullable
     public static EquipmentTypeEntry getBestToolForBlock(final BlockState state, float blockHardness, final AbstractBuilding building, final BlockGetter level, final BlockPos pos)
     {
         if (state.getBlock() instanceof IForgeShearable && building.hasModule(SettingsModule.class) && building.getFirstModuleOccurance(SettingsModule.class).getSettingValueOrDefault(USE_SHEARS, true))
@@ -118,7 +119,7 @@ public final class WorkerUtil
             return EquipmentTypeBlockResolver.getEquipmentTypeForBlock(state, level, pos);
         }
 
-        return ModEquipmentTypes.none.get();
+        return null;
     }
 
     /**
