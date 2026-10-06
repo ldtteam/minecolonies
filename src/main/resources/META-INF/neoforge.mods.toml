@@ -96,3 +96,48 @@ file="META-INF/accesstransformer.cfg"
     versionRange="[${dynamicTreesVersion},)"
     ordering="NONE"
     side="BOTH"
+
+[[dependencies.minecolonies]]
+    modId="minecolonies_compatibility"
+    type="discouraged"
+    reason="Usage of mixins repeatedly breaks compatibility with MineColonies, for support from MineColonies, removal of this mod is required"
+[[dependencies.minecolonies]]
+    modId="minecolonies_tweaks"
+    type="discouraged"
+    reason="Usage of mixins repeatedly breaks compatibility with MineColonies, for support from MineColonies, removal of this mod is required"
+[[dependencies.minecolonies]]
+    modId="easycolony"
+    type="discouraged"
+    reason="Usage of mixins repeatedly breaks compatibility with MineColonies, for support from MineColonies, removal of this mod is required"
+[[dependencies.minecolonies]]
+    modId="colonypathingedition"
+    type="discouraged"
+    reason="Usage of mixins repeatedly breaks compatibility with MineColonies, for support from MineColonies, removal of this mod is required"
+[[dependencies.minecolonies]]
+    modId="minecolonies_qol"
+    type="discouraged"
+    reason="Usage of mixins repeatedly breaks compatibility with MineColonies, for support from MineColonies, removal of this mod is required"
+[[dependencies.minecolonies]]
+    modId="mindofthecolony"
+    type="discouraged"
+    reason="Usage of mixins repeatedly breaks compatibility with MineColonies, for support from MineColonies, removal of this mod is required"
+[[dependencies.minecolonies]]
+    modId="minecoloniestransitnetworks"
+    type="discouraged"
+    reason="Usage of mixins repeatedly breaks compatibility with MineColonies, for support from MineColonies, removal of this mod is required"
+[[dependencies.minecolonies]]
+    modId="minecolonieslive"
+    type="discouraged"
+    reason="Usage of mixins repeatedly breaks compatibility with MineColonies, for support from MineColonies, removal of this mod is required"
+[[dependencies.minecolonies]]
+    modId="mctier_engine"
+    type="discouraged"
+    reason="Usage of mixins repeatedly breaks compatibility with MineColonies, for support from MineColonies, removal of this mod is required"
+[[dependencies.minecolonies]]
+    modId="colonyautopilot"
+    type="incompatible"
+    reason="Usage of mixins repeatedly breaks compatibility with MineColonies, for support from MineColonies, removal of this mod is required"
+[[dependencies.minecolonies]]
+    modId="sable"
+    type="incompatible"
+    reason="Sable extensively rewrites the game through a very heavy use of mixins. Compatibility with sable is thus impossible"
