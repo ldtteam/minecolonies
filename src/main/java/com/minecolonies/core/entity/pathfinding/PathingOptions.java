@@ -73,6 +73,11 @@ public class PathingOptions
     public double divingCost = 4D;
 
     /**
+     * Cost added for going against the blocks inherent direction/facing value
+     */
+    public double badDirectionCost = 5;
+
+    /**
      * Factor multiplied to the small random base cost of values, increases this increases the paths randomness/volatilty. Set to 0 to disable rng.
      */
     public double randomnessFactor = 0.1;
@@ -291,6 +296,12 @@ public class PathingOptions
     public PathingOptions withDivingCost(final double divingCost)
     {
         this.divingCost = divingCost;
+        return this;
+    }
+
+    public PathingOptions withBadDirectionCost(final double badDirectionCost)
+    {
+        this.badDirectionCost = badDirectionCost;
         return this;
     }
 

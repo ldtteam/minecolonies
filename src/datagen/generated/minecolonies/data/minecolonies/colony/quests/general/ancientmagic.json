@@ -1,0 +1,148 @@
+{
+  "max-occurrences": 1,
+  "name": "minecolonies.quests.general.ancientmagic",
+  "objectives": [
+    {
+      "type": "minecolonies:dialogue",
+      "options": [
+        {
+          "answer": "minecolonies.quests.general.ancientmagic.obj0.answer0",
+          "result": {
+            "type": "minecolonies:advanceobjective",
+            "go-to": 1
+          }
+        },
+        {
+          "answer": "minecolonies.quests.general.ancientmagic.obj0.answer1",
+          "result": {
+            "type": "minecolonies:return"
+          }
+        },
+        {
+          "answer": "minecolonies.quests.general.ancientmagic.obj0.answer2",
+          "result": {
+            "type": "minecolonies:cancel"
+          }
+        }
+      ],
+      "target": 0,
+      "text": "minecolonies.quests.general.ancientmagic.obj0"
+    },
+    {
+      "type": "minecolonies:delivery",
+      "details": {
+        "item": "minecolonies:scroll_buff",
+        "next-objective": 2,
+        "qty": 1,
+        "target": 1
+      }
+    },
+    {
+      "type": "minecolonies:dialogue",
+      "options": [
+        {
+          "answer": "minecolonies.quests.general.ancientmagic.obj2.answer0",
+          "result": {
+            "type": "minecolonies:advanceobjective",
+            "go-to": 3
+          }
+        },
+        {
+          "answer": "minecolonies.quests.general.ancientmagic.obj2.answer1",
+          "result": {
+            "type": "minecolonies:dialogue",
+            "options": [
+              {
+                "answer": "minecolonies.quests.general.ancientmagic.obj2.answer1.reply.answer0",
+                "result": {
+                  "type": "minecolonies:advanceobjective",
+                  "go-to": 3
+                }
+              }
+            ],
+            "text": "minecolonies.quests.general.ancientmagic.obj2.answer1.reply"
+          }
+        }
+      ],
+      "target": 1,
+      "text": "minecolonies.quests.general.ancientmagic.obj2",
+      "unlocks-rewards": [
+        0,
+        1,
+        2,
+        3
+      ]
+    }
+  ],
+  "parents": [],
+  "rewards": [
+    {
+      "type": "minecolonies:item",
+      "details": {
+        "item": "minecraft:potion",
+        "nbt": "{Potion:\"minecraft:luck\"}",
+        "qty": 1
+      }
+    },
+    {
+      "type": "minecolonies:item",
+      "details": {
+        "item": "minecraft:potion",
+        "nbt": "{Potion:\"minecraft:luck\"}",
+        "qty": 1
+      }
+    },
+    {
+      "type": "minecolonies:item",
+      "details": {
+        "item": "minecraft:potion",
+        "nbt": "{Potion:\"minecraft:luck\"}",
+        "qty": 1
+      }
+    },
+    {
+      "type": "minecolonies:happiness",
+      "details": {
+        "days": 14,
+        "qty": 2,
+        "target": 1
+      }
+    }
+  ],
+  "triggers": [
+    {
+      "type": "minecolonies:random",
+      "rarity": 2500000
+    },
+    {
+      "type": "minecolonies:state",
+      "state": {
+        "match": {
+          "type": "minecolonies:hospital",
+          "level": 1
+        },
+        "path": "buildingManager/buildings"
+      }
+    },
+    {
+      "type": "minecolonies:citizen",
+      "state": {
+        "match": {
+          "job": {
+            "type": "minecolonies:enchanter"
+          }
+        }
+      }
+    },
+    {
+      "type": "minecolonies:citizen",
+      "state": {
+        "match": {
+          "job": {
+            "type": "minecolonies:healer"
+          }
+        }
+      }
+    }
+  ]
+}

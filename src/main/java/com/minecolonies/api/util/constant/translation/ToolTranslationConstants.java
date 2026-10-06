@@ -23,6 +23,8 @@ public class ToolTranslationConstants
     @NonNls
     public static final String TOOL_TYPE_BOW         = "com.minecolonies.coremod.tooltype.bow";
     @NonNls
+    public static final String TOOL_TYPE_CROSSBOW    = "com.minecolonies.coremod.tooltype.crossbow";
+    @NonNls
     public static final String TOOL_TYPE_FISHING_ROD = "com.minecolonies.coremod.tooltype.fishingrod";
     @NonNls
     public static final String TOOL_TYPE_SHEARS      = "com.minecolonies.coremod.tooltype.shears";

@@ -1,7 +1,7 @@
 package com.minecolonies.core.entity.ai.workers.guard;
 
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.core.colony.jobs.JobCavalry;
+import com.minecolonies.core.colony.jobs.guard.JobCavalry;
 import com.minecolonies.core.entity.citizen.EntityCitizen;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.ITickRateStateMachine;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
@@ -11,7 +11,7 @@ import net.minecraft.resources.ResourceLocation;
 import static com.minecolonies.api.util.constant.GuardConstants.CAVALRY_DAMAGE_MULTIPLIER;
 import static com.minecolonies.api.util.constant.GuardConstants.CAVALRY_RANGE_MULTIPLIER;
 
-public class CavalryCombatAI extends KnightCombatAI
+public class CavalryCombatAI extends MeleeCombatAI
 {
     /**
      * Combat icon

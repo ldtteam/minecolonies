@@ -1,0 +1,37 @@
+{
+  "branch": "minecolonies:combat",
+  "costs": [
+    {
+      "type": "minecolonies:item_simple",
+      "item": "minecraft:iron_horse_armor",
+      "quantity": 1
+    },
+    {
+      "type": "minecolonies:item_simple",
+      "item": "minecraft:gold_ingot",
+      "quantity": 5
+    }
+  ],
+  "effects": [
+    {
+      "id": "minecolonies:effects/mountarmor",
+      "level": 2
+    }
+  ],
+  "icon": "minecraft:iron_horse_armor",
+  "parentResearch": "minecolonies:combat/barding",
+  "requirements": [
+    {
+      "type": "minecolonies:building",
+      "building": "minecolonies:stable",
+      "level": 4
+    },
+    {
+      "type": "minecolonies:building",
+      "building": "minecolonies:blacksmith",
+      "level": 4
+    }
+  ],
+  "researchLevel": 4,
+  "subtitle": "com.minecolonies.research.combat.improvedbarding.subtitle"
+}

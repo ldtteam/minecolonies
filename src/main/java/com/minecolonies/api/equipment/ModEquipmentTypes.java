@@ -50,6 +50,8 @@ public class ModEquipmentTypes
     public static final RegistryObject<EquipmentTypeEntry> flint_and_steel;
     public static final RegistryObject<EquipmentTypeEntry> lead;
     public static final RegistryObject<EquipmentTypeEntry> spear;
+    public static final RegistryObject<EquipmentTypeEntry> crossbow;
+
     static
     {
         none = register("none",
@@ -96,6 +98,12 @@ public class ModEquipmentTypes
             builder -> builder.setDisplayName(Component.translatable(ToolTranslationConstants.TOOL_TYPE_BOW))
                 .setIsEquipment((itemStack, equipmentType) -> itemStack.getItem() instanceof BowItem)
                 .setEquipmentLevel((itemStack, equipmentType) -> durabilityBasedLevel(itemStack, Items.BOW.getMaxDamage()))
+                .build());
+
+        crossbow = register("crossbow",
+            builder -> builder.setDisplayName(Component.translatable(ToolTranslationConstants.TOOL_TYPE_CROSSBOW))
+                .setIsEquipment((itemStack, equipmentType) -> itemStack.getItem() instanceof CrossbowItem)
+                .setEquipmentLevel((itemStack, equipmentType) -> durabilityBasedLevel(itemStack, Items.CROSSBOW.getMaxDamage()))
                 .build());
 
         fishing_rod = register("rod",

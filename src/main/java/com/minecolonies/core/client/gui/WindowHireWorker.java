@@ -512,6 +512,10 @@ public class WindowHireWorker extends AbstractWindowSkeleton
         int xOffset = 15;
         for (final IAssignmentModuleView hireModule : moduleViews)
         {
+            if (hireModule.getResearchRequirement() != null && colony.getResearchManager().getResearchEffects().getEffectStrength(hireModule.getResearchRequirement()) <= 0)
+            {
+                continue;
+            }
             final JobEntry entry = hireModule.getJobEntry();
 
             final ButtonImage jobButton = new ButtonImage();

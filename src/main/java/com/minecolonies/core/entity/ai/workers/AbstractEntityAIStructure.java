@@ -658,7 +658,12 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
             return getState();
         }
 
-        if (!mineBlock(blockToMine, null))
+        if (workFrom == null)
+        {
+            return getState();
+        }
+
+        if (!mineBlock(blockToMine, workFrom))
         {
             worker.swing(InteractionHand.MAIN_HAND);
             return getState();

@@ -1,0 +1,163 @@
+{
+  "max-occurrences": 1,
+  "name": "minecolonies.quests.general.apromisetokeep",
+  "objectives": [
+    {
+      "type": "minecolonies:dialogue",
+      "options": [
+        {
+          "answer": "minecolonies.quests.general.apromisetokeep.obj0.answer0",
+          "result": {
+            "type": "minecolonies:dialogue",
+            "options": [
+              {
+                "answer": "minecolonies.quests.general.apromisetokeep.obj0.answer0.reply.answer0",
+                "result": {
+                  "type": "minecolonies:advanceobjective",
+                  "go-to": 1
+                }
+              }
+            ],
+            "text": "minecolonies.quests.general.apromisetokeep.obj0.answer0.reply"
+          }
+        },
+        {
+          "answer": "minecolonies.quests.general.apromisetokeep.obj0.answer1",
+          "result": {
+            "type": "minecolonies:cancel"
+          }
+        }
+      ],
+      "target": 0,
+      "text": "minecolonies.quests.general.apromisetokeep.obj0"
+    },
+    {
+      "type": "minecolonies:delivery",
+      "details": {
+        "item": "minecraft:paper",
+        "next-objective": 2,
+        "qty": 3,
+        "target": 0
+      }
+    },
+    {
+      "type": "minecolonies:delivery",
+      "details": {
+        "item": "minecraft:compass",
+        "next-objective": 3,
+        "qty": 1,
+        "target": 0
+      }
+    },
+    {
+      "type": "minecolonies:dialogue",
+      "options": [
+        {
+          "answer": "minecolonies.quests.general.apromisetokeep.obj3.answer0",
+          "result": {
+            "type": "minecolonies:advanceobjective",
+            "go-to": 4
+          }
+        }
+      ],
+      "target": 0,
+      "text": "minecolonies.quests.general.apromisetokeep.obj3"
+    },
+    {
+      "type": "minecolonies:dialogue",
+      "options": [
+        {
+          "answer": "minecolonies.quests.general.apromisetokeep.obj4.answer0",
+          "result": {
+            "type": "minecolonies:advanceobjective",
+            "go-to": 5
+          }
+        },
+        {
+          "answer": "minecolonies.quests.general.apromisetokeep.obj4.answer1",
+          "result": {
+            "type": "minecolonies:dialogue",
+            "options": [
+              {
+                "answer": "minecolonies.quests.general.apromisetokeep.obj4.answer1.reply.answer0",
+                "result": {
+                  "type": "minecolonies:advanceobjective",
+                  "go-to": 5
+                }
+              }
+            ],
+            "text": "minecolonies.quests.general.apromisetokeep.obj4.answer1.reply"
+          }
+        }
+      ],
+      "target": 1,
+      "text": "minecolonies.quests.general.apromisetokeep.obj4",
+      "unlocks-rewards": [
+        0,
+        1,
+        2
+      ]
+    }
+  ],
+  "parents": [],
+  "rewards": [
+    {
+      "type": "minecolonies:item",
+      "details": {
+        "item": "minecolonies:scroll_tp",
+        "qty": 3
+      }
+    },
+    {
+      "type": "minecolonies:item",
+      "details": {
+        "item": "minecraft:pumpkin_pie",
+        "qty": 1
+      }
+    },
+    {
+      "type": "minecolonies:happiness",
+      "details": {
+        "days": 7,
+        "qty": 1,
+        "target": 1
+      }
+    }
+  ],
+  "triggers": [
+    {
+      "type": "minecolonies:random",
+      "rarity": 1000000
+    },
+    {
+      "type": "minecolonies:state",
+      "state": {
+        "match": {
+          "type": "minecolonies:enchanter",
+          "level": 1
+        },
+        "path": "buildingManager/buildings"
+      }
+    },
+    {
+      "type": "minecolonies:citizen",
+      "state": {
+        "match": {
+          "job": {
+            "type": "minecolonies:enchanter"
+          }
+        }
+      }
+    },
+    {
+      "type": "minecolonies:citizen",
+      "state": {
+        "match": {
+          "job": {
+            "type": "minecolonies:knight"
+          }
+        }
+      }
+    }
+  ]
+}

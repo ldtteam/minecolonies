@@ -19,6 +19,10 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.animal.AbstractGolem;
+import net.minecraft.world.entity.animal.IronGolem;
+import net.minecraft.world.entity.npc.AbstractVillager;
+import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.entity.player.Player;
 
 import static com.minecolonies.api.entity.mobs.RaiderMobUtils.MOB_ATTACK_DAMAGE;
@@ -79,7 +83,8 @@ public class RaiderMeleeAI<T extends AbstractEntityMinecoloniesMonster & IThreat
     @Override
     protected boolean isAttackableTarget(final LivingEntity target)
     {
-        return (target instanceof EntityCitizen && !target.isInvisible()) || (target instanceof Player && !((Player) target).isCreative() && !target.isSpectator());
+        return ((target instanceof EntityCitizen || target instanceof AbstractVillager || target instanceof IronGolem) && !target.isInvisible())
+            || (target instanceof Player && !((Player) target).isCreative() && !target.isSpectator());
     }
 
     @Override

@@ -9,10 +9,13 @@ import com.minecolonies.core.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.core.entity.citizen.EntityCitizen;
 import com.minecolonies.core.items.ItemSpear;
 import net.minecraft.core.BlockPos;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.item.BowItem;
 import net.minecraft.world.item.Item;
@@ -78,10 +81,20 @@ public class CombatUtils
     {
         final double xVector = target.getX() - arrow.getX();
         final double yVector = target.getBoundingBox().minY + target.getBbHeight() / AIM_HEIGHT - arrow.getY();
+
         final double zVector = target.getZ() - arrow.getZ();
         final double distance = Mth.sqrt((float) (xVector * xVector + zVector * zVector));
         final double dist3d = Mth.sqrt((float) (yVector * yVector + xVector * xVector + zVector * zVector));
-        arrow.shoot(xVector, yVector + distance * AIM_SLIGHTLY_HIGHER_MULTIPLIER, zVector, (float) (ARROW_SPEED * 1 + (dist3d / SPEED_FOR_DIST)), (float) hitChance);
+        final double distanceMultiplier = arrow.shotFromCrossbow() ? 0.05 : AIM_SLIGHTLY_HIGHER_MULTIPLIER;
+        arrow.shoot(xVector, yVector + distance * distanceMultiplier, zVector, (float) (ARROW_SPEED * 1 + (dist3d / SPEED_FOR_DIST)), (float) hitChance);
+        if (arrow.shotFromCrossbow())
+        {
+            target.playSound(SoundEvents.CROSSBOW_SHOOT, 1.0F, 1.0F / (target.level.getRandom().nextFloat() * 0.4F + 0.8F));
+        }
+        else
+        {
+            target.playSound(SoundEvents.ARROW_SHOOT, 1.0F, 1.0F / (target.level.getRandom().nextFloat() * 0.4F + 1.2F));
+        }
         target.level.addFreshEntity(arrow);
     }
 

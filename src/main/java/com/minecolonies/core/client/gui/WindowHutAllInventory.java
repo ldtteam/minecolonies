@@ -6,13 +6,13 @@ import com.ldtteam.blockui.views.BOWindow;
 import com.ldtteam.blockui.views.ScrollingList;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.crafting.ItemStorage;
-import com.minecolonies.core.tileentities.TileEntityRack;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.Utils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.client.render.worldevent.HighlightManager;
 import com.minecolonies.core.client.render.worldevent.highlightmanager.TimedBoxRenderData;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
+import com.minecolonies.core.tileentities.TileEntityRack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
@@ -58,8 +58,9 @@ public class WindowHutAllInventory extends AbstractWindowSkeleton
 
     /**
      * The sortDescriptor so how we want to sort
+     * Intentionally static to preserve the setting for the current game session
      */
-    private int sortDescriptor = 0;
+    private static int sortDescriptor = 0;
 
     /**
      * The building associated to the GUI.
@@ -89,7 +90,7 @@ public class WindowHutAllInventory extends AbstractWindowSkeleton
         registerButton(BUTTON_SORT, this::setSortFlag);
         registerButton(BUTTON_BACK, this::back);
         this.stackList = findPaneOfTypeByID(LIST_ALLINVENTORY, ScrollingList.class);
-        updateResources();
+        updateSorting();
         registerButton(LOCATE, this::locate);
         this.prev = prev;
 
@@ -165,6 +166,15 @@ public class WindowHutAllInventory extends AbstractWindowSkeleton
         {
             sortDescriptor = NO_SORT;
         }
+
+        updateSorting();
+    }
+
+    /**
+     * Updates the sorting setting and updates resources
+     */
+    private void updateSorting()
+    {
         switch (sortDescriptor)
         {
             case NO_SORT:

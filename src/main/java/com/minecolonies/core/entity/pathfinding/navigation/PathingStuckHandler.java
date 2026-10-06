@@ -340,6 +340,7 @@ public class PathingStuckHandler<NAV extends PathNavigation & IMinecoloniesNavig
             {
                 // Skip ahead on the node index in hopes that the potentially different direction helps us unstuck
                 navigator.getPath().setNextNodeIndex(navigator.getPath().getNextNodeIndex() + 1);
+                navigator.updateNodeReferences();
                 delayToNextUnstuckAction = 30;
                 stuckLevel++;
             }

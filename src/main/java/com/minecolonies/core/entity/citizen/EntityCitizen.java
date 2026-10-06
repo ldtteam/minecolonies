@@ -47,10 +47,10 @@ import com.minecolonies.core.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.core.colony.buildings.modules.WorkerBuildingModule;
 import com.minecolonies.core.colony.eventhooks.citizenEvents.CitizenDiedEvent;
 import com.minecolonies.core.colony.jobs.AbstractJobGuard;
-import com.minecolonies.core.colony.jobs.JobCavalry;
-import com.minecolonies.core.colony.jobs.JobKnight;
+import com.minecolonies.core.colony.jobs.guard.JobCavalry;
+import com.minecolonies.core.colony.jobs.guard.JobKnight;
 import com.minecolonies.core.colony.jobs.JobNetherWorker;
-import com.minecolonies.core.colony.jobs.JobRanger;
+import com.minecolonies.core.colony.jobs.guard.JobRanger;
 import com.minecolonies.core.datalistener.DiseasesListener;
 import com.minecolonies.core.debug.DebugPlayerManager;
 import com.minecolonies.core.entity.ai.minimal.*;
@@ -58,7 +58,7 @@ import com.minecolonies.core.entity.ai.workers.AbstractEntityAIBasic;
 import com.minecolonies.core.entity.ai.workers.CitizenAI;
 import com.minecolonies.core.entity.ai.workers.guard.AbstractEntityAIGuard;
 import com.minecolonies.core.entity.citizen.citizenhandlers.*;
-import com.minecolonies.core.entity.other.cavalry.CavalryHorseEntity;
+import com.minecolonies.core.entity.other.ICitizenJobMount;
 import com.minecolonies.core.entity.pathfinding.navigation.EntityNavigationUtils;
 import com.minecolonies.core.entity.pathfinding.navigation.MovementHandler;
 import com.minecolonies.core.event.EventHandler;
@@ -128,7 +128,6 @@ import static com.minecolonies.api.util.constant.StatisticsConstants.DEATH;
 import static com.minecolonies.api.util.constant.Suppression.INCREMENT_AND_DECREMENT_OPERATORS_SHOULD_NOT_BE_USED_IN_A_METHOD_CALL_OR_MIXED_WITH_OTHER_OPERATORS_IN_AN_EXPRESSION;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.core.entity.ai.minimal.EntityAIInteractToggleAble.*;
-import static com.minecolonies.api.util.constant.GuardConstants.CAVALRY_RANGED_DAMAGE_VULNERABILITY;
 
 /**
  * The Class used to represent the citizen entities.
@@ -1367,18 +1366,13 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
         // For cavalry, allocate some of the damage to the horse.
         if (citizenJobHandler.getColonyJob() instanceof JobCavalry cav && citizenData != null)
         {
-            if (this.getVehicle() instanceof CavalryHorseEntity horse) 
+            final Entity mount = this.getVehicle();
+            if (mount instanceof ICitizenJobMount)
             {
-                if (damageSource.is(DamageTypeTags.IS_PROJECTILE))
-                {
-                    // Horses take more damage from fire, so increase the split.
-                    damageInc *= CAVALRY_RANGED_DAMAGE_VULNERABILITY;
-                }
-
                 float horseSplit = cav.getMountDamageSplit() * damageInc;
                 damageInc = damageInc - horseSplit;
 
-                horse.hurt(damageSource, horseSplit);
+                mount.hurt(damageSource, horseSplit);
             }
         }
 

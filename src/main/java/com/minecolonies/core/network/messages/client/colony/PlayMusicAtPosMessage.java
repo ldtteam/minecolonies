@@ -103,7 +103,7 @@ public class PlayMusicAtPosMessage implements IMessage
     {
         if (Minecraft.getInstance().level.dimension() == dimensionID)
         {
-            Minecraft.getInstance().level.playSound(Minecraft.getInstance().player, pos.getX(), pos.getY(), pos.getZ(), soundEvent, SoundSource.AMBIENT, volume, pitch);
+            Minecraft.getInstance().level.playSound(Minecraft.getInstance().player, pos.getX(), pos.getY(), pos.getZ(), soundEvent, SoundSource.RECORDS, volume, pitch);
         }
     }
 }

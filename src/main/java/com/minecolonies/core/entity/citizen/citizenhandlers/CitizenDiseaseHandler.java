@@ -46,6 +46,11 @@ public class CitizenDiseaseHandler implements ICitizenDiseaseHandler
     private static final int IMMUNITY_TIME = 20 * 60 * 90;
 
     /**
+     * Collision cooldown to avoid triggering too aggressively. 30 seconds currently.
+     */
+    private static final int COLLISION_COOLDOWN = 20 * 30;
+
+    /**
      * Additional immunity time through vaccines.
      */
     private static final int VACCINE_MODIFIER = 10;
@@ -147,9 +152,21 @@ public class CitizenDiseaseHandler implements ICitizenDiseaseHandler
               && canBecomeSick()
               && citizen.getRandom().nextInt(ONE_HUNDRED_PERCENT) < 1)
         {
-            if (citizen.getColony().getResearchManager().getResearchEffects().getEffectStrength(MASKS) <= 0 || citizen.getRandom().nextBoolean())
+            final double masks = citizen.getColony().getResearchManager().getResearchEffects().getEffectStrength(MASKS);
+            if (masks <= 0 || citizen.getRandom().nextBoolean())
             {
                 this.disease = citizen.getCitizenDiseaseHandler().getDisease();
+            }
+            else
+            {
+                if (citizenData.getColony().getResearchManager().getResearchEffects().getEffectStrength(VACCINES) > 0)
+                {
+                    immunityTicks = Math.max(immunityTicks, COLLISION_COOLDOWN * 2);
+                }
+                else
+                {
+                    immunityTicks = Math.max(immunityTicks, COLLISION_COOLDOWN);
+                }
             }
         }
     }

@@ -423,7 +423,19 @@ public class RaidManager implements IRaiderManager
                 {
                     event = new PirateGroundRaidEvent(colony);
                 }
-                else if (raidSettings.raidType() == null || raidSettings.raidType().equals(BarbarianRaidEvent.BARBARIAN_RAID_EVENT_TYPE_ID.getPath()))
+                else if (raidSettings.raidType() == null)
+                {
+                    // 2/3 Chance for Barbs
+                    if (MathUtils.RANDOM.nextDouble() > 0.33)
+                    {
+                        event = new BarbarianRaidEvent(colony);
+                    }
+                    else
+                    {
+                        event = new NorsemenRaidEvent(colony);
+                    }
+                }
+                else if (raidSettings.raidType().equals(BarbarianRaidEvent.BARBARIAN_RAID_EVENT_TYPE_ID.getPath()))
                 {
                     event = new BarbarianRaidEvent(colony);
                 }

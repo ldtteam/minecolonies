@@ -27,6 +27,8 @@ public final class ModJobs
     public static final ResourceLocation SMELTER_ID        = new ResourceLocation(Constants.MOD_ID, "smelter");
     public static final ResourceLocation ARCHER_ID         = new ResourceLocation(Constants.MOD_ID, "ranger");
     public static final ResourceLocation KNIGHT_ID         = new ResourceLocation(Constants.MOD_ID, "knight");
+    public static final ResourceLocation MARKSMAN_ID       = new ResourceLocation(Constants.MOD_ID, "marksman");
+    public static final ResourceLocation HUSCARL_ID        = new ResourceLocation(Constants.MOD_ID, "huscarl");
     public static final ResourceLocation CAVALRY_ID        = new ResourceLocation(Constants.MOD_ID, "cavalry");
     public static final ResourceLocation COMPOSTER_ID      = new ResourceLocation(Constants.MOD_ID, "composter");
     public static final ResourceLocation STUDENT_ID        = new ResourceLocation(Constants.MOD_ID, "student");
@@ -80,6 +82,8 @@ public final class ModJobs
     public static RegistryObject<JobEntry> smelter;
     public static RegistryObject<JobEntry> archer;
     public static RegistryObject<JobEntry> knight;
+    public static RegistryObject<JobEntry> marksman;
+    public static RegistryObject<JobEntry> huscarl;
     public static RegistryObject<JobEntry> cavalry;
     public static RegistryObject<JobEntry> composter;
     public static RegistryObject<JobEntry> student;

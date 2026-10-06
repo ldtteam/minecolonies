@@ -10,12 +10,7 @@ import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.api.util.InventoryUtils;
-import com.minecolonies.api.util.StatsUtil;
-
-import com.minecolonies.api.util.Tuple;
-import com.minecolonies.api.util.WorldUtil;
+import com.minecolonies.api.util.*;
 import com.minecolonies.core.Network;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingHospital;
 import com.minecolonies.core.colony.interactionhandling.StandardInteraction;
@@ -34,10 +29,8 @@ import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
-import static com.minecolonies.api.util.constant.TranslationConstants.PATIENT_FULL_INVENTORY;
-import static com.minecolonies.api.util.constant.StatisticsConstants.DISEASES_TREATED;
 import static com.minecolonies.api.util.constant.StatisticsConstants.NUM_DISEASES_TREATED;
-
+import static com.minecolonies.api.util.constant.TranslationConstants.PATIENT_FULL_INVENTORY;
 
 /**
  * Healer AI class.
@@ -453,6 +446,12 @@ public class EntityAIWorkHealer extends AbstractEntityAIInteract<JobHealer, Buil
     {
         if (playerToHeal == null)
         {
+            return DECIDE;
+        }
+
+        if (playerToHeal.blockPosition().distSqr(building.getPosition()) > 50 * 50)
+        {
+            playerToHeal = null;
             return DECIDE;
         }
 

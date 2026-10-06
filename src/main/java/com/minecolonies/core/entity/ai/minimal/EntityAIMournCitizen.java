@@ -158,6 +158,13 @@ public class EntityAIMournCitizen implements IStateAI
             return MourningState.DECIDE;
         }
 
+        final GraveyardManagementModule module = graveyard.getModule(GraveyardManagementModule.class);
+
+        if (module == null)
+        {
+            return MourningState.DECIDE;
+        }
+
         if (!citizen.getNavigation().isDone())
         {
             return MourningState.WANDER_AT_GRAVEYARD;
@@ -171,7 +178,7 @@ public class EntityAIMournCitizen implements IStateAI
         }
 
         // Try find the grave of one of the diseased.
-        final Set<Tuple<BlockPos, Direction>> gravePositions = ((BuildingGraveyard) graveyard).getGravePositions();
+        final Set<Tuple<BlockPos, Direction>> gravePositions = module.getGravePositions();
         for (final Tuple<BlockPos, Direction> gravePos : gravePositions)
         {
             if (WorldUtil.isBlockLoaded(citizen.level, gravePos.getA()))

@@ -97,8 +97,8 @@ public class StatisticsManager implements IStatisticsManager
     @Override
     public void clear()
     {
+        dirtyStats.addAll(stats.keySet());
         stats.clear();
-        dirtyStats = new HashSet<>();
     }
 
     @Override
@@ -125,9 +125,15 @@ public class StatisticsManager implements IStatisticsManager
         {
             for (final String id : dirtyStats)
             {
-                var dataEntry = stats.get(id);
+                final Int2IntLinkedOpenHashMap dataEntry = stats.get(id);
 
                 buf.writeUtf(id);
+                if (dataEntry == null)
+                {
+                    buf.writeVarInt(0);
+                    continue;
+                }
+
                 buf.writeVarInt(1);
                 buf.writeVarInt(dataEntry.lastIntKey());
                 buf.writeVarInt(dataEntry.get(dataEntry.lastIntKey()));
@@ -154,6 +160,12 @@ public class StatisticsManager implements IStatisticsManager
         {
             final String id = buf.readUtf();
             final int statEntrySize = buf.readVarInt();
+
+            if (!fullSync && statEntrySize == 0)
+            {
+                stats.remove(id);
+                continue;
+            }
 
             final Int2IntLinkedOpenHashMap statValues = (fullSync || !stats.containsKey(id)) ? new Int2IntLinkedOpenHashMap(statEntrySize) : stats.get(id);
             for (int j = 0; j < statEntrySize; j++)

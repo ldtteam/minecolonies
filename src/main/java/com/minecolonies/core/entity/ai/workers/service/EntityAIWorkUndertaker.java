@@ -115,6 +115,15 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
     {
         worker.getCitizenData().setVisibleStatus(VisibleCitizenStatus.WORKING);
 
+        final GraveyardManagementModule module = building.getModule(GraveyardManagementModule.class);
+
+        // If we had a pending burial to oversee that was interrupted by a sleep cycle or break, resume it the next time we start working.
+        if (module !=null && module.getLastGraveData() != null)
+        {
+            worker.getCitizenData().setJobStatus(JobStatus.WORKING);
+            return BURY_CITIZEN;
+        }
+
         @Nullable final BlockPos currentGrave = building.getGraveToWorkOn();
         if (currentGrave != null)
         {
@@ -431,7 +440,7 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
     private IAIState buryCitizen()
     {
         @Nullable final BuildingGraveyard buildingGraveyard = building;
-        final GraveyardManagementModule module = buildingGraveyard.getFirstModuleOccurance(GraveyardManagementModule.class);
+        final GraveyardManagementModule module = buildingGraveyard.getModule(GraveyardManagementModule.class);
 
         if (checkForToolOrWeapon(ModEquipmentTypes.shovel.get()) || module.getLastGraveData() == null)
         {
@@ -441,15 +450,21 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
 
         if (burialPos == null || !world.getBlockState(burialPos.getA()).canBeReplaced())
         {
-            burialPos = building.getRandomFreeVisualGravePos();
+            burialPos = module.getRandomFreeVisualGravePos();
         }
 
         if (burialPos == null || burialPos.getA() == null)
         {
+            final String citizenName = module.getLastGraveData().getCitizenName();
+
             // couldn't find a place to dig a grave
-            MessageUtils.forCitizen(worker, Component.translatable(MESSAGE_INFO_CITIZEN_UNDERTAKER_GRAVEYARD_NO_SPACE, module.getLastGraveData().getCitizenName()))
+            MessageUtils.forCitizen(worker, Component.translatable(MESSAGE_INFO_CITIZEN_UNDERTAKER_GRAVEYARD_NO_SPACE, citizenName))
               .sendTo(worker.getCitizenColonyHandler().getColonyOrRegister().getMessagePlayerEntities());
-            return IDLE;
+
+            module.setLastGraveData(null);
+            burialPos = null;
+
+            return INVENTORY_FULL;
         }
 
         if (walkWithProxy(burialPos.getA(), 4))
@@ -467,7 +482,12 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
         effortCounter = 0;
         unequip();
 
-        module.buryCitizenHere(burialPos, worker);
+        if (!module.buryCitizenHere(burialPos, worker))
+        {
+            burialPos = null;
+            return getState();
+        }
+
         //Disabled until Mourning AI update: worker.getCitizenColonyHandler().getColony().setNeedToMourn(false, buildingGraveyard.getLastGraveData().getCitizenName());
         AdvancementUtils.TriggerAdvancementPlayersForColony(worker.getCitizenColonyHandler().getColonyOrRegister(), playerMP -> AdvancementTriggers.CITIZEN_BURY.trigger(playerMP));
 

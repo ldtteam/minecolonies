@@ -2,7 +2,6 @@ package com.minecolonies.core.entity.ai.workers.crafting;
 
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingStoneSmeltery;
 import com.minecolonies.core.colony.jobs.JobStoneSmeltery;
-import com.minecolonies.core.entity.ai.workers.crafting.AbstractEntityAIRequestSmelter;
 import org.jetbrains.annotations.NotNull;
 
 /**

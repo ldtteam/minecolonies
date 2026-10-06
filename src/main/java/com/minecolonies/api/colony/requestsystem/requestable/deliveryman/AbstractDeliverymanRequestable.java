@@ -7,6 +7,9 @@ public abstract class AbstractDeliverymanRequestable implements IDeliverymanRequ
 {
     ////// --------------------------- NBTConstants --------------------------- \\\\\\
     protected static final String NBT_PRIORITY = "Priority";
+    protected static final String NBT_DAY = "day";
+    protected static final String NBT_QTY = "qty";
+
     ////// --------------------------- NBTConstants --------------------------- \\\\\\
 
     public static final    int MAX_BUILDING_PRIORITY     = 10;
