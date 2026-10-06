@@ -10,6 +10,7 @@ import com.minecolonies.api.crafting.ModRecipeTypes;
 import com.minecolonies.api.crafting.RecipeStorage;
 import com.minecolonies.api.equipment.ModEquipmentTypes;
 import com.minecolonies.api.equipment.registry.EquipmentTypeEntry;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.SerializationIdentifierConstants;
 import com.minecolonies.api.util.constant.TypeConstants;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -144,7 +145,10 @@ public class RecipeStorageFactory implements IRecipeStorageFactory
             compound.putString(LOOT_TAG, recipeStorage.getLootTable().toString());
         }
 
-        compound.putString(TOOL_TAG, recipeStorage.getRequiredTool().getRegistryName().toString());
+        if (recipeStorage.getRequiredTool() != null)
+        {
+            compound.putString(TOOL_TAG, recipeStorage.getRequiredTool().getRegistryName().toString());
+        }
 
         return compound;
     }
@@ -239,7 +243,7 @@ public class RecipeStorageFactory implements IRecipeStorageFactory
         packetBuffer.writeVarInt(input.getCraftingToolsAndSecondaryOutputs().size());
         input.getCraftingToolsAndSecondaryOutputs().forEach(stack -> packetBuffer.writeItem(stack));
 
-        packetBuffer.writeResourceLocation(input.getRequiredTool().getRegistryName());
+        packetBuffer.writeResourceLocation(input.getRequiredTool() != null ? input.getRequiredTool().getRegistryName() : new ResourceLocation(Constants.MOD_ID, ""));
 
         packetBuffer.writeBoolean(input.getLootTable() != null);
         if(input.getLootTable() != null)

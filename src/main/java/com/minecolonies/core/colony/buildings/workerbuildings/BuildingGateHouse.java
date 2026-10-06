@@ -13,8 +13,6 @@ import net.minecraft.core.BlockPos;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static com.minecolonies.api.util.constant.EquipmentLevelConstants.BASIC_TOOL_LEVEL;
-import static com.minecolonies.api.util.constant.EquipmentLevelConstants.TOOL_LEVEL_MAXIMUM;
 import static com.minecolonies.api.util.constant.SchematicTagConstants.TAG_ARCHER;
 import static com.minecolonies.api.util.constant.SchematicTagConstants.TAG_KNIGHT;
 import static com.minecolonies.core.colony.buildings.modules.BuildingModules.*;
@@ -55,20 +53,6 @@ public class BuildingGateHouse extends AbstractBuildingGuards
     public int getMaxBuildingLevel()
     {
         return MAX_LEVEL;
-    }
-
-    @Override
-    public int getMaxEquipmentLevel()
-    {
-        if (getBuildingLevel() >= getMaxBuildingLevel())
-        {
-            return TOOL_LEVEL_MAXIMUM;
-        }
-        else if (getBuildingLevelEquivalent() <= WOOD_HUT_LEVEL)
-        {
-            return BASIC_TOOL_LEVEL;
-        }
-        return getBuildingLevelEquivalent() - WOOD_HUT_LEVEL;
     }
 
     @Override

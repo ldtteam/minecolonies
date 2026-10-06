@@ -2,7 +2,6 @@ package com.minecolonies.core.colony.buildings.workerbuildings.plantation.module
 
 import com.minecolonies.api.colony.buildingextensions.IBuildingExtension;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-import com.minecolonies.api.equipment.ModEquipmentTypes;
 import com.minecolonies.api.equipment.registry.EquipmentTypeEntry;
 import com.minecolonies.core.colony.buildings.workerbuildings.plantation.modules.generic.BoneMealedPlantModule;
 import net.minecraft.core.BlockPos;
@@ -17,6 +16,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluids;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -60,9 +60,10 @@ public class SeagrassPlantModule extends BoneMealedPlantModule
     }
 
     @Override
+    @Nullable
     public EquipmentTypeEntry getRequiredTool()
     {
-        return ModEquipmentTypes.none.get();
+        return null;
     }
 
     @Override

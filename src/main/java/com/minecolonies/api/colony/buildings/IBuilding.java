@@ -36,8 +36,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.function.Predicate;
 
-import static com.minecolonies.api.util.constant.EquipmentLevelConstants.BASIC_TOOL_LEVEL;
-import static com.minecolonies.api.util.constant.EquipmentLevelConstants.TOOL_LEVEL_MAXIMUM;
 import static com.minecolonies.api.util.constant.Suppression.GENERIC_WILDCARD;
 
 public interface IBuilding extends IBuildingContainer, IBuildingModuleContainer, IRequestResolverProvider, IRequester, ICommonBuilding
@@ -446,15 +444,7 @@ public interface IBuilding extends IBuildingContainer, IBuildingModuleContainer,
      */
     default int getMaxEquipmentLevel()
     {
-        if (getBuildingLevel() >= getMaxBuildingLevel())
-        {
-            return TOOL_LEVEL_MAXIMUM;
-        }
-        else if (getBuildingLevel() <= WOOD_HUT_LEVEL)
-        {
-            return BASIC_TOOL_LEVEL;
-        }
-        return getBuildingLevel() - WOOD_HUT_LEVEL;
+        return getBuildingLevelEquivalent();
     }
 
     /**
