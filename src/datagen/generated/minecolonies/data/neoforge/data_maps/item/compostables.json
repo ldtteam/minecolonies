@@ -27,6 +27,9 @@
     "minecolonies:cheese_pizza": {
       "chance": 1.0
     },
+    "minecolonies:cheese_pizza_slice": {
+      "chance": 0.33333334
+    },
     "minecolonies:cheese_ravioli": {
       "chance": 1.0
     },
@@ -131,6 +134,9 @@
     },
     "minecolonies:mushroom_pizza": {
       "chance": 1.0
+    },
+    "minecolonies:mushroom_pizza_slice": {
+      "chance": 0.33333334
     },
     "minecolonies:mutton_dinner": {
       "chance": 1.0

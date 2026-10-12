@@ -1086,6 +1086,32 @@ public class DefaultRecipeProvider extends RecipeProvider
           .unlockedBy("has_cheddar", has(ModItems.cheddar_cheese))
           .save(consumer, new ResourceLocation(MOD_ID, "cheese_pizza"));
 
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.cheese_pizza_slice, 8)
+          .requires(ModItems.cheese_pizza)
+          .unlockedBy("has_cheese_pizza", has(ModItems.cheese_pizza))
+          .save(consumer, new ResourceLocation(MOD_ID, "cheese_pizza_slice"));
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.FOOD, ModItems.cheese_pizza, 1)
+          .pattern("SSS")
+          .pattern("S S")
+          .pattern("SSS")
+          .define('S', ModItems.cheese_pizza_slice)
+          .unlockedBy("has_cheese_pizza", has(ModItems.cheese_pizza))
+          .save(consumer, new ResourceLocation(MOD_ID, "cheese_pizza_from_slices"));
+
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.mushroom_pizza_slice, 8)
+            .requires(ModItems.mushroom_pizza)
+            .unlockedBy("has_mushroom_pizza", has(ModItems.mushroom_pizza))
+            .save(consumer, new ResourceLocation(MOD_ID, "mushroom_pizza_slice"));
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.FOOD, ModItems.mushroom_pizza, 1)
+            .pattern("SSS")
+            .pattern("S S")
+            .pattern("SSS")
+            .define('S', ModItems.mushroom_pizza_slice)
+            .unlockedBy("has_mushroom_pizza", has(ModItems.mushroom_pizza))
+            .save(consumer, new ResourceLocation(MOD_ID, "mushroom_pizza_from_slices"));
+
         ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.plain_cheesecake, 1)
           .requires(ModItems.creamcheese)
           .requires(ModItems.creamcheese)
