@@ -314,7 +314,7 @@ public class BuildingStructureHandler<J extends AbstractJobStructure<?, J>, B ex
     @Override
     public boolean allowReplace()
     {
-        return getStage() != null && getStage() != BuildingProgressStage.CLEAR;
+        return getStage() != null && getStage() != BuildingProgressStage.CLEAR && getStage() != BuildingProgressStage.CLEAR_BOTTOM_UP;
     }
 
     @Override
