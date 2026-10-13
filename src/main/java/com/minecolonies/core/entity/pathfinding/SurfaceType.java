@@ -3,18 +3,19 @@ package com.minecolonies.core.entity.pathfinding;
 import com.ldtteam.domumornamentum.block.decorative.FloatingCarpetBlock;
 import com.ldtteam.domumornamentum.block.decorative.PanelBlock;
 import com.ldtteam.domumornamentum.block.vanilla.TrapdoorBlock;
-import com.ldtteam.structurize.util.BlockUtils;
 import com.minecolonies.api.blocks.decorative.AbstractBlockMinecoloniesConstructionTape;
 import com.minecolonies.api.blocks.huts.AbstractBlockMinecoloniesDefault;
 import com.minecolonies.api.util.ShapeUtil;
+import com.minecolonies.core.entity.pathfinding.PathingOptions.DangerMode;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FluidState;
-import net.minecraft.world.level.pathfinder.PathFinder;
 import net.minecraft.world.phys.shapes.VoxelShape;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -41,6 +42,54 @@ public enum SurfaceType
     }
 
     /**
+     * Determines whether danger handling produces an immediate surface result.
+     *
+     * @param world world used for collision-shape evaluation
+     * @param blockState state being evaluated
+     * @param pos position of the state
+     * @param pathingOptions applicable pathing options
+     * @param dropIfEmpty whether an allowed dangerous state with no collision should be considered dropable
+     * @return an immediate surface type, or null when normal evaluation should continue
+     */
+    @Nullable
+    private static SurfaceType pathAwareSurface(final BlockGetter world, final BlockState blockState, final BlockPos pos, @Nullable final PathingOptions pathingOptions, final boolean dropIfEmpty)
+    {
+        if (pathingOptions == null)
+        {
+            if (PathfindingUtils.isDangerous(blockState))
+            {
+                return SurfaceType.NOT_PASSABLE;
+            }
+
+            return null;
+        }
+
+        if (pathingOptions.isDangerousToPath(blockState))
+        {
+            return SurfaceType.NOT_PASSABLE;
+        }
+
+        // If lava isn't dangerous, we can walk on it...
+        if (PathfindingUtils.isLavaState(blockState))
+        {
+            return SurfaceType.WALKABLE;
+        }
+
+        // Normally dangerous, but potentially allowable due to pathing options.
+        if (!pathingOptions.isDangerMode(DangerMode.DEFAULT) && PathfindingUtils.isDangerous(blockState))
+        {
+            if (dropIfEmpty && ShapeUtil.isEmpty(blockState.getCollisionShape(world, pos)))
+            {
+                return SurfaceType.DROPABLE;
+            }
+                
+            return SurfaceType.WALKABLE;
+        }
+
+        return null;
+    }
+
+    /**
      * Is the block solid and can be stood upon.
      *
      * @param blockState     Block to check.
@@ -52,19 +101,11 @@ public enum SurfaceType
     public static SurfaceType getSurfaceType(final BlockGetter world, final BlockState blockState, final BlockPos pos, @Nullable final PathingOptions pathingOptions)
     {
         final Block block = blockState.getBlock();
+        SurfaceType surfaceType = pathAwareSurface(world, blockState, pos, pathingOptions, true);
 
-        if (PathfindingUtils.isDangerous(blockState))
+        if (surfaceType != null)
         {
-            if (pathingOptions != null && pathingOptions.canPassDanger())
-            {
-                if (ShapeUtil.isEmpty(blockState.getCollisionShape(world, pos)))
-                {
-                    return SurfaceType.DROPABLE;
-                }
-                return SurfaceType.WALKABLE;
-            }
-
-            return SurfaceType.NOT_PASSABLE;
+            return surfaceType;
         }
 
         if (block instanceof FenceBlock
@@ -83,14 +124,16 @@ public enum SurfaceType
 
         final VoxelShape shape = blockState.getCollisionShape(world, pos);
         final double maxShapeY = ShapeUtil.max(shape, Direction.Axis.Y);
-        if (maxShapeY < 0.5 && PathfindingUtils.isDangerous(world.getBlockState(pos.below())))
-        {
-            if (pathingOptions != null && pathingOptions.canPassDanger())
-            {
-                return SurfaceType.WALKABLE;
-            }
 
-            return SurfaceType.NOT_PASSABLE;
+        if (maxShapeY < 0.5)
+        {
+            final BlockState below = world.getBlockState(pos.below());
+            surfaceType = pathAwareSurface(world, below, pos.below(), pathingOptions, false);
+
+            if (surfaceType != null)
+            {
+                return surfaceType;
+            }
         }
 
         if ((block instanceof PanelBlock || block instanceof TrapdoorBlock) && !blockState.getValue(TrapdoorBlock.OPEN))
@@ -107,11 +150,6 @@ public enum SurfaceType
         if (PathfindingUtils.isWater(world, pos, blockState, fluid))
         {
             return SurfaceType.WALKABLE;
-        }
-
-        if (PathfindingUtils.isLava(world, pos, blockState, fluid))
-        {
-            return SurfaceType.NOT_PASSABLE;
         }
 
         if (block instanceof AbstractBlockMinecoloniesConstructionTape || block instanceof SignBlock || block instanceof VineBlock)

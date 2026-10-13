@@ -1387,11 +1387,18 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
         if (!block.isAir())
         {
             final VoxelShape shape = block.getCollisionShape(world, tempWorldPos.set(x, y, z));
-            if (!pathingOptions.canPassDanger() && ShapeUtil.max(shape, Direction.Axis.Y) < 0.5 && PathfindingUtils.isDangerous(cachedBlockLookup.getBlockState(x, y - 1, z)))
+            final double maxShapeY = ShapeUtil.max(shape, Direction.Axis.Y);
+
+            if (maxShapeY < 0.5)
             {
-                return false;
+                final BlockState below = cachedBlockLookup.getBlockState(x, y - 1, z);
+                if (!pathingOptions.canPassDanger(below))
+                {
+                    return false;
+                }
             }
-            if (block.blocksMotion() && !(ShapeUtil.isEmpty(shape) || ShapeUtil.max(shape, Direction.Axis.Y) <= 0.1))
+            
+            if (block.blocksMotion() && !(ShapeUtil.isEmpty(shape) || maxShapeY <= 0.1))
             {
                 if (block.getBlock() instanceof TrapDoorBlock || block.getBlock() instanceof PanelBlock)
                 {
@@ -1453,7 +1460,7 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
                              || !block.getBlock().properties.hasCollision;
                 }
             }
-            else if (!pathingOptions.canPassDanger() && PathfindingUtils.isDangerous(block))
+            else if (!pathingOptions.canPassDanger(block))
             {
                 return false;
             }
@@ -1462,6 +1469,11 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
                 if (PathfindingUtils.isLadder(block, pathingOptions))
                 {
                     return true;
+                }
+
+                if (PathfindingUtils.isLavaState(block))
+                {
+                    return pathingOptions.canPassDanger(block);
                 }
 
                 if (ShapeUtil.isEmpty(shape) || ShapeUtil.max(shape, Direction.Axis.Y) <= 0.1
