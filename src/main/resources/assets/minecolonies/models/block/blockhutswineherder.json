@@ -2,6 +2,7 @@
 	"format_version": "1.9.0",
 	"credit": "Made with Blockbench",
 	"ambientocclusion": false,
+	"render_type": "minecraft:cutout",
 	"texture_size": [32, 32],
 	"textures": {
 		"4": "block/stripped_oak_log",
@@ -85,9 +86,9 @@
 		},
 		{
 			"name": "durumhay",
-			"from": [0, 0, 2],
-			"to": [16, 12, 14],
-			"rotation": {"angle": 0, "axis": "y", "origin": [0, 1.1, 1]},
+			"from": [0, 0.01, 2],
+			"to": [16, 12.01, 14],
+			"rotation": {"angle": 0, "axis": "y", "origin": [0, 1.11, 1]},
 			"faces": {
 				"north": {"uv": [8, 0, 16, 6], "texture": "#7"},
 				"south": {"uv": [8, 0, 16, 6], "texture": "#7"},
@@ -97,9 +98,9 @@
 		},
 		{
 			"name": "durumhay",
-			"from": [16, 12, 14],
-			"to": [0, 0, 2],
-			"rotation": {"angle": 0, "axis": "y", "origin": [0, 1.1, 1]},
+			"from": [16, 12.01, 14],
+			"to": [0, 0.01, 2],
+			"rotation": {"angle": 0, "axis": "y", "origin": [0, 1.11, 1]},
 			"faces": {
 				"north": {"uv": [8, 6, 16, 0], "texture": "#7"},
 				"south": {"uv": [8, 6, 16, 0], "texture": "#7"},
