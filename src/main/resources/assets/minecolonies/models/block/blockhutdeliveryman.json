@@ -5,8 +5,7 @@
 	"textures": {
 		"0": "block/oak_planks",
 		"2": "block/stripped_oak_log",
-		"4": "minecolonies:block/books/booktexture_blue",
-		"5": "minecolonies:block/books/booktexture_purple",
+		"4": "minecolonies:block/books/paper_2",
 		"6": "minecolonies:block/blockhutstorages",
 		"7": "minecolonies:block/postbox",
 		"particle": "block/oak_planks"
@@ -114,40 +113,12 @@
 			}
 		},
 		{
-			"name": "book1",
-			"from": [9, 17, 11],
-			"to": [15, 18, 15],
-			"rotation": {"angle": 0, "axis": "y", "origin": [12, 16.005, 13]},
-			"faces": {
-				"north": {"uv": [15, 4, 15.5, 0.5], "rotation": 90, "texture": "#4"},
-				"east": {"uv": [9.5, 5.5, 12, 6], "texture": "#4"},
-				"south": {"uv": [13.5, 10, 14, 6.5], "rotation": 90, "texture": "#4"},
-				"west": {"uv": [12, 5.5, 9.5, 6], "texture": "#4"},
-				"up": {"uv": [14, 6.5, 16, 10], "rotation": 270, "texture": "#4"},
-				"down": {"uv": [11.5, 6.5, 13.5, 10], "rotation": 270, "texture": "#4"}
-			}
-		},
-		{
-			"name": "book2",
-			"from": [9, 16.002, 11],
-			"to": [15, 17.002, 15],
-			"rotation": {"angle": 45, "axis": "y", "origin": [12, 16.502, 13]},
-			"faces": {
-				"north": {"uv": [15, 4, 15.5, 0.5], "rotation": 90, "texture": "#5"},
-				"east": {"uv": [9.5, 5.5, 12, 6], "texture": "#5"},
-				"south": {"uv": [13.5, 10, 14, 6.5], "rotation": 90, "texture": "#5"},
-				"west": {"uv": [12, 5.5, 9.5, 6], "texture": "#5"},
-				"up": {"uv": [14, 6.5, 16, 10], "rotation": 270, "texture": "#5"},
-				"down": {"uv": [11.5, 6.5, 13.5, 10], "rotation": 270, "texture": "#5"}
-			}
-		},
-		{
 			"name": "paper1",
-			"from": [8, 16.01, 2],
-			"to": [14, 16.01, 9],
-			"rotation": {"angle": 22.5, "axis": "y", "origin": [10, 16.01, 5]},
+			"from": [1.15013, 16.01, 1.7821],
+			"to": [15.15013, 16.01, 15.7821],
+			"rotation": {"angle": 0, "axis": "y", "origin": [8.15013, 16.01, 8.7821]},
 			"faces": {
-				"up": {"uv": [0, 5.5, 3, 9], "texture": "#6"}
+				"up": {"uv": [0, 0, 7, 7], "texture": "#4"}
 			}
 		},
 		{
@@ -178,18 +149,18 @@
 		},
 		{
 			"name": "paper1",
-			"from": [3.5, 16.01, 8.6],
-			"to": [9.5, 16.01, 12.6],
-			"rotation": {"angle": 0, "axis": "y", "origin": [7.5, 16, 8.6]},
+			"from": [3.5, 16.135, 8.6],
+			"to": [9.5, 16.135, 12.6],
+			"rotation": {"angle": 0, "axis": "y", "origin": [7.5, 16.125, 8.6]},
 			"faces": {
 				"up": {"uv": [0, 13, 3, 11], "texture": "#7"}
 			}
 		},
 		{
 			"name": "paper2",
-			"from": [0, 16.02, 8.5],
-			"to": [6, 16.02, 12.5],
-			"rotation": {"angle": -45, "axis": "y", "origin": [2, 16, 11.5]},
+			"from": [0, 16.145, 8.5],
+			"to": [6, 16.145, 12.5],
+			"rotation": {"angle": -45, "axis": "y", "origin": [2, 16.125, 11.5]},
 			"faces": {
 				"up": {"uv": [0, 13, 3, 11], "texture": "#7"}
 			}
@@ -243,16 +214,16 @@
 			"origin": [11.5, 17.005, 8.5],
 			"scope": 0,
 			"color": 0,
-			"children": [8, 9, 10]
+			"children": [8]
 		},
 		{
 			"name": "parcels",
 			"origin": [7, 8, 8],
 			"scope": 0,
 			"color": 0,
-			"children": [11, 12]
+			"children": [9, 10]
 		},
-		13,
-		14
+		11,
+		12
 	]
 }
