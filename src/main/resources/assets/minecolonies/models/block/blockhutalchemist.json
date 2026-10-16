@@ -10,11 +10,10 @@
 		"6": "minecolonies:block/liquid/potionwater_still",
 		"7": "block/oak_planks",
 		"8": "block/magma",
-		"9": "block/cobblestone",
-		"10": "block/cobbled_deepslate",
+		"9": "block/tuff_bricks",
+		"particle": "block/tuff_bricks",
 		"base": "block/brewing_stand_base",
-		"stand": "block/brewing_stand",
-		"particle": "block/cobblestone"
+		"stand": "block/brewing_stand"
 	},
 	"elements": [
 		{
@@ -201,7 +200,7 @@
 			"faces": {
 				"north": {"uv": [0, 0, 16, 1], "texture": "#9"},
 				"east": {"uv": [0, 0, 2, 1], "texture": "#9"},
-				"south": {"uv": [0, 2, 16, 3], "texture": "#10"},
+				"south": {"uv": [0, 2, 16, 3], "texture": "#9"},
 				"west": {"uv": [0, 0, 2, 1], "texture": "#9"},
 				"up": {"uv": [0, 1, 16, 3], "texture": "#9"}
 			}
@@ -212,7 +211,7 @@
 			"rotation": {"angle": 0, "axis": "y", "origin": [0, 15, 2]},
 			"faces": {
 				"north": {"uv": [12, 1, 16, 2], "texture": "#9"},
-				"east": {"uv": [0, 0, 4, 1], "texture": "#10"},
+				"east": {"uv": [0, 0, 4, 1], "texture": "#9"},
 				"south": {"uv": [0, 1, 4, 2], "texture": "#9"},
 				"west": {"uv": [0, 0, 4, 1], "texture": "#9"},
 				"up": {"uv": [0, 0, 4, 4], "texture": "#9"}
@@ -226,7 +225,7 @@
 				"north": {"uv": [12, 1, 16, 2], "texture": "#9"},
 				"east": {"uv": [0, 1, 4, 2], "texture": "#9"},
 				"south": {"uv": [0, 1, 4, 2], "texture": "#9"},
-				"west": {"uv": [0, 1, 4, 2], "texture": "#10"},
+				"west": {"uv": [0, 1, 4, 2], "texture": "#9"},
 				"up": {"uv": [0, 0, 4, 4], "texture": "#9"}
 			}
 		},
@@ -235,7 +234,7 @@
 			"to": [16, 16, 8],
 			"rotation": {"angle": 0, "axis": "y", "origin": [0, 15, 6]},
 			"faces": {
-				"north": {"uv": [0, 0, 16, 1], "texture": "#10"},
+				"north": {"uv": [0, 0, 16, 1], "texture": "#9"},
 				"east": {"uv": [0, 0, 2, 1], "texture": "#9"},
 				"south": {"uv": [0, 0, 16, 1], "texture": "#9"},
 				"west": {"uv": [0, 0, 2, 1], "texture": "#9"},
