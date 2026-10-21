@@ -213,10 +213,12 @@ public final class ModItemsInitializer
         // Tier 2
         ModItems.pasta_tomato = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(11).saturationModifier(0.25F).usingConvertsTo(Items.BOWL).build()), 2);
         ModItems.cheese_pizza = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(13).saturationModifier(0.25F).build()), 2);
+        ModItems.cheese_pizza_slice = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(2).saturationModifier(0.25F).build()), 2);
         // Tier 3
         ModItems.eggplant_dolma = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(12).saturationModifier(0.25F).build()), 3);
         ModItems.stuffed_pita = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(13).saturationModifier(0.25F).build()), 3);
         ModItems.mushroom_pizza = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(12).saturationModifier(0.25F).build()), 3);
+        ModItems.mushroom_pizza_slice = new ItemFood((new Item.Properties()).food(new FoodProperties.Builder().nutrition(2).saturationModifier(0.25F).build()), 3);
 
         // Hot Dry Biomes
         // Tier 1
@@ -381,7 +383,9 @@ public final class ModItemsInitializer
         Registry.register(registry, new ResourceLocation(Constants.MOD_ID, "tortillas"), ModItems.tortillas);
         Registry.register(registry, new ResourceLocation(Constants.MOD_ID, "apple_pie"), ModItems.apple_pie);
         Registry.register(registry, new ResourceLocation(Constants.MOD_ID, "cheese_pizza"), ModItems.cheese_pizza);
+        Registry.register(registry, new ResourceLocation(Constants.MOD_ID, "cheese_pizza_slice"), ModItems.cheese_pizza_slice);
         Registry.register(registry, new ResourceLocation(Constants.MOD_ID, "mushroom_pizza"), ModItems.mushroom_pizza);
+        Registry.register(registry, new ResourceLocation(Constants.MOD_ID, "mushroom_pizza_slice"), ModItems.mushroom_pizza_slice);
         Registry.register(registry, new ResourceLocation(Constants.MOD_ID, "plain_cheesecake"), ModItems.plain_cheesecake);
         Registry.register(registry, new ResourceLocation(Constants.MOD_ID, "mintchoco_cheesecake"), ModItems.mintchoco_cheesecake);
         Registry.register(registry, new ResourceLocation(Constants.MOD_ID, "spicy_eggplant"), ModItems.spicy_eggplant);
