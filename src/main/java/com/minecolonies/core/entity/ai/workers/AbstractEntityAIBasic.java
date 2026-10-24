@@ -934,7 +934,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
      */
     public boolean retrieveToolInTileEntity(final BlockEntity entity, final EquipmentTypeEntry toolType, final int minLevel, final int maxLevel)
     {
-        if (ModEquipmentTypes.none.get().equals(toolType))
+        if (toolType == null)
         {
             return false;
         }
@@ -1111,7 +1111,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
                 final BlockEntity entity = world.getBlockEntity(pos);
                 if (entity instanceof TileEntityRack)
                 {
-                    if (ModEquipmentTypes.none.get().equals(toolType))
+                    if (toolType == null)
                     {
                         return false;
                     }
@@ -1361,7 +1361,12 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
     private void requestTool(@NotNull final BlockState target, final BlockPos pos)
     {
         final EquipmentTypeEntry toolType = WorkerUtil.getBestToolForBlock(target, target.getDestroySpeed(world, pos), building, world, pos);
-        final int required = WorkerUtil.getCorrectHarvestLevelForBlock(target);
+        if (toolType == null)
+        {
+            return;
+        }
+
+        final int required = WorkerUtil.getCorrectHarvestLevelForBlock(target, world, pos);
         if (building.getMaxEquipmentLevel() < required && worker.getCitizenData() != null)
         {
             worker.getCitizenData().triggerInteraction(new PosBasedInteraction(
@@ -1405,9 +1410,9 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
     protected int getMostEfficientTool(@NotNull final BlockState target, final BlockPos pos)
     {
         final EquipmentTypeEntry toolType = WorkerUtil.getBestToolForBlock(target, target.getDestroySpeed(world, pos), building, world, pos);
-        final int required = WorkerUtil.getCorrectHarvestLevelForBlock(target);
+        final int required = WorkerUtil.getCorrectHarvestLevelForBlock(target, world, pos);
 
-        if (toolType == ModEquipmentTypes.none.get())
+        if (toolType == null)
         {
             return NO_TOOL;
         }

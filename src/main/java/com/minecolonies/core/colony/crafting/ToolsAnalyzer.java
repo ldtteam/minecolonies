@@ -32,7 +32,7 @@ public final class ToolsAnalyzer
         for (final ItemStack stack : IColonyManager.getInstance().getCompatibilityManager().getListOfAllItems())
         {
             for (EquipmentTypeEntry toolType : ModEquipmentTypes.getRegistry()) {
-                if (toolType == ModEquipmentTypes.none.get() || !toolType.checkIsEquipment(stack)) { continue; }
+                if (!toolType.checkIsEquipment(stack)) { continue; }
 
                 tryAddingToolWithLevel(toolItems, toolType, stack);
 

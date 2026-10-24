@@ -227,9 +227,10 @@ public class CustomRecipe
     private ResourceLocation lootTable;
 
     /**
-     * The tool required to craft this recipe
+     * The tool required to craft this recipe, or null if none is required
      */
-    private EquipmentTypeEntry requiredTool = ModEquipmentTypes.none.get();
+    @Nullable
+    private EquipmentTypeEntry requiredTool = null;
 
     /**
      * Cache of the recipe storage for performance
@@ -582,14 +583,14 @@ public class CustomRecipe
      * @param researchReqs      Research IDs that the colony must have to begin the research.
      * @param researchExcludes  Research IDs that will cause buildings in the colony to remove the recipe, if learned.
      * @param lootTable         The loot table's resource location, if one is present.
-     * @param requiredTool      The tool required for this craft, if any.  (In addition to any tools inferred from the recipe itself.)
+     * @param requiredTool      The tool required for this craft, if any, or null if none is required.  (In addition to any tools inferred from the recipe itself.)
      * @param inputs            The consumed items, as ItemStorages.
      * @param primaryOutput     The primary output of the recipe.
      * @param secondaryOutput   The secondary outputs of the recipe. Most often items like buckets or tools.
      * @param altOutputs        Alternative outputs of the recipe.  Used to allow one taught recipe to result in multiple effective choices for the request system.
      */
     public CustomRecipe(final String crafter, final int minBldgLevel, final int maxBldgLevel, final boolean mustExist, final boolean showTooltip, final ResourceLocation recipeId,
-      final Set<ResourceLocation> researchReqs, final Set<ResourceLocation> researchExcludes, @Nullable final ResourceLocation lootTable, final EquipmentTypeEntry requiredTool,
+      final Set<ResourceLocation> researchReqs, final Set<ResourceLocation> researchExcludes, @Nullable final ResourceLocation lootTable, @Nullable final EquipmentTypeEntry requiredTool,
       final List<ItemStorage> inputs, final ItemStack primaryOutput, final List<ItemStack> secondaryOutput, final List<ItemStack> altOutputs, Block intermediate)
     {
         this.crafter = crafter;
@@ -675,9 +676,9 @@ public class CustomRecipe
 
     /**
      * Get the required tool, if any.
-     * @return the tool required to perform this craft
+     * @return the tool required to perform this craft, or null if none is required
      */
-    @NotNull
+    @Nullable
     public EquipmentTypeEntry getRequiredTool()
     {
         return requiredTool;
@@ -894,7 +895,11 @@ public class CustomRecipe
         {
             packetBuffer.writeResourceLocation(getLootTable());
         }
-        packetBuffer.writeResourceLocation(getRequiredTool().getRegistryName());
+        packetBuffer.writeBoolean(getRequiredTool() != null);
+        if (getRequiredTool() != null)
+        {
+            packetBuffer.writeResourceLocation(getRequiredTool().getRegistryName());
+        }
         packetBuffer.writeVarInt(getMinBuildingLevel());
         packetBuffer.writeVarInt(getMaxBuildingLevel());
         packetBuffer.writeBoolean(getMustExist());
@@ -938,7 +943,15 @@ public class CustomRecipe
         {
             lootTable = null;
         }
-        final EquipmentTypeEntry requiredTool = ModEquipmentTypes.getRegistry().getValue(buffer.readResourceLocation());
+        final EquipmentTypeEntry requiredTool;
+        if (buffer.readBoolean())
+        {
+            requiredTool = ModEquipmentTypes.getRegistry().getValue(buffer.readResourceLocation());
+        }
+        else
+        {
+            requiredTool = null;
+        }
         final int minBldgLevel = buffer.readVarInt();
         final int maxBldgLevel = buffer.readVarInt();
         final boolean mustExist = buffer.readBoolean();
