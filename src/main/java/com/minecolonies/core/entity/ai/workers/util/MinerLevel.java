@@ -97,20 +97,20 @@ public class MinerLevel
         this.depth = depth;
         this.levelSign = levelSign;
 
-        final int cobbleX = buildingMiner.getCobbleLocation().getX();
-        final int cobbleZ = buildingMiner.getCobbleLocation().getZ();
+        final int ladderBackX = buildingMiner.getLadderBackLocation().getX();
+        final int ladderBackZ = buildingMiner.getLadderBackLocation().getZ();
 
-        final BlockPos vector = buildingMiner.getLadderLocation().subtract(buildingMiner.getCobbleLocation());
+        final BlockPos vector = buildingMiner.getLadderLocation().subtract(buildingMiner.getLadderBackLocation());
 
         //check for orientation
-        @NotNull final Vec2i cobbleCenter = new Vec2i(cobbleX - (vector.getX() * 3), cobbleZ - (vector.getZ() * 3));
-        @NotNull final Vec2i ladderCenter = new Vec2i(cobbleX + (vector.getX() * 4), cobbleZ + (vector.getZ() * 4));
+        @NotNull final Vec2i ladderBackCenter = new Vec2i(ladderBackX - (vector.getX() * 3), ladderBackZ - (vector.getZ() * 3));
+        @NotNull final Vec2i ladderCenter = new Vec2i(ladderBackX + (vector.getX() * 4), ladderBackZ + (vector.getZ() * 4));
 
         //They are shaft and ladderBack, their parents are the shaft.
-        @NotNull final MineNode cobbleNode = new MineNode(cobbleCenter.getX(), cobbleCenter.getZ(), ladderCenter);
-        cobbleNode.setStyle(LADDER_BACK);
-        cobbleNode.setStatus(MineNode.NodeStatus.COMPLETED);
-        nodes.put(cobbleCenter, cobbleNode);
+        @NotNull final MineNode ladderBackNode = new MineNode(ladderBackCenter.getX(), ladderBackCenter.getZ(), ladderCenter);
+        ladderBackNode.setStyle(LADDER_BACK);
+        ladderBackNode.setStatus(MineNode.NodeStatus.COMPLETED);
+        nodes.put(ladderBackCenter, ladderBackNode);
 
         ladderNode = new MineNode(ladderCenter.getX(), ladderCenter.getZ(), null);
         ladderNode.setStyle(SHAFT);
@@ -126,7 +126,7 @@ public class MinerLevel
 
         for (final Vec2i pos : nodeCenterList)
         {
-            if (cobbleCenter.equals(pos) || ladderCenter.equals(pos))
+            if (ladderBackCenter.equals(pos) || ladderCenter.equals(pos))
             {
                 continue;
             }
@@ -219,7 +219,7 @@ public class MinerLevel
         }
         if (nextNode == null || nextNode.getStyle() == SHAFT)
         {
-            final BlockPos vector = buildingMiner.getLadderLocation().subtract(buildingMiner.getCobbleLocation());
+            final BlockPos vector = buildingMiner.getLadderLocation().subtract(buildingMiner.getLadderBackLocation());
 
             return new BlockPos(ladderNode.getX() + 3 * vector.getX(), getDepth() + 1, ladderNode.getZ() + 3 * vector.getZ());
         }

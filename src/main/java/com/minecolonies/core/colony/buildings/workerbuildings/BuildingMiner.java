@@ -31,12 +31,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static com.minecolonies.api.util.constant.BuildingConstants.TAG_CLOCATION;
+import static com.minecolonies.api.util.constant.BuildingConstants.TAG_LBLOCATION;
 import static com.minecolonies.api.util.constant.BuildingConstants.TAG_LLOCATION;
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 import static com.minecolonies.api.util.constant.EquipmentLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
-import static com.minecolonies.api.util.constant.SchematicTagConstants.TAG_COBBLE;
-import static com.minecolonies.api.util.constant.SchematicTagConstants.TAG_LADDER;
+import static com.minecolonies.api.util.constant.SchematicTagConstants.*;
 
 /**
  * The miners building.
@@ -68,9 +67,9 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
     private static final String MINER = "miner";
 
     /**
-     * The location of the topmost cobblestone the ladder starts at.
+     * The location of the topmost block where the ladder starts at.
      */
-    private BlockPos cobbleLocation;
+    private BlockPos ladderBackLocation;
 
     /**
      * The location of the topmost ladder in the shaft.
@@ -89,11 +88,9 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
 
         final ItemStack stackLadder = new ItemStack(Blocks.LADDER);
         final ItemStack stackTorch = new ItemStack(Blocks.TORCH);
-        final ItemStack stackCobble = new ItemStack(Blocks.COBBLESTONE);
 
         keepX.put(stack -> ItemStack.isSameItem(stackLadder, stack), new Tuple<>(STACKSIZE, true));
         keepX.put(stack -> ItemStack.isSameItem(stackTorch, stack), new Tuple<>(STACKSIZE, true));
-        keepX.put(stack -> ItemStack.isSameItem(stackCobble, stack), new Tuple<>(STACKSIZE, true));
 
         keepX.put(itemStack -> ItemStackUtils.hasEquipmentLevel(itemStack, ModEquipmentTypes.pickaxe.get(), TOOL_LEVEL_WOOD_OR_GOLD, getMaxEquipmentLevel()), new Tuple<>(1, true));
         keepX.put(itemStack -> ItemStackUtils.hasEquipmentLevel(itemStack, ModEquipmentTypes.shovel.get(), TOOL_LEVEL_WOOD_OR_GOLD, getMaxEquipmentLevel()), new Tuple<>(1, true));
@@ -146,7 +143,7 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
         super.deserializeNBT(compound);
 
         ladderLocation = BlockPosUtil.readOrNull(compound, TAG_LLOCATION);
-        cobbleLocation = BlockPosUtil.readOrNull(compound, TAG_CLOCATION);
+        ladderBackLocation = BlockPosUtil.readOrNull(compound, TAG_LBLOCATION);
     }
 
     @Override
@@ -154,7 +151,7 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
     {
         final CompoundTag compound = super.serializeNBT();
 
-        BlockPosUtil.writeOptional(compound, TAG_CLOCATION, cobbleLocation);
+        BlockPosUtil.writeOptional(compound, TAG_LBLOCATION, ladderBackLocation);
         BlockPosUtil.writeOptional(compound, TAG_LLOCATION, ladderLocation);
 
         return compound;
@@ -227,30 +224,30 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
     }
 
     /**
-     * Getter of the cobbleLocation.
+     * Getter of the ladderBackLocation.
      *
      * @return the location.
      */
-    public BlockPos getCobbleLocation()
+    public BlockPos getLadderBackLocation()
     {
-        if (cobbleLocation == null)
+        if (ladderBackLocation == null)
         {
             loadLadderPos();
         }
 
-        return cobbleLocation;
+        return ladderBackLocation;
     }
 
     private void loadLadderPos()
     {
         final Map<String, Set<BlockPos>> map = getTileEntity().getWorldTagNamePosMap();
-        final Set<BlockPos> cobblePos = map.getOrDefault(TAG_COBBLE, new HashSet<>());
+        final Set<BlockPos> ladderBackPos = map.getOrDefault(TAG_LADDER_BACK, new HashSet<>());
         final Set<BlockPos> ladderPos = map.getOrDefault(TAG_LADDER, new HashSet<>());
-        if (cobblePos.isEmpty() || ladderPos.isEmpty())
+        if (ladderBackPos.isEmpty() || ladderPos.isEmpty())
         {
             return;
         }
-        cobbleLocation = cobblePos.iterator().next();
+        ladderBackLocation = ladderBackPos.iterator().next();
         ladderLocation = ladderPos.iterator().next();
     }
 
@@ -302,7 +299,7 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
      */
     private static int getRotationFromVector(final BuildingMiner buildingMiner)
     {
-        final BlockPos vector = buildingMiner.getLadderLocation().subtract(buildingMiner.getCobbleLocation());
+        final BlockPos vector = buildingMiner.getLadderLocation().subtract(buildingMiner.getLadderBackLocation());
 
         if (vector.getX() == 1)
         {
