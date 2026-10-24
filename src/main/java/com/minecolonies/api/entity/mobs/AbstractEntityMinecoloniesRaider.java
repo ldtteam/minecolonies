@@ -12,6 +12,7 @@ import com.minecolonies.api.entity.pathfinding.registry.IPathNavigateRegistry;
 import com.minecolonies.api.items.IChiefSwordItem;
 import com.minecolonies.api.util.ColonyUtils;
 import com.minecolonies.api.util.DamageSourceKeys;
+import com.minecolonies.core.entity.pathfinding.PathingOptions.DangerMode;
 import com.minecolonies.core.entity.pathfinding.navigation.AbstractAdvancedPathNavigate;
 import com.minecolonies.core.entity.pathfinding.navigation.PathingStuckHandler;
 import net.minecraft.nbt.CompoundTag;
@@ -180,7 +181,7 @@ public abstract class AbstractEntityMinecoloniesRaider extends AbstractEntityMin
             newNavigator.getPathingOptions().setEnterDoors(true);
             newNavigator.getPathingOptions().withDropCost(1D);
             newNavigator.getPathingOptions().withJumpCost(1D);
-            newNavigator.getPathingOptions().setPassDanger(true);
+            newNavigator.getPathingOptions().setDangerMode(DangerMode.LAVA_ONLY);
             PathingStuckHandler stuckHandler = PathingStuckHandler.createStuckHandler()
                 .withTakeDamageOnStuck(0.4f)
                 .withBuildLeafBridges()

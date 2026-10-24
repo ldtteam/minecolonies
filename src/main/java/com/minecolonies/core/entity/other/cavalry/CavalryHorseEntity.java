@@ -33,6 +33,7 @@ import com.minecolonies.core.entity.mobs.IAnimalColonyHandler;
 import com.minecolonies.core.entity.other.ICitizenJobMount;
 import com.minecolonies.core.entity.pathfinding.PathPointExtended;
 import com.minecolonies.core.entity.pathfinding.PathingOptions;
+import com.minecolonies.core.entity.pathfinding.PathingOptions.DangerMode;
 import com.minecolonies.core.entity.pathfinding.navigation.MinecoloniesAdvancedPathNavigate;
 
 import net.minecraft.core.BlockPos;
@@ -476,7 +477,7 @@ public class CavalryHorseEntity extends Horse implements IManagedAnimal<CavalryH
         pathNavigation.getPathingOptions().setCanOpenDoors(false);
         pathNavigation.getPathingOptions().withDropCost(1D);
         pathNavigation.getPathingOptions().withJumpCost(1D);
-        pathNavigation.getPathingOptions().setPassDanger(false);
+        pathNavigation.getPathingOptions().setDangerMode(DangerMode.DEFAULT);
         pathNavigation.getPathingOptions().setCanSwim(true);
         pathNavigation.getPathingOptions().setCanClimbAdvanced(false);
         pathNavigation.setCanFloat(true);

@@ -322,6 +322,25 @@ public class PathfindingUtils
     }
 
     /**
+     * Check if this block state's fluid is lava.
+     * @param state
+     * @return
+     */
+    public static boolean isLavaState(final BlockState state)
+    {
+        final Fluid fluid = state.getFluidState().getType();
+
+        if (state.getBlock() == Blocks.LAVA
+            || fluid == Fluids.LAVA
+            || fluid == Fluids.FLOWING_LAVA) 
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
      * Check if the block at this position is lava.
      *
      * @param pos         the pos in the world.
@@ -454,7 +473,8 @@ public class PathfindingUtils
             block instanceof MagmaBlock ||
             block instanceof SweetBerryBushBlock ||
             block instanceof PowderSnowBlock ||
-            block == Blocks.LAVA_CAULDRON;
+            block == Blocks.LAVA_CAULDRON ||
+            PathfindingUtils.isLavaState(blockState);
     }
 
     /**
