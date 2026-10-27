@@ -40,6 +40,7 @@ public final class TagConstants
     public static final ResourceLocation INDESTRUCTIBLE            = new ResourceLocation(MOD_ID, "indestructible");
     public static final ResourceLocation MESHES                    = new ResourceLocation(MOD_ID, "meshes");
     public static final ResourceLocation HOSTILE                   = new ResourceLocation(MOD_ID, "hostile");
+    public static final ResourceLocation RAIDER_TARGETS            = new ResourceLocation(MOD_ID, "raider_targets");
     public static final ResourceLocation BREAKABLE_ORE             = new ResourceLocation(MOD_ID, "breakable_ore");
     public static final ResourceLocation RAW_ORE                   = new ResourceLocation(MOD_ID, "raw_ore");
     public static final ResourceLocation MOB_ATTACK_BLACKLIST      = new ResourceLocation(MOD_ID, "mob_attack_blacklist");

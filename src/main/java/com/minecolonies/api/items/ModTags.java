@@ -75,6 +75,7 @@ public class ModTags
 
     public static final TagKey<EntityType<?>> hostile = TagKey.create(Registries.ENTITY_TYPE, TagConstants.HOSTILE);
     public static final TagKey<EntityType<?>> mobAttackBlacklist = TagKey.create(Registries.ENTITY_TYPE, TagConstants.MOB_ATTACK_BLACKLIST);
+    public static final TagKey<EntityType<?>> raider_targets = TagKey.create(Registries.ENTITY_TYPE, TagConstants.RAIDER_TARGETS);
 
     public static final TagKey<EntityType<?>> raiders = TagKey.create(Registries.ENTITY_TYPE, TagConstants.RAIDERS);
 

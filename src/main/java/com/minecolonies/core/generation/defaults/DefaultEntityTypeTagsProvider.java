@@ -28,6 +28,7 @@ public class DefaultEntityTypeTagsProvider extends EntityTypeTagsProvider
     protected void addTags(final HolderLookup.Provider holder)
     {
         tag(ModTags.hostile).add(EntityType.SLIME);
+        tag(ModTags.raider_targets).add(EntityType.VILLAGER, EntityType.IRON_GOLEM, ModEntities.MERCENARY, ModEntities.VISITOR, ModEntities.CITIZEN);
         tag(ModTags.mobAttackBlacklist).add(EntityType.ENDERMAN, EntityType.LLAMA);
         tag(ModTags.freeToInteractWith).addOptional(new ResourceLocation("corpse", "corpse"));
 
