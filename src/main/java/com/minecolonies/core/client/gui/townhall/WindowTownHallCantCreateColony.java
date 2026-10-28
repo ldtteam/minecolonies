@@ -2,10 +2,10 @@ package com.minecolonies.core.client.gui.townhall;
 
 import com.ldtteam.blockui.PaneBuilders;
 import com.ldtteam.blockui.controls.Text;
-import com.minecolonies.core.Network;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.core.Network;
 import com.minecolonies.core.client.gui.AbstractWindowSkeleton;
-import com.minecolonies.core.network.messages.server.PickupBlockMessage;
+import com.minecolonies.core.network.messages.server.PickUpTownhallMessage;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -13,7 +13,8 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 
-import static com.minecolonies.api.util.constant.WindowConstants.*;
+import static com.minecolonies.api.util.constant.WindowConstants.BUTTON_CANCEL;
+import static com.minecolonies.api.util.constant.WindowConstants.BUTTON_PICKUP_BUILDING;
 
 /**
  *  UI to notify the player that a colony can't be created here.
@@ -45,7 +46,7 @@ public class WindowTownHallCantCreateColony extends AbstractWindowSkeleton
      */
     private void pickup()
     {
-        Network.getNetwork().sendToServer(new PickupBlockMessage(pos));
+        Network.getNetwork().sendToServer(new PickUpTownhallMessage(pos));
         close();
     }
 }

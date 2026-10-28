@@ -20,19 +20,19 @@ import static com.minecolonies.api.util.constant.TranslationConstants.WARNING_BU
 /**
  * Pickup the town hall block.
  */
-public class PickupBlockMessage implements IMessage
+public class PickUpTownhallMessage implements IMessage
 {
     /**
      * Position the player wants to found the colony at.
      */
     BlockPos pos;
 
-    public PickupBlockMessage()
+    public PickUpTownhallMessage()
     {
         super();
     }
 
-    public PickupBlockMessage(final BlockPos pos)
+    public PickUpTownhallMessage(final BlockPos pos)
     {
         this.pos = pos;
     }
