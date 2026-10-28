@@ -1,7 +1,9 @@
 package com.minecolonies.core.entity.pathfinding.pathjobs;
 
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.compatibility.Compatibility;
+import com.minecolonies.api.compatibility.ICompatibilityManager;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.BlockPosUtil;
@@ -13,10 +15,12 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashMap;
 import java.util.List;
 
 import static com.minecolonies.core.entity.pathfinding.pathjobs.PathJobMoveToWithPassable.PASSING_COST;
@@ -40,7 +44,12 @@ public class PathJobFindTree extends AbstractPathJob implements ISearchPathJob
      * Position we want to search towards
      */
     private final BlockPos searchTowards;
-    private final int      dyntreesize;
+    private final int                         dyntreesize;
+
+    /**
+     * Cache of leaves to sapling map from compat manager.
+     */
+    private final HashMap<Block, ItemStorage> leavesToSaplingMapCache;
 
     /**
      * Box restriction area
@@ -71,6 +80,8 @@ public class PathJobFindTree extends AbstractPathJob implements ISearchPathJob
     {
         super(world, start, range, new TreePathResult(), entity);
         this.excludedTrees = treesToCut;
+        this.leavesToSaplingMapCache = IColonyManager.getInstance().getCompatibilityManager().getLeavesToSaplingMapCopy();
+
         this.colony = colony;
         this.searchTowards = home;
         this.dyntreesize = dyntreesize;
@@ -118,6 +129,7 @@ public class PathJobFindTree extends AbstractPathJob implements ISearchPathJob
         this.excludedTrees = excludedTrees;
         this.colony = colony;
         this.dyntreesize = dyntreesize;
+        this.leavesToSaplingMapCache = IColonyManager.getInstance().getCompatibilityManager().getLeavesToSaplingMapCopy();
 
         this.searchTowards = BlockPos.containing(restrictionBox.getCenter());
     }
@@ -170,7 +182,7 @@ public class PathJobFindTree extends AbstractPathJob implements ISearchPathJob
 
     private boolean isTree(final BlockPos pos)
     {
-        if (Tree.checkTree(world, pos, excludedTrees, dyntreesize) && Tree.checkIfInColony(pos, colony, world, restrictionBox != null))
+        if (Tree.checkTree(world, pos, excludedTrees, dyntreesize, leavesToSaplingMapCache) && Tree.checkIfInColony(pos, colony, world, restrictionBox != null))
         {
             getResult().treeLocation = pos.immutable();
             return true;

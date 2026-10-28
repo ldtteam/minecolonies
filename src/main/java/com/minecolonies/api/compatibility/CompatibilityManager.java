@@ -583,6 +583,12 @@ public class CompatibilityManager implements ICompatibilityManager
     }
 
     @Override
+    public HashMap<Block, ItemStorage> getLeavesToSaplingMapCopy()
+    {
+        return new HashMap<>(leavesToSaplingMap);
+    }
+
+    @Override
     public CreativeModeTab getCreativeTab(final ItemStorage checkItem)
     {
         return creativeModeTabMap.get(checkItem);
