@@ -33,9 +33,9 @@ public final class BuildingConstants
     public static final String TAG_LEVELS = "levels";
 
     /**
-     * The NBT Tag to store the location of the cobblestone at the shaft.
+     * The NBT Tag to store the location of the block behind the ladder at the shaft.
      */
-    public static final String TAG_CLOCATION = "cobblelocation";
+    public static final String TAG_LBLOCATION = "ladderbacklocation";
 
     /**
      * The NBT Tag to store the active node the miner is working on.
