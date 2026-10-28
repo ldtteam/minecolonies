@@ -4,7 +4,7 @@ import com.ldtteam.blockui.PaneBuilders;
 import com.ldtteam.blockui.controls.Text;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.client.gui.AbstractWindowSkeleton;
-import com.minecolonies.core.network.messages.server.PickupBlockMessage;
+import com.minecolonies.core.network.messages.server.PickUpTownhallMessage;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -44,7 +44,7 @@ public class WindowTownHallCantCreateColony extends AbstractWindowSkeleton
      */
     private void pickup()
     {
-        new PickupBlockMessage(pos).sendToServer();
+        new PickUpTownhallMessage(pos).sendToServer();
         close();
     }
 }

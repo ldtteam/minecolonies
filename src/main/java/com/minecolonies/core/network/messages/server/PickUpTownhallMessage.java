@@ -2,13 +2,13 @@ package com.minecolonies.core.network.messages.server;
 
 import com.ldtteam.common.network.AbstractServerPlayMessage;
 import com.ldtteam.common.network.PlayMessageType;
+import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.colony.Colony;
 import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
@@ -21,22 +21,22 @@ import static com.minecolonies.api.util.constant.TranslationConstants.WARNING_BU
 /**
  * Pickup the town hall block.
  */
-public class PickupBlockMessage extends AbstractServerPlayMessage
+public class PickUpTownhallMessage extends AbstractServerPlayMessage
 {
-    public static final PlayMessageType<?> TYPE = PlayMessageType.forServer(Constants.MOD_ID, "pickup_block", PickupBlockMessage::new);
+    public static final PlayMessageType<?> TYPE = PlayMessageType.forServer(Constants.MOD_ID, "pickup_block", PickUpTownhallMessage::new);
 
     /**
      * Position the player wants to found the colony at.
      */
     BlockPos pos;
 
-    public PickupBlockMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
+    public PickUpTownhallMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
     {
         super(type);
         pos = buf.readBlockPos();
     }
 
-    public PickupBlockMessage(final BlockPos pos)
+    public PickUpTownhallMessage(final BlockPos pos)
     {
         super(TYPE);
         this.pos = pos;
@@ -62,7 +62,12 @@ public class PickupBlockMessage extends AbstractServerPlayMessage
             return;
         }
 
-        final ItemStack stack = new ItemStack(world.getBlockState(pos).getBlock(), 1);
+        if (world.getBlockState(pos).getBlock() != ModBlocks.blockHutTownHall || pos.distSqr(sender.blockPosition()) > 15 * 15)
+        {
+            return;
+        }
+
+        final ItemStack stack = new ItemStack(ModBlocks.blockHutTownHall, 1);
         if (InventoryUtils.addItemStackToItemHandler(new InvWrapper(sender.getInventory()), stack))
         {
             world.destroyBlock(pos, false);
@@ -71,6 +76,5 @@ public class PickupBlockMessage extends AbstractServerPlayMessage
         {
             MessageUtils.format(WARNING_BUILDING_PICKUP_PLAYER_INVENTORY_FULL).sendTo(sender);
         }
-
     }
 }

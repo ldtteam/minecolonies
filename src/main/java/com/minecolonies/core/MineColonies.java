@@ -362,7 +362,7 @@ public class MineColonies
         GiveToolMessage.TYPE.register(registry);
         GetColonyInfoMessage.TYPE.register(registry);
         MarkStoryReadOnItem.TYPE.register(registry);
-        PickupBlockMessage.TYPE.register(registry);
+        PickUpTownhallMessage.TYPE.register(registry);
         ColonyAbandonOwnMessage.TYPE.register(registry);
 
         AssignUnassignMessage.TYPE.register(registry);
