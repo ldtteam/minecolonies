@@ -1,12 +1,12 @@
 package com.minecolonies.core.network.messages.server;
 
+import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.network.IMessage;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.core.colony.Colony;
 import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
@@ -72,9 +72,12 @@ public class PickupBlockMessage implements IMessage
             return;
         }
 
-        final ItemStack stack = new ItemStack(world.getBlockState(pos).getBlock(), 1);
-        final CompoundTag compoundNBT = new CompoundTag();
-        stack.setTag(compoundNBT);
+        if (world.getBlockState(pos).getBlock() != ModBlocks.blockHutTownHall || pos.distSqr(sender.blockPosition()) > 15 * 15)
+        {
+            return;
+        }
+
+        final ItemStack stack = new ItemStack(ModBlocks.blockHutTownHall, 1);
         if (InventoryUtils.addItemStackToProvider(sender, stack))
         {
             world.destroyBlock(pos, false);
