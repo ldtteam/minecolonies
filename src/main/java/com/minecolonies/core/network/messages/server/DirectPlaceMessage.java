@@ -3,6 +3,7 @@ package com.minecolonies.core.network.messages.server;
 import com.ldtteam.structurize.storage.ServerFutureProcessor;
 import com.ldtteam.structurize.storage.StructurePacks;
 import com.ldtteam.structurize.util.BlockUtils;
+import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
@@ -113,7 +114,8 @@ public class DirectPlaceMessage implements IMessage
         final ServerPlayer player = ctxIn.getSender();
         final Level world = player.getCommandSenderWorld();
         final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld(world, pos);
-        if (player.blockPosition().distSqr(pos) > 5 * 5 || !state.equals(BlockUtils.getBlockStateFromStack(stack)) || !world.getBlockState(pos).isAir())
+        if (player.blockPosition().distSqr(pos) > 5 * 5 || !state.equals(BlockUtils.getBlockStateFromStack(stack)) || !world.getBlockState(pos).isAir()
+            || !(state.getBlock() instanceof AbstractBlockHut))
         {
             return;
         }
