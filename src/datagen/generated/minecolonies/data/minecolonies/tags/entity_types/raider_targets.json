@@ -1,0 +1,8 @@
+{
+  "values": [
+    "minecraft:villager",
+    "minecraft:iron_golem",
+    "minecolonies:mercenary",
+    "minecolonies:citizen"
+  ]
+}
