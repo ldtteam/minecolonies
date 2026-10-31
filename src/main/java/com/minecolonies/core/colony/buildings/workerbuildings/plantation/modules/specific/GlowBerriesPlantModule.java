@@ -1,7 +1,6 @@
 package com.minecolonies.core.colony.buildings.workerbuildings.plantation.modules.specific;
 
 import com.minecolonies.api.colony.buildingextensions.IBuildingExtension;
-import com.minecolonies.api.equipment.ModEquipmentTypes;
 import com.minecolonies.api.equipment.registry.EquipmentTypeEntry;
 import com.minecolonies.core.colony.buildings.workerbuildings.plantation.modules.generic.DownwardsGrowingPlantModule;
 import net.minecraft.resources.ResourceLocation;
@@ -9,6 +8,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jetbrains.annotations.Nullable;
 
 import static com.minecolonies.api.research.util.ResearchConstants.PLANTATION_EXOTIC;
 
@@ -48,8 +48,9 @@ public class GlowBerriesPlantModule extends DownwardsGrowingPlantModule
     }
 
     @Override
+    @Nullable
     public EquipmentTypeEntry getRequiredTool()
     {
-        return ModEquipmentTypes.none.get();
+        return null;
     }
 }
