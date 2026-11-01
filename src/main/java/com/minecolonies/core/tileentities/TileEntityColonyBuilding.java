@@ -489,8 +489,14 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
                                 }
 
                                 signText = signText.setMessage(i, Component.literal(buildingView.getBuildingLevel() + ""));
-                                signBlockEntity.setText(signText, true);
-                                signBlockEntity.setText(signText, false);
+                                if (!signBlockEntity.getText(true).equals(signText))
+                                {
+                                    signBlockEntity.setText(signText, true);
+                                }
+                                if (!signBlockEntity.getText(false).equals(signText))
+                                {
+                                    signBlockEntity.setText(signText, false);
+                                }
                             }
                         }
                     }
