@@ -37,13 +37,15 @@ public class GlobalResearchTreeMessage extends AbstractClientPlayMessage
     protected GlobalResearchTreeMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
     {
         super(buf, type);
-        treeBuffer = new RegistryFriendlyByteBuf(new FriendlyByteBuf(Unpooled.wrappedBuffer(buf.readByteArray())), buf.registryAccess());
+        treeBuffer = new RegistryFriendlyByteBuf(Unpooled.copiedBuffer(buf.readSlice(buf.readVarInt())), buf.registryAccess());
     }
 
     @Override
     protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf)
     {
-        buf.writeByteArray(treeBuffer.array());
+        int len = treeBuffer.readableBytes();
+        buf.writeVarInt(len);
+        buf.writeBytes(treeBuffer, treeBuffer.readerIndex(), len);
     }
 
     @Override

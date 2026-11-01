@@ -39,11 +39,6 @@ public class ColonyVisitorViewDataMessage extends AbstractClientPlayMessage
     private final ResourceKey<Level> dimension;
 
     /**
-     * Visiting entity data
-     */
-    private Set<IVisitorData> visitors;
-
-    /**
      * Visitor buf to read on client side.
      */
     private final RegistryFriendlyByteBuf visitorBuf;
@@ -63,7 +58,6 @@ public class ColonyVisitorViewDataMessage extends AbstractClientPlayMessage
         super(TYPE);
         this.colonyId = colony.getID();
         this.dimension = colony.getDimension();
-        this.visitors = visitors;
         this.refresh = refresh;
 
         visitorBuf = new RegistryFriendlyByteBuf(new FriendlyByteBuf(Unpooled.buffer()), colony.getWorld().registryAccess());
@@ -81,7 +75,8 @@ public class ColonyVisitorViewDataMessage extends AbstractClientPlayMessage
         colonyId = buf.readInt();
         dimension = ResourceKey.create(Registries.DIMENSION, ResourceLocation.parse(buf.readUtf(32767)));
         refresh = buf.readBoolean();
-        this.visitorBuf = new RegistryFriendlyByteBuf(new FriendlyByteBuf(Unpooled.wrappedBuffer(buf.readByteArray())), buf.registryAccess());
+
+        this.visitorBuf = new RegistryFriendlyByteBuf(Unpooled.copiedBuffer(buf.readSlice(buf.readVarInt())), buf.registryAccess());
     }
 
     @Override
@@ -91,7 +86,10 @@ public class ColonyVisitorViewDataMessage extends AbstractClientPlayMessage
         buf.writeInt(colonyId);
         buf.writeUtf(dimension.location().toString());
         buf.writeBoolean(refresh);
-        buf.writeByteArray(visitorBuf.array());
+
+        int len = visitorBuf.readableBytes();
+        buf.writeVarInt(len);
+        buf.writeBytes(visitorBuf, visitorBuf.readerIndex(), len);
     }
 
     @Override

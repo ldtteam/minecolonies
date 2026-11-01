@@ -30,19 +30,21 @@ public class CustomRecipeManagerMessage extends AbstractClientPlayMessage
     public CustomRecipeManagerMessage(final RegistryFriendlyByteBuf buf)
     {
         super(TYPE);
-        this.managerBuffer = new RegistryFriendlyByteBuf(new FriendlyByteBuf(buf.copy()), buf.registryAccess());
+        this.managerBuffer = new RegistryFriendlyByteBuf(buf.copy(), buf.registryAccess());
     }
 
     protected CustomRecipeManagerMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
     {
         super(buf, type);
-        managerBuffer = new RegistryFriendlyByteBuf(new FriendlyByteBuf(Unpooled.wrappedBuffer(buf.readByteArray())), buf.registryAccess());
+        this.managerBuffer = new RegistryFriendlyByteBuf(Unpooled.copiedBuffer(buf.readSlice(buf.readVarInt())), buf.registryAccess());
     }
 
     @Override
     protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf)
     {
-        buf.writeByteArray(managerBuffer.array());
+        int len = managerBuffer.readableBytes();
+        buf.writeVarInt(len);
+        buf.writeBytes(managerBuffer, managerBuffer.readerIndex(), len);
     }
 
     @Override
