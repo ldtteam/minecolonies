@@ -16,6 +16,7 @@ import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.core.MineColonies;
 import com.minecolonies.core.client.gui.WindowSupplies;
 import com.minecolonies.core.client.gui.WindowSupplyStory;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -148,7 +149,7 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies implements 
         final BlockPos zeroPos = pos.subtract(blueprint.getPrimaryBlockOffset());
         final int sizeX = blueprint.getSizeX();
         final int sizeZ = blueprint.getSizeZ();
-        final int groundHeight = BlueprintTagUtils.getNumberOfGroundLevels(blueprint, 1) - 1;
+        final int groundHeight = Mth.clamp(BlueprintTagUtils.getNumberOfGroundLevels(blueprint, 1) - 1, 0, blueprint.getSizeY() - 1);
         final int groundLevel = zeroPos.getY() + groundHeight;
 
         final List<PlacementError> needsAirAbove = new ArrayList<>();
