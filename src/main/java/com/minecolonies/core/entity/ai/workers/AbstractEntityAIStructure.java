@@ -1,6 +1,9 @@
 package com.minecolonies.core.entity.ai.workers;
 
 import com.ldtteam.structurize.blocks.schematic.BlockFluidSubstitution;
+import com.ldtteam.structurize.blueprints.v1.Blueprint;
+import com.ldtteam.structurize.blueprints.v1.BlueprintTagUtils;
+import com.ldtteam.structurize.placement.AbstractBlueprintIterator;
 import com.ldtteam.structurize.placement.BlockPlacementResult;
 import com.ldtteam.structurize.placement.StructurePhasePlacementResult;
 import com.ldtteam.structurize.placement.StructurePlacer;
@@ -29,6 +32,7 @@ import com.minecolonies.core.colony.buildings.modules.BuildingResourcesModule;
 import com.minecolonies.core.colony.buildings.utils.BuilderBucket;
 import com.minecolonies.core.colony.buildings.utils.BuildingBuilderResource;
 import com.minecolonies.core.colony.jobs.AbstractJobStructure;
+import com.minecolonies.core.entity.ai.workers.util.BlueprintFrameIterator;
 import com.minecolonies.core.entity.ai.workers.util.BuildingProgressStage;
 import com.minecolonies.core.entity.ai.workers.util.BuildingStructureHandler;
 import com.minecolonies.core.tileentities.TileEntityDecorationController;
@@ -93,6 +97,11 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
      * We're waiting for the blueprint to finish loading.
      */
     protected boolean loadingBlueprint = false;
+
+    /**
+     * Blueprint frame iterator
+     */
+    private BlueprintFrameIterator frameIterator = null;
 
     /**
      * Different item check result possibilities.
@@ -363,8 +372,27 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
         final StructurePhasePlacementResult result;
         final StructurePlacer placer = structurePlacer.getA();
         final BuildingProgressStage currentStage = structurePlacer.getB().getStage();
+
+
         switch (currentStage)
         {
+            case BUILD_FRAME:
+                if (this.frameIterator == null)
+                {
+                    final BlueprintFrameIterator localFrameIterator = createFrameIteratorForBlueprint(placer.getHandler().getBluePrint());
+                    if (localFrameIterator == null)
+                    {
+                        result = new StructurePhasePlacementResult(BlockPos.ZERO, new BlockPlacementResult(BlockPos.ZERO, BlockPlacementResult.Result.FINISHED));
+                        break;
+                    }
+                    else
+                    {
+                        this.frameIterator = localFrameIterator;
+                    }
+                }
+                result = placer.executeStructureStep(world, null, progress, StructurePlacer.Operation.BLOCK_PLACEMENT,
+                    () -> frameIterator.increment(this::skipBuilding), false, frameIterator);
+                break;
             case BUILD_SOLID:
                 //structure
                 result = placer.executeStructureStep(world, null, progress, StructurePlacer.Operation.BLOCK_PLACEMENT,
@@ -436,7 +464,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
         final boolean firstIteration = building.getProgress() == null;
         if (result.getBlockResult().getResult() == BlockPlacementResult.Result.FINISHED)
         {
-
+            frameIterator = null;
             building.nextStage();
             if (!goToNextStage(result))
             {
@@ -502,6 +530,39 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
         setDelay((int) ((BUILD_BLOCK_DELAY * PROGRESS_MULTIPLIER / (getPlaceSpeedLevel() / 2 + PROGRESS_MULTIPLIER)) * decrease));
 
         return getState();
+    }
+
+    /**
+     * Queries the frame tags from the blueprint and creates the frame iterator.
+     * @param blueprint the blueprint to query it from.
+     * @return the iterator to construct the frame.
+     */
+    protected BlueprintFrameIterator createFrameIteratorForBlueprint(final Blueprint blueprint)
+    {
+        final Map<BlockPos, List<String>> tags = BlueprintTagUtils.getBlueprintTags(blueprint);
+        final BlockPos offset = blueprint.getPrimaryBlockOffset();
+        final List<BlockPos> hframePos = new ArrayList<>();
+        final List<BlockPos> vframePos = new ArrayList<>();
+
+        for (final Map.Entry<BlockPos, List<String>> tag : tags.entrySet())
+        {
+            if (tag.getValue().contains("hframe"))
+            {
+                hframePos.add(tag.getKey().offset(offset));
+            }
+            if (tag.getValue().contains("vframe"))
+            {
+                vframePos.add(tag.getKey().offset(offset));
+            }
+        }
+
+        // Less than 2 h-frames for connection and no v-frames and there is no frame to build.
+        if (hframePos.size() < 2 && vframePos.isEmpty())
+        {
+            return null;
+        }
+
+        return new BlueprintFrameIterator(structurePlacer.getB(), hframePos, vframePos);
     }
 
     /**
@@ -717,7 +778,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
             {
                 structure = new BuildingStructureHandler<>(world,
                     workOrder,
-                    this, new BuildingProgressStage[] {CLEAR, BUILD_SOLID, WEAK_SOLID, CLEAR_WATER, CLEAR_NON_SOLIDS, DECORATE, SPAWN});
+                    this, new BuildingProgressStage[] {CLEAR, BUILD_FRAME, BUILD_SOLID, WEAK_SOLID, CLEAR_WATER, CLEAR_NON_SOLIDS, DECORATE, SPAWN});
                 building.setTotalStages(6);
             }
 
@@ -1050,6 +1111,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
         structurePlacer = null;
         building.setProgressPos(null, null);
         worker.getCitizenData().setStatusPosition(null);
+        frameIterator = null;
     }
 
     /**
