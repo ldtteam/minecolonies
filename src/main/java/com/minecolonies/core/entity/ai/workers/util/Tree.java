@@ -41,6 +41,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -343,13 +344,14 @@ public class Tree
     /**
      * For use in PathJobFindTree.
      *
-     * @param world         the world.
-     * @param pos           The coordinates.
-     * @param treesToNotCut the trees the lumberjack is not supposed to cut.
-     * @param dyntreesize   the radius a dynamic tree must have in order to get cut down.
+     * @param world                   the world.
+     * @param pos                     The coordinates.
+     * @param treesToNotCut           the trees the lumberjack is not supposed to cut.
+     * @param dyntreesize             the radius a dynamic tree must have in order to get cut down.
+     * @param leavesToSaplingMapCache mapping of leaf to sapling.
      * @return true if the log is part of a tree.
      */
-    public static boolean checkTree(@NotNull final LevelReader world, final BlockPos pos, final List<ItemStorage> treesToNotCut, final int dyntreesize)
+    public static boolean checkTree(@NotNull final LevelReader world, final BlockPos pos, final List<ItemStorage> treesToNotCut, final int dyntreesize, final HashMap<Block, ItemStorage> leavesToSaplingMapCache)
     {
         //Is the first block a log?
         final BlockState state = world.getBlockState(pos);
@@ -375,7 +377,7 @@ public class Tree
         //Make sure tree is on solid ground and tree is not build above cobblestone.
         return BlockUtils.isAnySolid(world.getBlockState(basePos.below()))
                  && world.getBlockState(basePos.below()).getBlock() != Blocks.COBBLESTONE
-                 && hasEnoughLeavesAndIsSupposedToCut(world, baseAndTOp.getB(), treesToNotCut);
+                 && hasEnoughLeavesAndIsSupposedToCut(world, baseAndTOp.getB(), treesToNotCut, leavesToSaplingMapCache);
     }
 
     /**
@@ -437,12 +439,14 @@ public class Tree
     /**
      * Check if the tree has enough leaves and the lj is supposed to cut them.
      *
-     * @param world         the world it is in.
-     * @param pos           the position.
-     * @param treesToNotCut the trees the lj is not supposed to cut.
+     * @param world                   the world it is in.
+     * @param pos                     the position.
+     * @param treesToNotCut           the trees the lj is not supposed to cut.
+     * @param leavesToSaplingMapCache mapping of leaf to sapling.
      * @return true if so.
      */
-    private static boolean hasEnoughLeavesAndIsSupposedToCut(@NotNull final LevelReader world, final BlockPos pos, final List<ItemStorage> treesToNotCut)
+    private static boolean hasEnoughLeavesAndIsSupposedToCut(@NotNull final LevelReader world, final BlockPos pos, final List<ItemStorage> treesToNotCut,
+        final HashMap<Block, ItemStorage> leavesToSaplingMapCache)
     {
         boolean checkedLeaves = false;
         int leafCount = 0;
@@ -464,7 +468,7 @@ public class Tree
                     final BlockState block = world.getBlockState(leafPos);
                     if (block.is(BlockTags.LEAVES) || block.is(ModTags.hugeMushroomBlocks) || block.is(BlockTags.WART_BLOCKS))
                     {
-                        if (!checkedLeaves && !supposedToCut(world, treesToNotCut, leafPos))
+                        if (!checkedLeaves && !supposedToCut(world, treesToNotCut, leafPos, leavesToSaplingMapCache))
                         {
                             return false;
                         }
@@ -486,12 +490,13 @@ public class Tree
     /**
      * Check if the Lj is supposed to cut a tree.
      *
-     * @param world         the world it is in.
-     * @param treesToNotCut the trees he is not supposed to cut.
-     * @param leafPos       the position a leaf is at.
+     * @param world                   the world it is in.
+     * @param treesToNotCut           the trees he is not supposed to cut.
+     * @param leafPos                 the position a leaf is at.
+     * @param leavesToSaplingMapCache mapping of leaf to sapling.
      * @return false if not.
      */
-    private static boolean supposedToCut(final LevelReader world, final List<ItemStorage> treesToNotCut, final BlockPos leafPos)
+    private static boolean supposedToCut(final LevelReader world, final List<ItemStorage> treesToNotCut, final BlockPos leafPos, final HashMap<Block, ItemStorage> leavesToSaplingMapCache)
     {
         final BlockState leaf = world.getBlockState(leafPos);
         if (leaf.getOptionalValue(LeavesBlock.PERSISTENT).orElse(false))
@@ -503,22 +508,12 @@ public class Tree
         // isn't already cached (which it won't be the very first time we encounter a new tree type for this colony)
         // then we will try to chop it regardless of hut settings.  but the *second* tree of that type we should
         // obey the settings properly.
-        final ItemStack sap = IColonyManager.getInstance().getCompatibilityManager().getSaplingForLeaf(leaf.getBlock());
-
+        final ItemStorage sap = leavesToSaplingMapCache.get(leaf.getBlock());
         if (sap == null)
         {
             return true;
         }
-
-        for (final ItemStorage stack : treesToNotCut)
-        {
-            if (ItemStackUtils.compareItemStacksIgnoreStackSize(sap, stack.getItemStack()))
-            {
-                return false;
-            }
-        }
-
-        return true;
+        return !treesToNotCut.contains(sap);
     }
 
     /**
