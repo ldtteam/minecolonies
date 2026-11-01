@@ -247,6 +247,9 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
 
         final StructurePlacer placer = new StructurePlacer(structure, building.getWorkOrder().getIteratorType());
 
+        IBuilding colonyBuilding = worker.getCitizenColonyHandler().getColonyOrRegister().getServerBuildingManager().getBuilding(structurePlacer.getB().getCenterPos());
+
+
         if (requestProgress == null)
         {
             final AbstractBuildingStructureBuilder buildingWorker = building;
@@ -259,6 +262,11 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
         switch (currState)
         {
             case SOLID_FRAME:
+                if (colonyBuilding != null && colonyBuilding.getBuildingLevel() > 1)
+                {
+                    requestState = RequestStage.SOLID;
+                    return false;
+                }
                 if (requestFrameIterator == null)
                 {
                     requestFrameIterator = createFrameIteratorForBlueprint(structurePlacer.getB().getBluePrint());
