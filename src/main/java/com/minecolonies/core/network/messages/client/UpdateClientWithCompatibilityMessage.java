@@ -37,14 +37,15 @@ public class UpdateClientWithCompatibilityMessage extends AbstractClientPlayMess
     protected UpdateClientWithCompatibilityMessage(final RegistryFriendlyByteBuf buf, final PlayMessageType<?> type)
     {
         super(buf, type);
-        this.buffer = new RegistryFriendlyByteBuf(new FriendlyByteBuf(Unpooled.wrappedBuffer(buf.readByteArray())), buf.registryAccess());
+        this.buffer = new RegistryFriendlyByteBuf(Unpooled.copiedBuffer(buf.readSlice(buf.readVarInt())), buf.registryAccess());
     }
 
     @Override
     protected void toBytes(@NotNull final RegistryFriendlyByteBuf buf)
     {
-        buf.writeByteArray(this.buffer.array());
-        this.buffer.resetWriterIndex();
+        int len = this.buffer.readableBytes();
+        buf.writeVarInt(len);
+        buf.writeBytes(this.buffer, this.buffer.readerIndex(), len);
     }
 
     @Override

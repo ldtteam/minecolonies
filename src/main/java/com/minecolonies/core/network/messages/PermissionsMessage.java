@@ -69,7 +69,7 @@ public class PermissionsMessage
             super(buf, type);
             colonyID = buf.readInt();
             dimension = ResourceKey.create(Registries.DIMENSION, ResourceLocation.parse(buf.readUtf(32767)));
-            data = new RegistryFriendlyByteBuf(new FriendlyByteBuf(Unpooled.wrappedBuffer(buf.readByteArray())), buf.registryAccess());
+            data = new RegistryFriendlyByteBuf(Unpooled.copiedBuffer(buf.readSlice(buf.readVarInt())), buf.registryAccess());
         }
 
         
@@ -85,7 +85,9 @@ public class PermissionsMessage
             data.resetReaderIndex();
             buf.writeInt(colonyID);
             buf.writeUtf(dimension.location().toString());
-            buf.writeByteArray(data.array());
+            int len = data.readableBytes();
+            buf.writeVarInt(len);
+            buf.writeBytes(data, data.readerIndex(), len);
         }
     }
 
