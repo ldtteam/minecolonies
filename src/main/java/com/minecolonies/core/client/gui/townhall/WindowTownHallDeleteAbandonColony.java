@@ -8,7 +8,7 @@ import com.minecolonies.core.MineColonies;
 import com.minecolonies.core.Network;
 import com.minecolonies.core.client.gui.AbstractWindowSkeleton;
 import com.minecolonies.core.network.messages.server.GetColonyInfoMessage;
-import com.minecolonies.core.network.messages.server.PickupBlockMessage;
+import com.minecolonies.core.network.messages.server.PickUpTownhallMessage;
 import com.minecolonies.core.network.messages.server.colony.ColonyAbandonOwnMessage;
 import com.minecolonies.core.network.messages.server.colony.ColonyDeleteOwnMessage;
 import net.minecraft.ChatFormatting;
@@ -115,7 +115,7 @@ public class WindowTownHallDeleteAbandonColony extends AbstractWindowSkeleton
      */
     private void pickup()
     {
-        Network.getNetwork().sendToServer(new PickupBlockMessage(pos));
+        Network.getNetwork().sendToServer(new PickUpTownhallMessage(pos));
         close();
     }
 }
