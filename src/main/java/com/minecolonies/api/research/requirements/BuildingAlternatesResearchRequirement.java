@@ -145,7 +145,7 @@ public class BuildingAlternatesResearchRequirement implements IResearchRequireme
     {
         for (final ResourceLocation requirement : buildings)
         {
-            if (colony.hasBuilding(requirement, buildingLevel, false))
+            if (colony.getCommonBuildingManager().hasBuilding(requirement, buildingLevel, false))
             {
                 return true;
             }

@@ -1,0 +1,143 @@
+{
+  "name": "Ancient Magic",
+  "parents": [],
+  "max-occurrences": 1,
+  "triggers": [
+    {
+      "type": "minecolonies:random",
+      "rarity": 2500000
+    },
+    {
+      "type": "minecolonies:state",
+      "state": {
+        "path": "buildingManager/buildings",
+        "match": {
+          "type": "minecolonies:hospital",
+          "level": 1
+        }
+      }
+    },
+    {
+      "type": "minecolonies:citizen",
+      "state": {
+        "match": {
+          "job": {
+            "type": "minecolonies:enchanter"
+          }
+        }
+      }
+    },
+    {
+      "type": "minecolonies:citizen",
+      "state": {
+        "match": {
+          "job": {
+            "type": "minecolonies:healer"
+          }
+        }
+      }
+    }
+  ],
+  "objectives": [
+    {
+      "type": "minecolonies:dialogue",
+      "target": 0,
+      "text": "Oh! Something extraordinary is happening - my crystals have been absolutely singing since you walked in. There is an ancient, powerful magic nearby... something I have never encountered before in person. Have you by chance come across a Sacred Scroll of Regeneration in your travels? Old parchment, warm to the touch, a faint smell of lavender? This magic was thought lost to time - I cannot even begin to understand how to recreate it. Our doctor has been utterly overwhelmed lately with a terrible strain of flu going through the colony. If you have such a scroll, please - take it to $1 at once. It could change everything.",
+      "options": [
+        {
+          "answer": "I think I do have something like that...",
+          "result": {
+            "type": "minecolonies:advanceobjective",
+            "go-to": 1
+          }
+        },
+        {
+          "answer": "I have not come across anything like that yet.",
+          "result": {
+            "type": "minecolonies:return"
+          }
+        },
+        {
+          "answer": "I am afraid I cannot help with this.",
+          "result": {
+            "type": "minecolonies:cancel"
+          }
+        }
+      ]
+    },
+    {
+      "type": "minecolonies:delivery",
+      "details": {
+        "target": 1,
+        "item": "minecolonies:scroll_buff",
+        "qty": 1,
+        "next-objective": 2
+      }
+    },
+    {
+      "unlocks-rewards": [0, 1, 2, 3],
+      "type": "minecolonies:dialogue",
+      "target": 1,
+      "text": "Oh... oh my. Is this...? I have read about these but never... I could weep. Do you have any idea what this means? Every patient I have been struggling with this week - this changes everything. I am going to use this immediately. I know I cannot replace something this rare - there is no substitute for ancient magic like this. But please, take these. They are not much compared to what you have given this colony today, but they come from the heart.",
+      "options": [
+        {
+          "answer": "I hope everyone recovers quickly. You are doing wonderful work.",
+          "result": {
+            "type": "minecolonies:advanceobjective",
+            "go-to": 3
+          }
+        },
+        {
+          "answer": "Is there anything else I can do to help?",
+          "result": {
+            "type": "minecolonies:dialogue",
+            "text": "Just knowing that people like you are out there looking after us is enough. Now go on - you have done more than enough today. Thank you. Truly, from the bottom of my heart.",
+            "options": [
+              {
+                "answer": "Take good care of them. Thank you!",
+                "result": {
+                  "type": "minecolonies:advanceobjective",
+                  "go-to": 3
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "rewards": [
+    {
+      "type": "minecolonies:item",
+      "details": {
+        "item": "minecraft:potion",
+        "qty": 1,
+        "nbt": "{Potion:\"minecraft:luck\"}"
+      }
+    },
+    {
+      "type": "minecolonies:item",
+      "details": {
+        "item": "minecraft:potion",
+        "qty": 1,
+        "nbt": "{Potion:\"minecraft:luck\"}"
+      }
+    },
+    {
+      "type": "minecolonies:item",
+      "details": {
+        "item": "minecraft:potion",
+        "qty": 1,
+        "nbt": "{Potion:\"minecraft:luck\"}"
+      }
+    },
+    {
+      "type": "minecolonies:happiness",
+      "details": {
+        "target": 1,
+        "qty": 2,
+        "days": 14
+      }
+    }
+  ]
+}

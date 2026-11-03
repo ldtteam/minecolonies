@@ -3,6 +3,7 @@
   "crafter": "chef_crafting",
   "inputs": [
     {
+      "count": 2,
       "item": "minecolonies:durum"
     },
     {

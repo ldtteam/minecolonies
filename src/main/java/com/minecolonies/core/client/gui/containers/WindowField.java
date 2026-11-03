@@ -41,6 +41,8 @@ import net.minecraftforge.common.Tags;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
+import java.util.Objects;
 import java.util.Arrays;
 import java.util.Optional;
 
@@ -232,9 +234,10 @@ public class WindowField extends AbstractWindowSkeleton
             return;
         }
 
-        final IBuildingExtension field = colonyView.getBuildingExtension(otherField -> otherField.getBuildingExtensionType().equals(BuildingExtensionRegistries.farmField.get()) && otherField.getPosition()
-                                                                                                                                      .equals(tileEntityScarecrow.getBlockPos()));
-        if (field instanceof FarmField farmFieldFound)
+        final @NotNull List<IBuildingExtension> fields = colonyView.getClientBuildingManager()
+            .getBuildingExtensions(otherField -> otherField.getBuildingExtensionType().equals(BuildingExtensionRegistries.farmField.get()) && otherField.getPosition()
+                .equals(tileEntityScarecrow.getBlockPos()));
+        if (!fields.isEmpty() && fields.get(0) instanceof FarmField farmFieldFound)
         {
             farmField = farmFieldFound;
         }
@@ -266,7 +269,7 @@ public class WindowField extends AbstractWindowSkeleton
             return;
         }
 
-        final IBuildingView building = colonyView.getBuilding(farmField.getBuildingId());
+        final IBuildingView building = colonyView.getClientBuildingManager().getBuilding(farmField.getBuildingId());
         if (building == null)
         {
             return;

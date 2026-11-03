@@ -314,12 +314,12 @@ public class BuildingEntry
      * @return
      */
     @Nullable
-    public static IBuildingModuleView produceViewWithoutBuilding(final String key)
+    public static IBuildingModuleView produceViewWithoutBuilding(final String key, final IColonyView colony)
     {
         final var producer = ModuleProducer.ALL_MODULES.get(key);
         if (producer.hasView())
         {
-            return producer.viewProducer.get().get();
+            return producer.viewProducer.get().get().setProducer(producer).setColonyView(colony);
         }
 
         return null;

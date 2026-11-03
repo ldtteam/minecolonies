@@ -278,12 +278,12 @@ public abstract class AbstractTileEntityColonyBuilding extends TileEntityRack im
         final String old = getSchematicName();
         IBlueprintDataProviderBE.super.readSchematicDataFromNBT(originalCompound);
 
-        if (level == null || level.isClientSide || getColony() == null || getColony().getBuildingManager() == null)
+        if (level == null || level.isClientSide || getColony() == null || getColony().getServerBuildingManager() == null)
         {
             return;
         }
 
-        final IBuilding building = getColony().getBuildingManager().getBuilding(worldPosition);
+        final IBuilding building = getColony().getServerBuildingManager().getBuilding(worldPosition);
         if (building != null)
         {
             building.onUpgradeSchematicTo(old, getSchematicName(), this);

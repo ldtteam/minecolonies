@@ -1,0 +1,232 @@
+{
+	"format_version": "1.9.0",
+	"credit": "Made with Blockbench",
+	"ambientocclusion": false,
+	"render_type": "cutout",
+	"textures": {
+		"0": "block/stripped_birch_log",
+		"1": "minecolonies:block/blockalchemist",
+		"2": "block/podzol_top",
+		"5": "minecraft:entity/horse/horse_gray",
+		"6": "minecolonies:block/tables_herders",
+		"particle": "block/oak_log"
+	},
+	"elements": [
+		{
+			"name": "post1",
+			"from": [1, 0, 1],
+			"to": [4, 13, 3],
+			"rotation": {"angle": 0, "axis": "y", "origin": [7.5, 6.25, 7.75]},
+			"faces": {
+				"north": {"uv": [0, 0, 3, 13], "texture": "#particle"},
+				"east": {"uv": [0, 0, 2, 13], "texture": "#particle"},
+				"south": {"uv": [0, 0, 3, 13], "texture": "#particle"},
+				"west": {"uv": [0, 0, 2, 13], "texture": "#particle"},
+				"up": {"uv": [0, 0, 3, 2], "texture": "#0"},
+				"down": {"uv": [0, 0, 3, 3], "texture": "#0"}
+			}
+		},
+		{
+			"name": "post2",
+			"from": [1, 0, 13],
+			"to": [4, 13, 15],
+			"rotation": {"angle": 0, "axis": "y", "origin": [7.5, 6.25, 19.75]},
+			"faces": {
+				"north": {"uv": [0, 0, 3, 13], "texture": "#particle"},
+				"east": {"uv": [0, 0, 2, 13], "texture": "#particle"},
+				"south": {"uv": [0, 0, 3, 13], "texture": "#particle"},
+				"west": {"uv": [0, 0, 2, 13], "texture": "#particle"},
+				"up": {"uv": [0, 0, 3, 2], "texture": "#0"},
+				"down": {"uv": [0, 0, 3, 2], "texture": "#0"}
+			}
+		},
+		{
+			"name": "HitchingPostCrossbar",
+			"from": [1, 8, 3],
+			"to": [4, 10, 13],
+			"rotation": {"angle": 0, "axis": "y", "origin": [6.5, 6.25, 7.75]},
+			"faces": {
+				"east": {"uv": [3, 3, 13, 5], "texture": "#particle"},
+				"west": {"uv": [3, 3, 13, 5], "texture": "#particle"},
+				"up": {"uv": [3, 2, 6, 12], "texture": "#particle"},
+				"down": {"uv": [3, 2, 6, 12], "texture": "#particle"}
+			}
+		},
+		{
+			"name": "SaddleSeat",
+			"from": [0, 2.001, 4],
+			"to": [5, 10.001, 12],
+			"rotation": {"angle": 0, "axis": "y", "origin": [7.5, -1.75, 7.75]},
+			"faces": {
+				"east": {"uv": [11.25, 2.25, 13.5, 4.5], "texture": "#5"},
+				"west": {"uv": [13.5, 2.25, 11.25, 4.5], "texture": "#5"},
+				"up": {"uv": [9.25, 0, 10.75, 2.25], "texture": "#5"}
+			}
+		},
+		{
+			"name": "SaddleSeat inverted",
+			"from": [5, 10.001, 12],
+			"to": [0, 2.001, 4],
+			"rotation": {"angle": 0, "axis": "y", "origin": [7.5, -1.75, 7.75]},
+			"faces": {
+				"east": {"uv": [13.5, 4.5, 11.25, 2.25], "texture": "#5"},
+				"west": {"uv": [11.25, 4.5, 13.5, 2.25], "texture": "#5"},
+				"down": {"uv": [10.75, 0, 9.25, 2.25], "texture": "#5"}
+			}
+		},
+		{
+			"name": "bucket1",
+			"from": [6, 0, 10],
+			"to": [15, 7, 16],
+			"rotation": {"angle": 0, "axis": "y", "origin": [11.5, 3, 13]},
+			"faces": {
+				"north": {"uv": [7, 12.5, 11.5, 16], "texture": "#1"},
+				"east": {"uv": [13, 9.5, 16, 13], "texture": "#1"},
+				"south": {"uv": [11.5, 12.5, 7, 16], "texture": "#1"},
+				"west": {"uv": [13, 9.5, 16, 13], "texture": "#1"},
+				"up": {"uv": [11.5, 13, 16, 16], "texture": "#1"},
+				"down": {"uv": [7, 0.5, 10, 5], "rotation": 270, "texture": "#1"}
+			}
+		},
+		{
+			"name": "bucket2 inverted",
+			"from": [14, 7, 15],
+			"to": [7, 2, 11],
+			"rotation": {"angle": 0, "axis": "y", "origin": [10.5, 3, 12]},
+			"faces": {
+				"north": {"uv": [11, 15, 7.5, 12.5], "texture": "#1"},
+				"east": {"uv": [13.5, 12, 15.5, 9.5], "texture": "#1"},
+				"south": {"uv": [11, 15, 7.5, 12.5], "texture": "#1"},
+				"west": {"uv": [13.5, 12, 15.5, 9.5], "texture": "#1"},
+				"up": {"uv": [7, 5, 10, 0.5], "rotation": 270, "texture": "#1"},
+				"down": {"uv": [16, 13, 11.5, 16], "texture": "#1"}
+			}
+		},
+		{
+			"name": "Sileage",
+			"from": [7, 6, 11],
+			"to": [14, 6, 15],
+			"rotation": {"angle": 0, "axis": "y", "origin": [11.5, -2, 13]},
+			"faces": {
+				"up": {"uv": [6, 4, 10, 11], "rotation": 90, "texture": "#2"}
+			}
+		},
+		{
+			"name": "SaddleMouthLine",
+			"from": [0.99, 6.001, 13],
+			"to": [4.01, 13.001, 16],
+			"rotation": {"angle": 0, "axis": "x", "origin": [1.9, 14.5, 14.5]},
+			"faces": {
+				"east": {"uv": [10.75, 5.25, 12.5, 4.5], "rotation": 90, "texture": "#5"},
+				"west": {"uv": [8, 5.25, 9.75, 4.5], "rotation": 90, "texture": "#5"},
+				"up": {"uv": [9.75, 5.25, 10.5, 4.5], "texture": "#5"}
+			}
+		},
+		{
+			"name": "SaddleMouthLine inverted",
+			"from": [4.01, 13.001, 16],
+			"to": [0.99, 6.001, 13],
+			"rotation": {"angle": 0, "axis": "x", "origin": [1.9, 14.5, 14.5]},
+			"faces": {
+				"east": {"uv": [9.75, 5.25, 8, 4.5], "rotation": 90, "texture": "#5"},
+				"west": {"uv": [12.5, 5.25, 10.75, 4.5], "rotation": 90, "texture": "#5"},
+				"down": {"uv": [10.5, 5.25, 9.75, 4.5], "texture": "#5"}
+			}
+		},
+		{
+			"name": "grainsack",
+			"from": [10, 0, 4],
+			"to": [15, 4, 9],
+			"rotation": {"angle": 0, "axis": "y", "origin": [10, 0, 4]},
+			"faces": {
+				"north": {"uv": [0, 14, 2.5, 16], "texture": "#6"},
+				"east": {"uv": [7.5, 14, 10, 16], "texture": "#6"},
+				"south": {"uv": [5, 14, 7.5, 16], "texture": "#6"},
+				"west": {"uv": [2.5, 14, 5, 16], "texture": "#6"},
+				"down": {"uv": [12.5, 13.5, 15, 16], "texture": "#6"}
+			}
+		},
+		{
+			"name": "grainsack inverted",
+			"from": [15, 4, 9],
+			"to": [10, 3, 4],
+			"rotation": {"angle": 0, "axis": "y", "origin": [10, 0, 4]},
+			"faces": {
+				"north": {"uv": [5, 14.5, 7.5, 14], "texture": "#6"},
+				"east": {"uv": [2.5, 14.5, 5, 14], "texture": "#6"},
+				"south": {"uv": [0, 14.5, 2.5, 14], "texture": "#6"},
+				"west": {"uv": [7.5, 14.5, 10, 14], "texture": "#6"},
+				"up": {"uv": [13, 2, 10.5, 4.5], "texture": "#6"}
+			}
+		},
+		{
+			"name": "durum1",
+			"from": [9.26777, 3, 7.23223],
+			"to": [16.26777, 6, 7.23223],
+			"rotation": {"angle": 45, "axis": "y", "origin": [11.76777, 5.5, 7.23223]},
+			"faces": {
+				"north": {"uv": [8, 1, 9.5, 4.5], "rotation": 90, "texture": "#6"},
+				"south": {"uv": [8, 4.5, 9.5, 1], "rotation": 90, "texture": "#6"}
+			}
+		},
+		{
+			"name": "duru2",
+			"from": [8.97487, 3, 6.52513],
+			"to": [15.97487, 6, 6.52513],
+			"rotation": {"angle": -45, "axis": "y", "origin": [12.47487, 4.5, 6.52513]},
+			"faces": {
+				"north": {"uv": [8, 1, 9.5, 4.5], "rotation": 90, "texture": "#6"},
+				"south": {"uv": [8, 4.5, 9.5, 1], "rotation": 90, "texture": "#6"}
+			}
+		},
+		{
+			"name": "apple",
+			"from": [1, 13, 0.5],
+			"to": [4, 16, 3.5],
+			"rotation": {"angle": 22.5, "axis": "y", "origin": [2.5, 14.5, 2]},
+			"faces": {
+				"north": {"uv": [14.5, 12, 16, 13.5], "texture": "#6"},
+				"east": {"uv": [13, 12, 14.5, 13.5], "texture": "#6"},
+				"south": {"uv": [11.5, 12, 13, 13.5], "texture": "#6"},
+				"west": {"uv": [10, 12, 11.5, 13.5], "texture": "#6"},
+				"up": {"uv": [8.5, 12, 10, 13.5], "texture": "#6"},
+				"down": {"uv": [14.5, 12, 16, 13.5], "texture": "#6"}
+			}
+		},
+		{
+			"name": "apple",
+			"from": [2.5, 16, 1.5],
+			"to": [2.5, 17, 2.5],
+			"rotation": {"angle": 0, "axis": "y", "origin": [4, 17.5, 3]},
+			"faces": {
+				"east": {"uv": [15.5, 11.5, 16, 12], "texture": "#6"},
+				"west": {"uv": [15.5, 11.5, 16, 12], "texture": "#6"}
+			}
+		}
+	],
+	"groups": [
+		0,
+		1,
+		2,
+		{
+			"name": "group",
+			"origin": [7.5, 6.25, 7.75],
+			"color": 0,
+			"children": [3, 4]
+		},
+		{
+			"name": "Sileage",
+			"origin": [8, 8, 8],
+			"color": 0,
+			"children": [5, 6, 7]
+		},
+		8,
+		9,
+		10,
+		11,
+		12,
+		13,
+		14,
+		15
+	]
+}

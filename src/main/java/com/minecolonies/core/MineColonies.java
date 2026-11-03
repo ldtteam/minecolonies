@@ -15,9 +15,9 @@ import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesRaider;
 import com.minecolonies.api.entity.mobs.RaiderMobUtils;
+import com.minecolonies.api.equipment.ModEquipmentTypes;
 import com.minecolonies.api.items.ModBannerPatterns;
 import com.minecolonies.api.items.ModTags;
-import com.minecolonies.api.equipment.ModEquipmentTypes;
 import com.minecolonies.api.loot.ModLootConditions;
 import com.minecolonies.api.sounds.ModSoundEvents;
 import com.minecolonies.api.util.Log;
@@ -26,8 +26,11 @@ import com.minecolonies.api.util.constant.SchematicTagConstants;
 import com.minecolonies.apiimp.ClientMinecoloniesAPIImpl;
 import com.minecolonies.apiimp.CommonMinecoloniesAPIImpl;
 import com.minecolonies.apiimp.initializer.*;
+import com.minecolonies.core.blocks.BlockDecorationController;
 import com.minecolonies.core.blocks.BlockPlantationField;
 import com.minecolonies.core.blocks.huts.BlockHutGateHouse;
+import com.minecolonies.core.blocks.huts.BlockHutMiner;
+import com.minecolonies.core.blocks.huts.BlockHutSchool;
 import com.minecolonies.core.colony.IColonyManagerCapability;
 import com.minecolonies.core.colony.requestsystem.init.RequestSystemInitializer;
 import com.minecolonies.core.colony.requestsystem.init.StandardFactoryControllerInitializer;
@@ -41,7 +44,6 @@ import com.minecolonies.core.placementhandlers.main.SurvivalHandler;
 import com.minecolonies.core.recipes.FoodIngredient;
 import com.minecolonies.core.recipes.PlantIngredient;
 import com.minecolonies.core.structures.MineColoniesStructures;
-
 import net.minecraft.world.entity.animal.horse.Horse;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
@@ -142,10 +144,17 @@ public class MineColonies
             TagManager.registerSpecificTagOption(TAG_KNIGHT, b -> b instanceof BlockHutGateHouse);
             TagManager.registerSpecificTagOption(TAG_ARCHER, b -> b instanceof BlockHutGateHouse);
 
-            for (final String fieldTag : SchematicTagConstants.getPlantationTags())
-            {
-                TagManager.registerSpecificTagOption(fieldTag, b -> b instanceof BlockPlantationField);
-            }
+            TagManager.registerSpecificTagOption(TAG_COBBLE, b -> b instanceof BlockHutMiner);
+            TagManager.registerSpecificTagOption(TAG_LADDER, b -> b instanceof BlockHutMiner);
+
+            TagManager.registerSpecificTagOption(TAG_LEISURE, b -> b instanceof BlockDecorationController);
+
+            TagManager.registerSpecificTagOption(TAG_SITTING, b -> b instanceof BlockHutSchool);
+
+             for (final String fieldTag : SchematicTagConstants.getPlantationTags())
+             {
+                 TagManager.registerSpecificTagOption(fieldTag, b -> b instanceof BlockPlantationField);
+             }
         });
 
         Mod.EventBusSubscriber.Bus.MOD.bus().get().addListener(GatherDataHandler::dataGeneratorSetup);
@@ -190,6 +199,7 @@ public class MineColonies
 
         event.enqueueWork(ModLootConditions::init);
         event.enqueueWork(ModTags::init);
+        event.enqueueWork(ModEquipmentTypes::initRegisterEquipmentTiers);
     }
 
     @SubscribeEvent

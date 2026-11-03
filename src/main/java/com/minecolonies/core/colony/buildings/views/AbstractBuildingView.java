@@ -21,6 +21,7 @@ import com.minecolonies.core.Network;
 import com.minecolonies.core.client.gui.WindowHutMinPlaceholder;
 import com.minecolonies.core.client.gui.huts.WindowHutWorkerModulePlaceholder;
 import com.minecolonies.core.colony.buildings.moduleviews.WorkerBuildingModuleView;
+import com.minecolonies.core.colony.requestsystem.locations.StaticLocation;
 import com.minecolonies.core.network.messages.server.colony.OpenInventoryMessage;
 import com.minecolonies.core.network.messages.server.colony.building.HutRenameMessage;
 import it.unimi.dsi.fastutil.ints.Int2ObjectLinkedOpenHashMap;
@@ -156,6 +157,16 @@ public abstract class AbstractBuildingView implements IBuildingView
     private BuildingEntry buildingType;
 
     /**
+     * Prestige value of this building.
+     */
+    private          int       prestige;
+
+    /**
+     * Requester location of this.
+     */
+    private @NotNull ILocation iLocation;
+
+    /**
      * Creates a building view.
      *
      * @param c ColonyView the building is in.
@@ -165,6 +176,7 @@ public abstract class AbstractBuildingView implements IBuildingView
     {
         colony = c;
         location = new BlockPos(l);
+        this.iLocation = new StaticLocation(getPosition(), colony.getDimension());
     }
 
     /**
@@ -342,7 +354,7 @@ public abstract class AbstractBuildingView implements IBuildingView
      * Returns the Container List
      */
     @Override
-    public List<BlockPos> getContainerList()
+    public List<BlockPos> getContainers()
     {
         return new ArrayList<>(containerlist);
     }
@@ -401,6 +413,7 @@ public abstract class AbstractBuildingView implements IBuildingView
         path = buf.readUtf(32767);
         parent = buf.readBlockPos();
         customName = buf.readUtf(32767);
+        prestige = buf.readInt();
 
         rotation = buf.readInt();
         isBuildingMirrored = buf.readBoolean();
@@ -424,6 +437,7 @@ public abstract class AbstractBuildingView implements IBuildingView
             requesterId = StandardFactoryController.getInstance().deserialize(compound);
         }
         containerlist.clear();
+        containerlist.add(getPosition());
         final int racks = buf.readInt();
         for (int i = 0; i < racks; i++)
         {
@@ -446,6 +460,12 @@ public abstract class AbstractBuildingView implements IBuildingView
 
             moduleView.deserialize(buf);
         }
+    }
+
+    @Override
+    public int getPrestige()
+    {
+        return prestige;
     }
 
     private void loadRequestSystemFromNBT(final CompoundTag compound)
@@ -601,7 +621,7 @@ public abstract class AbstractBuildingView implements IBuildingView
     @Override
     public ILocation getLocation()
     {
-        return null;
+        return this.iLocation;
     }
 
     @Override

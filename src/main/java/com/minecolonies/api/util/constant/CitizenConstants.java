@@ -1,5 +1,7 @@
 package com.minecolonies.api.util.constant;
 
+import static com.minecolonies.api.colony.ICitizenData.MAX_SATURATION;
+
 /**
  * Constants regarding citizens.
  */
@@ -48,7 +50,7 @@ public final class CitizenConstants
     /**
      * Full saturation amount.
      */
-    public static final double FULL_SATURATION = 20;
+    public static final double FULL_SATURATION = MAX_SATURATION;
 
     /**
      * Number of ticks to heal the citizens.
@@ -132,7 +134,7 @@ public final class CitizenConstants
     /**
      * Big multiplier in extreme saturation situations.
      */
-    public static final double BIG_SATURATION_FACTOR      = 0.05;
+    public static final double BIG_SATURATION_FACTOR      = 0.2;
     /**
      * Decrease by this * buildingLevel each new night.
      */

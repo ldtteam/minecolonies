@@ -11,9 +11,12 @@ import com.ldtteam.blockui.views.ScrollingList;
 import com.minecolonies.api.research.IGlobalResearchTree;
 import com.minecolonies.api.research.IResearchRequirement;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.core.Network;
 import com.minecolonies.core.client.gui.AbstractModuleWindow;
 import com.minecolonies.core.client.gui.WindowResearchTree;
 import com.minecolonies.core.colony.buildings.moduleviews.UniversityResearchModuleView;
+import com.minecolonies.core.network.messages.server.colony.OpenInventoryMessage;
+
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -28,7 +31,7 @@ import java.util.List;
 
 import static com.minecolonies.api.research.util.ResearchConstants.COLOR_TEXT_UNFULFILLED;
 import static com.minecolonies.api.util.constant.WindowConstants.GUI_LIST_ELEMENT_NAME;
-
+import static com.minecolonies.api.util.constant.WindowConstants.UNI_INV_RESEARCH;
 /**
  * BOWindow for the university.
  */
@@ -41,6 +44,8 @@ public class UniversityModuleWindow extends AbstractModuleWindow<UniversityResea
     public UniversityModuleWindow(final UniversityResearchModuleView moduleView)
     {
         super(moduleView, new ResourceLocation(Constants.MOD_ID, "gui/layouthuts/layoutuniversity.xml"));
+
+        registerButton(UNI_INV_RESEARCH, this::inventoryClicked);
 
         final List<ResourceLocation> inputBranches = IGlobalResearchTree.getInstance().getBranches();
         inputBranches.sort(Comparator.comparingInt(branchId -> IGlobalResearchTree.getInstance().getBranchData(branchId).getSortOrder()));
@@ -183,5 +188,13 @@ public class UniversityModuleWindow extends AbstractModuleWindow<UniversityResea
                 hoverText.build();
             }
         }
+    }
+
+    /**
+     * Action when a button opening an inventory is clicked.
+     */
+    private void inventoryClicked()
+    {
+        Network.getNetwork().sendToServer(new OpenInventoryMessage(buildingView));
     }
 }

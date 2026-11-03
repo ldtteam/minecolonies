@@ -9,6 +9,7 @@ import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.blockui.views.DropDownList;
 import com.ldtteam.structurize.client.gui.WindowSwitchPack;
 import com.ldtteam.structurize.storage.StructurePacks;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.core.Network;
 import com.minecolonies.core.client.gui.WindowBannerPicker;
 import com.minecolonies.core.client.gui.map.WindowColonyMap;
@@ -27,10 +28,7 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLSocketFactory;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
@@ -342,7 +340,10 @@ public class WindowMainPage extends AbstractWindowTownHall
             }
             catch (IOException e)
             {
-                e.printStackTrace();
+                if (!(e instanceof FileNotFoundException))
+                {
+                    e.printStackTrace();
+                }
             }
         }).start();
     }

@@ -1,9 +1,14 @@
 package com.minecolonies.core.items;
 
+import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.items.IMinecoloniesFoodItem;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.core.client.gui.containers.WindowCitizenInventory;
+import com.minecolonies.core.client.gui.modules.building.RestaurantMenuModuleWindow;
+import net.minecraft.core.NonNullList;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.inventory.tooltip.BundleTooltip;
+import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
@@ -12,6 +17,7 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * A custom item class for food items.
@@ -42,6 +48,31 @@ public class ItemFood extends Item implements IMinecoloniesFoodItem
         {
             tooltip.add(Component.translatable(TranslationConstants.TIER_TOOLTIP + this.tier));
         }
+    }
+
+    @Override
+    public Optional<TooltipComponent> getTooltipImage(ItemStack stack)
+    {
+        NonNullList<ItemStack> nonnulllist = NonNullList.create();
+        int qty = 0;
+        for (final ItemStorage ingredient : RestaurantMenuModuleWindow.getRecipeFromStack(new ItemStorage(stack), false, 1))
+        {
+            // Max Render Quantity.
+            if (qty > 16)
+            {
+                break;
+            }
+            nonnulllist.add(ingredient.getItemStack());
+            qty++;
+        }
+
+        return Optional.of(new BundleTooltip(nonnulllist, 0));
+    }
+
+    @Override
+    public int getUseDuration(ItemStack stack)
+    {
+        return super.getUseDuration(stack) * Math.max(1, tier);
     }
 
     @Override

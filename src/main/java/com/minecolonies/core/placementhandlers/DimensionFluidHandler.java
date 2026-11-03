@@ -1,8 +1,11 @@
 package com.minecolonies.core.placementhandlers;
 
+import com.ldtteam.structurize.placement.IPlacementContext;
 import com.ldtteam.structurize.placement.handlers.placement.IPlacementHandler;
 import com.ldtteam.structurize.util.BlockUtils;
 import com.minecolonies.api.util.WorldUtil;
+import net.minecraft.util.Tuple;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.BubbleColumnBlock;
@@ -37,10 +40,10 @@ public class DimensionFluidHandler implements IPlacementHandler
       @NotNull BlockPos pos,
       @NotNull BlockState blockState,
       @Nullable CompoundTag tileEntityData,
-      boolean complete)
+      @NotNull final IPlacementContext placementContext)
     {
         final List<ItemStack> itemList = new ArrayList<>();
-        if (complete)
+        if (!placementContext.fancyPlacement())
         {
             itemList.add(BlockUtils.getItemStackFromBlockState(blockState));
             return itemList;
@@ -69,15 +72,24 @@ public class DimensionFluidHandler implements IPlacementHandler
       @NotNull BlockPos pos,
       @NotNull BlockState blockState,
       @Nullable CompoundTag tileEntityData,
-      boolean complete,
-      BlockPos centerPos)
+      @NotNull final IPlacementContext placementContext)
     {
-        if (!blockState.getFluidState().isSource() && !complete)
+        if (!blockState.getFluidState().isSource() && placementContext.fancyPlacement())
         {
             return ActionProcessingResult.PASS;
         }
         world.setBlock(pos, blockState, UPDATE_FLAG);
         world.scheduleTick(pos, blockState.getFluidState().getType(), blockState.getFluidState().getType().getTickDelay(world));
         return ActionProcessingResult.SUCCESS;
+    }
+
+    @Override
+    public boolean doesWorldStateMatchBlueprintState(
+        final BlockState blueprintState,
+        final BlockState worldState,
+        final Tuple<BlockEntity, CompoundTag> tuple,
+        @NotNull final IPlacementContext iPlacementContext)
+    {
+        return blueprintState.equals(worldState);
     }
 }

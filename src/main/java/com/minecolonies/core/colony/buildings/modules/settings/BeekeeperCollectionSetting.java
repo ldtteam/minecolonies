@@ -3,6 +3,7 @@ package com.minecolonies.core.colony.buildings.modules.settings;
 import com.ldtteam.blockui.Pane;
 import com.ldtteam.blockui.controls.ButtonImage;
 import com.ldtteam.blockui.views.BOWindow;
+import com.minecolonies.api.colony.buildings.modules.ICommonSettingsModule;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingsModuleView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
@@ -50,7 +51,7 @@ public class BeekeeperCollectionSetting extends StringSetting
     public void setupHandler(
       final ISettingKey<?> key,
       final Pane pane,
-      final ISettingsModuleView settingsModuleView,
+      final ICommonSettingsModule settingsModuleView,
       final IBuildingView building,
       final BOWindow window)
     {

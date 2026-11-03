@@ -1,6 +1,7 @@
 package com.minecolonies.core.network.messages.server.colony.building;
 
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.modules.settings.ISetting;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
@@ -9,6 +10,8 @@ import com.minecolonies.core.colony.buildings.AbstractBuilding;
 import com.minecolonies.core.colony.buildings.modules.SettingsModule;
 import com.minecolonies.core.colony.buildings.modules.settings.SettingKey;
 import com.minecolonies.core.network.messages.server.AbstractBuildingServerMessage;
+import com.minecolonies.core.network.messages.server.AbstractColonyServerMessage;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.network.NetworkEvent;
@@ -17,7 +20,8 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Message handling setting triggering.
  */
-public class TriggerSettingMessage extends AbstractBuildingServerMessage<AbstractBuilding>
+//todo make this non building based, and give it an optional blockpos which if zero means colony level setting.
+public class TriggerSettingMessage extends AbstractColonyServerMessage
 {
     /**
      * The unique setting key.
@@ -35,6 +39,11 @@ public class TriggerSettingMessage extends AbstractBuildingServerMessage<Abstrac
     private int moduleID;
 
     /**
+     * The building position that the setting was triggered for or zero for colony level.
+     */
+    private BlockPos buildingPos;
+
+    /**
      * Empty standard constructor.
      */
     public TriggerSettingMessage()
@@ -44,16 +53,17 @@ public class TriggerSettingMessage extends AbstractBuildingServerMessage<Abstrac
 
     /**
      * Settings constructor.
-     * @param building the building involving the setting.
+     * @param colony the building involving the setting.
      * @param key the unique key of it.
      * @param value the value of the setting.
      */
-    public TriggerSettingMessage(final IBuildingView building, final ISettingKey<?> key, final ISetting value, final int moduleID)
+    public TriggerSettingMessage(final IColony colony, final ISettingKey<?> key, final ISetting value, final int moduleID, final BlockPos pos)
     {
-        super(building);
+        super(colony);
         this.key = key.getUniqueId();
         this.value = value;
         this.moduleID = moduleID;
+        this.buildingPos = pos;
     }
 
     @Override
@@ -62,6 +72,7 @@ public class TriggerSettingMessage extends AbstractBuildingServerMessage<Abstrac
         this.moduleID = buf.readInt();
         this.key = buf.readResourceLocation();
         this.value = StandardFactoryController.getInstance().deserialize(buf);
+        this.buildingPos = buf.readBlockPos();
     }
 
     @Override
@@ -70,15 +81,24 @@ public class TriggerSettingMessage extends AbstractBuildingServerMessage<Abstrac
         buf.writeInt(moduleID);
         buf.writeResourceLocation(this.key);
         StandardFactoryController.getInstance().serialize(buf, this.value);
+        buf.writeBlockPos(this.buildingPos);
     }
 
     @Override
-    public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony, final AbstractBuilding building)
+    public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony)
     {
-        if (building.getModule(moduleID) instanceof SettingsModule module)
+        final ISettingKey settingKey = new SettingKey<>(this.value.getClass(), this.key);
+        if (buildingPos.equals(BlockPos.ZERO))
         {
-            module.updateSetting(new SettingKey<>(this.value.getClass(), this.key), this.value, ctxIn.getSender());
+            colony.getSettings().updateSetting(settingKey, this.value, ctxIn.getSender());
+        }
+        else
+        {
+            final IBuilding building = colony.getServerBuildingManager().getBuilding(buildingPos);
+            if (building != null && building.getModule(moduleID) instanceof SettingsModule module)
+            {
+                module.updateSetting(settingKey, this.value, ctxIn.getSender());
+            }
         }
     }
 }
-

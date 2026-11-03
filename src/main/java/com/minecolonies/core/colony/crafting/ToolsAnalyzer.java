@@ -38,7 +38,7 @@ public final class ToolsAnalyzer
 
                 if (stack.isEnchantable())
                 {
-                    for (int enchantLevel = 1; enchantLevel < 4; ++enchantLevel)
+                    for (int enchantLevel = 1; enchantLevel < 6; ++enchantLevel)
                     {
                         tryAddingEnchantedTool(toolItems, toolType, stack, enchantLevel);
                     }
@@ -59,12 +59,16 @@ public final class ToolsAnalyzer
         // this list should theoretically end up applying a total of two enchants to each tool type
         tryEnchantStack(enchantedStack, Enchantments.UNBREAKING, enchantLevel);
         tryEnchantStack(enchantedStack, Enchantments.MOB_LOOTING, enchantLevel);
+        tryEnchantStack(enchantedStack, Enchantments.BANE_OF_ARTHROPODS, enchantLevel);
         tryEnchantStack(enchantedStack, Enchantments.FLAMING_ARROWS, enchantLevel);
         tryEnchantStack(enchantedStack, Enchantments.BLOCK_FORTUNE, enchantLevel);
         tryEnchantStack(enchantedStack, Enchantments.ALL_DAMAGE_PROTECTION, enchantLevel);
         tryEnchantStack(enchantedStack, Enchantments.FISHING_SPEED, enchantLevel);
 
-        tryAddingToolWithLevel(toolItems, tool, enchantedStack);
+        if (enchantedStack.isEnchanted())
+        {
+            tryAddingToolWithLevel(toolItems, tool, enchantedStack);
+        }
     }
 
     private static void tryEnchantStack(@NotNull final ItemStack stack,

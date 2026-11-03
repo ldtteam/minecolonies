@@ -533,7 +533,6 @@ public abstract class AbstractEntityMinecoloniesRaider extends AbstractEntityMin
     public void initStatsFor(final double baseHealth, final double difficulty, final double baseDamage)
     {
         super.initStatsFor(baseHealth, difficulty, baseDamage);
-
         this.difficulty = difficulty;
     }
 

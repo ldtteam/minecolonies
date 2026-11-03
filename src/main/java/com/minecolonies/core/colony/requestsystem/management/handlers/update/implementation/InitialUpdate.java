@@ -23,6 +23,6 @@ public class InitialUpdate implements IUpdateStep
         {
             manager.reset();
         }
-        colony.getBuildingManager().getBuildings().values().forEach(manager::onProviderAddedToColony);
+        colony.getServerBuildingManager().getBuildings().values().forEach(manager::onProviderAddedToColony);
     }
 }

@@ -195,7 +195,8 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
 
         tag(ModTags.leather)
           .add(Items.SADDLE)
-          .add(Items.LEATHER);
+          .add(Items.LEATHER)
+          .add(Items.LEATHER_HORSE_ARMOR);
 
         final Item[] paperExtras = getDomumExtra(ExtraBlockType.BASE_PAPER, ExtraBlockType.LIGHT_PAPER);
 
@@ -567,6 +568,7 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
           .add(ModItems.cookieDough)
           .add(ModItems.rawPumpkinPie)
           .add(ModItems.cakeBatter)
+          .add(Items.BOOKSHELF)
           .addTags(Tags.Items.STONE, Tags.Items.COBBLESTONE)
           .addTags(Tags.Items.GRAVEL, Tags.Items.SAND)
           .addTags(Tags.Items.INGOTS, storageBlocks);

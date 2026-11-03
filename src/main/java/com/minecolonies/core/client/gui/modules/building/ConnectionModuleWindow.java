@@ -15,6 +15,7 @@ import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.Network;
 import com.minecolonies.core.client.gui.AbstractBuildingWindow;
+import com.minecolonies.core.client.gui.WindowConfirm;
 import com.minecolonies.core.commands.ClickEventWithExecutable;
 import com.minecolonies.core.network.messages.server.colony.TeleportToColonyMessage;
 import net.minecraft.client.Minecraft;
@@ -109,11 +110,13 @@ public class ConnectionModuleWindow extends AbstractBuildingWindow<IBuildingView
         final int dist = (int) BlockPosUtil.dist(connectedColonyData.pos, buildingView.getPosition());
         final int itemCount = externalPlayer ? dist/125 : 0;
 
-        MessageUtils.format("com.minecolonies.core.gui.colonylist.travel.really", connectedColonyData.name)
-            .withPriority(MessageUtils.MessagePriority.IMPORTANT)
-            .withClickEvent(new ClickEventWithExecutable(() -> Network.getNetwork().sendToServer(new TeleportToColonyMessage(mc.level.dimension(), connectedColonyData.id, connectedColonyData.pos, buildingView.getColony().getID(), itemCount))))
-            .sendTo(Minecraft.getInstance().player);
-        this.close();
+        new WindowConfirm(this,
+            () ->
+            {
+                Network.getNetwork().sendToServer(new TeleportToColonyMessage(mc.level.dimension(), connectedColonyData.id, connectedColonyData.pos, buildingView.getColony().getID(), itemCount));
+                close();
+            },
+        Component.translatable("com.minecolonies.coremod.gui.townhall.tp", connectedColonyData.name).getString(), "").open();
     }
 
     /**

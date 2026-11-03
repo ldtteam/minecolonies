@@ -4,6 +4,7 @@ import com.ldtteam.blockui.Pane;
 import com.ldtteam.blockui.PaneBuilders;
 import com.ldtteam.blockui.views.BOWindow;
 import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.buildings.modules.ICommonSettingsModule;
 import com.minecolonies.api.colony.buildings.modules.ISettingsModule;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import net.minecraft.network.chat.Component;
@@ -35,7 +36,7 @@ public interface ISetting<S>
     void setupHandler(
       final ISettingKey<?> key,
       final Pane rowPane,
-      final ISettingsModuleView settingsModuleView,
+      final ICommonSettingsModule settingsModuleView,
       final IBuildingView building,
       final BOWindow window);
 
@@ -51,7 +52,7 @@ public interface ISetting<S>
     void render(
       final ISettingKey<?> key,
       final Pane rowPane,
-      final ISettingsModuleView settingsModuleView,
+      final ICommonSettingsModule settingsModuleView,
       final IBuildingView building,
       final BOWindow window);
 
@@ -111,14 +112,14 @@ public interface ISetting<S>
      * @param component          the component to put the hover pane on.
      * @param settingsModuleView the module view that holds the setting.
      */
-    default void setHoverPane(final ISettingKey<?> key, final Pane component, final ISettingsModuleView settingsModuleView)
+    default void setHoverPane(final ISettingKey<?> key, final Pane component, final ICommonSettingsModule settingsModuleView)
     {
         final String generalSettingToolTipKey = "com.minecolonies.coremod.setting.tooltip." + key.getUniqueId().toString();
         final Component tooltip = Component.translatable(generalSettingToolTipKey);
         final Component inActiveReason = getInactiveReason();
 
         final boolean hasTooltip = !tooltip.getString().equals(generalSettingToolTipKey);
-        final boolean isActive = isActive(settingsModuleView);
+        final boolean isActive = isActive((ISettingsModuleView) settingsModuleView);
 
         if (isActive && hasTooltip)
         {

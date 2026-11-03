@@ -1,0 +1,159 @@
+{
+  "name": "A Promise to Keep",
+  "parents": [],
+  "max-occurrences": 1,
+  "triggers": [
+    {
+      "type": "minecolonies:random",
+      "rarity": 1000000
+    },
+    {
+      "type": "minecolonies:state",
+      "state": {
+        "path": "buildingManager/buildings",
+        "match": {
+          "type": "minecolonies:enchanter",
+          "level": 1
+        }
+      }
+    },
+    {
+      "type": "minecolonies:citizen",
+      "state": {
+        "match": {
+          "job": {
+            "type": "minecolonies:enchanter"
+          }
+        }
+      }
+    },
+    {
+      "type": "minecolonies:citizen",
+      "state": {
+        "match": {
+          "job": {
+            "type": "minecolonies:knight"
+          }
+        }
+      }
+    }
+  ],
+  "objectives": [
+    {
+      "type": "minecolonies:dialogue",
+      "target": 0,
+      "text": "Oh, I am glad you stopped by! One of our guards came to me with a bit of a dilemma - they need to make a trip to a nearby village to visit family, but they have a patrol shift tonight and do not want to leave the colony unprotected. I told them I could craft a Teleport Scroll to make the trip quick enough that they could be back in time. I just need a few materials - could you help?",
+      "options": [
+        {
+          "answer": "Of course! What do you need?",
+          "result": {
+            "type": "minecolonies:dialogue",
+            "text": "Wonderful! Just three sheets of paper and a compass - I already have the Build Tool ready here. Simple enough! Once I have those I can have the scroll finished in no time.",
+            "options": [
+              {
+                "answer": "I will get those for you right away!",
+                "result": {
+                  "type": "minecolonies:advanceobjective",
+                  "go-to": 1
+                }
+              }
+            ]
+          }
+        },
+        {
+          "answer": "Sorry, I am a bit busy right now.",
+          "result": {
+            "type": "minecolonies:cancel"
+          }
+        }
+      ]
+    },
+    {
+      "type": "minecolonies:delivery",
+      "details": {
+        "target": 0,
+        "item": "minecraft:paper",
+        "qty": 3,
+        "next-objective": 2
+      }
+    },
+    {
+      "type": "minecolonies:delivery",
+      "details": {
+        "target": 0,
+        "item": "minecraft:compass",
+        "qty": 1,
+        "next-objective": 3
+      }
+    },
+    {
+      "type": "minecolonies:dialogue",
+      "target": 0,
+      "text": "Perfect! The scroll is already done - the guard stopped by a little while ago so I sent it along with them straight away. They are out on the paths somewhere. Why don't you go say hello? I am sure they would appreciate knowing you helped make this possible!",
+      "options": [
+        {
+          "answer": "Happy to! I will go find them.",
+          "result": {
+            "type": "minecolonies:advanceobjective",
+            "go-to": 4
+          }
+        }
+      ]
+    },
+    {
+      "unlocks-rewards": [0, 1, 2],
+      "type": "minecolonies:dialogue",
+      "target": 1,
+      "text": "Oh! You must be the one who helped the enchanter gather those materials! I heard all about it. I actually have some great news - one of the other guards offered to cover my shift so I could stay the night after all! I am still taking the scroll just in case. My mother absolutely insisted I bring this back for whoever helped. She baked it fresh this morning!",
+      "options": [
+        {
+          "answer": "Give your family my best! Safe travels!",
+          "result": {
+            "type": "minecolonies:advanceobjective",
+            "go-to": 5
+          }
+        },
+        {
+          "answer": "That is very kind! Tell her it smells wonderful.",
+          "result": {
+            "type": "minecolonies:dialogue",
+            "text": "Ha! I will pass that along. She will be so pleased. Now go on - and thank you again, truly. It means a lot that people here look out for one another.",
+            "options": [
+              {
+                "answer": "That is what a good colony is all about!",
+                "result": {
+                  "type": "minecolonies:advanceobjective",
+                  "go-to": 5
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "rewards": [
+    {
+      "type": "minecolonies:item",
+      "details": {
+        "item": "minecolonies:scroll_tp",
+        "qty": 3
+      }
+    },
+    {
+      "type": "minecolonies:item",
+      "details": {
+        "item": "minecraft:pumpkin_pie",
+        "qty": 1
+      }
+    },
+    {
+      "type": "minecolonies:happiness",
+      "details": {
+        "target": 1,
+        "qty": 1,
+        "days": 7
+      }
+    }
+  ]
+}

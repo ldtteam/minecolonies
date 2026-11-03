@@ -307,6 +307,6 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
      */
     public static double getMysticalSiteFactor(final IColony colony)
     {
-        return Math.max(1, ((double)colony.getBuildingManager().getMysticalSiteMaxBuildingLevel() / 2.0));
+        return Math.max(1, ((double)colony.getServerBuildingManager().getMysticalSiteMaxBuildingLevel() / 2.0));
     }
 }

@@ -137,7 +137,7 @@ public class WindowColonyMap extends AbstractWindowSkeleton
     /**
      * List of known colonies
      */
-    private static List<ColonyListMessage.ColonyInfo> colonies = new ArrayList<>();
+    public static List<ColonyListMessage.ColonyInfo> colonies = new ArrayList<>();
 
     /**
      * The position of the looker
@@ -218,6 +218,8 @@ public class WindowColonyMap extends AbstractWindowSkeleton
             registerButton(BUTTON_EXIT, this::close);
         }
         registerButton(BUTTON_INVENTORY, this::inventoryClicked);
+        registerButton(BUTTON_PRESTIGE, () ->  new WindowColonyPrestigeRanking(atTownHall, building).open());
+        registerButton(BUTTON_PRESTIGE_ICON, () ->  new WindowColonyPrestigeRanking(atTownHall, building).open());
 
         Network.getNetwork().sendToServer(new ColonyListMessage());
     }
@@ -355,7 +357,7 @@ public class WindowColonyMap extends AbstractWindowSkeleton
             updateColonyInfoImage(info);
         }
 
-        for (final IBuildingView buildingView : building.getColony().getBuildings())
+        for (final IBuildingView buildingView : building.getColony().getClientBuildingManager().getBuildings().values())
         {
             updateBuildingView(buildingView);
         }

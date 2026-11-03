@@ -1,6 +1,7 @@
 package com.minecolonies.core.colony.buildings.workerbuildings;
 
 import com.ldtteam.blockui.views.BOWindow;
+import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
@@ -24,6 +25,7 @@ import net.minecraft.world.level.block.state.BlockState;
 
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -101,14 +103,14 @@ public class BuildingBarracks extends AbstractBuilding
             }
         }
         super.onDestroyed();
-        colony.getBuildingManager().guardBuildingChangedAt(this, 0);
+        colony.getServerBuildingManager().guardBuildingChangedAt(this, 0);
     }
 
     @Override
-    public void onUpgradeComplete(final int newLevel)
+    public void onUpgradeComplete(@Nullable final Blueprint blueprint, final int newLevel)
     {
-        super.onUpgradeComplete(newLevel);
-        colony.getBuildingManager().guardBuildingChangedAt(this, newLevel);
+        super.onUpgradeComplete(blueprint, newLevel);
+        colony.getServerBuildingManager().guardBuildingChangedAt(this, newLevel);
     }
 
     @Override
@@ -117,7 +119,7 @@ public class BuildingBarracks extends AbstractBuilding
         super.registerBlockPosition(block, pos, world);
         if (block.getBlock() == ModBlocks.blockHutBarracksTower)
         {
-            final IBuilding building = getColony().getBuildingManager().getBuilding(pos);
+            final IBuilding building = getColony().getServerBuildingManager().getBuilding(pos);
             if (building instanceof BuildingBarracksTower)
             {
                 building.setStructurePack(this.getStructurePack());
@@ -168,7 +170,7 @@ public class BuildingBarracks extends AbstractBuilding
         int barracksClaimRadius = 3;
         for (final BlockPos pos : towers)
         {
-            final IBuilding building = colony.getBuildingManager().getBuilding(pos);
+            final IBuilding building = colony.getServerBuildingManager().getBuilding(pos);
             if (building != null)
             {
                 if (building.getBuildingLevel() < 4) 

@@ -43,7 +43,7 @@ public interface ICitizenManager extends IEntityManager
      */
     default ICitizenData spawnOrCreateCitizen(final ICitizenData data, @NotNull final Level world, final BlockPos spawnPos)
     {
-        return this.spawnOrCreateCivilian(data, world, spawnPos, false);
+        return this.spawnOrCreateCivilian(data, world, List.of(spawnPos), false);
     }
 
     /**

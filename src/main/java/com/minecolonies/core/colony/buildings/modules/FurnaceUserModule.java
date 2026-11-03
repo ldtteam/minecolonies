@@ -23,8 +23,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 
-import static com.minecolonies.api.util.constant.BuildingConstants.FUEL_LIST;
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
+import static com.minecolonies.core.colony.buildings.modules.BuildingModules.ITEMLIST_FUEL;
 
 /**
  * Module for all workers that need a furnace.
@@ -117,7 +117,7 @@ public class FurnaceUserModule extends AbstractBuildingModule implements IPersis
         {
             return false;
         }
-        return building.getModuleMatching(ItemListModule.class, m -> m.getId().equals(FUEL_LIST)).isItemInList(new ItemStorage(stack));
+        return building.getModule(ITEMLIST_FUEL).isItemInList(new ItemStorage(stack));
     }
 
     /**

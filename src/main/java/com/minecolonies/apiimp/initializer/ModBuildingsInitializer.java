@@ -70,6 +70,8 @@ public final class ModBuildingsInitializer
           .addBuildingModuleProducer(KNIGHT_BARRACKS_WORK)
           .addBuildingModuleProducer(RANGER_BARRACKS_WORK)
           .addBuildingModuleProducer(DRUID_BARRACKS_WORK)
+          .addBuildingModuleProducer(HUSCARL_BARRACKS_WORK)
+          .addBuildingModuleProducer(MARKSMAN_BARRACKS_WORK)
           .addBuildingModuleProducer(GUARD_TOOL)
           .addBuildingModuleProducer(GUARD_ENTITY_LIST)
           .addBuildingModuleProducer(GUARD_SETTINGS)
@@ -141,7 +143,7 @@ public final class ModBuildingsInitializer
         ModBuildings.cook = DEFERRED_REGISTER.register(ModBuildings.COOK_ID, () -> new BuildingEntry.Builder()
           .setBuildingBlock(ModBlocks.blockHutCook)
           .setBuildingProducer(BuildingCook::new)
-          .setBuildingViewProducer(() -> EmptyView::new)
+          .setBuildingViewProducer(() ->  BuildingCook.View::new)
           .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.COOK_ID))
           .addBuildingModuleProducer(COOK_WORK)
           .addBuildingModuleProducer(FURNACE)
@@ -158,6 +160,21 @@ public final class ModBuildingsInitializer
           .addBuildingModuleProducer(COWHERDER_WORK)
           .addBuildingModuleProducer(COWHERDER_HERDING)
           .addBuildingModuleProducer(COWHERDER_SETTINGS)
+          .addBuildingModuleProducer(MIN_STOCK)
+          .addBuildingModuleProducer(STATS_MODULE)
+          .createBuildingEntry());
+
+        ModBuildings.stable = DEFERRED_REGISTER.register(ModBuildings.STABLE_ID, () -> new BuildingEntry.Builder()
+          .setBuildingBlock(ModBlocks.blockHutStable)
+          .setBuildingProducer(BuildingStable::new)
+          .setBuildingViewProducer(() -> EmptyView::new)
+          .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.STABLE_ID))
+          .addBuildingModuleProducer(CAVALRY_STABLE_WORK)
+          .addBuildingModuleProducer(BED)
+          .addBuildingModuleProducer(STABLEMASTER_WORK)
+          .addBuildingModuleProducer(STABLEMASTER_HERDING)
+          .addBuildingModuleProducer(GUARD_ENTITY_LIST)
+          .addBuildingModuleProducer(STABLE_SETTINGS)
           .addBuildingModuleProducer(MIN_STOCK)
           .addBuildingModuleProducer(STATS_MODULE)
           .createBuildingEntry());
@@ -215,6 +232,8 @@ public final class ModBuildingsInitializer
           .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.GUARD_TOWER_ID))
           .addBuildingModuleProducer(KNIGHT_TOWER_WORK)
           .addBuildingModuleProducer(RANGER_TOWER_WORK)
+          .addBuildingModuleProducer(MARKSMAN_TOWER_WORK)
+          .addBuildingModuleProducer(HUSCARL_TOWER_WORK)
           .addBuildingModuleProducer(GUARD_TOOL)
           .addBuildingModuleProducer(GUARD_ENTITY_LIST)
           .addBuildingModuleProducer(GUARD_SETTINGS)
@@ -322,6 +341,7 @@ public final class ModBuildingsInitializer
           .addBuildingModuleProducer(ITEMLIST_FUEL)
           .addBuildingModuleProducer(ITEMLIST_ORE)
           .addBuildingModuleProducer(MIN_STOCK)
+          .addBuildingModuleProducer(SMELTER_SETTINGS)
           .addBuildingModuleProducer(STATS_MODULE)
           .createBuildingEntry());
 
@@ -505,6 +525,7 @@ public final class ModBuildingsInitializer
           .addBuildingModuleProducer(TAVERN_VISITOR)
           .addBuildingModuleProducer(BED)
           .addBuildingModuleProducer(STATS_MODULE)
+          .addBuildingModuleProducer(TAVERN_SETTINGS)
           .createBuildingEntry());
 
         ModBuildings.mechanic = DEFERRED_REGISTER.register(ModBuildings.MECHANIC_ID, () -> new BuildingEntry.Builder()
@@ -586,6 +607,7 @@ public final class ModBuildingsInitializer
           .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.GRAVEYARD_ID))
           .addBuildingModuleProducer(GRAVEYARD_WORK)
           .addBuildingModuleProducer(GRAVEYARD)
+          .addBuildingModuleProducer(MIN_STOCK)
           .addBuildingModuleProducer(STATS_MODULE)
           .createBuildingEntry());
 

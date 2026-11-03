@@ -33,10 +33,10 @@ public final class WorkerLoadOnlyStructureHandler<J extends AbstractJobStructure
      * @param fancyPlacement if fancy or complete.
      */
     public WorkerLoadOnlyStructureHandler(
-      final Level world, final BlockPos pos, final Blueprint blueprint, final PlacementSettings settings, final boolean fancyPlacement,
+      final Level world, final BlockPos pos, final Blueprint blueprint, final PlacementSettings settings,
       final AbstractEntityAIStructure<J, B> entityAIStructure)
     {
-        super(world, pos, blueprint, settings, fancyPlacement);
+        super(world, pos, blueprint, settings);
         this.structureAI = entityAIStructure;
     }
 

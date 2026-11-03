@@ -53,6 +53,7 @@ public class ColonyListMessage implements IMessage
             info.name = buf.readUtf(32767);
             info.citizencount = buf.readInt();
             info.owner = buf.readUtf(32767);
+            info.prestige = buf.readInt();
             colonyInfo.add(info);
         }
     }
@@ -68,6 +69,7 @@ public class ColonyListMessage implements IMessage
             buf.writeUtf(colony.getName());
             buf.writeInt(colony.getCitizenManager().getCurrentCitizenCount());
             buf.writeUtf(colony.getPermissions().getOwnerName());
+            buf.writeInt(colony.getServerBuildingManager().getColonyPrestige());
         }
     }
 
@@ -91,6 +93,7 @@ public class ColonyListMessage implements IMessage
         private       String   name;
         private       int      citizencount;
         private       String   owner;
+        private       int      prestige;
 
         public ColonyInfo(final int id)
         {
@@ -120,6 +123,10 @@ public class ColonyListMessage implements IMessage
         public String getOwner()
         {
             return owner;
+        }
+
+        public int getPrestige() {
+            return prestige;
         }
     }
 }

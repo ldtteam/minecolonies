@@ -67,7 +67,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.function.Predicate;
 
-import static com.minecolonies.api.colony.requestsystem.requestable.deliveryman.AbstractDeliverymanRequestable.getMaxBuildingPriority;
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.constant.CitizenConstants.*;
 import static com.minecolonies.api.util.constant.Constants.*;
@@ -379,7 +378,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
 
             // fix for printing the actual exception
             e.printStackTrace();
-            Log.getLogger().warn("AI history for citizen error:{}", getStateAI().getHistory());
+            Log.getLogger().warn("AI history for citizen error:{}", getStateAI().getHistory().getString());
         }
         catch (final RuntimeException exp)
         {
@@ -1179,7 +1178,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
             // Note that this will not create a pickup request when another request is already in progress.
             if (building.getPickUpPriority() > 0)
             {
-                building.createPickupRequest(getMaxBuildingPriority(true));
+                building.createPickupRequest(dumpedItems, true);
                 dumpedItems = 0;
             }
             alreadyKept.clear();
@@ -1200,15 +1199,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
         // Note that this will not create a pickup request when another request is already in progress.
         if (isAfterDumpPickupAllowed() && building.getPickUpPriority() > 0 && dumpedItems > 0)
         {
-            // Only create a pickup request probabilistically.
-            if (worker.getRandom().nextInt(STACKSIZE * 2) < dumpedItems)
-            {
-                building.createPickupRequest(getMaxBuildingPriority(true));
-            }
-            else
-            {
-                building.createPickupRequest(building.getPickUpPriority());
-            }
+            building.createPickupRequest(dumpedItems, false);
             dumpedItems = 0;
         }
         return afterDump();
@@ -1690,7 +1681,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
         }
 
         final int invCount = InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), s -> ItemStackUtils.compareItemStacksIgnoreStackSize(s, stack));
-        if (invCount >= count)
+        if (invCount >= minCount)
         {
             return true;
         }
@@ -1698,11 +1689,12 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
         final int updatedCount = count - invCount;
         final int updatedMinCount = Math.min(updatedCount, minCount);
 
+        // Check if in building and if we could transfer at least "mincount" over.
         if (InventoryUtils.hasBuildingEnoughElseCount(building, new ItemStorage(stack, true, matchNBT), updatedMinCount) >= updatedMinCount &&
-              InventoryUtils.transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandler(
+              updatedCount - InventoryUtils.transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandlerWithResult(
                 building, itemStack -> ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, stack, true, matchNBT),
                 updatedCount,
-                worker.getInventoryCitizen()))
+                worker.getInventoryCitizen()) >= minCount)
         {
             return true;
         }

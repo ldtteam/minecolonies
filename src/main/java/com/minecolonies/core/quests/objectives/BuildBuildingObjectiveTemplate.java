@@ -169,7 +169,7 @@ public class BuildBuildingObjectiveTemplate extends DialogueObjectiveTemplateTem
         {
             if (qty > 0)
             {
-                for (final IBuilding building : colonyQuest.getColony().getBuildingManager().getBuildings().values())
+                for (final IBuilding building : colonyQuest.getColony().getServerBuildingManager().getBuildings().values())
                 {
                     if (building.getBuildingType() == buildingEntry && building.getBuildingLevel() >= lvl)
                     {
@@ -179,7 +179,7 @@ public class BuildBuildingObjectiveTemplate extends DialogueObjectiveTemplateTem
             }
             else
             {
-                for (final IBuilding building : colonyQuest.getColony().getBuildingManager().getBuildings().values())
+                for (final IBuilding building : colonyQuest.getColony().getServerBuildingManager().getBuildings().values())
                 {
                     if (building.getBuildingType() == buildingEntry)
                     {

@@ -163,7 +163,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         worker.getCitizenData().setVisibleStatus(DELIVERING);
 
         final BlockPos pickupTarget = currentTask.getRequester().getLocation().getInDimensionLocation();
-        final IBuilding pickupBuilding = building.getColony().getBuildingManager().getBuilding(pickupTarget);
+        final IBuilding pickupBuilding = building.getColony().getServerBuildingManager().getBuilding(pickupTarget);
         if (pickupBuilding == null)
         {
             job.finishRequest(false);
@@ -209,7 +209,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
     /**
      * Gather not needed Items from building.
      *
-     * @param building building to gather it from.
+     * @param targetBuilding building to gather it from.
      * @return true when finished.
      */
     private boolean pickupFromBuilding(@NotNull final IBuilding targetBuilding)
@@ -349,7 +349,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             return START_WORKING;
         }
 
-        final IBuilding targetBuilding = worker.getCitizenColonyHandler().getColony().getBuildingManager().getBuilding(targetBuildingLocation.getInDimensionLocation());
+        final IBuilding targetBuilding = worker.getCitizenColonyHandler().getColony().getServerBuildingManager().getBuilding(targetBuildingLocation.getInDimensionLocation());
         if (targetBuilding == null)
         {
             job.finishRequest(true);
@@ -510,7 +510,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             }
         }
 
-        if (nextPickUp == null || parallelDeliveryCount > 1 + (getSecondarySkillLevel() / 5))
+        if (nextPickUp == null || parallelDeliveryCount > job.getMaxParallelDeliveries())
         {
             return DELIVERY;
         }

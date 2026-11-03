@@ -1,7 +1,6 @@
 package com.minecolonies.core.entity.pathfinding;
 
 import com.minecolonies.api.util.Log;
-import com.minecolonies.core.MineColonies;
 import com.minecolonies.core.entity.pathfinding.pathjobs.AbstractPathJob;
 import org.jetbrains.annotations.NotNull;
 
@@ -48,7 +47,7 @@ public final class Pathfinding
     {
         if (executor == null)
         {
-            executor = new ThreadPoolExecutor(1, MineColonies.getConfig().getServer().pathfindingMaxThreadCount.get(), 10, TimeUnit.SECONDS, jobQueue, new MinecoloniesThreadFactory());
+            executor = new ThreadPoolExecutor(1, 1, 10, TimeUnit.SECONDS, jobQueue, new MinecoloniesThreadFactory());
         }
         return executor;
     }

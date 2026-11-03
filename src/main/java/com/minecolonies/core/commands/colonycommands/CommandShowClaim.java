@@ -94,7 +94,7 @@ public class CommandShowClaim implements IMCOPCommand
                 {
                     if (colony != null)
                     {
-                        final IBuilding building = colony.getBuildingManager().getBuilding(buildingPos);
+                        final IBuilding building = colony.getServerBuildingManager().getBuilding(buildingPos);
                         if (building != null)
                         {
                             text.append(Component.translatable("ID: %s Building: %s Pos: %s\n",

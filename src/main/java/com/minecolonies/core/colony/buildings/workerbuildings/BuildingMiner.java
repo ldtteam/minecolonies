@@ -10,7 +10,6 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.colony.buildings.AbstractBuildingStructureBuilder;
-import com.minecolonies.core.colony.buildings.modules.BuildingModules;
 import com.minecolonies.core.colony.buildings.modules.WorkerBuildingModule;
 import com.minecolonies.core.colony.buildings.modules.settings.BlockSetting;
 import com.minecolonies.core.colony.buildings.modules.settings.IntSetting;
@@ -36,6 +35,8 @@ import static com.minecolonies.api.util.constant.BuildingConstants.TAG_CLOCATION
 import static com.minecolonies.api.util.constant.BuildingConstants.TAG_LLOCATION;
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 import static com.minecolonies.api.util.constant.EquipmentLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
+import static com.minecolonies.api.util.constant.SchematicTagConstants.TAG_COBBLE;
+import static com.minecolonies.api.util.constant.SchematicTagConstants.TAG_LADDER;
 
 /**
  * The miners building.
@@ -242,9 +243,9 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
 
     private void loadLadderPos()
     {
-        final Map<String, Set<BlockPos>> map = tileEntity.getWorldTagNamePosMap();
-        final Set<BlockPos> cobblePos = map.getOrDefault("cobble", new HashSet<>());
-        final Set<BlockPos> ladderPos = map.getOrDefault("ladder", new HashSet<>());
+        final Map<String, Set<BlockPos>> map = getTileEntity().getWorldTagNamePosMap();
+        final Set<BlockPos> cobblePos = map.getOrDefault(TAG_COBBLE, new HashSet<>());
+        final Set<BlockPos> ladderPos = map.getOrDefault(TAG_LADDER, new HashSet<>());
         if (cobblePos.isEmpty() || ladderPos.isEmpty())
         {
             return;

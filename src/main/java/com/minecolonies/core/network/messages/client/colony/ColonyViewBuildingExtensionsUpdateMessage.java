@@ -108,7 +108,7 @@ public class ColonyViewBuildingExtensionsUpdateMessage implements IMessage
         if (view != null)
         {
             final Set<IBuildingExtension> extensions = new HashSet<>();
-            view.getBuildingExtensions(extension -> true).forEach(existingExtension -> {
+            view.getClientBuildingManager().getBuildingExtensions(extension -> true).forEach(existingExtension -> {
                 if (this.extensions.containsKey(existingExtension))
                 {
                     final FriendlyByteBuf copyBuffer = new FriendlyByteBuf(Unpooled.buffer());
@@ -119,7 +119,7 @@ public class ColonyViewBuildingExtensionsUpdateMessage implements IMessage
             });
             extensions.addAll(this.extensions.keySet());
 
-            view.handleColonyBuildingExtensionViewUpdateMessage(extensions);
+            view.getClientBuildingManager().handleColonyBuildingExtensionViewUpdateMessage(extensions);
         }
         else
         {

@@ -6,6 +6,8 @@ import com.ldtteam.blockui.controls.ItemIcon;
 import com.ldtteam.blockui.views.BOWindow;
 import com.ldtteam.structurize.client.gui.WindowSelectRes;
 import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.buildings.modules.ICommonSettingsModule;
+import com.minecolonies.api.colony.buildings.modules.ISettingsModule;
 import com.minecolonies.api.colony.buildings.modules.settings.ISetting;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingsModuleView;
@@ -114,7 +116,7 @@ public class BlockSetting implements ISetting<BlockItem>
     public void setupHandler(
       final ISettingKey<?> key,
       final Pane pane,
-      final ISettingsModuleView settingsModuleView,
+      final ICommonSettingsModule settingsModuleView,
       final IBuildingView building,
       final BOWindow window)
     {
@@ -154,13 +156,13 @@ public class BlockSetting implements ISetting<BlockItem>
     public void render(
       final ISettingKey<?> key,
       final Pane pane,
-      final ISettingsModuleView settingsModuleView,
+      final ICommonSettingsModule settingsModuleView,
       final IBuildingView building,
       final BOWindow window)
     {
         pane.findPaneOfTypeByID("icon", ItemIcon.class).setItem(new ItemStack(value));
         ButtonImage triggerButton = pane.findPaneOfTypeByID("trigger", ButtonImage.class);
-        triggerButton.setEnabled(isActive(settingsModuleView));
+        triggerButton.setEnabled(isActive((ISettingsModuleView) settingsModuleView));
         triggerButton.setText(Component.translatable(SWITCH));
         setHoverPane(key, triggerButton, settingsModuleView);
     }

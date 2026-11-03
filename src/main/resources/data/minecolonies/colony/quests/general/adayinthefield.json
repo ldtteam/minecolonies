@@ -1,0 +1,138 @@
+{
+  "name": "A Day in the Field",
+  "parents": [],
+  "max-occurrences": 1,
+  "triggers": [
+    {
+      "type": "minecolonies:random",
+      "rarity": 1000000
+    },
+    {
+      "type": "minecolonies:state",
+      "state": {
+        "path": "buildingManager/buildings",
+        "match": {
+          "type": "minecolonies:enchanter",
+          "level": 2
+        }
+      }
+    },
+    {
+      "type": "minecolonies:citizen",
+      "state": {
+        "match": {
+          "job": {
+            "type": "minecolonies:enchanter"
+          }
+        }
+      }
+    }
+  ],
+  "objectives": [
+    {
+      "type": "minecolonies:dialogue",
+      "target": 0,
+      "text": "Ah, perfect timing! I have been planning a field expedition with our university scholars to gather some rare medicinal herbs - there is a wonderful spot I know of not far from here. The trip out is easy enough, but I worry about getting everyone safely home before nightfall. The forest paths can be treacherous in the dark! I want to craft a Group Teleport Scroll to bring everyone home at once, but I am afraid I have used up all of my Teleport Scrolls on other projects. Could you bring me three?",
+      "options": [
+        {
+          "answer": "Three scrolls? I can manage that!",
+          "result": {
+            "type": "minecolonies:advanceobjective",
+            "go-to": 1
+          }
+        },
+        {
+          "answer": "That is a lot of scrolls, I am afraid I cannot spare them.",
+          "result": {
+            "type": "minecolonies:cancel"
+          }
+        }
+      ]
+    },
+    {
+      "type": "minecolonies:delivery",
+      "details": {
+        "target": 0,
+        "item": "minecolonies:scroll_tp",
+        "qty": 3,
+        "next-objective": 2
+      }
+    },
+    {
+      "type": "minecolonies:dialogue",
+      "target": 0,
+      "text": "Wonderful! This is everything I need. I will get the Group Scroll crafted and then we are off! The scholars are already beside themselves with excitement - they have been chattering about the trip all week. Come find me tomorrow and I will show you what we gathered. Hopefully it will be worth the journey!",
+      "options": [
+        {
+          "answer": "I hope you find what you are looking for! I will check in tomorrow.",
+          "result": {
+            "type": "minecolonies:advanceobjective",
+            "go-to": 3
+          }
+        }
+      ]
+    },
+    {
+      "unlocks-rewards": [0, 1, 2],
+      "type": "minecolonies:dialogue",
+      "target": 0,
+      "text": "You are back! Oh, what a day we had! The scholars found twice what I had hoped for - torchflower, orchid, all manner of remarkable specimens! Everyone was safe home before supper thanks to the scroll, which worked perfectly, I am pleased to say. Here, I had a spare scroll from the expedition and I want you to have it along with your scrolls back - you made this whole trip possible. Thank you!",
+      "options": [
+        {
+          "answer": "It sounds like it was a wonderful success! I am glad I could help.",
+          "result": {
+            "type": "minecolonies:advanceobjective",
+            "go-to": 4
+          }
+        },
+        {
+          "answer": "Tell me more about what you found!",
+          "result": {
+            "type": "minecolonies:dialogue",
+            "text": "Oh where to even begin! There was a cluster of torchflower growing right alongside a patch of orchids, which I have never seen before. The scholars were absolutely buzzing. I could talk about it all day, but you should take your reward first! We must do this again sometime.",
+            "options": [
+              {
+                "answer": "That sounds incredible. Thank you!",
+                "result": {
+                  "type": "minecolonies:advanceobjective",
+                  "go-to": 4
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "rewards": [
+    {
+      "type": "minecolonies:item",
+      "details": {
+        "item": "minecolonies:scroll_area_tp",
+        "qty": 1
+      }
+    },
+    {
+      "type": "minecolonies:item",
+      "details": {
+        "item": "minecolonies:scroll_tp",
+        "qty": 3
+      }
+    },
+    {
+      "type": "minecolonies:item",
+      "details": {
+        "item": "minecraft:blue_orchid",
+        "qty": 3
+      }
+    },
+    {
+      "type": "minecolonies:happiness",
+      "details": {
+        "target": 0,
+        "qty": 1,
+        "days": 7
+      }
+    }
+  ]
+}

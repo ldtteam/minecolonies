@@ -88,7 +88,7 @@ public class EntityInitializer
               .setTrackingRange(ENTITY_TRACKING_RANGE)
               .setUpdateInterval(ENTITY_UPDATE_FREQUENCY)
               .sized((float) CITIZEN_WIDTH, (float) CITIZEN_HEIGHT)
-              .setShouldReceiveVelocityUpdates(true));
+                .setShouldReceiveVelocityUpdates(true));
 
             ModEntities.MERCENARY = build(registry, "mercenary",
               EntityType.Builder.of(EntityMercenary::new, MobCategory.CREATURE)

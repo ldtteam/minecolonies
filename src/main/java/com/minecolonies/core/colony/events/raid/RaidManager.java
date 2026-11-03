@@ -423,7 +423,19 @@ public class RaidManager implements IRaiderManager
                 {
                     event = new PirateGroundRaidEvent(colony);
                 }
-                else if (raidSettings.raidType() == null || raidSettings.raidType().equals(BarbarianRaidEvent.BARBARIAN_RAID_EVENT_TYPE_ID.getPath()))
+                else if (raidSettings.raidType() == null)
+                {
+                    // 2/3 Chance for Barbs
+                    if (MathUtils.RANDOM.nextDouble() > 0.33)
+                    {
+                        event = new BarbarianRaidEvent(colony);
+                    }
+                    else
+                    {
+                        event = new NorsemenRaidEvent(colony);
+                    }
+                }
+                else if (raidSettings.raidType().equals(BarbarianRaidEvent.BARBARIAN_RAID_EVENT_TYPE_ID.getPath()))
                 {
                     event = new BarbarianRaidEvent(colony);
                 }
@@ -455,9 +467,9 @@ public class RaidManager implements IRaiderManager
      */
     private PathResult<?> createSpawnPath(final BlockPos targetSpawnPoint, final boolean underwater)
     {
-        final BlockPos closestBuildingPos = colony.getBuildingManager().getBestBuilding(targetSpawnPoint, IBuilding.class);
+        final BlockPos closestBuildingPos = colony.getServerBuildingManager().getBestBuilding(targetSpawnPoint, IBuilding.class);
         final PathJobRaiderPathing job =
-            new PathJobRaiderPathing(new ArrayList<>(colony.getBuildingManager().getBuildings().values()), colony.getWorld(), closestBuildingPos, targetSpawnPoint);
+            new PathJobRaiderPathing(new ArrayList<>(colony.getServerBuildingManager().getBuildings().values()), colony.getWorld(), closestBuildingPos, targetSpawnPoint);
         job.getPathingOptions().withWalkUnderWater(underwater);
         job.getResult().startJob(Pathfinding.getExecutor());
         return job.getResult();
@@ -474,7 +486,7 @@ public class RaidManager implements IRaiderManager
         BlockPos locationSum = new BlockPos(0, 0, 0);
         int amount = 0;
 
-        for (final IBuilding building : colony.getBuildingManager().getBuildings().values())
+        for (final IBuilding building : colony.getServerBuildingManager().getBuildings().values())
         {
             if (WorldUtil.isEntityBlockLoaded(colony.getWorld(), building.getPosition()))
             {
@@ -486,7 +498,7 @@ public class RaidManager implements IRaiderManager
         if (amount == 0)
         {
             Log.getLogger()
-                .info("Trying to spawn raid on colony with no loaded buildings, aborting! Colony:" + colony.getID() + " buildings:" + colony.getBuildingManager()
+                .info("Trying to spawn raid on colony with no loaded buildings, aborting! Colony:" + colony.getID() + " buildings:" + colony.getServerBuildingManager()
                     .getBuildings()
                     .size() + " isActive:" + colony.isActive() + " colony state:" + colony.getState());
             return null;
@@ -502,7 +514,7 @@ public class RaidManager implements IRaiderManager
         final BlockPos advanceTowards = calcCenter.offset(x, 0, z);
 
         BlockPos spawnPos = null;
-        final BlockPos closestBuilding = colony.getBuildingManager().getBestBuilding(advanceTowards, IBuilding.class);
+        final BlockPos closestBuilding = colony.getServerBuildingManager().getBestBuilding(advanceTowards, IBuilding.class);
 
         if (closestBuilding == null)
         {
@@ -565,7 +577,7 @@ public class RaidManager implements IRaiderManager
     {
         BlockPos spawnPos = new BlockPos(start);
         BlockPos tempPos = new BlockPos(spawnPos.getX(), spawnPos.getY(), spawnPos.getZ());
-        final Collection<IBuilding> buildings = colony.getBuildingManager().getBuildings().values();
+        final Collection<IBuilding> buildings = colony.getServerBuildingManager().getBuildings().values();
 
         final int xDiff = Math.abs(start.getX() - advancePos.getX());
         final int zDiff = Math.abs(start.getZ() - advancePos.getZ());
@@ -827,7 +839,7 @@ public class RaidManager implements IRaiderManager
             }
         }
 
-        for (final IBuilding building : colony.getBuildingManager().getBuildings().values())
+        for (final IBuilding building : colony.getServerBuildingManager().getBuildings().values())
         {
             if (building.getBuildingLevel() > 0)
             {
@@ -872,7 +884,7 @@ public class RaidManager implements IRaiderManager
         if (buildingPosUsage > Math.max(6, getLastRaid().raiderAmount / 3) || lastBuilding == null)
         {
             buildingPosUsage = 0;
-            final Collection<IBuilding> buildingList = colony.getBuildingManager().getBuildings().values();
+            final Collection<IBuilding> buildingList = colony.getServerBuildingManager().getBuildings().values();
             final Object[] buildingArray = buildingList.toArray();
             if (buildingArray.length != 0)
             {

@@ -1,0 +1,19 @@
+<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" size="400 244"
+        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/ldtteam/BlockUI/version/main/src/main/resources/assets/blockui/gui/block_ui.xsd">
+    <button id="map" size="34 34" pos="-10 20" color="black"
+            source="minecolonies:textures/gui/modules/tab_left_side1.png"
+            label="" tooltip="$(item.minecolonies.colonymap)"/>
+    <button id="mapicon" size="25 25" pos="-5 24" color="black"
+            source="minecolonies:textures/gui/modules/map.png"
+            label="" tooltip="$(item.minecolonies.colonymap)"/>
+    <image source="minecolonies:textures/gui/builderhut/builder_paper_wide_structure.png" pos="11 7" size="378 237"/>
+    <text id="title" size="280 13" pos="60 15" color="black" label="$(com.minecolonies.coremod.gui.townhall.prestige)" textalign="MIDDLE"/>
+    <button size="15 15" pos="260 12" color="black"
+            source="minecolonies:textures/gui/red_wax_information.png"
+            label="" tooltip="$(com.minecolonies.coremod.gui.townhall.prestige.tooltip)"/>
+
+    <list id="colonies" size="280 180" pos="60 30">
+        <text id="desc" size="280 13" pos="0 0" color="black"/>
+    </list>
+    <button id="exit" size="14 15" pos="360 10" source="minecolonies:textures/gui/button_x.png" tooltip="close" color="black"/>
+</window>

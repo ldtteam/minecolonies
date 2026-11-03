@@ -20,7 +20,7 @@
         <text size="105 11" pos="20 220" textalign="MIDDLE_RIGHT" color="black"
             label="$(com.minecolonies.core.gui.modules.stats.hidezerolabel)"/>
         <button id="hidezero" pos="127 218" size="14 15"
-                        source="minecolonies:textures/gui/builderhut/builder_button_mini.png"
+                        source="minecolonies:textures/gui/builderhut/builder_button_mini_check.png"
                         disabled="minecolonies:textures/gui/builderhut/builder_button_mini_disabled.png"/>
     </view>
 </window>

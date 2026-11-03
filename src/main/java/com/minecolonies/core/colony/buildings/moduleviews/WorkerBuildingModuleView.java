@@ -58,6 +58,11 @@ public class WorkerBuildingModuleView extends AbstractBuildingModuleView impleme
      */
     private JobEntry jobEntry;
 
+    /**
+     * Research requirement.
+     */
+    private ResourceLocation researchRequirement = null;
+
     @Override
     public List<Integer> getAssignedCitizens()
     {
@@ -97,6 +102,10 @@ public class WorkerBuildingModuleView extends AbstractBuildingModuleView impleme
         this.jobEntry = buf.readRegistryIdSafe(JobEntry.class);
         this.primary = Skill.values()[buf.readInt()];
         this.secondary = Skill.values()[buf.readInt()];
+        if (buf.readBoolean())
+        {
+            this.researchRequirement = buf.readResourceLocation();
+        }
     }
 
     @Override
@@ -148,7 +157,7 @@ public class WorkerBuildingModuleView extends AbstractBuildingModuleView impleme
         return !citizen.isChild() &&
                  (citizen.getWorkBuilding() == null
                     || workerIDs.contains(citizen.getId())
-                    || buildingView.getColony().getBuilding(citizen.getWorkBuilding()) != null && buildingView.getColony().getBuilding(citizen.getWorkBuilding()).getModuleViewMatching(WorkerBuildingModuleView.class, m -> m.canBeHiredAs(getJobEntry()))
+                    || buildingView.getColony().getClientBuildingManager().getBuilding(citizen.getWorkBuilding()) != null && buildingView.getColony().getClientBuildingManager().getBuilding(citizen.getWorkBuilding()).getModuleViewMatching(WorkerBuildingModuleView.class, m -> m.canBeHiredAs(getJobEntry()))
                          != null);
     }
 
@@ -189,5 +198,11 @@ public class WorkerBuildingModuleView extends AbstractBuildingModuleView impleme
     public boolean isFull()
     {
         return !buildingView.allowsAssignment() || getAssignedCitizens().size() >= getMaxInhabitants();
+    }
+
+    @Override
+    public ResourceLocation getResearchRequirement()
+    {
+        return researchRequirement;
     }
 }

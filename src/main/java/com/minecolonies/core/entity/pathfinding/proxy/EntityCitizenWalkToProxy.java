@@ -76,7 +76,7 @@ public class EntityCitizenWalkToProxy extends AbstractWalkToProxy
                 AbstractBuildingGuards guardbuilding = (AbstractBuildingGuards) building;
                 if (guardbuilding.getTask().equals(GuardTaskSetting.PATROL_MINE) && guardbuilding.getMinePos() != null)
                 {
-                    final IBuilding miner = citizen.getCitizenColonyHandler().getColonyOrRegister().getBuildingManager().getBuilding(guardbuilding.getMinePos());
+                    final IBuilding miner = citizen.getCitizenColonyHandler().getColonyOrRegister().getServerBuildingManager().getBuilding(guardbuilding.getMinePos());
                     if (miner instanceof BuildingMiner)
                     {
                         return getMinerProxy(target, distanceToPath, (BuildingMiner) miner);

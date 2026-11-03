@@ -54,6 +54,11 @@ public final class StatisticsConstants
     public static final String BREEDING_ATTEMPTS = "breeding_attempts";
     public static final String ANIMALS_BUTCHERED = "animals_butchered";
 
+    /**
+     * Guard building stats.
+     */
+    public static final String PATROLS_STARTED = "patrols_started";
+
     // Cook
     public static final String FOOD_SERVED_DETAIL = "food_served_detail";
 
@@ -121,6 +126,12 @@ public final class StatisticsConstants
 
     // University
     public static final String RESEARCH_COMPLETED = "research_completed";
+
+    // Stable
+    public static final String HORSES_TRAINED = "horses_trained";
+    public static final String MOUNTS_READIED = "mounts_readied";
+    public static final String ROUNDUPS_COMPLETED = "roundups_completed";
+
 }
 
 

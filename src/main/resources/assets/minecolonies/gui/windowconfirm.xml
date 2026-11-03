@@ -1,0 +1,11 @@
+<window size="350 170" lightbox="true">
+    <text id="title" size="294 11" pos="23 32" textalign="MIDDLE" color="white" textscale="1.2"/>
+    <text id="warning" size="294 31" pos="23 52" textalign="MIDDLE" color="white"/>
+
+    <button id="cancel" size="86 17" pos="60 120"
+            source="minecolonies:textures/gui/builderhut/builder_button_medium.png"
+            label="$(gui.yes)" color="black"/>
+    <button id="confirm" size="86 17" pos="160 120"
+            source="minecolonies:textures/gui/builderhut/builder_button_medium.png"
+            label="$(gui.cancel)" color="black"/>
+</window>

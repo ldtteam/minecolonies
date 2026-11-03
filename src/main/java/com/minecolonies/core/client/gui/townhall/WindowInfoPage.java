@@ -10,6 +10,7 @@ import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.colonyEvents.descriptions.IBuildingEventDescription;
 import com.minecolonies.api.colony.colonyEvents.descriptions.ICitizenEventDescription;
 import com.minecolonies.api.colony.colonyEvents.descriptions.IColonyEventDescription;
+import com.minecolonies.api.colony.workorders.IWorkOrder;
 import com.minecolonies.api.colony.workorders.IWorkOrderView;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.core.Network;
@@ -21,7 +22,6 @@ import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -180,7 +180,7 @@ public class WindowInfoPage extends AbstractWindowTownHall
      */
     private void sortWorkOrders()
     {
-        workOrders.sort(Comparator.comparing(IWorkOrderView::getPriority, Comparator.reverseOrder()));
+        workOrders.sort(IWorkOrder.WORK_ORDER_COMPARATOR);
     }
 
     /**
@@ -278,7 +278,7 @@ public class WindowInfoPage extends AbstractWindowTownHall
                 }
 
                 //Searches citizen of id x
-                for (@NotNull final IBuildingView buildingView : buildingView.getColony().getBuildings())
+                for (@NotNull final IBuildingView buildingView : buildingView.getColony().getClientBuildingManager().getBuildings().values())
                 {
                     if (buildingView.getPosition().equals(workOrder.getClaimedBy()) && buildingView instanceof AbstractBuildingBuilderView)
                     {

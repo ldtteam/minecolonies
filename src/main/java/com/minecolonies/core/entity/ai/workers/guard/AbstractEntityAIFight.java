@@ -12,6 +12,7 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.core.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.core.colony.jobs.AbstractJobGuard;
 import com.minecolonies.core.entity.ai.workers.AbstractEntityAIInteract;
+import com.minecolonies.core.items.ItemSpear;
 import com.minecolonies.core.util.citizenutils.CitizenItemUtils;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
@@ -125,7 +126,7 @@ public abstract class AbstractEntityAIFight<J extends AbstractJobGuard<J>, B ext
             InventoryFunctions.matchFirstInProviderWithSimpleAction(worker,
               stack -> !ItemStackUtils.isEmpty(stack)
                          && ItemStackUtils.doesItemServeAsWeapon(stack)
-                         && ItemStackUtils.hasEquipmentLevel(stack, tool, 0, building.getMaxEquipmentLevel()),
+                         && ItemStackUtils.hasEquipmentLevel(stack, tool, stack.getItem() instanceof ItemSpear ? -1 : 0, building.getMaxEquipmentLevel()),
               itemStack -> CitizenItemUtils.setMainHeldItem(worker, itemStack));
         }
 

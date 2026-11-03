@@ -4,14 +4,17 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IVisitorData;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.WorldUtil;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-import static com.minecolonies.api.util.constant.NbtTagConstants.*;
+import java.util.ArrayList;
+import java.util.List;
+
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_ID;
 import static com.minecolonies.api.util.constant.SchematicTagConstants.TAG_SITTING;
 
 /**
@@ -123,24 +126,23 @@ public class VisitorData extends CitizenData implements IVisitorData
             {
                 return;
             }
+
+            setEntity(null);
         }
 
-        if (getLastPosition() != BlockPos.ZERO && (getLastPosition().getX() != 0 && getLastPosition().getZ() != 0) && WorldUtil.isEntityBlockLoaded(getColony().getWorld(),
-          getLastPosition()))
+        List<BlockPos> spawnPositions = new ArrayList<>();
+        if (getLastPosition() != BlockPos.ZERO && (getLastPosition().getX() != 0 && getLastPosition().getZ() != 0))
         {
-            getColony().getVisitorManager().spawnOrCreateCivilian(this, getColony().getWorld(), getLastPosition(), true);
+            spawnPositions.add(getLastPosition());
+
         }
-        else if (getHomeBuilding() != null)
+
+        if (getHomeBuilding() != null)
         {
-            if (WorldUtil.isEntityBlockLoaded(getColony().getWorld(), getHomeBuilding().getID()))
-            {
-                final BlockPos spawnPos = BlockPosUtil.findSpawnPosAround(getColony().getWorld(), getHomeBuilding().getID());
-                if (spawnPos != null)
-                {
-                    getColony().getVisitorManager().spawnOrCreateCivilian(this, getColony().getWorld(), spawnPos, true);
-                }
-            }
+            spawnPositions.add(getHomeBuilding().getPosition());
         }
+
+        getColony().getVisitorManager().spawnOrCreateCivilian(this, getColony().getWorld(), spawnPositions, true);
     }
 
     @Override

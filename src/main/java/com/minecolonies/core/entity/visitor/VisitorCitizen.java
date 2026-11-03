@@ -268,7 +268,7 @@ public class VisitorCitizen extends AbstractEntityCitizen
     {
         if (citizenData != null)
         {
-            citizenData.decreaseSaturation(SATURATION_DECREASE_FACTOR);
+            citizenData.decreaseSaturation(SATURATION_DECREASE_FACTOR * 3);
             citizenData.markDirty(20 * 20);
         }
     }
@@ -281,7 +281,7 @@ public class VisitorCitizen extends AbstractEntityCitizen
     {
         if (citizenData != null)
         {
-            citizenData.decreaseSaturation(SATURATION_DECREASE_FACTOR / 100.0);
+            citizenData.decreaseSaturation(SATURATION_DECREASE_FACTOR * 3 / 100.0);
             citizenData.markDirty(20 * 60 * 2);
         }
     }

@@ -7,7 +7,7 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenDiseaseHandler;
 import com.minecolonies.core.MineColonies;
-import com.minecolonies.core.colony.buildings.workerbuildings.BuildingCook;
+import com.minecolonies.core.colony.buildings.workerbuildings.BuildingHospital;
 import com.minecolonies.core.colony.jobs.AbstractJobGuard;
 import com.minecolonies.core.colony.jobs.JobHealer;
 import com.minecolonies.core.datalistener.model.Disease;
@@ -44,6 +44,11 @@ public class CitizenDiseaseHandler implements ICitizenDiseaseHandler
      * Number of ticks after recovering a citizen is immune against any illness. 90 Minutes currently.
      */
     private static final int IMMUNITY_TIME = 20 * 60 * 90;
+
+    /**
+     * Collision cooldown to avoid triggering too aggressively. 30 seconds currently.
+     */
+    private static final int COLLISION_COOLDOWN = 20 * 30;
 
     /**
      * Additional immunity time through vaccines.
@@ -147,9 +152,21 @@ public class CitizenDiseaseHandler implements ICitizenDiseaseHandler
               && canBecomeSick()
               && citizen.getRandom().nextInt(ONE_HUNDRED_PERCENT) < 1)
         {
-            if (citizen.getColony().getResearchManager().getResearchEffects().getEffectStrength(MASKS) <= 0 || citizen.getRandom().nextBoolean())
+            final double masks = citizen.getColony().getResearchManager().getResearchEffects().getEffectStrength(MASKS);
+            if (masks <= 0 || citizen.getRandom().nextBoolean())
             {
                 this.disease = citizen.getCitizenDiseaseHandler().getDisease();
+            }
+            else
+            {
+                if (citizenData.getColony().getResearchManager().getResearchEffects().getEffectStrength(VACCINES) > 0)
+                {
+                    immunityTicks = Math.max(immunityTicks, COLLISION_COOLDOWN * 2);
+                }
+                else
+                {
+                    immunityTicks = Math.max(immunityTicks, COLLISION_COOLDOWN);
+                }
             }
         }
     }
@@ -210,9 +227,9 @@ public class CitizenDiseaseHandler implements ICitizenDiseaseHandler
         if (citizenData.isAsleep() && citizenData.getEntity().isPresent())
         {
             citizenData.getEntity().get().stopSleeping();
-            final BlockPos hospitalPos = citizenData.getColony().getBuildingManager().getBestBuilding(citizenData.getEntity().get(), BuildingCook.class);
+            final BlockPos hospitalPos = citizenData.getColony().getServerBuildingManager().getBestBuilding(citizenData.getEntity().get(), BuildingHospital.class);
             final IColony colony = citizenData.getColony();
-            final IBuilding hospital = colony.getBuildingManager().getBuilding(hospitalPos);
+            final IBuilding hospital = colony.getServerBuildingManager().getBuilding(hospitalPos);
             if (hospital != null)
             {
                 hospital.onWakeUp();

@@ -36,10 +36,11 @@ import java.util.List;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.ItemStackUtils.*;
-import static com.minecolonies.api.util.constant.BuildingConstants.FUEL_LIST;
 import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.BAKER_HAS_NO_FURNACES_MESSAGE;
 import static com.minecolonies.api.util.constant.TranslationConstants.FURNACE_USER_NO_FUEL;
+import static com.minecolonies.core.colony.buildings.modules.BuildingModules.FURNACE;
+import static com.minecolonies.core.colony.buildings.modules.BuildingModules.ITEMLIST_FUEL;
 
 /**
  * AI class for all workers which use a furnace and require fuel and a block to smelt in it.
@@ -127,7 +128,7 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob<?, J>, B
      */
     protected BlockPos getPositionOfOvenToRetrieveFrom()
     {
-        for (final BlockPos pos : building.getFirstModuleOccurance(FurnaceUserModule.class).getFurnaces())
+        for (final BlockPos pos : building.getModule(FURNACE).getFurnaces())
         {
             final BlockEntity entity = world.getBlockEntity(pos);
             if (entity instanceof FurnaceBlockEntity)
@@ -154,8 +155,8 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob<?, J>, B
      */
     protected BlockPos getPositionOfOvenToRetrieveFuelFrom()
     {
-        final ItemListModule module = building.getModuleMatching(ItemListModule.class, m -> m.getId().equals(FUEL_LIST));
-        for (final BlockPos pos : building.getFirstModuleOccurance(FurnaceUserModule.class).getFurnaces())
+        final ItemListModule module = building.getModule(ITEMLIST_FUEL);
+        for (final BlockPos pos : building.getModule(FURNACE).getFurnaces())
         {
             final BlockEntity entity = world.getBlockEntity(pos);
             if (entity instanceof FurnaceBlockEntity)
@@ -185,8 +186,8 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob<?, J>, B
             return getState();
         }
 
-        final FurnaceUserModule furnaceModule = building.getFirstModuleOccurance(FurnaceUserModule.class);
-        final ItemListModule itemListModule = building.getModuleMatching(ItemListModule.class, m -> m.getId().equals(FUEL_LIST));
+        final FurnaceUserModule furnaceModule = building.getModule(FURNACE);
+        final ItemListModule itemListModule = building.getModule(ITEMLIST_FUEL);
         worker.getCitizenData().setVisibleStatus(VisibleCitizenStatus.WORKING);
 
         if (itemListModule.getList().isEmpty())
@@ -195,15 +196,13 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob<?, J>, B
             {
                 worker.getCitizenData().triggerInteraction(new StandardInteraction(Component.translatable(FURNACE_USER_NO_FUEL), ChatPriority.BLOCKING));
             }
-            return getState();
         }
 
         if (furnaceModule.getFurnaces().isEmpty())
         {
             if (worker.getCitizenData() != null)
             {
-                worker.getCitizenData()
-                  .triggerInteraction(new StandardInteraction(Component.translatable(BAKER_HAS_NO_FURNACES_MESSAGE), ChatPriority.BLOCKING));
+                worker.getCitizenData().triggerInteraction(new StandardInteraction(Component.translatable(BAKER_HAS_NO_FURNACES_MESSAGE), ChatPriority.BLOCKING));
             }
             return getState();
         }
@@ -269,7 +268,7 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob<?, J>, B
     private List<ItemStack> getAllowedFuel()
     {
         final List<ItemStack> list = new ArrayList<>();
-        for (final ItemStorage storage : building.getModuleMatching(ItemListModule.class, m -> m.getId().equals(FUEL_LIST)).getList())
+        for (final ItemStorage storage : building.getModule(ITEMLIST_FUEL).getList())
         {
             final ItemStack stack = storage.getItemStack().copy();
             stack.setCount(stack.getMaxStackSize());
@@ -320,7 +319,7 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob<?, J>, B
      */
     private IAIState checkIfAbleToSmelt(final int amountOfFuel, final int amountOfSmeltable)
     {
-        final FurnaceUserModule module = building.getFirstModuleOccurance(FurnaceUserModule.class);
+        final FurnaceUserModule module = building.getModule(FURNACE);
         for (final BlockPos pos : module.getFurnaces())
         {
             final BlockEntity entity = world.getBlockEntity(pos);
@@ -452,7 +451,7 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob<?, J>, B
      */
     private IAIState fillUpFurnace()
     {
-        if (building.getFirstModuleOccurance(FurnaceUserModule.class).getFurnaces().isEmpty())
+        if (building.getModule(FURNACE).getFurnaces().isEmpty())
         {
             if (worker.getCitizenData() != null)
             {
@@ -486,7 +485,7 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob<?, J>, B
                   new InvWrapper(furnace), SMELTABLE_SLOT);
             }
 
-            final ItemListModule module = building.getModuleMatching(ItemListModule.class, m -> m.getId().equals(FUEL_LIST));
+            final ItemListModule module = building.getModule(ITEMLIST_FUEL);
             if (InventoryUtils.hasItemInItemHandler((worker.getInventoryCitizen()), stack -> module.isItemInList(new ItemStorage(stack)))
                   && (hasSmeltableInFurnaceAndNoFuel(furnace) || hasNeitherFuelNorSmeltAble(furnace)))
             {

@@ -162,13 +162,4 @@ To get the most up-to-date builds, you'll have to update your local repository p
 
 ### Contributing
 
-#### Submitting a PR
-Found a bug in our code? Think you can make it more efficient? Want to help in general? Great!
-
-1. If you haven't already, create a GitHub account.
-2. Click the `Fork` icon located at the top right.
-3. Make your changes and commit them.
-	* If you're making changes locally, you'll have to do `git commit -a` and `git push` in your command line (or with GitKraken stage the changes, commit them, and push them first).
-4. Click `Pull Request` in the middle.
-5. Click 'New pull request' to create a pull request for this comparison, enter your PR's title, and create a detailed description telling us what you changed.
-6. Click `Create pull request` and wait for feedback!
+Please read our [Contributing Guidelines](CONTRIBUTING.md) before submitting a pull request. This covers the PR process, our CLA requirement, and our AI disclosure policy.

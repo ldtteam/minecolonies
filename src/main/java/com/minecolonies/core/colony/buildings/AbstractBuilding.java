@@ -49,12 +49,12 @@ import com.minecolonies.core.colony.jobs.AbstractJobCrafter;
 import com.minecolonies.core.colony.requestsystem.management.IStandardRequestManager;
 import com.minecolonies.core.colony.requestsystem.requesters.BuildingBasedRequester;
 import com.minecolonies.core.colony.requestsystem.requests.StandardRequests;
-import com.minecolonies.core.colony.requestsystem.resolvers.BuildingRequestResolver;
 import com.minecolonies.core.colony.workorders.WorkOrderBuilding;
 import com.minecolonies.core.entity.ai.workers.service.EntityAIWorkDeliveryman;
 import com.minecolonies.core.entity.ai.workers.util.ConstructionTapeHelper;
 import com.minecolonies.core.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.core.util.ChunkDataHelper;
+import com.minecolonies.core.util.SchemAnalyzerUtil;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -83,6 +83,8 @@ import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import static com.minecolonies.api.colony.requestsystem.requestable.deliveryman.AbstractDeliverymanRequestable.MAX_BUILDING_PRIORITY;
+import static com.minecolonies.api.colony.requestsystem.requestable.deliveryman.AbstractDeliverymanRequestable.getMaxBuildingPriority;
 import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT_MAX_BUILDING_LEVEL;
 import static com.minecolonies.api.util.constant.BuildingConstants.NO_WORK_ORDER;
 import static com.minecolonies.api.util.constant.Constants.MOD_ID;
@@ -154,14 +156,9 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     protected Int2ObjectOpenHashMap<IBuildingModule> modulesMap = new Int2ObjectOpenHashMap<>();
 
     /**
-     * Day the next pickup should happen.
+     * Prestige value of this building (dominated by schematic complexity).
      */
-    public int pickUpDay = -1;
-
-    /**
-     * Cached position for citizen standing position next to hut block.
-     */
-    private BlockPos cachedStandingPosition;
+    private int prestige;
 
     /**
      * Constructor for a AbstractBuilding.
@@ -344,6 +341,10 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
         {
             this.customName = compound.getString(TAG_CUSTOM_NAME);
         }
+        if (compound.contains(TAG_PRESTIGE))
+        {
+            this.prestige = compound.getInt(TAG_PRESTIGE);
+        }
 
         if (compound.contains(TAG_BUILDING_MODULES))
         {
@@ -379,6 +380,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
         writeRequestSystemToNBT(compound);
         compound.putBoolean(TAG_IS_BUILT, isBuilt);
         compound.putString(TAG_CUSTOM_NAME, customName);
+        compound.putInt(TAG_PRESTIGE, prestige);
 
         CompoundTag modules = new CompoundTag();
         for (IPersistentModule module : getModulesByType(IPersistentModule.class))
@@ -399,12 +401,12 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     public void destroy()
     {
         onDestroyed();
-        colony.getBuildingManager().removeBuilding(this, colony.getPackageManager().getCloseSubscribers());
+        colony.getServerBuildingManager().removeBuilding(this, colony.getPackageManager().getCloseSubscribers());
         colony.getRequestManager().getDataStoreManager().remove(this.rsDataStoreToken);
 
         for (final BlockPos childpos : getChildren())
         {
-            final IBuilding building = colony.getBuildingManager().getBuilding(childpos);
+            final IBuilding building = colony.getServerBuildingManager().getBuilding(childpos);
             if (building != null)
             {
                 building.destroy();
@@ -469,21 +471,22 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
             return;
         }
 
+        final int min = colony.getWorld().getMinBuildHeight();
         final int max = colony.getWorld().getMaxBuildHeight();
         if (getCorners().getA().getY() >= max || getCorners().getB().getY() >= max)
         {
-            MessageUtils.format(BUILDER_BUILDING_TOO_HIGH).sendTo(colony).forAllPlayers();
+            MessageUtils.format(BUILDER_BUILDING_TOO_HIGH, max).sendTo(colony).forAllPlayers();
             return;
         }
-        else if (getPosition().getY() <= colony.getWorld().getMinBuildHeight())
+        else if (getPosition().getY() <= min)
         {
-            MessageUtils.format(BUILDER_BUILDING_TOO_LOW).sendTo(colony).forAllPlayers();
+            MessageUtils.format(BUILDER_BUILDING_TOO_LOW, min).sendTo(colony).forAllPlayers();
             return;
         }
 
         if (!builder.equals(BlockPos.ZERO))
         {
-            final IBuilding building = colony.getBuildingManager().getBuilding(builder);
+            final IBuilding building = colony.getServerBuildingManager().getBuilding(builder);
             if (building instanceof AbstractBuildingStructureBuilder &&
                   (building.getBuildingLevel() >= workOrder.getTargetLevel() || canBeBuiltByBuilder(workOrder.getTargetLevel())))
             {
@@ -539,7 +542,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
         dirty = true;
         if (colony != null)
         {
-            colony.getBuildingManager().markBuildingsDirty();
+            colony.getServerBuildingManager().markBuildingsDirty();
         }
     }
 
@@ -614,7 +617,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
                 markDirty();
 
                 final BlockPos buildingPos = o.getClaimedBy();
-                final IBuilding building = colony.getBuildingManager().getBuilding(buildingPos);
+                final IBuilding building = colony.getServerBuildingManager().getBuilding(buildingPos);
                 if (building != null)
                 {
                     for (final AbstractAssignedCitizenModule module : building.getModulesByType(AbstractAssignedCitizenModule.class))
@@ -681,6 +684,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
         buf.writeUtf(getBlueprintPath());
         buf.writeBlockPos(getParent());
         buf.writeUtf(this.customName);
+        buf.writeInt(this.prestige);
 
         buf.writeInt(getRotation());
         buf.writeBoolean(isMirrored());
@@ -731,6 +735,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     public void onColonyTick(final IColony colony)
     {
         getModulesByType(ITickingModule.class).forEach(module -> module.onColonyTick(colony));
+        super.onColonyTick(colony);
     }
 
     /**
@@ -749,7 +754,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
           .map(m -> (WorkOrderBuilding) m)
           .filter(f -> f.getLocation().equals(this.getID()) || this.getChildren().contains(f.getLocation()))
           .forEach(f -> {
-              IBuilding building = this.colony.getBuildingManager().getBuilding(f.getLocation());
+              IBuilding building = this.colony.getServerBuildingManager().getBuilding(f.getLocation());
               if (building != null)
               {
                   f.setCustomName(building);
@@ -793,7 +798,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
             return;
         }
 
-        final IBuilding parentBuilding = colony.getBuildingManager().getBuilding(getParent());
+        final IBuilding parentBuilding = colony.getServerBuildingManager().getBuilding(getParent());
 
         if (getBuildingLevel() == 0 && (parentBuilding == null || parentBuilding.getBuildingLevel() > 0))
         {
@@ -932,7 +937,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     }
 
     @Override
-    public void onUpgradeComplete(final int newLevel)
+    public void onUpgradeComplete(@Nullable final Blueprint blueprint, final int newLevel)
     {
         cachedRotation = -1;
         if (!hasParent())
@@ -962,8 +967,27 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
 
         getModulesByType(IBuildingEventsModule.class).forEach(module -> module.onUpgradeComplete(newLevel));
         colony.getResearchManager().checkAutoStartResearch();
-        colony.getBuildingManager().onBuildingUpgradeComplete(this, newLevel);
-        cachedStandingPosition = null;
+        colony.getServerBuildingManager().onBuildingUpgradeComplete(this, newLevel);
+
+        if (blueprint != null)
+        {
+           calculatePrestige(blueprint);
+        }
+    }
+
+    @Override
+    public void calculatePrestige(final Blueprint blueprint)
+    {
+        if (getBuildingLevel() > 0)
+        {
+            final int new_prestige = SchemAnalyzerUtil.analyzeSchematic(blueprint).costScore;
+            if (new_prestige != prestige)
+            {
+                prestige = new_prestige;
+                markDirty();
+            }
+        }
+        colony.getServerBuildingManager().clearPendingPrestigeCalc(this);
     }
 
     @Override
@@ -1008,7 +1032,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     {
         if (recheckGuardBuildingNear)
         {
-            guardBuildingNear = colony.getBuildingManager().hasGuardBuildingNear(this);
+            guardBuildingNear = colony.getServerBuildingManager().hasGuardBuildingNear(this);
             recheckGuardBuildingNear = false;
         }
         return guardBuildingNear;
@@ -1118,6 +1142,12 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
 
         getModulesByType(IAltersRequiredItems.class).forEach(module -> module.alterItemsToBeKept((stack, qty, inv) -> toKeep.put(stack, new Tuple<>(qty, inv))));
         return toKeep;
+    }
+
+    @Override
+    public int getPrestige()
+    {
+        return prestige;
     }
 
     @Override
@@ -1492,40 +1522,36 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     }
 
     @Override
-    public boolean createPickupRequest(final int pickUpPrio)
+    public boolean createPickupRequest(final int qty, final boolean force)
     {
-        int daysToPickup = 10 - pickUpPrio;
-        if (pickUpDay == -1 || pickUpDay > colony.getDay() + daysToPickup)
-        {
-            pickUpDay = colony.getDay() + daysToPickup;
-        }
-
-        if (colony.getDay() < pickUpDay)
-        {
-            return false;
-        }
-
-        pickUpDay = -1;
-
+        final int priority = force ? getMaxBuildingPriority(true) : this.getPickUpPriority();
         final List<IToken<?>> reqs = new ArrayList<>(getOpenRequestsByRequestableType().getOrDefault(TypeConstants.PICKUP, Collections.emptyList()));
         if (!reqs.isEmpty())
         {
             for (final IToken<?> req : reqs)
             {
                 final IRequest<?> request = colony.getRequestManager().getRequestForToken(req);
-                if (request != null && request.getState() == RequestState.IN_PROGRESS)
+                if (request != null && request.getState() == RequestState.IN_PROGRESS && req instanceof Pickup pickup)
                 {
                     final IRequestResolver<?> resolver = colony.getRequestManager().getResolverForRequest(req);
                     if (resolver instanceof IPlayerRequestResolver || resolver instanceof IRetryingRequestResolver)
                     {
                         colony.getRequestManager().reassignRequest(req, Collections.emptyList());
                     }
+                    pickup.setQuantity(pickup.getQuantity() + qty);
+                    final int pickUpDay = colony.getDay() + Math.max(0, (10 - priority) - (pickup.getQuantity() / 16));
+                    if (pickup.getDay() > colony.getDay())
+                    {
+                        pickup.setDay(pickUpDay < pickup.getDay() ? pickUpDay : pickup.getDay() - 1);
+                    }
+                    break;
                 }
             }
             return false;
         }
 
-        createRequest(new Pickup(pickUpPrio), true);
+        final int pickUpDay = colony.getDay() + Math.max(0, (10 - getPickUpPriority()) - (qty / 16));
+        createRequest(new Pickup(priority, pickUpDay, qty), true);
         return true;
     }
 

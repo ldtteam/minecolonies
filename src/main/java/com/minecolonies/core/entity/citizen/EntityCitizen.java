@@ -47,9 +47,10 @@ import com.minecolonies.core.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.core.colony.buildings.modules.WorkerBuildingModule;
 import com.minecolonies.core.colony.eventhooks.citizenEvents.CitizenDiedEvent;
 import com.minecolonies.core.colony.jobs.AbstractJobGuard;
-import com.minecolonies.core.colony.jobs.JobKnight;
+import com.minecolonies.core.colony.jobs.guard.JobCavalry;
+import com.minecolonies.core.colony.jobs.guard.JobKnight;
 import com.minecolonies.core.colony.jobs.JobNetherWorker;
-import com.minecolonies.core.colony.jobs.JobRanger;
+import com.minecolonies.core.colony.jobs.guard.JobRanger;
 import com.minecolonies.core.datalistener.DiseasesListener;
 import com.minecolonies.core.debug.DebugPlayerManager;
 import com.minecolonies.core.entity.ai.minimal.*;
@@ -57,6 +58,7 @@ import com.minecolonies.core.entity.ai.workers.AbstractEntityAIBasic;
 import com.minecolonies.core.entity.ai.workers.CitizenAI;
 import com.minecolonies.core.entity.ai.workers.guard.AbstractEntityAIGuard;
 import com.minecolonies.core.entity.citizen.citizenhandlers.*;
+import com.minecolonies.core.entity.other.ICitizenJobMount;
 import com.minecolonies.core.entity.pathfinding.navigation.EntityNavigationUtils;
 import com.minecolonies.core.entity.pathfinding.navigation.MovementHandler;
 import com.minecolonies.core.event.EventHandler;
@@ -115,6 +117,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 
 import static com.minecolonies.api.research.util.ResearchConstants.*;
+import static com.minecolonies.api.util.FoodUtils.computeSaturationConsumptionFactor;
 import static com.minecolonies.api.util.ItemStackUtils.ISFOOD;
 import static com.minecolonies.api.util.constant.CitizenConstants.*;
 import static com.minecolonies.api.util.constant.Constants.*;
@@ -1087,7 +1090,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     @Override
     public void decreaseSaturationForContinuousAction()
     {
-        this.cachedActionSaturationDecrease += SATURATION_DECREASE_FACTOR / 4.0;
+        this.cachedActionSaturationDecrease += SATURATION_DECREASE_FACTOR;
     }
 
     /**
@@ -1358,6 +1361,19 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
         if (citizenJobHandler.getColonyJob() instanceof JobNetherWorker && citizenData != null && damageSource.typeHolder().is(DamageSourceKeys.NETHER))
         {
             damageInc = damage;
+        }
+
+        // For cavalry, allocate some of the damage to the horse.
+        if (citizenJobHandler.getColonyJob() instanceof JobCavalry cav && citizenData != null)
+        {
+            final Entity mount = this.getVehicle();
+            if (mount instanceof ICitizenJobMount)
+            {
+                float horseSplit = cav.getMountDamageSplit() * damageInc;
+                damageInc = damageInc - horseSplit;
+
+                mount.hurt(damageSource, horseSplit);
+            }
         }
 
         if (!level.isClientSide && !this.isInvisible() && !damageSource.typeHolder().is(DamageTypes.FALL))
@@ -1961,15 +1977,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
         if (citizenData != null && level() != null && !level().isNight() && !citizenSleepHandler.isAsleep())
         {
             final int buildingLevel = citizenData.getHomeBuilding() == null ? 0 :  citizenData.getHomeBuilding().getBuildingLevelEquivalent();
-            double decrease = switch (buildingLevel)
-            {
-                case 1 -> 0.2;
-                case 2 -> 0.256;
-                case 3 -> 0.32;
-                case 4 -> 0.4;
-                case 5 -> 0.5;
-                default -> 0.1;
-            };
+            double decrease = computeSaturationConsumptionFactor(buildingLevel);
 
             if (citizenData.getJob() != null)
             {

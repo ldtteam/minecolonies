@@ -213,7 +213,10 @@ public class BuildingHospital extends AbstractBuilding
         {
             for (final ItemStorage cureItem : disease.cureItems())
             {
-                return Disease.isCureItem(stack, cureItem);
+                if (Disease.isCureItem(stack, cureItem))
+                {
+                    return true;
+                }
             }
         }
         return false;

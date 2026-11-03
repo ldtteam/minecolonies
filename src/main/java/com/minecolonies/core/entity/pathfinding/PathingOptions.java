@@ -40,7 +40,7 @@ public class PathingOptions
     /**
      * Additional cost of swimming - base 1.
      */
-    public double swimCost = 2D;
+    public double swimCost = 4D;
 
     /**
      * Additional cost of cave air.
@@ -71,6 +71,11 @@ public class PathingOptions
      * Cost to dive (head underwater).
      */
     public double divingCost = 4D;
+
+    /**
+     * Cost added for going against the blocks inherent direction/facing value
+     */
+    public double badDirectionCost = 5;
 
     /**
      * Factor multiplied to the small random base cost of values, increases this increases the paths randomness/volatilty. Set to 0 to disable rng.
@@ -118,6 +123,11 @@ public class PathingOptions
      * Whether we can drop down more than one block
      */
     public boolean canDrop = true;
+
+    /**
+     * Any turn penalty to be applied for cornering, u-turns, etc.
+     */    
+    protected float turnPenalty = 0.0f;
 
     public PathingOptions()
     {}
@@ -181,6 +191,16 @@ public class PathingOptions
         return enterGates;
     }
 
+    /**
+     * Returns the turn penalty for the entity. This is a float value that represents the extra cost for the entity to make a turn while pathfinding.
+     * A higher value increases the cost, while a lower value decreases it. A value of 0 disables the turn penalty.
+     * @return the turn penalty for the entity
+     */
+    public float getTurnPenalty()
+    {
+        return turnPenalty;
+    }
+
     public void setEnterDoors(final boolean enterDoors)
     {
         this.enterDoors = enterDoors;
@@ -208,6 +228,15 @@ public class PathingOptions
     public void setWalkUnderWater(final boolean walkUnderWater)
     {
         this.walkUnderWater = walkUnderWater;
+    }
+
+    /**
+     * Sets the turn penalty for the entity. 
+     * @param turnPenalty the turn penalty for the entity
+     */
+    public void setTurnPenalty(final float turnPenalty)
+    {
+        this.turnPenalty = turnPenalty;
     }
 
     public PathingOptions withStartSwimCost(final double startSwimCost)
@@ -270,6 +299,12 @@ public class PathingOptions
         return this;
     }
 
+    public PathingOptions withBadDirectionCost(final double badDirectionCost)
+    {
+        this.badDirectionCost = badDirectionCost;
+        return this;
+    }
+
     /**
      * Sets swimming ability
      *
@@ -315,6 +350,18 @@ public class PathingOptions
     }
 
     /**
+     * Set the penalty for making a turn while pathfinding.
+     * 
+     * @param turnPenalty the penalty for making a turn
+     * @return this PathingOptions object
+     */
+    public PathingOptions withTurnPenalty(final float turnPenalty)
+    {
+        this.turnPenalty = turnPenalty;
+        return this;
+    }
+
+    /**
      * Imports all options from the given other pathing options
      * @param pathingOptions
      */
@@ -342,5 +389,6 @@ public class PathingOptions
         randomnessFactor = pathingOptions.randomnessFactor;
         walkUnderWater = pathingOptions.walkUnderWater;
         canDrop = pathingOptions.canDrop;
+        turnPenalty = pathingOptions.turnPenalty;
     }
 }

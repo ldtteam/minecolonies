@@ -109,6 +109,9 @@ public class CommandTranslationConstants
     public static final String COMMAND_COLONY_EXPORT_SUCCESS                 = "com.minecolonies.command.export.success";
     @NonNls
     public static final String COMMAND_COLONY_LOAD_BACKUP_SUCCESS            = "com.minecolonies.command.loadbackup.success";
+    /** Translation key for a successful colony statistics reset. */
+    @NonNls
+    public static final String COMMAND_COLONY_RESET_STATS_SUCCESS            = "com.minecolonies.command.resetstats.success";
     @NonNls
     public static final String COMMAND_RAID_NOW_SUCCESS                      = "com.minecolonies.command.raidnow.success";
     @NonNls

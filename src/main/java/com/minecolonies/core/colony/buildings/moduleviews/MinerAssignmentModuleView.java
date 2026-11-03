@@ -100,7 +100,7 @@ public class MinerAssignmentModuleView extends AbstractBuildingModuleView implem
     @Override
     public boolean canAssign(ICitizenDataView data)
     {
-        for (final IBuildingView bView : buildingView.getColony().getBuildings())
+        for (final IBuildingView bView : buildingView.getColony().getClientBuildingManager().getBuildings().values())
         {
             final MinerAssignmentModuleView view = bView.getModuleViewMatching(MinerAssignmentModuleView.class, m-> !m.buildingView.getId().equals(buildingView.getId()));
             if (view != null && view.getAssignedCitizens().contains(data.getId()))

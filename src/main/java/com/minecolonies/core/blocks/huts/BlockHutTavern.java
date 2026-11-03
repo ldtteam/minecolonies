@@ -51,7 +51,7 @@ public class BlockHutTavern extends AbstractBlockHut<com.minecolonies.core.block
     {
         IColony colony = IColonyManager.getInstance().getIColony(player.level(), pos);
         
-        for (final IBuilding building : colony.getBuildingManager().getBuildings().values())
+        for (final IBuilding building : colony.getServerBuildingManager().getBuildings().values())
         {
             if (colony.getWorld() != null && !colony.getWorld().isClientSide && building.hasModule(BuildingModules.TAVERN_VISITOR))
             {

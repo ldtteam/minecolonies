@@ -122,7 +122,7 @@ public abstract class BuildingExtensionsModule extends AbstractBuildingModule im
         {
             return null;
         }
-        return building.getColony().getBuildingManager().getMatchingBuildingExtension(currentExtensionId);
+        return building.getColony().getServerBuildingManager().getMatchingBuildingExtension(currentExtensionId);
     }
 
     /**
@@ -240,7 +240,7 @@ public abstract class BuildingExtensionsModule extends AbstractBuildingModule im
     public void markDirty()
     {
         super.markDirty();
-        building.getColony().getBuildingManager().markBuildingExtensionsDirty();
+        building.getColony().getServerBuildingManager().markBuildingExtensionsDirty();
     }
 
     /**

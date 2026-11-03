@@ -19,6 +19,7 @@ import com.minecolonies.core.colony.buildings.workerbuildings.BuildingCook;
 import com.minecolonies.core.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.core.colony.jobs.AbstractJobGuard;
 import com.minecolonies.core.colony.jobs.JobCook;
+import com.minecolonies.core.colony.jobs.guard.JobCavalry;
 import com.minecolonies.core.entity.citizen.EntityCitizen;
 import com.minecolonies.core.entity.other.SittingEntity;
 import com.minecolonies.core.entity.pathfinding.navigation.EntityNavigationUtils;
@@ -254,7 +255,7 @@ public class EntityAIEatTask implements IStateAI
         }
 
         final IColony colony = citizen.getCitizenColonyHandler().getColonyOrRegister();
-        final IBuilding cookBuilding = colony.getBuildingManager().getBuilding(restaurantPos);
+        final IBuilding cookBuilding = colony.getServerBuildingManager().getBuilding(restaurantPos);
         if (cookBuilding instanceof BuildingCook)
         {
             if (!EntityNavigationUtils.walkToBuilding(citizen, cookBuilding))
@@ -265,8 +266,9 @@ public class EntityAIEatTask implements IStateAI
             final ItemStorage storageToGet = FoodUtils.checkForFoodInBuilding(citizen.getCitizenData(), cookBuilding.getModule(RESTAURANT_MENU).getMenu(), cookBuilding);
             if (storageToGet != null)
             {
-                int qty = (int) (Math.max(1.0,
-                    (FULL_SATURATION - citizen.getCitizenData().getSaturation()) / FoodUtils.getFoodValue(storageToGet.getItemStack(), citizen)));
+                int qty = (int) (Math.max(1.0, (FULL_SATURATION - citizen.getCitizenData().getSaturation()) / FoodUtils.getFoodValue(storageToGet.getItemStack(), citizen)));
+                // Hand out a bit extra
+                qty = (int) Math.ceil(qty * 1.5);
                 InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(cookBuilding, storageToGet, qty, citizen.getInventoryCitizen());
                 return EAT;
             }
@@ -330,7 +332,7 @@ public class EntityAIEatTask implements IStateAI
     {
         if (restaurantPos != null)
         {
-            final IBuilding restaurant = citizen.getCitizenData().getColony().getBuildingManager().getBuilding(restaurantPos);
+            final IBuilding restaurant = citizen.getCitizenData().getColony().getServerBuildingManager().getBuilding(restaurantPos);
             if (restaurant instanceof BuildingCook)
             {
                 return ((BuildingCook) restaurant).getNextSittingPosition();
@@ -349,21 +351,21 @@ public class EntityAIEatTask implements IStateAI
     {
         final ICitizenData citizenData = citizen.getCitizenData();
         final IColony colony = citizenData.getColony();
-        restaurantPos = colony.getBuildingManager().getBestBuilding(citizen, BuildingCook.class);
-
+        restaurantPos = colony.getServerBuildingManager().getBestBuilding(citizenData.getWorkBuilding() != null ? citizenData.getWorkBuilding().getPosition() : citizen.blockPosition(), BuildingCook.class);
         if (restaurantPos == null)
         {
             return SEARCH_RESTAURANT;
         }
+        colony.getServerBuildingManager().getBuilding(restaurantPos, BuildingCook.class).storeCustomer(citizenData);
 
-        restaurant = colony.getBuildingManager().getBuilding(restaurantPos);
+        restaurant = colony.getServerBuildingManager().getBuilding(restaurantPos);
         if (!restaurant.isInBuilding(citizen.blockPosition()))
         {
             return GO_TO_RESTAURANT;
         }
 
         eatPos = findPlaceToEat();
-        if (restaurant != null)
+        if (eatPos != null)
         {
             return GO_TO_EAT_POS;
         }
@@ -391,7 +393,7 @@ public class EntityAIEatTask implements IStateAI
     private EatingState goToHut()
     {
         final IBuilding buildingWorker = citizen.getCitizenData().getWorkBuilding();
-        if (buildingWorker == null)
+        if (buildingWorker == null || !WorldUtil.isBlockLoaded(citizen.level(), buildingWorker.getPosition()))
         {
             return SEARCH_RESTAURANT;
         }
@@ -402,11 +404,15 @@ public class EntityAIEatTask implements IStateAI
             return GO_TO_HUT;
         }
 
-        final int slot;
+        int slot = -1;
         if (buildingWorker instanceof BuildingCook buildingCook)
         {
             restaurant = buildingCook;
             slot = FoodUtils.getBestFoodForCitizen(citizen.getInventoryCitizen(), citizen.getCitizenData(), buildingCook.getModule(RESTAURANT_MENU).getMenu());
+            if (slot == -1)
+            {
+                slot = FoodUtils.getBestFoodForCitizen(citizen.getInventoryCitizen(), citizen.getCitizenData(), null);
+            }
         }
         else
         {
@@ -444,7 +450,13 @@ public class EntityAIEatTask implements IStateAI
     {
         if (restaurantPos != null)
         {
-            final IBuilding building = citizen.getCitizenColonyHandler().getColonyOrRegister().getBuildingManager().getBuilding(restaurantPos);
+            // Prevent riding the horse into the restaurant.
+            if (citizen.getCitizenData().getJob() instanceof JobCavalry && citizen.getVehicle() != null && BlockPosUtil.distManhattan(restaurantPos, citizen.blockPosition()) < JobCavalry.DININGHALL_HORSE_PARKING_RANGE)
+            {   
+                citizen.stopRiding();
+            }
+
+            final IBuilding building = citizen.getCitizenColonyHandler().getColonyOrRegister().getServerBuildingManager().getBuilding(restaurantPos);
             if (building != null)
             {
                 if (building.isInBuilding(citizen.blockPosition()))
@@ -473,10 +485,10 @@ public class EntityAIEatTask implements IStateAI
             ? citizenData.getWorkBuilding().getPosition()
             : citizenData.getHomeBuilding() != null ? citizenData.getHomeBuilding().getPosition() : citizen.blockPosition();
 
-        restaurantPos = colony.getBuildingManager().getBestBuilding(searchFrom, BuildingCook.class, STAFFED_RESTAURANTS);
+        restaurantPos = colony.getServerBuildingManager().getBestBuilding(searchFrom, BuildingCook.class, STAFFED_RESTAURANTS);
         if (restaurantPos == null)
         {
-            restaurantPos = colony.getBuildingManager().getBestBuilding(searchFrom, BuildingCook.class);
+            restaurantPos = colony.getServerBuildingManager().getBestBuilding(searchFrom, BuildingCook.class);
         }
 
         final IJob<?> job = citizen.getCitizenJobHandler().getColonyJob();

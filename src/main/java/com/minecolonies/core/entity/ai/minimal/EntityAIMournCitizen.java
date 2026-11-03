@@ -158,6 +158,13 @@ public class EntityAIMournCitizen implements IStateAI
             return MourningState.DECIDE;
         }
 
+        final GraveyardManagementModule module = graveyard.getModule(GraveyardManagementModule.class);
+
+        if (module == null)
+        {
+            return MourningState.DECIDE;
+        }
+
         if (!citizen.getNavigation().isDone())
         {
             return MourningState.WANDER_AT_GRAVEYARD;
@@ -171,7 +178,7 @@ public class EntityAIMournCitizen implements IStateAI
         }
 
         // Try find the grave of one of the diseased.
-        final Set<Tuple<BlockPos, Direction>> gravePositions = ((BuildingGraveyard) graveyard).getGravePositions();
+        final Set<Tuple<BlockPos, Direction>> gravePositions = module.getGravePositions();
         for (final Tuple<BlockPos, Direction> gravePos : gravePositions)
         {
             if (WorldUtil.isBlockLoaded(citizen.level, gravePos.getA()))
@@ -290,7 +297,7 @@ public class EntityAIMournCitizen implements IStateAI
         if (this.graveyard == null)
         {
             final IBuilding graveyardBuilding =
-              citizen.getCitizenColonyHandler().getColonyOrRegister().getBuildingManager().getFirstBuildingMatching(b -> b instanceof BuildingGraveyard && b.getFirstModuleOccurance(
+              citizen.getCitizenColonyHandler().getColonyOrRegister().getServerBuildingManager().getFirstBuildingMatching(b -> b instanceof BuildingGraveyard && b.getFirstModuleOccurance(
                 GraveyardManagementModule.class).hasRestingCitizen(citizen.getCitizenData().getCitizenMournHandler().getDeceasedCitizens()));
             if (graveyardBuilding != null)
             {
@@ -329,9 +336,9 @@ public class EntityAIMournCitizen implements IStateAI
     protected IBuilding getMournLocation()
     {
         final IColony colony = citizen.getCitizenColonyHandler().getColonyOrRegister();
-        if (colony != null && colony.getBuildingManager().hasTownHall())
+        if (colony != null && colony.getServerBuildingManager().hasTownHall())
         {
-            return colony.getBuildingManager().getTownHall();
+            return colony.getServerBuildingManager().getTownHall();
         }
 
         return citizen.getCitizenData().getHomeBuilding();

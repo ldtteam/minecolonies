@@ -148,7 +148,7 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter,
     @Override
     protected IRequestable getSmeltAbleClass()
     {
-        return new SmeltableOre(STACKSIZE * building.getFirstModuleOccurance(FurnaceUserModule.class).getFurnaces().size());
+        return new SmeltableOre(STACKSIZE * building.getFirstModuleOccurance(FurnaceUserModule.class).getFurnaces().size(), building.getSetting(BuildingSmeltery.MIN).getValue());
     }
 
     @Override
@@ -230,7 +230,8 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter,
                       .createRequestAsync(new StackList(requests,
                         RequestSystemTranslationConstants.REQUESTS_TYPE_SMELTABLE_ORE,
                         STACKSIZE * building.getFirstModuleOccurance(FurnaceUserModule.class).getFurnaces().size(),
-                        1));
+                        1,
+                        building.getSetting(BuildingSmeltery.MIN).getValue()));
                 }
             }
         }

@@ -23,6 +23,8 @@ public class ToolTranslationConstants
     @NonNls
     public static final String TOOL_TYPE_BOW         = "com.minecolonies.coremod.tooltype.bow";
     @NonNls
+    public static final String TOOL_TYPE_CROSSBOW    = "com.minecolonies.coremod.tooltype.crossbow";
+    @NonNls
     public static final String TOOL_TYPE_FISHING_ROD = "com.minecolonies.coremod.tooltype.fishingrod";
     @NonNls
     public static final String TOOL_TYPE_SHEARS      = "com.minecolonies.coremod.tooltype.shears";
@@ -40,6 +42,8 @@ public class ToolTranslationConstants
     public static final String TOOL_TYPE_LIGHTER     = "com.minecolonies.coremod.tooltype.lighter";
     @NonNls
     public static final String TOOL_TYPE_LEAD        = "com.minecolonies.coremod.tooltype.lead";
+    @NonNls
+    public static final String TOOL_TYPE_SPEAR       = "com.minecolonies.coremod.tooltype.spear";
 
     @NonNls
     public static final String TOOL_RALLY_BANNER_ACTIVATED   = "item.minecolonies.banner_rally_guards.activated";

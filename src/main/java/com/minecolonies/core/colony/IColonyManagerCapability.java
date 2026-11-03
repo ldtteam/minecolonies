@@ -198,7 +198,7 @@ public interface IColonyManagerCapability
                             Log.getLogger()
                               .warn(
                                 "ID: " + colony.getID() + " name:" + colony.getName() + " citizens:" + colony.getCitizenManager().getCitizens().size() + " building count:" + colony
-                                                                                                                                                                                .getBuildingManager()
+                                                                                                                                                                                .getServerBuildingManager()
                                                                                                                                                                                 .getBuildings()
                                                                                                                                                                                 .size());
                         }

@@ -55,9 +55,9 @@ public class WindowTownHallNameEntry extends BOWindow implements ButtonHandler
             return;
         }
 
-        if (colony.getTownHall() != null)
+        if (colony.getClientBuildingManager().getTownHall() != null)
         {
-            colony.getTownHall().openGui(false);
+            colony.getClientBuildingManager().getTownHall().openGui(false);
         }
     }
 }

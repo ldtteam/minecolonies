@@ -2,6 +2,7 @@ package com.minecolonies.core.tileentities;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.tileentities.AbstractTileEntityScarecrow;
 import com.minecolonies.api.tileentities.ScareCrowType;
 import com.minecolonies.core.Network;
@@ -71,7 +72,7 @@ public class TileEntityScarecrow extends AbstractTileEntityScarecrow
         {
             this.currentColony = IColonyManager.getInstance().getIColony(level, worldPosition);
             // TODO: Remove in 1.20.2
-            if (this.currentColony != null)
+            if (currentColony instanceof IColonyView)
             {
                 Network.getNetwork().sendToServer(new FarmFieldRegistrationMessage(currentColony, worldPosition));
             }

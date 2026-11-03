@@ -1,5 +1,6 @@
 package com.minecolonies.core.colony.buildings.workerbuildings;
 
+import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.minecolonies.api.advancements.AdvancementTriggers;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
@@ -12,6 +13,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.WARNING_UPGRADE_BARRACKS;
 
@@ -64,7 +66,7 @@ public class BuildingBarracksTower extends AbstractBuildingGuards
     public void requestUpgrade(final Player player, final BlockPos builder)
     {
         final int buildingLevel = getBuildingLevel();
-        final IBuilding building = getColony().getBuildingManager().getBuilding(barracks);
+        final IBuilding building = getColony().getServerBuildingManager().getBuilding(barracks);
 
         if (building != null && buildingLevel < getMaxBuildingLevel() && buildingLevel < building.getBuildingLevel())
         {
@@ -96,10 +98,10 @@ public class BuildingBarracksTower extends AbstractBuildingGuards
     }
 
     @Override
-    public void onUpgradeComplete(final int newLevel)
+    public void onUpgradeComplete(@Nullable final Blueprint blueprint, final int newLevel)
     {
-        super.onUpgradeComplete(newLevel);
-        final IBuilding barrack = colony.getBuildingManager().getBuilding(barracks);
+        super.onUpgradeComplete(blueprint, newLevel);
+        final IBuilding barrack = colony.getServerBuildingManager().getBuilding(barracks);
         if (barrack == null)
         {
             return;
@@ -110,7 +112,7 @@ public class BuildingBarracksTower extends AbstractBuildingGuards
             boolean allUpgraded = true;
             for (BlockPos tower : ((BuildingBarracks) barrack).getTowers())
             {
-                if (colony.getBuildingManager().getBuilding(tower).getBuildingLevel() != barrack.getMaxBuildingLevel())
+                if (colony.getServerBuildingManager().getBuilding(tower).getBuildingLevel() != barrack.getMaxBuildingLevel())
                 {
                     allUpgraded = false;
                 }

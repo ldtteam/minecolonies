@@ -3,13 +3,15 @@
   "crafter": "chef_crafting",
   "inputs": [
     {
+      "count": 2,
       "item": "minecolonies:garlic"
     },
     {
-      "item": "minecolonies:garlic"
-    },
-    {
+      "count": 2,
       "item": "minecolonies:cabbage"
+    },
+    {
+      "item": "minecolonies:onion"
     },
     {
       "item": "minecraft:cod"

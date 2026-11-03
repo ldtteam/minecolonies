@@ -5,6 +5,7 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
 import com.minecolonies.api.util.MessageUtils;
+import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -62,9 +63,9 @@ public class TileEntityStash extends TileEntityColonyBuilding
                 final IColony colony = IColonyManager.getInstance().getClosestColony(level, worldPosition);
                 if (colony != null)
                 {
-                    final IBuilding building = colony.getBuildingManager().getBuilding(worldPosition);
+                    final IBuilding building = colony.getServerBuildingManager().getBuilding(worldPosition);
                     // Note that createPickupRequest will make sure to only create on request per building.
-                    if (!isEmpty() && building != null && building.createPickupRequest(getPlayerActionPriority(true)))
+                    if (!isEmpty() && building != null && building.createPickupRequest(Constants.STACKSIZE, true))
                     {
                         MessageUtils.format(COM_MINECOLONIES_COREMOD_ENTITY_DELIVERYMAN_FORCEPICKUP).sendToClose(getTilePos(), 6, colony.getMessagePlayerEntities());
                     }

@@ -100,11 +100,10 @@ public class RecruitmentInteraction extends ServerCitizenInteraction
         final ButtonImage recruitButton = window.findPaneOfTypeByID(BUTTON_RESPONSE_ID + 2, ButtonImage.class);
         final Box group = window.findPaneOfTypeByID(RESPONSE_BOX_ID, Box.class);
 
-
         if (recruitButton != null && dataView instanceof IVisitorViewData visitorViewData)
         {
             final ItemStack recruitCost = visitorViewData.getRecruitCost();
-            final IColonyView colony = (IColonyView) dataView.getColony();
+            final IColonyView colony = dataView.getColony();
 
             window.findPaneOfTypeByID(CHAT_LABEL_ID, Text.class).setText(PaneBuilders.textBuilder()
                 .append(Component.literal(dataView.getName() + ": "))
@@ -168,7 +167,7 @@ public class RecruitmentInteraction extends ServerCitizenInteraction
                     data.setHomeBuilding(null);
                     data.setJob(null);
 
-                    final IBuilding tavern = colony.getBuildingManager().getFirstBuildingMatching(b -> b.getBuildingType() == ModBuildings.tavern.get());
+                    final IBuilding tavern = colony.getServerBuildingManager().getFirstBuildingMatching(b -> b.getBuildingType() == ModBuildings.tavern.get());
                     
                     if (colony.getWorld().random.nextInt(100) <= BAD_VISITOR_CHANCE)
                     {

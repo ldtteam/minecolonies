@@ -1,0 +1,181 @@
+{
+  "name": "Things That Go Bump in the Night",
+  "parents": [],
+  "max-occurrences": 1,
+  "triggers": [
+    {
+      "type": "minecolonies:random",
+      "rarity": 1000000
+    },
+    {
+      "type": "minecolonies:state",
+      "state": {
+        "path": "buildingManager/buildings",
+        "match": {
+          "type": "minecolonies:enchanter",
+          "level": 2
+        }
+      }
+    },
+    {
+      "type": "minecolonies:citizen",
+      "state": {
+        "match": {
+          "job": {
+            "type": "minecolonies:enchanter"
+          }
+        }
+      }
+    }
+  ],
+  "objectives": [
+    {
+      "type": "minecolonies:dialogue",
+      "target": 0,
+      "text": "Oh! I am so glad you stopped by. I have been hearing the most unsettling noises near the tower at night - rustling, thumping, all manner of things. Could be animals. Could be something worse. I would feel much safer if I had a Spatial Guard Reinforcements Scroll on hand, just in case. Could you help me gather the ingredients?",
+      "options": [
+        {
+          "answer": "Of course! What do you need?",
+          "result": {
+            "type": "minecolonies:dialogue",
+            "text": "Wonderful, thank you! I will need one Teleport Scroll, five Lapis Lazuli, one Ender Pearl, and one sheet of Paper. I have the enchanting setup ready - I just need the raw materials. Once I have them I can get to work tonight.",
+            "options": [
+              {
+                "answer": "Leave it to me, I will gather those right away!",
+                "result": {
+                  "type": "minecolonies:advanceobjective",
+                  "go-to": 1
+                }
+              }
+            ]
+          }
+        },
+        {
+          "answer": "Sorry, I am a bit busy right now.",
+          "result": {
+            "type": "minecolonies:cancel"
+          }
+        }
+      ]
+    },
+    {
+      "type": "minecolonies:delivery",
+      "details": {
+        "target": 0,
+        "item": "minecolonies:scroll_tp",
+        "qty": 1,
+        "next-objective": 2
+      }
+    },
+    {
+      "type": "minecolonies:delivery",
+      "details": {
+        "target": 0,
+        "item": "minecraft:lapis_lazuli",
+        "qty": 5,
+        "next-objective": 3
+      }
+    },
+    {
+      "type": "minecolonies:delivery",
+      "details": {
+        "target": 0,
+        "item": "minecraft:ender_pearl",
+        "qty": 1,
+        "next-objective": 4
+      }
+    },
+    {
+      "type": "minecolonies:delivery",
+      "details": {
+        "target": 0,
+        "item": "minecraft:paper",
+        "qty": 1,
+        "next-objective": 5
+      }
+    },
+    {
+      "type": "minecolonies:dialogue",
+      "target": 0,
+      "text": "Perfect! This is everything I need. I will get to work on the scroll tonight and have a proper listen around the tower while I am at it. Come back and check in with me tomorrow - I will let you know what I found!",
+      "options": [
+        {
+          "answer": "Of course! I will stop by tomorrow.",
+          "result": {
+            "type": "minecolonies:advanceobjective",
+            "go-to": 6
+          }
+        }
+      ]
+    },
+    {
+      "unlocks-rewards": [0, 1, 2, 3, 4],
+      "type": "minecolonies:dialogue",
+      "target": 0,
+      "text": "Oh! You are back! Ha - you will not believe this. I stayed up half the night, peered out every window, and do you know what was making all that noise? Squirrels! A whole family of squirrels had made a nest in the woodpile outside. Completely harmless. I feel a little foolish, I will admit. The good news is I used the time productively and made not one but three scrolls! Here, take them - and the leftover materials. Thank you for humoring a nervous enchanter.",
+      "options": [
+        {
+          "answer": "Ha! I am glad it was not something worse. Stay safe!",
+          "result": {
+            "type": "minecolonies:advanceobjective",
+            "go-to": 7
+          }
+        },
+        {
+          "answer": "Three scrolls? You really went all out!",
+          "result": {
+            "type": "minecolonies:dialogue",
+            "text": "Well, I had to do something with all that nervous energy! Besides, you never know when guards might come in handy. Now go on, and do not hesitate to visit if you need more enchanting work done.",
+            "options": [
+              {
+                "answer": "Will do. Thanks!",
+                "result": {
+                  "type": "minecolonies:advanceobjective",
+                  "go-to": 7
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "rewards": [
+    {
+      "type": "minecolonies:item",
+      "details": {
+        "item": "minecolonies:scroll_guard_help",
+        "qty": 3
+      }
+    },
+    {
+      "type": "minecolonies:item",
+      "details": {
+        "item": "minecraft:lapis_lazuli",
+        "qty": 5
+      }
+    },
+    {
+      "type": "minecolonies:item",
+      "details": {
+        "item": "minecraft:ender_pearl",
+        "qty": 1
+      }
+    },
+    {
+      "type": "minecolonies:item",
+      "details": {
+        "item": "minecraft:paper",
+        "qty": 1
+      }
+    },
+    {
+      "type": "minecolonies:happiness",
+      "details": {
+        "target": 0,
+        "qty": 1,
+        "days": 7
+      }
+    }
+  ]
+}

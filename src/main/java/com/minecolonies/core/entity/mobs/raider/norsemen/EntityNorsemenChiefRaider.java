@@ -15,6 +15,12 @@ import static com.minecolonies.core.colony.events.raid.RaiderConstants.CHIEF_BON
 public class EntityNorsemenChiefRaider extends AbstractEntityNorsemenRaider implements INorsemenChiefEntity
 {
     /**
+     * Norse adjustments.
+     */
+    public static final double BASE_NORSE_ARMOR = 15;
+    public static final double NORSE_HEALTH_REDUCTION_FACTOR = 1.25;
+
+    /**
      * Constructor of the entity.
      *
      * @param worldIn world to construct it in.
@@ -29,10 +35,10 @@ public class EntityNorsemenChiefRaider extends AbstractEntityNorsemenRaider impl
     public void initStatsFor(final double baseHealth, final double difficulty, final double baseDamage)
     {
         super.initStatsFor(baseHealth, difficulty, baseDamage);
-        final double chiefArmor = difficulty * CHIEF_BONUS_ARMOR;
+        final double chiefArmor = difficulty * CHIEF_BONUS_ARMOR + BASE_NORSE_ARMOR;
         this.getAttribute(Attributes.ARMOR).setBaseValue(chiefArmor);
         this.getAttribute(MOB_ATTACK_DAMAGE.get()).setBaseValue(baseDamage + 1.0);
-        this.getAttribute(Attributes.MAX_HEALTH).setBaseValue(baseHealth * 1.5);
+        this.getAttribute(Attributes.MAX_HEALTH).setBaseValue(baseHealth);
         this.setHealth(this.getMaxHealth());
     }
 }

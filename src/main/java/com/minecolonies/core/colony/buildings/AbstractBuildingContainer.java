@@ -161,7 +161,7 @@ public abstract class AbstractBuildingContainer extends AbstractSchematicProvide
             {
                 buildingEntity.setStructurePack(StructurePacks.getStructurePack(getStructurePack()));
                 buildingEntity.setMirror(isMirrored());
-                final IBuilding building = colony.getBuildingManager().getBuilding(pos);
+                final IBuilding building = colony.getServerBuildingManager().getBuilding(pos);
                 if (building != null)
                 {
                     building.setStructurePack(getStructurePack());

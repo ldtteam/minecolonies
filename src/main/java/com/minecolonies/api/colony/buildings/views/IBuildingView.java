@@ -5,23 +5,24 @@ import com.google.common.collect.ImmutableList;
 import com.ldtteam.blockui.views.BOWindow;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.buildings.ICommonBuilding;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
+import com.minecolonies.api.crafting.ItemStorage;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.Suppression.GENERIC_WILDCARD;
 
-public interface IBuildingView extends IRequester, IModuleContainerView
+public interface IBuildingView extends IRequester, IModuleContainerView, ICommonBuilding
 {
     /**
      * Gets the id for this building.
@@ -32,33 +33,11 @@ public interface IBuildingView extends IRequester, IModuleContainerView
     BlockPos getID();
 
     /**
-     * Gets the location of this building.
-     *
-     * @return A BlockPos, where this building is.
-     */
-    @NotNull
-    BlockPos getPosition();
-
-    /**
      * Get the parent building
      *
      * @return
      */
     BlockPos getParent();
-
-    /**
-     * Get the current level of the building.
-     *
-     * @return AbstractBuilding current level.
-     */
-    int getBuildingLevel();
-
-    /**
-     * Get the BlockPos of the Containers.
-     *
-     * @return containerList.
-     */
-    List<BlockPos> getContainerList();
 
     /**
      * Get the max level of the building.
@@ -230,12 +209,6 @@ public interface IBuildingView extends IRequester, IModuleContainerView
     boolean isDeconstructed();
 
     /**
-     * Get the Building type
-     * @return building type
-     */
-    BuildingEntry getBuildingType();
-
-    /**
      * Set the building type
      * @param buildingType
      */
@@ -258,4 +231,13 @@ public interface IBuildingView extends IRequester, IModuleContainerView
      * @return the range.
      */
     default int getRange() { return 0; }
+
+    /**
+     * Get lang key of pre-upgrade warning for building level.
+     * @return empty-string by default. Override for respective building.
+     */
+    default String getHoverWarningForLevel()
+    {
+        return "";
+    }
 }

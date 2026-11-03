@@ -4,6 +4,7 @@ import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.colony.jobs.*;
+import com.minecolonies.core.colony.jobs.guard.*;
 import com.minecolonies.core.colony.jobs.views.CrafterJobView;
 import com.minecolonies.core.colony.jobs.views.DefaultJobView;
 import com.minecolonies.core.colony.jobs.views.DmanJobView;
@@ -96,6 +97,12 @@ public final class ModJobsInitializer
           .setRegistryName(ModJobs.COWBOY_ID)
           .createJobEntry());
 
+        ModJobs.stablemaster = register(DEFERRED_REGISTER, ModJobs.STABLEMASTER_ID.getPath(), () -> new JobEntry.Builder()
+          .setJobProducer(JobStablemaster::new)
+          .setJobViewProducer(() -> DefaultJobView::new)
+          .setRegistryName(ModJobs.STABLEMASTER_ID)
+          .createJobEntry());
+
         ModJobs.swineHerder = register(DEFERRED_REGISTER, ModJobs.SWINE_HERDER_ID.getPath(), () -> new JobEntry.Builder()
           .setJobProducer(JobSwineHerder::new)
           .setJobViewProducer(() -> DefaultJobView::new)
@@ -124,6 +131,24 @@ public final class ModJobsInitializer
           .setJobProducer(JobKnight::new)
           .setJobViewProducer(() -> DefaultJobView::new)
           .setRegistryName(ModJobs.KNIGHT_ID)
+          .createJobEntry());
+
+        ModJobs.marksman = register(DEFERRED_REGISTER, ModJobs.MARKSMAN_ID.getPath(), () -> new JobEntry.Builder()
+            .setJobProducer(JobMarksman::new)
+            .setJobViewProducer(() -> DefaultJobView::new)
+            .setRegistryName(ModJobs.MARKSMAN_ID)
+            .createJobEntry());
+
+        ModJobs.huscarl = register(DEFERRED_REGISTER, ModJobs.HUSCARL_ID.getPath(), () -> new JobEntry.Builder()
+            .setJobProducer(JobHuscarl::new)
+            .setJobViewProducer(() -> DefaultJobView::new)
+            .setRegistryName(ModJobs.HUSCARL_ID)
+            .createJobEntry());
+
+        ModJobs.cavalry = register(DEFERRED_REGISTER, ModJobs.CAVALRY_ID.getPath(), () -> new JobEntry.Builder()
+          .setJobProducer(JobCavalry::new)
+          .setJobViewProducer(() -> DefaultJobView::new)
+          .setRegistryName(ModJobs.CAVALRY_ID)
           .createJobEntry());
 
         ModJobs.composter = register(DEFERRED_REGISTER, ModJobs.COMPOSTER_ID.getPath(), () -> new JobEntry.Builder()

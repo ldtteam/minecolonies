@@ -388,6 +388,11 @@ public abstract class AbstractJobCrafter<AI extends AbstractEntityAIBasic<J, ? e
         {
             getColony().getRequestManager().updateRequestState(t, RequestState.FAILED);
         }
+
+        for (final IToken<?> t : getAssignedTasks())
+        {
+            getColony().getRequestManager().updateRequestState(t, RequestState.FAILED);
+        }
     }
 
     /**

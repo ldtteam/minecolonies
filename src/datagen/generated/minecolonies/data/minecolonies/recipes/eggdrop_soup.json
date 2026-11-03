@@ -9,6 +9,9 @@
       "item": "minecolonies:onion"
     },
     {
+      "item": "minecolonies:garlic"
+    },
+    {
       "item": "minecraft:egg"
     },
     {
@@ -16,10 +19,12 @@
     },
     {
       "item": "minecraft:chicken"
+    },
+    {
+      "item": "minecraft:bowl"
     }
   ],
   "result": {
-    "count": 2,
     "item": "minecolonies:eggdrop_soup"
   }
 }

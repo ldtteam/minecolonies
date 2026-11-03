@@ -6,7 +6,7 @@
     <text id="warning" size="150 22" pos="13 50" color="black" textalign="MIDDLE" label="$(com.minecolonies.core.menu.warning)"/>
     <text id="poorwarning" size="160 22" pos="14 25" color="red" textalign="MIDDLE" label="$(com.minecolonies.core.poor.menu.warning)" visible="false"/>
 
-    <list id="resourcesstock" size="164 180" pos="13 50">
+    <list id="resourcesstock" size="164 90" pos="13 45">
         <box size="100% 17" linewidth="1">
             <gradient id="gradient" size="162 15" pos="1 1"/>
             <itemicon id="resourceIcon" size="16 16" pos="0 0"/>
@@ -14,6 +14,15 @@
 
             <button label="X" id="removeStock" pos="126 1" size="29 15"
                          source="minecolonies:textures/gui/builderhut/builder_button_very_small.png" textcolor="red"/>
+        </box>
+    </list>
+
+    <text id="ingredients" size="130 11" pos="13 135" textalign="MIDDLE" color="black"
+          label="$(com.minecolonies.core.menu.ingredients)"/>
+    <list id="ingredientslist" size="164 85" pos="13 145">
+        <box size="100% 17" linewidth="1">
+            <itemicon id="resourceIcon" size="16 16" pos="0 0"/>
+            <text id="resourceName" size="100 12" pos="20 1" color="black"/>
         </box>
     </list>
 

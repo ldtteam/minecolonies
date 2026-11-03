@@ -1,10 +1,12 @@
 package com.minecolonies.core.colony.buildings.workerbuildings;
 
+import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.core.colony.buildings.AbstractBuildingGuards;
 import net.minecraft.core.BlockPos;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Guard Tower building.
@@ -69,14 +71,14 @@ public class BuildingGuardTower extends AbstractBuildingGuards
     public void onDestroyed()
     {
         super.onDestroyed();
-        colony.getBuildingManager().guardBuildingChangedAt(this, 0);
+        colony.getServerBuildingManager().guardBuildingChangedAt(this, 0);
     }
 
     @Override
-    public void onUpgradeComplete(final int newLevel)
+    public void onUpgradeComplete(@Nullable final Blueprint blueprint, final int newLevel)
     {
-        super.onUpgradeComplete(newLevel);
-        colony.getBuildingManager().guardBuildingChangedAt(this, newLevel);
+        super.onUpgradeComplete(blueprint, newLevel);
+        colony.getServerBuildingManager().guardBuildingChangedAt(this, newLevel);
     }
 
     @Override

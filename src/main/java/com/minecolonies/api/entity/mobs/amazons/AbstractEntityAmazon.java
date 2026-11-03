@@ -8,8 +8,8 @@ import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 
-import static com.minecolonies.core.colony.events.raid.RaiderConstants.ONE;
-import static com.minecolonies.core.colony.events.raid.RaiderConstants.OUT_OF_ONE_HUNDRED;
+import static com.minecolonies.core.colony.events.raid.RaiderConstants.*;
+import static com.minecolonies.core.colony.events.raid.RaiderConstants.ATTACK_DAMAGE;
 
 /**
  * Abstract for all amazon entities.
@@ -30,6 +30,7 @@ public abstract class AbstractEntityAmazon extends AbstractEntityMinecoloniesMon
     public AbstractEntityAmazon(final EntityType<? extends AbstractEntityAmazon> type, final Level world)
     {
         super(type, world);
+        initStatsFor(BARBARIAN_BASE_HEALTH * (world.getDifficulty().getId() + 0.1), world.getDifficulty().getId() + 0.1, ATTACK_DAMAGE * world.getDifficulty().getId());
     }
 
     @Override

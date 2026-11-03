@@ -99,7 +99,7 @@ public class WorkManager implements IWorkManager
         {
             if (workOrder.isClaimed())
             {
-                final IBuilding building = colony.getBuildingManager().getBuilding(workOrder.getClaimedBy());
+                final IBuilding building = colony.getServerBuildingManager().getBuilding(workOrder.getClaimedBy());
                 if (building instanceof AbstractBuildingStructureBuilder abstractBuildingStructureBuilder)
                 {
                     abstractBuildingStructureBuilder.onWorkOrderCancellation(workOrder);
@@ -266,7 +266,7 @@ public class WorkManager implements IWorkManager
                 //  If this Work Order is claimed, and the Citizen who claimed it no longer exists
                 //  then clear the Claimed status
                 //  This is just a failsafe cleanup; this should not happen under normal circumstances
-                if (o.isClaimed() && colony.getBuildingManager().getBuilding(o.getClaimedBy()) == null)
+                if (o.isClaimed() && colony.getServerBuildingManager().getBuilding(o.getClaimedBy()) == null)
                 {
                     o.setClaimedBy(null);
                 }
@@ -316,7 +316,7 @@ public class WorkManager implements IWorkManager
         {
             if (order instanceof WorkOrderBuilding buildingOrder)
             {
-                final IBuilding building = colony.getBuildingManager().getBuilding(buildingOrder.getLocation());
+                final IBuilding building = colony.getServerBuildingManager().getBuilding(buildingOrder.getLocation());
                 if (building != null)
                 {
                     AdvancementUtils.TriggerAdvancementPlayersForColony(colony,
@@ -386,33 +386,46 @@ public class WorkManager implements IWorkManager
     @Override
     public void onColonyTick(@NotNull final IColony colony)
     {
-        @NotNull final Iterator<IServerWorkOrder> iter = workOrders.values().iterator();
+        final List<IServerWorkOrder> orderedWorkOrders = new ArrayList<>(workOrders.size());
+        final Iterator<IServerWorkOrder> iter = workOrders.values().iterator();
+
+        // Clean up invalid orders and handle builder deconstruction scenarios
         while (iter.hasNext())
         {
             final IServerWorkOrder order = iter.next();
-            if (!order.isValid(this.colony))
+
+            if (!order.isValid(colony))
             {
                 iter.remove();
                 dirty = true;
                 continue;
             }
-            else if (order.isDirty())
+
+            if (order.isDirty())
             {
                 dirty = true;
                 order.resetChange();
             }
 
-            if (order.isClaimed() && getColony().getBuildingManager().getBuildings().get(order.getClaimedBy()) == null)
+            if (order.isClaimed()
+                && colony.getServerBuildingManager().getBuilding(order.getClaimedBy()) == null)
             {
                 order.setClaimedBy(BlockPos.ZERO);
             }
 
-            tryAssignWorkOrder(order, (b) -> order.getClaimedBy().equals(b.getPosition()));
+            orderedWorkOrders.add(order);
         }
 
-        for (final IServerWorkOrder wo : colony.getWorkManager().getWorkOrders().values())
+        // Sort first by group, then by priority.
+        orderedWorkOrders.sort(
+            Comparator.comparing(IServerWorkOrder::isClaimed)
+                .reversed()
+                .thenComparing(IWorkOrder.WORK_ORDER_COMPARATOR));
+
+        // Attempt to assign the orders.
+        for (final IServerWorkOrder order : orderedWorkOrders)
         {
-            tryAssignWorkOrder(wo, wo::canBuild);
+            tryAssignWorkOrder(order, order::canBuild);
         }
     }
 
@@ -423,11 +436,11 @@ public class WorkManager implements IWorkManager
      */
     private void tryAssignWorkOrder(final IServerWorkOrder order, @NotNull Predicate<IBuilding> predicate)
     {
-        for (IBuilding building : colony.getBuildingManager().getBuildings().values())
+        for (IBuilding building : colony.getServerBuildingManager().getBuildings().values())
         {
             if (building instanceof AbstractBuildingStructureBuilder abstractBuildingStructureBuilder)
             {
-                final @Nullable ICitizenData citizen = building.getFirstModuleOccurance(WorkerBuildingModule.class).getFirstCitizen();
+                final @Nullable ICitizenData citizen = building.getModule(WorkerBuildingModule.class).getFirstCitizen();
                 if (citizen == null)
                 {
                     continue;
@@ -444,7 +457,7 @@ public class WorkManager implements IWorkManager
                     {
                         abstractBuildingStructureBuilder.setWorkOrder(order);
                         order.setClaimedBy(building.getID());
-                        continue;
+                        return;
                     }
                     continue;
                 }
@@ -459,6 +472,7 @@ public class WorkManager implements IWorkManager
                 {
                     abstractBuildingStructureBuilder.setWorkOrder(order);
                     order.setClaimedBy(building.getID());
+                    return;
                 }
             }
         }
@@ -494,7 +508,7 @@ public class WorkManager implements IWorkManager
         return workOrders.values().stream()
           .filter(o -> (!o.isClaimed() || o.getClaimedBy().equals(builder)))
           .filter(predicate)
-          .sorted(Comparator.comparingInt(IWorkOrder::getPriority).reversed())
+          .sorted(IWorkOrder.WORK_ORDER_COMPARATOR)
           .collect(Collectors.toList());
     }
 

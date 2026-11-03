@@ -10,6 +10,10 @@
     },
     {
       "type": "minecraft:single",
+      "resource": "minecraft:entity/horse/horse_gray"
+    },
+    {
+      "type": "minecraft:single",
       "resource": "minecraft:entity/chicken"
     },
     {

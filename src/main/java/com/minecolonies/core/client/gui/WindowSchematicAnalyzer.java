@@ -7,7 +7,7 @@ import com.ldtteam.blockui.views.Box;
 import com.ldtteam.blockui.views.ScrollingList;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.client.gui.WindowExtendedBuildTool;
-import com.ldtteam.structurize.storage.rendering.RenderingCache;
+import com.ldtteam.structurize.client.rendertask.RenderTaskManager;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
@@ -388,7 +388,7 @@ public class WindowSchematicAnalyzer extends AbstractWindowSkeleton
     @Override
     public void onClosed()
     {
-        RenderingCache.removeBox("analyzer");
+        RenderTaskManager.removeTaskGroup("analyzer");
         super.onClosed();
     }
 }

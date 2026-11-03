@@ -3,15 +3,13 @@ package com.minecolonies.api.entity.citizen;
 import com.minecolonies.api.colony.ICivilianData;
 import com.minecolonies.api.entity.other.AbstractFastMinecoloniesEntity;
 import com.minecolonies.api.entity.other.MinecoloniesMinecart;
+import com.minecolonies.core.entity.other.ICitizenJobMount;
 import com.minecolonies.core.entity.other.SittingEntity;
-import com.minecolonies.core.entity.other.cavalry.CavalryHorseEntity;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.PathfinderMob;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.npc.Npc;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -145,6 +143,12 @@ public abstract class AbstractCivilianEntity extends AbstractFastMinecoloniesEnt
         return "Enity: " + getDisplayName().getString() + " Type: [" + getClass().getSimpleName() + "] at pos: " + blockPosition() + " civilian id: " + id + " colony: " + colony;
     }
 
+    @Override
+    protected float getStandingEyeHeight(Pose pose, EntityDimensions dim)
+    {
+        return dim.height * 0.95f;
+    }
+
     /**
      * Prevent riding entities except ours.
      *
@@ -155,7 +159,7 @@ public abstract class AbstractCivilianEntity extends AbstractFastMinecoloniesEnt
     @Override
     public boolean startRiding(final @NotNull Entity entity, final boolean force)
     {
-        if (entity instanceof SittingEntity || entity instanceof MinecoloniesMinecart || entity instanceof CavalryHorseEntity)
+        if (entity instanceof SittingEntity || entity instanceof MinecoloniesMinecart || entity instanceof ICitizenJobMount)
         {
             return super.startRiding(entity, force);
         }

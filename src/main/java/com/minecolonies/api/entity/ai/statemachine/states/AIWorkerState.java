@@ -259,7 +259,7 @@ public enum AIWorkerState implements IAIState
     /**
      * Delivery required items or tools.
      */
-    DELIVERY(true),
+    DELIVERY(false),
 
     /**
      * Pickup unneeded items from buildings.
@@ -370,6 +370,25 @@ public enum AIWorkerState implements IAIState
      * Feed animals.
      */
     HERDER_FEED(false),
+
+    /*
+### Stablemaster ###
+     */
+
+    /**
+     * Train mounts!
+     */
+    HERDER_TRAIN(true),
+
+    /**
+     * Get mounts ready for combat!
+     */
+    HERDER_READY_FOR_COMBAT(true),
+
+    /**
+     * Bring mounts to the stable!
+     */
+    HERDER_GATHER_MOUNTS(true),
 
     /*
 ### Cowboy ###

@@ -6,7 +6,6 @@ import com.minecolonies.api.colony.connections.*;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.WorldUtil;
-import com.minecolonies.core.blocks.BlockColonySign;
 import com.minecolonies.core.entity.pathfinding.Pathfinding;
 import com.minecolonies.core.entity.pathfinding.pathjobs.PathJobSignConnection;
 import com.minecolonies.core.entity.pathfinding.pathresults.PathResult;
@@ -23,7 +22,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-import static com.minecolonies.api.colony.connections.ConnectionEventType.*;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 
@@ -68,6 +66,13 @@ public class ColonyConnectionManager implements IColonyConnectionManager
      * Pending connection points. This is stored to nbt.
      */
     private final Map<BlockPos, PendingConnectionNode> pendingColonyConnections = new LinkedHashMap<>();
+
+    /**
+     * Diplomacy Status Mapping.
+     */
+    private final Map<Integer, DiplomacyStatus> diplomacyStatus = new HashMap<>();
+
+    //todo correctly set to indirect connection when it matters.
 
     /**
      * Create a new connection manager.
@@ -486,9 +491,10 @@ public class ColonyConnectionManager implements IColonyConnectionManager
             {
                 for (final ColonyConnection indirectConnectedColony : connectedColony.getConnectionManager().getDirectlyConnectedColonies().values())
                 {
-                    if (!directlyConnectedColonies.containsKey(indirectConnectedColony.id) && indirectConnectedColony.id != colony.getID())
+                    if (!directlyConnectedColonies.containsKey(indirectConnectedColony.id) && !indirectlyConnectedColoniesCache.containsKey(indirectConnectedColony.id) &&indirectConnectedColony.id != colony.getID())
                     {
-                        indirectlyConnectedColoniesCache.put(indirectConnectedColony.id, indirectConnectedColony);
+                        indirectlyConnectedColoniesCache.put(indirectConnectedColony.id, new ColonyConnection(indirectConnectedColony.id, indirectConnectedColony.name, colonyEntry.pos, diplomacyStatus.getOrDefault(indirectConnectedColony.id, DiplomacyStatus.NEUTRAL)));
+                        colony.markDirty();
                     }
                 }
             }
@@ -654,6 +660,12 @@ public class ColonyConnectionManager implements IColonyConnectionManager
             colonyConnectionData.read((CompoundTag) tag);
             pendingColonyConnections.put(pos, colonyConnectionData);
         }
+
+        final ListTag diplomacyStatusTagList = compound.getList(TAG_DIPLOMACY, Tag.TAG_COMPOUND);
+        for (final Tag tag : diplomacyStatusTagList)
+        {
+            diplomacyStatus.put(((CompoundTag)tag).getInt(TAG_COLONY_ID), DiplomacyStatus.values()[((CompoundTag)tag).getInt(TAG_STATUS)]);
+        }
     }
 
     @Override
@@ -694,6 +706,16 @@ public class ColonyConnectionManager implements IColonyConnectionManager
             pendingConnectionTagList.add(connectionEvent.write());
         }
         compoundTag.put(TAG_PENDING, pendingConnectionTagList);
+
+        @NotNull final ListTag diplomacyStatusTagList = new ListTag();
+        for (final Map.Entry<Integer, DiplomacyStatus> status : diplomacyStatus.entrySet())
+        {
+            final CompoundTag diplomacyStatusTag = new CompoundTag();
+            diplomacyStatusTag.putInt(TAG_COLONY_ID, status.getKey());
+            diplomacyStatusTag.putInt(TAG_STATUS, status.getValue().ordinal());
+            diplomacyStatusTagList.add(diplomacyStatusTag);
+        }
+        compoundTag.put(TAG_DIPLOMACY, diplomacyStatusTagList);
         return compoundTag;
     }
 
@@ -752,6 +774,9 @@ public class ColonyConnectionManager implements IColonyConnectionManager
         {
             return;
         }
+
+        this.diplomacyStatus.put(originColony.getID(), diplomacyStatus);
+        ((ColonyConnectionManager)originColonyConnectionManager).diplomacyStatus.put(colony.getID(), diplomacyStatus);
 
         originAffectedMap.put(colony.getID(), new ColonyConnection(colony.getID(), colony.getName(), originConnectedColonyData.pos, diplomacyStatus));
         originColony.markDirty();

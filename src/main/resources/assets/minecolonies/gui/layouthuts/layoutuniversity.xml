@@ -11,4 +11,7 @@
                          disabled="minecolonies:textures/gui/builderhut/builder_button_medium_large_disabled.png" disabledsize="129 17"/>
         </box>
     </list>
+    <button id="invresearch" size="34 34" pos="80 200" color="black"
+            source="minecolonies:textures/gui/chest.png"
+            label="" tooltip="$(com.minecolonies.coremod.university.researchfrominv)"/>
 </window>

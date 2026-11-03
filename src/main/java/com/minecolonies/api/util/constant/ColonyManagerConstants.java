@@ -38,12 +38,12 @@ public final class ColonyManagerConstants
     /**
      * Colony filename.
      */
-    public static final String FILENAME_COLONY = "colony%d.dat";
+    public static final String FILENAME_COLONY = "colony%s.dat";
 
     /**
      * Colony filename deleted.
      */
-    public static final String FILENAME_COLONY_DELETED = "colony%d.dat.deleted";
+    public static final String FILENAME_COLONY_DELETED = "colony%s.dat.deleted";
 
     /**
      * Log message for missing world cap.

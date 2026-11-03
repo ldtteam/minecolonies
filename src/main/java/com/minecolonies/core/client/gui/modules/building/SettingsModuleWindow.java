@@ -71,7 +71,7 @@ public class SettingsModuleWindow extends AbstractModuleWindow<SettingsModuleVie
             public void updateElement(final int index, @NotNull final Pane rowPane)
             {
                 final ISettingKey<? extends ISetting> key = moduleView.getSettingsToShow().get(index);
-                final ISetting setting = moduleView.getSetting(key);
+                final ISetting<?> setting = moduleView.getSetting(key);
                 if (setting == null)
                 {
                     return;

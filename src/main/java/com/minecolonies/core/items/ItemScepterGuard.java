@@ -69,7 +69,7 @@ public class ItemScepterGuard extends AbstractItemMinecolonies
                 return InteractionResult.FAIL;
             }
         }
-        return handleItemUsage(ctx.getLevel(), ctx.getClickedPos(), compound, ctx.getPlayer());
+        return handleItemUsage(ctx.getLevel(), ctx.getClickedPos(), compound, ctx.getPlayer(), scepter);
     }
 
     /**
@@ -79,10 +79,11 @@ public class ItemScepterGuard extends AbstractItemMinecolonies
      * @param pos      the position.
      * @param compound the compound.
      * @param playerIn the player using it.
+     * @param stack the used item.
      * @return if it has been successful.
      */
     @NotNull
-    private static InteractionResult handleItemUsage(final Level worldIn, final BlockPos pos, final CompoundTag compound, final Player playerIn)
+    private static InteractionResult handleItemUsage(final Level worldIn, final BlockPos pos, final CompoundTag compound, final Player playerIn, final ItemStack stack)
     {
         if (!compound.contains(TAG_ID))
         {
@@ -95,7 +96,7 @@ public class ItemScepterGuard extends AbstractItemMinecolonies
         }
 
         final BlockPos guardTower = BlockPosUtil.read(compound, TAG_POS);
-        final IBuilding hut = colony.getBuildingManager().getBuilding(guardTower);
+        final IBuilding hut = colony.getServerBuildingManager().getBuilding(guardTower);
         if (!(hut instanceof AbstractBuildingGuards))
         {
             return InteractionResult.FAIL;
@@ -112,7 +113,7 @@ public class ItemScepterGuard extends AbstractItemMinecolonies
         {
             MessageUtils.format(TOOL_GUARD_SCEPTER_ADD_GUARD_TARGET, pos.toShortString()).sendTo(playerIn);
             tower.setGuardPos(pos);
-            playerIn.getInventory().removeItemNoUpdate(playerIn.getInventory().selected);
+            playerIn.getInventory().removeItem(stack);
         }
         else
         {

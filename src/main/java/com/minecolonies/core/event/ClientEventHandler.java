@@ -16,10 +16,12 @@ import com.minecolonies.api.colony.buildings.modules.ICraftingBuildingModule;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.entity.other.AbstractFastMinecoloniesEntity;
 import com.minecolonies.api.research.IGlobalResearch;
 import com.minecolonies.api.util.FoodUtils;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.ColonyConstants;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.TranslationConstants;
@@ -39,10 +41,13 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.DyeableLeatherItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
@@ -55,6 +60,7 @@ import net.minecraftforge.client.event.RenderLevelStageEvent;
 import net.minecraftforge.client.event.sound.PlaySoundEvent;
 import net.minecraftforge.common.util.Lazy;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
@@ -67,11 +73,11 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.Map.Entry;
 
-import static com.minecolonies.api.research.util.ResearchConstants.SATURATION;
 import static com.minecolonies.api.sounds.ModSoundEvents.CITIZEN_SOUND_EVENT_PREFIX;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.api.util.constant.translation.DebugTranslationConstants.*;
 import static com.minecolonies.core.colony.buildings.modules.BuildingModules.RESTAURANT_MENU;
+import static net.minecraftforge.eventbus.api.EventPriority.HIGHEST;
 
 /**
  * Used to handle client events.
@@ -99,11 +105,38 @@ public class ClientEventHandler
         }
     }
 
+    @SubscribeEvent(priority = HIGHEST)
+    public static void onEntityAdded(@NotNull final EntityJoinLevelEvent event)
+    {
+        // Makes the server the entity authority, and the client no longer rejects a new entity for an old potentially stale or desynced one
+        if (!(event.getLevel() instanceof ClientLevel clientLevel)
+            || !(event.getEntity() instanceof AbstractFastMinecoloniesEntity citizen))
+        {
+            return;
+        }
+
+        final List<Integer> duplicateIds = new ArrayList<>();
+        for (final Entity existing : clientLevel.entityStorage.getEntityGetter().getAll())
+        {
+            if (existing != citizen && existing.getUUID().equals(citizen.getUUID()))
+            {
+                duplicateIds.add(existing.getId());
+            }
+        }
+
+        for (final int duplicateId : duplicateIds)
+        {
+            clientLevel.removeEntity(duplicateId, Entity.RemovalReason.DISCARDED);
+        }
+    }
+
     @SubscribeEvent
     public static void onPlayerLogout(@NotNull final ClientPlayerNetworkEvent.LoggingOut event)
     {
         ColonyBorderRenderer.cleanup();
         WindowBuildingBrowser.clearCache();
+        IColonyManager.getInstance().resetColonyViews();
+        Log.getLogger().info("Removed all colony views");
     }
 
     @SubscribeEvent(priority = EventPriority.HIGH)
@@ -150,11 +183,29 @@ public class ClientEventHandler
             event.getToolTip().add(extraItemTooltips.get(stack.getItem()));
         }
 
+        if (stack.getItem() instanceof DyeableLeatherItem && IMinecoloniesAPI.getInstance().getConfig().getClient().showdyetooltips.get())
+        {
+            IMinecoloniesAPI.getInstance().getColonyManager().getCompatibilityManager().getDyeColor(stack).ifPresent(c ->
+            {
+                event.getToolTip().removeIf(line -> line.getContents() instanceof TranslatableContents t && t.getKey().equals("item.dyed"));
+                event.getToolTip().add(1, Component.translatable("%s: %s",
+                    Component.translatable("item.dyed"),
+                    Component.translatable("color.minecraft." + c.getName()).withStyle(Style.EMPTY.withColor(c.getTextColor()).withItalic(false)))
+                    .withStyle(Style.EMPTY.withColor(ChatFormatting.GRAY).withItalic(true)));
+            });
+        }
+
         IColony colony = IMinecoloniesAPI.getInstance().getColonyManager().getIColony(event.getEntity().level, event.getEntity().blockPosition());
         if (colony == null)
         {
             colony = IMinecoloniesAPI.getInstance().getColonyManager().getIColonyByOwner(event.getEntity().level, event.getEntity());
         }
+
+        if (colony == null)
+        {
+            return;
+        }
+
         handleCrafterRecipeTooltips(colony, event.getToolTip(), stack.getItem());
         if (stack.getItem() instanceof BlockItem)
         {
@@ -188,14 +239,13 @@ public class ClientEventHandler
                 return;
             }
 
-            double foodValue = FoodUtils.getFoodValue(stack, stack.getItem().getFoodProperties(), colony.getResearchManager().getResearchEffects().getEffectStrength(SATURATION));
-            final int foodTier = FoodUtils.getFoodTier(foodValue);
+            final int foodTier = FoodUtils.getFoodTier(stack);
 
             final ICitizenDataView citizenData = (ICitizenDataView) WindowCitizenInventory.activeCitizenInventory.getCitizenData();
-            final IColonyView colonyView = (IColonyView) citizenData.getColony();
+            final IColonyView colonyView = citizenData.getColony();
 
             IBuildingView cookBuilding = null;
-            for (final IBuildingView buildingView : colonyView.getBuildings())
+            for (final IBuildingView buildingView : colonyView.getClientBuildingManager().getBuildings().values())
             {
                 if (buildingView.getBuildingType() == ModBuildings.cook.get())
                 {
@@ -207,7 +257,7 @@ public class ClientEventHandler
             }
 
             final int homeBuildingLevel =
-                colonyView.getBuilding(citizenData.getHomeBuilding()) == null ? 0 : colonyView.getBuilding(citizenData.getHomeBuilding()).getBuildingLevel();
+                colonyView.getClientBuildingManager().getBuilding(citizenData.getHomeBuilding()) == null ? 0 : colonyView.getClientBuildingManager().getBuilding(citizenData.getHomeBuilding()).getBuildingLevel();
             if (FoodUtils.canEatLevel(event.getItemStack(), homeBuildingLevel))
             {
                 event.getToolTip().add(Component.translatable(TranslationConstants.TIER_TOOLTIP + foodTier).withStyle(ChatFormatting.GRAY));
@@ -303,7 +353,7 @@ public class ClientEventHandler
                 // unless we can change how colony.hasBuilding uses its parameter...
 
                 final MutableComponent reqLevelText = Component.translatable(COM_MINECOLONIES_COREMOD_ITEM_BUILDLEVEL_TOOLTIP_GUI, craftingBuildingName, minimumLevel);
-                if (colony != null && colony.hasBuilding(schematicName, minimumLevel, true))
+                if (colony != null && colony.getCommonBuildingManager().hasBuilding(schematicName, minimumLevel, true))
                 {
                     reqLevelText.setStyle(Style.EMPTY.withColor(ChatFormatting.AQUA));
                 }

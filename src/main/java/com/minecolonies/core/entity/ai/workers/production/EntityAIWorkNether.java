@@ -18,7 +18,6 @@ import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.equipment.ModEquipmentTypes;
 import com.minecolonies.api.equipment.registry.EquipmentTypeEntry;
 import com.minecolonies.api.util.*;
-import com.minecolonies.core.MineColonies;
 import com.minecolonies.core.colony.buildings.modules.ExpeditionLogModule;
 import com.minecolonies.core.colony.buildings.modules.expedition.ExpeditionLog;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingNetherWorker;
@@ -59,9 +58,7 @@ import static com.minecolonies.api.util.constant.CitizenConstants.*;
 import static com.minecolonies.api.util.constant.EquipmentLevelConstants.*;
 import static com.minecolonies.api.util.constant.GuardConstants.*;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
-import static com.minecolonies.api.util.constant.StatisticsConstants.ITEMS_DISCOVERED;
-import static com.minecolonies.api.util.constant.StatisticsConstants.TRIPS_COMPLETED;
-import static com.minecolonies.api.util.constant.StatisticsConstants.MINER_DEATHS;
+import static com.minecolonies.api.util.constant.StatisticsConstants.*;
 import static com.minecolonies.core.colony.buildings.modules.BuildingModules.NETHERMINER_MENU;
 import static com.minecolonies.core.entity.ai.workers.production.EntityAIStructureMiner.*;
 
@@ -418,7 +415,7 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
 
                                 // Figure out who gets to hit who this round
                                 boolean doDamage = worker.getRandom().nextBoolean();
-                                boolean takeDamage = worker.getRandom().nextBoolean() && MineColonies.getConfig().getServer().netherWorkerTakesDamage.get();
+                                boolean takeDamage = worker.getRandom().nextBoolean();
 
                                 // Calculate if the sword still exists, how much damage will be done to the mob
                                 final ItemStack sword = worker.getItemBySlot(EquipmentSlot.MAINHAND);

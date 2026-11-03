@@ -1,6 +1,5 @@
 {
   "type": "recipe",
-  "count": 2,
   "crafter": "chef_crafting",
   "inputs": [
     {

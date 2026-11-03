@@ -1,7 +1,7 @@
 package com.minecolonies.core.client.render.worldevent;
 
+import com.ldtteam.structurize.client.rendertask.util.WorldRenderMacros;
 import com.ldtteam.structurize.items.ModItems;
-import com.ldtteam.structurize.util.WorldRenderMacros;
 import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.core.MineColonies;

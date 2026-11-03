@@ -1,5 +1,6 @@
 {
   "type": "recipe",
+  "count": 2,
   "crafter": "baker_crafting",
   "inputs": [
     {

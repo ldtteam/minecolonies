@@ -9,8 +9,12 @@ import java.util.Optional;
 import java.util.Set;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.spongepowered.asm.util.asm.IAnnotatedElement;
+
 import com.minecolonies.api.colony.IAnimalData;
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.managers.interfaces.IAnimalManager;
 import com.minecolonies.api.colony.managers.interfaces.IManagedAnimal;
 import com.minecolonies.api.util.Log;
@@ -133,6 +137,66 @@ public class AnimalManager implements IAnimalManager
     public List<IAnimalData> getAnimals()
     {
         return new ArrayList<>(animalMap.values());
+    }
+
+    /**
+     * Gets a list of all animal data of a certain class, with the specified home (or if home is null, all animals of that class).
+     *
+     * @param animalClass the class of animals to get.
+     * @param home the home building of the animals to get, or null to get all animals of that class.
+     * @return a list of all animal data of the specified class, with the specified home (or all animals of that class if home is null).
+     */
+    @Override
+    public List<IAnimalData> getAnimalsOfClassByHome(final Class<? extends Animal> animalClass, @Nullable final IBuilding home)
+    {
+        final List<IAnimalData> animals = new ArrayList<>();
+
+        for (final IAnimalData data : animalMap.values())
+        {
+            final Optional<IManagedAnimal<? extends Animal>> managedOpt = data.getManagedAnimal();
+            if (managedOpt.isEmpty())
+            {
+                continue;
+            }
+
+            final Animal entity = managedOpt.get().getEntity();
+            if (entity == null)
+            {
+                continue;
+            }
+
+            // is this entity an instance of the requested class?
+            if (!animalClass.isInstance(entity))
+            {
+                continue;
+            }
+
+            if (!matchesHome(home, data))
+            {
+                continue;
+            }
+
+            animals.add(data);
+        }
+
+        return animals;
+    }
+
+    /**
+     * Checks if the given home matches the home of the given animal data.
+     * If the given home is null, this method returns true.
+     * @param checkHome the home to check against.
+     * @param data the animal data to check.
+     * @return true if the given home matches the home of the given animal data, false otherwise.
+     */
+    protected boolean matchesHome(IBuilding checkHome, IAnimalData data)
+    {
+        if (checkHome == null)
+        {
+            return true;
+        }
+
+        return checkHome.equals(data.getHomeBuilding());
     }
 
     /**

@@ -13,7 +13,6 @@ import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.MineColonies;
 import com.minecolonies.core.Network;
-import com.minecolonies.core.colony.buildings.modules.BuildingModules;
 import com.minecolonies.core.network.messages.server.GetColonyInfoMessage;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -221,9 +220,9 @@ public class BlockHutTownHall extends AbstractBlockHut<BlockHutTownHall>
     {
         IColony colony = IColonyManager.getInstance().getIColony(player.level(), pos);
         
-        if (colony.hasTownHall())
+        if (colony.getCommonBuildingManager().hasTownHall())
         {
-            IBuilding townHall = colony.getBuildingManager().getTownHall();
+            IBuilding townHall = colony.getServerBuildingManager().getTownHall();
             
             if (colony.getWorld() != null && !colony.getWorld().isClientSide)
             {

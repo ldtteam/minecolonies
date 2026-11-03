@@ -65,6 +65,12 @@ public class ItemBowlFood extends Item implements IMinecoloniesFoodItem
     }
 
     @Override
+    public int getUseDuration(ItemStack stack)
+    {
+        return super.getUseDuration(stack) * Math.max(1, tier);
+    }
+
+    @Override
     public void appendHoverText(@NotNull final ItemStack stack, @Nullable final Level worldIn, @NotNull final List<Component> tooltip, @NotNull final TooltipFlag flagIn)
     {
         tooltip.add(Component.translatable(TranslationConstants.TIER_TOOLTIP + this.tier));

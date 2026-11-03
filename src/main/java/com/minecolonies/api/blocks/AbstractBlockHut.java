@@ -290,7 +290,7 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
             }
 
             building.setIsMirrored(settings.mirror != Mirror.NONE);
-            building.onUpgradeComplete(building.getBuildingLevel());
+            building.onUpgradeComplete(blueprint, building.getBuildingLevel());
         }
         return true;
     }
@@ -333,7 +333,7 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
         }
         else
         {
-            return colony.getBuildingManager().canPlaceAt(anchor, pos, player);
+            return colony.getServerBuildingManager().canPlaceAt(anchor, pos, player);
         }
     }
 

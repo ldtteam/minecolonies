@@ -171,7 +171,7 @@ public class TabsWindowModule implements IWindowModule
          */
         public ResourceLocation getImage(final Random random)
         {
-            return new ResourceLocation(Constants.MOD_ID, String.format("textures/gui/modules/tab_%s_side%d.png", side, random.nextInt(imageCount) + 1));
+            return new ResourceLocation(Constants.MOD_ID, String.format("textures/gui/modules/tab_%s_side%s.png", side, random.nextInt(imageCount) + 1));
         }
     }
 }

@@ -3,6 +3,8 @@ package com.minecolonies.core.colony.buildings.modules.settings;
 import com.ldtteam.blockui.Pane;
 import com.ldtteam.blockui.controls.TextField;
 import com.ldtteam.blockui.views.BOWindow;
+import com.minecolonies.api.colony.buildings.modules.ICommonSettingsModule;
+import com.minecolonies.api.colony.buildings.modules.ISettingsModule;
 import com.minecolonies.api.colony.buildings.modules.settings.ISetting;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingsModuleView;
@@ -76,7 +78,7 @@ public class IntSetting implements ISetting<Integer>
     public void setupHandler(
       final ISettingKey<?> key,
       final Pane pane,
-      final ISettingsModuleView settingsModuleView,
+      final ICommonSettingsModule settingsModuleView,
       final IBuildingView building, final BOWindow window)
     {
         pane.findPaneOfTypeByID("trigger", TextField.class).setHandler(input -> {
@@ -103,12 +105,12 @@ public class IntSetting implements ISetting<Integer>
     public void render(
       final ISettingKey<?> key,
       final Pane pane,
-      final ISettingsModuleView settingsModuleView,
+      final ICommonSettingsModule settingsModuleView,
       final IBuildingView building,
       final BOWindow window)
     {
         final TextField field = pane.findPaneOfTypeByID("trigger", TextField.class);
-        field.setEnabled(isActive(settingsModuleView));
+        field.setEnabled(isActive((ISettingsModuleView) settingsModuleView));
         setHoverPane(key, field, settingsModuleView);
         if (!field.getText().equals(String.valueOf(this.value)))
         {

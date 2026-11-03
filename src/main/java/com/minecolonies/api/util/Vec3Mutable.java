@@ -85,4 +85,9 @@ public class Vec3Mutable
     {
         return Mth.floor(z);
     }
+
+    public String toString()
+    {
+        return "{x:" + x + " y:" + y + " z:" + z + "}";
+    }
 }

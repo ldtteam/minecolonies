@@ -125,7 +125,7 @@ public class WindowStatsPage extends AbstractWindowTownHall
 
         int children = 0;
         final Map<String, Tuple<Integer, Integer>> jobMaxCountMap = new HashMap<>();
-        for (@NotNull final IBuildingView building : buildingView.getColony().getBuildings())
+        for (@NotNull final IBuildingView building : buildingView.getColony().getClientBuildingManager().getBuildings().values())
         {
             if (building instanceof AbstractBuildingView)
             {

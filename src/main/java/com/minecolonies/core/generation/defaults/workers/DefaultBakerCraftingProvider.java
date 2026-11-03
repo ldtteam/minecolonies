@@ -197,11 +197,11 @@ public class DefaultBakerCraftingProvider extends CustomRecipeProvider
         CustomRecipeBuilder.create(BAKER, MODULE_CRAFTING, "muffin_dough")
           .inputs(List.of(
             new ItemStorage(new ItemStack(ModBlocks.blockDurum)),
-            new ItemStorage(new ItemStack(ModBlocks.blockDurum)),
             new ItemStorage(new ItemStack(ModItems.butter)),
             new ItemStorage(new ItemStack(Items.SUGAR)),
+            new ItemStorage(new ItemStack(Items.EGG)),
             new ItemStorage(new ItemStack(Items.SWEET_BERRIES))))
-          .result(new ItemStack(ModItems.muffin_dough, 2))
+          .result(new ItemStack(ModItems.muffin_dough))
           .showTooltip(true)
           .build(consumer);
 
@@ -210,7 +210,7 @@ public class DefaultBakerCraftingProvider extends CustomRecipeProvider
             new ItemStorage(new ItemStack(ModBlocks.blockDurum)),
             new ItemStorage(new ItemStack(ModBlocks.blockDurum)),
             new ItemStorage(ModItems.large_water_bottle.getDefaultInstance())))
-          .result(new ItemStack(ModItems.flatbread, 1))
+          .result(new ItemStack(ModItems.flatbread, 2))
           .lootTable(DefaultRecipeLootProvider.LOOT_TABLE_LARGE_BOTTLE)
           .showTooltip(true)
           .build(consumer);
@@ -247,7 +247,6 @@ public class DefaultBakerCraftingProvider extends CustomRecipeProvider
 
         CustomRecipeBuilder.create(BAKER, MODULE_CRAFTING, "mushroom_pizza")
           .inputs(List.of(
-            new ItemStorage(new ItemStack(ModBlocks.blockDurum)),
             new ItemStorage(new ItemStack(ModBlocks.blockDurum)),
             new ItemStorage(new ItemStack(ModBlocks.blockDurum)),
             new ItemStorage(new ItemStack(ModBlocks.blockTomato)),

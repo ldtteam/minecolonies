@@ -673,6 +673,8 @@ public final class TranslationConstants
     @NonNls
     public static final String FOOD_QUALITY_TOOLTIP                               = "com.minecolonies.core.gui.restaurant.foodquality";
     @NonNls
+    public static final String FOOD_CONSUMPTION_TOOLTIP                           = "com.minecolonies.core.gui.restaurant.foodconsumption";
+    @NonNls
     public static final String COM_MINECOLONIES_MAP_NEED_COLONY                   = "com.minecolonies.core.item.colonymap.needcolony";
     @NonNls
     public static final String COM_MINECOLONIES_MAP_COLONY_SET                    = "com.minecolonies.core.item.colonymap.registered";
@@ -748,6 +750,12 @@ public final class TranslationConstants
     public static final String PARTIAL_EXPEDITION_STATUS                  = "com.minecolonies.gui.workerhuts.expedition.";
     @NonNls
     public static final String PARTIAL_STATS_MODIFIER_NAME                = "com.minecolonies.coremod.gui.townhall.stats.";
+    @NonNls
+    public static final String CAVALRY_NOHORSE                            = "entity.cavalry.nohorse";
+    @NonNls
+    public static final String STABLEMASTER_NEEDED_READYITEMS             = "com.minecolonies.coremod.stablemaster.needed.readyitems";
+    @NonNls
+    public static final String STABLEMASTER_NEEDED_FEEDITEMS              = "com.minecolonies.coremod.stablemaster.needed.feeditems";
 
     //</editor-fold>
 

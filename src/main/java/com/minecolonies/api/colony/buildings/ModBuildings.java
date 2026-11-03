@@ -30,6 +30,7 @@ public final class ModBuildings
     public static final String SHEPHERD_ID       = "shepherd";
     public static final String SIFTER_ID         = "sifter";
     public static final String SMELTERY_ID       = "smeltery";
+    public static final String STABLE_ID         = "stable";
     public static final String STONE_MASON_ID    = "stonemason";
     public static final String STONE_SMELTERY_ID = "stonesmeltery";
     public static final String SWINE_HERDER_ID   = "swineherder";
@@ -85,6 +86,7 @@ public final class ModBuildings
     public static RegistryObject<BuildingEntry> shepherd;
     public static RegistryObject<BuildingEntry> sifter;
     public static RegistryObject<BuildingEntry> smeltery;
+    public static RegistryObject<BuildingEntry> stable;
     public static RegistryObject<BuildingEntry> stoneMason;
     public static RegistryObject<BuildingEntry> stoneSmelter;
     public static RegistryObject<BuildingEntry> swineHerder;
