@@ -1,9 +1,13 @@
 package com.minecolonies.api.colony.buildings;
 
+import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Player;
+
+import java.util.Set;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -178,4 +182,14 @@ public interface IGuardBuilding extends IBuilding
      * @return the coords of the assigned mine
      */
     BlockPos getMinePos();
+
+    /**
+     * Get the set of all assigned military units in the building.
+     * @return the set
+     */
+    default Set<ICitizenData> getAllAssignedMilitaryUnits()
+    {
+        return getAllAssignedCitizen();
+    }
+    
 }

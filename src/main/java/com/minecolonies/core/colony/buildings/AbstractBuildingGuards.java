@@ -197,9 +197,11 @@ public abstract class AbstractBuildingGuards extends AbstractBuilding implements
     @Override
     public void onUpgradeComplete(@Nullable final Blueprint blueprint, final int newLevel)
     {
-        if (getAllAssignedCitizen() != null)
+        Set<ICitizenData> militaryUnits = getAllAssignedMilitaryUnits();
+
+        if (militaryUnits != null)
         {
-            for (final ICitizenData optCitizen : getAllAssignedCitizen())
+            for (final ICitizenData optCitizen : militaryUnits)
             {
                 if (optCitizen.getEntity().isPresent())
                 {
@@ -281,8 +283,9 @@ public abstract class AbstractBuildingGuards extends AbstractBuilding implements
             buf.writeBlockPos(pos);
         }
 
-        buf.writeInt(this.getAllAssignedCitizen().size());
-        for (final ICitizenData citizen : this.getAllAssignedCitizen())
+        Set<ICitizenData> militaryUnits = getAllAssignedMilitaryUnits();
+        buf.writeInt(militaryUnits.size());
+        for (final ICitizenData citizen : militaryUnits)
         {
             buf.writeInt(citizen.getId());
         }

@@ -1,13 +1,21 @@
 package com.minecolonies.core.colony.buildings.workerbuildings;
 
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Predicate;
 
 import org.jetbrains.annotations.NotNull;
+
+import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
+import com.minecolonies.api.colony.guardtype.GuardType;
+import com.minecolonies.api.colony.guardtype.registry.IGuardTypeRegistry;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
@@ -17,6 +25,7 @@ import com.minecolonies.core.colony.buildings.modules.AnimalHerdingModule;
 import com.minecolonies.core.colony.buildings.modules.BuildingModules;
 import com.minecolonies.core.colony.buildings.modules.settings.IntSetting;
 import com.minecolonies.core.colony.buildings.modules.settings.SettingKey;
+import com.minecolonies.core.colony.jobs.JobStablemaster;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -315,5 +324,26 @@ public class BuildingStable extends AbstractBuildingGuards
     public static Predicate<IBuilding> cavalryPatrolFilter()
     {
         return b -> b instanceof BuildingStable || b instanceof BuildingGateHouse;
+    }
+
+    @Override
+    public Set<ICitizenData> getAllAssignedMilitaryUnits()
+    {
+        final Set<ICitizenData> assignedGuards = new HashSet<>();
+
+        for (final ICitizenData citizenData : getAllAssignedCitizen())
+        {
+            if (citizenData == null || citizenData.getJob() == null)
+            {
+                continue;
+            }
+
+            if (!(citizenData.getJob() instanceof JobStablemaster))
+            {
+                assignedGuards.add(citizenData);
+            }
+        }
+
+        return assignedGuards;
     }
 }

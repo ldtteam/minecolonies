@@ -2,6 +2,7 @@ package com.minecolonies.core.entity.ai.combat;
 
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.buildings.IGuardBuilding;
 import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesRaider;
@@ -103,7 +104,13 @@ public class CombatUtils
      */
     public static void notifyGuardsOfTarget(final AbstractEntityCitizen user, final LivingEntity target, final int callRange)
     {
-        for (final ICitizenData citizen : user.getCitizenData().getWorkBuilding().getAllAssignedCitizen())
+        IBuilding workBuilding = user.getCitizenData().getWorkBuilding();
+
+        if (!(workBuilding instanceof IGuardBuilding)) return;
+
+        IGuardBuilding guardBuilding = (IGuardBuilding) workBuilding;
+
+        for (final ICitizenData citizen : guardBuilding.getAllAssignedMilitaryUnits())
         {
             if (citizen.getEntity().isPresent() && citizen.getEntity().get().getLastHurtByMob() == null)
             {

@@ -6,7 +6,7 @@
     <text size="130 11" pos="30 14" textalign="MIDDLE" color="black"
            label="$(item.minecolonies.banner_rally_guards)"/>
     <box size="158 178" pos="16 30" linewidth="1">
-        <list id="guardtowers" size="100% 100%">
+        <list id="guardtowers" size="100% 100%" scrollbarOffset="9 0">
             <box id="guardtower" size="100% 44" linewidth="1">
                 <!--Item icon -->
                 <itemicon id="guardicon" size="16 16" pos="1 3"/>

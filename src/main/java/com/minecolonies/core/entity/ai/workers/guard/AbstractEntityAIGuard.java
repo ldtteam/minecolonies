@@ -267,7 +267,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
      */
     private boolean shouldSleep()
     {
-        if (worker.getLastHurtByMob() != null || target != null || fighttimer > 0 || job.getCitizen().getCitizenDiseaseHandler().isSick())
+        if (buildingGuards.getRallyLocation() != null || worker.getLastHurtByMob() != null || target != null || fighttimer > 0 || job.getCitizen().getCitizenDiseaseHandler().isSick())
         {
             return false;
         }
@@ -313,7 +313,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
      */
     protected IAIState sleep()
     {
-        if (worker.getLastHurtByMob() != null || (sleepTimer -= getTickRate()) < 0)
+        if (buildingGuards.getRallyLocation() != null || worker.getLastHurtByMob() != null || (sleepTimer -= getTickRate()) < 0)
         {
             stopSleeping();
             ((EntityCitizen) worker).getThreatTable().removeCurrentTarget();
