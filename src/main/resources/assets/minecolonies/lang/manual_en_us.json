@@ -266,8 +266,8 @@
   "minecolonies.config.canplayeruseresetcommand.comment": "Should players be allowed to use the /mc colony requestsystem-reset command?",
 
   "minecolonies.config.default.boolean": "[Default: %b]",
-  "minecolonies.config.default.int": "[Default: %s, min: %s, max: %s]",
-  "minecolonies.config.default.long": "[Default: %s, min: %s, max: %s]",
+  "minecolonies.config.default.int": "[Default: %d, min: %d, max: %d]",
+  "minecolonies.config.default.long": "[Default: %d, min: %d, max: %d]",
   "minecolonies.config.default.double": "[Default: %f, min: %f, max: %f]",
 
   "block.minecolonies.blockhutfield": "Field",
