@@ -9,6 +9,7 @@ import com.minecolonies.api.colony.IVisitorData;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.modules.*;
+import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
 import com.minecolonies.api.colony.buildings.modules.stat.IStat;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.sounds.TavernSounds;
@@ -16,6 +17,8 @@ import com.minecolonies.api.util.MathUtils;
 import com.minecolonies.api.util.StatsUtil;
 import com.minecolonies.core.Network;
 import com.minecolonies.core.client.gui.huts.WindowHutLiving;
+import com.minecolonies.core.colony.buildings.modules.settings.BoolSetting;
+import com.minecolonies.core.colony.buildings.modules.settings.SettingKey;
 import com.minecolonies.core.colony.buildings.views.LivingBuildingView;
 import com.minecolonies.core.colony.interactionhandling.RecruitmentInteraction;
 import com.minecolonies.core.datalistener.CustomVisitorListener;
@@ -26,6 +29,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
@@ -49,6 +53,9 @@ import static com.minecolonies.api.util.constant.StatisticsConstants.NEW_VISITOR
  */
 public class TavernBuildingModule extends AbstractBuildingModule implements IDefinesCoreBuildingStatsModule, IBuildingEventsModule, IPersistentModule, ITickingModule
 {
+    public static final ISettingKey<BoolSetting>       PLAYMUSIC      =
+      new SettingKey<>(BoolSetting.class, new ResourceLocation(com.minecolonies.api.util.constant.Constants.MOD_ID, "playmusic"));
+
     /**
      * Schematic name
      */
@@ -101,7 +108,9 @@ public class TavernBuildingModule extends AbstractBuildingModule implements IDef
     @Override
     public void onPlayerEnterBuilding(final Player player)
     {
-        if (musicCooldown <= 0 && building.getBuildingLevel() > 0 && !building.getColony().isDay())
+        boolean musicToggle = building.getSettingValueOrDefault(PLAYMUSIC, true);
+
+        if (musicToggle && musicCooldown <= 0 && building.getBuildingLevel() > 0 && !building.getColony().isDay())
         {
             int count = 0;
             BlockPos avg = BlockPos.ZERO;
@@ -126,8 +135,10 @@ public class TavernBuildingModule extends AbstractBuildingModule implements IDef
             avg = new BlockPos(avg.getX() / count, avg.getY() / count, avg.getZ() / count);
             final PlayMusicAtPosMessage message = new PlayMusicAtPosMessage(TavernSounds.tavernTheme, avg, building.getColony().getWorld(), 0.7f, 1.0f);
             for (final ServerPlayer curPlayer : building.getColony().getPackageManager().getCloseSubscribers())
+
             {
                 Network.getNetwork().sendToPlayer(message, curPlayer);
+
             }
             musicCooldown = TWENTY_MINUTES;
         }

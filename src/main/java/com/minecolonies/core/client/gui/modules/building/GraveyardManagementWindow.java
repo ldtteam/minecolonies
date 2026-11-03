@@ -52,6 +52,16 @@ public class GraveyardManagementWindow extends AbstractModuleWindow<GraveyardMan
     private static final String TAG_DIRECTION = "dir";
 
     /**
+     * Id of the burial plot statistics label inside the GUI.
+     */
+    private static final String TAG_PLOT_STATISTICS = "plotStatistics";
+
+    /**
+     * Translation key for the burial plot statistics label.
+     */
+    private static final String PLOT_STATISTICS = "com.minecolonies.coremod.gui.workerhuts.graveyard.plotsfilled";
+
+    /**
      * The world.
      */
     private final ClientLevel world = Minecraft.getInstance().level;
@@ -70,6 +80,7 @@ public class GraveyardManagementWindow extends AbstractModuleWindow<GraveyardMan
     public void onOpened()
     {
         super.onOpened();
+        updatePlotStatistics();
 
         /*
          * ScrollList with the graves.
@@ -128,5 +139,15 @@ public class GraveyardManagementWindow extends AbstractModuleWindow<GraveyardMan
     {
         super.onUpdate();
         moduleView.cleanGraves();
+        updatePlotStatistics();
+    }
+
+    /**
+     * Update the displayed number of occupied and total burial plots.
+     */
+    private void updatePlotStatistics()
+    {
+        findPaneOfTypeByID(TAG_PLOT_STATISTICS, Text.class).setText(Component.translatable(PLOT_STATISTICS,
+          moduleView.getFilledGravePlotCount(), moduleView.getTotalGravePlotCount()));
     }
 }

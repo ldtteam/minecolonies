@@ -1,4 +1,4 @@
-package com.minecolonies.core.compatibility.journeymap;
+package com.minecolonies.core.compatibility.journeymap.v5;
 
 import com.google.gson.JsonElement;
 import com.google.gson.internal.Streams;

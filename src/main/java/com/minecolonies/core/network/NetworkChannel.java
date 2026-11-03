@@ -205,7 +205,7 @@ public class NetworkChannel
         registerMessage(++idx, ColonyNameStyleMessage.class, ColonyNameStyleMessage::new);
         registerMessage(++idx, InteractionClose.class, InteractionClose::new);
         registerMessage(++idx, GetColonyInfoMessage.class, GetColonyInfoMessage::new);
-        registerMessage(++idx, PickupBlockMessage.class, PickupBlockMessage::new);
+        registerMessage(++idx, PickUpTownhallMessage.class, PickUpTownhallMessage::new);
         registerMessage(++idx, MarkStoryReadOnItemMessage.class, MarkStoryReadOnItemMessage::new);
         registerMessage(++idx, AlterRestaurantMenuItemMessage.class, AlterRestaurantMenuItemMessage::new);
 

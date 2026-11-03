@@ -109,6 +109,8 @@ public class DefaultResearchProvider extends AbstractResearchProvider
         effects.add(new ResearchEffect(RESURRECT_CHANCE).setTranslatedName("Improve Resurrection Chance by +%3$s%%").setLevels(new double[] {0.01, 0.03}));
         effects.add(new ResearchEffect(GRAVE_DECAY_BONUS).setTranslatedName("Citizen Graves Take %s More Minutes to Decay").setLevels(new double[] {5, 10}));
         effects.add(new ResearchEffect(LOOTING).setTranslatedName("Herders Gain Looting %s").setLevels(new double[] {1}));
+        effects.add(new ResearchEffect(MOUNT_HEALTH).setTranslatedName("Mount Health +%3$s%%").setLevels(new double[] {0.20, 0.40, 0.60, 0.80, 1.0}));
+        effects.add(new ResearchEffect(MOUNT_ARMOR).setTranslatedName("Mount Armor +%3$s%%").setLevels(new double[] {0.15, 0.30, 0.45, 0.60, 0.75}));
 
         // Guard and Worker unlocks do not need a strength, but do have static ResourceLocations.
         effects.add(new ResearchEffect(ARCHER_USE_ARROWS).setTranslatedName("Archers Use Arrows For +2 Damage"));
@@ -174,7 +176,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
         effects.add(new ResearchEffect(ModBuildings.stoneSmelter.get().getBuildingBlock()).setTranslatedName("Unlocks Brick Yard").setLevels(new double[] {5}));
         effects.add(new ResearchEffect(ModBuildings.netherWorker.get().getBuildingBlock()).setTranslatedName("Unlocks Nether Mine").setLevels(new double[] {5}));
         effects.add(new ResearchEffect(ModBuildings.alchemist.get().getBuildingBlock()).setTranslatedName("Unlocks Alchemist").setLevels(new double[] {5}));
-
+        effects.add(new ResearchEffect(ModBuildings.stable.get().getBuildingBlock()).setTranslatedName("Unlocks Stable").setLevels(new double[] {5}));
 
         // Crafter-recipe-only unlocks
         effects.add(new ResearchEffect(THE_END).setTranslatedName("Stonemasons Learn Endstone Recipe and Bakers Learn Chorus Bread Recipe"));
@@ -893,6 +895,15 @@ public class DefaultResearchProvider extends AbstractResearchProvider
                                            .addItemCost(Items.SHIELD, 16)
                                            .addEffect(BLOCK_ATTACKS, 3)
                                            .addToList(r);
+        final Research mountedCombat = new Research(new ResourceLocation(Constants.MOD_ID, "combat/mountedcombat"), COMBAT).setParentResearch(tacticTraining)
+                                          .setTranslatedName("Mounted Combat")
+                                          .setTranslatedSubtitle("Not just two empty halves of coconut.")
+                                          .setIcon(ModBlocks.blockHutStable.asItem())
+                                          .addItemCost(Items.SADDLE, 1)
+                                          .addItemCost(Items.LEAD, 1)
+                                          .addEffect(ModBuildings.stable.get().getBuildingBlock(), 1)
+                                          .addToList(r);
+
         new Research(new ResourceLocation(Constants.MOD_ID, "combat/captainoftheguard"), COMBAT).setParentResearch(captainTraining)
           .setTranslatedName("Captain of the Guard")
           .setIcon(Items.IRON_BLOCK)
@@ -1047,6 +1058,91 @@ public class DefaultResearchProvider extends AbstractResearchProvider
           .setIcon(Items.DIAMOND_BOOTS)
           .addItemCost(Items.DIAMOND, 64)
           .addEffect(ARCHER_ARMOR, 5)
+          .addToList(r);
+
+        final Research ivermectin = new Research(new ResourceLocation(Constants.MOD_ID, "combat/ivermectin"), COMBAT).setParentResearch(mountedCombat)
+          .setTranslatedName("Ivermectin")
+          .setTranslatedSubtitle("Just worm-free horses, despite what some may say...")
+          .setIcon(Items.RED_MUSHROOM)
+          .addBuildingRequirement(new ResourceLocation(Constants.MOD_ID, ModBuildings.STABLE_ID), 2)
+          .addBuildingRequirement(new ResourceLocation(Constants.MOD_ID, ModBuildings.HOSPITAL_ID), 2)
+          .addItemCost(Items.RED_MUSHROOM, 8)
+          .addItemCost(Items.WARPED_FUNGUS, 8)
+          .addEffect(MOUNT_HEALTH, 1)
+          .addToList(r);
+
+        final Research healthyDiet = new Research(new ResourceLocation(Constants.MOD_ID, "combat/healthdiet"), COMBAT).setParentResearch(ivermectin)
+          .setTranslatedName("Healthy Diet")
+          .setTranslatedSubtitle("Sugar cubes are beneath them.")
+          .setIcon(Items.HAY_BLOCK)
+          .addBuildingRequirement(new ResourceLocation(Constants.MOD_ID, ModBuildings.STABLE_ID), 3)
+          .addItemCost(Items.HAY_BLOCK, 2)
+          .addItemCost(Items.APPLE, 8)
+          .addEffect(MOUNT_HEALTH, 2)
+          .addToList(r);
+
+        final Research exerciseRegimen = new Research(new ResourceLocation(Constants.MOD_ID, "combat/exerciseregimen"), COMBAT).setParentResearch(healthyDiet)
+          .setTranslatedName("Exercise Regimen")
+          .setTranslatedSubtitle("War horse, warhead...")
+          .setIcon(Items.GOLDEN_APPLE)
+          .addBuildingRequirement(new ResourceLocation(Constants.MOD_ID, ModBuildings.STABLE_ID), 4)
+          .addItemCost(Items.GOLDEN_APPLE, 4)
+          .addItemCost(Items.GOLDEN_CARROT, 4)
+          .addEffect(MOUNT_HEALTH, 3)
+          .addToList(r);
+
+        new Research(new ResourceLocation(Constants.MOD_ID, "combat/bucephalus"), COMBAT).setParentResearch(exerciseRegimen)
+          .setTranslatedName("Bucephalus")
+          .setTranslatedSubtitle("They will go down in history.")
+          .setIcon(Items.NETHER_STAR)
+          .addBuildingRequirement(new ResourceLocation(Constants.MOD_ID, ModBuildings.STABLE_ID), 5)
+          .addItemCost(Items.NETHER_STAR, 1)
+          .addItemCost(Items.BLACK_BANNER, 1)
+          .addEffect(MOUNT_HEALTH, 4)
+          .addToList(r);
+
+        final Research barding = new Research(new ResourceLocation(Constants.MOD_ID, "combat/barding"), COMBAT).setParentResearch(mountedCombat)
+          .setTranslatedName("Barding")
+          .setTranslatedSubtitle("Like a tank with legs...")
+          .setIcon(Items.LEATHER_HORSE_ARMOR)
+          .addBuildingRequirement(new ResourceLocation(Constants.MOD_ID, ModBuildings.STABLE_ID), 3)
+          .addBuildingRequirement(new ResourceLocation(Constants.MOD_ID, ModBuildings.BLACKSMITH_ID), 3)
+          .addItemCost(Items.LEATHER_HORSE_ARMOR, 8)
+          .addItemCost(Items.IRON_INGOT, 5)
+          .addEffect(MOUNT_ARMOR, 1)
+          .addToList(r);
+
+        final Research improvedBarding = new Research(new ResourceLocation(Constants.MOD_ID, "combat/improvedbarding"), COMBAT).setParentResearch(barding)
+          .setTranslatedName("Improved Barding")
+          .setTranslatedSubtitle("Tougher than it looks...")
+          .setIcon(Items.IRON_HORSE_ARMOR)
+          .addBuildingRequirement(new ResourceLocation(Constants.MOD_ID, ModBuildings.STABLE_ID), 4)
+          .addBuildingRequirement(new ResourceLocation(Constants.MOD_ID, ModBuildings.BLACKSMITH_ID), 4)
+          .addItemCost(Items.IRON_HORSE_ARMOR, 1)
+          .addItemCost(Items.GOLD_INGOT, 5)
+          .addEffect(MOUNT_ARMOR, 2)
+          .addToList(r);
+
+        final Research advancedBarding = new Research(new ResourceLocation(Constants.MOD_ID, "combat/advancedbarding"), COMBAT).setParentResearch(improvedBarding)
+          .setTranslatedName("Advanced Barding")
+          .setTranslatedSubtitle("I laugh at your swords...")
+          .setIcon(Items.GOLDEN_HORSE_ARMOR)
+          .addBuildingRequirement(new ResourceLocation(Constants.MOD_ID, ModBuildings.STABLE_ID), 5)
+          .addBuildingRequirement(new ResourceLocation(Constants.MOD_ID, ModBuildings.BLACKSMITH_ID), 5)
+          .addItemCost(Items.GOLDEN_HORSE_ARMOR, 1)
+          .addItemCost(Items.DIAMOND, 5)
+          .addEffect(MOUNT_ARMOR, 3)
+          .addToList(r);
+
+        new Research(new ResourceLocation(Constants.MOD_ID, "combat/masterbarding"), COMBAT).setParentResearch(advancedBarding)
+          .setTranslatedName("Master Barding")
+          .setTranslatedSubtitle("Is this... mithril?")
+          .setIcon(Items.DIAMOND_HORSE_ARMOR)
+          .addBuildingRequirement(new ResourceLocation(Constants.MOD_ID, ModBuildings.STABLE_ID), 5)
+          .addBuildingRequirement(new ResourceLocation(Constants.MOD_ID, ModBuildings.BLACKSMITH_ID), 5)
+          .addItemCost(Items.DIAMOND_HORSE_ARMOR, 1)
+          .addItemCost(Items.NETHERITE_INGOT, 5)
+          .addEffect(MOUNT_ARMOR, 4)
           .addToList(r);
 
         // Primary Research #4

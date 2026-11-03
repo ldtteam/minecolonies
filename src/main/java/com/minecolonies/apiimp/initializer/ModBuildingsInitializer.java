@@ -170,6 +170,7 @@ public final class ModBuildingsInitializer
           .setBuildingViewProducer(() -> EmptyView::new)
           .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.STABLE_ID))
           .addBuildingModuleProducer(CAVALRY_STABLE_WORK)
+          .addBuildingModuleProducer(BED)
           .addBuildingModuleProducer(STABLEMASTER_WORK)
           .addBuildingModuleProducer(STABLEMASTER_HERDING)
           .addBuildingModuleProducer(GUARD_ENTITY_LIST)
@@ -524,6 +525,7 @@ public final class ModBuildingsInitializer
           .addBuildingModuleProducer(TAVERN_VISITOR)
           .addBuildingModuleProducer(BED)
           .addBuildingModuleProducer(STATS_MODULE)
+          .addBuildingModuleProducer(TAVERN_SETTINGS)
           .createBuildingEntry());
 
         ModBuildings.mechanic = DEFERRED_REGISTER.register(ModBuildings.MECHANIC_ID, () -> new BuildingEntry.Builder()
@@ -605,6 +607,7 @@ public final class ModBuildingsInitializer
           .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.GRAVEYARD_ID))
           .addBuildingModuleProducer(GRAVEYARD_WORK)
           .addBuildingModuleProducer(GRAVEYARD)
+          .addBuildingModuleProducer(MIN_STOCK)
           .addBuildingModuleProducer(STATS_MODULE)
           .createBuildingEntry());
 

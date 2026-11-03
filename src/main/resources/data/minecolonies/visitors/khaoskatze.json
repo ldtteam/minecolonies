@@ -1,0 +1,12 @@
+{
+  "texture": "f79086fd-867f-475a-965e-2dcf0e038a10",
+  "citizensuffix": "_w",
+  "name": "Katu A. Khaos",
+  "chance": 0.001,
+  "storylangkey": "com.minecolonies.coremod.gui.chat.khaoskatze",
+  "recruitcost": "minecraft:cookie",
+  "recruitcostcount": 64,
+  "gender": "female",
+  "primaryskill": "Dexterity",
+  "secondaryskill": "Adaptability"
+}

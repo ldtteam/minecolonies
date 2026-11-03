@@ -1,0 +1,37 @@
+{
+  "branch": "minecolonies:combat",
+  "costs": [
+    {
+      "type": "minecolonies:item_simple",
+      "item": "minecraft:diamond_horse_armor",
+      "quantity": 1
+    },
+    {
+      "type": "minecolonies:item_simple",
+      "item": "minecraft:netherite_ingot",
+      "quantity": 5
+    }
+  ],
+  "effects": [
+    {
+      "id": "minecolonies:effects/mountarmor",
+      "level": 4
+    }
+  ],
+  "icon": "minecraft:diamond_horse_armor",
+  "parentResearch": "minecolonies:combat/advancedbarding",
+  "requirements": [
+    {
+      "type": "minecolonies:building",
+      "building": "minecolonies:stable",
+      "level": 5
+    },
+    {
+      "type": "minecolonies:building",
+      "building": "minecolonies:blacksmith",
+      "level": 5
+    }
+  ],
+  "researchLevel": 6,
+  "subtitle": "com.minecolonies.research.combat.masterbarding.subtitle"
+}

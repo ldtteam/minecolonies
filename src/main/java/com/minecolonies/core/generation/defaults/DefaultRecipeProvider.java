@@ -112,8 +112,7 @@ public class DefaultRecipeProvider extends RecipeProvider
         registerHutRecipe1(consumer, ModBlocks.blockHutNetherWorker, Items.OBSIDIAN);
         registerHutRecipe1(consumer, ModBlocks.blockHutAlchemist, Items.BREWING_STAND);
         registerHutRecipe1(consumer, ModBlocks.blockHutKitchen, Items.SMOKER);
-        // TODO: Cavalry 4 of 4 - replace stable recipe.
-        // registerHutRecipe1(consumer, ModBlocks.blockHutStable, Items.GOLDEN_APPLE);
+        registerHutRecipe1(consumer, ModBlocks.blockHutStable, Items.GOLDEN_APPLE);
 
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.blockHutCrusher)
                 .pattern("XTX")
