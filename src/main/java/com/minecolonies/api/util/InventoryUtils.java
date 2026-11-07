@@ -7,15 +7,13 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.ICommonBuilding;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.equipment.registry.EquipmentTypeEntry;
-import com.minecolonies.api.research.IGlobalResearch;
-import com.minecolonies.api.research.IResearchCost;
 import com.minecolonies.core.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.core.tileentities.TileEntityRack;
-
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Inventory;
@@ -1890,6 +1888,82 @@ public class InventoryUtils
       @NotNull final IItemHandler targetHandler)
     {
         return transferItemStackIntoNextBestSlotInItemHandler(building, storage, Integer.MAX_VALUE, targetHandler);
+    }
+
+    /**
+     * Method to transfer an ItemStacks to a Building.
+     *
+     * @param building The {@link IBuilding} that works as Source.
+     * @param stack    the ItemStack.
+     * @param qty      the quantity
+     * @return the transfered amount.
+     */
+    public static int transferItemStackToBuilding(
+        final IBuilding building,
+        final ItemStack stack,
+        final int qty)
+    {
+        int tempQty = qty;
+        final Level level = building.getColony().getWorld();
+        for (int i = 0; i < Math.max(1, qty/stack.getMaxStackSize()); i++)
+        {
+            for (final BlockPos pos : building.getContainers())
+            {
+                if (WorldUtil.isBlockLoaded(level, pos))
+                {
+                    final BlockEntity entity = level.getBlockEntity(pos);
+                    if (entity instanceof TileEntityRack tileEntityRack)
+                    {
+                        int localQty = Math.min(tempQty, stack.getMaxStackSize());
+                        final ItemStack itemStack = stack.copy();
+                        itemStack.setCount(localQty);
+                        tempQty -= localQty - transferItemStackIntoNextBestSlotInItemHandlerWithResult(itemStack, tileEntityRack.getInventory()).getCount();
+
+                        if (tempQty <= 0)
+                        {
+                            return 0;
+                        }
+                    }
+                }
+            }
+        }
+
+        return tempQty;
+    }
+
+    /**
+     * Method to transfer an ItemStacks to a Building.
+     *
+     * @param building The {@link IBuilding} that works as Source.
+     * @param stack    the ItemStack.
+     * @param qty      the quantity
+     * @return the transfered amount.
+     */
+    public static int transferItemStackFromItemHandlerToBuilding(
+        final IItemHandler handler,
+        final IBuilding building,
+        final ItemStack stack,
+        final int qty)
+    {
+        int tempQty = qty;
+        final Level level = building.getColony().getWorld();
+        for (final BlockPos pos : building.getContainers())
+        {
+            if (WorldUtil.isBlockLoaded(level, pos))
+            {
+                final BlockEntity entity = level.getBlockEntity(pos);
+                if (entity instanceof TileEntityRack tileEntityRack)
+                {
+                    tempQty = transferXOfFirstSlotInItemHandlerWithIntoNextFreeSlotInItemHandlerWithResult(handler, stack1 -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack1, stack, true, true), tempQty, tileEntityRack.getInventory());
+                    if (tempQty <= 0)
+                    {
+                        return 0;
+                    }
+                }
+            }
+        }
+
+        return tempQty;
     }
 
     /**
