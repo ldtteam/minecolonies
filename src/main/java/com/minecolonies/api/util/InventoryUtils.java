@@ -7,15 +7,13 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.ICommonBuilding;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.equipment.registry.EquipmentTypeEntry;
-import com.minecolonies.api.research.IGlobalResearch;
-import com.minecolonies.api.research.IResearchCost;
 import com.minecolonies.core.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.core.tileentities.TileEntityRack;
-
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Inventory;
@@ -1893,6 +1891,87 @@ public class InventoryUtils
     }
 
     /**
+     * Method to transfer an ItemStacks to a Building.
+     *
+     * @param building The {@link IBuilding} that works as Source.
+     * @param stack    the ItemStack.
+     * @param qty      the quantity
+     * @return the transfered amount.
+     */
+    public static int transferItemStackToBuilding(
+        final IBuilding building,
+        final ItemStack stack,
+        final int qty)
+    {
+        int tempQty = qty;
+        final Level level = building.getColony().getWorld();
+        for (int i = 0; i < Math.max(1, Math.ceil((double)qty/stack.getMaxStackSize())); i++)
+        {
+            final int before = tempQty;
+            for (final BlockPos pos : building.getContainers())
+            {
+                if (WorldUtil.isBlockLoaded(level, pos))
+                {
+                    final BlockEntity entity = level.getBlockEntity(pos);
+                    if (entity instanceof TileEntityRack tileEntityRack)
+                    {
+                        int localQty = Math.min(tempQty, stack.getMaxStackSize());
+                        final ItemStack itemStack = stack.copy();
+                        itemStack.setCount(localQty);
+                        tempQty -= localQty - transferItemStackIntoNextBestSlotInItemHandlerWithResult(itemStack, tileEntityRack.getInventory()).getCount();
+
+                        if (tempQty <= 0)
+                        {
+                            return 0;
+                        }
+                    }
+                }
+            }
+            if (tempQty == before)
+            {
+                break;
+            }
+        }
+
+        return tempQty;
+    }
+
+    /**
+     * Method to transfer an ItemStacks to a Building.
+     *
+     * @param building The {@link IBuilding} that works as Source.
+     * @param stack    the ItemStack.
+     * @param qty      the quantity
+     * @return the transfered amount.
+     */
+    public static int transferItemStackFromItemHandlerToBuilding(
+        final IItemHandler handler,
+        final IBuilding building,
+        final ItemStack stack,
+        final int qty)
+    {
+        int tempQty = qty;
+        final Level level = building.getColony().getWorld();
+        for (final BlockPos pos : building.getContainers())
+        {
+            if (WorldUtil.isBlockLoaded(level, pos))
+            {
+                final BlockEntity entity = level.getBlockEntity(pos);
+                if (entity instanceof TileEntityRack tileEntityRack)
+                {
+                    tempQty = transferXOfFirstSlotInItemHandlerWithIntoNextFreeSlotInItemHandlerWithResult(handler, stack1 -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack1, stack, true, true), tempQty, tileEntityRack.getInventory());
+                    if (tempQty <= 0)
+                    {
+                        return 0;
+                    }
+                }
+            }
+        }
+
+        return tempQty;
+    }
+
+    /**
      * Method to put a given Itemstack in a given target {@link IItemHandler}. Trying to merge existing itemStacks if possible.
      *
      * @param stack         the itemStack to transfer.
@@ -1982,7 +2061,7 @@ public class InventoryUtils
      *
      * @param stack         the stack to add.
      * @param targetHandler The {@link IItemHandler} that works as Target.
-     * @return True when the swap was successful, false when not.
+     * @return an empty stack if all was transfered else the leftover.
      */
     public static ItemStack mergeItemStackIntoNextBestSlotInItemHandlers(
       final ItemStack stack,
@@ -2100,13 +2179,18 @@ public class InventoryUtils
 
             if (!ItemStackUtils.isEmpty(returnStack))
             {
-                if (!InventoryUtils.addItemStackToItemHandler(targetHandler, returnStack))
+                final ItemStack result = InventoryUtils.transferItemStackIntoNextBestSlotInItemHandlerWithResult(returnStack, targetHandler);
+                if (!result.isEmpty())
                 {
-                    sourceHandler.insertItem(desiredItemSlot, returnStack, false);
-                    break;
+                    sourceHandler.insertItem(desiredItemSlot, result, false);
                 }
-                // Only reduce if successfully inserted.
-                currentAmount -= returnStack.getCount();
+
+                if (result.getCount() == returnStack.getCount())
+                {
+                    return currentAmount;
+                }
+
+                currentAmount -= returnStack.getCount() - result.getCount();
             }
 
             slot++;
