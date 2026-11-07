@@ -150,6 +150,9 @@ public class JEIPlugin implements IModPlugin
                 registerCategory(registration, category);
             }
         }
+
+        // cook doesn't have a crafting module, but can still use generic recipes
+        registerCategory(registration, new CookRecipeCategory(guiHelper, modIdHelper));
     }
 
     private void registerCategory(@NotNull final IRecipeCategoryRegistration registration,
