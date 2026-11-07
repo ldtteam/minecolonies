@@ -2179,7 +2179,7 @@ public class InventoryUtils
 
             if (!ItemStackUtils.isEmpty(returnStack))
             {
-                final ItemStack result = InventoryUtils.mergeItemStackIntoNextBestSlotInItemHandlers(returnStack, targetHandler);
+                final ItemStack result = InventoryUtils.transferItemStackIntoNextBestSlotInItemHandlerWithResult(returnStack, targetHandler);
                 if (!result.isEmpty())
                 {
                     sourceHandler.insertItem(desiredItemSlot, result, false);
