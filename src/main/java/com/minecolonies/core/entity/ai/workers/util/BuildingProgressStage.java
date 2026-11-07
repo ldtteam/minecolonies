@@ -6,6 +6,7 @@ package com.minecolonies.core.entity.ai.workers.util;
 public enum BuildingProgressStage
 {
     CLEAR,
+    BUILD_FRAME,
     BUILD_SOLID,
     CLEAR_WATER,
     CLEAR_NON_SOLIDS,
