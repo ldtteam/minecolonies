@@ -106,22 +106,27 @@ public class TransferItemsRequestMessage extends AbstractBuildingServerMessage<I
             previousContent = InventoryUtils.getAllItemsForProviders(building.getTileEntity(), new InvWrapper(player.getInventory()));
         }
 
+        final int toMove;
         final int leftOver;
         if (isCreative)
         {
+            toMove = this.quantity;
             leftOver = InventoryUtils.transferItemStackToBuilding(building, itemStack, this.quantity);
         }
         else
         {
-            final int playerQty = InventoryUtils.getItemCountInItemHandler(new InvWrapper(player.getInventory()), stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, itemStack, true, true));
-            leftOver = InventoryUtils.transferItemStackFromItemHandlerToBuilding(new InvWrapper(player.getInventory()), building, itemStack, playerQty);
+            toMove = Math.min(this.quantity, InventoryUtils.getItemCountInItemHandler(new InvWrapper(player.getInventory()), stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, itemStack, true, true)));
+            if (toMove == 0)
+            {
+                return;
+            }
+            leftOver = InventoryUtils.transferItemStackFromItemHandlerToBuilding(new InvWrapper(player.getInventory()), building, itemStack, toMove);
         }
         if (leftOver > 0)
         {
             MessageUtils.format(Component.translatable("entity.builder.inventoryfull", itemStack.getDisplayName()).withStyle(ChatFormatting.RED)).sendTo(player);
         }
-        final boolean success = leftOver < this.quantity;
-
+        final boolean success = leftOver < toMove;
         if (attemptResolve && success)
         {
             building.overruleNextOpenRequestWithStack(itemStack);

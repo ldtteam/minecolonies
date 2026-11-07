@@ -1905,8 +1905,9 @@ public class InventoryUtils
     {
         int tempQty = qty;
         final Level level = building.getColony().getWorld();
-        for (int i = 0; i < Math.max(1, qty/stack.getMaxStackSize()); i++)
+        for (int i = 0; i < Math.max(1, Math.ceil((double)qty/stack.getMaxStackSize())); i++)
         {
+            final int before = tempQty;
             for (final BlockPos pos : building.getContainers())
             {
                 if (WorldUtil.isBlockLoaded(level, pos))
@@ -1925,6 +1926,10 @@ public class InventoryUtils
                         }
                     }
                 }
+            }
+            if (tempQty == before)
+            {
+                break;
             }
         }
 
@@ -2056,7 +2061,7 @@ public class InventoryUtils
      *
      * @param stack         the stack to add.
      * @param targetHandler The {@link IItemHandler} that works as Target.
-     * @return True when the swap was successful, false when not.
+     * @return an empty stack if all was transfered else the leftover.
      */
     public static ItemStack mergeItemStackIntoNextBestSlotInItemHandlers(
       final ItemStack stack,
@@ -2174,13 +2179,18 @@ public class InventoryUtils
 
             if (!ItemStackUtils.isEmpty(returnStack))
             {
-                if (!InventoryUtils.addItemStackToItemHandler(targetHandler, returnStack))
+                final ItemStack result = InventoryUtils.mergeItemStackIntoNextBestSlotInItemHandlers(returnStack, targetHandler);
+                if (!result.isEmpty())
                 {
-                    sourceHandler.insertItem(desiredItemSlot, returnStack, false);
-                    break;
+                    sourceHandler.insertItem(desiredItemSlot, result, false);
                 }
-                // Only reduce if successfully inserted.
-                currentAmount -= returnStack.getCount();
+
+                if (result.getCount() == returnStack.getCount())
+                {
+                    return currentAmount;
+                }
+
+                currentAmount -= returnStack.getCount() - result.getCount();
             }
 
             slot++;
