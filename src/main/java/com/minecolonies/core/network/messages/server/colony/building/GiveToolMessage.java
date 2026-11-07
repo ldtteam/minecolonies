@@ -2,6 +2,7 @@ package com.minecolonies.core.network.messages.server.colony.building;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
+import com.minecolonies.api.items.IScepter;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
@@ -67,6 +68,10 @@ public class GiveToolMessage extends AbstractBuildingServerMessage<AbstractBuild
         }
 
         final ItemStack scepter = InventoryUtils.getOrCreateItemAndPutToHotbarAndSelectOrDrop(item, player, item::getDefaultInstance, true);
+        if (!(scepter.getItem() instanceof IScepter))
+        {
+            return;
+        }
         final CompoundTag compound = scepter.getOrCreateTag();
         BlockPosUtil.write(compound, TAG_POS, building.getID());
         compound.putInt(TAG_ID, colony.getID());
