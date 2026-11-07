@@ -127,12 +127,16 @@ public class TransferItemsRequestMessage extends AbstractBuildingServerMessage<I
             MessageUtils.format(Component.translatable("entity.builder.inventoryfull", itemStack.getDisplayName()).withStyle(ChatFormatting.RED)).sendTo(player);
         }
         final boolean success = leftOver < toMove;
-        if (attemptResolve && success)
-        {
-            building.overruleNextOpenRequestWithStack(itemStack);
-            building.getTileEntity().setChanged();
-        }
 
+        if (success)
+        {
+            building.getTileEntity().setChanged();
+            if (attemptResolve)
+            {
+                building.overruleNextOpenRequestWithStack(itemStack);
+            }
+        }
+       
         if (!isCreative && previousContent != null && MineColonies.getConfig().getServer().debugInventories.get())
         {
             InventoryUtils.doStorageSetsMatch(previousContent, InventoryUtils.getAllItemsForProviders(building.getTileEntity(), new InvWrapper(player.getInventory())), true);
