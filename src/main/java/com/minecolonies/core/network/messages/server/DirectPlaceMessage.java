@@ -4,6 +4,8 @@ import com.ldtteam.common.network.AbstractServerPlayMessage;
 import com.ldtteam.common.network.PlayMessageType;
 import com.ldtteam.structurize.storage.ServerFutureProcessor;
 import com.ldtteam.structurize.storage.StructurePacks;
+import com.ldtteam.structurize.util.BlockUtils;
+import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
@@ -97,7 +99,11 @@ public class DirectPlaceMessage extends AbstractServerPlayMessage
     {
         final Level world = player.getCommandSenderWorld();
         final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld(world, pos);
-        InventoryUtils.reduceStackInItemHandler(new InvWrapper(player.getInventory()), stack);
+        if (player.blockPosition().distSqr(pos) > 5 * 5 || !state.equals(BlockUtils.getBlockStateFromStack(stack)) || !world.getBlockState(pos).isAir()
+            || !(state.getBlock() instanceof AbstractBlockHut))
+        {
+            return;
+        }
 
         if ((colony == null && state.getBlock() == ModBlocks.blockHutTownHall) || (colony != null && colony.getPermissions().hasPermission(player, Action.MANAGE_HUTS)))
         {
@@ -105,6 +111,11 @@ public class DirectPlaceMessage extends AbstractServerPlayMessage
             if (colony != null && colonyId.hasColonyId() && colony.getID() != colonyId.id())
             {
                 MessageUtils.format(WRONG_COLONY, colonyId.id()).sendTo(player);
+                return;
+            }
+
+            if (!InventoryUtils.attemptReduceStackInItemHandler(new InvWrapper(player.getInventory()), stack, 1))
+            {
                 return;
             }
 
