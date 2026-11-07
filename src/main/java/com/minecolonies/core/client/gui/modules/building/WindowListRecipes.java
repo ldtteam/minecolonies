@@ -6,7 +6,6 @@ import com.ldtteam.blockui.controls.*;
 import com.ldtteam.blockui.views.ScrollingList;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.crafting.ItemStorage;
-import com.minecolonies.api.equipment.ModEquipmentTypes;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.core.Network;
@@ -207,7 +206,7 @@ public class WindowListRecipes extends AbstractModuleWindow<CraftingModuleView>
 
                 final Text intermediate = rowPane.findPaneOfTypeByID("intermediate", Text.class);
                 intermediate.setVisible(false);
-                if (recipe.getRequiredTool() != ModEquipmentTypes.none.get())
+                if (recipe.getRequiredTool() != null)
                 {
                     intermediate.setText(recipe.getRequiredTool().getDisplayName());
                     intermediate.setVisible(true);
