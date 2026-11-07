@@ -54,11 +54,12 @@ public class GiveToolMessage extends AbstractBuildingServerMessage<AbstractBuild
     @Override
     protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final AbstractBuilding building)
     {
-        final ItemStack scepter = InventoryUtils.getOrCreateItemAndPutToHotbarAndSelectOrDrop(item, player, item::getDefaultInstance, true);
-        if (!(scepter.getItem() instanceof IScepter))
+        if (!(item instanceof IScepter))
         {
             return;
         }
+        final ItemStack scepter = InventoryUtils.getOrCreateItemAndPutToHotbarAndSelectOrDrop(item, player, item::getDefaultInstance, true);
+
         building.writeToItemStack(scepter);
 
         player.getInventory().setChanged();
