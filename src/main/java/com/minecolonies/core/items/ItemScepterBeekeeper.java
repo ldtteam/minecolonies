@@ -6,6 +6,7 @@ import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.items.IBlockOverlayItem;
 import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.items.IScepter;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.core.Network;
@@ -36,7 +37,7 @@ import static com.minecolonies.api.util.constant.translation.ToolTranslationCons
 /**
  * Beekeeper Scepter Item class. Used to give tasks to Beekeeper.
  */
-public class ItemScepterBeekeeper extends AbstractItemMinecolonies implements IBlockOverlayItem
+public class ItemScepterBeekeeper extends AbstractItemMinecolonies implements IBlockOverlayItem, IScepter
 {
     private static final int RED_OVERLAY = 0xFFFF0000;
     private static final int YELLOW_OVERLAY = 0xFFFFFF00;
