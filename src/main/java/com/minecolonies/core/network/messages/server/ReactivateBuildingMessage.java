@@ -4,8 +4,9 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.network.IMessage;
-import com.minecolonies.core.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
+import com.minecolonies.core.network.IRangeRestrictedPacket;
+import com.minecolonies.core.tileentities.TileEntityColonyBuilding;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
@@ -19,7 +20,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Reactivate a building.
  */
-public class ReactivateBuildingMessage implements IMessage
+public class ReactivateBuildingMessage implements IMessage, IRangeRestrictedPacket<BlockPos>
 {
     /**
      * The position to reactivate it.
@@ -79,6 +80,12 @@ public class ReactivateBuildingMessage implements IMessage
     {
         final ServerPlayer player = ctxIn.getSender();
         final Level world = player.getCommandSenderWorld();
+
+        if (!isInRange(player, pos))
+        {
+            return;
+        }
+
         final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld(world, pos);
         if (colony != null && colony.getPermissions().hasPermission(player, Action.MANAGE_HUTS))
         {
@@ -98,5 +105,11 @@ public class ReactivateBuildingMessage implements IMessage
                 }
             }
         }
+    }
+
+    @Override
+    public boolean isInRange(final ServerPlayer player, final BlockPos target)
+    {
+        return player.blockPosition().distSqr(target) < 15 * 15;
     }
 }

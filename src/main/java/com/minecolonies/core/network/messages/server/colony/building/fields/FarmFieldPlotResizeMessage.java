@@ -4,10 +4,12 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildingextensions.registry.BuildingExtensionRegistries;
 import com.minecolonies.api.network.IMessage;
 import com.minecolonies.core.colony.buildingextensions.FarmField;
+import com.minecolonies.core.network.IRangeRestrictedPacket;
 import com.minecolonies.core.tileentities.TileEntityScarecrow;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.network.NetworkEvent;
 
@@ -18,7 +20,7 @@ import static com.minecolonies.core.colony.buildingextensions.FarmField.MAX_RANG
 /**
  * Message to change the farmer field plot size.
  */
-public class FarmFieldPlotResizeMessage implements IMessage
+public class FarmFieldPlotResizeMessage implements IMessage, IRangeRestrictedPacket<BlockPos>
 {
     /**
      * The new radius of the field plot.
@@ -96,5 +98,11 @@ public class FarmFieldPlotResizeMessage implements IMessage
         size = buf.readInt();
         direction = Direction.from2DDataValue(buf.readInt());
         position = buf.readBlockPos();
+    }
+
+    @Override
+    public boolean isInRange(final ServerPlayer player, final BlockPos target)
+    {
+        return player.blockPosition().distSqr(target) < 15 * 15;
     }
 }
