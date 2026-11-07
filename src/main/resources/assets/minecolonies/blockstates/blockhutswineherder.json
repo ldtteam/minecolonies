@@ -2,19 +2,19 @@
   "variants": {
     "facing=east": {
       "model": "minecolonies:block/blockhutswineherder",
-      "y": 0
+      "y": 270
     },
     "facing=south": {
       "model": "minecolonies:block/blockhutswineherder",
-      "y": 90
+      "y": 0
     },
     "facing=west": {
       "model": "minecolonies:block/blockhutswineherder",
-      "y": 180
+      "y": 90
     },
     "facing=north": {
       "model": "minecolonies:block/blockhutswineherder",
-      "y": 270
+      "y": 180
     }
   }
 }

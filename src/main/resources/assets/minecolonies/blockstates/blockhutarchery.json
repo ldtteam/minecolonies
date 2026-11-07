@@ -2,19 +2,19 @@
   "variants": {
     "facing=east": {
       "model": "minecolonies:block/blockhutarchery",
-      "y": 0
+      "y": 180
     },
     "facing=south": {
       "model": "minecolonies:block/blockhutarchery",
-      "y": 90
+      "y": 270
     },
     "facing=west": {
       "model": "minecolonies:block/blockhutarchery",
-      "y": 180
+      "y": 0
     },
     "facing=north": {
       "model": "minecolonies:block/blockhutarchery",
-      "y": 270
+      "y": 90
     }
   }
 }

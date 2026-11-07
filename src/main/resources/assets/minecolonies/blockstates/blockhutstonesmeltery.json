@@ -2,19 +2,19 @@
   "variants": {
     "facing=east": {
       "model": "minecolonies:block/blockhutstonesmeltery",
-      "y": 0
+      "y": 180
     },
     "facing=south": {
       "model": "minecolonies:block/blockhutstonesmeltery",
-      "y": 90
+      "y": 270
     },
     "facing=west": {
       "model": "minecolonies:block/blockhutstonesmeltery",
-      "y": 180
+      "y": 0
     },
     "facing=north": {
       "model": "minecolonies:block/blockhutstonesmeltery",
-      "y": 270
+      "y": 90
     }
   }
 }
