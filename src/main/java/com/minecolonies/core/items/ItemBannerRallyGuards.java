@@ -318,7 +318,7 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
             if (building != null)
             {
                 building.setRallyLocation(rallyTarget);
-                numGuards += building.getAllAssignedCitizen().size();
+                numGuards += building.getAllAssignedMilitaryUnits().size();
             }
         }
         return numGuards;

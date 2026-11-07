@@ -1,12 +1,15 @@
 package com.minecolonies.core.client.gui;
 
 import com.ldtteam.blockui.Color;
+import com.ldtteam.blockui.PaneBuilders;
 import com.ldtteam.blockui.controls.Button;
 import com.ldtteam.blockui.controls.ButtonImage;
 import com.ldtteam.blockui.controls.ItemIcon;
 import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.blockui.views.ScrollingList;
-import com.minecolonies.api.colony.guardtype.registry.ModGuardTypes;
+import com.minecolonies.api.colony.ICitizenDataView;
+import com.minecolonies.api.colony.guardtype.GuardType;
+import com.minecolonies.api.colony.guardtype.registry.IGuardTypeRegistry;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.Network;
@@ -15,12 +18,15 @@ import com.minecolonies.core.network.messages.server.RemoveFromRallyingListMessa
 import com.minecolonies.core.network.messages.server.ToggleBannerRallyGuardsMessage;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.core.items.ItemBannerRallyGuards.*;
@@ -84,6 +90,55 @@ public class WindowBannerRallyGuards extends AbstractWindowSkeleton
         registerButton(BUTTON_RALLY, this::rallyClicked);
     }
 
+    /**
+     * Helper to assemble the guard information associated with the given military building.
+     *
+     * @param militaryView the military building view.
+     * @return the assembled detail for the associated view.
+     */
+    private MutableComponent assembleGuardDetails(final AbstractBuildingGuards.View militaryView)
+    {
+        final Map<GuardType, Integer> assignedGuardTypes = new HashMap<>();
+
+        for (final int citizenId : militaryView.getGuards())
+        {
+            final ICitizenDataView citizen = militaryView.getColony().getCitizen(citizenId);
+            if (citizen == null || citizen.getJobView() == null)
+            {
+                continue;
+            }
+
+            // Ensure that only military units are listed on the banner.
+            for (final GuardType guardType : IGuardTypeRegistry.getInstance().getValues())
+            {
+                if (guardType.getJobEntry().get().equals(citizen.getJobView().getEntry()))
+                {
+                    assignedGuardTypes.merge(guardType, 1, Integer::sum);
+                    break;
+                }
+            }
+        }
+
+        if (assignedGuardTypes.isEmpty())
+        {
+            return Component.translatable(COM_MINECOLONIES_BANNER_RALLY_GUARDS_GUI_UNSTAFFED);
+        }
+
+        final MutableComponent guardDetails = Component.empty();
+        for (final Map.Entry<GuardType, Integer> assignedGuardType : assignedGuardTypes.entrySet())
+        {
+            if (!guardDetails.getSiblings().isEmpty())
+            {
+                guardDetails.append(", ");
+            }
+
+            guardDetails.append(Component.translatable(assignedGuardType.getKey().getJobTranslationKey()));
+            guardDetails.append(": " + assignedGuardType.getValue());
+        }
+
+        return guardDetails;
+    }
+
     @Override
     public void onOpened()
     {
@@ -109,27 +164,26 @@ public class WindowBannerRallyGuards extends AbstractWindowSkeleton
 
             final Pair<ILocation, AbstractBuildingGuards.View> guardTower = guardTowers.get(index);
 
-            //todo we probably want to display the exact mix.
             final ItemIcon exampleStackDisplay = rowPane.findPaneOfTypeByID(ICON_GUARD, ItemIcon.class);
+            final Text guardTypeLabel = rowPane.findPaneOfTypeByID(LABEL_GUARDTYPE, Text.class);
             final AbstractBuildingGuards.View guardTowerView = guardTower.getSecond();
 
             if (guardTowerView != null)
             {
                 exampleStackDisplay.setItem(new ItemStack(Items.IRON_SWORD));
-                rowPane.findPaneOfTypeByID(LABEL_GUARDTYPE, Text.class).setText(Component.translatable(ModGuardTypes.knight.get().getJobTranslationKey())
-                  .append("|")
-                  .append(Component.translatable(ModGuardTypes.ranger.get().getJobTranslationKey()))
-                  .append(": ")
-                  .append(String.valueOf(guardTowerView.getGuards().size())));
+                final MutableComponent guardDetails = assembleGuardDetails(guardTowerView);
+                guardTypeLabel.setText(guardDetails);
+                guardTypeLabel.setColors(Color.rgbaToInt(0, 0, 0, 1));
+                PaneBuilders.singleLineTooltip(guardDetails, guardTypeLabel);
                 rowPane.findPaneOfTypeByID(LABEL_POSITION, Text.class).setText(Component.literal(guardTower.getFirst().toString()));
             }
             else
             {
                 exampleStackDisplay.setItem(new ItemStack(Items.COOKIE));
 
-                rowPane.findPaneOfTypeByID(LABEL_GUARDTYPE, Text.class)
-                  .setText(Component.translatable(COM_MINECOLONIES_BANNER_RALLY_GUARDS_GUI_TOWERMISSING));
-                rowPane.findPaneOfTypeByID(LABEL_GUARDTYPE, Text.class).setColors(Color.rgbaToInt(255, 0, 0, 1));
+                guardTypeLabel.setText(Component.translatable(COM_MINECOLONIES_BANNER_RALLY_GUARDS_GUI_TOWERMISSING));
+                guardTypeLabel.setColors(Color.rgbaToInt(255, 0, 0, 1));
+                guardTypeLabel.setHoverPane(null);
                 rowPane.findPaneOfTypeByID(LABEL_POSITION, Text.class).setText(Component.literal(guardTower.getFirst().toString()));
             }
         });

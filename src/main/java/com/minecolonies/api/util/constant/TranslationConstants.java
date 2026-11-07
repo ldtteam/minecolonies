@@ -116,6 +116,8 @@ public final class TranslationConstants
     @NonNls
     public static final String COM_MINECOLONIES_BANNER_RALLY_GUARDS_GUI_TOWERMISSING                = "com.minecolonies.coremod.item.bannerrallyguards.gui.towermissing";
     @NonNls
+    public static final String COM_MINECOLONIES_BANNER_RALLY_GUARDS_GUI_UNSTAFFED                   = "com.minecolonies.coremod.item.bannerrallyguards.gui.unstaffed";
+    @NonNls
     public static final String COM_MINECOLONIES_BANNER_RALLY_GUARDS_GUI_RALLY                       = "com.minecolonies.coremod.item.bannerrallyguards.gui.rally";
     @NonNls
     public static final String COM_MINECOLONIES_BANNER_RALLY_GUARDS_GUI_DISMISS                     = "com.minecolonies.coremod.item.bannerrallyguards.gui.dismiss";

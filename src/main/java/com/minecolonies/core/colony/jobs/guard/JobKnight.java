@@ -106,7 +106,11 @@ public class JobKnight extends AbstractJobGuard<JobKnight> implements IJobWithCo
         if (this.getCitizen().getEntity().isPresent())
         {
             final AbstractEntityCitizen worker = this.getCitizen().getEntity().get();
-            CitizenItemUtils.setHeldItem(worker, InteractionHand.OFF_HAND, InventoryUtils.findFirstSlotInItemHandlerWith(this.getCitizen().getInventory(), Items.SHIELD));
+            int shieldSlot = InventoryUtils.findFirstSlotInItemHandlerWith(this.getCitizen().getInventory(), Items.SHIELD);
+
+            if (shieldSlot < 0) return;
+            
+            CitizenItemUtils.setHeldItem(worker, InteractionHand.OFF_HAND, shieldSlot);
             worker.startUsingItem(InteractionHand.OFF_HAND);
             ItemStack shieldStack = worker.getInventoryCitizen().getHeldItem(InteractionHand.OFF_HAND);
             CompoundTag nbt = shieldStack.getOrCreateTagElement("BlockEntityTag");
