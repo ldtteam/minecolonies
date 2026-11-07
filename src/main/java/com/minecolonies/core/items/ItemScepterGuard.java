@@ -1,6 +1,7 @@
 package com.minecolonies.core.items;
 
 import com.minecolonies.api.colony.buildings.IGuardBuilding;
+import com.minecolonies.api.items.IScepter;
 import com.minecolonies.api.items.component.BuildingId;
 import com.minecolonies.api.items.component.PatrolTarget;
 import com.minecolonies.api.items.component.ModDataComponents;
@@ -22,7 +23,7 @@ import static com.minecolonies.api.util.constant.translation.ToolTranslationCons
 /**
  * Guard Scepter Item class. Used to give tasks to guards.
  */
-public class ItemScepterGuard extends AbstractItemMinecolonies
+public class ItemScepterGuard extends AbstractItemMinecolonies implements IScepter
 {
     /**
      * GuardScepter constructor. Sets max stack to 1, like other tools.

@@ -4,6 +4,7 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.items.IBlockOverlayItem;
+import com.minecolonies.api.items.IScepter;
 import com.minecolonies.api.items.component.ModDataComponents;
 import com.minecolonies.api.items.component.PermissionMode;
 import com.minecolonies.api.util.MessageUtils;
@@ -37,7 +38,7 @@ import static com.minecolonies.api.util.constant.translation.ToolTranslationCons
 /**
  * Permission scepter. used to add free to interact blocks or positions to the colonies permission list
  */
-public class ItemScepterPermission extends AbstractItemMinecolonies implements IBlockOverlayItem
+public class ItemScepterPermission extends AbstractItemMinecolonies implements IBlockOverlayItem, IScepter
 {
     private static final int GREEN_OVERLAY = 0xFF00FF00;
     private static final int BLOCK_OVERLAY_RANGE_XZ = 32;
