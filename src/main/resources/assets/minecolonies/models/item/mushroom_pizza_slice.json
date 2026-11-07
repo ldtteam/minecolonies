@@ -1,0 +1,10 @@
+{
+  "loader": "minecolonies:sliced_item",
+  "base": {
+    "parent": "minecraft:item/generated",
+    "textures": {
+      "layer0": "minecolonies:item/food/mushroom_pizza"
+    }
+  },
+  "slices": 8
+}
