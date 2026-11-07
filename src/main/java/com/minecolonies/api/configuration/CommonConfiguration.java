@@ -5,6 +5,7 @@ import net.minecraftforge.common.ForgeConfigSpec;
 public class CommonConfiguration extends AbstractConfiguration
 {
     public final ForgeConfigSpec.BooleanValue generateSupplyLoot;
+    public final ForgeConfigSpec.BooleanValue spawnAbandonedColonies;
     public final ForgeConfigSpec.BooleanValue rsEnableDebugLogging;
 
     /**
@@ -16,6 +17,7 @@ public class CommonConfiguration extends AbstractConfiguration
     {
         createCategory(builder, "gameplay");
         generateSupplyLoot = defineBoolean(builder, "generatesupplyloot", true);
+        spawnAbandonedColonies = defineBoolean(builder, "spawnabandonedcolonies", true);
         finishCategory(builder);
 
         createCategory(builder, "requestsystem");
