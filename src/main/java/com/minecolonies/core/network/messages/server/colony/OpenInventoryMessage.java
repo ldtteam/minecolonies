@@ -8,6 +8,7 @@ import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.core.network.IRangeRestrictedPacket;
 import com.minecolonies.core.network.messages.server.AbstractColonyServerMessage;
 import com.minecolonies.core.tileentities.TileEntityGrave;
 import com.minecolonies.core.tileentities.TileEntityRack;
@@ -24,7 +25,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Message sent to open an inventory.
  */
-public class OpenInventoryMessage extends AbstractColonyServerMessage
+public class OpenInventoryMessage extends AbstractColonyServerMessage implements IRangeRestrictedPacket
 {
     public static final PlayMessageType<?> TYPE = PlayMessageType.forServer(Constants.MOD_ID, "open_inventory", OpenInventoryMessage::new);
 
@@ -132,6 +133,11 @@ public class OpenInventoryMessage extends AbstractColonyServerMessage
         @Nullable final AbstractEntityCitizen citizen = (AbstractEntityCitizen) CompatibilityUtils.getWorldFromEntity(player).getEntity(entityID);
         if (citizen != null)
         {
+            if (!isInRange(player.blockPosition(), citizen.blockPosition()))
+            {
+                return;
+            }
+
             if (!StringUtil.isNullOrEmpty(name))
             {
                 citizen.getInventoryCitizen().setCustomName(name);
@@ -143,6 +149,11 @@ public class OpenInventoryMessage extends AbstractColonyServerMessage
 
     private void doHutInventory(final ServerPlayer player, final IColony colony)
     {
+        if (!isInRange(player.blockPosition(), tePos))
+        {
+            return;
+        }
+
         final BlockEntity tileEntity = BlockPosUtil.getTileEntity(player.level(), tePos);
 
         if(tileEntity instanceof TileEntityRack || tileEntity instanceof TileEntityGrave)

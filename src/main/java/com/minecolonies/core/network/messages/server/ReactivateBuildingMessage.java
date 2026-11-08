@@ -7,6 +7,7 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
+import com.minecolonies.core.network.IRangeRestrictedPacket;
 import com.minecolonies.core.tileentities.TileEntityColonyBuilding;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -19,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Reactivate a building.
  */
-public class ReactivateBuildingMessage extends AbstractServerPlayMessage
+public class ReactivateBuildingMessage extends AbstractServerPlayMessage implements IRangeRestrictedPacket
 {
     public static final PlayMessageType<?> TYPE = PlayMessageType.forServer(Constants.MOD_ID, "reactivate_building", ReactivateBuildingMessage::new);
 
@@ -65,6 +66,12 @@ public class ReactivateBuildingMessage extends AbstractServerPlayMessage
     protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player)
     {
         final Level world = player.getCommandSenderWorld();
+
+        if (!isInRange(player.blockPosition(), pos))
+        {
+            return;
+        }
+
         final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld(world, pos);
         if (colony != null && colony.getPermissions().hasPermission(player, Action.MANAGE_HUTS))
         {

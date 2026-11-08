@@ -6,6 +6,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildingextensions.registry.BuildingExtensionRegistries;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.colony.buildingextensions.FarmField;
+import com.minecolonies.core.network.IRangeRestrictedPacket;
 import com.minecolonies.core.tileentities.TileEntityScarecrow;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -22,7 +23,7 @@ import static com.minecolonies.core.colony.buildingextensions.FarmField.MAX_RANG
 /**
  * Message to change the farmer field plot size.
  */
-public class FarmFieldPlotResizeMessage extends AbstractServerPlayMessage
+public class FarmFieldPlotResizeMessage extends AbstractServerPlayMessage implements IRangeRestrictedPacket
 {
     public static final PlayMessageType<?> TYPE = PlayMessageType.forServer(Constants.MOD_ID, "farm_field_plot_resize", FarmFieldPlotResizeMessage::new);
 
@@ -57,6 +58,11 @@ public class FarmFieldPlotResizeMessage extends AbstractServerPlayMessage
     @Override
     protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player)
     {
+        if (!isInRange(player.blockPosition(), position))
+        {
+            return;
+        }
+
         final BlockEntity fieldBlock = player.level().getBlockEntity(position);
         if (fieldBlock instanceof TileEntityScarecrow scarecrow)
         {

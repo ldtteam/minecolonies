@@ -8,6 +8,7 @@ import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.colony.Colony;
+import com.minecolonies.core.network.IRangeRestrictedPacket;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
@@ -21,7 +22,7 @@ import static com.minecolonies.api.util.constant.TranslationConstants.WARNING_BU
 /**
  * Pickup the town hall block.
  */
-public class PickUpTownhallMessage extends AbstractServerPlayMessage
+public class PickUpTownhallMessage extends AbstractServerPlayMessage implements IRangeRestrictedPacket
 {
     public static final PlayMessageType<?> TYPE = PlayMessageType.forServer(Constants.MOD_ID, "pickup_block", PickUpTownhallMessage::new);
 
@@ -62,7 +63,7 @@ public class PickUpTownhallMessage extends AbstractServerPlayMessage
             return;
         }
 
-        if (world.getBlockState(pos).getBlock() != ModBlocks.blockHutTownHall || pos.distSqr(sender.blockPosition()) > 15 * 15)
+        if (world.getBlockState(pos).getBlock() != ModBlocks.blockHutTownHall || !isInRange(sender.blockPosition(), pos))
         {
             return;
         }

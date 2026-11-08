@@ -9,6 +9,7 @@ import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.MineColonies;
 import com.minecolonies.core.colony.Colony;
+import com.minecolonies.core.network.IRangeRestrictedPacket;
 import com.minecolonies.core.network.messages.client.OpenCantFoundColonyWarningMessage;
 import com.minecolonies.core.network.messages.client.OpenColonyFoundingCovenantMessage;
 import com.minecolonies.core.network.messages.client.OpenDeleteAbandonColonyMessage;
@@ -28,7 +29,7 @@ import static com.minecolonies.core.MineColonies.getConfig;
 /**
  * Message for asking the server for some colony info before creation.
  */
-public class GetColonyInfoMessage extends AbstractServerPlayMessage
+public class GetColonyInfoMessage extends AbstractServerPlayMessage implements IRangeRestrictedPacket
 {
     public static final PlayMessageType<?> TYPE = PlayMessageType.forServer(Constants.MOD_ID, "get_colony_info", GetColonyInfoMessage::new);
 
@@ -58,7 +59,7 @@ public class GetColonyInfoMessage extends AbstractServerPlayMessage
     @Override
     protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer sender)
     {
-        if (sender == null)
+        if (sender == null || !isInRange(sender.blockPosition(), pos))
         {
             return;
         }

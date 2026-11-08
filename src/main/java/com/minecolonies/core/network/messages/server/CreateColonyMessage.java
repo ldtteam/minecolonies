@@ -8,6 +8,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.eventbus.events.colony.ColonyCreatedModEvent;
+import com.minecolonies.core.network.IRangeRestrictedPacket;
 import com.minecolonies.core.network.messages.client.colony.OpenBuildingUIMessage;
 import com.minecolonies.core.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.BlockPosUtil;
@@ -30,7 +31,7 @@ import static com.minecolonies.api.util.constant.TranslationConstants.*;
 /**
  * Message for trying to create a new colony.
  */
-public class CreateColonyMessage extends AbstractServerPlayMessage
+public class CreateColonyMessage extends AbstractServerPlayMessage implements IRangeRestrictedPacket
 {
     public static final PlayMessageType<?> TYPE = PlayMessageType.forServer(Constants.MOD_ID, "create_colony", CreateColonyMessage::new);
 
@@ -93,6 +94,10 @@ public class CreateColonyMessage extends AbstractServerPlayMessage
     protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer sender)
     {
         final ServerLevel world = sender.serverLevel();
+        if (!isInRange(sender.blockPosition(), townHall))
+        {
+            return;
+        }
 
         final IColony colony = IColonyManager.getInstance().getClosestColony(world, townHall);
 

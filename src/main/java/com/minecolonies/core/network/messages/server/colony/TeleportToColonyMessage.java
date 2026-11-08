@@ -9,6 +9,7 @@ import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.MathUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingGateHouse;
+import com.minecolonies.core.network.IRangeRestrictedPacket;
 import com.minecolonies.core.network.messages.server.AbstractColonyServerMessage;
 import com.minecolonies.core.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.core.util.TeleportHelper;
@@ -32,7 +33,7 @@ import static com.minecolonies.api.util.constant.SchematicTagConstants.TAG_GATE;
 /**
  * Message for trying to teleport to a friends colony.
  */
-public class TeleportToColonyMessage extends AbstractColonyServerMessage
+public class TeleportToColonyMessage extends AbstractColonyServerMessage implements IRangeRestrictedPacket
 {
     public static final PlayMessageType<?> TYPE = PlayMessageType.forServer(Constants.MOD_ID, "teleport_to_colony", TeleportToColonyMessage::new);
     /**
@@ -85,7 +86,7 @@ public class TeleportToColonyMessage extends AbstractColonyServerMessage
     @Override
     protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony)
     {
-        if (player == null)
+        if (player == null || !isInRange(player.blockPosition(), pos))
         {
             return;
         }
