@@ -33,6 +33,7 @@ import com.minecolonies.core.blocks.BlockPlantationField;
 import com.minecolonies.core.blocks.huts.BlockHutGateHouse;
 import com.minecolonies.core.blocks.huts.BlockHutMiner;
 import com.minecolonies.core.blocks.huts.BlockHutSchool;
+import com.minecolonies.core.client.model.SlicedItemModel;
 import com.minecolonies.core.client.render.SpearItemTileEntityRenderer;
 import com.minecolonies.core.colony.crafting.CustomRecipeManagerMessage;
 import com.minecolonies.core.colony.requestsystem.init.RequestSystemInitializer;
@@ -84,6 +85,7 @@ import net.neoforged.fml.event.lifecycle.FMLLoadCompleteEvent;
 import net.neoforged.fml.javafmlmod.FMLModContainer;
 import net.neoforged.neoforge.capabilities.Capabilities.ItemHandler;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
+import net.neoforged.neoforge.client.event.ModelEvent;
 import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
 import net.neoforged.neoforge.common.NeoForge;
@@ -491,6 +493,12 @@ public class MineColonies
                 return new SpearItemTileEntityRenderer();
             }
         }, ModItems.spear);
+    }
+
+    @SubscribeEvent
+    public static void onRegisterGeometryLoaders(final ModelEvent.RegisterGeometryLoaders event)
+    {
+        event.register(SlicedItemModel.Loader.ID, SlicedItemModel.Loader.INSTANCE);
     }
 
     /**

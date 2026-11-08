@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_mushroom_pizza": {
+      "conditions": {
+        "items": [
+          {
+            "items": "minecolonies:mushroom_pizza"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "minecolonies:mushroom_pizza_slice"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_mushroom_pizza"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "minecolonies:mushroom_pizza_slice"
+    ]
+  }
+}
