@@ -27,6 +27,7 @@ import com.minecolonies.api.entity.ai.workers.util.IBuilderUndestroyable;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.*;
+import com.minecolonies.api.util.constant.TagConstants;
 import com.minecolonies.core.colony.buildings.AbstractBuildingStructureBuilder;
 import com.minecolonies.core.colony.buildings.modules.BuildingResourcesModule;
 import com.minecolonies.core.colony.buildings.utils.BuilderBucket;
@@ -63,6 +64,8 @@ import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*
 import static com.minecolonies.api.research.util.ResearchConstants.BLOCK_PLACE_SPEED;
 import static com.minecolonies.api.util.constant.CitizenConstants.*;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
+import static com.minecolonies.api.util.constant.SchematicTagConstants.TAG_H_FRAME;
+import static com.minecolonies.api.util.constant.SchematicTagConstants.TAG_V_FRAME;
 import static com.minecolonies.core.colony.buildings.workerbuildings.BuildingMiner.FILL_BLOCK;
 import static com.minecolonies.core.entity.ai.workers.AbstractEntityAIStructure.ItemCheckResult.*;
 import static com.minecolonies.core.entity.ai.workers.util.BuildingProgressStage.*;
@@ -546,11 +549,12 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
 
         for (final Map.Entry<BlockPos, List<String>> tag : tags.entrySet())
         {
-            if (tag.getValue().contains("hframe"))
+
+            if (tag.getValue().contains(TAG_H_FRAME))
             {
                 hframePos.add(tag.getKey().offset(offset));
             }
-            if (tag.getValue().contains("vframe"))
+            if (tag.getValue().contains(TAG_V_FRAME))
             {
                 vframePos.add(tag.getKey().offset(offset));
             }

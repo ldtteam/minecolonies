@@ -161,16 +161,18 @@ public class MineColonies
             modBus.register(ClientRegistryHandler.class);
 
             TagManager.registerGlobalTagOption(TAG_WORK);
-             TagManager.registerGlobalTagOption(TAG_SIT_IN);
-             TagManager.registerGlobalTagOption(TAG_SIT_OUT);
-             TagManager.registerGlobalTagOption(TAG_STAND_IN);
-             TagManager.registerGlobalTagOption(TAG_STAND_OUT);
-             TagManager.registerGlobalTagOption(TAG_SITTING);
-             TagManager.registerGlobalTagOption(BUILDING_SIGN);
+            TagManager.registerGlobalTagOption(TAG_SIT_IN);
+            TagManager.registerGlobalTagOption(TAG_SIT_OUT);
+            TagManager.registerGlobalTagOption(TAG_STAND_IN);
+            TagManager.registerGlobalTagOption(TAG_STAND_OUT);
+            TagManager.registerGlobalTagOption(TAG_SITTING);
+            TagManager.registerGlobalTagOption(BUILDING_SIGN);
+            TagManager.registerGlobalTagOption(TAG_H_FRAME);
+            TagManager.registerGlobalTagOption(TAG_V_FRAME);
 
-             TagManager.registerSpecificTagOption(TAG_GATE, b -> b instanceof BlockHutGateHouse);
-             TagManager.registerSpecificTagOption(TAG_KNIGHT, b -> b instanceof BlockHutGateHouse);
-             TagManager.registerSpecificTagOption(TAG_ARCHER, b -> b instanceof BlockHutGateHouse);
+            TagManager.registerSpecificTagOption(TAG_GATE, b -> b instanceof BlockHutGateHouse);
+            TagManager.registerSpecificTagOption(TAG_KNIGHT, b -> b instanceof BlockHutGateHouse);
+            TagManager.registerSpecificTagOption(TAG_ARCHER, b -> b instanceof BlockHutGateHouse);
 
             TagManager.registerSpecificTagOption(TAG_COBBLE, b -> b instanceof BlockHutMiner);
             TagManager.registerSpecificTagOption(TAG_LADDER, b -> b instanceof BlockHutMiner);

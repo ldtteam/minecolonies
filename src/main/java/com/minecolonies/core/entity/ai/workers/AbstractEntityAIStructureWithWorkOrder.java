@@ -328,6 +328,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
 
         if (result.getBlockResult().getResult() == BlockPlacementResult.Result.FINISHED)
         {
+            requestProgress = NULL_POS;
             if (requestState == RequestStage.ENTITIES)
             {
                 requestState = RequestStage.SOLID_FRAME;
