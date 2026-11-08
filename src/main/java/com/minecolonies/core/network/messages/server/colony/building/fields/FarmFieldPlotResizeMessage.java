@@ -61,6 +61,11 @@ public class FarmFieldPlotResizeMessage implements IMessage, IRangeRestrictedPac
     @Override
     public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
     {
+        if (!isInRange(ctxIn.getSender(), position))
+        {
+            return;
+        }
+
         final BlockEntity fieldBlock = ctxIn.getSender().level.getBlockEntity(position);
         if (fieldBlock instanceof TileEntityScarecrow scarecrow)
         {
