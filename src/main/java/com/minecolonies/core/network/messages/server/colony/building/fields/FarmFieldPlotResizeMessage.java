@@ -4,6 +4,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildingextensions.registry.BuildingExtensionRegistries;
 import com.minecolonies.api.network.IMessage;
 import com.minecolonies.core.colony.buildingextensions.FarmField;
+import com.minecolonies.core.network.IRangeRestrictedPacket;
 import com.minecolonies.core.tileentities.TileEntityScarecrow;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -18,7 +19,7 @@ import static com.minecolonies.core.colony.buildingextensions.FarmField.MAX_RANG
 /**
  * Message to change the farmer field plot size.
  */
-public class FarmFieldPlotResizeMessage implements IMessage
+public class FarmFieldPlotResizeMessage implements IMessage, IRangeRestrictedPacket
 {
     /**
      * The new radius of the field plot.
@@ -59,6 +60,11 @@ public class FarmFieldPlotResizeMessage implements IMessage
     @Override
     public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
     {
+        if (!isInRange(ctxIn.getSender().blockPosition(), position))
+        {
+            return;
+        }
+
         final BlockEntity fieldBlock = ctxIn.getSender().level.getBlockEntity(position);
         if (fieldBlock instanceof TileEntityScarecrow scarecrow)
         {

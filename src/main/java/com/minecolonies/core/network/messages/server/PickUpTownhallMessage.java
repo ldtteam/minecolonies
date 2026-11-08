@@ -6,6 +6,7 @@ import com.minecolonies.api.network.IMessage;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.core.colony.Colony;
+import com.minecolonies.core.network.IRangeRestrictedPacket;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
@@ -20,7 +21,7 @@ import static com.minecolonies.api.util.constant.TranslationConstants.WARNING_BU
 /**
  * Pickup the town hall block.
  */
-public class PickUpTownhallMessage implements IMessage
+public class PickUpTownhallMessage implements IMessage, IRangeRestrictedPacket
 {
     /**
      * Position the player wants to found the colony at.
@@ -72,7 +73,7 @@ public class PickUpTownhallMessage implements IMessage
             return;
         }
 
-        if (world.getBlockState(pos).getBlock() != ModBlocks.blockHutTownHall || pos.distSqr(sender.blockPosition()) > 15 * 15)
+        if (world.getBlockState(pos).getBlock() != ModBlocks.blockHutTownHall || !isInRange(sender.blockPosition(), pos))
         {
             return;
         }
