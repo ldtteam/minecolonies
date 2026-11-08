@@ -4,8 +4,6 @@ import net.minecraft.core.BlockPos;
 
 /**
  * Interface for range restricted packet interactions
- *
- * @param <T>
  */
 public interface IRangeRestrictedPacket
 {
