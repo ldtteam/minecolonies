@@ -176,7 +176,8 @@ public class BuildingResourcesModule extends AbstractBuildingModule implements I
     {
         return (buckets.isEmpty()
             || ((AbstractBuildingStructureBuilder) building).getProgress() == null
-            || ((AbstractBuildingStructureBuilder) building).getProgress().getB() == BuildingProgressStage.CLEAR) ? null : buckets.getFirst();
+            || ((AbstractBuildingStructureBuilder) building).getProgress().getB() == BuildingProgressStage.CLEAR
+            || ((AbstractBuildingStructureBuilder) building).getProgress().getB() == BuildingProgressStage.CLEAR_BOTTOM_UP) ? null : buckets.getFirst();
     }
 
     /**
