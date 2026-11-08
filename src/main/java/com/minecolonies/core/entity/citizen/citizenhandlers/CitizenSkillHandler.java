@@ -150,7 +150,8 @@ public class CitizenSkillHandler implements ICitizenSkillHandler
     @Override
     public boolean tryLevelUpIntelligence(@NotNull final Random random, final double customChance, @NotNull final ICitizenData citizen)
     {
-        if (customChance > 0 && random.nextDouble() * customChance < 1)
+        // customChance is a "one in X" value: succeed with probability 1 / customChance.
+        if (customChance > 0 && random.nextDouble() * customChance >= 1)
         {
             return false;
         }
