@@ -7,13 +7,14 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.eventbus.events.colony.ColonyCreatedModEvent;
 import com.minecolonies.api.network.IMessage;
-import com.minecolonies.core.Network;
-import com.minecolonies.core.network.messages.client.colony.OpenBuildingUIMessage;
-import com.minecolonies.core.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.MessageUtils.MessagePriority;
 import com.minecolonies.core.MineColonies;
+import com.minecolonies.core.Network;
+import com.minecolonies.core.network.IRangeRestrictedPacket;
+import com.minecolonies.core.network.messages.client.colony.OpenBuildingUIMessage;
+import com.minecolonies.core.tileentities.TileEntityColonyBuilding;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerLevel;
@@ -32,7 +33,7 @@ import static com.minecolonies.api.util.constant.TranslationConstants.*;
 /**
  * Message for trying to create a new colony.
  */
-public class CreateColonyMessage implements IMessage
+public class CreateColonyMessage implements IMessage, IRangeRestrictedPacket
 {
     /**
      * Town hall position to create building on.
@@ -106,7 +107,7 @@ public class CreateColonyMessage implements IMessage
         final ServerPlayer sender = ctxIn.getSender();
         final Level world = ctxIn.getSender().level;
 
-        if (sender == null)
+        if (sender == null || !isInRange(sender.blockPosition(), townHall))
         {
             return;
         }

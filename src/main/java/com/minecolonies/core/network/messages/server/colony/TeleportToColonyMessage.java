@@ -7,6 +7,7 @@ import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.MathUtils;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingGateHouse;
+import com.minecolonies.core.network.IRangeRestrictedPacket;
 import com.minecolonies.core.network.messages.server.AbstractColonyServerMessage;
 import com.minecolonies.core.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.core.util.TeleportHelper;
@@ -29,7 +30,7 @@ import static com.minecolonies.api.util.constant.SchematicTagConstants.TAG_GATE;
 /**
  * Message for trying to teleport to a friends colony.
  */
-public class TeleportToColonyMessage extends AbstractColonyServerMessage
+public class TeleportToColonyMessage extends AbstractColonyServerMessage implements IRangeRestrictedPacket
 {
     /**
      * Origin colony id.
@@ -69,7 +70,7 @@ public class TeleportToColonyMessage extends AbstractColonyServerMessage
     @Override
     protected void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony)
     {
-        if (ctxIn.getSender() == null)
+        if (ctxIn.getSender() == null || !isInRange(ctxIn.getSender().blockPosition(), pos))
         {
             return;
         }

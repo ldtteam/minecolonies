@@ -8,6 +8,7 @@ import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.core.MineColonies;
 import com.minecolonies.core.Network;
 import com.minecolonies.core.colony.Colony;
+import com.minecolonies.core.network.IRangeRestrictedPacket;
 import com.minecolonies.core.network.messages.client.OpenCantFoundColonyWarningMessage;
 import com.minecolonies.core.network.messages.client.OpenColonyFoundingCovenantMessage;
 import com.minecolonies.core.network.messages.client.OpenDeleteAbandonColonyMessage;
@@ -29,7 +30,7 @@ import static com.minecolonies.core.MineColonies.getConfig;
 /**
  * Message for asking the server for some colony info before creation.
  */
-public class GetColonyInfoMessage implements IMessage
+public class GetColonyInfoMessage implements IMessage, IRangeRestrictedPacket
 {
     /**
      * Position the player wants to found the colony at.
@@ -71,7 +72,7 @@ public class GetColonyInfoMessage implements IMessage
         final ServerPlayer sender = ctxIn.getSender();
         final Level world = ctxIn.getSender().level;
 
-        if (sender == null)
+        if (sender == null || !isInRange(sender.blockPosition(), pos))
         {
             return;
         }
@@ -122,4 +123,5 @@ public class GetColonyInfoMessage implements IMessage
             Network.getNetwork().sendToPlayer(new OpenCantFoundColonyWarningMessage(Component.translatable("com.minecolonies.core.founding.tooclosetocolony", Math.max(100, blockRange - distance)), pos, false), sender);
         }
     }
+
 }
