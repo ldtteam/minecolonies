@@ -30,7 +30,7 @@ import static com.minecolonies.core.MineColonies.getConfig;
 /**
  * Message for asking the server for some colony info before creation.
  */
-public class GetColonyInfoMessage implements IMessage, IRangeRestrictedPacket<BlockPos>
+public class GetColonyInfoMessage implements IMessage, IRangeRestrictedPacket
 {
     /**
      * Position the player wants to found the colony at.
@@ -72,7 +72,7 @@ public class GetColonyInfoMessage implements IMessage, IRangeRestrictedPacket<Bl
         final ServerPlayer sender = ctxIn.getSender();
         final Level world = ctxIn.getSender().level;
 
-        if (sender == null || !isInRange(sender, pos))
+        if (sender == null || !isInRange(sender.blockPosition(), pos))
         {
             return;
         }
@@ -124,9 +124,4 @@ public class GetColonyInfoMessage implements IMessage, IRangeRestrictedPacket<Bl
         }
     }
 
-    @Override
-    public boolean isInRange(final ServerPlayer player, final BlockPos target)
-    {
-        return player.blockPosition().distSqr(target) < 15 * 15;
-    }
 }

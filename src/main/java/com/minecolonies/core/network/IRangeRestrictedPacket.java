@@ -1,19 +1,34 @@
 package com.minecolonies.core.network;
 
-import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.core.BlockPos;
 
 /**
  * Interface for range restricted packet interactions
  *
  * @param <T>
  */
-public interface IRangeRestrictedPacket<T>
+public interface IRangeRestrictedPacket
 {
     /**
+     * Default allowed range
+     */
+    static int DEFAULT_RANGE = 15;
+
+    /**
      * Range check to implement
-     * @param player
-     * @param target
+     */
+    default boolean isInRange(BlockPos from, BlockPos to)
+    {
+        return from.distSqr(to) <= DEFAULT_RANGE * DEFAULT_RANGE;
+    }
+
+    /**
+     * Max allowed range in blocks
+     *
      * @return
      */
-    boolean isInRange(ServerPlayer player, T target);
+    default int getMaxRange()
+    {
+        return DEFAULT_RANGE;
+    }
 }

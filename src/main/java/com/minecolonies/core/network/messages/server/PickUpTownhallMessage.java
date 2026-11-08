@@ -21,7 +21,7 @@ import static com.minecolonies.api.util.constant.TranslationConstants.WARNING_BU
 /**
  * Pickup the town hall block.
  */
-public class PickUpTownhallMessage implements IMessage, IRangeRestrictedPacket<BlockPos>
+public class PickUpTownhallMessage implements IMessage, IRangeRestrictedPacket
 {
     /**
      * Position the player wants to found the colony at.
@@ -73,7 +73,7 @@ public class PickUpTownhallMessage implements IMessage, IRangeRestrictedPacket<B
             return;
         }
 
-        if (world.getBlockState(pos).getBlock() != ModBlocks.blockHutTownHall || !isInRange(sender, pos))
+        if (world.getBlockState(pos).getBlock() != ModBlocks.blockHutTownHall || !isInRange(sender.blockPosition(), pos))
         {
             return;
         }
@@ -88,11 +88,5 @@ public class PickUpTownhallMessage implements IMessage, IRangeRestrictedPacket<B
             MessageUtils.format(WARNING_BUILDING_PICKUP_PLAYER_INVENTORY_FULL).sendTo(sender);
         }
 
-    }
-
-    @Override
-    public boolean isInRange(final ServerPlayer player, final BlockPos target)
-    {
-        return player.blockPosition().distSqr(target) < 15 * 15;
     }
 }

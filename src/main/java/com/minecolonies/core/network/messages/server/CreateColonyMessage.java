@@ -33,7 +33,7 @@ import static com.minecolonies.api.util.constant.TranslationConstants.*;
 /**
  * Message for trying to create a new colony.
  */
-public class CreateColonyMessage implements IMessage, IRangeRestrictedPacket<BlockPos>
+public class CreateColonyMessage implements IMessage, IRangeRestrictedPacket
 {
     /**
      * Town hall position to create building on.
@@ -107,7 +107,7 @@ public class CreateColonyMessage implements IMessage, IRangeRestrictedPacket<Blo
         final ServerPlayer sender = ctxIn.getSender();
         final Level world = ctxIn.getSender().level;
 
-        if (sender == null || !isInRange(sender, townHall))
+        if (sender == null || !isInRange(sender.blockPosition(), townHall))
         {
             return;
         }
@@ -198,11 +198,5 @@ public class CreateColonyMessage implements IMessage, IRangeRestrictedPacket<Blo
         MessageUtils.format(WARNING_COLONY_FOUNDING_FAILED)
           .withPriority(MessagePriority.DANGER)
           .sendTo(sender);
-    }
-
-    @Override
-    public boolean isInRange(final ServerPlayer player, final BlockPos target)
-    {
-        return player.blockPosition().distSqr(target) < 15 * 15;
     }
 }

@@ -8,11 +8,10 @@ import com.minecolonies.core.network.IRangeRestrictedPacket;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.network.NetworkEvent;
 
-public abstract class AbstractBuildingServerMessage<T extends IBuilding> extends AbstractColonyServerMessage implements IRangeRestrictedPacket<IBuilding>
+public abstract class AbstractBuildingServerMessage<T extends IBuilding> extends AbstractColonyServerMessage implements IRangeRestrictedPacket
 {
     /**
      * The buildingID this message originates from
@@ -69,9 +68,9 @@ public abstract class AbstractBuildingServerMessage<T extends IBuilding> extends
     }
 
     @Override
-    public boolean isInRange(ServerPlayer player, IBuilding target)
+    public int getMaxRange()
     {
-        return player.blockPosition().distSqr(target.getID()) <= 5 * 5;
+        return 5;
     }
 
     @Override
@@ -79,7 +78,7 @@ public abstract class AbstractBuildingServerMessage<T extends IBuilding> extends
     public final void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony)
     {
         final IBuilding building = colony.getServerBuildingManager().getBuilding(buildingId);
-        if (building == null || ctxIn.getSender() == null || !isInRange(ctxIn.getSender(), building))
+        if (building == null || ctxIn.getSender() == null || !isInRange(ctxIn.getSender().blockPosition(), building.getID()))
         {
             return;
         }

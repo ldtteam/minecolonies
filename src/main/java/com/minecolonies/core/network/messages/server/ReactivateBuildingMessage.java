@@ -20,7 +20,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Reactivate a building.
  */
-public class ReactivateBuildingMessage implements IMessage, IRangeRestrictedPacket<BlockPos>
+public class ReactivateBuildingMessage implements IMessage, IRangeRestrictedPacket
 {
     /**
      * The position to reactivate it.
@@ -81,7 +81,7 @@ public class ReactivateBuildingMessage implements IMessage, IRangeRestrictedPack
         final ServerPlayer player = ctxIn.getSender();
         final Level world = player.getCommandSenderWorld();
 
-        if (!isInRange(player, pos))
+        if (!isInRange(player.blockPosition(), pos))
         {
             return;
         }
@@ -105,11 +105,5 @@ public class ReactivateBuildingMessage implements IMessage, IRangeRestrictedPack
                 }
             }
         }
-    }
-
-    @Override
-    public boolean isInRange(final ServerPlayer player, final BlockPos target)
-    {
-        return player.blockPosition().distSqr(target) < 15 * 15;
     }
 }

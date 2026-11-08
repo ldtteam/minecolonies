@@ -24,7 +24,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Message sent to open an inventory.
  */
-public class OpenInventoryMessage extends AbstractColonyServerMessage implements IRangeRestrictedPacket<BlockPos>
+public class OpenInventoryMessage extends AbstractColonyServerMessage implements IRangeRestrictedPacket
 {
     /***
      * The inventory name.
@@ -120,7 +120,7 @@ public class OpenInventoryMessage extends AbstractColonyServerMessage implements
     protected void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony)
     {
         final ServerPlayer player = ctxIn.getSender();
-        if (player == null || !isInRange(player, tePos))
+        if (player == null || !isInRange(player.blockPosition(), tePos))
         {
             return;
         }
@@ -159,12 +159,6 @@ public class OpenInventoryMessage extends AbstractColonyServerMessage implements
         {
             NetworkHooks.openScreen(player, (MenuProvider) tileEntity, packetBuffer -> packetBuffer.writeVarInt(colony.getID()).writeBlockPos(tileEntity.getBlockPos()));
         }
-    }
-
-    @Override
-    public boolean isInRange(final ServerPlayer player, final BlockPos target)
-    {
-        return player.blockPosition().distSqr(target) < 15 * 15;
     }
 
     /**

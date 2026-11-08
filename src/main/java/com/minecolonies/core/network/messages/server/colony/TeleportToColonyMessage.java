@@ -14,7 +14,6 @@ import com.minecolonies.core.util.TeleportHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
@@ -31,7 +30,7 @@ import static com.minecolonies.api.util.constant.SchematicTagConstants.TAG_GATE;
 /**
  * Message for trying to teleport to a friends colony.
  */
-public class TeleportToColonyMessage extends AbstractColonyServerMessage implements IRangeRestrictedPacket<BlockPos>
+public class TeleportToColonyMessage extends AbstractColonyServerMessage implements IRangeRestrictedPacket
 {
     /**
      * Origin colony id.
@@ -71,7 +70,7 @@ public class TeleportToColonyMessage extends AbstractColonyServerMessage impleme
     @Override
     protected void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony)
     {
-        if (ctxIn.getSender() == null || !isInRange(ctxIn.getSender(), pos))
+        if (ctxIn.getSender() == null || !isInRange(ctxIn.getSender().blockPosition(), pos))
         {
             return;
         }
@@ -147,11 +146,5 @@ public class TeleportToColonyMessage extends AbstractColonyServerMessage impleme
         this.pos = buf.readBlockPos();
         this.originColonyId = buf.readInt();
         this.cost = buf.readInt();
-    }
-
-    @Override
-    public boolean isInRange(final ServerPlayer player, final BlockPos target)
-    {
-        return player.blockPosition().distSqr(target) < 15 * 15;
     }
 }
