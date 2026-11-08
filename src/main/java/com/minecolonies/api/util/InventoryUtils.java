@@ -1896,7 +1896,7 @@ public class InventoryUtils
      * @param building The {@link IBuilding} that works as Source.
      * @param stack    the ItemStack.
      * @param qty      the quantity
-     * @return the transfered amount.
+     * @return the remainder quantity that was not transferred.
      */
     public static int transferItemStackToBuilding(
         final IBuilding building,
@@ -1942,7 +1942,7 @@ public class InventoryUtils
      * @param building The {@link IBuilding} that works as Source.
      * @param stack    the ItemStack.
      * @param qty      the quantity
-     * @return the transfered amount.
+     * @return the remainder quantity that was not transferred.
      */
     public static int transferItemStackFromItemHandlerToBuilding(
         final IItemHandler handler,
