@@ -1563,8 +1563,8 @@ public abstract class AbstractPathJob implements Callable<Path>, IPathJob
         {
             return y + 1;
         }
-        if (target.is(BlockTags.STAIRS)
-              && parentY - HALF_A_BLOCK < MAX_JUMP_HEIGHT
+        if (parentY - HALF_A_BLOCK < MAX_JUMP_HEIGHT
+            && target.hasProperty(StairBlock.HALF) && target.hasProperty(StairBlock.FACING)
               && target.getValue(StairBlock.HALF) == Half.BOTTOM
               && BlockPosUtil.getXZFacing(parent.x, parent.z, x, z) == target.getValue(StairBlock.FACING))
         {
