@@ -93,6 +93,6 @@ public class PickUpTownhallMessage implements IMessage, IRangeRestrictedPacket<B
     @Override
     public boolean isInRange(final ServerPlayer player, final BlockPos target)
     {
-        return player.blockPosition().distSqr(target) > 15 * 15;
+        return player.blockPosition().distSqr(target) < 15 * 15;
     }
 }
