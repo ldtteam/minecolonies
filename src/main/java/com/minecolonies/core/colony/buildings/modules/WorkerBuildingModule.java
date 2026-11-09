@@ -12,6 +12,7 @@ import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.Skill;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.core.colony.requestsystem.resolvers.BuildingRequestResolver;
 import com.minecolonies.core.colony.requestsystem.resolvers.PrivateWorkerCraftingProductionResolver;
@@ -37,7 +38,7 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.*;
  * The worker module for citizen where they are assigned to if they work at it.
  */
 public class WorkerBuildingModule extends AbstractAssignedCitizenModule
-  implements IAssignsJob, IBuildingEventsModule, ITickingModule, IPersistentModule, IBuildingWorkerModule, ICreatesResolversModule
+    implements IAssignsJob, IBuildingEventsModule, ITickingModule, IPersistentModule, IBuildingWorkerModule, ICreatesResolversModule
 {
     /**
      * Module specific skills.
@@ -66,11 +67,11 @@ public class WorkerBuildingModule extends AbstractAssignedCitizenModule
     private ResourceLocation researchRequirement = null;
 
     public WorkerBuildingModule(
-      final JobEntry entry,
-      final Skill primary,
-      final Skill secondary,
-      final boolean canWorkingDuringRain,
-      final Function<IBuilding, Integer> sizeLimit)
+        final JobEntry entry,
+        final Skill primary,
+        final Skill secondary,
+        final boolean canWorkingDuringRain,
+        final Function<IBuilding, Integer> sizeLimit)
     {
         this.jobEntry = entry;
         this.primary = primary;
@@ -95,7 +96,6 @@ public class WorkerBuildingModule extends AbstractAssignedCitizenModule
         this.researchRequirement = researchRequirement;
     }
 
-
     @Override
     public boolean assignCitizen(final ICitizenData citizen)
     {
@@ -105,14 +105,24 @@ public class WorkerBuildingModule extends AbstractAssignedCitizenModule
         }
 
         IJob job = citizen.getJob();
-        if (job == null)
+        if (job != null)
         {
-            job = createJob(citizen);
+            // Check compatible job and assign
+            if (job.assignTo(this))
+            {
+                return super.assignCitizen(citizen);
+            }
+            else
+            {
+                // Remove from old job
+                job.getWorkModule().removeCitizen(citizen);
+            }
         }
 
+        job = createJob(citizen);
         if (!job.assignTo(this))
         {
-            return false;
+            Log.getLogger().error("Module: {} produced Job is not compatible with the module itself!", this);
         }
 
         return super.assignCitizen(citizen);
@@ -165,7 +175,8 @@ public class WorkerBuildingModule extends AbstractAssignedCitizenModule
     public void onColonyTick(@NotNull final IColony colony)
     {
         // If we have no active worker, grab one from the Colony
-        if (!isFull() && BuildingUtils.canAutoHire(building, getHiringMode(), getJobEntry()) && (researchRequirement == null || colony.getResearchManager().getResearchEffects().getEffectStrength(researchRequirement) > 0))
+        if (!isFull() && BuildingUtils.canAutoHire(building, getHiringMode(), getJobEntry()) && (researchRequirement == null
+            || colony.getResearchManager().getResearchEffects().getEffectStrength(researchRequirement) > 0))
         {
             final ICitizenData joblessCitizen = colony.getCitizenManager().getJoblessCitizen();
             if (joblessCitizen != null)
@@ -285,11 +296,11 @@ public class WorkerBuildingModule extends AbstractAssignedCitizenModule
     {
         final ImmutableList.Builder<IRequestResolver<?>> builder = ImmutableList.builder();
         builder.add(new BuildingRequestResolver(building.getRequester().getLocation(), building.getColony().getRequestManager()
-            .getFactoryController().getNewInstance(TypeConstants.ITOKEN)),
-          new PrivateWorkerCraftingRequestResolver(building.getRequester().getLocation(), building.getColony().getRequestManager()
-            .getFactoryController().getNewInstance(TypeConstants.ITOKEN), jobEntry),
-          new PrivateWorkerCraftingProductionResolver(building.getRequester().getLocation(), building.getColony().getRequestManager()
-            .getFactoryController().getNewInstance(TypeConstants.ITOKEN), jobEntry));
+                .getFactoryController().getNewInstance(TypeConstants.ITOKEN)),
+            new PrivateWorkerCraftingRequestResolver(building.getRequester().getLocation(), building.getColony().getRequestManager()
+                .getFactoryController().getNewInstance(TypeConstants.ITOKEN), jobEntry),
+            new PrivateWorkerCraftingProductionResolver(building.getRequester().getLocation(), building.getColony().getRequestManager()
+                .getFactoryController().getNewInstance(TypeConstants.ITOKEN), jobEntry));
         return builder.build();
     }
 
