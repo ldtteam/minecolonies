@@ -202,7 +202,6 @@ public class MineColonies
 
         event.enqueueWork(ModLootConditions::init);
         event.enqueueWork(ModTags::init);
-        event.enqueueWork(ModEquipmentTypes::initRegisterEquipmentTiers);
     }
 
     @SubscribeEvent
