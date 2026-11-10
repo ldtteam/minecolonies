@@ -16,11 +16,9 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 /**
  * Window for selecting a Stable's automatic cavalry patrol targets.
@@ -77,9 +75,15 @@ public class StablePatrolTargetsModuleWindow extends AbstractModuleWindow<Stable
         super.onOpened();
 
         selectedTargets = new ArrayList<>(moduleView.getPatrolTargets());
-        eligibleBuildings = buildingView.getColony().getClientBuildingManager().getBuildings().values().stream()
-                              .filter(BuildingStable::isCavalryPatrolTarget)
-                              .collect(Collectors.toList());
+        eligibleBuildings = new ArrayList<>();
+        
+        for (final IBuildingView building : buildingView.getColony().getClientBuildingManager().getBuildings().values())
+        {
+            if (BuildingStable.isCavalryPatrolTarget(building))
+            {
+                eligibleBuildings.add(building);
+            }
+        }
 
         targetList = findPaneOfTypeByID(TARGET_LIST, ScrollingList.class);
 
@@ -99,7 +103,7 @@ public class StablePatrolTargetsModuleWindow extends AbstractModuleWindow<Stable
             /**
              * Updates one eligible patrol-building row.
              *
-             * @param index the eligible building index.
+             * @param index   the eligible building index.
              * @param rowPane the row pane to update.
              */
             @Override
@@ -119,14 +123,16 @@ public class StablePatrolTargetsModuleWindow extends AbstractModuleWindow<Stable
 
                 final BlockPos targetPosition = targetBuilding.getPosition();
                 final int distance = (int) BlockPosUtil.getDistance2D(buildingView.getPosition(), targetPosition);
-                
+
                 namePane.setHoverPane(null);
                 PaneBuilders.tooltipBuilder()
-                  .append(Component.translatable("com.minecolonies.gui.workerhuts.stable.patroltargets.coordinates",
-                    targetPosition.getX(), targetPosition.getY(), targetPosition.getZ()))
-                  .appendNL(Component.translatable("com.minecolonies.gui.workerhuts.stable.patroltargets.distance", distance))
-                  .hoverPane(namePane)
-                  .build();
+                    .append(Component.translatable("com.minecolonies.gui.workerhuts.stable.patroltargets.coordinates",
+                        targetPosition.getX(),
+                        targetPosition.getY(),
+                        targetPosition.getZ()))
+                    .appendNL(Component.translatable("com.minecolonies.gui.workerhuts.stable.patroltargets.distance", distance))
+                    .hoverPane(namePane)
+                    .build();
 
                 final Pane activePatrol = rowPane.findPaneByID(ACTIVE_PATROL);
                 final BlockPos activePatrolTarget = moduleView.getActivePatrolTarget();
@@ -143,15 +149,16 @@ public class StablePatrolTargetsModuleWindow extends AbstractModuleWindow<Stable
 
                 activePatrol.setHoverPane(null);
                 PaneBuilders.tooltipBuilder()
-                .append(Component.translatable("com.minecolonies.gui.workerhuts.stable.patroltargets.activepatrol"))
-                .hoverPane(activePatrol)
-                .build();
+                    .append(Component.translatable("com.minecolonies.gui.workerhuts.stable.patroltargets.activepatrol"))
+                    .hoverPane(activePatrol)
+                    .build();
 
                 final CheckBox checkBox = rowPane.findPaneOfTypeByID(TARGET_SELECTED, CheckBox.class);
                 final boolean selected = selectedTargets.contains(targetPosition);
                 checkBox.setChecked(selected);
 
-                if ((!selected && selectedTargets.size() >= moduleView.getTargetCapacity()) || (selected && selectedTargets.size() <= 1))
+                if ((!selected && selectedTargets.size() >= moduleView.getTargetCapacity()) ||
+                    (selected && selectedTargets.size() <= 1))
                 {
                     checkBox.disable();
                 }
@@ -208,7 +215,9 @@ public class StablePatrolTargetsModuleWindow extends AbstractModuleWindow<Stable
      */
     private void updateTargetCount()
     {
-        findPaneOfTypeByID(TARGET_COUNT, Text.class).setText(Component.translatable(
-          "com.minecolonies.gui.workerhuts.stable.patroltargets.count", selectedTargets.size(), moduleView.getTargetCapacity()));
+        findPaneOfTypeByID(TARGET_COUNT, Text.class)
+            .setText(Component.translatable("com.minecolonies.gui.workerhuts.stable.patroltargets.count",
+                selectedTargets.size(),
+                moduleView.getTargetCapacity()));
     }
 }

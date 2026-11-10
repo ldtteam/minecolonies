@@ -14,11 +14,9 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
 import javax.annotation.Nullable;
 
 /**
@@ -62,7 +60,7 @@ public class StablePatrolTargetsModuleView extends AbstractBuildingModuleView
         if (onPatrol)
         {
             activePatrolTargetPos = buf.readBlockPos();
-        } 
+        }
         else
         {
             activePatrolTargetPos = null;
@@ -101,7 +99,7 @@ public class StablePatrolTargetsModuleView extends AbstractBuildingModuleView
     /**
      * Requests that the server change a patrol target's selected state and updates the local view optimistically.
      *
-     * @param target the target building position.
+     * @param target   the target building position.
      * @param selected whether the target should be selected.
      */
     public void setPatrolTargetSelected(final BlockPos target, final boolean selected)

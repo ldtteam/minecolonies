@@ -18,7 +18,6 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -28,7 +27,8 @@ import java.util.Set;
 /**
  * Stores the ordered list of buildings selected as automatic cavalry patrol targets.
  */
-public class StablePatrolTargetsModule extends AbstractBuildingModule implements IPersistentModule, IBuildingEventsModule, ITickingModule
+public class StablePatrolTargetsModule extends AbstractBuildingModule
+    implements IPersistentModule, IBuildingEventsModule, ITickingModule
 {
     /**
      * NBT tag containing the selected patrol targets.
@@ -55,12 +55,13 @@ public class StablePatrolTargetsModule extends AbstractBuildingModule implements
 
     /**
      * Record the building of the active patrol target.
+     * 
      * @param target
      */
     public void setActivePatrolTarget(@Nullable BlockPos target)
     {
         final BlockPos immutableTarget = target == null ? null : target.immutable();
-        
+
         if (Objects.equals(activePatrolTargetPos, immutableTarget))
         {
             return;
@@ -97,7 +98,7 @@ public class StablePatrolTargetsModule extends AbstractBuildingModule implements
                 patrolTargets.add(target);
             }
         }
-        
+
         lastPatrolTarget = null;
         activePatrolTargetPos = null;
     }
@@ -140,7 +141,6 @@ public class StablePatrolTargetsModule extends AbstractBuildingModule implements
         {
             buf.writeBlockPos(activePatrolTargetPos);
         }
-
     }
 
     /**
@@ -191,8 +191,8 @@ public class StablePatrolTargetsModule extends AbstractBuildingModule implements
     }
 
     /**
-     * Gets the next selected patrol building. The first target of each runtime route is random,
-     * after which targets are returned in persisted list order with wraparound.
+     * Gets the next selected patrol building. The first target of each runtime route is random, after which targets are returned in
+     * persisted list order with wraparound.
      *
      * @return the next patrol building position, or {@code null} when none is available.
      */
@@ -227,8 +227,8 @@ public class StablePatrolTargetsModule extends AbstractBuildingModule implements
      * {@inheritDoc}
      */
     @Override
-    public void onColonyTick(final @NotNull IColony colony) 
-    { 
+    public void onColonyTick(final @NotNull IColony colony)
+    {
         final boolean listChanged = validateTargets();
 
         if (listChanged)
@@ -236,18 +236,16 @@ public class StablePatrolTargetsModule extends AbstractBuildingModule implements
             markDirty();
         }
 
-        if (building instanceof BuildingStable stable
-              && (!GuardTaskSetting.PATROL.equals(stable.getTask())
-                    || GuardPatrolModeSetting.MANUAL.equals(stable.getSetting(AbstractBuildingGuards.PATROL_MODE).getValue())
-                    || stable.getAllAssignedMilitaryUnits().isEmpty()))
+        if (building instanceof BuildingStable stable && (!GuardTaskSetting.PATROL.equals(stable.getTask()) ||
+            GuardPatrolModeSetting.MANUAL.equals(stable.getSetting(AbstractBuildingGuards.PATROL_MODE).getValue()) ||
+            stable.getAllAssignedMilitaryUnits().isEmpty()))
         {
             setActivePatrolTarget(null);
         }
     }
 
     /**
-     * Ensure all patrol targets are valid.
-     * (Handles clean-up if buildings are deconstructed/destroyed, etc.)
+     * Ensure all patrol targets are valid. (Handles clean-up if buildings are deconstructed/destroyed, etc.)
      */
     private boolean validateTargets()
     {
