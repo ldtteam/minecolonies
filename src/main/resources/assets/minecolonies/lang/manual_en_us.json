@@ -1262,6 +1262,12 @@
   "com.minecolonies.gui.workerhuts.enchanter.workers": "Gather Targets",
   "com.minecolonies.coremod.enchanter.nodrainingsset": "Please configure some workers I can study so I can work!",
 
+  "com.minecolonies.gui.workerhuts.stable.patroltargets": "Patrol Targets",
+  "com.minecolonies.gui.workerhuts.stable.patroltargets.coordinates": "Coordinates: %s, %s, %s",
+  "com.minecolonies.gui.workerhuts.stable.patroltargets.count": "Patrol Targets: %s / %s",
+  "com.minecolonies.gui.workerhuts.stable.patroltargets.distance": "Distance: %s blocks",
+  "com.minecolonies.gui.workerhuts.stable.patroltargets.activepatrol": "Current Patrol Target",
+
   "com.minecolonies.gui.workerhuts.expeditionlog": "Expedition Log",
   "com.minecolonies.gui.workerhuts.expedition.none": "No expedition",
   "com.minecolonies.gui.workerhuts.expedition.starting": "Starting Expedition",

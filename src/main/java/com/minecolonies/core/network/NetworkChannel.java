@@ -25,6 +25,7 @@ import com.minecolonies.core.network.messages.server.colony.building.home.Assign
 import com.minecolonies.core.network.messages.server.colony.building.miner.MinerRepairLevelMessage;
 import com.minecolonies.core.network.messages.server.colony.building.miner.MinerSetLevelMessage;
 import com.minecolonies.core.network.messages.server.colony.building.postbox.PostBoxRequestMessage;
+import com.minecolonies.core.network.messages.server.colony.building.stable.StablePatrolTargetMessage;
 import com.minecolonies.core.network.messages.server.colony.building.university.TryResearchMessage;
 import com.minecolonies.core.network.messages.server.colony.building.warehouse.SortBuildingMessage;
 import com.minecolonies.core.network.messages.server.colony.building.warehouse.UpgradeWarehouseMessage;
@@ -181,6 +182,7 @@ public class NetworkChannel
         registerMessage(++idx, DirectPlaceMessage.class, DirectPlaceMessage::new);
         registerMessage(++idx, TeleportToColonyMessage.class, TeleportToColonyMessage::new);
         registerMessage(++idx, EnchanterWorkerSetMessage.class, EnchanterWorkerSetMessage::new);
+        registerMessage(++idx, StablePatrolTargetMessage.class, StablePatrolTargetMessage::new);
         registerMessage(++idx, InteractionResponse.class, InteractionResponse::new);
         registerMessage(++idx, TryResearchMessage.class, TryResearchMessage::new);
         registerMessage(++idx, HireSpiesMessage.class, HireSpiesMessage::new);

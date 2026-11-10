@@ -175,8 +175,9 @@ public final class ModBuildingsInitializer
           .addBuildingModuleProducer(STABLEMASTER_WORK)
           .addBuildingModuleProducer(STABLEMASTER_HERDING)
           .addBuildingModuleProducer(GUARD_ENTITY_LIST)
-          .addBuildingModuleProducer(STABLE_SETTINGS)
+          .addBuildingModuleProducer(STABLE_PATROL_TARGETS)
           .addBuildingModuleProducer(MIN_STOCK)
+          .addBuildingModuleProducer(STABLE_SETTINGS)
           .addBuildingModuleProducer(STATS_MODULE)
           .createBuildingEntry());
 

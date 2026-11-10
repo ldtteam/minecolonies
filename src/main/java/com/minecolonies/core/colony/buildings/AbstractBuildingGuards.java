@@ -434,7 +434,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuilding implements
                     this.pathResult = null;
                 }
             }
-            else if (colony.getWorld().random.nextBoolean())
+            else if (useRandomPatrolPosition())
             {
                 final PathJobRandomPos job = new PathJobRandomPos(colony.getWorld(), lastPatrolPoint, 20, 40, null);
                 this.pathResult = job.getResult();
@@ -442,12 +442,12 @@ public abstract class AbstractBuildingGuards extends AbstractBuilding implements
             }
             else
             {
-                pos = getRandomPatrolTarget();
+                pos = getPatrolTarget();
             }
 
             if (pos != null)
             {
-                if (BlockPosUtil.getDistance(pos, getPosition()) > getPatrolDistance())
+                if (limitPatrolDistance() && BlockPosUtil.getDistance(pos, getPosition()) > getPatrolDistance())
                 {
                     lastPatrolPoint = getPosition();
                     return lastPatrolPoint;
@@ -479,9 +479,29 @@ public abstract class AbstractBuildingGuards extends AbstractBuilding implements
      * @return the next random patrol target.
      */
     @Nullable
-    protected BlockPos getRandomPatrolTarget()
+    protected BlockPos getPatrolTarget()
     {
         return colony.getServerBuildingManager().getRandomBuilding(b -> b.getBuildingLevel() >= 1);
+    }
+
+    /**
+     * Determines whether automatic patrol routing may generate a random nearby position instead of selecting a building.
+     *
+     * @return {@code true} when a random nearby patrol position should be generated.
+     */
+    protected boolean useRandomPatrolPosition()
+    {
+        return colony.getWorld().random.nextBoolean();
+    }
+
+    /**
+     * Determines whether a patrol target is limited by patrol distance.
+     *
+     * @return {@code true} when the patrol distance must be enforced.
+     */
+    protected boolean limitPatrolDistance()
+    {
+        return true;
     }
 
     @Override
