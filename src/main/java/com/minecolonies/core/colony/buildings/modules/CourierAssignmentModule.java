@@ -2,12 +2,8 @@ package com.minecolonies.core.colony.buildings.modules;
 
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.buildings.modules.IAssignsJob;
-import com.minecolonies.api.colony.buildings.modules.IBuildingEventsModule;
-import com.minecolonies.api.colony.buildings.modules.IPersistentModule;
-import com.minecolonies.api.colony.buildings.modules.ITickingModule;
+import com.minecolonies.api.colony.buildings.modules.*;
 import com.minecolonies.api.colony.jobs.ModJobs;
-import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.core.colony.jobs.JobDeliveryman;
 import com.minecolonies.core.util.BuildingUtils;
 import net.minecraft.core.HolderLookup;
@@ -21,13 +17,13 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_COURIERS;
 /**
  * The Courier module for the warehouse.
  */
-public class CourierAssignmentModule extends AbstractAssignedCitizenModule implements IAssignsJob, IBuildingEventsModule, ITickingModule, IPersistentModule
+public class CourierAssignmentModule extends AbstractAssignedCitizenModule implements IAssignsCitizen, IBuildingEventsModule, ITickingModule, IPersistentModule
 {
     @Override
     public void onColonyTick(@NotNull final IColony colony)
     {
         // If we have no active worker, grab one from the Colony
-        if (!isFull() && BuildingUtils.canAutoHire(building, getHiringMode(), getJobEntry()))
+        if (!isFull() && BuildingUtils.canAutoHire(building, getHiringMode(), ModJobs.delivery.get()))
         {
             for (final ICitizenData data : colony.getCitizenManager().getCitizens())
             {
@@ -99,12 +95,6 @@ public class CourierAssignmentModule extends AbstractAssignedCitizenModule imple
     public int getModuleMax()
     {
         return this.building.getBuildingLevel() * 2;
-    }
-
-    @Override
-    public JobEntry getJobEntry()
-    {
-        return ModJobs.delivery.get();
     }
 
     @Override

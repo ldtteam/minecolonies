@@ -105,17 +105,12 @@ public class WorkerBuildingModule extends AbstractAssignedCitizenModule
         }
 
         IJob job = citizen.getJob();
-        if (job != null)
+        if (job != null && job.getWorkModule() == null)
         {
-            // Check compatible job and assign
+            // Assign to an existing job on load
             if (job.assignTo(this))
             {
                 return super.assignCitizen(citizen);
-            }
-            else
-            {
-                // Remove from old job
-                job.getWorkModule().removeCitizen(citizen);
             }
         }
 
@@ -123,6 +118,7 @@ public class WorkerBuildingModule extends AbstractAssignedCitizenModule
         if (!job.assignTo(this))
         {
             Log.getLogger().error("Module: {} produced Job is not compatible with the module itself!", this);
+            return false;
         }
 
         return super.assignCitizen(citizen);
