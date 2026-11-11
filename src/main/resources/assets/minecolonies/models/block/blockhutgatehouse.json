@@ -1,4 +1,5 @@
 {
+	"format_version": "1.9.0",
 	"credit": "Made by Imrielle with Blockbench",
 	"textures": {
 		"0": "minecolonies:block/books/booktexture_red",
@@ -77,9 +78,9 @@
 			}
 		},
 		{
-			"from": [7, 15, 7],
-			"to": [15, 17, 16],
-			"rotation": {"angle": -22.5, "axis": "x", "origin": [11, 16, 11]},
+			"from": [7, 15, 6],
+			"to": [15, 17, 15],
+			"rotation": {"angle": -22.5, "axis": "x", "origin": [11, 16, 10]},
 			"faces": {
 				"north": {"uv": [4, 0, 12, 2], "texture": "#4"},
 				"east": {"uv": [12, 2, 14, 11], "rotation": 90, "texture": "#3"},
@@ -90,9 +91,9 @@
 			}
 		},
 		{
-			"from": [8, 15, 13],
-			"to": [14, 17, 15],
-			"rotation": {"angle": 0, "axis": "y", "origin": [11, 16, 18]},
+			"from": [8, 15, 12],
+			"to": [14, 17, 14],
+			"rotation": {"angle": 0, "axis": "y", "origin": [11, 16, 17]},
 			"faces": {
 				"north": {"uv": [2, 0, 8, 2], "texture": "#3"},
 				"east": {"uv": [0, 0, 2, 2], "texture": "#3"},
@@ -101,9 +102,9 @@
 			}
 		},
 		{
-			"from": [7, 15.92911, 6.61628],
-			"to": [15, 16.92911, 7.61628],
-			"rotation": {"angle": -22.5, "axis": "x", "origin": [12, 16.42911, 8.11628]},
+			"from": [7, 15.92911, 5.61628],
+			"to": [15, 16.92911, 6.61628],
+			"rotation": {"angle": -22.5, "axis": "x", "origin": [12, 16.42911, 7.11628]},
 			"faces": {
 				"north": {"uv": [0, 1, 8, 2], "texture": "#3"},
 				"east": {"uv": [0, 0, 1, 1], "texture": "#3"},
@@ -114,16 +115,16 @@
 		},
 		{
 			"name": "book",
-			"from": [8, 17, 7.25],
-			"to": [14, 19, 15.25],
-			"rotation": {"angle": -22.5, "axis": "x", "origin": [11.375, 18, 10.5]},
+			"from": [8, 17, 6.25],
+			"to": [14, 20, 16.25],
+			"rotation": {"angle": -22.5, "axis": "x", "origin": [11.375, 18, 9.5]},
 			"faces": {
-				"north": {"uv": [0, 0, 6, 2], "texture": "#0"},
-				"east": {"uv": [8, 8, 10, 16], "rotation": 90, "texture": "#0"},
-				"south": {"uv": [6, 0, 0, 2], "texture": "#0"},
-				"west": {"uv": [0.5, 0, 8.5, 2], "texture": "#0"},
-				"up": {"uv": [16, 8, 10, 16], "texture": "#0"},
-				"down": {"uv": [10, 16, 16, 8], "texture": "#0"}
+				"north": {"uv": [9, 5, 12, 6.5], "texture": "#0"},
+				"east": {"uv": [8.5, 5, 10, 0], "rotation": 90, "texture": "#0"},
+				"south": {"uv": [12, 5, 9, 6.5], "texture": "#0"},
+				"west": {"uv": [14.5, 0, 16, 5], "rotation": 90, "texture": "#0"},
+				"up": {"uv": [13, 0, 10, 5], "texture": "#0"},
+				"down": {"uv": [5.5, 0, 8.5, 5], "texture": "#0"}
 			}
 		},
 		{
@@ -174,9 +175,9 @@
 		},
 		{
 			"name": "bl1",
-			"from": [4, 15, 5],
-			"to": [14, 16, 7],
-			"rotation": {"angle": 22.5, "axis": "y", "origin": [4, 15, 5]},
+			"from": [5, 15, 4],
+			"to": [15, 16, 6],
+			"rotation": {"angle": 22.5, "axis": "y", "origin": [5, 15, 4]},
 			"faces": {
 				"north": {"uv": [0, 0, 10, 1], "texture": "#5"},
 				"east": {"uv": [0, 0, 2, 1], "texture": "#5"},
@@ -187,9 +188,9 @@
 		},
 		{
 			"name": "b2",
-			"from": [14, 15, 5.5],
-			"to": [15, 16, 6.5],
-			"rotation": {"angle": 22.5, "axis": "y", "origin": [4, 15, 5]},
+			"from": [15, 15, 4.5],
+			"to": [16, 16, 5.5],
+			"rotation": {"angle": 22.5, "axis": "y", "origin": [5, 15, 4]},
 			"faces": {
 				"north": {"uv": [0, 0, 1, 1], "texture": "#5"},
 				"east": {"uv": [0, 0, 1, 1], "texture": "#5"},
@@ -200,9 +201,9 @@
 		},
 		{
 			"name": "h1",
-			"from": [3, 15, 4],
-			"to": [4, 16, 8],
-			"rotation": {"angle": 22.5, "axis": "y", "origin": [4, 15, 5]},
+			"from": [4, 15, 3],
+			"to": [5, 16, 7],
+			"rotation": {"angle": 22.5, "axis": "y", "origin": [5, 15, 4]},
 			"faces": {
 				"north": {"uv": [0, 0, 1, 1], "texture": "#3"},
 				"east": {"uv": [0, 0, 4, 1], "texture": "#3"},
@@ -213,9 +214,9 @@
 		},
 		{
 			"name": "h2",
-			"from": [-1, 15, 5],
-			"to": [0, 16, 7],
-			"rotation": {"angle": 22.5, "axis": "y", "origin": [4, 15, 5]},
+			"from": [0, 15, 4],
+			"to": [1, 16, 6],
+			"rotation": {"angle": 22.5, "axis": "y", "origin": [5, 15, 4]},
 			"faces": {
 				"north": {"uv": [0, 0, 1, 1], "texture": "#3"},
 				"east": {"uv": [0, 0, 2, 1], "texture": "#3"},
@@ -227,9 +228,9 @@
 		},
 		{
 			"name": "h3",
-			"from": [0, 15, 5.5],
-			"to": [3, 16, 6.5],
-			"rotation": {"angle": 22.5, "axis": "y", "origin": [4, 15, 5]},
+			"from": [1, 15, 4.5],
+			"to": [4, 16, 5.5],
+			"rotation": {"angle": 22.5, "axis": "y", "origin": [5, 15, 4]},
 			"faces": {
 				"north": {"uv": [0, 0, 3, 1], "texture": "#3"},
 				"east": {"uv": [0, 0, 1, 1], "texture": "#3"},
@@ -252,12 +253,14 @@
 		{
 			"name": "bell",
 			"origin": [0, 0, 0],
+			"scope": 0,
 			"color": 0,
 			"children": [9, 10, 11, 12]
 		},
 		{
 			"name": "sword",
 			"origin": [8, 8, 8],
+			"scope": 0,
 			"color": 0,
 			"children": [13, 14, 15, 16, 17]
 		}

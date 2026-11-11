@@ -1,7 +1,8 @@
 {
   "parent": "minecolonies:block/digsite",
   "textures": {
-    "0": "item/netherite_pickaxe",
-    "4": "block/diamond_block"
+    "pick": "item/netherite_pickaxe",
+    "1": "block/diamond_ore",
+    "5": "block/deepslate_redstone_ore"
 	}
 }

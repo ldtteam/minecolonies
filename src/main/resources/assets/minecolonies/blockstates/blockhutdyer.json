@@ -2,19 +2,19 @@
   "variants": {
     "facing=east": {
       "model": "minecolonies:block/blockhutdyer",
-      "y": 90
+      "y": 0
     },
     "facing=south": {
       "model": "minecolonies:block/blockhutdyer",
-      "y": 180
+      "y": 90
     },
     "facing=west": {
       "model": "minecolonies:block/blockhutdyer",
-      "y": 270
+      "y": 180
     },
     "facing=north": {
       "model": "minecolonies:block/blockhutdyer",
-      "y": 0
+      "y": 270
     }
   }
 }
