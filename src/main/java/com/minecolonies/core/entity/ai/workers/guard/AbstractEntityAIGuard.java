@@ -261,27 +261,33 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
     }
 
     /**
+     * Separate sleep chance so it can be overridden by guard type.
+     * @return chance of sleeping
+     */
+    protected double sleepChance()
+    {
+        return 1 / (1 + worker.getCitizenColonyHandler().getColonyOrRegister().getResearchManager().getResearchEffects().getEffectStrength(SLEEP_LESS));
+    }
+
+    /**
      * Whether the guard should fall asleep.
      *
      * @return true if so
      */
-    private boolean shouldSleep()
+    protected boolean shouldSleep()
     {
-        if (worker.getLastHurtByMob() != null || target != null || fighttimer > 0 || job.getCitizen().getCitizenDiseaseHandler().isSick())
+        if (buildingGuards.getRallyLocation() != null || worker.getLastHurtByMob() != null || target != null || fighttimer > 0 || job.getCitizen().getCitizenDiseaseHandler().isSick())
         {
             return false;
         }
 
-        final double chance = 1 / (1 + worker.getCitizenColonyHandler().getColonyOrRegister().getResearchManager().getResearchEffects().getEffectStrength(SLEEP_LESS));
+        final double chance = sleepChance();
 
         // Chance to fall asleep every 10sec, Chance is 1 in (10 + level/2) = 1 in Level1:5,Level2:6 Level6:8 Level 12:11 etc
         if (worker.getRandom().nextInt((int) (worker.getCitizenData().getCitizenSkillHandler().getLevel(Skill.Adaptability) * 0.5) + 20) == 1
               && worker.getRandom().nextDouble() < chance)
         {
-            // Sleep for 2500-3000 ticks
-            sleepTimer = worker.getRandom().nextInt(500) + 2500;
-            worker.getNavigation().stop();
-            SittingEntity.sitDown(worker.blockPosition(), worker, sleepTimer);
+            startSleeping();
 
             return true;
         }
@@ -294,7 +300,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
      *
      * @return the next state to go into
      */
-    private IAIState sleepParticles()
+    protected IAIState sleepParticles()
     {
         Network.getNetwork().sendToTrackingEntity(new SleepingParticleMessage(worker.getX(), worker.getY() + 2.0d, worker.getZ()), worker);
 
@@ -313,7 +319,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
      */
     protected IAIState sleep()
     {
-        if (worker.getLastHurtByMob() != null || (sleepTimer -= getTickRate()) < 0)
+        if (isSleepInterrupted() || (sleepTimer -= getTickRate()) < 0)
         {
             stopSleeping();
             ((EntityCitizen) worker).getThreatTable().removeCurrentTarget();
@@ -329,6 +335,45 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
             30f);
         ((LookHandler) worker.getLookControl()).setLookAtCooldown(sleepTimer);
         return null;
+    }
+
+    /**
+     * Checks whether an external event requires the guard to stop sleeping.
+     *
+     * @return {@code true} when the guard has been called for a rally or attacked.
+     */
+    protected boolean isSleepInterrupted()
+    {
+        return buildingGuards.getRallyLocation() != null || worker.getLastHurtByMob() != null;
+    }
+
+    /**
+     * Start the sleeping animation and associated timer.
+     */
+    protected void startSleeping()
+    {
+        startSleepTimer();
+        SittingEntity.sitDown(worker.blockPosition(), worker, sleepTimer);
+    }
+
+    /**
+     * Starts the sleep timer and stops the worker's navigation.
+     */
+    protected void startSleepTimer()
+    {
+        // Sleep for 2500-3000 ticks
+        sleepTimer = worker.getRandom().nextInt(500) + 2500;
+        worker.getNavigation().stop();
+    }
+
+    /**
+     * Gets the remaining duration of the current sleeping activity.
+     *
+     * @return the remaining duration in ticks.
+     */
+    protected int getSleepTimer()
+    {
+        return sleepTimer;
     }
 
     /**

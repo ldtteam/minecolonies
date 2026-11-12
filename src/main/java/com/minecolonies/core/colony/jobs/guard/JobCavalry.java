@@ -5,6 +5,7 @@ import com.minecolonies.core.util.citizenutils.CitizenItemUtils;
 import net.minecraft.resources.ResourceLocation;
 import com.minecolonies.api.client.render.modeltype.ModModelTypes;
 import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.jobs.IJobWithColonyFlag;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.equipment.ModEquipmentTypes;
@@ -31,7 +32,7 @@ import java.util.UUID;
 /**
  * The Cavalry job class.
  */
-public class JobCavalry extends AbstractJobGuard<JobCavalry>
+public class JobCavalry extends AbstractJobGuard<JobCavalry> implements IJobWithColonyFlag
 {
     public static final float MOUNT_DAMAGE_SPLIT = .20f;
     public static final int DININGHALL_HORSE_PARKING_RANGE = 40;
@@ -186,5 +187,23 @@ public class JobCavalry extends AbstractJobGuard<JobCavalry>
     public static EquipmentTypeEntry getWeaponType()
     {
         return ModEquipmentTypes.spear.get();
+    }
+
+    @Override
+    public void onColonyFlagChanged()
+    {
+        if (this.getCitizen().getEntity().isPresent())
+        {
+            final AbstractEntityCitizen worker = this.getCitizen().getEntity().get();
+            int shieldSlot = InventoryUtils.findFirstSlotInItemHandlerWith(this.getCitizen().getInventory(), Items.SHIELD);
+
+            if (shieldSlot < 0) return;
+
+            CitizenItemUtils.setHeldItem(worker, InteractionHand.OFF_HAND, shieldSlot);
+            worker.startUsingItem(InteractionHand.OFF_HAND);
+            ItemStack shieldStack = worker.getInventoryCitizen().getHeldItem(InteractionHand.OFF_HAND);
+            CompoundTag nbt = shieldStack.getOrCreateTagElement("BlockEntityTag");
+            nbt.put(TAG_BANNER_PATTERNS, worker.getCitizenColonyHandler().getColonyOrRegister().getColonyFlag());
+        }
     }
 }

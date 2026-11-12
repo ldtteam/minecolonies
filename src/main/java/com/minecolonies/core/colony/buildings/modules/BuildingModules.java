@@ -23,8 +23,6 @@ import net.minecraft.world.entity.animal.Rabbit;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Items;
 
-import java.util.List;
-
 import static com.minecolonies.api.research.util.ResearchConstants.HUSCARL;
 import static com.minecolonies.api.research.util.ResearchConstants.MARKSMAN;
 import static com.minecolonies.api.util.constant.BuildingConstants.BUILDING_FLOWER_LIST;
@@ -207,6 +205,9 @@ public class BuildingModules
         .with(AbstractBuildingGuards.PATROL_MODE, new GuardPatrolModeSetting())
         .with(BuildingStable.PATROL_INTERVAL, new IntSetting(6))
         .with(AbstractBuildingGuards.FOLLOW_MODE, new GuardFollowModeSetting()), () -> SettingsModuleView::new);
+
+    public static final BuildingEntry.ModuleProducer<StablePatrolTargetsModule, StablePatrolTargetsModuleView> STABLE_PATROL_TARGETS =
+      new BuildingEntry.ModuleProducer<>("stable_patrol_targets", StablePatrolTargetsModule::new, () -> StablePatrolTargetsModuleView::new);
       
     public static final BuildingEntry.ModuleProducer<WorkerBuildingModule,WorkerBuildingModuleView> FISHER_WORK         =
       new BuildingEntry.ModuleProducer<>("fisher_work",
