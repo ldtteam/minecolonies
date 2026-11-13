@@ -96,3 +96,48 @@ file="META-INF/accesstransformer.cfg"
     versionRange="[${dynamicTreesVersion},)"
     ordering="NONE"
     side="BOTH"
+
+[[dependencies.minecolonies]]
+    modId="minecolonies_compatibility"
+    type="discouraged"
+    reason="Use of this mod alongside MineColonies is discouraged, as its mixins have been known to cause compatibility issues. We’re unable to offer support while it is installed. For issues related to this mod, please contact its author."
+[[dependencies.minecolonies]]
+    modId="minecolonies_tweaks"
+    type="discouraged"
+    reason="Use of this mod alongside MineColonies is discouraged, as its mixins have been known to cause compatibility issues. We’re unable to offer support while it is installed. For issues related to this mod, please contact its author."
+[[dependencies.minecolonies]]
+    modId="easycolony"
+    type="discouraged"
+    reason="Use of this mod alongside MineColonies is discouraged, as its mixins have been known to cause compatibility issues. We’re unable to offer support while it is installed. For issues related to this mod, please contact its author."
+[[dependencies.minecolonies]]
+    modId="colonypathingedition"
+    type="discouraged"
+    reason="Use of this mod alongside MineColonies is discouraged, as its mixins have been known to cause compatibility issues. We’re unable to offer support while it is installed. For issues related to this mod, please contact its author."
+[[dependencies.minecolonies]]
+    modId="minecolonies_qol"
+    type="discouraged"
+    reason="Use of this mod alongside MineColonies is discouraged, as its mixins have been known to cause compatibility issues. We’re unable to offer support while it is installed. For issues related to this mod, please contact its author."
+[[dependencies.minecolonies]]
+    modId="mindofthecolony"
+    type="discouraged"
+    reason="Use of this mod alongside MineColonies is discouraged, as its mixins have been known to cause compatibility issues. We’re unable to offer support while it is installed. For issues related to this mod, please contact its author."
+[[dependencies.minecolonies]]
+    modId="minecoloniestransitnetworks"
+    type="discouraged"
+    reason="Use of this mod alongside MineColonies is discouraged, as its mixins have been known to cause compatibility issues. We’re unable to offer support while it is installed. For issues related to this mod, please contact its author."
+[[dependencies.minecolonies]]
+    modId="minecolonieslive"
+    type="discouraged"
+    reason="Use of this mod alongside MineColonies is discouraged, as its mixins have been known to cause compatibility issues. We’re unable to offer support while it is installed. For issues related to this mod, please contact its author."
+[[dependencies.minecolonies]]
+    modId="mctier_engine"
+    type="discouraged"
+    reason="Use of this mod alongside MineColonies is discouraged, as its mixins have been known to cause compatibility issues. We’re unable to offer support while it is installed. For issues related to this mod, please contact its author."
+[[dependencies.minecolonies]]
+    modId="colonyautopilot"
+    type="discouraged"
+    reason="Use of this mod alongside MineColonies is discouraged, as its mixins have been known to cause compatibility issues. We’re unable to offer support while it is installed. For issues related to this mod, please contact its author."
+[[dependencies.minecolonies]]
+    modId="sable"
+    type="discouraged"
+    reason="This mod significantly rewrites Minecraft core functionality via mixins and is known to cause crashes with MineColonies. Any compatibility fixes would need to come from the mod author."
