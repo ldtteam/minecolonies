@@ -124,9 +124,9 @@ public interface IGenericRecipe
     /**
      * Gets the tool required for this craft, if any.
      *
-     * @return The required tool.
+     * @return The required tool, or null if no tool is required.
      */
-    @NotNull
+    @Nullable
     EquipmentTypeEntry getRequiredTool();
 
     /**

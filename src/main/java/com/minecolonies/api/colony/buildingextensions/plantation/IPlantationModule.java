@@ -135,8 +135,9 @@ public interface IPlantationModule extends IBuildingExtensionModule
     /**
      * Returns the requested tool type in order to work on this module.
      *
-     * @return the tool to work on this module.
+     * @return the tool to work on this module, or null if no tool is required.
      */
+    @Nullable
     EquipmentTypeEntry getRequiredTool();
 
     /**

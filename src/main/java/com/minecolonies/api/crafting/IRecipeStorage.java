@@ -190,8 +190,9 @@ public interface IRecipeStorage
 
     /**
      * Get the additional tool needed beyond the recipe (if any)
-     * @return the required tool
+     * @return the required tool, or null if no tool is required
      */
+    @Nullable
     EquipmentTypeEntry getRequiredTool();
 
     /** 

@@ -1,13 +1,13 @@
 package com.minecolonies.core.colony.buildings.workerbuildings.plantation.modules.specific;
 
 import com.minecolonies.api.colony.buildingextensions.IBuildingExtension;
-import com.minecolonies.api.equipment.ModEquipmentTypes;
 import com.minecolonies.api.equipment.registry.EquipmentTypeEntry;
 import com.minecolonies.core.colony.buildings.workerbuildings.plantation.modules.generic.UpwardsGrowingPlantModule;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Planter module for growing {@link Items#SUGAR_CANE}.
@@ -39,8 +39,9 @@ public class SugarCanePlantModule extends UpwardsGrowingPlantModule
     }
 
     @Override
+    @Nullable
     public EquipmentTypeEntry getRequiredTool()
     {
-        return ModEquipmentTypes.none.get();
+        return null;
     }
 }
