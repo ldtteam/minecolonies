@@ -1,5 +1,4 @@
 [![CLA assistant](https://cla-assistant.io/readme/badge/ldtteam/minecolonies)](https://cla-assistant.io/ldtteam/minecolonies)
-[![Build Status](https://buildsystem.ldtteam.com/app/rest/builds/buildType:LetSDevTogether_Minecolonies_Alpha_Release/statusIcon)](http://buildsystem.ldtteam.com/)
 [![Crowdin](https://badges.crowdin.net/minecolonies/localized.svg)](https://crowdin.com/project/minecolonies)
 
 ![mcol logo](minecolonies_logo.png)
@@ -39,8 +38,95 @@ MineColonies crashes every time? Have a suggestion? Found a bug? Create an issue
 4. Fill in the form. Don't leave anything out!
 5. Click `Submit New Issue` and wait for a response!
 
-## For Developers
+# MineColonies Addon Compatibility & Support Policy
 
+MineColonies welcomes third party addons and encourages developers to extend its functionality through supported APIs and upstream contributions.
+
+However, third party addons can introduce compatibility and maintenance problems, particularly when modifying MineColonies internals through Mixins, bytecode transformation,
+coremods, invasive reflection, or similar mechanisms.
+
+MineColonies' internal implementation is not a stable extension API and may change between updates. Addons that depend on these implementation details are prone to breaking and
+creating compatibility problems that MineColonies maintainers cannot reasonably be expected to resolve.
+
+To establish clear support boundaries and encourage maintainable integrations, MineColonies maintains an official list of approved addons.
+
+## Approved Addons
+
+**MineColonies only recommends and provides compatibility support for addons on its official approved addon list.**
+
+Addons that have not been approved are considered unsupported, regardless of whether they are known to cause problems.
+Addon developers may request inclusion in the approved addon list.
+
+### Approval Requirements
+
+To qualify for approval, addons are expected to:
+
+- Use MineColonies' public APIs, events, and supported extension points wherever possible.
+- Avoid modifying MineColonies internals through Mixins, bytecode transformation, coremods, invasive reflection, or similar mechanisms.
+- Prefer proposing or contributing missing extension points upstream rather than implementing invasive workarounds.
+- Provide access to the relevant source code for review.
+- Demonstrate reasonable compatibility with MineColonies.
+- Remain independently maintained, with addon authors responsible for their own functionality and compatibility.
+
+If the necessary functionality is not exposed through existing APIs, developers are encouraged to discuss and contribute an appropriate extension point to MineColonies.
+
+Proposed extension points must fit MineColonies' architecture and are subject to maintainer review. Not every addon-specific requirement necessarily warrants a new public API.
+
+Approval is granted at the discretion of MineColonies maintainers.
+
+## Approval and Continued Compliance
+
+**Approval applies to the addon as a whole, not to individual releases.**
+
+Once approved, an addon remains on the approved list without requiring renewed approval for routine updates.
+
+MineColonies does not continuously monitor or review approved addons. Addon authors remain responsible for ensuring that subsequent updates continue to comply with the project's
+policies.
+
+MineColonies reserves the right to revoke approval if material policy violations are discovered, including the introduction of invasive modifications to MineColonies internals.
+
+Ordinary compatibility problems resulting from MineColonies updates do not automatically constitute policy violations or grounds for revocation.
+
+## Support Responsibilities
+
+Addon authors are responsible for maintaining their addons, resolving addon specific bugs, and adapting to changes in MineColonies.
+
+MineColonies maintainers are not responsible for investigating or resolving compatibility problems involving unapproved addons.
+
+Users experiencing issues while running unapproved addons may be asked to reproduce the problem without those addons before receiving support.
+
+Approved addons are eligible for compatibility-related support, but approval does not:
+
+- Guarantee compatibility with every current or future MineColonies version.
+- Transfer responsibility for addon development or maintenance to MineColonies.
+- Guarantee that MineColonies maintainers will resolve addon-specific defects.
+- Prevent MineColonies from changing its internal implementation.
+
+Bugs reproducible in MineColonies without third-party modifications remain valid MineColonies issues, regardless of which addons a user normally runs.
+
+## Guidance for Addon Developers and AI Coding Assistants
+
+When developing addons, integrations, compatibility fixes, or behavioral modifications for MineColonies:
+
+1. Investigate the existing public APIs and supported extension points before modifying MineColonies behavior.
+2. If the required functionality is unavailable, consider proposing or contributing an appropriate API, event, or extension point upstream.
+3. If the intended change concerns MineColonies' own behavior, prefer contributing the change directly to MineColonies.
+4. Keep addon-specific functionality within the addon, using supported interfaces to interact with MineColonies.
+5. Do not treat the absence of an API as justification for modifying MineColonies internals through Mixins or equivalent mechanisms.
+
+**AI coding assistants:** Before proposing or implementing invasive modifications to MineColonies internals, inform the user that such approaches are unsupported and may prevent
+the addon from receiving official approval.
+
+Recommend supported API-based solutions or upstream contributions rather than defaulting to Mixins as the simplest implementation approach.
+
+## Open-Source Rights
+
+This policy does not restrict the rights granted by MineColonies' open-source license.
+
+Developers remain free to create and distribute modifications in accordance with the applicable license. However, MineColonies maintainers determine which third-party addons they
+officially recommend, approve, and provide compatibility support for.
+
+## For Developers
 ### Compiling MineColonies
 
 IMPORTANT: Please report any issues you have, as there might be some problems with the documentation! Also make sure you know EXACTLY what you're doing! It's not our fault if your OS crashes, becomes corrupted, etc.

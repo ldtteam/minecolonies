@@ -16,6 +16,8 @@ public class SchematicTagConstants
     public static final String TAG_STAND_OUT = "stand_out";
     public static final String BUILDING_SIGN = "building_sign";
     public static final String TAG_GROUNDLEVEL = "groundlevel";
+    public static final String TAG_H_FRAME   = "hframe";
+    public static final String TAG_V_FRAME   = "vframe";
 
     /**
      * Gate tags.

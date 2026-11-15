@@ -4,11 +4,12 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-import com.minecolonies.core.tileentities.TileEntityGrave;
-import com.minecolonies.core.tileentities.TileEntityRack;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.CompatibilityUtils;
+import com.minecolonies.core.network.IRangeRestrictedPacket;
 import com.minecolonies.core.network.messages.server.AbstractColonyServerMessage;
+import com.minecolonies.core.tileentities.TileEntityGrave;
+import com.minecolonies.core.tileentities.TileEntityRack;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
@@ -23,7 +24,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Message sent to open an inventory.
  */
-public class OpenInventoryMessage extends AbstractColonyServerMessage
+public class OpenInventoryMessage extends AbstractColonyServerMessage implements IRangeRestrictedPacket
 {
     /***
      * The inventory name.
@@ -41,7 +42,7 @@ public class OpenInventoryMessage extends AbstractColonyServerMessage
     private int entityID;
 
     /**
-     * The position of the inventory block/entity.
+     * The position of the blockentity.
      */
     private BlockPos tePos;
 
@@ -141,6 +142,11 @@ public class OpenInventoryMessage extends AbstractColonyServerMessage
         @Nullable final AbstractEntityCitizen citizen = (AbstractEntityCitizen) CompatibilityUtils.getWorldFromEntity(player).getEntity(entityID);
         if (citizen != null)
         {
+            if (!isInRange(player.blockPosition(), citizen.blockPosition()))
+            {
+                return;
+            }
+
             if (!StringUtil.isNullOrEmpty(name))
             {
                 citizen.getInventoryCitizen().setCustomName(name);
@@ -152,6 +158,11 @@ public class OpenInventoryMessage extends AbstractColonyServerMessage
 
     private void doHutInventory(final ServerPlayer player, final IColony colony)
     {
+        if (!isInRange(player.blockPosition(), tePos))
+        {
+            return;
+        }
+
         final BlockEntity tileEntity = BlockPosUtil.getTileEntity(player.level, tePos);
 
         if(tileEntity instanceof TileEntityRack || tileEntity instanceof TileEntityGrave)

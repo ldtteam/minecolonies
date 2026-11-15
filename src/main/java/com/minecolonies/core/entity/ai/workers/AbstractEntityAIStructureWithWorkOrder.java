@@ -28,6 +28,7 @@ import com.minecolonies.core.colony.eventhooks.buildingEvents.BuildingUpgradedEv
 import com.minecolonies.core.colony.jobs.AbstractJobStructure;
 import com.minecolonies.core.colony.workorders.WorkOrderBuilding;
 import com.minecolonies.core.colony.workorders.WorkOrderMiner;
+import com.minecolonies.core.entity.ai.workers.util.BlueprintFrameIterator;
 import com.minecolonies.core.entity.ai.workers.util.BuildingProgressStage;
 import com.minecolonies.core.entity.ai.workers.util.WorkerLoadOnlyStructureHandler;
 import net.minecraft.core.BlockPos;
@@ -53,6 +54,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
      */
     protected enum RequestStage
     {
+        SOLID_FRAME,
         SOLID,
         WEAK_SOLID,
         DECO,
@@ -62,7 +64,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
     /**
      * The current request state (0 is solid
      */
-    protected RequestStage requestState = RequestStage.SOLID;
+    protected RequestStage requestState = RequestStage.SOLID_FRAME;
 
     /**
      * Request progress pos.
@@ -74,6 +76,11 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
      * We don't want to persist this anywhere on purpose.
      */
     private boolean recalculated = false;
+
+    /**
+     * Frame iterator for requesting.
+     */
+    private BlueprintFrameIterator requestFrameIterator = null;
 
     /**
      * Initialize the builder and add all his tasks.
@@ -240,41 +247,50 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
 
         final StructurePlacer placer = new StructurePlacer(structure, building.getWorkOrder().getIteratorType());
 
+        IBuilding colonyBuilding = worker.getCitizenColonyHandler().getColonyOrRegister().getServerBuildingManager().getBuilding(structurePlacer.getB().getCenterPos());
+
+
         if (requestProgress == null)
         {
             final AbstractBuildingStructureBuilder buildingWorker = building;
             buildingWorker.resetNeededResources();
             requestProgress = NULL_POS;
-            requestState = RequestStage.SOLID;
+            requestState = RequestStage.SOLID_FRAME;
         }
 
         final RequestStage currState = requestState;
         switch (currState)
         {
+            case SOLID_FRAME:
+                if (colonyBuilding != null && colonyBuilding.getBuildingLevel() > 1)
+                {
+                    requestState = RequestStage.SOLID;
+                    return false;
+                }
+                if (requestFrameIterator == null)
+                {
+                    requestFrameIterator = createFrameIteratorForBlueprint(structurePlacer.getB().getBluePrint());
+                    if (requestFrameIterator == null)
+                    {
+                        requestState = RequestStage.SOLID;
+                        return false;
+                    }
+                }
+
+                result = placer.executeStructureStep(world,
+                    null,
+                    requestProgress,
+                    StructurePlacer.Operation.GET_RES_REQUIREMENTS,
+                    () -> requestFrameIterator.increment(this::skipBuilding),
+                    false, requestFrameIterator);
+                break;
             case SOLID:
                 result = placer.executeStructureStep(world,
                   null,
                   requestProgress,
                   StructurePlacer.Operation.GET_RES_REQUIREMENTS,
-                  () -> placer.getIterator()
-                          .increment(DONT_TOUCH_PREDICATE.or((info, pos, handler) -> !BlockUtils.canBlockFloatInAir(info.getBlockInfo().getState())
-                                                                                       || isDecoItem(info.getBlockInfo()
-                                                                                                       .getState()
-                                                                                                       .getBlock()))),
-                  false);
-                requestProgress = result.getIteratorPos();
-
-                for (final ItemStack stack : result.getBlockResult().getRequiredItems())
-                {
-                    building.addNeededResource(stack, stack.getCount());
-                }
-
-                if (result.getBlockResult().getResult() == BlockPlacementResult.Result.FINISHED)
-                {
-                    requestState = RequestStage.WEAK_SOLID;
-                }
-                return false;
-
+                    () -> placer.getIterator().increment(this::skipBuilding), false);
+                break;
             case WEAK_SOLID:
                 result = placer.executeStructureStep(world,
                   null,
@@ -282,19 +298,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
                   StructurePlacer.Operation.GET_RES_REQUIREMENTS,
                   () -> placer.getIterator().increment(DONT_TOUCH_PREDICATE.or((info, pos, handler) -> !BlockUtils.isWeakSolidBlock(info.getBlockInfo().getState()))),
                   false);
-                requestProgress = result.getIteratorPos();
-
-                for (final ItemStack stack : result.getBlockResult().getRequiredItems())
-                {
-                    building.addNeededResource(stack, stack.getCount());
-                }
-
-                if (result.getBlockResult().getResult() == BlockPlacementResult.Result.FINISHED)
-                {
-                    requestState = RequestStage.DECO;
-                }
-                return false;
-
+                break;
             case DECO:
                 result = placer.executeStructureStep(world,
                   null,
@@ -305,40 +309,37 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
                                                                                                                                                             .getState()
                                                                                                                                                             .getBlock()))),
                   false);
-                requestProgress = result.getIteratorPos();
-
-                for (final ItemStack stack : result.getBlockResult().getRequiredItems())
-                {
-                    building.addNeededResource(stack, stack.getCount());
-                }
-
-                if (result.getBlockResult().getResult() == BlockPlacementResult.Result.FINISHED)
-                {
-                    requestState = RequestStage.ENTITIES;
-                }
-                return false;
+                break;
             case ENTITIES:
                 result = placer.executeStructureStep(world, null, requestProgress, StructurePlacer.Operation.GET_RES_REQUIREMENTS,
                   () -> placer.getIterator().increment(DONT_TOUCH_PREDICATE.or((info, pos, handler) -> info.getEntities().length == 0)), true);
-                requestProgress = result.getIteratorPos();
-
-                for (final ItemStack stack : result.getBlockResult().getRequiredItems())
-                {
-                    building.addNeededResource(stack, stack.getCount());
-                }
-
-                if (result.getBlockResult().getResult() == BlockPlacementResult.Result.FINISHED)
-                {
-                    requestState = RequestStage.SOLID;
-                    requestProgress = null;
-                    recalculated = true;
-                    return true;
-                }
-                return false;
+                break;
             default:
                 recalculated = true;
                 return true;
         }
+
+        requestProgress = result.getIteratorPos();
+
+        for (final ItemStack stack : result.getBlockResult().getRequiredItems())
+        {
+            building.addNeededResource(stack, stack.getCount());
+        }
+
+        if (result.getBlockResult().getResult() == BlockPlacementResult.Result.FINISHED)
+        {
+            requestProgress = NULL_POS;
+            if (requestState == RequestStage.ENTITIES)
+            {
+                requestState = RequestStage.SOLID_FRAME;
+                requestProgress = null;
+                recalculated = true;
+                requestFrameIterator = null;
+                return true;
+            }
+            requestState = RequestStage.values()[requestState.ordinal() + 1];
+        }
+        return false;
     }
 
     @Override

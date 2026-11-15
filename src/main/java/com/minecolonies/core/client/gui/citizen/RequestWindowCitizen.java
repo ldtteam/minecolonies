@@ -4,7 +4,6 @@ import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
-import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.InventoryUtils;
@@ -13,7 +12,6 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.Network;
 import com.minecolonies.core.client.gui.AbstractWindowSkeleton;
 import com.minecolonies.core.client.gui.modules.RequestTreeWindowModule;
-import com.minecolonies.core.network.messages.server.colony.UpdateRequestStateMessage;
 import com.minecolonies.core.network.messages.server.colony.citizen.TransferItemsToCitizenRequestMessage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
@@ -234,11 +232,7 @@ public class RequestWindowCitizen extends AbstractWindowCitizen
             }
 
             final int quantity = isCreative ? amount : Math.min(amount, count);
-            Network.getNetwork().sendToServer(new TransferItemsToCitizenRequestMessage(colony, citizenDataView, itemStack, quantity));
-
-            final ItemStack copy = itemStack.copy();
-            copy.setCount(quantity);
-            Network.getNetwork().sendToServer(new UpdateRequestStateMessage(colony, request.getId(), RequestState.OVERRULED, copy));
+            Network.getNetwork().sendToServer(new TransferItemsToCitizenRequestMessage(colony, citizenDataView, itemStack, quantity, request.getId()));
         }
     }
 }

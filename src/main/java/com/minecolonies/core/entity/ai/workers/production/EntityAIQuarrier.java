@@ -382,10 +382,12 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
         }
         iterator.setLayer(requestLayer);
 
-        final BlockPos worldPos = structure.getProgressPosInWorld(requestProgress);
         final RequestStage currState = requestState;
         switch (currState)
         {
+            case SOLID_FRAME:
+                requestState = RequestStage.SOLID;
+                return false;
             case SOLID:
                 result = placer.executeStructureStep(world,
                   null,

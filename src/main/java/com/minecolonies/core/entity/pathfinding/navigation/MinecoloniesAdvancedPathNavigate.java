@@ -729,8 +729,11 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
         }
 
         moveTo(pathResult.getPath(), getSpeedFactor());
-        isTracking = PathfindingUtils.trackingMap.containsValue(ourEntity.getUUID());
-        updateNodeReferences();
+        if (path != null)
+        {
+            isTracking = PathfindingUtils.trackingMap.containsValue(ourEntity.getUUID());
+            updateNodeReferences();
+        }
     }
 
     /**
@@ -1318,6 +1321,11 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
     @Override
     public void updateNodeReferences()
     {
+        if (path == null)
+        {
+            return;
+        }
+
         final int currentIndex = path.getNextNodeIndex();
         final int pathLength = path.getNodeCount();
 

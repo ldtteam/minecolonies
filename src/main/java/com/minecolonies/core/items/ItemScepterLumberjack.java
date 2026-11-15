@@ -4,6 +4,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.items.IBlockOverlayItem;
+import com.minecolonies.api.items.IScepter;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.Tuple;
@@ -33,7 +34,7 @@ import static com.minecolonies.api.util.constant.translation.ToolTranslationCons
 /**
  * Lumberjack Scepter Item class. Used to give tasks to Lumberjacks.
  */
-public class ItemScepterLumberjack extends AbstractItemMinecolonies implements IBlockOverlayItem
+public class ItemScepterLumberjack extends AbstractItemMinecolonies implements IBlockOverlayItem, IScepter
 {
     private static final int RED_OVERLAY = 0xFFFF0000;
     private static final int GREEN_OVERLAY = 0xFF00FF00;

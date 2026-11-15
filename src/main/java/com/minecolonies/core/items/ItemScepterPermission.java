@@ -4,6 +4,7 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.items.IBlockOverlayItem;
+import com.minecolonies.api.items.IScepter;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.core.Network;
 import com.minecolonies.core.network.messages.server.colony.ChangeFreeToInteractBlockMessage;
@@ -39,7 +40,7 @@ import static com.minecolonies.api.util.constant.translation.ToolTranslationCons
 /**
  * Permission scepter. used to add free to interact blocks or positions to the colonies permission list
  */
-public class ItemScepterPermission extends AbstractItemMinecolonies implements IBlockOverlayItem
+public class ItemScepterPermission extends AbstractItemMinecolonies implements IBlockOverlayItem, IScepter
 {
     /**
      * The NBT tag of the mode

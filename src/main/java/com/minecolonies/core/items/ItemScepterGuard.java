@@ -4,6 +4,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IGuardBuilding;
+import com.minecolonies.api.items.IScepter;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.core.colony.buildings.AbstractBuildingGuards;
@@ -25,7 +26,7 @@ import static com.minecolonies.api.util.constant.translation.ToolTranslationCons
 /**
  * Guard Scepter Item class. Used to give tasks to guards.
  */
-public class ItemScepterGuard extends AbstractItemMinecolonies
+public class ItemScepterGuard extends AbstractItemMinecolonies implements IScepter
 {
     /**
      * The compound tag for the last pos the tool has been clicked.
