@@ -7,8 +7,6 @@ import com.minecolonies.api.colony.buildings.modules.IBuildingEventsModule;
 import com.minecolonies.api.colony.buildings.modules.IPersistentModule;
 import com.minecolonies.api.colony.buildings.modules.ITickingModule;
 import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.core.colony.buildings.AbstractBuildingGuards;
-import com.minecolonies.core.colony.buildings.modules.settings.GuardPatrolModeSetting;
 import com.minecolonies.core.colony.buildings.modules.settings.GuardTaskSetting;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingStable;
 import net.minecraft.core.BlockPos;
@@ -237,7 +235,6 @@ public class StablePatrolTargetsModule extends AbstractBuildingModule
         }
 
         if (building instanceof BuildingStable stable && (!GuardTaskSetting.PATROL.equals(stable.getTask()) ||
-            GuardPatrolModeSetting.MANUAL.equals(stable.getSetting(AbstractBuildingGuards.PATROL_MODE).getValue()) ||
             stable.getAllAssignedMilitaryUnits().isEmpty()))
         {
             setActivePatrolTarget(null);
