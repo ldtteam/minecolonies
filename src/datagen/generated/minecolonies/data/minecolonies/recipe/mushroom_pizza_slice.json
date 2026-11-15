@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "minecolonies:mushroom_pizza"
+    }
+  ],
+  "result": {
+    "count": 8,
+    "id": "minecolonies:mushroom_pizza_slice"
+  }
+}

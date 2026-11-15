@@ -149,7 +149,9 @@ public final class ModItems
     public static Item tortillas;
     public static Item apple_pie;
     public static Item cheese_pizza;
+    public static Item cheese_pizza_slice;
     public static Item mushroom_pizza;
+    public static Item mushroom_pizza_slice;
     public static Item plain_cheesecake;
     public static Item mintchoco_cheesecake;
     public static Item spicy_eggplant;
@@ -229,6 +231,7 @@ public final class ModItems
           mutton_dinner,
           pasta_tomato,
           cheese_pizza,
+          cheese_pizza_slice,
           pepper_hummus,
           kebab,
           congee,
@@ -247,6 +250,7 @@ public final class ModItems
           eggplant_dolma,
           stuffed_pita,
           mushroom_pizza,
+          mushroom_pizza_slice,
           pita_hummus,
           spicy_eggplant,
           stew_trencher,
@@ -254,5 +258,11 @@ public final class ModItems
           tacos,
           fried_rice
         };
+    }
+
+    public static boolean isSlicedFood(final Item foodItem)
+    {
+        return foodItem == ModItems.cheese_pizza_slice
+            || foodItem == ModItems.mushroom_pizza_slice;
     }
 }
