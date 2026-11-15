@@ -1,6 +1,6 @@
 {
   "values": [
-    "minecraft:netherite_block",
+    "minecraft:ancient_debris",
     "minecraft:purpur_slab",
     "minecraft:purpur_block",
     "minecraft:purpur_pillar",
@@ -12,10 +12,11 @@
     "minecraft:end_stone_brick_wall",
     "minecraft:end_rod",
     "#minecraft:shulker_boxes",
+    "minecraft:skeleton_skull",
+    "minecraft:wither_skeleton_skull",
+    "minecraft:torchflower",
+    "minecraft:pitcher_plant",
     "minecraft:chorus_plant",
-    "minecraft:chorus_flower",
-    "minecraft:ochre_froglight",
-    "minecraft:verdant_froglight",
-    "minecraft:pearlescent_froglight"
+    "minecraft:chorus_flower"
   ]
 }
