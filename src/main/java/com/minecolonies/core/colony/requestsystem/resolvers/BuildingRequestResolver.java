@@ -90,7 +90,7 @@ public class BuildingRequestResolver extends AbstractBuildingDependentRequestRes
             return !requestParent.getRequestOfType(IDeliverable.class).map(d -> d.matches(itemStack)).orElse(false);
         };
 
-        return InventoryUtils.hasBuildingEnoughElseCount(building, pred, request.getRequest().getMinimumCount()) >= request.getRequest().getMinimumCount();
+        return building.hasEnoughElseCount( pred, request.getRequest().getMinimumCount()) >= request.getRequest().getMinimumCount();
     }
 
     @Nullable
@@ -101,7 +101,7 @@ public class BuildingRequestResolver extends AbstractBuildingDependentRequestRes
       @NotNull final AbstractBuilding building)
     {
         final int totalRequested = request.getRequest().getCount();
-        int totalAvailable = InventoryUtils.getCountFromBuilding(building, itemStack -> request.getRequest().matches(itemStack));
+        int totalAvailable = building.getItemCount(itemStack -> request.getRequest().matches(itemStack));
         for (final Map.Entry<ItemStorage, Integer> reserved : building.reservedStacksExcluding(request).entrySet())
         {
             if (request.getRequest().matches(reserved.getKey().getItemStack()))

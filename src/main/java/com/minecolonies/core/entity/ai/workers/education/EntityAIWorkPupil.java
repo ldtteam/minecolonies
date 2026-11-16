@@ -150,7 +150,7 @@ public class EntityAIWorkPupil extends AbstractEntityAIInteract<JobPupil, Buildi
             SittingEntity.sitDown(studyPos, worker, maxSittingTicks * 20);
         }
 
-        final int slot = InventoryUtils.findFirstSlotInItemHandlerWith(worker.getInventoryCitizen(), PAPER);
+        final int slot = InventoryUtils.getMatchingSlot(worker.getInventoryCitizen(), PAPER);
 
         if (slot != -1)
         {

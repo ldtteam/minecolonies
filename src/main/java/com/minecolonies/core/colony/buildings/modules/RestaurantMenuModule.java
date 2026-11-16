@@ -143,8 +143,8 @@ public class RestaurantMenuModule extends AbstractBuildingModule implements IPer
                 }
 
                 final int target = requestStack.getMaxStackSize() * getExpectedStock();
-                int count = InventoryUtils.hasBuildingEnoughElseCount(this.building, new ItemStorage(requestStack, true), target);
-                count += rawStack.isEmpty() ? 0 : InventoryUtils.hasBuildingEnoughElseCount(this.building, new ItemStorage(rawStack, true), target);
+                int count = building.hasEnoughElseCount(new ItemStorage(requestStack, true), target);
+                count += rawStack.isEmpty() ? 0 : building.hasEnoughElseCount(new ItemStorage(rawStack, true), target);
                 final int delta = target - count;
 
                 final IToken<?> request = getMatchingRequest(requestStack, list);

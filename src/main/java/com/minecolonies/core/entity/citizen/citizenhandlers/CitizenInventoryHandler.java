@@ -35,7 +35,7 @@ public class CitizenInventoryHandler implements ICitizenInventoryHandler
     @Override
     public int findFirstSlotInInventoryWith(final Item targetItem)
     {
-        return InventoryUtils.findFirstSlotInItemHandlerWith(citizen.getInventoryCitizen(), targetItem);
+        return InventoryUtils.getMatchingSlot(citizen.getInventoryCitizen(), targetItem);
     }
 
     /**
@@ -47,7 +47,7 @@ public class CitizenInventoryHandler implements ICitizenInventoryHandler
     @Override
     public int findFirstSlotInInventoryWith(final Block block)
     {
-        return InventoryUtils.findFirstSlotInItemHandlerWith(citizen.getInventoryCitizen(), block);
+        return InventoryUtils.getMatchingSlot(citizen.getInventoryCitizen(), block);
     }
 
     /**
@@ -59,7 +59,7 @@ public class CitizenInventoryHandler implements ICitizenInventoryHandler
     @Override
     public int getItemCountInInventory(final Block block)
     {
-        return InventoryUtils.getItemCountInItemHandler(citizen.getInventoryCitizen(), block);
+        return InventoryUtils.getItemCount(citizen.getInventoryCitizen(), block);
     }
 
     /**
@@ -71,7 +71,7 @@ public class CitizenInventoryHandler implements ICitizenInventoryHandler
     @Override
     public int getItemCountInInventory(final Item targetItem)
     {
-        return InventoryUtils.getItemCountInItemHandler(citizen.getInventoryCitizen(), targetItem);
+        return InventoryUtils.getItemCount(citizen.getInventoryCitizen(), targetItem);
     }
 
     /**

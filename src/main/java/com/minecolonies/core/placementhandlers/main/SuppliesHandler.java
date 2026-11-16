@@ -103,7 +103,7 @@ public class SuppliesHandler implements ISurvivalBlueprintHandler
                             stack -> stack.hasTag() && stack.getTag().get(PLACEMENT_NBT) != null && stack.getTag().getString(PLACEMENT_NBT).equals(INSTANT_PLACEMENT));
         }
 
-        final int slot = InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(new InvWrapper(player.getInventory()), searchPredicate);
+        final int slot = InventoryUtils.getMatchingSlot(new InvWrapper(player.getInventory()), searchPredicate);
 
         if (slot != -1 && !ItemStackUtils.isEmpty(player.getInventory().removeItemNoUpdate(slot)))
         {

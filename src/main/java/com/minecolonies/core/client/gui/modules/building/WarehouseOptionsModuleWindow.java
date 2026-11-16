@@ -25,6 +25,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.items.wrapper.InvWrapper;
+import net.minecraftforge.items.wrapper.PlayerMainInvWrapper;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.LABEL_X_OF_Z;
 import static com.minecolonies.api.util.constant.TranslationConstants.WAREHOUSE_SORTED;
@@ -99,7 +100,7 @@ public class WarehouseOptionsModuleWindow extends AbstractModuleWindow<Warehouse
         }
         else
         {
-            amountToSet = InventoryUtils.getItemCountInItemHandler(new InvWrapper(inventory), resource.getItem());
+            amountToSet = InventoryUtils.getItemCount(new PlayerMainInvWrapper(inventory), resource.getItem());
         }
         resource.setPlayerAmount(amountToSet);
 

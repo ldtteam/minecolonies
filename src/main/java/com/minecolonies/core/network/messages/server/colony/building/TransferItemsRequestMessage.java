@@ -16,6 +16,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.wrapper.InvWrapper;
+import net.minecraftforge.items.wrapper.PlayerMainInvWrapper;
 import net.minecraftforge.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
 
@@ -103,7 +104,7 @@ public class TransferItemsRequestMessage extends AbstractBuildingServerMessage<I
         Map<ItemStorage, ItemStorage> previousContent = null;
         if (MineColonies.getConfig().getServer().debugInventories.get())
         {
-            previousContent = InventoryUtils.getAllItemsForProviders(building.getTileEntity(), new InvWrapper(player.getInventory()));
+            previousContent = InventoryUtils.getAllItemsForProviders(building.getTileEntity(), new PlayerMainInvWrapper(player.getInventory()));
         }
 
         final int toMove;
@@ -115,12 +116,12 @@ public class TransferItemsRequestMessage extends AbstractBuildingServerMessage<I
         }
         else
         {
-            toMove = Math.min(this.quantity, InventoryUtils.getItemCountInItemHandler(new InvWrapper(player.getInventory()), stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, itemStack, true, true)));
+            toMove = Math.min(this.quantity, InventoryUtils.getItemCount(new PlayerMainInvWrapper(player.getInventory()), stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, itemStack, true, true)));
             if (toMove == 0)
             {
                 return;
             }
-            leftOver = InventoryUtils.transferItemStackFromItemHandlerToBuilding(new InvWrapper(player.getInventory()), building, itemStack, toMove);
+            leftOver = InventoryUtils.transferItemStackFromItemHandlerToBuilding(new PlayerMainInvWrapper(player.getInventory()), building, itemStack, toMove);
         }
         if (leftOver > 0)
         {
@@ -139,7 +140,7 @@ public class TransferItemsRequestMessage extends AbstractBuildingServerMessage<I
        
         if (!isCreative && previousContent != null && MineColonies.getConfig().getServer().debugInventories.get())
         {
-            InventoryUtils.doStorageSetsMatch(previousContent, InventoryUtils.getAllItemsForProviders(building.getTileEntity(), new InvWrapper(player.getInventory())), true);
+            InventoryUtils.doStorageSetsMatch(previousContent, InventoryUtils.getAllItemsForProviders(building.getTileEntity(), new PlayerMainInvWrapper(player.getInventory())), true);
         }
     }
 }

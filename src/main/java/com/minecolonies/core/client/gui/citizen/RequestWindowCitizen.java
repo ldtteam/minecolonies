@@ -18,6 +18,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.wrapper.InvWrapper;
+import net.minecraftforge.items.wrapper.PlayerMainInvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -171,7 +172,7 @@ public class RequestWindowCitizen extends AbstractWindowCitizen
                 return false;
             }
 
-            return isCreative || InventoryUtils.hasItemInItemHandler(new InvWrapper(inventory), deliverable::matches);
+            return isCreative || InventoryUtils.hasItem(new PlayerMainInvWrapper(inventory), deliverable::matches);
         }
 
         @Override
@@ -185,7 +186,7 @@ public class RequestWindowCitizen extends AbstractWindowCitizen
             final Predicate<ItemStack> requestPredicate = deliverable::matches;
             final int amount = deliverable.getCount();
 
-            final int count = InventoryUtils.getItemCountInItemHandler(new InvWrapper(inventory), deliverable::matches);
+            final int count = InventoryUtils.getItemCount(new PlayerMainInvWrapper(inventory), deliverable::matches);
 
             if (!isCreative && count <= 0)
             {
@@ -201,18 +202,7 @@ public class RequestWindowCitizen extends AbstractWindowCitizen
             }
             else
             {
-                final List<Integer> slots = InventoryUtils.findAllSlotsInItemHandlerWith(new InvWrapper(inventory), requestPredicate);
-                final int invSize = inventory.getContainerSize() - 5; // 4 armour slots + 1 shield slot
-                int slot = -1;
-                for (final Integer possibleSlot : slots)
-                {
-                    if (possibleSlot < invSize)
-                    {
-                        slot = possibleSlot;
-                        break;
-                    }
-                }
-
+                final int slot = InventoryUtils.getMatchingSlot(new PlayerMainInvWrapper(inventory), requestPredicate);
                 if (slot == -1)
                 {
                     MessageUtils.format("<%s> ")
@@ -224,7 +214,6 @@ public class RequestWindowCitizen extends AbstractWindowCitizen
                 }
                 itemStack = inventory.getItem(slot);
             }
-
 
             if (citizenDataView.getWorkBuilding() != null)
             {

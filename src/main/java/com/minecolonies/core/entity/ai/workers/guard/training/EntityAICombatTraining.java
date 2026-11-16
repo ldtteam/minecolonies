@@ -4,11 +4,7 @@ import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.equipment.ModEquipmentTypes;
-import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.api.util.DamageSourceKeys;
-import com.minecolonies.api.util.InventoryUtils;
-import com.minecolonies.api.util.SoundUtils;
-import com.minecolonies.api.util.StatsUtil;
+import com.minecolonies.api.util.*;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingCombatAcademy;
 import com.minecolonies.core.colony.jobs.JobCombatTraining;
 import com.minecolonies.core.entity.pathfinding.navigation.EntityNavigationUtils;
@@ -197,7 +193,7 @@ public class EntityAICombatTraining extends AbstractEntityAITraining<JobCombatTr
 
             if (worker.getRandom().nextBoolean())
             {
-                final int shieldSlot = InventoryUtils.findFirstSlotInItemHandlerWith(getInventory(), Items.SHIELD);
+                final int shieldSlot = InventoryUtils.getMatchingSlot(getInventory(), Items.SHIELD);
                 if (shieldSlot != -1)
                 {
                     worker.playSound(SoundEvents.SHIELD_BLOCK, (float) BASIC_VOLUME, (float) SoundUtils.getRandomPitch(worker.getRandom()));
@@ -302,7 +298,7 @@ public class EntityAICombatTraining extends AbstractEntityAITraining<JobCombatTr
 
             if (worker.getRandom().nextBoolean())
             {
-                final int shieldSlot = InventoryUtils.findFirstSlotInItemHandlerWith(getInventory(),
+                final int shieldSlot = InventoryUtils.getMatchingSlot(getInventory(),
                   Items.SHIELD);
                 if (shieldSlot != -1)
                 {
@@ -342,7 +338,7 @@ public class EntityAICombatTraining extends AbstractEntityAITraining<JobCombatTr
             return false;
         }
 
-        final int weaponSlot = InventoryUtils.getFirstSlotOfItemHandlerContainingEquipment(getInventory(), ModEquipmentTypes.sword.get(), 0, building.getMaxEquipmentLevel());
+        final int weaponSlot = InventoryUtils.getMatchingSlot(getInventory(), stack -> ItemStackUtils.hasEquipmentLevel(stack, ModEquipmentTypes.sword.get(), 0, building.getMaxEquipmentLevel()));
         if (weaponSlot != -1)
         {
             CitizenItemUtils.setHeldItem(worker, InteractionHand.MAIN_HAND, weaponSlot);

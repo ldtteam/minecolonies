@@ -1085,7 +1085,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
     {
         final int maxToolLevel = worker.getCitizenColonyHandler().getWorkBuilding().getMaxEquipmentLevel();
         final InventoryCitizen inventory = worker.getInventoryCitizen();
-        if (InventoryUtils.isEquipmentInItemHandler(inventory, toolType, minimalLevel, maxToolLevel))
+        if (InventoryUtils.hasItem(inventory, stack -> ItemStackUtils.hasEquipmentLevel(stack, toolType, minimalLevel, maxToolLevel)))
         {
             return false;
         }
@@ -1164,7 +1164,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
             return afterDump();
         }
 
-        if (InventoryUtils.isBuildingFull(building))
+        if (building.isInventoryFull())
         {
             final ICitizenData citizenData = worker.getCitizenData();
             if (citizenData != null)
@@ -1252,7 +1252,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
         boolean dumpAnyway = false;
         if (slotAt + MIN_OPEN_SLOTS * 2 >= totalSize)
         {
-            final long openSlots = InventoryUtils.openSlotCount(worker.getInventoryCitizen());
+            final long openSlots = worker.getInventoryCitizen().getFreeSlots();
             if (openSlots < MIN_OPEN_SLOTS * 2)
             {
                 if (stackToDump.getCount() < CHANCE_TO_DUMP_50)
@@ -1680,7 +1680,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
             return true;
         }
 
-        final int invCount = InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), s -> ItemStackUtils.compareItemStacksIgnoreStackSize(s, stack));
+        final int invCount = InventoryUtils.getItemCount(worker.getInventoryCitizen(), s -> ItemStackUtils.compareItemStacksIgnoreStackSize(s, stack));
         if (invCount >= minCount)
         {
             return true;
@@ -1690,7 +1690,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
         final int updatedMinCount = Math.min(updatedCount, minCount);
 
         // Check if in building and if we could transfer at least "mincount" over.
-        if (InventoryUtils.hasBuildingEnoughElseCount(building, new ItemStorage(stack, true, matchNBT), updatedMinCount) >= updatedMinCount &&
+        if (building.hasEnoughElseCount( new ItemStorage(stack, true, matchNBT), updatedMinCount) >= updatedMinCount &&
               updatedCount - InventoryUtils.transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandlerWithResult(
                 building, itemStack -> ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, stack, true, matchNBT),
                 updatedCount,
@@ -1726,7 +1726,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
      */
     public boolean checkIfRequestForItemExistOrCreate(@NotNull final IDeliverable deliverable)
     {
-        final int invCount = InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), deliverable::matches);
+        final int invCount = InventoryUtils.getItemCount(worker.getInventoryCitizen(), deliverable::matches);
         if (invCount >= deliverable.getCount())
         {
             return true;
@@ -1734,7 +1734,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
         final int updatedCount = deliverable.getCount() - invCount;
         final int updatedMinCount = Math.min(updatedCount, deliverable.getMinimumCount());
 
-        if (InventoryUtils.hasBuildingEnoughElseCount(building,
+        if (building.hasEnoughElseCount(
           deliverable::matches, updatedMinCount) >= updatedMinCount &&
               InventoryUtils.transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandler(
                 building, deliverable::matches,
@@ -1763,12 +1763,12 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
      */
     public boolean checkIfRequestForTagExistOrCreateAsync(@NotNull final TagKey<Item> tag, final int count)
     {
-        if (InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(), stack -> stack.is(tag) && stack.getCount() >= count))
+        if (InventoryUtils.hasItem(worker.getInventoryCitizen(), stack -> stack.is(tag) && stack.getCount() >= count))
         {
             return true;
         }
 
-        if (InventoryUtils.hasBuildingEnoughElseCount(building,
+        if (building.hasEnoughElseCount(
           itemStack -> itemStack.is(tag), count) >= count &&
               InventoryUtils.transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandler(
                 building, itemStack -> itemStack.is(tag),
@@ -1806,7 +1806,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
             return true;
         }
 
-        int existingAmount = InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), predicate.getA());
+        int existingAmount = InventoryUtils.getItemCount(worker.getInventoryCitizen(), predicate.getA());
         int amount;
         if (predicate.getB() > existingAmount)
         {
@@ -1818,7 +1818,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
         }
 
         InventoryUtils.transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandlerWithResult(entity, predicate.getA(), amount, worker.getInventoryCitizen());
-        existingAmount = InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), predicate.getA());
+        existingAmount = InventoryUtils.getItemCount(worker.getInventoryCitizen(), predicate.getA());
         // has already needed transfers...
         return existingAmount >= predicate.getB();
     }
@@ -1921,5 +1921,21 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
     public boolean canGoIdle()
     {
         return false;
+    }
+
+    /**
+     * Verifies if there is one equipment with an acceptable level in a worker's inventory.
+     *
+     * @param equipmentType      the type of equipment needed
+     * @param requiredLevel the minimum equipment level
+     * @param maximumLevel  the worker's hut level
+     * @return true if equipment is acceptable
+     */
+    public boolean hasEquipmentWithLevel(final EquipmentTypeEntry equipmentType, final int requiredLevel, final int maximumLevel)
+    {
+        return InventoryUtils.hasItem(worker.getInventoryCitizen(),
+            (ItemStack stack) -> (!ItemStackUtils.isEmpty(stack) && (equipmentType.checkIsEquipment(stack) && ItemStackUtils.verifyEquipmentLevel(stack,
+                equipmentType.getMiningLevel(stack),
+                requiredLevel, maximumLevel))));
     }
 }

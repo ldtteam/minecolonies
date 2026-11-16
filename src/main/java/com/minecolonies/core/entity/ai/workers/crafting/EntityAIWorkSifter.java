@@ -130,7 +130,7 @@ public class EntityAIWorkSifter extends AbstractEntityAICrafting<JobSifter, Buil
 
         if (currentRecipeStorage == null)
         {
-            if (InventoryUtils.hasBuildingEnoughElseCount(building, i -> i.is(ModTags.meshes), 1) == 0)
+            if (building.hasEnoughElseCount( i -> i.is(ModTags.meshes), 1) == 0)
             {
                 if (InventoryUtils.getItemCountInProvider(worker, i -> i.is(ModTags.meshes)) > 0)
                 {

@@ -255,7 +255,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman, B
      */
     private boolean hasFish()
     {
-        return InventoryUtils.hasItemInItemHandler(getInventory(), item -> item.is(ItemTags.FISHES));
+        return InventoryUtils.hasItem(getInventory(), item -> item.is(ItemTags.FISHES));
     }
 
     /**
@@ -265,8 +265,8 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman, B
      */
     private boolean hasRodButNotEquipped()
     {
-        return InventoryUtils.hasItemHandlerEquipmentWithLevel(getInventory(), ModEquipmentTypes.fishing_rod.get(), TOOL_LEVEL_WOOD_OR_GOLD, building.getMaxEquipmentLevel())
-                 && worker.getMainHandItem() != null
+        return hasEquipmentWithLevel(ModEquipmentTypes.fishing_rod.get(), TOOL_LEVEL_WOOD_OR_GOLD, building.getMaxEquipmentLevel())
+                 && !ItemStackUtils.isEmpty(worker.getMainHandItem())
                  && !ModEquipmentTypes.fishing_rod.get().checkIsEquipment(worker.getMainHandItem());
     }
 
@@ -641,8 +641,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman, B
      */
     private int getRodSlot()
     {
-        return InventoryUtils.getFirstSlotOfItemHandlerContainingEquipment(getInventory(), ModEquipmentTypes.fishing_rod.get(),
-          TOOL_LEVEL_WOOD_OR_GOLD, building.getMaxEquipmentLevel());
+        return InventoryUtils.getMatchingSlot(getInventory(), stack -> ItemStackUtils.hasEquipmentLevel(stack, ModEquipmentTypes.fishing_rod.get(), TOOL_LEVEL_WOOD_OR_GOLD, building.getMaxEquipmentLevel()));
     }
 
     /**

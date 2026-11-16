@@ -9,7 +9,6 @@ import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.*;
 import com.minecolonies.api.util.CraftingUtils;
-import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.OptionalPredicate;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
 import com.minecolonies.core.colony.buildings.modules.AbstractCraftingBuildingModule;
@@ -158,7 +157,7 @@ public class BuildingDyer extends AbstractBuilding
                 {
                     for(IBuilding wareHouse: building.getColony().getServerBuildingManager().getWareHouses())
                     {
-                        final int colorCount = InventoryUtils.getCountFromBuilding(wareHouse, color);
+                        final int colorCount = wareHouse.getItemCount(color);
                         inventoryCounts.put(color, inventoryCounts.getOrDefault(color, 0) + colorCount);
                     }
                 }

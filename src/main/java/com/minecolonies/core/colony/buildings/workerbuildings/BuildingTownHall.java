@@ -5,6 +5,7 @@ import com.ldtteam.blockui.views.BOWindow;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.modules.IBuildingModule;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
 import com.minecolonies.api.colony.buildings.workerbuildings.ITownHall;
@@ -12,8 +13,10 @@ import com.minecolonies.api.colony.buildings.workerbuildings.ITownHallView;
 import com.minecolonies.api.colony.colonyEvents.descriptions.IColonyEventDescription;
 import com.minecolonies.api.colony.colonyEvents.registry.ColonyEventDescriptionTypeRegistryEntry;
 import com.minecolonies.api.colony.permissions.PermissionEvent;
+import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.core.MineColonies;
 import com.minecolonies.core.client.gui.townhall.WindowMainPage;
 import com.minecolonies.core.colony.Colony;
@@ -22,6 +25,7 @@ import com.minecolonies.core.colony.buildings.modules.BuildingModules;
 import com.minecolonies.core.colony.buildings.modules.settings.BoolSetting;
 import com.minecolonies.core.colony.buildings.modules.settings.SettingKey;
 import com.minecolonies.core.colony.buildings.views.AbstractBuildingView;
+import com.minecolonies.core.tileentities.TileEntityRack;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
@@ -30,6 +34,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.MapItem;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
 import org.jetbrains.annotations.NotNull;
 
@@ -144,11 +149,22 @@ public class BuildingTownHall extends AbstractBuilding implements ITownHall
         colony.getEventDescriptionManager().serialize(buf);
 
         final List<ItemStack> maps = new ArrayList<>();
-        for (final ItemStack stack : InventoryUtils.getBuildingInventory(this))
+
+        for (final BlockPos pos : getContainers())
         {
-            if (!stack.isEmpty() && stack.getItem() == Items.FILLED_MAP)
+            if (WorldUtil.isBlockLoaded(colony.getWorld(), pos))
             {
-                maps.add(stack);
+                final BlockEntity entity = colony.getWorld().getBlockEntity(pos);
+                if (entity instanceof TileEntityRack)
+                {
+                    for (final ItemStorage storage : ((TileEntityRack) entity).getAllContent().keySet())
+                    {
+                        if (!storage.isEmpty() && storage.getItem() == Items.FILLED_MAP)
+                        {
+                            maps.add(storage.getItemStack());
+                        }
+                    }
+                }
             }
         }
 

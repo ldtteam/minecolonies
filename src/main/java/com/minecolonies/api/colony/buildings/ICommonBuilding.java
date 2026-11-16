@@ -1,9 +1,22 @@
 package com.minecolonies.api.colony.buildings;
 
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
+import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.util.WorldUtil;
+import com.minecolonies.core.tileentities.TileEntityRack;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.function.Predicate;
+
 import com.minecolonies.api.colony.IColony;
 
 
@@ -62,4 +75,241 @@ public interface ICommonBuilding
      * @return the prestige value.
      */
     int getPrestige();
+
+    /**
+     * Calculate the number of empty slots in a given building.
+     *
+     * @return the number of empty slots.
+     */
+    default boolean isInventoryFull()
+    {
+        final Level world = this.getColony().getWorld();
+        for (final BlockPos pos : this.getContainers())
+        {
+            if (WorldUtil.isBlockLoaded(world, pos))
+            {
+                final BlockEntity entity = world.getBlockEntity(pos);
+                if (entity instanceof TileEntityRack rack && rack.getFreeSlots() > 0)
+                {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Calculate the number of empty slots in a given building.
+     * @return the number of empty slots.
+     */
+    default int countEmptySlots()
+    {
+        int totalCount = 0;
+        final Level world = this.getColony().getWorld();
+        for (final BlockPos pos : this.getContainers())
+        {
+            if (WorldUtil.isBlockLoaded(world, pos))
+            {
+                final BlockEntity entity = world.getBlockEntity(pos);
+                if (entity instanceof TileEntityRack)
+                {
+                    totalCount += ((TileEntityRack) entity).getFreeSlots();
+                }
+            }
+        }
+
+        return totalCount;
+    }
+
+    /**
+     * Count the number of items of different types a building has.
+     *
+     * @param stacks   the stacks to check for.
+     * @return Amount of occurrences of stacks that match the given stacks.
+     */
+    default int getItemCount(@NotNull final List<ItemStorage> stacks)
+    {
+        int totalCount = 0;
+        for (ItemStorage stack : stacks)
+        {
+            totalCount += this.getItemCount(stack);
+        }
+
+        return totalCount;
+    }
+
+    /**
+     * Count the number of items a building has.
+     *
+     * @param stack    the stack to check.
+     * @return Amount of occurrences of stacks that match the given stack.
+     */
+    default int getItemCount(@NotNull final ItemStorage stack)
+    {
+        int totalCount = 0;
+        final Level world = this.getColony().getWorld();
+
+        for (final BlockPos pos : this.getContainers())
+        {
+            if (WorldUtil.isBlockLoaded(world, pos))
+            {
+                final BlockEntity entity = world.getBlockEntity(pos);
+                if (entity instanceof TileEntityRack)
+                {
+                    totalCount += ((TileEntityRack) entity).getCount(stack);
+                }
+            }
+        }
+
+        return totalCount;
+    }
+
+    /**
+     * Count the number of items a building has.
+     *
+     * @param predicate the predicate to match.
+     * @return Amount of occurrences of stacks that match the given stack.
+     */
+    default int getItemCount(@NotNull final Predicate<ItemStack> predicate)
+    {
+        int totalCount = 0;
+        final Level world = this.getColony().getWorld();
+
+        for (final BlockPos pos : this.getContainers())
+        {
+            if (WorldUtil.isBlockLoaded(world, pos))
+            {
+                final BlockEntity entity = world.getBlockEntity(pos);
+                if (entity instanceof TileEntityRack)
+                {
+                    totalCount += ((TileEntityRack) entity).getItemCount(predicate);
+                }
+            }
+        }
+
+        return totalCount;
+    }
+
+    /**
+     * Count the number of items a building has.
+     * Only count up to "limit" of a particular item.
+     *
+     * @param predicate the predicate to match.
+     * @return Amount of occurrences of stacks that match the given stack.
+     */
+    default int getItemCountWithLimit(@NotNull final Predicate<ItemStack> predicate, final Function<ItemStack, Integer> limit)
+    {
+        final Level world = this.getColony().getWorld();
+
+        final Map<ItemStorage, Integer> allMatching = new HashMap<>();
+
+        for (final BlockPos pos : this.getContainers())
+        {
+            if (WorldUtil.isBlockLoaded(world, pos))
+            {
+                final BlockEntity entity = world.getBlockEntity(pos);
+                if (entity instanceof TileEntityRack)
+                {
+                    for (final Map.Entry<ItemStorage, Integer> entry : ((TileEntityRack) entity).getAllContent().entrySet())
+                    {
+                        if (predicate.test(entry.getKey().getItemStack()))
+                        {
+                            allMatching.put(entry.getKey(), allMatching.getOrDefault(entry.getKey(), 0) + entry.getValue());
+                        }
+                    }
+                }
+            }
+        }
+
+        int totalCount = 0;
+        for (final Map.Entry<ItemStorage, Integer> entry : allMatching.entrySet())
+        {
+            totalCount += Math.min(limit.apply(entry.getKey().getItemStack()), entry.getValue());
+        }
+
+        return totalCount;
+    }
+
+    /**
+     * Check if a building has more than a count in stack. Return the count it has if it has less.
+     *
+     * @param stack    the stack to check.
+     * @return Amount of occurrences of stacks that match the given predicate.
+     */
+    default int hasEnoughElseCount(@NotNull final ItemStorage stack, final int count)
+    {
+        int totalCount = 0;
+        final Level world = this.getColony().getWorld();
+
+        for (final BlockPos pos : this.getContainers())
+        {
+            if (WorldUtil.isBlockLoaded(world, pos))
+            {
+                final BlockEntity entity = world.getBlockEntity(pos);
+                if (entity instanceof TileEntityRack)
+                {
+                    totalCount += ((TileEntityRack) entity).getCount(stack);
+                }
+
+                if (totalCount >= count)
+                {
+                    return totalCount;
+                }
+            }
+        }
+
+        return totalCount;
+    }
+
+    /**
+     * Check if a building has more than a count in stack. Return the count it has if it has less.
+     *
+     * @param stack    the stack to check.
+     * @return Amount of occurrences of stacks that match the given predicate.
+     */
+    default int hasEnoughElseCount(@NotNull final Predicate<ItemStack> stack, final int count)
+    {
+        int totalCount = 0;
+        final Level world = this.getColony().getWorld();
+
+        for (final BlockPos pos : this.getContainers())
+        {
+            if (WorldUtil.isBlockLoaded(world, pos))
+            {
+                final BlockEntity entity = world.getBlockEntity(pos);
+                if (entity instanceof TileEntityRack)
+                {
+                    totalCount += ((TileEntityRack) entity).getItemCount(stack);
+                }
+
+                if (totalCount >= count)
+                {
+                    return totalCount;
+                }
+            }
+        }
+
+        return totalCount;
+    }
+
+    /**
+     * Check if the building has an item.
+     * @param stack the predicate to match.
+     * @return true if so.
+     */
+    default boolean hasItem(@NotNull final Predicate<ItemStack> stack)
+    {
+        return hasEnoughElseCount(stack, 1) >= 1;
+    }
+
+    /**
+     * Check if the building has an item.
+     * @param item the item to match.
+     * @return true if so.
+     */
+    default boolean hasItem(@NotNull final Item item)
+    {
+        return hasEnoughElseCount(stack -> !stack.isEmpty() && stack.getItem() == item, 1) >= 1;
+    }
 }

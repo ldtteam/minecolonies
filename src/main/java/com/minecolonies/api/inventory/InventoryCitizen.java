@@ -192,6 +192,15 @@ public class InventoryCitizen implements IItemHandlerModifiable, Nameable
     }
 
     /**
+     * Get the number of free slots (no content) from the citizen.
+     * @return the number of slots.
+     */
+    public int getFreeSlots()
+    {
+        return freeSlots;
+    }
+
+    /**
      * Resize this inventory.
      *
      * @param size       the current size.

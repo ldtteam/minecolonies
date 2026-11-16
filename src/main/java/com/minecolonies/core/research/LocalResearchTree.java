@@ -253,7 +253,7 @@ public class LocalResearchTree implements ILocalResearchTree
                 final InvWrapper playerInv = new InvWrapper(player.getInventory());
                 for (final ItemStorage cost : costList)
                 {
-                    final int count = InventoryUtils.getItemCountInItemHandler(playerInv,
+                    final int count = InventoryUtils.getItemCount(playerInv,
                       stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, cost.getItemStack(), !cost.ignoreDamageValue(), !cost.ignoreNBT()));
                     if (count < cost.getAmount())
                     {
@@ -265,7 +265,7 @@ public class LocalResearchTree implements ILocalResearchTree
                 }
                 for (ItemStorage cost : costList)
                 {
-                    final List<Integer> slotsWithMaterial = InventoryUtils.findAllSlotsInItemHandlerWith(playerInv,
+                    final List<Integer> slotsWithMaterial = InventoryUtils.dec(playerInv,
                       stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, cost.getItemStack(), !cost.ignoreDamageValue(), !cost.ignoreNBT()));
                     int amount = cost.getAmount();
                     for (Integer slotNum : slotsWithMaterial)

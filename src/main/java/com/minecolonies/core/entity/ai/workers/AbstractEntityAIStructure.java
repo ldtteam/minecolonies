@@ -248,7 +248,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
             }
         }
 
-        if (neededItemsList.size() <= pickUpCount || InventoryUtils.openSlotCount(worker.getInventoryCitizen()) <= MIN_OPEN_SLOTS)
+        if (neededItemsList.size() <= pickUpCount || worker.getInventoryCitizen().getFreeSlots() <= MIN_OPEN_SLOTS)
         {
             building.checkOrRequestBucket(building.getRequiredResources(), worker.getCitizenData());
             building.checkOrRequestBucket(building.getNextBucket(), worker.getCitizenData());
@@ -259,7 +259,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
         needsCurrently = neededItemsList.get(pickUpCount);
         pickUpCount++;
 
-        if (InventoryUtils.hasItemInProvider(building.getTileEntity(), needsCurrently.getA()))
+        if (needsCurrently != null && needsCurrently.getA() != null && building.hasItem(needsCurrently.getA()))
         {
             return GATHERING_REQUIRED_MATERIALS;
         }
@@ -837,15 +837,22 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
 
         for (final ItemStorage stack : requestedMap.keySet())
         {
-            if (!InventoryUtils.hasItemInItemHandler(placer.getInventory(), stack1 -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack.getItemStack(), stack1))
+            if (!InventoryUtils.hasItem(placer.getInventory(), stack1 -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack.getItemStack(), stack1))
                   && !placer.building.hasResourceInBucket(stack.getItemStack()))
             {
                 return RECALC;
             }
         }
-        // TODO: Why predicate based search when we got our ItemStorages we look for already?
-        final List<ItemStack> foundStacks = InventoryUtils.filterItemHandler(placer.getWorker().getInventoryCitizen(),
-          itemStack -> requestedMap.keySet().stream().anyMatch(storage -> ItemStackUtils.compareItemStacksIgnoreStackSize(storage.getItemStack(), itemStack)));
+
+        final List<ItemStack> foundStacks = new ArrayList<>();
+        for (int i = 0; i < placer.getWorker().getInventoryCitizen().getSlots(); i++)
+        {
+            final ItemStack stack = placer.getWorker().getInventoryCitizen().getStackInSlot(i);
+            if (requestedMap.containsKey(new ItemStorage(stack)))
+            {
+                foundStacks.add(stack);
+            }
+        }
 
         final Map<ItemStorage, Integer> localMap = new HashMap<>();
         for (final ItemStack stack : foundStacks)

@@ -364,7 +364,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
         }
 
         currentRequest = currentTask;
-        final int currentCount = InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(),
+        final int currentCount = InventoryUtils.getItemCount(worker.getInventoryCitizen(),
           stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, currentRecipeStorage.getPrimaryOutput()));
         final int inProgressCount = getExtendedCount(currentRecipeStorage.getPrimaryOutput());
 
@@ -395,8 +395,8 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
                 isToolOrContainer = false;
             }
 
-            final int availableCount = InventoryUtils.getCountFromBuilding(building, itemStack -> ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, inputStorage.getItemStack(), false, true))
-                + InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(),
+            final int availableCount = building.getItemCount(itemStack -> ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, inputStorage.getItemStack(), false, true))
+                + InventoryUtils.getItemCount(worker.getInventoryCitizen(),
                 itemStack -> ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, inputStorage.getItemStack(), false, true))
                 + getExtendedCount(inputStorage.getItemStack());
 
@@ -469,7 +469,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
         for (final ItemStorage inputStorage : input)
         {
             final Predicate<ItemStack> predicate = stack -> !ItemStackUtils.isEmpty(stack) && new Stack(stack, false).matches(inputStorage.getItemStack());
-            final int invCount = InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), predicate) + getExtendedCount(inputStorage.getItemStack());
+            final int invCount = InventoryUtils.getItemCount(worker.getInventoryCitizen(), predicate) + getExtendedCount(inputStorage.getItemStack());
             final ItemStack container = inputStorage.getItemStack().getCraftingRemainingItem();
             final int remaining;
             if (!currentRecipeStorage.getCraftingToolsAndSecondaryOutputs().isEmpty()
@@ -489,7 +489,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
             if (invCount + inProgressCount <= 0
                   || invCount + ((job.getCraftCounter() + progressOpsCount) * inputStorage.getAmount()) < remaining)
             {
-                if (InventoryUtils.hasItemInProvider(building, predicate))
+                if (building.hasItem(predicate))
                 {
                     needsCurrently = new Tuple<>(predicate, remaining);
                     return GATHERING_REQUIRED_MATERIALS;
@@ -530,7 +530,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
         int toolSlot = -1;
         if (currentRecipeStorage.getRequiredTool() != ModEquipmentTypes.none.get())
         {
-            toolSlot = InventoryUtils.findFirstSlotInItemHandlerWith(worker.getInventoryCitizen(), stack -> currentRecipeStorage.getRequiredTool().checkIsEquipment(stack));
+            toolSlot = InventoryUtils.getMatchingSlot(worker.getInventoryCitizen(), stack -> currentRecipeStorage.getRequiredTool().checkIsEquipment(stack));
         }
         if (toolSlot >= 0)
         {

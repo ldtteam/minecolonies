@@ -121,7 +121,7 @@ public class MinimumStockModule extends AbstractBuildingModule implements IMinim
                 }
 
                 final int target = entry.getValue() * itemStack.getMaxStackSize();
-                final int count = InventoryUtils.hasBuildingEnoughElseCount(this.building, new ItemStorage(itemStack, true), target);
+                final int count = building.hasEnoughElseCount(new ItemStorage(itemStack, true), target);
                 final int delta = target - count;
                 final IToken<?> request = getMatchingRequest(itemStack, list);
                 if (delta > (building.getColony().getResearchManager().getResearchEffects().getEffectStrength(MIN_ORDER) > 0 ? target / 4 : 0))

@@ -271,8 +271,7 @@ public class EntityAIWorkAlchemist extends AbstractEntityAICrafting<JobAlchemist
 
             final BlockState state = world.getBlockState(walkTo);
 
-            final int slot =
-              InventoryUtils.getFirstSlotOfItemHandlerContainingEquipment(worker.getInventoryCitizen(), ModEquipmentTypes.shears.get(), TOOL_LEVEL_WOOD_OR_GOLD, building.getMaxEquipmentLevel());
+            final int slot = InventoryUtils.getMatchingSlot(worker.getInventoryCitizen(), stack -> ItemStackUtils.hasEquipmentLevel(stack, ModEquipmentTypes.shears.get(), TOOL_LEVEL_WOOD_OR_GOLD, building.getMaxEquipmentLevel()));
             CitizenItemUtils.setHeldItem(worker, InteractionHand.MAIN_HAND, slot);
 
             worker.swing(InteractionHand.MAIN_HAND);
@@ -536,8 +535,8 @@ public class EntityAIWorkAlchemist extends AbstractEntityAICrafting<JobAlchemist
 
         final Level world = building.getColony().getWorld();
 
-        if (!InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(), Items.BLAZE_POWDER)
-              && !InventoryUtils.hasItemInProvider(building, Items.BLAZE_POWDER)
+        if (!InventoryUtils.hasItem(worker.getInventoryCitizen(), Items.BLAZE_POWDER)
+              && !building.hasItem(Items.BLAZE_POWDER)
               && !building.hasWorkerOpenRequestsOfType(worker.getCitizenData().getId(), TypeToken.of(Stack.class)))
         {
             worker.getCitizenData().createRequestAsync(new Stack(new ItemStack(Items.BLAZE_POWDER), BREWING_MIN_FUEL_COUNT * building.getAllBrewingStandPositions().size(), 1));
@@ -554,9 +553,9 @@ public class EntityAIWorkAlchemist extends AbstractEntityAICrafting<JobAlchemist
                     final BrewingStandBlockEntity brewingStand = (BrewingStandBlockEntity) entity;
                     if (brewingStand.brewTime <= 0 && (hasBrewableAndNoFuel(brewingStand) || hasNeitherFuelNorBrewable(brewingStand)))
                     {
-                        if (!InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(), Items.BLAZE_POWDER))
+                        if (!InventoryUtils.hasItem(worker.getInventoryCitizen(), Items.BLAZE_POWDER))
                         {
-                            if (InventoryUtils.hasItemInProvider(building, Items.BLAZE_POWDER))
+                            if (building.hasItem(Items.BLAZE_POWDER))
                             {
                                 needsCurrently = new Tuple<>(item -> item.getItem() == Items.BLAZE_POWDER, BREWING_MIN_FUEL_COUNT);
                                 walkTo = null;
@@ -590,9 +589,9 @@ public class EntityAIWorkAlchemist extends AbstractEntityAICrafting<JobAlchemist
      */
     private IAIState addFuelToBrewingStand()
     {
-        if (!InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(), Items.BLAZE_POWDER))
+        if (!InventoryUtils.hasItem(worker.getInventoryCitizen(), Items.BLAZE_POWDER))
         {
-            if (InventoryUtils.hasItemInProvider(building, Items.BLAZE_POWDER))
+            if (building.hasItem(Items.BLAZE_POWDER))
             {
                 needsCurrently = new Tuple<>(item -> item.getItem() == Items.BLAZE_POWDER, STACKSIZE);
                 return GATHERING_REQUIRED_MATERIALS;
@@ -615,7 +614,7 @@ public class EntityAIWorkAlchemist extends AbstractEntityAICrafting<JobAlchemist
             {
                 final BrewingStandBlockEntity brewingStand = (BrewingStandBlockEntity) entity;
                 //Stoke the brewing stands
-                if (InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(), Items.BLAZE_POWDER)
+                if (InventoryUtils.hasItem(worker.getInventoryCitizen(), Items.BLAZE_POWDER)
                       && (hasBrewableAndNoFuel(brewingStand) || hasNeitherFuelNorBrewable(brewingStand)))
                 {
                     InventoryUtils.transferXOfFirstSlotInItemHandlerWithIntoInItemHandler(
@@ -694,18 +693,17 @@ public class EntityAIWorkAlchemist extends AbstractEntityAICrafting<JobAlchemist
 
         final List<ItemStorage> input = storage.getCleanedInput();
         final int countInBewingStand = getExtendedCount(storage.getPrimaryOutput());
-        int outputInInv =
-          InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, storage.getPrimaryOutput()));
+        int outputInInv = InventoryUtils.getItemCount(worker.getInventoryCitizen(), stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, storage.getPrimaryOutput()));
 
         for (final ItemStorage inputStorage : input)
         {
             final Predicate<ItemStack> predicate = stack -> !ItemStackUtils.isEmpty(stack) && ItemStackUtils.compareItemStacksIgnoreStackSize(stack, inputStorage.getItemStack());
             int inputInBrewingStand = getExtendedCount(inputStorage.getItemStack());
-            int inputInInv = InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), predicate);
+            int inputInInv = InventoryUtils.getItemCount(worker.getInventoryCitizen(), predicate);
 
             if (countInBewingStand + inputInBrewingStand + inputInInv + outputInInv < inputStorage.getAmount() * job.getMaxCraftingCount())
             {
-                if (InventoryUtils.hasItemInProvider(building, predicate))
+                if (building.hasItem(predicate))
                 {
                     needsCurrently = new Tuple<>(predicate, inputStorage.getAmount() * (job.getMaxCraftingCount() - countInBewingStand - inputInBrewingStand));
                     return GATHERING_REQUIRED_MATERIALS;
@@ -713,7 +711,7 @@ public class EntityAIWorkAlchemist extends AbstractEntityAICrafting<JobAlchemist
             }
 
             //if we don't have enough at all, cancel
-            int countOfInput = inputInInv + InventoryUtils.getCountFromBuilding(building, predicate) + countInBewingStand + inputInBrewingStand + outputInInv;
+            int countOfInput = inputInInv + building.getItemCount(predicate) + countInBewingStand + inputInBrewingStand + outputInInv;
             if (countOfInput < inputStorage.getAmount() * job.getMaxCraftingCount())
             {
                 job.finishRequest(false);
@@ -750,7 +748,7 @@ public class EntityAIWorkAlchemist extends AbstractEntityAICrafting<JobAlchemist
         }
         walkTo = null;
 
-        final int preExtractCount = InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(),
+        final int preExtractCount = InventoryUtils.getItemCount(worker.getInventoryCitizen(),
           stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(currentRequest.getRequest().getStack(), stack));
 
         for (int slot = 0; slot < 3; slot++)
@@ -762,7 +760,7 @@ public class EntityAIWorkAlchemist extends AbstractEntityAICrafting<JobAlchemist
         }
 
         //Do we have the requested item in the inventory now?
-        final int resultCount = InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(),
+        final int resultCount = InventoryUtils.getItemCount(worker.getInventoryCitizen(),
           stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(currentRequest.getRequest().getStack(), stack)) - preExtractCount;
 
         if (resultCount > 0)
@@ -915,7 +913,7 @@ public class EntityAIWorkAlchemist extends AbstractEntityAICrafting<JobAlchemist
             final BrewingStandBlockEntity brewingStand = (BrewingStandBlockEntity) entity;
             final int maxBrewingStands = getMaxUsableBrewingStands();
             final int resultInBrewingStand = getExtendedCount(currentRecipeStorage.getPrimaryOutput());
-            final int resultInCitizenInv = InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(),
+            final int resultInCitizenInv = InventoryUtils.getItemCount(worker.getInventoryCitizen(),
               stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, currentRecipeStorage.getPrimaryOutput()));
 
             if (isEmpty(((BrewingStandBlockEntity) entity).getItem(0)) || isEmpty(((BrewingStandBlockEntity) entity).getItem(1))
@@ -933,8 +931,8 @@ public class EntityAIWorkAlchemist extends AbstractEntityAICrafting<JobAlchemist
                     return START_WORKING;
                 }
 
-                final int amountOfPotionInBuilding = InventoryUtils.getCountFromBuilding(building, potion);
-                final int amountOfPotionInInv = InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), potion);
+                final int amountOfPotionInBuilding = building.getItemCount(potion);
+                final int amountOfPotionInInv = InventoryUtils.getItemCount(worker.getInventoryCitizen(), potion);
                 if (worker.getItemInHand(InteractionHand.MAIN_HAND).isEmpty())
                 {
                     worker.setItemInHand(InteractionHand.MAIN_HAND, potionStack.copy());
@@ -999,8 +997,8 @@ public class EntityAIWorkAlchemist extends AbstractEntityAICrafting<JobAlchemist
                 {
                     return START_WORKING;
                 }
-                final int amountOfIngredientInBuilding = InventoryUtils.getCountFromBuilding(building, ingredient);
-                final int amountOfIngredientInInv = InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), ingredient);
+                final int amountOfIngredientInBuilding = building.getItemCount(ingredient);
+                final int amountOfIngredientInInv = InventoryUtils.getItemCount(worker.getInventoryCitizen(), ingredient);
                 if (worker.getItemInHand(InteractionHand.MAIN_HAND).isEmpty())
                 {
                     worker.setItemInHand(InteractionHand.MAIN_HAND, ingredientStack.copy());

@@ -24,8 +24,6 @@ import com.minecolonies.core.entity.ai.workers.AbstractEntityAIBasic;
 import com.minecolonies.core.util.WorkerUtil;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.items.IItemHandler;
 
 import java.util.List;
 
@@ -57,9 +55,9 @@ public class InteractionValidatorInitializer
         InteractionValidatorRegistry.registerStandardPredicate(Component.translatable(BAKER_HAS_NO_FURNACES_MESSAGE),
           citizen -> citizen.getWorkBuilding() != null && citizen.getWorkBuilding().hasModule(BuildingModules.FURNACE) && citizen.getWorkBuilding().getModule(BuildingModules.FURNACE).getFurnaces().isEmpty());
         InteractionValidatorRegistry.registerStandardPredicate(Component.translatable(RAW_FOOD),
-          citizen -> InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(citizen.getInventory(), ISCOOKABLE) != -1
+          citizen -> InventoryUtils.getMatchingSlot(citizen.getInventory(), ISCOOKABLE) != -1
               &&
-              InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(citizen.getInventory(), stack -> FoodUtils.canEat(stack, citizen.getHomeBuilding(), citizen.getWorkBuilding()))
+              InventoryUtils.getMatchingSlot(citizen.getInventory(), stack -> FoodUtils.canEat(stack, citizen.getHomeBuilding(), citizen.getWorkBuilding()))
                   == -1);
         InteractionValidatorRegistry.registerStandardPredicate(Component.translatable(BETTER_FOOD),
           citizen -> citizen.getSaturation() == 0 && !citizen.isChild() && citizen.needsBetterFood());
@@ -68,7 +66,7 @@ public class InteractionValidatorInitializer
         InteractionValidatorRegistry.registerStandardPredicate(Component.translatable(NO_RESTAURANT),
           citizen -> citizen.getColony() != null && citizen.getSaturation() <= LOW_SATURATION && citizen.getEntity().isPresent()
                        && citizen.getColony().getServerBuildingManager().getBestBuilding(citizen.getEntity().get(), BuildingCook.class) == null
-                       && InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(citizen.getInventory(), ISFOOD) == -1);
+                       && InventoryUtils.getMatchingSlot(citizen.getInventory(), ISFOOD) == -1);
         InteractionValidatorRegistry.registerStandardPredicate(Component.translatable(NO_HOSPITAL),
             citizen -> citizen.getColony() != null && citizen.getEntity().isPresent() && citizen.getCitizenDiseaseHandler().isSick()
                        && citizen.getColony().getServerBuildingManager().getBestBuilding(citizen.getEntity().get(), BuildingHospital.class) == null);
@@ -86,11 +84,7 @@ public class InteractionValidatorInitializer
                       final IBuilding building = colony.getServerBuildingManager().getBuilding(pos);
                       if (building != null)
                       {
-                          final IItemHandler inv = building.getCapability(ForgeCapabilities.ITEM_HANDLER, null).resolve().orElse(null);
-                          if (inv != null)
-                          {
-                              return InventoryUtils.openSlotCount(inv) <= 0;
-                          }
+                          return building.isInventoryFull();
                       }
                   }
               }
@@ -112,7 +106,7 @@ public class InteractionValidatorInitializer
           citizen -> citizen.getWorkBuilding() instanceof BuildingMiner && citizen.getJob() instanceof JobMiner && (((BuildingMiner) citizen.getWorkBuilding()).getCobbleLocation() == null || ((BuildingMiner) citizen.getWorkBuilding()).getLadderLocation() == null));
 
         InteractionValidatorRegistry.registerStandardPredicate(Component.translatable(COM_MINECOLONIES_COREMOD_ENTITY_WORKER_INVENTORYFULLCHEST),
-          citizen -> citizen.getWorkBuilding() != null && InventoryUtils.isBuildingFull(citizen.getWorkBuilding()));
+          citizen -> citizen.getWorkBuilding() != null && citizen.getWorkBuilding().isInventoryFull());
         InteractionValidatorRegistry.registerPosBasedPredicate(
           Component.translatable(REQUEST_SYSTEM_BUILDING_LEVEL_TOO_LOW), (citizen, pos) ->
           {
@@ -215,8 +209,7 @@ public class InteractionValidatorInitializer
             {
                 return false;
             }
-            return InventoryUtils.getItemCountInProvider(citizen.getWorkBuilding(), item -> item.is(ModTags.meshes)) <= 0 &&
-                   InventoryUtils.getItemCountInItemHandler(citizen.getInventory(), item -> item.is(ModTags.meshes)) <= 0;
+            return citizen.getWorkBuilding().getItemCount(stack -> stack.is(ModTags.meshes)) <= 0 && InventoryUtils.getItemCount(citizen.getInventory(), item -> item.is(ModTags.meshes)) <= 0;
           });
         InteractionValidatorRegistry.registerStandardPredicate(Component.translatable(BAKER_HAS_NO_FURNACES_MESSAGE),
           citizen -> citizen.getWorkBuilding() instanceof BuildingBaker && citizen.getWorkBuilding().getModule(BuildingModules.FURNACE).getFurnaces().isEmpty());
@@ -241,7 +234,7 @@ public class InteractionValidatorInitializer
               final IBuilding buildingFlorist = citizen.getWorkBuilding();
               if (buildingFlorist instanceof BuildingFlorist && buildingFlorist.getColony().getWorld() != null)
               {
-                  return InventoryUtils.getItemCountInItemHandler(citizen.getInventory(), IS_COMPOST) == 0 && !isThereCompostedLand((BuildingFlorist) buildingFlorist,
+                  return InventoryUtils.getItemCount(citizen.getInventory(), IS_COMPOST) == 0 && !isThereCompostedLand((BuildingFlorist) buildingFlorist,
                     buildingFlorist.getColony().getWorld());
               }
               return false;

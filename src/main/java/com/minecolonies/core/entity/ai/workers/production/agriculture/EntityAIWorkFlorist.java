@@ -138,9 +138,7 @@ public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist, Bu
     @Override
     protected void updateRenderMetaData()
     {
-        worker.setRenderMetadata(
-          (InventoryUtils.hasItemInItemHandler(worker.getItemHandlerCitizen(), stack -> stack.is(ItemTags.FLOWERS)) ? RENDER_META_FLOWERS : "")
-            + (getState() == IDLE ? "" : RENDER_META_WORKING));
+        worker.setRenderMetadata((InventoryUtils.hasItem(worker.getItemHandlerCitizen(), stack -> stack.is(ItemTags.FLOWERS)) ? RENDER_META_FLOWERS : "") + (getState() == IDLE ? "" : RENDER_META_WORKING));
     }
 
     /**
@@ -169,10 +167,10 @@ public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist, Bu
             return DECIDE;
         }
 
-        final int amountOfCompostInInv = InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), IS_COMPOST);
+        final int amountOfCompostInInv = InventoryUtils.getItemCount(worker.getInventoryCitizen(), IS_COMPOST);
         if (amountOfCompostInInv <= 0)
         {
-            final int amountOfCompostInBuilding = InventoryUtils.hasBuildingEnoughElseCount(building, IS_COMPOST, 1);
+            final int amountOfCompostInBuilding = building.hasEnoughElseCount( IS_COMPOST, 1);
             if (amountOfCompostInBuilding > 0)
             {
                 needsCurrently = new Tuple<>(IS_COMPOST, STACKSIZE);
@@ -311,7 +309,7 @@ public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist, Bu
             return false;
         }
 
-        final int shearSlot = InventoryUtils.getFirstSlotOfItemHandlerContainingEquipment(worker.getInventoryCitizen(), ModEquipmentTypes.shears.get(), 0, building.getMaxEquipmentLevel());
+        final int shearSlot = InventoryUtils.getMatchingSlot(worker.getInventoryCitizen(), stack -> ItemStackUtils.hasEquipmentLevel(stack, ModEquipmentTypes.shears.get(), 0, building.getMaxEquipmentLevel()));
         if (shearSlot >= 0)
         {
             CitizenItemUtils.setHeldItem(worker, InteractionHand.MAIN_HAND, shearSlot);

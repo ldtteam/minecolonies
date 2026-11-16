@@ -65,8 +65,8 @@ public class WindowsBarracksSpies extends BOWindow implements ButtonHandler
 
         final IItemHandler rackInv = ((TileEntityRack) buildingView.getColony().getWorld().getBlockEntity(buildingPos)).getInventory();
         final IItemHandler playerInv = new InvWrapper(Minecraft.getInstance().player.getInventory());
-        int goldCount = InventoryUtils.getItemCountInItemHandler(playerInv, Items.GOLD_INGOT);
-        goldCount += InventoryUtils.getItemCountInItemHandler(rackInv, Items.GOLD_INGOT);
+        int goldCount = InventoryUtils.getItemCount(playerInv, Items.GOLD_INGOT);
+        goldCount += InventoryUtils.getItemCount(rackInv, Items.GOLD_INGOT);
 
         if (!buildingView.getColony().isRaiding() || goldCount < GOLD_COST || buildingView.getColony().areSpiesEnabled())
         {

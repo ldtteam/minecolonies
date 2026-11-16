@@ -76,6 +76,7 @@ import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.wrapper.PlayerMainInvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -841,7 +842,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
         compoundNBT.putInt(TAG_COLONY_ID, this.getColony().getID());
         compoundNBT.putInt(TAG_OTHER_LEVEL, this.getBuildingLevel());
         stack.setTag(compoundNBT);
-        if (InventoryUtils.addItemStackToProvider(player, stack))
+        if (InventoryUtils.addItemStackToItemHandler(new PlayerMainInvWrapper(player.getInventory()), stack))
         {
             this.destroy();
             colony.getWorld().destroyBlock(this.getPosition(), false);
@@ -1219,44 +1220,6 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     protected boolean keepFood()
     {
         return true;
-    }
-
-    /**
-     * Try to transfer a stack to one of the inventories of the building and force the transfer.
-     *
-     * @param stack the stack to transfer.
-     * @param world the world to do it in.
-     * @return the itemStack which has been replaced or the itemStack which could not be transfered
-     */
-    @Override
-    @Nullable
-    public ItemStack forceTransferStack(final ItemStack stack, final Level world)
-    {
-        if (getTileEntity() == null)
-        {
-            for (final BlockPos pos : containerList)
-            {
-                final BlockEntity tempTileEntity = world.getBlockEntity(pos);
-                if (tempTileEntity instanceof ChestBlockEntity && !InventoryUtils.isProviderFull(tempTileEntity))
-                {
-                    return forceItemStackToProvider(tempTileEntity, stack);
-                }
-            }
-        }
-        else
-        {
-            return forceItemStackToProvider(getTileEntity(), stack);
-        }
-        return stack;
-    }
-
-    @Nullable
-    private ItemStack forceItemStackToProvider(@NotNull final ICapabilityProvider provider, @NotNull final ItemStack itemStack)
-    {
-        final List<ItemStorage> localAlreadyKept = new ArrayList<>();
-        return InventoryUtils.forceItemStackToProvider(provider,
-          itemStack,
-          (ItemStack stack) -> EntityAIWorkDeliveryman.workerRequiresItem(this, stack, localAlreadyKept) != stack.getCount());
     }
 
     //------------------------- Ending Required Tools/Item handling -------------------------//

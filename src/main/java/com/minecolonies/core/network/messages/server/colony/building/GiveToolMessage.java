@@ -70,7 +70,7 @@ public class GiveToolMessage extends AbstractBuildingServerMessage<AbstractBuild
         {
             return;
         }
-        final ItemStack scepter = InventoryUtils.getOrCreateItemAndPutToHotbarAndSelectOrDrop(item, player, item::getDefaultInstance, true);
+        final ItemStack scepter = InventoryUtils.getOrCreateItemAndPutToHotbarAndSelectOrDrop(item, player, item::getDefaultInstance);
 
         final CompoundTag compound = scepter.getOrCreateTag();
         BlockPosUtil.write(compound, TAG_POS, building.getID());

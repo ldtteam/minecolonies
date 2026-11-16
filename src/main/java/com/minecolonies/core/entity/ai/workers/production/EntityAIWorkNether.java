@@ -483,7 +483,7 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
                                 StatsUtil.trackStat(building, MINER_DEATHS, 1);
 
                                 // Stop processing loot table data, as the worker died before finishing the trip.
-                                InventoryUtils.clearItemHandler(worker.getItemHandlerCitizen());
+                                InventoryUtils.clearInventory(worker.getItemHandlerCitizen());
                                 job.getCraftedResults().clear();
                                 job.getProcessedResults().clear();
                                 return IDLE;
@@ -723,7 +723,7 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
 
     private ItemStack findItem(@NotNull final Predicate<ItemStack> predicate)
     {
-        int slotOfStack = InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(worker.getItemHandlerCitizen(), predicate);
+        int slotOfStack = InventoryUtils.getMatchingSlot(worker.getItemHandlerCitizen(), predicate);
         return slotOfStack < 0 ? ItemStack.EMPTY : worker.getInventoryCitizen().getStackInSlot(slotOfStack);
     }
 
@@ -757,7 +757,7 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
                     {
                         if (!item.test(worker.getInventoryCitizen().getArmorInSlot(item.getType())))
                         {
-                            final int toBeEquipped = InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(worker.getItemHandlerCitizen(), item);
+                            final int toBeEquipped = InventoryUtils.getMatchingSlot(worker.getItemHandlerCitizen(), item);
                             if (toBeEquipped > -1)
                             {
                                 final ItemStack stack = worker.getInventoryCitizen().getStackInSlot(toBeEquipped);
@@ -918,7 +918,7 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
                     if (!ItemStackUtils.isEmpty(virtualEquipmentSlots.get(item.getType())))
                     {
                         final int slot =
-                            InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(worker.getInventoryCitizen(), stack -> stack == virtualEquipmentSlots.get(item.getType()));
+                            InventoryUtils.getMatchingSlot(worker.getInventoryCitizen(), stack -> stack == virtualEquipmentSlots.get(item.getType()));
                         if (slot > -1)
                         {
                             InventoryUtils.transferItemStackIntoNextFreeSlotInProvider(worker.getInventoryCitizen(), slot, building);
@@ -935,13 +935,13 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
 
     protected IAIState checkAndRequestFood()
     {
-        if (InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), stack -> building.getModule(NETHERMINER_MENU).getMenu().contains(new ItemStorage(stack))) >= 16)
+        if (InventoryUtils.getItemCount(worker.getInventoryCitizen(), stack -> building.getModule(NETHERMINER_MENU).getMenu().contains(new ItemStorage(stack))) >= 16)
         {
             // We have enough food.
             return getState();
         }
 
-        if (InventoryUtils.hasBuildingEnoughElseCount(building, stack -> building.getModule(NETHERMINER_MENU).getMenu().contains(new ItemStorage(stack)), 1) >= 1)
+        if (building.hasEnoughElseCount( stack -> building.getModule(NETHERMINER_MENU).getMenu().contains(new ItemStorage(stack)), 1) >= 1)
         {
             needsCurrently = new Tuple<>(stack -> building.getModule(NETHERMINER_MENU).getMenu().contains(new ItemStorage(stack)), 16);
             return GATHERING_REQUIRED_MATERIALS;

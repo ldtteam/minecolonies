@@ -80,14 +80,14 @@ public class JobKnight extends AbstractJobGuard<JobKnight> implements IJobWithCo
     public boolean ignoresDamage(@NotNull final DamageSource damageSource)
     {
         if (damageSource.is(DamageTypeTags.IS_EXPLOSION) && this.getColony().getResearchManager().getResearchEffects().getEffectStrength(SHIELD_USAGE) > 0
-            && InventoryUtils.findFirstSlotInItemHandlerWith(this.getCitizen().getInventory(), Items.SHIELD) != -1)
+            && InventoryUtils.getMatchingSlot(this.getCitizen().getInventory(), Items.SHIELD) != -1)
         {
             if (!this.getCitizen().getEntity().isPresent())
             {
                 return true;
             }
             final AbstractEntityCitizen worker = this.getCitizen().getEntity().get();
-            CitizenItemUtils.setHeldItem(worker, InteractionHand.OFF_HAND, InventoryUtils.findFirstSlotInItemHandlerWith(this.getCitizen().getInventory(), Items.SHIELD));
+            CitizenItemUtils.setHeldItem(worker, InteractionHand.OFF_HAND, InventoryUtils.getMatchingSlot(this.getCitizen().getInventory(), Items.SHIELD));
             worker.startUsingItem(InteractionHand.OFF_HAND);
 
             // Apply the colony Flag to the shield
@@ -106,7 +106,7 @@ public class JobKnight extends AbstractJobGuard<JobKnight> implements IJobWithCo
         if (this.getCitizen().getEntity().isPresent())
         {
             final AbstractEntityCitizen worker = this.getCitizen().getEntity().get();
-            CitizenItemUtils.setHeldItem(worker, InteractionHand.OFF_HAND, InventoryUtils.findFirstSlotInItemHandlerWith(this.getCitizen().getInventory(), Items.SHIELD));
+            CitizenItemUtils.setHeldItem(worker, InteractionHand.OFF_HAND, InventoryUtils.getMatchingSlot(this.getCitizen().getInventory(), Items.SHIELD));
             worker.startUsingItem(InteractionHand.OFF_HAND);
             ItemStack shieldStack = worker.getInventoryCitizen().getHeldItem(InteractionHand.OFF_HAND);
             CompoundTag nbt = shieldStack.getOrCreateTagElement("BlockEntityTag");

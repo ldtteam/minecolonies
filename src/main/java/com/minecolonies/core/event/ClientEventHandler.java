@@ -215,7 +215,7 @@ public class ClientEventHandler
                 handleHutBlockResearchUnlocks(colony, event.getToolTip(), blockItem.getBlock());
             }
 
-            if (event.getEntity().isCreative() && InventoryUtils.hasItemInItemHandler(new InvWrapper(event.getEntity().getInventory()), ModItems.scanTool.get()))
+            if (event.getEntity().isCreative() && InventoryUtils.hasItem(new InvWrapper(event.getEntity().getInventory()), ModItems.scanTool.get()))
             {
                 int tier = SchemAnalyzerUtil.getBlockTier(blockItem.getBlock());
 

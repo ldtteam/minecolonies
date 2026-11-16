@@ -1020,6 +1020,6 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
      */
     private boolean hasLogs()
     {
-        return InventoryUtils.hasItemInItemHandler(getInventory(), this::isStackLog);
+        return InventoryUtils.hasItem(getInventory(), this::isStackLog);
     }
 }

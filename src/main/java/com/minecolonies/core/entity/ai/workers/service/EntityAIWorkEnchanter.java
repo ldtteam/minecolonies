@@ -152,10 +152,10 @@ public class EntityAIWorkEnchanter extends AbstractEntityAICrafting<JobEnchanter
                 return IDLE;
             }
 
-            final int booksInInv = InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), IS_BOOK);
+            final int booksInInv = InventoryUtils.getItemCount(worker.getInventoryCitizen(), IS_BOOK);
             if (booksInInv <= 0)
             {
-                final int numberOfBooksInBuilding = InventoryUtils.hasBuildingEnoughElseCount(building, IS_BOOK, 1);
+                final int numberOfBooksInBuilding = building.hasEnoughElseCount( IS_BOOK, 1);
                 if (numberOfBooksInBuilding > 0)
                 {
                     needsCurrently = new Tuple<>(IS_BOOK, 1);
@@ -187,10 +187,10 @@ public class EntityAIWorkEnchanter extends AbstractEntityAICrafting<JobEnchanter
 
         if (!ancientTomeCraftingDisabled)
         {
-            final int ancientTomesInInv = InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), IS_ANCIENT_TOME);
+            final int ancientTomesInInv = InventoryUtils.getItemCount(worker.getInventoryCitizen(), IS_ANCIENT_TOME);
             if (ancientTomesInInv <= 0)
             {
-                final int amountOfAncientTomes = InventoryUtils.hasBuildingEnoughElseCount(building, IS_ANCIENT_TOME, 1);
+                final int amountOfAncientTomes = building.hasEnoughElseCount( IS_ANCIENT_TOME, 1);
                 if (amountOfAncientTomes > 0)
                 {
                     needsCurrently = new Tuple<>(IS_ANCIENT_TOME, 1);
@@ -405,7 +405,7 @@ public class EntityAIWorkEnchanter extends AbstractEntityAICrafting<JobEnchanter
             return getState();
         }
 
-        final int bookSlot = InventoryUtils.findFirstSlotInItemHandlerWith(worker.getInventoryCitizen(), Items.BOOK);
+        final int bookSlot = InventoryUtils.getMatchingSlot(worker.getInventoryCitizen(), Items.BOOK);
         if (bookSlot != -1)
         {
             final int size = citizenToGatherFrom.getInventory().getSlots();

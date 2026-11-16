@@ -224,8 +224,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
                 }
             }
 
-            final boolean hasBreedingItem = InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(),
-                stack -> ItemStackUtils.compareItemStorageListIgnoreStackSize(module.getBreedingItems(), stack)) > 1;
+            final boolean hasBreedingItem = InventoryUtils.getItemCount(worker.getInventoryCitizen(), stack -> ItemStackUtils.compareItemStorageListIgnoreStackSize(module.getBreedingItems(), stack)) > 1;
 
             if (ColonyConstants.rand.nextDouble() < 0.1 && !searchForItemsInArea().isEmpty())
             {
@@ -720,9 +719,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
      */
     private int getToolSlot(final EquipmentTypeEntry toolType)
     {
-        final int slot = InventoryUtils.getFirstSlotOfItemHandlerContainingEquipment(getInventory(), toolType,
-          TOOL_LEVEL_WOOD_OR_GOLD, building.getMaxEquipmentLevel());
-
+        final int slot = InventoryUtils.getMatchingSlot(getInventory(), stack -> ItemStackUtils.hasEquipmentLevel(stack, toolType, TOOL_LEVEL_WOOD_OR_GOLD, building.getMaxEquipmentLevel()));
         if (slot == -1)
         {
             checkForToolOrWeapon(toolType);
@@ -759,7 +756,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
      */
     public int getItemSlot(final Item item)
     {
-        return InventoryUtils.findFirstSlotInItemHandlerWith(getInventory(), item);
+        return InventoryUtils.getMatchingSlot(getInventory(), item);
     }
 
     /**

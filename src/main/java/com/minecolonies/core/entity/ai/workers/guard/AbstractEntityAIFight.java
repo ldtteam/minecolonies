@@ -226,7 +226,7 @@ public abstract class AbstractEntityAIFight<J extends AbstractJobGuard<J>, B ext
                         final ItemStack armorStack = worker.getInventoryCitizen().getArmorInSlot(item.getType());
                         worker.getInventoryCitizen().moveArmorToInventory(item.getType());
                         final int slot =
-                          InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(worker.getInventoryCitizen(), stack -> stack == armorStack);
+                          InventoryUtils.getMatchingSlot(worker.getInventoryCitizen(), stack -> stack == armorStack);
                         if (slot > -1)
                         {
                             InventoryUtils.transferItemStackIntoNextFreeSlotInProvider(worker.getInventoryCitizen(), slot, building);
@@ -235,7 +235,7 @@ public abstract class AbstractEntityAIFight<J extends AbstractJobGuard<J>, B ext
 
                     final ItemStack newStack = bestHandler.getStackInSlot(bestSlot);
                     InventoryUtils.transferItemStackIntoNextFreeSlotInItemHandler(bestHandler, bestSlot, worker.getInventoryCitizen());
-                    final int slot = InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(worker.getInventoryCitizen(), stack -> stack == newStack);
+                    final int slot = InventoryUtils.getMatchingSlot(worker.getInventoryCitizen(), stack -> stack == newStack);
                     if (slot > -1)
                     {
                         worker.getInventoryCitizen().transferArmorToSlot(item.getType(), slot);
@@ -246,7 +246,7 @@ public abstract class AbstractEntityAIFight<J extends AbstractJobGuard<J>, B ext
                     if (!ItemStackUtils.isEmpty(worker.getItemBySlot(item.getType())))
                     {
                         final int slot =
-                          InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(worker.getInventoryCitizen(), stack -> stack == worker.getItemBySlot(item.getType()));
+                          InventoryUtils.getMatchingSlot(worker.getInventoryCitizen(), stack -> stack == worker.getItemBySlot(item.getType()));
                         if (slot > -1)
                         {
                             InventoryUtils.transferItemStackIntoNextFreeSlotInProvider(worker.getInventoryCitizen(), slot, building);
@@ -286,7 +286,7 @@ public abstract class AbstractEntityAIFight<J extends AbstractJobGuard<J>, B ext
             {
                 if (building.getBuildingLevelEquivalent() >= item.getMinBuildingLevelRequired() && building.getBuildingLevelEquivalent() <= item.getMaxBuildingLevelRequired())
                 {
-                    int slot = InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(worker.getInventoryCitizen(), item);
+                    int slot = InventoryUtils.getMatchingSlot(worker.getInventoryCitizen(), item);
                     if (slot <= -1)
                     {
                         continue;
@@ -312,7 +312,7 @@ public abstract class AbstractEntityAIFight<J extends AbstractJobGuard<J>, B ext
                       && building.getBuildingLevelEquivalent() <= item.getMaxBuildingLevelRequired())
                 {
                     equipment.add(item.getType());
-                    int slot = InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(worker.getInventoryCitizen(), item);
+                    int slot = InventoryUtils.getMatchingSlot(worker.getInventoryCitizen(), item);
                     if (slot > -1)
                     {
                         worker.setItemSlot(item.getType(), worker.getInventoryCitizen().getStackInSlot(slot));
@@ -329,7 +329,7 @@ public abstract class AbstractEntityAIFight<J extends AbstractJobGuard<J>, B ext
     {
         final ItemStack stack = worker.getItemBySlot(EquipmentSlot.OFFHAND);
         if (stack.isEmpty()
-              || InventoryUtils.findFirstSlotInItemHandlerWith(getInventory(), itemStack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, itemStack, false, true)) == -1)
+              || InventoryUtils.getMatchingSlot(getInventory(), itemStack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, itemStack, false, true)) == -1)
         {
             worker.setItemSlot(EquipmentSlot.OFFHAND, ItemStackUtils.EMPTY);
         }

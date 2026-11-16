@@ -79,9 +79,7 @@ public class RemoveFromRallyingListMessage implements IMessage
     public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
     {
         final ServerPlayer player = ctxIn.getSender();
-        final int slot = InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(player.getInventory()),
-          (itemStack -> ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, banner)));
-
+        final int slot = InventoryUtils.getMatchingSlot(new InvWrapper(player.getInventory()), (itemStack -> ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, banner)));
         if (slot == -1)
         {
             MessageUtils.format(COM_MINECOLONIES_BANNER_RALLY_GUARDS_GUI_ERROR).sendTo(player);

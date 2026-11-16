@@ -310,7 +310,7 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
                 return ActionHandlerResult.NEEDS_ITEM;
             }
 
-            final int slot = InventoryUtils.findFirstSlotInItemHandlerWith(worker.getItemHandlerCitizen(), currentStack.getItem());
+            final int slot = InventoryUtils.getMatchingSlot(worker.getItemHandlerCitizen(), currentStack.getItem());
             CitizenItemUtils.setMainHeldItem(worker, slot);
 
             BlockState blockState = planterModule.getPlantingBlockState(world, activeModuleResult.getWorkingPosition(), BlockUtils.getBlockStateFromStack(currentStack));
@@ -347,7 +347,7 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
             }
 
             final int boneMealSlot =
-              InventoryUtils.findFirstSlotInItemHandlerWith(worker.getInventoryCitizen(), stack -> planterModule.getValidBonemeal().contains(stack.getItem()));
+              InventoryUtils.getMatchingSlot(worker.getInventoryCitizen(), stack -> planterModule.getValidBonemeal().contains(stack.getItem()));
             final ItemStack stackInSlot = worker.getInventoryCitizen().getStackInSlot(boneMealSlot);
             planterModule.applyBonemeal(worker, activeModuleResult.getActionPosition(), stackInSlot, getFakePlayer());
         }
@@ -393,7 +393,7 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
     private boolean checkIfItemsUnavailable(final IConcreteDeliverable deliverable)
     {
         final int invCount =
-          InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), deliverable::matches);
+          InventoryUtils.getItemCount(worker.getInventoryCitizen(), deliverable::matches);
         if (invCount >= deliverable.getMinimumCount())
         {
             return false;

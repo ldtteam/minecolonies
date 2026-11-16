@@ -194,7 +194,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
                 return START_WORKING;
             }
         }
-        else if (InventoryUtils.openSlotCount(worker.getInventoryCitizen()) <= 0)
+        else if (worker.getInventoryCitizen().getFreeSlots() <= 0)
         {
             this.alreadyKept = new ArrayList<>();
             this.currentSlot = 0;
@@ -214,7 +214,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
      */
     private boolean pickupFromBuilding(@NotNull final IBuilding targetBuilding)
     {
-        if (cannotHoldMoreItems() || InventoryUtils.openSlotCount(worker.getInventoryCitizen()) <= 0)
+        if (cannotHoldMoreItems() || worker.getInventoryCitizen().getFreeSlots() <= 0)
         {
             return false;
         }
@@ -488,7 +488,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         for (final IRequest<? extends Delivery> task : taskList)
         {
             parallelDeliveryCount++;
-            int totalCount = InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(),
+            int totalCount = InventoryUtils.getItemCount(worker.getInventoryCitizen(),
               itemStack -> ItemStackUtils.compareItemStacksIgnoreStackSize(task.getRequest().getStack(), itemStack));
             int hasCount = 0;
             for (final ItemStack stack : alreadyInInv)
@@ -566,9 +566,9 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             return false;
         }
 
-        if ((entity instanceof TileEntityColonyBuilding
-               && InventoryUtils.hasBuildingEnoughElseCount(((TileEntityColonyBuilding) entity).getBuilding(), new ItemStorage(is), is.getCount()) >= is.getCount()) ||
-              (entity instanceof TileEntityRack && ((TileEntityRack) entity).getCount(new ItemStorage(is)) >= is.getCount()))
+        if ((entity instanceof TileEntityColonyBuilding colonyBuilding
+            && colonyBuilding.getBuilding().hasEnoughElseCount(new ItemStorage(is), is.getCount()) >= is.getCount())
+            || (entity instanceof TileEntityRack && ((TileEntityRack) entity).getCount(new ItemStorage(is)) >= is.getCount()))
         {
             final IItemHandler handler = entity.getCapability(ForgeCapabilities.ITEM_HANDLER, null).resolve().orElse(null);
             if (handler != null)

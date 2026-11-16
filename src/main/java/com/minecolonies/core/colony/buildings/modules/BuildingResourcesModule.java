@@ -134,13 +134,13 @@ public class BuildingResourcesModule extends AbstractBuildingModule implements I
 
                 if (structureBuilderInventory != null)
                 {
-                    resource.addAvailable(InventoryUtils.getItemCountInItemHandler(structureBuilderInventory,
+                    resource.addAvailable(InventoryUtils.getItemCount(structureBuilderInventory,
                       stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, resource.getItemStack(), true, true)));
                 }
 
                 if (building.getTileEntity() != null)
                 {
-                    resource.addAvailable(InventoryUtils.getItemCountInItemHandler(building.getCapability(ForgeCapabilities.ITEM_HANDLER, null).orElseGet(null),
+                    resource.addAvailable(InventoryUtils.getItemCount(building.getCapability(ForgeCapabilities.ITEM_HANDLER, null).orElseGet(null),
                       stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, resource.getItemStack(), true, true)));
                 }
 
@@ -148,7 +148,7 @@ public class BuildingResourcesModule extends AbstractBuildingModule implements I
                 {
                     for (final IBuilding station : ((IJobWithExternalWorkStations) data.getJob()).getWorkStations())
                     {
-                        resource.addAvailable(InventoryUtils.getItemCountInItemHandler(station.getCapability(ForgeCapabilities.ITEM_HANDLER, null).orElseGet(null),
+                        resource.addAvailable(InventoryUtils.getItemCount(station.getCapability(ForgeCapabilities.ITEM_HANDLER, null).orElseGet(null),
                           stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, resource.getItemStack(), true, true)));
                     }
                 }
@@ -349,15 +349,14 @@ public class BuildingResourcesModule extends AbstractBuildingModule implements I
                 continue;
             }
 
-            int count = InventoryUtils.hasBuildingEnoughElseCount(building,
-              stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, itemStack.getItemStack()), entry.getValue());
+            int count = building.hasEnoughElseCount(stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, itemStack.getItemStack()), entry.getValue());
 
             if (count >= entry.getValue())
             {
                 continue;
             }
 
-            count += InventoryUtils.getItemCountInItemHandler(worker.getInventory(), stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, itemStack.getItemStack()));
+            count += InventoryUtils.getItemCount(worker.getInventory(), stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, itemStack.getItemStack()));
             if (count >= entry.getValue())
             {
                 continue;

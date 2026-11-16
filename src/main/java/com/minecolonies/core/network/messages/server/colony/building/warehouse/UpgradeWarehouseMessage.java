@@ -56,9 +56,7 @@ public class UpgradeWarehouseMessage extends AbstractBuildingServerMessage<Build
         final boolean isCreative = player.isCreative();
         if (!isCreative)
         {
-            final int slot = InventoryUtils.
-                                             findFirstSlotInItemHandlerWith(new InvWrapper(player.getInventory()),
-                                               itemStack -> ItemStack.isSameItem(itemStack, new ItemStack(Blocks.EMERALD_BLOCK)));
+            final int slot = InventoryUtils.getMatchingSlot(new InvWrapper(player.getInventory()), itemStack -> ItemStack.isSameItem(itemStack, new ItemStack(Blocks.EMERALD_BLOCK)));
             player.getInventory().removeItem(slot, 1);
         }
     }

@@ -761,7 +761,7 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
 
         for(IWareHouse wareHouse: wareHouses)
         {
-            count += InventoryUtils.getCountFromBuilding(wareHouse, item);
+            count += wareHouse.getItemCount(item);
         }
         return count;
     }

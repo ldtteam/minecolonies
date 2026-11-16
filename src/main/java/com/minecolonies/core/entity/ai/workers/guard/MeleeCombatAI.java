@@ -117,7 +117,7 @@ public class MeleeCombatAI extends AttackMoveAI<EntityCitizen>
      */
     protected IAIState attackProtect()
     {
-        final int shieldSlot = InventoryUtils.findFirstSlotInItemHandlerWith(user.getInventoryCitizen(), Items.SHIELD);
+        final int shieldSlot = InventoryUtils.getMatchingSlot(user.getInventoryCitizen(), Items.SHIELD);
         if (!isHuscarl() && shieldSlot != -1 && target != null && target.isAlive() && nextAttackTime - user.level.getGameTime() >= MIN_TIME_TO_ATTACK &&
               user.getCitizenColonyHandler().getColonyOrRegister().getResearchManager().getResearchEffects().getEffectStrength(SHIELD_USAGE) > 0)
         {
@@ -158,10 +158,10 @@ public class MeleeCombatAI extends AttackMoveAI<EntityCitizen>
         EquipmentTypeEntry tool = getWeaponType();
 
         final int weaponSlot =
-          InventoryUtils.getFirstSlotOfItemHandlerContainingEquipment(user.getInventoryCitizen(),
+          InventoryUtils.getMatchingSlot(user.getInventoryCitizen(), stack -> ItemStackUtils.hasEquipmentLevel(stack,
             tool,
             0,
-            user.getCitizenData().getWorkBuilding().getMaxEquipmentLevel());
+            user.getCitizenData().getWorkBuilding().getMaxEquipmentLevel()));
 
         if (weaponSlot != -1)
         {

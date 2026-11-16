@@ -88,8 +88,8 @@ public class EntityAIWorkTeacher extends AbstractEntityAIInteract<JobTeacher, Bu
      */
     private IAIState decide()
     {
-        final int paperInBuilding = InventoryUtils.hasBuildingEnoughElseCount(building, PAPER, 1);
-        final int paperInInv = InventoryUtils.getItemCountInItemHandler((worker.getInventoryCitizen()), PAPER);
+        final int paperInBuilding = building.hasEnoughElseCount(PAPER, 1);
+        final int paperInInv = InventoryUtils.getItemCount((worker.getInventoryCitizen()), PAPER);
         if (paperInBuilding + paperInInv <= 0)
         {
             requestPaper();
@@ -148,8 +148,8 @@ public class EntityAIWorkTeacher extends AbstractEntityAIInteract<JobTeacher, Bu
             worker.setPos(worker.getX(), worker.getY() + 1, worker.getZ());
         }
 
-        final int slot = InventoryUtils.findFirstSlotInItemHandlerWith(worker.getInventoryCitizen(), PAPER);
-        final int pupilSlot = InventoryUtils.findFirstSlotInItemHandlerWith(pupilToTeach.getInventoryCitizen(), PAPER);
+        final int slot = InventoryUtils.getMatchingSlot(worker.getInventoryCitizen(), PAPER);
+        final int pupilSlot = InventoryUtils.getMatchingSlot(pupilToTeach.getInventoryCitizen(), PAPER);
         if (slot != -1 && pupilSlot == -1)
         {
             InventoryUtils.transferXOfFirstSlotInItemHandlerWithIntoNextFreeSlotInItemHandler(

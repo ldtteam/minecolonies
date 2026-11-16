@@ -147,7 +147,7 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, Buildi
 
         if (!worker.getCitizenInventoryHandler().hasItemInInventory(building.getMilkInputItem().getItem()))
         {
-            if (InventoryUtils.hasBuildingEnoughElseCount(building, new ItemStorage(building.getMilkInputItem()), 1) > 0
+            if (building.hasEnoughElseCount( new ItemStorage(building.getMilkInputItem()), 1) > 0
                 && walkToBuilding())
             {
                 checkAndTransferFromHut(building.getMilkInputItem());
@@ -201,7 +201,7 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, Buildi
 
         if (!worker.getCitizenInventoryHandler().hasItemInInventory(Items.BOWL))
         {
-            if (InventoryUtils.hasBuildingEnoughElseCount(building, new ItemStorage(new ItemStack(Items.BOWL, 1)), 1) > 0
+            if (building.hasEnoughElseCount( new ItemStorage(new ItemStack(Items.BOWL, 1)), 1) > 0
                 && walkToBuilding())
             {
                 checkAndTransferFromHut(new ItemStack(Items.BOWL, 1));

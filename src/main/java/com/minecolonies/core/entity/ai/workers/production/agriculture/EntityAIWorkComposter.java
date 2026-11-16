@@ -151,7 +151,7 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
             return getState();
         }
 
-        if (InventoryUtils.hasItemInProvider(building, stack -> list.contains(new ItemStorage(stack))))
+        if (building.hasItem(stack -> list.contains(new ItemStorage(stack))))
         {
             InventoryUtils.transferItemStackIntoNextFreeSlotFromProvider(
               building,
@@ -159,7 +159,7 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
               worker.getInventoryCitizen());
         }
 
-        final int slot = InventoryUtils.findFirstSlotInItemHandlerWith(
+        final int slot = InventoryUtils.getMatchingSlot(
           worker.getInventoryCitizen(),
           stack -> list.contains(new ItemStorage(stack))
         );
@@ -253,9 +253,8 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
     {
         if (worker.getItemInHand(InteractionHand.MAIN_HAND) == ItemStack.EMPTY)
         {
-            final int slot = InventoryUtils.findFirstSlotInItemHandlerWith(
-              worker.getInventoryCitizen(),
-              stack -> building.getModuleMatching(ItemListModule.class, m -> m.getId().equals(COMPOSTABLE_LIST)).isItemInList(new ItemStorage(stack)));
+            final int slot = InventoryUtils.getMatchingSlot(worker.getInventoryCitizen(),
+                stack -> building.getModuleMatching(ItemListModule.class, m -> m.getId().equals(COMPOSTABLE_LIST)).isItemInList(new ItemStorage(stack)));
 
             if (slot >= 0)
             {

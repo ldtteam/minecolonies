@@ -163,7 +163,7 @@ public class ConnectionModuleWindow extends AbstractBuildingWindow<IBuildingView
                 }
 
                 final Button button = rowPane.findPaneOfTypeByID(TRAVEL, Button.class);
-                if (externalPlayer && InventoryUtils.getItemCountInItemHandler(new InvWrapper(Minecraft.getInstance().player.getInventory()), Items.GOLD_NUGGET) <= itemCount)
+                if (externalPlayer && InventoryUtils.getItemCount(new InvWrapper(Minecraft.getInstance().player.getInventory()), Items.GOLD_NUGGET) <= itemCount)
                 {
                     button.setEnabled(false);
                     PaneBuilders.tooltipBuilder().hoverPane(button).build().setText(Component.translatable("com.ldtteam.gatehouse.travel.cost"));

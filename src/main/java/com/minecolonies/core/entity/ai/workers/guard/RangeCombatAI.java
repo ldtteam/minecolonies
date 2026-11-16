@@ -114,9 +114,7 @@ public class RangeCombatAI extends AttackMoveAI<EntityCitizen>
     @Override
     public boolean canAttack()
     {
-        final int weaponSlot =
-          InventoryUtils.getFirstSlotOfItemHandlerContainingEquipment(user.getInventoryCitizen(), getWeaponType(), 0, user.getCitizenData().getWorkBuilding().getMaxEquipmentLevel());
-
+        final int weaponSlot = InventoryUtils.getMatchingSlot(user.getInventoryCitizen(), stack -> ItemStackUtils.hasEquipmentLevel(stack, getWeaponType(), 0, user.getCitizenData().getWorkBuilding().getMaxEquipmentLevel()));
         if (weaponSlot != -1)
         {
             CitizenItemUtils.setHeldItem(user, InteractionHand.MAIN_HAND, weaponSlot);
@@ -280,7 +278,7 @@ public class RangeCombatAI extends AttackMoveAI<EntityCitizen>
 
         if (user.getCitizenColonyHandler().getColonyOrRegister().getResearchManager().getResearchEffects().getEffectStrength(ARCHER_USE_ARROWS) > 0)
         {
-            int slot = InventoryUtils.findFirstSlotInItemHandlerWith(user.getInventoryCitizen(), item -> item.getItem() instanceof ArrowItem);
+            int slot = InventoryUtils.getMatchingSlot(user.getInventoryCitizen(), item -> item.getItem() instanceof ArrowItem);
             if (slot != -1)
             {
                 if (!ItemStackUtils.isEmpty(user.getInventoryCitizen().extractItem(slot, 1, true)))
@@ -290,7 +288,7 @@ public class RangeCombatAI extends AttackMoveAI<EntityCitizen>
                     {
                         customArrowEntity.setOnHitCallback(entityRayTraceResult ->
                         {
-                            final int arrowSlot = InventoryUtils.findFirstSlotInItemHandlerWith(user.getInventoryCitizen(), item -> item.getItem() instanceof ArrowItem);
+                            final int arrowSlot = InventoryUtils.getMatchingSlot(user.getInventoryCitizen(), item -> item.getItem() instanceof ArrowItem);
                             if (arrowSlot != -1)
                             {
                                 user.getInventoryCitizen().extractItem(arrowSlot, 1, false);

@@ -27,6 +27,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.items.wrapper.InvWrapper;
+import net.minecraftforge.items.wrapper.PlayerMainInvWrapper;
 
 import java.util.Collections;
 import java.util.List;
@@ -136,7 +137,7 @@ public class RecruitmentInteraction extends ServerCitizenInteraction
         // Validate recruitment before returning true
         if (response.equals(recruitAnswer.getA()) && data instanceof IVisitorViewData)
         {
-            if (player.isCreative() || InventoryUtils.getItemCountInItemHandler(new InvWrapper(player.getInventory()), ((IVisitorViewData) data).getRecruitCost().getItem())
+            if (player.isCreative() || InventoryUtils.getItemCount(new PlayerMainInvWrapper(player.getInventory()), ((IVisitorViewData) data).getRecruitCost().getItem())
                   >= ((IVisitorViewData) data).getRecruitCost().getCount())
             {
                 return super.onClientResponseTriggered(responseId, player, data, window);
@@ -158,7 +159,7 @@ public class RecruitmentInteraction extends ServerCitizenInteraction
             IColony colony = data.getColony();
             if (colony.getCitizenManager().getCurrentCitizenCount() < colony.getCitizenManager().getPotentialMaxCitizens())
             {
-                if (player.isCreative() || InventoryUtils.attemptReduceStackInItemHandler(new InvWrapper(player.getInventory()),
+                if (player.isCreative() || InventoryUtils.attemptReduceStackInItemHandler(new PlayerMainInvWrapper(player.getInventory()),
                   ((IVisitorData) data).getRecruitCost(),
                   ((IVisitorData) data).getRecruitCost().getCount(), true, true))
                 {

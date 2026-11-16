@@ -30,6 +30,6 @@ public class WarehouseRequestResolver extends AbstractWarehouseRequestResolver
             return 0;
         }
 
-        return InventoryUtils.hasBuildingEnoughElseCount(wareHouse, itemStack -> requestToCheck.getRequest().matches(itemStack), requestToCheck.getRequest().getCount());
+        return wareHouse.hasEnoughElseCount(itemStack -> requestToCheck.getRequest().matches(itemStack), requestToCheck.getRequest().getCount());
     }
 }

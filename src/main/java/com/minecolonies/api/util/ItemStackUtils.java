@@ -35,10 +35,12 @@ import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.entity.decoration.ItemFrame;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.*;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BrewingStandBlockEntity;
 import net.minecraft.world.level.block.entity.FurnaceBlockEntity;
 import net.minecraft.world.phys.EntityHitResult;
@@ -62,6 +64,16 @@ import static java.util.Map.entry;
  */
 public final class ItemStackUtils
 {
+    /**
+     * Several values to spawn items in the world.
+     */
+    private static final double SPAWN_MODIFIER    = 0.8D;
+    private static final double SPAWN_ADDITION    = 0.1D;
+    private static final int    MAX_RANDOM_SPAWN  = 21;
+    private static final int    MIN_RANDOM_SPAWN  = 10;
+    private static final double MOTION_MULTIPLIER = 0.05000000074505806D;
+    private static final double MOTION_Y_MIN      = 0.20000000298023224D;
+
     /**
      * Pattern for {@link #parseIdTemplate}.
      */
@@ -949,7 +961,7 @@ public final class ItemStackUtils
         {
             if (citizenData.getInventory().isFull() || (inventory != null && !inventory.add(itemUseReturn)))
             {
-                InventoryUtils.spawnItemStack(
+                spawnItemStack(
                   citizen.level,
                   citizen.getX(),
                   citizen.getY(),
@@ -997,5 +1009,32 @@ public final class ItemStackUtils
             return 0;
         }
     }
+
+    /**
+     * Spawn an itemStack in the world.
+     *
+     * @param worldIn the world.
+     * @param x       the x pos.
+     * @param y       the y pos.
+     * @param z       the z pos.
+     * @param stack   the stack to drop.
+     */
+    public static void spawnItemStack(final Level worldIn, final double x, final double y, final double z, final ItemStack stack)
+    {
+        final Random random = new Random();
+        final double spawnX = random.nextDouble() * SPAWN_MODIFIER + SPAWN_ADDITION;
+        final double spawnY = random.nextDouble() * SPAWN_MODIFIER + SPAWN_ADDITION;
+        final double spawnZ = random.nextDouble() * SPAWN_MODIFIER + SPAWN_ADDITION;
+
+        while (stack.getCount() > 0)
+        {
+            final int randomSplitStackSize = random.nextInt(MAX_RANDOM_SPAWN) + MIN_RANDOM_SPAWN;
+            final ItemEntity ItemEntity = new ItemEntity(worldIn, x + spawnX, y + spawnY, z + spawnZ, stack.split(randomSplitStackSize));
+
+            ItemEntity.setDeltaMovement(random.nextGaussian() * MOTION_MULTIPLIER, random.nextGaussian() * MOTION_MULTIPLIER + MOTION_Y_MIN, random.nextGaussian() * MOTION_MULTIPLIER);
+            worldIn.addFreshEntity(ItemEntity);
+        }
+    }
+
 }
 

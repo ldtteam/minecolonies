@@ -261,16 +261,6 @@ public interface IBuilding extends IBuildingContainer, IBuildingModuleContainer,
     Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> getRequiredItemsAndAmount();
 
     /**
-     * Try to transfer a stack to one of the inventories of the building and force the transfer.
-     *
-     * @param stack the stack to transfer.
-     * @param world the world to do it in.
-     * @return the itemStack which has been replaced or the itemStack which could not be transfered
-     */
-    @Nullable
-    ItemStack forceTransferStack(ItemStack stack, Level world);
-
-    /**
      * Create a request for a citizen.
      *
      * @param citizenData the data of the citizen.

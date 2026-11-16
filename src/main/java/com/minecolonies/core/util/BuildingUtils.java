@@ -45,27 +45,6 @@ public final class BuildingUtils
     }
 
     /**
-     * Get the hut from the inventory.
-     *
-     * @param inventory the inventory to search.
-     * @param hut       the hut to fetch.
-     * @return the stack or if not found empty.
-     */
-    public static ItemStack getItemStackForHutFromInventory(final Inventory inventory, final String hut)
-    {
-        final int slot = InventoryUtils.findFirstSlotInProviderNotEmptyWith(inventory.player,
-          item -> item.getItem() instanceof BlockItem && ((BlockItem) item.getItem()).getBlock() instanceof AbstractBlockHut && ForgeRegistries.BLOCKS.getKey(((BlockItem) item.getItem()).getBlock())
-                  .getPath()
-                  .endsWith(hut));
-
-        if (slot != -1)
-        {
-            return inventory.getItem(slot);
-        }
-        return ItemStack.EMPTY;
-    }
-
-    /**
      * Checks a hut block for job= tags to restrict which jobs are allowed to exist there.
      *
      * @param world       the world.

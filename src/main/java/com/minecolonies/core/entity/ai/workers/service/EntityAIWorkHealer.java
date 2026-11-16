@@ -161,7 +161,7 @@ public class EntityAIWorkHealer extends AbstractEntityAIInteract<JobHealer, Buil
                     {
                         if (!InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(), Disease.hasCureItem(cure)))
                         {
-                            if (InventoryUtils.getItemCountInItemHandler(building.getCapability(ForgeCapabilities.ITEM_HANDLER).orElseGet(null),
+                            if (InventoryUtils.getItemCount(building.getCapability(ForgeCapabilities.ITEM_HANDLER).orElseGet(null),
                               Disease.hasCureItem(cure)) >= cure.getAmount())
                             {
                                 needsCurrently = new Tuple<>(Disease.hasCureItem(cure), cure.getAmount());
@@ -343,7 +343,7 @@ public class EntityAIWorkHealer extends AbstractEntityAIInteract<JobHealer, Buil
             {
                 for (final ItemStorage cure : disease.cureItems())
                 {
-                    if (InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), Disease.hasCureItem(cure)) < cure.getAmount())
+                    if (InventoryUtils.getItemCount(worker.getInventoryCitizen(), Disease.hasCureItem(cure)) < cure.getAmount())
                     {
                         needsCurrently = new Tuple<>(Disease.hasCureItem(cure), 1);
                         return GATHERING_REQUIRED_MATERIALS;
@@ -358,7 +358,7 @@ public class EntityAIWorkHealer extends AbstractEntityAIInteract<JobHealer, Buil
         {
             for (final ItemStorage cure : disease.cureItems())
             {
-                if (InventoryUtils.getItemCountInItemHandler(citizen.getInventoryCitizen(), Disease.hasCureItem(cure)) < cure.getAmount())
+                if (InventoryUtils.getItemCount(citizen.getInventoryCitizen(), Disease.hasCureItem(cure)) < cure.getAmount())
                 {
                     if (!citizen.getInventoryCitizen().hasSpace())
                     {
@@ -526,7 +526,7 @@ public class EntityAIWorkHealer extends AbstractEntityAIInteract<JobHealer, Buil
     {
         for (final ItemStorage cure : disease.cureItems())
         {
-            if (InventoryUtils.getItemCountInItemHandler(handler, Disease.hasCureItem(cure)) < cure.getAmount())
+            if (InventoryUtils.getItemCount(handler, Disease.hasCureItem(cure)) < cure.getAmount())
             {
                 return false;
             }

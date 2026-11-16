@@ -149,7 +149,7 @@ public class SurvivalHandler implements ISurvivalBlueprintHandler
             final ItemStack stack = new ItemStack(anchorBlock);
             if (EventHandler.onBlockHutPlaced(world, player, anchorBlock, blockPos))
             {
-                final int slot = InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(player.getInventory()), anchorBlock);
+                final int slot = InventoryUtils.getMatchingSlot(new InvWrapper(player.getInventory()), anchorBlock);
                 if (slot == -1 && !player.isCreative())
                 {
                     SoundUtils.playErrorSound(player, player.blockPosition());

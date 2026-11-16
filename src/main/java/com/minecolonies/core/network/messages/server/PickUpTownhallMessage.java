@@ -13,6 +13,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.fml.LogicalSide;
+import net.minecraftforge.items.wrapper.PlayerMainInvWrapper;
 import net.minecraftforge.network.NetworkEvent;
 import org.jetbrains.annotations.Nullable;
 
@@ -79,7 +80,7 @@ public class PickUpTownhallMessage implements IMessage, IRangeRestrictedPacket
         }
 
         final ItemStack stack = new ItemStack(ModBlocks.blockHutTownHall, 1);
-        if (InventoryUtils.addItemStackToProvider(sender, stack))
+        if (InventoryUtils.addItemStackToItemHandler(new PlayerMainInvWrapper(sender.getInventory()), stack))
         {
             world.destroyBlock(pos, false);
         }

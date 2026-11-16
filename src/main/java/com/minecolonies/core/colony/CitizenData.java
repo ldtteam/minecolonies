@@ -1917,9 +1917,9 @@ public class CitizenData implements ICitizenData
         }
         else
         {
-            int slotBadFood = InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(inventory,
+            int slotBadFood = InventoryUtils.getMatchingSlot(inventory,
                 stack -> FoodUtils.canEat(stack, getHomeBuilding(), getWorkBuilding()));
-            int slotGoodFood = InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(inventory,
+            int slotGoodFood = InventoryUtils.getMatchingSlot(inventory,
                 stack -> FoodUtils.canEat(stack, getHomeBuilding(), getWorkBuilding()));
             return slotBadFood != -1 && slotGoodFood == -1;
         }

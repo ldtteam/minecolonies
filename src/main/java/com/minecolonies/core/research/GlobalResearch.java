@@ -3,6 +3,7 @@ package com.minecolonies.core.research;
 import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.ICommonBuilding;
+import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.api.research.*;
 import com.minecolonies.api.research.util.ResearchState;
 import com.minecolonies.api.util.InventoryUtils;
@@ -16,6 +17,7 @@ import net.minecraft.world.item.Item;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
 
+import net.minecraftforge.items.wrapper.PlayerMainInvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -187,7 +189,7 @@ public class GlobalResearch implements IGlobalResearch
             return true;
         }
 
-        final IItemHandler playerInventory = new InvWrapper(player.getInventory());
+        final IItemHandler playerInventory = new PlayerMainInvWrapper(player.getInventory());
 
         ICommonBuilding buildingInv = BuildingUtils.commonBuildingFromPosition(player.level(), universityPos);
 
@@ -199,13 +201,13 @@ public class GlobalResearch implements IGlobalResearch
 
                 if (buildingInv != null)
                 {
-                    final int count = InventoryUtils.hasBuildingEnoughElseCount(buildingInv, stack -> IGlobalResearch.isUniversityResearchMatch(stack, cost), ingredient.getCount());
+                    final int count = buildingInv.hasEnoughElseCount(stack -> IGlobalResearch.isUniversityResearchMatch(stack, cost), ingredient.getCount());
                     totalCount += count;
                 }
 
                 if (totalCount < ingredient.getCount())
                 {
-                    final int count = InventoryUtils.getItemCountInItemHandler(playerInventory, stack -> IGlobalResearch.isPlayerResearchMatch(stack, cost));
+                    final int count = InventoryUtils.getItemCount(playerInventory, stack -> IGlobalResearch.isPlayerResearchMatch(stack, cost));
                     totalCount += count;
                 }
             }

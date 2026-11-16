@@ -96,9 +96,7 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob<?, J>, B
      */
     private void extractFuelFromFurnace(final FurnaceBlockEntity furnace)
     {
-        InventoryUtils.transferItemStackIntoNextFreeSlotInItemHandler(
-          new InvWrapper(furnace), FUEL_SLOT,
-          worker.getInventoryCitizen());
+        InventoryUtils.transferItemStackIntoNextFreeSlotInItemHandler(new InvWrapper(furnace), FUEL_SLOT, worker.getInventoryCitizen());
     }
 
     /**
@@ -116,8 +114,7 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob<?, J>, B
      */
     protected boolean reachedMaxToKeep()
     {
-        final int count = InventoryUtils.countEmptySlotsInBuilding(building);
-        return count <= STORAGE_BUFFER;
+        return building.countEmptySlots() <= STORAGE_BUFFER;
     }
 
     /**
@@ -227,12 +224,12 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob<?, J>, B
             return RETRIEVING_END_PRODUCT_FROM_FURNACE;
         }
 
-        final int amountOfSmeltableInBuilding = InventoryUtils.getCountFromBuilding(building, this::isSmeltable);
-        final int amountOfSmeltableInInv = InventoryUtils.getItemCountInItemHandler((worker.getInventoryCitizen()), this::isSmeltable);
+        final int amountOfSmeltableInBuilding = building.getItemCount(this::isSmeltable);
+        final int amountOfSmeltableInInv = InventoryUtils.getItemCount((worker.getInventoryCitizen()), this::isSmeltable);
 
-        final int amountOfFuelInBuilding = InventoryUtils.getCountFromBuilding(building, itemListModule.getList());
+        final int amountOfFuelInBuilding = building.getItemCount(itemListModule.getList());
         final int amountOfFuelInInv =
-          InventoryUtils.getItemCountInItemHandler((worker.getInventoryCitizen()), stack -> itemListModule.isItemInList(new ItemStorage(stack)));
+          InventoryUtils.getItemCount((worker.getInventoryCitizen()), stack -> itemListModule.isItemInList(new ItemStorage(stack)));
 
         if (amountOfSmeltableInBuilding + amountOfSmeltableInInv <= 0 && !reachedMaxToKeep())
         {
@@ -477,7 +474,7 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob<?, J>, B
         {
             final FurnaceBlockEntity furnace = (FurnaceBlockEntity) entity;
 
-            if (InventoryUtils.hasItemInItemHandler((worker.getInventoryCitizen()), this::isSmeltable)
+            if (InventoryUtils.hasItem((worker.getInventoryCitizen()), this::isSmeltable)
                   && (hasFuelInFurnaceAndNoSmeltable(furnace) || hasNeitherFuelNorSmeltAble(furnace)))
             {
                 InventoryUtils.transferXOfFirstSlotInItemHandlerWithIntoInItemHandler(
@@ -486,7 +483,7 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob<?, J>, B
             }
 
             final ItemListModule module = building.getModule(ITEMLIST_FUEL);
-            if (InventoryUtils.hasItemInItemHandler((worker.getInventoryCitizen()), stack -> module.isItemInList(new ItemStorage(stack)))
+            if (InventoryUtils.hasItem((worker.getInventoryCitizen()), stack -> module.isItemInList(new ItemStorage(stack)))
                   && (hasSmeltableInFurnaceAndNoFuel(furnace) || hasNeitherFuelNorSmeltAble(furnace)))
             {
                 InventoryUtils.transferXOfFirstSlotInItemHandlerWithIntoInItemHandler(

@@ -437,7 +437,7 @@ public class EntityAIWorkStablemaster extends AbstractEntityAIHerder<JobStablema
 
         if (InventoryUtils.getItemCountInProvider(worker, i -> i.is(neededItem)) <= 0)
         {
-            if (InventoryUtils.hasBuildingEnoughElseCount(building, i -> i.is(neededItem), 1) > 0)
+            if (building.hasEnoughElseCount( i -> i.is(neededItem), 1) > 0)
             {
                 walkToBuilding();
 
@@ -453,7 +453,7 @@ public class EntityAIWorkStablemaster extends AbstractEntityAIHerder<JobStablema
             hasNeededItem  = true;
         }
 
-        int slotOfStack = InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(worker.getItemHandlerCitizen(), itemStack -> itemStack.is(neededItem));
+        int slotOfStack = InventoryUtils.getMatchingSlot(worker.getItemHandlerCitizen(), itemStack -> itemStack.is(neededItem));
 
         if (hasNeededItem || slotOfStack >= 0)
         {

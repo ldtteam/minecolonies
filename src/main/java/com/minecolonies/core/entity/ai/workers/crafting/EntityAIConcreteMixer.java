@@ -72,7 +72,7 @@ public class EntityAIConcreteMixer extends AbstractEntityAICrafting<JobConcreteM
         final int slot = getSlotWithPowder();
         if (slot == -1)
         {
-            if (InventoryUtils.getCountFromBuilding(building, CONCRETE) > 0)
+            if (building.getItemCount(CONCRETE) > 0)
             {
                 needsCurrently = new Tuple<>(CONCRETE, STACKSIZE);
                 return GATHERING_REQUIRED_MATERIALS;
@@ -147,13 +147,13 @@ public class EntityAIConcreteMixer extends AbstractEntityAICrafting<JobConcreteM
             final ItemStack inputStack = currentRecipeStorage.getCleanedInput().get(0).getItemStack();
             if (CONCRETE.test(inputStack))
             {
-                return InventoryUtils.findFirstSlotInItemHandlerWith(worker.getInventoryCitizen(), s -> ItemStackUtils.compareItemStacksIgnoreStackSize(s, inputStack));
+                return InventoryUtils.getMatchingSlot(worker.getInventoryCitizen(), s -> ItemStackUtils.compareItemStacksIgnoreStackSize(s, inputStack));
             }
             return -1;
         }
         else
         {
-            return InventoryUtils.findFirstSlotInItemHandlerWith(worker.getInventoryCitizen(), CONCRETE);
+            return InventoryUtils.getMatchingSlot(worker.getInventoryCitizen(), CONCRETE);
         }
     }
 

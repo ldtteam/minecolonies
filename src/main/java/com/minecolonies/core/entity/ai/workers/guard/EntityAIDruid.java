@@ -56,7 +56,7 @@ public class EntityAIDruid extends AbstractEntityAIGuard<JobDruid, AbstractBuild
               32,
               worker.getInventoryCitizen());
 
-            if (InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), item -> item.getItem() == ModItems.magicpotion) < 8)
+            if (InventoryUtils.getItemCount(worker.getInventoryCitizen(), item -> item.getItem() == ModItems.magicpotion) < 8)
             {
                 checkIfRequestForItemExistOrCreateAsync(new ItemStack(ModItems.magicpotion), 16, 8);
             }

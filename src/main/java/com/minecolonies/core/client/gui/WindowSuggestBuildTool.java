@@ -75,7 +75,7 @@ public class WindowSuggestBuildTool extends AbstractWindowSkeleton
      */
     private void buildToolClicked()
     {
-        if (InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(Minecraft.getInstance().player.getInventory()), ModItems.buildTool.get()) != -1)
+        if (InventoryUtils.getMatchingSlot(new InvWrapper(Minecraft.getInstance().player.getInventory()), ModItems.buildTool.get()) != -1)
         {
             Network.getNetwork().sendToServer(new SwitchBuildingWithToolMessage(stack));
             new WindowExtendedBuildTool(this.pos, GROUNDSTYLE_RELATIVE).open();

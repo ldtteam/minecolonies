@@ -3,16 +3,12 @@ package com.minecolonies.api.util;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.minecolonies.api.colony.buildings.IBuilding;
-import com.minecolonies.api.colony.buildings.ICommonBuilding;
 import com.minecolonies.api.crafting.ItemStorage;
-import com.minecolonies.api.equipment.registry.EquipmentTypeEntry;
 import com.minecolonies.core.tileentities.TileEntityRack;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodProperties;
@@ -23,7 +19,6 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
@@ -32,11 +27,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
-import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
-import java.util.stream.IntStream;
 
+import static com.ldtteam.structurize.api.util.ItemStackUtils.getItemHandlersFromProvider;
 import static com.minecolonies.api.util.constant.TranslationConstants.MESSAGE_INFO_PLAYER_INVENTORY_FULL_HOTBAR_INSERT;
 
 /**
@@ -44,16 +38,6 @@ import static com.minecolonies.api.util.constant.TranslationConstants.MESSAGE_IN
  */
 public class InventoryUtils
 {
-    /**
-     * Several values to spawn items in the world.
-     */
-    private static final double SPAWN_MODIFIER    = 0.8D;
-    private static final double SPAWN_ADDITION    = 0.1D;
-    private static final int    MAX_RANDOM_SPAWN  = 21;
-    private static final int    MIN_RANDOM_SPAWN  = 10;
-    private static final double MOTION_MULTIPLIER = 0.05000000074505806D;
-    private static final double MOTION_Y_MIN      = 0.20000000298023224D;
-
     /**
      * Private constructor to hide the implicit one.
      */
@@ -64,319 +48,128 @@ public class InventoryUtils
          */
     }
 
+    /// ----------- Start Read Only Methods ----------- ///
+
     /**
-     * Filters a list of items, that match the given predicate, in an {@link IItemHandler}.
-     *
-     * @param itemHandler                 The IItemHandler to get items from.
-     * @param itemStackSelectionPredicate The predicate to match the stack to.
-     * @return List of item stacks that match the given predicate.
+     * Check if an inventory contains a target item/block/predicate.
+     * @param itemHandler the inventory.
+     * @param targetItem what to check for.
+     * @return true if contains.
      */
-    @NotNull
-    public static List<ItemStack> filterItemHandler(@NotNull final IItemHandler itemHandler, @NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
+    public static boolean hasItem(@NotNull final IItemHandler itemHandler, @NotNull final Item targetItem) { return hasItem(itemHandler, (ItemStack stack) -> !stack.isEmpty() && stack.getItem() == targetItem); }
+    public static boolean hasItem(@NotNull final IItemHandler itemHandler, @NotNull final Block block) { return hasItem(itemHandler, Item.byBlock(block)); }
+    public static boolean hasItem(@NotNull final IItemHandler itemHandler, @NotNull final Predicate<ItemStack> predicate)
     {
-        @NotNull final ArrayList<ItemStack> filtered = new ArrayList<>();
-        //Check every itemHandler slot
-        for (int slot = 0; slot < itemHandler.getSlots(); slot++)
-        {
-            final ItemStack stack = itemHandler.getStackInSlot(slot);
-            if (!ItemStackUtils.isEmpty(stack) && itemStackSelectionPredicate.test(stack))
-            {
-                filtered.add(stack);
-            }
-        }
-        return filtered;
+       return getMatchingSlot(itemHandler, predicate) != -1;
     }
 
     /**
-     * Compares whether or not the item in an itemstack is equal to a given item.
-     *
-     * @param itemStack  ItemStack to check.
-     * @param targetItem Item to check.
-     * @return True when item in item stack is equal to target item.
+     * Get the slot in an inventory for a target item/block/predicate.
+     * @param itemHandler the inventory.
+     * @param targetItem what to check for.
+     * @return the slot.
      */
-    private static boolean compareItems(@Nullable final ItemStack itemStack, final Item targetItem)
-    {
-        return !ItemStackUtils.isEmpty(itemStack) && itemStack.getItem() == targetItem;
-    }
-
-    /**
-     * Converts a Block to its Item so it can be compared.
-     *
-     * @param block the block to convert
-     * @return an item from the registry
-     */
-    public static Item getItemFromBlock(final Block block)
-    {
-        return Item.byBlock(block);
-    }
-
-    /**
-     * Returns the index of the first occurrence of the block in the {@link IItemHandler}.
-     *
-     * @param itemHandler {@link IItemHandler} to check.
-     * @param block       Block to find.
-     * @return Index of the first occurrence.
-     */
-    public static int findFirstSlotInItemHandlerWith(@NotNull final IItemHandler itemHandler, @NotNull final Block block)
-    {
-        return findFirstSlotInItemHandlerWith(itemHandler, getItemFromBlock(block));
-    }
-
-    /**
-     * Returns the index of the first occurrence of the Item with the given ItemDamage in the {@link IItemHandler}.
-     *
-     * @param itemHandler {@link IItemHandler} to check
-     * @param targetItem  Item to find.
-     * @return Index of the first occurrence
-     */
-    public static int findFirstSlotInItemHandlerWith(@NotNull final IItemHandler itemHandler, @NotNull final Item targetItem)
-    {
-        return findFirstSlotInItemHandlerWith(itemHandler, (ItemStack stack) -> compareItems(stack, targetItem));
-    }
-
-    /**
-     * Returns the index of the first occurrence of an ItemStack that matches the given predicate in the {@link IItemHandler}.
-     *
-     * @param itemHandler                 ItemHandler to check
-     * @param itemStackSelectionPredicate The predicate to match.
-     * @return Index of the first occurrence
-     */
-    public static int findFirstSlotInItemHandlerWith(@NotNull final IItemHandler itemHandler, @NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
+    public static int getMatchingSlot(@NotNull final IItemHandler itemHandler, @NotNull final Item targetItem) { return getMatchingSlot(itemHandler,stack -> !stack.isEmpty() && stack.getItem() == targetItem); }
+    public static int getMatchingSlot(@NotNull final IItemHandler itemHandler, @NotNull final Block block) { return getMatchingSlot(itemHandler, Item.byBlock(block)); }
+    public static int getMatchingSlot(@NotNull final IItemHandler itemHandler, @NotNull final Predicate<ItemStack> predicate)
     {
         for (int slot = 0; slot < itemHandler.getSlots(); slot++)
         {
-            if (itemStackSelectionPredicate.test(itemHandler.getStackInSlot(slot)))
+            if (predicate.test(itemHandler.getStackInSlot(slot)))
             {
                 return slot;
             }
         }
 
         return -1;
-        //TODO: Later harden contract to remove compare on slot := -1
-        //throw new IllegalStateException("Item "+targetItem.getTranslationKey() + " not found in ItemHandler!");
     }
 
     /**
-     * Shrinks a specific stack in an item handler.
-     *
-     * @param itemHandler                 the handler..
-     * @param itemStackSelectionPredicate the predicate..
-     * @return true if successful.
-     */
-    public static boolean shrinkItemCountInItemHandler(final IItemHandler itemHandler, @NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
-    {
-        final Predicate<ItemStack> predicate = ItemStackUtils.NOT_EMPTY_PREDICATE.and(itemStackSelectionPredicate);
-        for (int slot = 0; slot < itemHandler.getSlots(); slot++)
-        {
-            if (predicate.test(itemHandler.getStackInSlot(slot)))
-            {
-                itemHandler.getStackInSlot(slot).shrink(1);
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Returns the indexes of all occurrences of an ItemStack that matches the given predicate in the {@link IItemHandler}.
-     *
-     * @param itemHandler                 ItemHandler to check
-     * @param itemStackSelectionPredicate The predicate to match.
-     * @return list of Indexes of the occurrences
-     */
-    public static List<Integer> findAllSlotsInItemHandlerWith(@NotNull final IItemHandler itemHandler, @NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
-    {
-        final List<Integer> returnList = new ArrayList<>();
-        for (int slot = 0; slot < itemHandler.getSlots(); slot++)
-        {
-            if (itemStackSelectionPredicate.test(itemHandler.getStackInSlot(slot)))
-            {
-                returnList.add(slot);
-            }
-        }
-
-        return returnList;
-    }
-
-    /**
-     * Returns the amount of occurrences in the {@link IItemHandler}.
+     * Returns the number of matching items in an {@link IItemHandler}.
      *
      * @param itemHandler {@link IItemHandler} to scan.
-     * @param block       The block to count
-     * @return Amount of occurrences of stacks that match the given block and ItemDamage
+     * @param targetItem  what to check for.
+     * @return quantity of items.
      */
-    public static int getItemCountInItemHandler(@Nullable final IItemHandler itemHandler, @NotNull final Block block)
+    public static int getItemCount(@Nullable final IItemHandler itemHandler, @NotNull final Item targetItem) { return getItemCount(itemHandler, stack -> !stack.isEmpty() && stack.getItem() == targetItem); }
+    public static int getItemCount(@Nullable final IItemHandler itemHandler, @NotNull final Predicate<ItemStack> predicate)
     {
         if (itemHandler == null)
         {
-            Log.getLogger().error("This is not supposed to happen, please notify the developers!", new Exception("getItemCountInItemHandler got a null itemHandler"));
-        }
-        return itemHandler == null ? 0 : getItemCountInItemHandler(itemHandler, getItemFromBlock(block));
-    }
-
-    /**
-     * Returns the amount of occurrences in the {@link IItemHandler}.
-     *
-     * @param itemHandler {@link IItemHandler} to scan.
-     * @param targetItem  Item to count
-     * @return Amount of occurrences of stacks that match the given item and ItemDamage
-     */
-    public static int getItemCountInItemHandler(@Nullable final IItemHandler itemHandler, @NotNull final Item targetItem)
-    {
-        if (itemHandler == null)
-        {
-            Log.getLogger().error("This is not supposed to happen, please notify the developers!", new Exception("getItemCountInItemHandler got a null itemHandler"));
-        }
-        return itemHandler == null ? 0 : getItemCountInItemHandler(itemHandler, (ItemStack stack) -> compareItems(stack, targetItem));
-    }
-
-    /**
-     * Returns the amount of occurrences in the {@link IItemHandler}.
-     *
-     * @param itemHandler                 {@link IItemHandler} to scan.
-     * @param itemStackSelectionPredicate The predicate used to select the stacks to count.
-     * @return Amount of occurrences of stacks that match the given predicate.
-     */
-    public static int getItemCountInItemHandler(@Nullable final IItemHandler itemHandler, @NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
-    {
-        if (itemHandler == null)
-        {
-            Log.getLogger().error("This is not supposed to happen, please notify the developers!", new Exception("getItemCountInItemHandler got a null itemHandler"));
+            Log.getLogger().error("This is not supposed to happen, please notify the developers!", new Exception("getItemCount got a null itemHandler"));
             return 0;
         }
 
         int count = 0;
-        for (final ItemStack stack : filterItemHandler(itemHandler, itemStackSelectionPredicate))
-        {
-            count += stack.getCount();
-        }
-        return count;
-    }
-
-    public static int getItemCountInItemHandlers(@Nullable final Collection<IItemHandler> itemHandlers, @NotNull final Predicate<ItemStack> itemStackPredicate)
-    {
-        int count = 0;
-        if (itemHandlers != null)
-        {
-            Set<ItemStack> itemSet = new HashSet<>();
-            for (final IItemHandler handler : itemHandlers)
-            {
-                itemSet.addAll(filterItemHandler(handler, itemStackPredicate));
-            }
-
-            for (final ItemStack stack : itemSet)
-            {
-                count += stack.getCount();
-            }
-        }
-        return count;
-    }
-
-    /**
-     * Checks if a player has a block in the {@link IItemHandler}. Checked by {@link #getItemCountInItemHandler(IItemHandler, Block)} &gt; 0;
-     *
-     * @param itemHandler {@link IItemHandler} to scan
-     * @param block       Block to count
-     * @return True when in {@link IItemHandler}, otherwise false
-     */
-    public static boolean hasItemInItemHandler(@Nullable final IItemHandler itemHandler, @NotNull final Block block)
-    {
-        if (itemHandler == null)
-        {
-            Log.getLogger().error("This is not supposed to happen, please notify the developers!", new Exception("hasItemInItemHandler got a null itemHandler"));
-        }
-        return itemHandler != null && hasItemInItemHandler(itemHandler, getItemFromBlock(block));
-    }
-
-    /**
-     * Checks if a player has an item in the {@link IItemHandler}. Checked by {@link #getItemCountInItemHandler(IItemHandler, Item)} &gt; 0;
-     *
-     * @param itemHandler {@link IItemHandler} to scan
-     * @param item        Item to count
-     * @return True when in {@link IItemHandler}, otherwise false
-     */
-    public static boolean hasItemInItemHandler(@Nullable final IItemHandler itemHandler, @NotNull final Item item)
-    {
-        if (itemHandler == null)
-        {
-            Log.getLogger().error("This is not supposed to happen, please notify the developers!", new Exception("hasItemInItemHandler got a null itemHandler"));
-        }
-        return itemHandler != null && hasItemInItemHandler(itemHandler, (ItemStack stack) -> compareItems(stack, item));
-    }
-
-    /**
-     * Checks if a player has an item in the {@link IItemHandler}. Checked by {@link InventoryUtils#getItemCountInItemHandler(IItemHandler, Predicate)} &gt; 0;
-     *
-     * @param itemHandler                 {@link IItemHandler} to scan
-     * @param itemStackSelectionPredicate The predicate to match the ItemStack to.
-     * @return True when in {@link IItemHandler}, otherwise false
-     */
-    public static boolean hasItemInItemHandler(@Nullable final IItemHandler itemHandler, @NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
-    {
-        if (itemHandler == null)
-        {
-            Log.getLogger().error("This is not supposed to happen, please notify the developers!", new Exception("hasItemInItemHandler got a null itemHandler"));
-        }
-        return itemHandler != null && findFirstSlotInItemHandlerNotEmptyWith(itemHandler, itemStackSelectionPredicate) > -1;
-    }
-
-    /**
-     * Returns if the {@link IItemHandler} is full.
-     *
-     * @param itemHandler The {@link IItemHandler}.
-     * @return True if the {@link IItemHandler} is full, false when not.
-     */
-    public static boolean isItemHandlerFull(@Nullable final IItemHandler itemHandler)
-    {
-        if (itemHandler == null)
-        {
-            Log.getLogger().error("This is not supposed to happen, please notify the developers!", new Exception("hasItemInItemHandler got a null itemHandler"));
-        }
-        return itemHandler == null || getFirstOpenSlotFromItemHandler(itemHandler) == -1;
-    }
-
-    /**
-     * Returns the first open slot in the {@link IItemHandler}.
-     *
-     * @param itemHandler The {@link IItemHandler} to check.
-     * @return slot index or -1 if none found.
-     */
-    public static int getFirstOpenSlotFromItemHandler(@Nullable final IItemHandler itemHandler)
-    {
-        if (itemHandler == null)
-        {
-            return -1;
-        }
-
-        for (int i = 0, slots = itemHandler.getSlots(); i < slots; i++)
+        for (int i = 0; i < itemHandler.getSlots(); i++)
         {
             final ItemStack stack = itemHandler.getStackInSlot(i);
-            if (stack == null || stack.isEmpty())
+            if (predicate.test(stack))
             {
-                return i;
+                count+= stack.getCount();
             }
         }
 
-        return -1;
+        return count;
     }
 
     /**
-     * Count all open slots in inventory.
+     * Returns the number of matching items in a list of {@link IItemHandler}.
      *
-     * @param itemHandler the inventory.
-     * @return the amount of open slots.
+     * @param itemHandlers list of {@link IItemHandler} to scan.
+     * @param predicate    The predicate used to select the stacks to count.
+     * @return quantity of items.
      */
-    public static long openSlotCount(@Nullable final IItemHandler itemHandler)
+    public static int getItemCount(@Nullable final Collection<IItemHandler> itemHandlers, @NotNull final Predicate<ItemStack> predicate)
     {
-        if (itemHandler == null)
+        int count = 0;
+        for (final IItemHandler handler : itemHandlers)
         {
-            Log.getLogger().error("This is not supposed to happen, please notify the developers!", new Exception("hasItemInItemHandler got a null itemHandler"));
-            return 0;
+            count += getItemCount(handler, predicate);
         }
-        return IntStream.range(0, itemHandler.getSlots())
-                 .filter(slot -> ItemStackUtils.isEmpty(itemHandler.getStackInSlot(slot)))
-                 .count();
+        return count;
     }
+
+
+    /// ----------- End Read Only Methods ----------- ///
+
+    /**
+     * Clears an entire {@link IItemHandler}.
+     *
+     * @param itemHandler {@link IItemHandler} to clear.
+     */
+    public static void clearInventory(@NotNull final IItemHandler itemHandler)
+    {
+        for (int slotIndex = 0; slotIndex < itemHandler.getSlots(); slotIndex++)
+        {
+            itemHandler.extractItem(slotIndex, Integer.MAX_VALUE, false);
+        }
+    }
+
+    /**
+     * Drop an actual itemHandler in the world.
+     *
+     * @param handler the handler.
+     * @param world   the world.
+     * @param x       the x pos.
+     * @param y       the y pos.
+     * @param z       the z pos.
+     */
+    public static void dropItemHandler(final IItemHandler handler, final Level world, final int x, final int y, final int z)
+    {
+        for (int i = 0; i < handler.getSlots(); ++i)
+        {
+            final ItemStack itemstack = handler.getStackInSlot(i);
+            if (!ItemStackUtils.isEmpty(itemstack))
+            {
+                spawnItemStack(world, x, y, z, itemstack);
+            }
+        }
+    }
+
+
+
+
 
     /**
      * Force stack to handler.
@@ -418,484 +211,6 @@ public class InventoryUtils
             }
         }
         return standardInsertionResult;
-    }
-
-    /**
-     * Returns the amount of item stacks in an inventory. This equals {@link #getItemHandlerAsList(IItemHandler)}<code>.length();</code>.
-     *
-     * @param itemHandler {@link IItemHandler} to count item stacks of.
-     * @return Amount of item stacks in the {@link IItemHandler}.
-     */
-    public static int getAmountOfStacksInItemHandler(@NotNull final IItemHandler itemHandler)
-    {
-        return getItemHandlerAsList(itemHandler).size();
-    }
-
-    /**
-     * Returns an {@link IItemHandler} as list of item stacks.
-     *
-     * @param itemHandler Inventory to convert.
-     * @return List of item stacks.
-     */
-    @NotNull
-    public static List<ItemStack> getItemHandlerAsList(@NotNull final IItemHandler itemHandler)
-    {
-        return filterItemHandler(itemHandler, (ItemStack stack) -> true);
-    }
-
-    /**
-     * Filters a list of items, that match the given predicate, in an {@link ICapabilityProvider}.
-     *
-     * @param provider                    The ICapabilityProvider to get items from.
-     * @param itemStackSelectionPredicate The predicate to match the stack to.
-     * @return List of item stacks that match the given predicate.
-     */
-    @NotNull
-    public static List<ItemStack> filterProvider(@NotNull final ICapabilityProvider provider, @NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
-    {
-        return getFromProviderForAllSides(provider, itemStackSelectionPredicate);
-    }
-
-    /**
-     * Method to process the given predicate for all {@link Direction} of a {@link ICapabilityProvider}, including the internal one (passing null as argument).
-     *
-     * @param provider  The provider to process all the
-     * @param predicate The predicate to match the ItemStacks in the {@link IItemHandler} for each side with.
-     * @return A combined {@link List}<{@link ItemStack}> as if the given predicate was called on all ItemStacks in all {@link IItemHandler}s of the given provider.
-     */
-    @NotNull
-    private static List<ItemStack> getFromProviderForAllSides(@NotNull final ICapabilityProvider provider, @NotNull final Predicate<ItemStack> predicate)
-    {
-        final Set<ItemStack> combinedList = new HashSet<>();
-
-        for (final IItemHandler handler : getItemHandlersFromProvider(provider))
-        {
-            if (handler != null)
-            {
-                combinedList.addAll(filterItemHandler(handler, predicate));
-            }
-        }
-        return new ArrayList<>(combinedList);
-    }
-
-    /**
-     * Method to get all the IItemHandlers from a given Provider.
-     *
-     * @param provider The provider to get the IItemHandlers from.
-     * @return A list with all the unique IItemHandlers a provider has.
-     */
-    @NotNull
-    public static Set<IItemHandler> getItemHandlersFromProvider(@NotNull final ICapabilityProvider provider)
-    {
-        final Set<IItemHandler> handlerList = new HashSet<>();
-        for (final Direction side : Direction.values())
-        {
-            provider.getCapability(ForgeCapabilities.ITEM_HANDLER, side).ifPresent(handlerList::add);
-        }
-        provider.getCapability(ForgeCapabilities.ITEM_HANDLER, null).ifPresent(handlerList::add);
-        return handlerList;
-    }
-
-    /**
-     * Returns the index of the first occurrence of the Item with the given ItemDamage in the {@link ICapabilityProvider}.
-     *
-     * @param provider   {@link ICapabilityProvider} to check
-     * @param targetItem Item to find.
-     * @return Index of the first occurrence
-     */
-    public static int findFirstSlotInProviderWith(@NotNull final ICapabilityProvider provider, final Item targetItem)
-    {
-        return findFirstSlotInProviderNotEmptyWith(provider, (ItemStack stack) -> compareItems(stack, targetItem));
-    }
-
-    /**
-     * Returns a map with all itemhandlers and slots matching the predicate in the provider. the given predicate in the {@link ICapabilityProvider}.
-     *
-     * @param provider                    Provider to check
-     * @param itemStackSelectionPredicate The predicate to match.
-     * @return Index of the first occurrence
-     */
-    public static Map<IItemHandler, List<Integer>> findAllSlotsInProviderWith(@NotNull final ICapabilityProvider provider, final Predicate<ItemStack> itemStackSelectionPredicate)
-    {
-        final Map<IItemHandler, List<Integer>> map = new HashMap<>();
-        for (final IItemHandler handler : getItemHandlersFromProvider(provider))
-        {
-            final List<Integer> tempList = findAllSlotsInItemHandlerWith(handler, itemStackSelectionPredicate);
-            if (!tempList.isEmpty())
-            {
-                map.put(handler, tempList);
-            }
-        }
-
-        return map;
-    }
-
-    /**
-     * Returns the index of the first occurrence of an ItemStack that matches the given predicate in the {@link ICapabilityProvider}.
-     *
-     * @param provider                    Provider to check
-     * @param itemStackSelectionPredicate The predicate to match.
-     * @return Index of the first occurrence
-     */
-    public static int findFirstSlotInProviderNotEmptyWith(@NotNull final ICapabilityProvider provider, final Predicate<ItemStack> itemStackSelectionPredicate)
-    {
-        for (final IItemHandler handler : getItemHandlersFromProvider(provider))
-        {
-            final int foundSlot = findFirstSlotInItemHandlerNotEmptyWith(handler, itemStackSelectionPredicate);
-            if (foundSlot > -1)
-            {
-                return foundSlot;
-            }
-        }
-
-        return -1;
-    }
-
-    /**
-     * Returns the index of the first occurrence of an ItemStack that matches the given predicate in the {@link IItemHandler}. Also applies the not empty check.
-     *
-     * @param itemHandler                 ItemHandler to check
-     * @param itemStackSelectionPredicate The predicate to match.
-     * @return Index of the first occurrence
-     */
-    public static int findFirstSlotInItemHandlerNotEmptyWith(@NotNull final IItemHandler itemHandler, @NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
-    {
-        @NotNull final Predicate<ItemStack> firstWorthySlotPredicate = ItemStackUtils.NOT_EMPTY_PREDICATE.and(itemStackSelectionPredicate);
-
-        for (int slot = 0; slot < itemHandler.getSlots(); slot++)
-        {
-            if (firstWorthySlotPredicate.test(itemHandler.getStackInSlot(slot)))
-            {
-                return slot;
-            }
-        }
-
-        return -1;
-        //TODO: Later harden contract to remove compare on slot := -1
-        //throw new IllegalStateException("Item "+targetItem.getTranslationKey() + " not found in ItemHandler!");
-    }
-
-    /**
-     * Returns the amount of occurrences in the {@link ICapabilityProvider}.
-     *
-     * @param provider                    {@link ICapabilityProvider} to scan.
-     * @param itemStackSelectionPredicate The predicate used to select the stacks to count.
-     * @return Amount of occurrences of stacks that match the given predicate.
-     */
-    public static int getItemCountInProvider(@NotNull final ICapabilityProvider provider, @NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
-    {
-        return getItemHandlersFromProvider(provider).stream().filter(Objects::nonNull)
-                 .mapToInt(handler -> filterItemHandler(handler, itemStackSelectionPredicate).stream().mapToInt(ItemStackUtils::getSize).sum())
-                 .sum();
-    }
-
-    /**
-     * Check if a building has more than a count in stack. Return the count it has if it has less.
-     *
-     * @param provider building to check in.
-     * @param stack    the stack to check.
-     * @return Amount of occurrences of stacks that match the given predicate.
-     */
-    public static int hasBuildingEnoughElseCount(@NotNull final ICommonBuilding provider, @NotNull final ItemStorage stack, final int count)
-    {
-        int totalCount = 0;
-        final Level world = provider.getColony().getWorld();
-
-        for (final BlockPos pos : provider.getContainers())
-        {
-            if (WorldUtil.isBlockLoaded(world, pos))
-            {
-                final BlockEntity entity = world.getBlockEntity(pos);
-                if (entity instanceof TileEntityRack)
-                {
-                    totalCount += ((TileEntityRack) entity).getCount(stack);
-                }
-
-                if (totalCount >= count)
-                {
-                    return totalCount;
-                }
-            }
-        }
-
-        return totalCount;
-    }
-
-    /**
-     * Check if a building has more than a count in stack. Return the count it has if it has less.
-     *
-     * @param provider building to check in.
-     * @param stack    the stack to check.
-     * @return Amount of occurrences of stacks that match the given predicate.
-     */
-    public static int hasBuildingEnoughElseCount(@NotNull final ICommonBuilding provider, @NotNull final Predicate<ItemStack> stack, final int count)
-    {
-        int totalCount = 0;
-        final Level world = provider.getColony().getWorld();
-
-        for (final BlockPos pos : provider.getContainers())
-        {
-            if (WorldUtil.isBlockLoaded(world, pos))
-            {
-                final BlockEntity entity = world.getBlockEntity(pos);
-                if (entity instanceof TileEntityRack)
-                {
-                    totalCount += ((TileEntityRack) entity).getItemCount(stack);
-                }
-
-                if (totalCount >= count)
-                {
-                    return totalCount;
-                }
-            }
-        }
-
-        return totalCount;
-    }
-
-    /**
-     * Count the number of items of different types a building has.
-     *
-     * @param provider the building to check.
-     * @param stacks   the stacks to check for.
-     * @return Amount of occurrences of stacks that match the given stacks.
-     */
-    public static int getCountFromBuilding(@NotNull final IBuilding provider, @NotNull final List<ItemStorage> stacks)
-    {
-        int totalCount = 0;
-
-        for (ItemStorage stack : stacks)
-        {
-            totalCount += getCountFromBuilding(provider, stack);
-        }
-
-        return totalCount;
-    }
-
-    /**
-     * Count the number of items a building has.
-     *
-     * @param provider building to check in.
-     * @param stack    the stack to check.
-     * @return Amount of occurrences of stacks that match the given stack.
-     */
-    public static int getCountFromBuilding(@NotNull final IBuilding provider, @NotNull final ItemStorage stack)
-    {
-        int totalCount = 0;
-        final Level world = provider.getColony().getWorld();
-
-        for (final BlockPos pos : provider.getContainers())
-        {
-            if (WorldUtil.isBlockLoaded(world, pos))
-            {
-                final BlockEntity entity = world.getBlockEntity(pos);
-                if (entity instanceof TileEntityRack)
-                {
-                    totalCount += ((TileEntityRack) entity).getCount(stack);
-                }
-            }
-        }
-
-        return totalCount;
-    }
-
-    /**
-     * Calculate the number of empty slots in a given building.
-     * @param ownBuilding the building to check.
-     * @return the number of empty slots.
-     */
-    public static int countEmptySlotsInBuilding(final IBuilding ownBuilding)
-    {
-        int totalCount = 0;
-        final Level world = ownBuilding.getColony().getWorld();
-
-        for (final BlockPos pos : ownBuilding.getContainers())
-        {
-            if (WorldUtil.isBlockLoaded(world, pos))
-            {
-                final BlockEntity entity = world.getBlockEntity(pos);
-                if (entity instanceof TileEntityRack)
-                {
-                    totalCount += ((TileEntityRack) entity).getFreeSlots();
-                }
-            }
-        }
-
-        return totalCount;
-    }
-
-    /**
-     * Calculate the number of empty slots in a given building.
-     *
-     * @param ownBuilding the building to check.
-     * @return the number of empty slots.
-     */
-    public static boolean isBuildingFull(final IBuilding ownBuilding)
-    {
-        final Level world = ownBuilding.getColony().getWorld();
-
-        for (final BlockPos pos : ownBuilding.getContainers())
-        {
-            if (WorldUtil.isBlockLoaded(world, pos))
-            {
-                final BlockEntity entity = world.getBlockEntity(pos);
-                if (entity instanceof TileEntityRack rack && rack.getFreeSlots() > 0)
-                {
-                    return false;
-                }
-            }
-        }
-
-        return true;
-    }
-
-    /**
-     * Count the number of items a building has.
-     *
-     * @param provider  building to check in.
-     * @param predicate the predicate to match.
-     * @return Amount of occurrences of stacks that match the given stack.
-     */
-    public static int getCountFromBuilding(@NotNull final IBuilding provider, @NotNull final Predicate<ItemStack> predicate)
-    {
-        int totalCount = 0;
-        final Level world = provider.getColony().getWorld();
-
-        for (final BlockPos pos : provider.getContainers())
-        {
-            if (WorldUtil.isBlockLoaded(world, pos))
-            {
-                final BlockEntity entity = world.getBlockEntity(pos);
-                if (entity instanceof TileEntityRack)
-                {
-                    totalCount += ((TileEntityRack) entity).getItemCount(predicate);
-                }
-            }
-        }
-
-        return totalCount;
-    }
-
-    /**
-     * Count the number of items a building has.
-     * Only count up to "limit" of a particular item.
-     *
-     * @param provider  building to check in.
-     * @param predicate the predicate to match.
-     * @return Amount of occurrences of stacks that match the given stack.
-     */
-    public static int getCountFromBuildingWithLimit(@NotNull final IBuilding provider, @NotNull final Predicate<ItemStack> predicate, final Function<ItemStack, Integer> limit)
-    {
-        final Level world = provider.getColony().getWorld();
-
-        final Map<ItemStorage, Integer> allMatching = new HashMap<>();
-
-        for (final BlockPos pos : provider.getContainers())
-        {
-            if (WorldUtil.isBlockLoaded(world, pos))
-            {
-                final BlockEntity entity = world.getBlockEntity(pos);
-                if (entity instanceof TileEntityRack)
-                {
-                    for (final Map.Entry<ItemStorage, Integer> entry : ((TileEntityRack) entity).getAllContent().entrySet())
-                    {
-                        if (predicate.test(entry.getKey().getItemStack()))
-                        {
-                            allMatching.put(entry.getKey(), allMatching.getOrDefault(entry.getKey(), 0) + entry.getValue());
-                        }
-                    }
-                }
-            }
-        }
-
-        int totalCount = 0;
-        for (final Map.Entry<ItemStorage, Integer> entry : allMatching.entrySet())
-        {
-            totalCount += Math.min(limit.apply(entry.getKey().getItemStack()), entry.getValue());
-        }
-
-        return totalCount;
-    }
-
-    /**
-     * Checks if a player has a block in the {@link ICapabilityProvider}. Checked by {@link #getItemCountInProvider(ICapabilityProvider, Block)} &gt; 0;
-     *
-     * @param Provider {@link ICapabilityProvider} to scan
-     * @param block    Block to count
-     * @return True when in {@link ICapabilityProvider}, otherwise false
-     */
-    public static boolean hasItemInProvider(@NotNull final ICapabilityProvider Provider, @NotNull final Block block)
-    {
-        return hasItemInProvider(Provider, getItemFromBlock(block));
-    }
-
-    /**
-     * Checks if a player has an item in the {@link ICapabilityProvider}. Checked by {@link #getItemCountInProvider(ICapabilityProvider, Item)} &gt; 0;
-     *
-     * @param Provider {@link ICapabilityProvider} to scan
-     * @param item     Item to count
-     * @return True when in {@link ICapabilityProvider}, otherwise false
-     */
-    public static boolean hasItemInProvider(@NotNull final ICapabilityProvider Provider, @NotNull final Item item)
-    {
-        return hasItemInProvider(Provider, (ItemStack stack) -> compareItems(stack, item));
-    }
-
-    /**
-     * Checks if a player has an item in the {@link ICapabilityProvider}. Checked by {@link InventoryUtils#getItemCountInProvider(ICapabilityProvider, Predicate)} &gt; 0;
-     *
-     * @param Provider                    {@link ICapabilityProvider} to scan
-     * @param itemStackSelectionPredicate The predicate to match the ItemStack to.
-     * @return True when in {@link ICapabilityProvider}, otherwise false
-     */
-    public static boolean hasItemInProvider(@NotNull final ICapabilityProvider Provider, @NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
-    {
-        for (IItemHandler handler : getItemHandlersFromProvider(Provider))
-        {
-            if (findFirstSlotInItemHandlerWith(handler, itemStackSelectionPredicate) != -1)
-            {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Returns if the {@link ICapabilityProvider} is full.
-     *
-     * @param provider The {@link ICapabilityProvider}.
-     * @return True if the {@link ICapabilityProvider} is full, false when not.
-     */
-    public static boolean isProviderFull(@NotNull final ICapabilityProvider provider)
-    {
-        return getFirstOpenSlotFromProvider(provider) == -1;
-    }
-
-    /**
-     * Returns the first open slot in the {@link ICapabilityProvider}.
-     *
-     * @param provider The {@link ICapabilityProvider} to check.
-     * @return slot index or -1 if none found.
-     */
-    public static int getFirstOpenSlotFromProvider(@NotNull final ICapabilityProvider provider)
-    {
-        return getItemHandlersFromProvider(provider).stream()
-                 .mapToInt(InventoryUtils::getFirstOpenSlotFromItemHandler)
-                 .filter(slotIndex -> slotIndex > -1)
-                 .findFirst()
-                 .orElse(-1);
-    }
-
-    /**
-     * Add stack to provider.
-     *
-     * @param provider  {@link ICapabilityProvider} to add itemstack to.
-     * @param itemStack ItemStack to add.
-     * @return True if successful, otherwise false.
-     */
-    public static boolean addItemStackToProvider(@NotNull final ICapabilityProvider provider, @Nullable final ItemStack itemStack)
-    {
-        return getItemHandlersFromProvider(provider).stream().anyMatch(handler -> addItemStackToItemHandler(handler, itemStack));
     }
 
     /**
@@ -973,30 +288,6 @@ public class InventoryUtils
     }
 
     /**
-     * Add stack to provider with result.
-     *
-     * @param provider  {@link ICapabilityProvider} to add itemstack to.
-     * @param itemStack ItemStack to add.
-     * @return Empty when fully transfered without swapping, otherwise return the remain of a partial transfer
-     */
-    public static ItemStack addItemStackToProviderWithResult(@NotNull final ICapabilityProvider provider, @Nullable final ItemStack itemStack)
-    {
-        ItemStack activeStack = itemStack;
-
-        if (ItemStackUtils.isEmpty(activeStack))
-        {
-            return ItemStackUtils.EMPTY;
-        }
-
-        for (final IItemHandler handler : getItemHandlersFromProvider(provider))
-        {
-            activeStack = addItemStackToItemHandlerWithResult(handler, activeStack);
-        }
-
-        return activeStack;
-    }
-
-    /**
      * Add stack to handler with result.
      *
      * @param itemHandler {@link IItemHandler} to add itemstack to.
@@ -1045,104 +336,6 @@ public class InventoryUtils
         }
     }
 
-    /**
-     * Force stack to provider.
-     *
-     * @param provider                 {@link ICapabilityProvider} to add itemstack to.
-     * @param itemStack                ItemStack to add.
-     * @param itemStackToKeepPredicate The {@link Predicate} that determines which ItemStacks to keep in the inventory. Return false to replace.
-     * @return itemStack which has been replaced.
-     */
-    @Nullable
-    public static ItemStack forceItemStackToProvider(
-      @NotNull final ICapabilityProvider provider,
-      @NotNull final ItemStack itemStack,
-      @NotNull final Predicate<ItemStack> itemStackToKeepPredicate)
-    {
-        final ItemStack standardInsertionResult = addItemStackToProviderWithResult(provider, itemStack);
-
-        if (!ItemStackUtils.isEmpty(standardInsertionResult))
-        {
-            ItemStack resultStack = standardInsertionResult.copy();
-            final Iterator<IItemHandler> iterator = getItemHandlersFromProvider(provider).iterator();
-            while (iterator.hasNext() && !ItemStackUtils.isEmpty(resultStack))
-            {
-                resultStack = forceItemStackToItemHandler(iterator.next(), resultStack, itemStackToKeepPredicate);
-            }
-
-            return resultStack;
-        }
-
-        return ItemStackUtils.EMPTY;
-    }
-
-    /**
-     * Checks if the {@link IItemHandler} contains the following equipmentType with the given minimal Level.
-     *
-     * @param itemHandler  The {@link IItemHandler} to scan.
-     * @param equipmentType     The equipmentType of the equipment to find.
-     * @param minimalLevel The minimal level to find.
-     * @param maximumLevel The maximum level to find.
-     * @return True if equipment with the given EquipmentType was found in the given {@link IItemHandler}, false when not.
-     */
-    public static boolean isEquipmentInItemHandler(
-      @NotNull final IItemHandler itemHandler,
-      @NotNull final EquipmentTypeEntry equipmentType,
-      final int minimalLevel,
-      final int maximumLevel)
-    {
-        return hasItemInItemHandler(itemHandler, (ItemStack stack) -> ItemStackUtils.hasEquipmentLevel(stack, equipmentType, minimalLevel, maximumLevel));
-    }
-
-    /**
-     * Clears an entire {@link IItemHandler}.
-     *
-     * @param itemHandler {@link IItemHandler} to clear.
-     */
-    public static void clearItemHandler(@NotNull final IItemHandler itemHandler)
-    {
-        for (int slotIndex = 0; slotIndex < itemHandler.getSlots(); slotIndex++)
-        {
-            itemHandler.extractItem(slotIndex, Integer.MAX_VALUE, false);
-        }
-    }
-
-    /**
-     * Returns a slot number if an {@link IItemHandler} contains given equipment type.
-     *
-     * @param itemHandler  the {@link IItemHandler} to get the slot from.
-     * @param equipmentType     the equipment type to look for.
-     * @param minimalLevel The minimal level to find.
-     * @param maximumLevel The maximum level to find.
-     * @return slot number if found, -1 if not found.
-     */
-    public static int getFirstSlotOfItemHandlerContainingEquipment(
-      @NotNull final IItemHandler itemHandler, @NotNull final EquipmentTypeEntry equipmentType, final int minimalLevel,
-      final int maximumLevel)
-    {
-        return findFirstSlotInItemHandlerWith(itemHandler, (ItemStack stack) -> ItemStackUtils.hasEquipmentLevel(stack, equipmentType, minimalLevel, maximumLevel));
-    }
-
-    /**
-     * Verifies if there is one equipment with an acceptable level in a worker's inventory.
-     *
-     * @param itemHandler   the worker's inventory
-     * @param equipmentType      the type of equipment needed
-     * @param requiredLevel the minimum equipment level
-     * @param maximumLevel  the worker's hut level
-     * @return true if equipment is acceptable
-     */
-    public static boolean hasItemHandlerEquipmentWithLevel(
-      @NotNull final IItemHandler itemHandler,
-      final EquipmentTypeEntry equipmentType,
-      final int requiredLevel,
-      final int maximumLevel)
-    {
-        return findFirstSlotInItemHandlerWith(itemHandler,
-          (ItemStack stack) -> (!ItemStackUtils.isEmpty(stack) && (equipmentType.checkIsEquipment(stack) && ItemStackUtils.verifyEquipmentLevel(stack,
-            equipmentType.getMiningLevel(stack),
-            requiredLevel, maximumLevel)))) > -1;
-    }
 
     /**
      * Method to swap the ItemStacks from the given source {@link IItemHandler} to the given target {@link ICapabilityProvider}.
@@ -1603,7 +796,7 @@ public class InventoryUtils
         int slot = 0;
         while (currentAmount > 0 && slot < sourceHandler.getSlots())
         {
-            final int desiredItemSlot = InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(sourceHandler,
+            final int desiredItemSlot = InventoryUtils.getMatchingSlot(sourceHandler,
               itemStackSelectionPredicate::test);
 
             if (desiredItemSlot == -1)
@@ -1685,7 +878,7 @@ public class InventoryUtils
       final int amount,
       final IItemHandler targetHandler, final int slot)
     {
-        final int desiredItemSlot = InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(sourceHandler,
+        final int desiredItemSlot = InventoryUtils.getMatchingSlot(sourceHandler,
           itemStackSelectionPredicate);
 
         if (desiredItemSlot == -1)
@@ -1748,7 +941,7 @@ public class InventoryUtils
     {
         int totalCount = count;
 
-        int index = findFirstSlotInItemHandlerWith(handler, stackPredicate);
+        int index = getMatchingSlot(handler, stackPredicate);
         while (index != -1)
         {
             final int localCount = Math.min(totalCount, handler.getStackInSlot(index).getCount());
@@ -1767,7 +960,7 @@ public class InventoryUtils
             {
                 return true;
             }
-            index = findFirstSlotInItemHandlerWith(handler, stackPredicate);
+            index = getMatchingSlot(handler, stackPredicate);
         }
 
         return false;
@@ -1821,7 +1014,7 @@ public class InventoryUtils
         while (i < list.size() && tries < maxTries)
         {
             final ItemStack stack = list.get(i);
-            final int slot = findFirstSlotInItemHandlerNotEmptyWith(handler, lStack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, lStack));
+            final int slot = getMatchingSlot(handler, lStack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, lStack));
 
             if (slot == -1)
             {
@@ -1890,7 +1083,7 @@ public class InventoryUtils
         int tries = 0;
         while (tries < count)
         {
-            final int slot = findFirstSlotInItemHandlerNotEmptyWith(handler, stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(workingStack, stack));
+            final int slot = getMatchingSlot(handler, stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(workingStack, stack));
             if (slot == -1)
             {
                 return;
@@ -1910,27 +1103,6 @@ public class InventoryUtils
         }
     }
 
-    /**
-     * Drop an actual itemHandler in the world.
-     *
-     * @param handler the handler.
-     * @param world   the world.
-     * @param x       the x pos.
-     * @param y       the y pos.
-     * @param z       the z pos.
-     */
-    public static void dropItemHandler(final IItemHandler handler, final Level world, final int x, final int y, final int z)
-    {
-        for (int i = 0; i < handler.getSlots(); ++i)
-        {
-            final ItemStack itemstack = handler.getStackInSlot(i);
-
-            if (itemstack != null)
-            {
-                spawnItemStack(world, x, y, z, itemstack);
-            }
-        }
-    }
 
     /**
      * Attempt to transfer as much item as possible from origin to target inventory
@@ -1958,33 +1130,6 @@ public class InventoryUtils
     }
 
     /**
-     * Spawn an itemStack in the world.
-     *
-     * @param worldIn the world.
-     * @param x       the x pos.
-     * @param y       the y pos.
-     * @param z       the z pos.
-     * @param stack   the stack to drop.
-     */
-    public static void spawnItemStack(final Level worldIn, final double x, final double y, final double z, final ItemStack stack)
-    {
-        final Random random = new Random();
-        final double spawnX = random.nextDouble() * SPAWN_MODIFIER + SPAWN_ADDITION;
-        final double spawnY = random.nextDouble() * SPAWN_MODIFIER + SPAWN_ADDITION;
-        final double spawnZ = random.nextDouble() * SPAWN_MODIFIER + SPAWN_ADDITION;
-
-        while (stack.getCount() > 0)
-        {
-            final int randomSplitStackSize = random.nextInt(MAX_RANDOM_SPAWN) + MIN_RANDOM_SPAWN;
-            final ItemEntity ItemEntity = new ItemEntity(worldIn, x + spawnX, y + spawnY, z + spawnZ, stack.split(randomSplitStackSize));
-
-            ItemEntity.setDeltaMovement(random.nextGaussian() * MOTION_MULTIPLIER, random.nextGaussian() * MOTION_MULTIPLIER + MOTION_Y_MIN, random.nextGaussian() * MOTION_MULTIPLIER);
-            worldIn.addFreshEntity(ItemEntity);
-        }
-    }
-
-
-    /**
      * Checks if all stacks given in the list are in at least one of the given the itemhandlers
      *
      * @param stacks   The stacks that should be in the itemhandlers
@@ -2007,7 +1152,7 @@ public class InventoryUtils
 
         return requiredCountForStacks.keySet().stream().allMatch(itemStack -> {
             final int countInHandlerList =
-              handlers.stream().mapToInt(handler -> getItemCountInItemHandler(handler, itemStack1 -> ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, itemStack1))).sum();
+              handlers.stream().mapToInt(handler -> getItemCount(handler, itemStack1 -> ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, itemStack1))).sum();
             return countInHandlerList >= requiredCountForStacks.get(itemStack);
         });
     }
@@ -2262,7 +1407,7 @@ public class InventoryUtils
      */
     public static boolean attemptReduceStackInItemHandler(final IItemHandler invWrapper, final ItemStack itemStack, final int quantity, final boolean ignoreDamage, final boolean ignoreNBT)
     {
-        if (getItemCountInItemHandler(invWrapper, stack -> !stack.isEmpty() && ItemStackUtils.compareItemStacksIgnoreStackSize(stack, itemStack, !ignoreDamage, !ignoreNBT)) < quantity)
+        if (getItemCount(invWrapper, stack -> !stack.isEmpty() && ItemStackUtils.compareItemStacksIgnoreStackSize(stack, itemStack, !ignoreDamage, !ignoreNBT)) < quantity)
         {
             return false;
         }
@@ -2350,6 +1495,7 @@ public class InventoryUtils
      */
     public static boolean doStorageSetsMatch(Map<ItemStorage, ItemStorage> first, Map<ItemStorage, ItemStorage> second, boolean showTrace)
     {
+
         for (final ItemStorage storage : first.keySet())
         {
             final ItemStorage compareStorage = second.get(storage);
@@ -2444,7 +1590,7 @@ public class InventoryUtils
                         if (!addItemStackToItemHandler(target, extractedFood))
                         {
                             // Swap if need
-                            final int slot = findFirstSlotInItemHandlerNotEmptyWith(target, s -> !foodPredicate.test(s));
+                            final int slot = getMatchingSlot(target, s -> !foodPredicate.test(s));
                             if (slot != -1)
                             {
                                 final ItemStack swappedItem = target.extractItem(slot, target.getStackInSlot(slot).getCount(), false);
@@ -2480,6 +1626,9 @@ public class InventoryUtils
         if (emptySlot == -1) // try full inv first
         {
             player.drop(itemStack, false);
+            MessageUtils.format(itemStack.getDisplayName().copy())
+                .append(MESSAGE_INFO_PLAYER_INVENTORY_FULL_HOTBAR_INSERT)
+                .sendTo(player);
             return false;
         }
         else
@@ -2502,40 +1651,17 @@ public class InventoryUtils
     }
 
     /**
-     * Tries to put given itemstack in hotbar, fails when player inventory is full, successes otherwise.
-     * If fails sends a message to player about dropped item.
-     *
-     * @param itemStack   itemstack to put into player's inv
-     * @param player player entity
-     * @return true if item was put into player's inv, false if dropped
-     */
-    public static boolean putItemToHotbarAndSelectOrDropMessage(final ItemStack itemStack, final Player player)
-    {
-        final boolean result = putItemToHotbarAndSelectOrDrop(itemStack, player);
-
-        if (!result)
-        {
-            MessageUtils.format(itemStack.getDisplayName().copy())
-              .append(MESSAGE_INFO_PLAYER_INVENTORY_FULL_HOTBAR_INSERT)
-              .sendTo(player);
-        }
-        return result;
-    }
-
-    /**
      * If item is already in inventory then it's moved to hotbar and returned.
      * Else {@link #putItemToHotbarAndSelectOrDrop} is called with itemstack created from given factory.
      *
      * @param item             item to search for
      * @param player           player inventory to check and use
      * @param itemStackFactory factory for new item if not found
-     * @param messageOnDrop    if true message player when new item was dropped
      * @return itemstack in hotbar or dropped in front of player
      */
     public static ItemStack getOrCreateItemAndPutToHotbarAndSelectOrDrop(final Item item,
         final Player player,
-        final Supplier<ItemStack> itemStackFactory,
-        final boolean messageOnDrop)
+        final Supplier<ItemStack> itemStackFactory)
     {
         final Inventory playerInv = player.getInventory();
 
@@ -2559,14 +1685,8 @@ public class InventoryUtils
         }
 
         final ItemStack newItem = itemStackFactory.get();
-        if (messageOnDrop)
-        {
-            putItemToHotbarAndSelectOrDropMessage(newItem, player);
-        }
-        else
-        {
-            putItemToHotbarAndSelectOrDrop(newItem, player);
-        }
+        putItemToHotbarAndSelectOrDrop(newItem, player);
+
         return newItem;
     }
 

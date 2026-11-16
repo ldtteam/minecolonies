@@ -29,6 +29,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraftforge.items.wrapper.InvWrapper;
+import net.minecraftforge.items.wrapper.PlayerMainInvWrapper;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -780,8 +781,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
         {
             final ItemStorage is = costList.get(i);
             undoCostIcons[i] = new ItemIcon();
-            if (InventoryUtils.getItemCountInItemHandler(new InvWrapper(Minecraft.getInstance().player.getInventory()),
-              stack -> !ItemStackUtils.isEmpty(stack) && ItemStack.isSameItem(stack, is.getItemStack())) < is.getAmount() && !Minecraft.getInstance().player.isCreative())
+            if (InventoryUtils.getMatchingSlot(new PlayerMainInvWrapper(Minecraft.getInstance().player.getInventory()), stack -> !ItemStackUtils.isEmpty(stack) && ItemStack.isSameItem(stack, is.getItemStack())) < is.getAmount() && !Minecraft.getInstance().player.isCreative())
             {
                 missingItems.add(is);
             }
