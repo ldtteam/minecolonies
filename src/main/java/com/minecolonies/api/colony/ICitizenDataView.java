@@ -245,4 +245,10 @@ public interface ICitizenDataView extends ICitizen
 
     @Override
     IColonyView getColony();
+
+    /**
+     * Get height dif.
+     * @return the height dif (around 1).
+     */
+    double getHeightDifference();
 }
