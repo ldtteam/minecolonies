@@ -679,7 +679,7 @@ public class CitizenDataView implements ICitizenDataView
     }
 
     @Override
-    public double getHeightDifference()
+    public double getHeight()
     {
         return heightDifference;
     }
