@@ -512,6 +512,12 @@ public class CitizenData implements ICitizenData
     }
 
     @Override
+    public double getHeight()
+    {
+        return 0;
+    }
+
+    @Override
     public int getId()
     {
         return id;
@@ -1808,6 +1814,12 @@ public class CitizenData implements ICitizenData
         {
             job.getAsyncRequests().remove(token);
         }
+    }
+
+    @Override
+    public void setHeight(final double height)
+    {
+        this.height = height;
     }
 
     @Override
