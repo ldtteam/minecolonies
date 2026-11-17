@@ -299,7 +299,6 @@ public class EntityAIWorkStablemaster extends AbstractEntityAIHerder<JobStablema
         if (current >= limit)
         {
             // Stable at capacity. Don't train.
-            Log.getLogger().info("Stablemaster in Colony {}: Already at {} mounts out of a limit of {}. Not training.", building.getColony().getID(), current, limit);
             return DECIDE;
         }
 

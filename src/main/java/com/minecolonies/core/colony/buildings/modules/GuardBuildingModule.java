@@ -4,6 +4,7 @@ import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IBuildingWorkerModule;
+import com.minecolonies.api.colony.buildings.IGuardBuilding;
 import com.minecolonies.api.colony.buildings.modules.IBuildingEventsModule;
 import com.minecolonies.api.colony.buildings.modules.ICreatesResolversModule;
 import com.minecolonies.api.colony.buildings.modules.IPersistentModule;
@@ -76,6 +77,8 @@ public class GuardBuildingModule extends WorkAtHomeBuildingModule implements IBu
     @Override
     public boolean isFull()
     {
+        if (building instanceof IGuardBuilding) return ((IGuardBuilding)building).getAllAssignedMilitaryUnits().size() >= getModuleMax();
+
         return building.getAllAssignedCitizen().size() >= getModuleMax();
     }
 
@@ -83,7 +86,8 @@ public class GuardBuildingModule extends WorkAtHomeBuildingModule implements IBu
     public void onColonyTick(@NotNull final IColony colony)
     {
         // Give the other assignment module also a chance.
-        if (random.nextInt(building.getModulesByType(GuardBuildingModule.class).size()) == 0)
+        int moduleNum = building.getModules(GuardBuildingModule.class).size();
+        if (moduleNum > 1 && random.nextInt(moduleNum) == 0)
         {
             return;
         }
@@ -103,9 +107,16 @@ public class GuardBuildingModule extends WorkAtHomeBuildingModule implements IBu
                 {
                     continue;
                 }
-                if ((getJobEntry().equals(ModJobs.archer.get()) && trainee.getJob().getJobRegistryEntry().equals(ModJobs.archerInTraining.get())
-                       || getJobEntry().equals(ModJobs.knight.get()) && trainee.getJob().getJobRegistryEntry().equals(ModJobs.knightInTraining.get()))
-                      && trainee.getCitizenSkillHandler().getLevel(getPrimarySkill()) > maxSkill)
+                if (
+                    (
+                        getJobEntry().equals(ModJobs.archer.get()) && trainee.getJob().getJobRegistryEntry().equals(ModJobs.archerInTraining.get())
+                        || getJobEntry().equals(ModJobs.marksman.get()) && trainee.getJob().getJobRegistryEntry().equals(ModJobs.archerInTraining.get())
+                        || getJobEntry().equals(ModJobs.knight.get()) && trainee.getJob().getJobRegistryEntry().equals(ModJobs.knightInTraining.get())
+                        || getJobEntry().equals(ModJobs.cavalry.get()) && trainee.getJob().getJobRegistryEntry().equals(ModJobs.knightInTraining.get())
+                        || getJobEntry().equals(ModJobs.huscarl.get()) && trainee.getJob().getJobRegistryEntry().equals(ModJobs.knightInTraining.get())
+                    )
+                    && trainee.getCitizenSkillHandler().getLevel(getPrimarySkill()) > maxSkill
+                    )
                 {
                     maxSkill = trainee.getCitizenSkillHandler().getLevel(getPrimarySkill());
                     trainingCitizen = trainee;

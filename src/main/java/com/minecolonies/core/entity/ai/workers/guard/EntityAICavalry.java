@@ -8,22 +8,30 @@ import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.ai.workers.util.GuardGear;
 import com.minecolonies.api.equipment.ModEquipmentTypes;
+import com.minecolonies.api.util.WorldUtil;
+import com.minecolonies.api.util.constant.SchematicTagConstants;
 import com.minecolonies.core.colony.buildings.AbstractBuildingGuards;
+import com.minecolonies.core.colony.buildings.modules.BuildingModules;
 import com.minecolonies.core.colony.buildings.workerbuildings.BuildingStable;
 import com.minecolonies.core.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.core.colony.jobs.guard.JobCavalry;
 import com.minecolonies.core.entity.citizen.EntityCitizen;
+import com.minecolonies.core.entity.other.SittingEntity;
 import com.minecolonies.core.entity.other.cavalry.CavalryHorseEntity;
 import com.minecolonies.core.entity.pathfinding.navigation.EntityNavigationUtils;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySelector;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.BedBlock;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BedPart;
 import net.minecraft.world.phys.AABB;
 
 import org.jetbrains.annotations.NotNull;
@@ -38,6 +46,7 @@ import static com.minecolonies.api.util.constant.EquipmentLevelConstants.TOOL_LE
 import static com.minecolonies.api.util.constant.GuardConstants.SHIELD_BUILDING_LEVEL_RANGE;
 import static com.minecolonies.api.util.constant.GuardConstants.SHIELD_LEVEL_RANGE;
 import static com.minecolonies.api.util.constant.TranslationConstants.CAVALRY_NOHORSE;
+import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.GUARD_SLEEP;
 
 /**
  * Cavalry AI
@@ -50,6 +59,11 @@ public class EntityAICavalry extends AbstractEntityAIGuard<JobCavalry, AbstractB
      * Tick interval for mount lookup and stable lookup AI targets.
      */
     private static final int GUARD_MOUNT_INTERVAL = 50;
+
+    /**
+     * Time after a completed patrol during which the cavalry unit remains dismounted.
+     */
+    private static final int REMOUNT_COOLDOWN_TICKS = 400;
 
     /**
      * Horizontal search radius used when looking for an available cavalry horse.
@@ -69,6 +83,26 @@ public class EntityAICavalry extends AbstractEntityAIGuard<JobCavalry, AbstractB
     protected CavalryHorseEntity targetMount = null;
     protected BlockPos stablePos = null;
     protected boolean stableChecked = false;
+
+    /**
+     * Game time after which the cavalry unit may remount following a completed patrol.
+     */
+    private long remountAllowedAt = 0;
+
+    /**
+     * Whether the cavalry unit has already dismounted during the current between-patrol rest window.
+     */
+    private boolean hasDismountedForPatrolRest = false;
+
+    /**
+     * Location for cavalry to sleep, when it is sleep time.
+     */
+    protected BlockPos sleepLocation = null;
+
+    /**
+     * Indicates if sleep location has been reached.
+     */
+    protected boolean reachedSleepLocation = false;
 
     @SuppressWarnings({"rawtypes", "unchecked"})
     public EntityAICavalry(@NotNull final JobCavalry job)
@@ -96,8 +130,7 @@ public class EntityAICavalry extends AbstractEntityAIGuard<JobCavalry, AbstractB
 
     /**
      * Decides the AI state the citizen should be in, and transitions as necessary.
-     * If the guard isn't mounted, will transition to the mount finding state.
-     * Otherwise, will call the super decide method.
+     * If the guard isn't mounted, will transition to the mount finding state (unless it is resting after a patrol).
      *
      * @return the next AI state.
      */
@@ -105,27 +138,229 @@ public class EntityAICavalry extends AbstractEntityAIGuard<JobCavalry, AbstractB
     {
         if (!worker.isPassenger())
         {
+
+            if (world.getGameTime() < remountAllowedAt && buildingGuards.getRallyLocation() == null)
+            {
+                return super.decide();
+            }
+
             return CombatAIStates.FIND_MOUNT;
         }
-    
+
         return super.decide();
     }
 
     /**
-     * Sleep activity
-     *
-     * If the guard is mounted, dismounts and clears the horse of the guard's reservation.
+     * {@inheritDoc}
+     */
+    @Override
+    protected double sleepChance()
+    {
+        return 2 * super.sleepChance();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected boolean shouldSleep()
+    {
+        if (worker.isPassenger())
+        {
+            sleepLocation = null;
+            reachedSleepLocation = false;
+            return false;
+        }
+
+        return super.shouldSleep();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected IAIState sleepParticles()
+    {
+        if (!reachedSleepLocation)
+        {
+            return null;
+        }
+
+        return super.sleepParticles();
+    }
+
+    /**
+     * Sleep activity. Cavalry finds an acceptable place to nap, then travels there for a snooze.
      *
      * @return the next state to go into
      */
     protected IAIState sleep()
     {
-        if (worker.isPassenger())
+        if (isSleepInterrupted())
         {
-            worker.stopRiding();
+            return super.sleep();
+        }
+
+        if (reachedSleepLocation)
+        {
+            return super.sleep();
+        }
+
+        if (sleepLocation == null)
+        {
+            sleepLocation = findSleepLocation();
+            if (sleepLocation == null)
+            {
+                return CombatAIStates.NO_TARGET;
+            }
+        }
+
+        if (!isSleepPositionAvailable(sleepLocation))
+        {
+            sleepLocation = null;
+            return GUARD_SLEEP;
+        }
+
+        if (!EntityNavigationUtils.walkToPos(worker, sleepLocation, 1, true))
+        {
+            return GUARD_SLEEP;
+        }
+
+        reachedSleepLocation = true;
+        startSleeping();
+
+        if (!hasStartedSleeping())
+        {
+            sleepLocation = null;
+            reachedSleepLocation = false;
+            return GUARD_SLEEP;
         }
 
         return super.sleep();
+    }
+
+    /**
+     * Finds an available bed in the assigned stable, falling back to tagged sitting positions in the stable.
+     *
+     * @return an available sleeping location, or null.
+     */
+    @Nullable
+    private BlockPos findSleepLocation()
+    {
+        // Check for free beds in the stable, first.
+        for (final BlockPos bedPosition : building.getModule(BuildingModules.BED).getRegisteredBlocks())
+        {
+            if (isSleepPositionAvailable(bedPosition))
+            {
+                return bedPosition;
+            }
+        }
+
+        // If there is no free bed at the stable, look at sit positions
+        for (final BlockPos fallbackSpot : building.getLocationsFromTag(SchematicTagConstants.TAG_SITTING))
+        {
+            if (!SittingEntity.isSittingPosOccupied(fallbackSpot, worker.level()))
+            {
+                return fallbackSpot;
+            }
+        }
+
+        // If there is no free sit position, check sit_in
+        for (final BlockPos fallbackSpot : building.getLocationsFromTag(SchematicTagConstants.TAG_SIT_IN))
+        {
+            if (!SittingEntity.isSittingPosOccupied(fallbackSpot, worker.level()))
+            {
+                return fallbackSpot;
+            }
+        }
+
+        // If there is no free sit_in position, look at sit_out
+        for (final BlockPos fallbackSpot : building.getLocationsFromTag(SchematicTagConstants.TAG_SIT_OUT))
+        {
+            if (!SittingEntity.isSittingPosOccupied(fallbackSpot, worker.level()))
+            {
+                return fallbackSpot;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Checks whether a registered stable bed is loaded, valid, and unoccupied.
+     *
+     * @param sleepPosition the registered bed-head position to check.
+     * @return {@code true} when the cavalry worker can use the bed.
+     */
+    private boolean isSleepPositionAvailable(final BlockPos sleepPosition)
+    {
+        if (!WorldUtil.isEntityBlockLoaded(worker.level(), sleepPosition))
+        {
+            return false;
+        }
+
+        final BlockState state = worker.level().getBlockState(sleepPosition);
+        if (!state.is(BlockTags.BEDS))
+        {
+            return !SittingEntity.isSittingPosOccupied(sleepPosition, worker.level());
+        }
+
+        final BlockState above = worker.level().getBlockState(sleepPosition.above());
+
+        return state.getValue(BedBlock.PART) == BedPart.HEAD
+                && !state.getValue(BedBlock.OCCUPIED)
+                && !above.isCollisionShapeFullBlock(worker.level(), sleepPosition.above());
+    }
+
+    /**
+     * Checks whether the worker successfully started the appropriate sleep behavior for the selected location.
+     *
+     * @return {@code true} when the worker is sleeping in a bed or sitting.
+     */
+    private boolean hasStartedSleeping()
+    {
+        if (worker.level().getBlockState(sleepLocation).is(BlockTags.BEDS))
+        {
+            return worker.getCitizenSleepHandler().isAsleep();
+        }
+
+        return worker.getVehicle() instanceof SittingEntity;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void startSleeping()
+    {
+        if (reachedSleepLocation)
+        {
+            startSleepTimer();
+
+            if (worker.level().getBlockState(sleepLocation).is(BlockTags.BEDS))
+            {
+                worker.getCitizenSleepHandler().trySleep(sleepLocation);
+            }
+            else
+            {
+                SittingEntity.sitDown(sleepLocation, worker, getSleepTimer());
+            }
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void stopSleeping()
+    {
+        super.stopSleeping();
+        if (worker.getCitizenSleepHandler().isAsleep())
+        {
+            worker.getCitizenSleepHandler().onWakeUp();
+        }
+        sleepLocation = null;
+        reachedSleepLocation = false;
     }
 
     /**
@@ -263,7 +498,7 @@ public class EntityAICavalry extends AbstractEntityAIGuard<JobCavalry, AbstractB
     }
 
     /**
-     * Patrol between a list of patrol points.
+     * Patrol between a list of patrol points, dismounting near the stable once a patrol is complete.
      *
      * @return the next patrol point to go to.
      */
@@ -273,11 +508,18 @@ public class EntityAICavalry extends AbstractEntityAIGuard<JobCavalry, AbstractB
         if (building instanceof BuildingStable stable && stable.minutesSinceLastPatrol() < building.getSetting(BuildingStable.PATROL_INTERVAL).getValue())
         {
             currentPatrolPoint = null;
-            EntityNavigationUtils.walkToRandomPosAround(worker, getStableRestCenter(), STABLE_REST_WANDER_RANGE, 0.6D);
+            final boolean reachedRestArea = EntityNavigationUtils.walkToRandomPosAround(worker, getStableRestCenter(), STABLE_REST_WANDER_RANGE, 0.6D);
+            if (worker.isPassenger() && reachedRestArea && !hasDismountedForPatrolRest)
+            {
+                worker.stopRiding();
+                remountAllowedAt = world.getGameTime() + REMOUNT_COOLDOWN_TICKS;
+                hasDismountedForPatrolRest = true;
+            }
 
             return null;
         }
 
+        hasDismountedForPatrolRest = false;
         return super.patrol();
     }
 
