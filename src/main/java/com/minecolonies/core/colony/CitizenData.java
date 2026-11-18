@@ -46,6 +46,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -1819,7 +1820,7 @@ public class CitizenData implements ICitizenData
     @Override
     public void setHeight(final double height)
     {
-        this.height = height;
+        this.height = Mth.clamp(height, 0.85, 1.15);
     }
 
     @Override

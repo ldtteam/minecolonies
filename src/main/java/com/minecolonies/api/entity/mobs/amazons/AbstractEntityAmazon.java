@@ -31,6 +31,7 @@ public abstract class AbstractEntityAmazon extends AbstractEntityMinecoloniesMon
     {
         super(type, world);
         initStatsFor(BARBARIAN_BASE_HEALTH * (world.getDifficulty().getId() + 0.1), world.getDifficulty().getId() + 0.1, ATTACK_DAMAGE * world.getDifficulty().getId());
+        initHeight();
     }
 
     @Override

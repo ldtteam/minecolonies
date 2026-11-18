@@ -60,8 +60,8 @@ public class RenderBipedCitizen extends MobRenderer<AbstractEntityCitizen, Citiz
         citizenModel.rightArmPose = RenderUtils.getArmPose(citizen, InteractionHand.MAIN_HAND);
         citizenModel.leftArmPose = RenderUtils.getArmPose(citizen, InteractionHand.OFF_HAND);
 
-        final float heightDif = (float) (citizen.getCitizenDataView() == null ? 1.0 : citizen.getCitizenDataView().getHeight());
-        matrixStack.scale(1, heightDif, 1);
+        final float height = (float) (citizen.getCitizenDataView() == null ? 1.0 : citizen.getCitizenDataView().getHeight());
+        matrixStack.scale(1, height, 1);
 
         if (isItGhostTime)
         {
@@ -79,7 +79,7 @@ public class RenderBipedCitizen extends MobRenderer<AbstractEntityCitizen, Citiz
             super.render(citizen, limbSwing, partialTicks, matrixStack, renderTypeBuffer, light);
         }
 
-        matrixStack.scale(1, -heightDif, 1);
+        matrixStack.scale(1, -height, 1);
     }
 
     private void setupMainModelFrom(@NotNull final AbstractEntityCitizen citizen)
