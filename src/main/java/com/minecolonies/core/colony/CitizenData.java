@@ -1621,7 +1621,7 @@ public class CitizenData implements ICitizenData
 
     private void initHeight()
     {
-        this.height = 1 + MathUtils.RANDOM.nextGaussian() * 0.05;
+        this.setHeight(1 + MathUtils.RANDOM.nextGaussian() * 0.05);
     }
 
     @Override

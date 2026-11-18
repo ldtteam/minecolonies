@@ -20,6 +20,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.Entity;
@@ -444,6 +445,6 @@ public abstract class AbstractEntityMinecoloniesMonster extends AbstractFastMine
      */
     public void initHeight()
     {
-        this.height = 1 + MathUtils.RANDOM.nextGaussian() * 0.05;
+        this.height = Mth.clamp(1 + MathUtils.RANDOM.nextGaussian() * 0.05, 0.75, 1.15);
     }
 }
