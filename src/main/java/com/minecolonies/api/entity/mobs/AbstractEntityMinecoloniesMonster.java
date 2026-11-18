@@ -20,6 +20,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.Entity;
@@ -37,6 +38,7 @@ import javax.annotation.Nullable;
 
 import static com.minecolonies.api.entity.citizen.AbstractEntityCitizen.ENTITY_AI_TICKRATE;
 import static com.minecolonies.api.entity.mobs.RaiderMobUtils.MOB_ATTACK_DAMAGE;
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_HEIGHT;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_SPAWN_POS;
 import static com.minecolonies.core.colony.events.raid.RaiderConstants.*;
 
@@ -84,6 +86,11 @@ public abstract class AbstractEntityMinecoloniesMonster extends AbstractFastMine
      * Initial spawn pos of the entity.
      */
     private BlockPos spawnPos = null;
+
+    /**
+     * Raider height.
+     */
+    private double height = 1.0;
 
     /**
      * Constructor method for Abstract minecolonies mobs.
@@ -334,6 +341,8 @@ public abstract class AbstractEntityMinecoloniesMonster extends AbstractFastMine
         {
             compound.putLong(TAG_SPAWN_POS, spawnPos.asLong());
         }
+        compound.putDouble(TAG_HEIGHT, height);
+
         super.addAdditionalSaveData(compound);
     }
 
@@ -344,6 +353,7 @@ public abstract class AbstractEntityMinecoloniesMonster extends AbstractFastMine
         {
             this.spawnPos = BlockPos.of(compound.getLong(TAG_SPAWN_POS));
         }
+        this.height = compound.getDouble(TAG_HEIGHT);
         super.readAdditionalSaveData(compound);
     }
 
@@ -418,5 +428,23 @@ public abstract class AbstractEntityMinecoloniesMonster extends AbstractFastMine
     protected boolean shouldDespawnInPeaceful()
     {
         return true;
+    }
+
+    /**
+     * Get the special height of our raider.
+     * @return the height
+     */
+    public double getHeight()
+    {
+        return this.height;
+    }
+
+    /**
+     * Get the special height of our raider.
+     * @return the height
+     */
+    public void initHeight()
+    {
+        this.height = Mth.clamp(1 + MathUtils.RANDOM.nextGaussian() * 0.05, 0.85, 1.15);
     }
 }

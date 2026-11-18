@@ -470,4 +470,10 @@ public interface ICitizenData extends ICivilianData, IQuestGiver, IQuestParticip
      * @param token the id.
      */
     void onRequestCompleted(IToken<?> token);
+
+    /**
+     * Set the height difference of the citizen.
+     * @param heightDifference the dif to set (1 is default).
+     */
+    void setHeight(double heightDifference);
 }
