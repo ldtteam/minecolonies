@@ -445,6 +445,6 @@ public abstract class AbstractEntityMinecoloniesMonster extends AbstractFastMine
      */
     public void initHeight()
     {
-        this.height = Mth.clamp(1 + MathUtils.RANDOM.nextGaussian() * 0.05, 0.75, 1.15);
+        this.height = Mth.clamp(1 + MathUtils.RANDOM.nextGaussian() * 0.05, 0.85, 1.15);
     }
 }
