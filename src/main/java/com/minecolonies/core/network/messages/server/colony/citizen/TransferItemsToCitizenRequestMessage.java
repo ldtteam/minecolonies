@@ -128,10 +128,10 @@ public class TransferItemsToCitizenRequestMessage extends AbstractColonyServerMe
         final AbstractEntityCitizen citizen = optionalEntityCitizen.get();
         if (!player.isCreative())
         {
-            final int remainder = InventoryUtils.transferXOfFirstSlotInItemHandlerWithIntoNextFreeSlotInItemHandlerWithResult(new InvWrapper(player.getInventory()),
+            final int remainder = InventoryUtils.transfer(new InvWrapper(player.getInventory()),
+                citizen.getInventoryCitizen(),
                 stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, itemStack),
-                quantity,
-                citizen.getInventoryCitizen());
+                quantity);
             if (remainder > 0)
             {
                 player.displayClientMessage(Component.translatable("com.minecolonies.coremod.citizeninvfull"), true);
@@ -139,7 +139,7 @@ public class TransferItemsToCitizenRequestMessage extends AbstractColonyServerMe
         }
         else
         {
-            InventoryUtils.addItemStackToItemHandler(citizen.getInventoryCitizen(), itemStack);
+            InventoryUtils.insert(citizen.getInventoryCitizen(), itemStack);
         }
 
         if (token != null)

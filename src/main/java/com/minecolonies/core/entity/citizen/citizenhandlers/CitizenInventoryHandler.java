@@ -59,7 +59,7 @@ public class CitizenInventoryHandler implements ICitizenInventoryHandler
     @Override
     public int getItemCountInInventory(final Block block)
     {
-        return InventoryUtils.getItemCount(citizen.getInventoryCitizen(), block);
+        return InventoryUtils.getItemCount(citizen.getInventoryCitizen(), Item.byBlock(block));
     }
 
     /**
@@ -83,7 +83,7 @@ public class CitizenInventoryHandler implements ICitizenInventoryHandler
     @Override
     public boolean hasItemInInventory(final Block block)
     {
-        return InventoryUtils.hasItemInItemHandler(citizen.getInventoryCitizen(), block);
+        return InventoryUtils.hasItem(citizen.getInventoryCitizen(), block);
     }
 
     /**
@@ -95,7 +95,7 @@ public class CitizenInventoryHandler implements ICitizenInventoryHandler
     @Override
     public boolean hasItemInInventory(final Item item)
     {
-        return InventoryUtils.hasItemInItemHandler(citizen.getInventoryCitizen(), item);
+        return InventoryUtils.hasItem(citizen.getInventoryCitizen(), item);
     }
 
     @Override

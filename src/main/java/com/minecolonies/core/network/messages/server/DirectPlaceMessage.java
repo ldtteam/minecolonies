@@ -129,7 +129,7 @@ public class DirectPlaceMessage implements IMessage
                 return;
             }
 
-            if (!InventoryUtils.attemptReduceStackInItemHandler(new InvWrapper(player.getInventory()), stack, 1))
+            if (InventoryUtils.extract(new InvWrapper(player.getInventory()), stack, 1).getB() <= 0)
             {
                 return;
             }

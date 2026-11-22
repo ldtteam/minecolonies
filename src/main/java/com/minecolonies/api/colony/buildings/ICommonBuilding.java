@@ -2,6 +2,7 @@ package com.minecolonies.api.colony.buildings;
 
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.entity.ai.workers.util.GuardGear;
 import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
@@ -329,11 +330,11 @@ public interface ICommonBuilding
     }
 
     /**
-     * Transfer from building into itemhandler.
+     * Transfer from building into itemHandler.
      * @param itemHandler the inventory to transfer to.
      * @param stack the stack to match to.
      * @param count the count to transfer.
-     * @return the transfered count.
+     * @return the transferred count.
      */
     default int transferFrom(@NotNull IItemHandler itemHandler, Predicate<ItemStack> stack, int count)
     {
@@ -358,5 +359,138 @@ public interface ICommonBuilding
             }
         }
         return transferedQty;
+    }
+
+    /**
+     * Transfer to building from itemHandler.
+     * @param itemHandler the inventory to transfer from.
+     * @param stack the stack to match to.
+     * @param count the count to transfer.
+     * @return the transferred count.
+     */
+    default int transferTo(@NotNull IItemHandler itemHandler, ItemStack stack, int count) { return transferTo(itemHandler, st -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, st), count); }
+    default int transferTo(@NotNull IItemHandler itemHandler, Predicate<ItemStack> stack, int count)
+    {
+        final Level world = this.getColony().getWorld();
+        int transferedQty = 0;
+        // First let's try inserting into an inventory that already has this stack.
+        for (final BlockPos pos : this.getContainers())
+        {
+            if (WorldUtil.isBlockLoaded(world, pos))
+            {
+                final BlockEntity entity = world.getBlockEntity(pos);
+                if (entity instanceof TileEntityRack rackEntity)
+                {
+                    if (rackEntity.hasItemStack(stack))
+                    {
+                        transferedQty += InventoryUtils.transfer(itemHandler, rackEntity.getInventory(), stack, count - transferedQty);
+                    }
+                }
+            }
+            if (transferedQty >= count)
+            {
+                return transferedQty;
+            }
+        }
+
+        for (final BlockPos pos : this.getContainers())
+        {
+            if (WorldUtil.isBlockLoaded(world, pos))
+            {
+                final BlockEntity entity = world.getBlockEntity(pos);
+                if (entity instanceof TileEntityRack rackEntity)
+                {
+                    transferedQty += InventoryUtils.transfer(itemHandler, rackEntity.getInventory(), stack, count - transferedQty);
+                }
+            }
+            if (transferedQty >= count)
+            {
+                return transferedQty;
+            }
+        }
+
+        return transferedQty;
+    }
+
+    /**
+     * Extract items from the building.
+     * @param predicate the matching predicate.
+     * @return the extracted amount.
+     */
+    default int extractItem(final Predicate<ItemStack> predicate, final int count)
+    {
+        final Level world = getColony().getWorld();
+        int extractedQty = 0;
+        for (final BlockPos pos : this.getContainers())
+        {
+            if (WorldUtil.isBlockLoaded(world, pos))
+            {
+                final BlockEntity entity = world.getBlockEntity(pos);
+                if (entity instanceof TileEntityRack rackEntity)
+                {
+                    extractedQty += InventoryUtils.extract(rackEntity.getInventory(), predicate, count - extractedQty).getB();
+                }
+            }
+            if (extractedQty >= count)
+            {
+                return extractedQty;
+            }
+        }
+        return extractedQty;
+    }
+
+    /**
+     * Insert items into the building.
+     * @param stack the stack to insert.
+     * @return the amount.
+     */
+    default ItemStack insert(final ItemStack stack)
+    {
+        final Level world = getColony().getWorld();
+        ItemStack leftOver = stack;
+        for (final BlockPos pos : this.getContainers())
+        {
+            if (WorldUtil.isBlockLoaded(world, pos))
+            {
+                final BlockEntity entity = world.getBlockEntity(pos);
+                if (entity instanceof TileEntityRack rackEntity)
+                {
+                    leftOver = InventoryUtils.insert(rackEntity.getInventory(), leftOver);
+                }
+            }
+            if (ItemStackUtils.isEmpty(leftOver))
+            {
+                return leftOver;
+            }
+        }
+        return leftOver;
+    }
+
+    /**
+     * Get all matching slots given some predicate.
+     * @param predicate the predicate to test for.
+     * @return map of racks to matching slots.
+     */
+    default Map<IItemHandler, List<Integer>> getMatchingSlots(final Predicate<ItemStack> predicate)
+    {
+        final Level world = getColony().getWorld();
+        final Map<IItemHandler, List<Integer>> map = new HashMap<>();
+        for (final BlockPos pos : this.getContainers())
+        {
+            if (WorldUtil.isBlockLoaded(world, pos))
+            {
+                final BlockEntity entity = world.getBlockEntity(pos);
+                if (entity instanceof TileEntityRack rackEntity)
+                {
+                    final List<Integer> tempList = InventoryUtils.getAllMatchingSlot(rackEntity.getInventory(), predicate);
+                    if (!tempList.isEmpty())
+                    {
+                        map.put(rackEntity.getInventory(), tempList);
+                    }
+                }
+            }
+        }
+
+        return map;
     }
 }

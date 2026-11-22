@@ -190,7 +190,14 @@ public class LocalResearchTree implements ILocalResearchTree
                 for (Item item : cost.getItems())
                 {
                     ItemStorage itemsToTake = new ItemStorage(item, cost.getCount());
-                    InventoryUtils.reduceBuildingThenPlayerInventory(building,  player, itemsToTake, stack -> IGlobalResearch.isUniversityResearchMatch(stack, item), stack -> IGlobalResearch.isPlayerResearchMatch(stack, item));
+                    if (building.hasItem(stack -> IGlobalResearch.isUniversityResearchMatch(stack, item)))
+                    {
+                        building.extractItem(stack -> IGlobalResearch.isUniversityResearchMatch(stack, item), itemsToTake.getAmount());
+                    }
+                    else
+                    {
+                        InventoryUtils.extract(new InvWrapper(player.getInventory()), stack -> IGlobalResearch.isPlayerResearchMatch(stack, item), itemsToTake.getAmount());
+                    }
                 }
 
             }

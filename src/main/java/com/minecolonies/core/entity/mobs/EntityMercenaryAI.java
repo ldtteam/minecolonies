@@ -161,7 +161,7 @@ public class EntityMercenaryAI extends Goal
 
                 if (building != null)
                 {
-                    final List<IItemHandler> handlers = new ArrayList<>(InventoryUtils.getItemHandlersFromProvider(building.getTileEntity()));
+                    final List<IItemHandler> handlers = building.getHandlers();
                     final IItemHandler handler = handlers.get(rand.nextInt(handlers.size()));
                     final ItemStack stack = handler.extractItem(rand.nextInt(handler.getSlots()), 5, false);
 

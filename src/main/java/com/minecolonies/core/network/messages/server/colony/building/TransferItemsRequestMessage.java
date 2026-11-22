@@ -104,12 +104,18 @@ public class TransferItemsRequestMessage extends AbstractBuildingServerMessage<I
             previousContent = InvDebugUtil.getAllItemsForProviders(building.getTileEntity(), new PlayerMainInvWrapper(player.getInventory()));
         }
 
-        final int toMove;
-        final int leftOver;
+        int toMove;
+        int leftOver = 0;
         if (isCreative)
         {
             toMove = this.quantity;
-            leftOver = InventoryUtils.transferItemStackToBuilding(building, itemStack, this.quantity);
+            for (int i = 0; i < Math.ceil(this.quantity/itemStack.getMaxStackSize()); i++)
+            {
+                final int size = Math.min(toMove, itemStack.getMaxStackSize());
+                final ItemStack stack = itemStack.copyWithCount(size);
+                building.insert(stack);
+                toMove -= size;
+            }
         }
         else
         {

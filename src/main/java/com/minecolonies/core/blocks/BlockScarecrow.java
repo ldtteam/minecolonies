@@ -94,7 +94,7 @@ public class BlockScarecrow extends AbstractBlockMinecoloniesDefault<BlockScarec
         {
             worldIn.setBlock(pos, state.setValue(LANTERN, true), 3);
             worldIn.playSound(player, pos, Blocks.LANTERN.getSoundType(Blocks.LANTERN.defaultBlockState()).getPlaceSound(), SoundSource.BLOCKS, 1.0f, 1.0f);
-            InventoryUtils.reduceStackInItemHandler(new InvWrapper(player.getInventory()), player.getItemInHand(hand));
+            InventoryUtils.extract(new InvWrapper(player.getInventory()), player.getItemInHand(hand), 1);
             return InteractionResult.CONSUME;
         }
 

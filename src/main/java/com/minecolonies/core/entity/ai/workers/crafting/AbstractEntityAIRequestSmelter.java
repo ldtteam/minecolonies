@@ -104,7 +104,7 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
     {
         final List<ItemStack> possibleFuels = getActivePossibleFuels();
         final FurnaceUserModule module = building.getModule(FURNACE);
-        if (!InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(), isCorrectFuel(possibleFuels))
+        if (!InventoryUtils.hasItem(worker.getInventoryCitizen(), isCorrectFuel(possibleFuels))
             && building.hasEnoughElseCount( isCorrectFuel(possibleFuels), 1) < 1
             && !building.hasWorkerOpenRequestsOfType(worker.getCitizenData().getId(), TypeToken.of(StackList.class)))
         {
@@ -178,7 +178,7 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
     private IAIState addFuelToFurnace()
     {
         final List<ItemStack> possibleFuels = getActivePossibleFuels();
-        if (!InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(), isCorrectFuel(possibleFuels)))
+        if (!InventoryUtils.hasItem(worker.getInventoryCitizen(), isCorrectFuel(possibleFuels)))
         {
             if (building.hasEnoughElseCount( isCorrectFuel(possibleFuels), 1) >= 1)
             {
@@ -474,7 +474,7 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
             return RETRIEVING_UNRELATED_PRODUCT_FROM_FURNACE;
         }
 
-        if (building.hasEnoughElseCount( isCorrectFuel(possibleFuels), 1) > 1 || InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(), isCorrectFuel(possibleFuels)))
+        if (building.hasEnoughElseCount( isCorrectFuel(possibleFuels), 1) > 1 || InventoryUtils.hasItem(worker.getInventoryCitizen(), isCorrectFuel(possibleFuels)))
         {
             furnacePos = getFurnaceWithoutFuel();
             if (furnacePos != null)

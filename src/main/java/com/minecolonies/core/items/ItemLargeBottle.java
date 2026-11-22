@@ -60,7 +60,7 @@ public class ItemLargeBottle extends Item
         if (entity instanceof Cow && !entity.isBaby())
         {
             player.playSound(SoundEvents.COW_MILK, 1.0F, 1.0F);
-            if (!InventoryUtils.addItemStackToItemHandler(new PlayerMainInvWrapper(player.getInventory()), ModItems.large_milk_bottle.getDefaultInstance()))
+            if (!InventoryUtils.insert(new PlayerMainInvWrapper(player.getInventory()), ModItems.large_milk_bottle.getDefaultInstance()).isEmpty())
             {
                 player.drop(ModItems.large_milk_bottle.getDefaultInstance(), false);
             }
@@ -71,7 +71,7 @@ public class ItemLargeBottle extends Item
         else if (entity instanceof final Goat goat && !entity.isBaby())
         {
             player.playSound(goat.getMilkingSound(), 1.0F, 1.0F);
-            if (!InventoryUtils.addItemStackToItemHandler(new PlayerMainInvWrapper(player.getInventory()), ModItems.large_milk_bottle.getDefaultInstance()))
+            if (!InventoryUtils.insert(new PlayerMainInvWrapper(player.getInventory()), ModItems.large_milk_bottle.getDefaultInstance()).isEmpty())
             {
                 player.drop(ModItems.large_milk_bottle.getDefaultInstance(), false);
             }
@@ -107,7 +107,7 @@ public class ItemLargeBottle extends Item
                 if (level.getFluidState(blockpos).is(FluidTags.WATER))
                 {
                     level.playSound(player, player.getX(), player.getY(), player.getZ(), SoundEvents.BOTTLE_FILL, SoundSource.NEUTRAL, 1.0F, 1.0F);
-                    if (!InventoryUtils.addItemStackToItemHandler(new PlayerMainInvWrapper(player.getInventory()), ModItems.large_water_bottle.getDefaultInstance()))
+                    if (!InventoryUtils.insert(new PlayerMainInvWrapper(player.getInventory()), ModItems.large_water_bottle.getDefaultInstance()).isEmpty())
                     {
                         player.drop(ModItems.large_water_bottle.getDefaultInstance(), false);
                     }

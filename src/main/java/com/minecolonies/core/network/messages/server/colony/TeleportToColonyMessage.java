@@ -89,16 +89,16 @@ public class TeleportToColonyMessage extends AbstractColonyServerMessage impleme
         if (originColony.getPermissions().hasPermission(ctxIn.getSender(), Action.TELEPORT_TO_COLONY) || colony.getPermissions().hasPermission(ctxIn.getSender(), Action.TELEPORT_TO_COLONY))
         {
             final BlockEntity gateHouse = colony.getWorld().getBlockEntity(pos);
-            if (gateHouse instanceof TileEntityColonyBuilding && ((TileEntityColonyBuilding) gateHouse).getBuilding() instanceof BuildingGateHouse)
+            if (gateHouse instanceof TileEntityColonyBuilding gateHouseBuilding && gateHouseBuilding.getBuilding() instanceof BuildingGateHouse)
             {
                 if (cost > 0)
                 {
-                    if (InventoryUtils.attemptReduceStackInItemHandler(new InvWrapper(ctxIn.getSender().getInventory()), new ItemStack(Items.GOLD_NUGGET), cost))
+                    if (InventoryUtils.extract(new InvWrapper(ctxIn.getSender().getInventory()), new ItemStack(Items.GOLD_NUGGET), cost).getB() >= cost)
                     {
                         int output = cost/2;
                         if (output <= STACKSIZE)
                         {
-                            InventoryUtils.addItemStackToItemHandler(((TileEntityColonyBuilding) gateHouse).getInventory(), new ItemStack(Items.GOLD_NUGGET, output));
+                            InventoryUtils.insert(gateHouseBuilding.getInventory(), new ItemStack(Items.GOLD_NUGGET, output));
                         }
                         else
                         {
@@ -107,7 +107,7 @@ public class TeleportToColonyMessage extends AbstractColonyServerMessage impleme
                                 if (output > 0)
                                 {
                                     final int qty = Math.min(STACKSIZE, output);
-                                    InventoryUtils.addItemStackToItemHandler(((TileEntityColonyBuilding) gateHouse).getInventory(), new ItemStack(Items.GOLD_NUGGET, qty));
+                                    InventoryUtils.insert(gateHouseBuilding.getInventory(), new ItemStack(Items.GOLD_NUGGET, qty));
                                     output -= qty;
                                 }
                             }
@@ -115,7 +115,7 @@ public class TeleportToColonyMessage extends AbstractColonyServerMessage impleme
                     }
                 }
 
-                final List<BlockPos> posList = ((TileEntityColonyBuilding) gateHouse).getCachedWorldTagNamePosMap().get(TAG_GATE);
+                final List<BlockPos> posList = gateHouseBuilding.getCachedWorldTagNamePosMap().get(TAG_GATE);
                 if (posList == null || posList.isEmpty())
                 {
                     TeleportHelper.colonyTeleport(ctxIn.getSender(), colony, pos);

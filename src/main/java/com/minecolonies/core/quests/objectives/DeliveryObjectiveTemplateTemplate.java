@@ -127,7 +127,7 @@ public class DeliveryObjectiveTemplateTemplate extends DialogueObjectiveTemplate
     @Override
     public boolean tryDiscountItem(final Player player, final IQuestInstance colonyQuest)
     {
-        return InventoryUtils.attemptReduceStackInItemHandler(new PlayerMainInvWrapper(player.getInventory()), this.item, this.quantity, nbtMode.equals("any"), nbtMode.equals("any"));
+        return InventoryUtils.extract(new PlayerMainInvWrapper(player.getInventory()), stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, this.item, !nbtMode.equals("any"), !nbtMode.equals("any")), this.quantity).getB() > 0;
     }
 
     @Override

@@ -269,7 +269,7 @@ public class EntityAIEatTask implements IStateAI
                 int qty = (int) (Math.max(1.0, (FULL_SATURATION - citizen.getCitizenData().getSaturation()) / FoodUtils.getFoodValue(storageToGet.getItemStack(), citizen)));
                 // Hand out a bit extra
                 qty = (int) Math.ceil(qty * 1.5);
-                InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(cookBuilding, storageToGet, qty, citizen.getInventoryCitizen());
+                cookBuilding.transferTo(citizen.getInventoryCitizen(), storageToGet.getItemStack(), qty);
                 return EAT;
             }
         }
@@ -422,7 +422,7 @@ public class EntityAIEatTask implements IStateAI
         if (slot == -1)
         {
             final ItemStorage storageToGet = FoodUtils.checkForFoodInBuilding(citizen.getCitizenData(), null, buildingWorker);
-            if (storageToGet != null && InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(buildingWorker, storageToGet, citizen.getInventoryCitizen()))
+            if (storageToGet != null && buildingWorker.transferTo(citizen.getInventoryCitizen(), storageToGet.getItemStack(), storageToGet.getAmount()) > 0)
             {
                 return EAT;
             }
@@ -527,7 +527,7 @@ public class EntityAIEatTask implements IStateAI
 
         final ICitizenData citizenData = citizen.getCitizenData();
 
-        if (InventoryUtils.hasItemInItemHandler(citizen.getInventoryCitizen(), stack -> FoodUtils.canEat(stack, citizenData.getHomeBuilding(), citizenData.getWorkBuilding())))
+        if (InventoryUtils.hasItem(citizen.getInventoryCitizen(), stack -> FoodUtils.canEat(stack, citizenData.getHomeBuilding(), citizenData.getWorkBuilding())))
         {
             if (citizenData.isChild())
             {
@@ -538,7 +538,7 @@ public class EntityAIEatTask implements IStateAI
                 citizenData.triggerInteraction(new StandardInteraction(Component.translatable(BETTER_FOOD), ChatPriority.IMPORTANT));
             }
         }
-        else if (InventoryUtils.hasItemInItemHandler(citizen.getInventoryCitizen(), ISCOOKABLE))
+        else if (InventoryUtils.hasItem(citizen.getInventoryCitizen(), ISCOOKABLE))
         {
             citizenData.triggerInteraction(new StandardInteraction(Component.translatable(RAW_FOOD), ChatPriority.PENDING));
         }

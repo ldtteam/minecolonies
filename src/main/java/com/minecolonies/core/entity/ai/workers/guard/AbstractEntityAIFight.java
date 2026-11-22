@@ -6,7 +6,6 @@ import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.equipment.ModEquipmentTypes;
 import com.minecolonies.api.equipment.registry.EquipmentTypeEntry;
-import com.minecolonies.api.util.InventoryFunctions;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.core.colony.buildings.AbstractBuildingGuards;
@@ -123,11 +122,14 @@ public abstract class AbstractEntityAIFight<J extends AbstractJobGuard<J>, B ext
             {
                 return getState();
             }
-            InventoryFunctions.matchFirstInProviderWithSimpleAction(worker,
-              stack -> !ItemStackUtils.isEmpty(stack)
-                         && ItemStackUtils.doesItemServeAsWeapon(stack)
-                         && ItemStackUtils.hasEquipmentLevel(stack, tool, stack.getItem() instanceof ItemSpear ? -1 : 0, building.getMaxEquipmentLevel()),
-              itemStack -> CitizenItemUtils.setMainHeldItem(worker, itemStack));
+            final int slot = InventoryUtils.getMatchingSlot(worker.getInventoryCitizen(),
+                stack -> !ItemStackUtils.isEmpty(stack)
+                    && ItemStackUtils.doesItemServeAsWeapon(stack)
+                    && ItemStackUtils.hasEquipmentLevel(stack, tool, stack.getItem() instanceof ItemSpear ? -1 : 0, building.getMaxEquipmentLevel()));
+            if (slot != -1)
+            {
+                CitizenItemUtils.setMainHeldItem(worker, slot);
+            }
         }
 
         equipInventoryArmor();
@@ -178,8 +180,7 @@ public abstract class AbstractEntityAIFight<J extends AbstractJobGuard<J>, B ext
                 }
             }
 
-
-            final Map<IItemHandler, List<Integer>> items = InventoryUtils.findAllSlotsInProviderWith(building, item);
+            final Map<IItemHandler, List<Integer>> items = building.getMatchingSlots(item);
             if (items.isEmpty())
             {
                 // None found, check for equipped
@@ -225,16 +226,15 @@ public abstract class AbstractEntityAIFight<J extends AbstractJobGuard<J>, B ext
                     {
                         final ItemStack armorStack = worker.getInventoryCitizen().getArmorInSlot(item.getType());
                         worker.getInventoryCitizen().moveArmorToInventory(item.getType());
-                        final int slot =
-                          InventoryUtils.getMatchingSlot(worker.getInventoryCitizen(), stack -> stack == armorStack);
+                        final int slot = InventoryUtils.getMatchingSlot(worker.getInventoryCitizen(), stack -> stack == armorStack);
                         if (slot > -1)
                         {
-                            InventoryUtils.transferItemStackIntoNextFreeSlotInProvider(worker.getInventoryCitizen(), slot, building);
+                            building.transferFrom(worker.getInventoryCitizen(), stack -> stack == armorStack, 1);
                         }
                     }
 
                     final ItemStack newStack = bestHandler.getStackInSlot(bestSlot);
-                    InventoryUtils.transferItemStackIntoNextFreeSlotInItemHandler(bestHandler, bestSlot, worker.getInventoryCitizen());
+                    InventoryUtils.transfer(bestHandler, worker.getInventoryCitizen(), newStack);
                     final int slot = InventoryUtils.getMatchingSlot(worker.getInventoryCitizen(), stack -> stack == newStack);
                     if (slot > -1)
                     {
@@ -245,17 +245,12 @@ public abstract class AbstractEntityAIFight<J extends AbstractJobGuard<J>, B ext
                 {
                     if (!ItemStackUtils.isEmpty(worker.getItemBySlot(item.getType())))
                     {
-                        final int slot =
-                          InventoryUtils.getMatchingSlot(worker.getInventoryCitizen(), stack -> stack == worker.getItemBySlot(item.getType()));
-                        if (slot > -1)
-                        {
-                            InventoryUtils.transferItemStackIntoNextFreeSlotInProvider(worker.getInventoryCitizen(), slot, building);
-                        }
+                        building.transferFrom(worker.getInventoryCitizen(), stack -> stack == worker.getItemBySlot(item.getType()), 1);
                     }
 
                     // Used for further comparisons, set to the right inventory slot afterwards
                     worker.setItemSlot(item.getType(), bestHandler.getStackInSlot(bestSlot));
-                    InventoryUtils.transferItemStackIntoNextFreeSlotInItemHandler(bestHandler, bestSlot, worker.getInventoryCitizen());
+                    InventoryUtils.transfer(bestHandler, worker.getInventoryCitizen(), bestHandler.getStackInSlot(bestSlot));
                 }
             }
         }

@@ -80,7 +80,7 @@ public class PickUpTownhallMessage implements IMessage, IRangeRestrictedPacket
         }
 
         final ItemStack stack = new ItemStack(ModBlocks.blockHutTownHall, 1);
-        if (InventoryUtils.addItemStackToItemHandler(new PlayerMainInvWrapper(sender.getInventory()), stack))
+        if (InventoryUtils.insert(new PlayerMainInvWrapper(sender.getInventory()), stack).isEmpty())
         {
             world.destroyBlock(pos, false);
         }

@@ -262,7 +262,7 @@ public class ItemAssistantHammer extends AbstractItemMinecolonies
                             continue;
                         }
 
-                        List<ItemStack> requiredItem = new ArrayList<>();
+                        List<ItemStack> requiredItems = new ArrayList<>();
 
                         IPlacementHandler foundHandler = null;
                         for (final IPlacementHandler handler : handlers)
@@ -270,7 +270,7 @@ public class ItemAssistantHammer extends AbstractItemMinecolonies
                             if (handler.canHandle(player.level(), BlockPos.ZERO, blockInfo.getState()))
                             {
                                 final List<ItemStack> itemList = handler.getRequiredItems(player.level(), workPos, blockInfo.getState(), blockInfo.getTileEntityData(), new SimplePlacementContext(true,              new PlacementSettings(workOrder.isMirrored() ? Mirror.FRONT_BACK : Mirror.NONE, BlockPosUtil.getRotationFromRotations(workOrder.getRotation()))));
-                                requiredItem.addAll(itemList);
+                                requiredItems.addAll(itemList);
 
                                 foundHandler = handler;
                                 break;
@@ -279,11 +279,11 @@ public class ItemAssistantHammer extends AbstractItemMinecolonies
 
                         if (foundHandler == null)
                         {
-                            requiredItem.add(BlockUtils.getItemStackFromBlockState(blockInfo.getState()));
+                            requiredItems.add(BlockUtils.getItemStackFromBlockState(blockInfo.getState()));
                         }
 
                         // Only allow single block placement, no inventory, no free blocks
-                        if (requiredItem.size() != 1)
+                        if (requiredItems.size() != 1)
                         {
                             continue;
                         }
@@ -293,7 +293,7 @@ public class ItemAssistantHammer extends AbstractItemMinecolonies
 
                         if (!player.isCreative())
                         {
-                            for (final ItemStack required : requiredItem)
+                            for (final ItemStack required : requiredItems)
                             {
                                 boolean found = false;
                                 for (final ItemStack stack : player.getInventory().items)
@@ -339,7 +339,10 @@ public class ItemAssistantHammer extends AbstractItemMinecolonies
 
                         if (!player.isCreative())
                         {
-                            InventoryUtils.removeStacksFromItemHandler(new InvWrapper(player.getInventory()), requiredItem);
+                            for (final ItemStack stack : requiredItems)
+                            {
+                                InventoryUtils.extract(new InvWrapper(player.getInventory()), stack, stack.getCount());
+                            }
                         }
 
                         // Server message
@@ -351,7 +354,7 @@ public class ItemAssistantHammer extends AbstractItemMinecolonies
                         else
                         {
                             final IBuilding building = colony.getServerBuildingManager().getBuilding(workOrder.getClaimedBy());
-                            for (final ItemStack stack : requiredItem)
+                            for (final ItemStack stack : requiredItems)
                             {
                                 building.getModule(BuildingModules.BUILDING_RESOURCES).reduceNeededResource(stack, 1);
                             }

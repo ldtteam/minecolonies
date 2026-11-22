@@ -282,11 +282,7 @@ public class EntityAISickTask implements IStateAI
         {
             for (final ItemStorage cure : disease.cureItems())
             {
-                final int slot = InventoryUtils.findFirstSlotInProviderNotEmptyWith(citizen, Disease.hasCureItem(cure));
-                if (slot != -1)
-                {
-                    citizenData.getInventory().extractItem(slot, 1, false);
-                }
+                InventoryUtils.extract(citizen.getInventoryCitizen(), Disease.hasCureItem(cure), 1).getB();
             }
         }
 
@@ -456,7 +452,7 @@ public class EntityAISickTask implements IStateAI
         }
         for (final ItemStorage cure : disease.cureItems())
         {
-            final int slot = InventoryUtils.findFirstSlotInProviderNotEmptyWith(citizen, Disease.hasCureItem(cure));
+            final int slot = InventoryUtils.getMatchingSlot(citizen.getInventoryCitizen(), Disease.hasCureItem(cure));
             if (slot == -1)
             {
                 if (citizen.getCitizenData().getCitizenDiseaseHandler().isSick())

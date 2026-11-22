@@ -159,7 +159,7 @@ public class EntityAIWorkHealer extends AbstractEntityAIInteract<JobHealer, Buil
                     final ImmutableList<IRequest<? extends Stack>> completed = building.getCompletedRequestsOfType(worker.getCitizenData(), TypeToken.of(Stack.class));
                     for (final ItemStorage cure : disease.cureItems())
                     {
-                        if (!InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(), Disease.hasCureItem(cure)))
+                        if (!InventoryUtils.hasItem(worker.getInventoryCitizen(), Disease.hasCureItem(cure)))
                         {
                             if (InventoryUtils.getItemCount(building.getCapability(ForgeCapabilities.ITEM_HANDLER).orElseGet(null),
                               Disease.hasCureItem(cure)) >= cure.getAmount())
@@ -271,8 +271,8 @@ public class EntityAIWorkHealer extends AbstractEntityAIInteract<JobHealer, Buil
 
         for (final ItemStorage cure : disease.cureItems())
         {
-            if (!InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(), Disease.hasCureItem(cure))
-                  && !InventoryUtils.hasItemInItemHandler(building.getCapability(ForgeCapabilities.ITEM_HANDLER).orElseGet(null), Disease.hasCureItem(cure)))
+            if (!InventoryUtils.hasItem(worker.getInventoryCitizen(), Disease.hasCureItem(cure))
+                  && !InventoryUtils.hasItem(building.getCapability(ForgeCapabilities.ITEM_HANDLER).orElseGet(null), Disease.hasCureItem(cure)))
             {
                 boolean hasRequest = false;
                 for (final IRequest<? extends Stack> request : list)

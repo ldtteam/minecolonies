@@ -452,7 +452,7 @@ public class RecipeStorage implements IRecipeStorage
         for (final ItemStorage storage : items)
         {
             final ItemStack stack = storage.getItemStack();
-            final int availableCount = InventoryUtils.getItemCounts(
+            final int availableCount = InventoryUtils.getItemCount(
               ImmutableList.copyOf(inventories),
               itemStack -> !ItemStackUtils.isEmpty(itemStack)
                              && ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, stack, false, !storage.ignoreNBT()));
@@ -473,7 +473,7 @@ public class RecipeStorage implements IRecipeStorage
         for (final ItemStorage storage : items)
         {
             final ItemStack stack = storage.getItemStack();
-            final int availableCount = InventoryUtils.getItemCounts(citizen,
+            final int availableCount = InventoryUtils.getItemCount(citizen,
               itemStack -> !ItemStackUtils.isEmpty(itemStack)
                              && ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, stack, false, !storage.ignoreNBT()))
                                          + building.getItemCount(storage);;
@@ -661,7 +661,7 @@ public class RecipeStorage implements IRecipeStorage
             int freeSpace = 0;
             for (final IItemHandler handler : handlers)
             {
-                freeSpace += handler.getSlots() - InventoryUtils.getAmountOfStacksInItemHandler(handler);
+                freeSpace += InventoryUtils.getEmptySlots(handler);
             }
 
             return freeSpace >= resultStacks.size() - getInput().size();
@@ -783,9 +783,11 @@ public class RecipeStorage implements IRecipeStorage
             resultStacks.add(outputStack.copy());
             if (doInsert)
             {
+                ItemStack insertStack = outputStack.copy();
                 for (final IItemHandler handler : handlers)
                 {
-                    if (InventoryUtils.addItemStackToItemHandler(handler, outputStack.copy()))
+                    insertStack = InventoryUtils.insert(handler, insertStack.copy());
+                    if (insertStack.isEmpty())
                     {
                         break;
                     }
@@ -809,9 +811,11 @@ public class RecipeStorage implements IRecipeStorage
         {
             for (final ItemStack stack : secondaryStacks)
             {
+                ItemStack insertStack = stack.copy();
                 for (final IItemHandler handler : handlers)
                 {
-                    if (InventoryUtils.addItemStackToItemHandler(handler, stack.copy()))
+                    insertStack = InventoryUtils.insert(handler, insertStack.copy());
+                    if (insertStack.isEmpty())
                     {
                         break;
                     }

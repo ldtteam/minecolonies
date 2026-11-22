@@ -6,10 +6,7 @@ import com.minecolonies.api.colony.GraveData;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.managers.interfaces.IGraveManager;
-import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.api.util.InventoryUtils;
-import com.minecolonies.api.util.MessageUtils;
-import com.minecolonies.api.util.WorldUtil;
+import com.minecolonies.api.util.*;
 import com.minecolonies.core.blocks.BlockMinecoloniesGrave;
 import com.minecolonies.core.colony.Colony;
 import com.minecolonies.core.tileentities.TileEntityGrave;
@@ -301,12 +298,11 @@ public class GraveManager implements IGraveManager
             for (final EquipmentSlot equipmentSlot : EquipmentSlot.values())
             {
                 final ItemStack stack = citizenData.getInventory().getArmorInSlot(equipmentSlot);
-                if (!InventoryUtils.addItemStackToItemHandler(graveEntity.getInventory(), stack))
+                if (!InventoryUtils.insert(graveEntity.getInventory(), stack).isEmpty())
                 {
-                    InventoryUtils.spawnItemStack(world, pos.getX(), pos.getY(), pos.getZ(), stack);
+                    ItemStackUtils.spawnItemStack(world, pos.getX(), pos.getY(), pos.getZ(), stack);
                 }
             }
-
 
             graveEntity.delayDecayTimer(colony.getResearchManager().getResearchEffects().getEffectStrength(GRAVE_DECAY_BONUS));
 

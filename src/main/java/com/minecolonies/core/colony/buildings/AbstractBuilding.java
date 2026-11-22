@@ -842,7 +842,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
         compoundNBT.putInt(TAG_COLONY_ID, this.getColony().getID());
         compoundNBT.putInt(TAG_OTHER_LEVEL, this.getBuildingLevel());
         stack.setTag(compoundNBT);
-        if (InventoryUtils.addItemStackToItemHandler(new PlayerMainInvWrapper(player.getInventory()), stack))
+        if (InventoryUtils.insert(new PlayerMainInvWrapper(player.getInventory()), stack).isEmpty())
         {
             this.destroy();
             colony.getWorld().destroyBlock(this.getPosition(), false);

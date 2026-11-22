@@ -3,6 +3,7 @@ package com.minecolonies.core.blocks;
 import com.minecolonies.api.blocks.AbstractBlockMinecolonies;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.colony.Colony;
@@ -176,7 +177,7 @@ public class MinecoloniesCropBlock extends AbstractBlockMinecolonies<Minecolonie
                 {
                     for (final ItemStack dropStack : getDrops(state, serverLevel, pos, null))
                     {
-                        InventoryUtils.spawnItemStack(level, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, dropStack);
+                        ItemStackUtils.spawnItemStack(level, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, dropStack);
                     }
                     stack.hurtAndBreak(1, player, s -> {});
                 }

@@ -354,7 +354,7 @@ public class InventoryCitizen implements IItemHandlerModifiable, Nameable
         if (equipmentSlot.isArmor())
         {
             final ItemStack armorStack = armorInventory.get(equipmentSlot.getIndex());
-            if (InventoryUtils.addItemStackToItemHandler(this, armorStack))
+            if (InventoryUtils.insert(this, armorStack).isEmpty())
             {
                 markDirty();
                 armorInventory.set(equipmentSlot.getIndex(), ItemStack.EMPTY);

@@ -89,7 +89,7 @@ public class EntityAIStudy extends AbstractEntityAISkill<JobStudent, BuildingLib
     protected void updateRenderMetaData()
     {
         String renderMeta = getState() == IDLE ? "" : RENDER_META_WORKING;
-        if (InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(), itemStack -> itemStack.getItem() == Items.BOOK || itemStack.getItem() == Items.PAPER))
+        if (InventoryUtils.hasItem(worker.getInventoryCitizen(), itemStack -> itemStack.getItem() == Items.BOOK || itemStack.getItem() == Items.PAPER))
         {
             renderMeta += RENDER_META_BOOK;
         }

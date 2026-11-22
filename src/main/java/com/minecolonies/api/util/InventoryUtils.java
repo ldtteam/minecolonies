@@ -80,6 +80,28 @@ public class InventoryUtils
     }
 
     /**
+     * Get the slot in an inventory for a target item/block/predicate.
+     * @param itemHandler the inventory.
+     * @param targetItem what to check for.
+     * @return the slot.
+     */
+    public static List<Integer> getAllMatchingSlot(@NotNull final IItemHandler itemHandler, @NotNull final Item targetItem) { return getAllMatchingSlot(itemHandler,stack -> !stack.isEmpty() && stack.getItem() == targetItem); }
+    public static List<Integer> getAllMatchingSlot(@NotNull final IItemHandler itemHandler, @NotNull final Block block) { return getAllMatchingSlot(itemHandler, Item.byBlock(block)); }
+    public static List<Integer> getAllMatchingSlot(@NotNull final IItemHandler itemHandler, @NotNull final Predicate<ItemStack> predicate)
+    {
+        final List<Integer> matchingSlots = new ArrayList<>();
+        for (int slot = 0; slot < itemHandler.getSlots(); slot++)
+        {
+            if (predicate.test(itemHandler.getStackInSlot(slot)))
+            {
+                return matchingSlots;
+            }
+        }
+
+        return matchingSlots;
+    }
+
+    /**
      * Returns the number of matching items in an {@link IItemHandler}.
      *
      * @param itemHandler {@link IItemHandler} to scan.
@@ -236,7 +258,11 @@ public class InventoryUtils
             final ItemStack stackInSlot = handler.getStackInSlot(slot);
             if (stackPredicate.test(stackInSlot))
             {
-                final ItemStack extractedStack = handler.extractItem(slot, qty, false);
+                final ItemStack extractedStack = handler.extractItem(slot, qty - progressQty, false);
+                if (extractedStack.isEmpty())
+                {
+                    continue;
+                }
                 progressQty += extractedStack.getCount();
                 extractedStacks.add(extractedStack);
                 if (progressQty >= qty)
@@ -302,7 +328,7 @@ public class InventoryUtils
                 final BlockEntity entity = level.getBlockEntity(pos);
                 if (entity instanceof TileEntityRack tileEntityRack)
                 {
-                    tempQty = transfer(handler, tileEntityRack.getInventory(), stack1 -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack1, stack, true, true), tempQty);
+                    tempQty -= transfer(handler, tileEntityRack.getInventory(), stack1 -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack1, stack, true, true), tempQty);
                     if (tempQty <= 0)
                     {
                         return 0;
@@ -320,7 +346,7 @@ public class InventoryUtils
      * Attempt to transfer as much item as possible from origin to target inventory
      *
      * @param origin the handler.
-     * @param target   the world.
+     * @param target the target.
      * @return true if all item transfered, false if some item remain in origin
      */
     public static boolean transferAllItemHandler(final IItemHandler origin, final IItemHandler target)
@@ -385,12 +411,12 @@ public class InventoryUtils
             {
                 // Found food
                 final FoodProperties itemFood = stack.getItem().getFoodProperties(stack, null);
-                if (itemFood == null)
+                if (itemFood == null || itemFood.getNutrition() <= 0)
                 {
                     continue;
                 }
 
-                int amount = (int) Math.round(Math.ceil((requiredSaturation - foundSaturation) / (float) itemFood.getNutrition()));
+                int amount = (int) Math.ceil((requiredSaturation - foundSaturation) / (float) itemFood.getNutrition());
 
                 final ItemStack extractedFood;
                 if (amount > stack.getCount())
@@ -423,6 +449,10 @@ public class InventoryUtils
                             final ItemStack swappedItem = target.extractItem(slot, target.getStackInSlot(slot).getCount(), false);
                             insert(source, swappedItem);
                             insert(target, leftOver);
+                        }
+                        else
+                        {
+                            insert(source, leftOver);
                         }
                     }
                 }
@@ -527,5 +557,23 @@ public class InventoryUtils
         {
             ((ServerPlayer) player).server.getPlayerList().sendAllPlayerInfo((ServerPlayer) player);
         }
+    }
+
+    /**
+     * Get number of empty slots in inventory.
+     * @param handler the inventory.
+     * @return number of empty slots.
+     */
+    public static int getEmptySlots(final IItemHandler handler)
+    {
+        int emptySlots = 0;
+        for (int slot = 0; slot < handler.getSlots(); slot++)
+        {
+            if (ItemStackUtils.isEmpty(handler.getStackInSlot(slot)))
+            {
+                emptySlots++;
+            }
+        }
+        return emptySlots;
     }
 }

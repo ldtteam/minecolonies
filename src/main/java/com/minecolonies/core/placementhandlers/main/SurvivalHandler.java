@@ -183,7 +183,7 @@ public class SurvivalHandler implements ISurvivalBlueprintHandler
                 {
                     Log.getLogger().error("Error during EntityPlaceEvent", e);
                 }
-                InventoryUtils.reduceStackInItemHandler(new InvWrapper(player.getInventory()), inventoryStack, 1);
+                InventoryUtils.extract(new InvWrapper(player.getInventory()), inventoryStack, 1);
 
                 if (tempColony == null)
                 {

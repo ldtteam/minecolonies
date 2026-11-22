@@ -113,7 +113,7 @@ public class TileEntityWareHouse extends AbstractTileEntityWareHouse
                     final BlockEntity entity = getLevel().getBlockEntity(pos);
                     if (entity instanceof final TileEntityRack rack && !rack.isEmpty() && rack.getItemCount(itemStackSelectionPredicate) > 0)
                     {
-                        for (final ItemStack stack : (InventoryUtils.filterItemHandler(rack.getInventory(), itemStackSelectionPredicate)))
+                        for (final ItemStack stack : InventoryUtils.filterItemHandler(rack.getInventory(), itemStackSelectionPredicate))
                         {
                             found.add(new Tuple<>(stack, pos));
                         }
