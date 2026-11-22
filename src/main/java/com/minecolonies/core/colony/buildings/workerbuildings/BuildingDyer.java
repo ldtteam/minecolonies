@@ -1,31 +1,27 @@
 package com.minecolonies.core.colony.buildings.workerbuildings;
 
-import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
-import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
-import com.minecolonies.api.crafting.*;
+import com.minecolonies.api.crafting.GenericRecipe;
+import com.minecolonies.api.crafting.IGenericRecipe;
+import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.util.CraftingUtils;
-import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.OptionalPredicate;
 import com.minecolonies.core.colony.buildings.AbstractBuilding;
 import com.minecolonies.core.colony.buildings.modules.AbstractCraftingBuildingModule;
 import net.minecraft.core.BlockPos;
-import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.Tags;
-import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT_MAX_BUILDING_LEVEL;
 import static com.minecolonies.api.util.constant.TagConstants.CRAFTING_DYER;
@@ -67,8 +63,6 @@ public class BuildingDyer extends AbstractBuilding
 
     public static class CraftingModule extends AbstractCraftingBuildingModule.Crafting
     {
-        private List<ItemStorage> woolItems;
-
         /**
          * Create a new module.
          *
@@ -141,37 +135,6 @@ public class BuildingDyer extends AbstractBuilding
         }
 
         @Override
-        public IRecipeStorage getFirstRecipe(Predicate<ItemStack> stackPredicate)
-        {
-            IRecipeStorage recipe = super.getFirstRecipe(stackPredicate);
-
-            if(recipe == null && stackPredicate.test(new ItemStack(Items.WHITE_WOOL)))
-            {
-                final HashMap<ItemStorage, Integer> inventoryCounts = new HashMap<>();
-
-                if (!building.getColony().getServerBuildingManager().hasWarehouse())
-                {
-                    return null;
-                }
-
-                for(ItemStorage color : getWoolItems())
-                {
-                    for(IBuilding wareHouse: building.getColony().getServerBuildingManager().getWareHouses())
-                    {
-                        final int colorCount = InventoryUtils.getCountFromBuilding(wareHouse, color);
-                        inventoryCounts.put(color, inventoryCounts.getOrDefault(color, 0) + colorCount);
-                    }
-                }
-
-                ItemStorage woolToUse = inventoryCounts.entrySet().stream().min(java.util.Map.Entry.comparingByValue(Comparator.reverseOrder())).get().getKey();
-
-                final IToken<?> token = getTokenForWool(woolToUse);
-                recipe = IColonyManager.getInstance().getRecipeManager().getRecipe(token);
-            }
-            return recipe;
-        }
-
-        @Override
         public boolean holdsRecipe(final IToken<?> token)
         {
             if (super.holdsRecipe(token))
@@ -186,64 +149,6 @@ public class BuildingDyer extends AbstractBuilding
             }
 
             return recipe.getPrimaryOutput().getItem() == Items.WHITE_WOOL;
-        }
-
-        @Override
-        public IRecipeStorage getFirstFulfillableRecipe(final Predicate<ItemStack> stackPredicate, final int count, final boolean considerReservation)
-        {
-            IRecipeStorage recipe = super.getFirstFulfillableRecipe(stackPredicate, count, considerReservation);
-            if (recipe == null && stackPredicate.test(new ItemStack(Items.WHITE_WOOL)))
-            {
-                final Set<IItemHandler> handlers = new HashSet<>();
-                for (final ICitizenData workerEntity : building.getAllAssignedCitizen())
-                {
-                    handlers.add(workerEntity.getInventory());
-                }
-
-                for (ItemStorage color : getWoolItems())
-                {
-                    IToken<?> token = getTokenForWool(color);
-
-                    final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
-
-                    IRecipeStorage toTest = storage.getRecipeType() instanceof MultiOutputRecipe ? storage.getClassicForMultiOutput(stackPredicate) : storage;
-                    if (toTest.canFullFillRecipe(count, considerReservation ? reservedStacks() : Collections.emptyMap(), new ArrayList<>(handlers), building))
-                    {
-                        return toTest;
-                    }
-                }
-            }
-            return recipe;
-        }
-
-        /**
-         * Builds and returns a list of all colored wool types
-         * @return the list
-         */
-        private List<ItemStorage> getWoolItems()
-        {
-            if (woolItems == null)
-            {
-                woolItems = ForgeRegistries.ITEMS.tags().getTag(ItemTags.WOOL).stream()
-                  .filter(item -> !item.equals(Items.WHITE_WOOL))
-                  .map(i -> new ItemStorage(new ItemStack(i))).collect(Collectors.toList());
-            }
-            return woolItems;
-        }
-
-        /**
-         * Creates the recipe to undye the given wool and returns its token
-         * @param wool the wool to undye
-         * @return the recipe token
-         */
-        private IToken<?> getTokenForWool(ItemStorage wool)
-        {
-            final IRecipeStorage tempRecipe = RecipeStorage.builder()
-                    .withInputs(ImmutableList.of(wool, new ItemStorage(new ItemStack(Items.WHITE_DYE))))
-                    .withPrimaryOutput(new ItemStack(Items.WHITE_WOOL))
-                    .build();
-
-            return IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(tempRecipe);
         }
     }
 
