@@ -2,6 +2,7 @@ package com.minecolonies.core.client.render.mobs.egyptians;
 
 import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMonster;
 import com.minecolonies.core.client.model.raiders.ModelArcherMummy;
+import com.minecolonies.core.client.render.mobs.RenderMinecoloniesMonster;
 import com.minecolonies.core.event.ClientRegistryHandler;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
@@ -9,7 +10,7 @@ import net.minecraft.resources.ResourceLocation;
 /**
  * Renderer used for archer mummy.
  */
-public class RendererArcherMummy extends AbstractRendererEgyptian<AbstractEntityMinecoloniesMonster, ModelArcherMummy>
+public class RendererArcherMummy extends RenderMinecoloniesMonster<AbstractEntityMinecoloniesMonster, ModelArcherMummy>
 {
     /**
      * Texture of the entity.
@@ -23,7 +24,7 @@ public class RendererArcherMummy extends AbstractRendererEgyptian<AbstractEntity
      */
     public RendererArcherMummy(final EntityRendererProvider.Context context)
     {
-        super(context, new ModelArcherMummy(context.bakeLayer(ClientRegistryHandler.ARCHER_MUMMY)), 0.5F);
+        super(context, new ModelArcherMummy(context.bakeLayer(ClientRegistryHandler.ARCHER_MUMMY)), 0.5F, false);
     }
 
     @Override

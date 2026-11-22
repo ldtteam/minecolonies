@@ -82,6 +82,7 @@ public final class RaiderMobUtils
         final double baseHealth = getHealthBasedOnRaidLevel(raidLevel) * difficultyModifier;
 
         mob.initStatsFor(baseHealth, difficultyModifier, attackDamage);
+        mob.initHeight();
     }
 
     /**

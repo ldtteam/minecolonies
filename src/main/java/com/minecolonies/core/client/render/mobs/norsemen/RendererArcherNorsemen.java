@@ -2,6 +2,7 @@ package com.minecolonies.core.client.render.mobs.norsemen;
 
 import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMonster;
 import com.minecolonies.core.client.model.raiders.ModelArcherNorsemen;
+import com.minecolonies.core.client.render.mobs.RenderMinecoloniesMonster;
 import com.minecolonies.core.event.ClientRegistryHandler;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
@@ -10,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Renderer used for archer amazons.
  */
-public class RendererArcherNorsemen extends AbstractRendererNorsemen<AbstractEntityMinecoloniesMonster, ModelArcherNorsemen>
+public class RendererArcherNorsemen extends RenderMinecoloniesMonster<AbstractEntityMinecoloniesMonster, ModelArcherNorsemen>
 {
     /**
      * Texture of the entity.
@@ -25,7 +26,7 @@ public class RendererArcherNorsemen extends AbstractRendererNorsemen<AbstractEnt
      */
     public RendererArcherNorsemen(final EntityRendererProvider.Context context)
     {
-        super(context, new ModelArcherNorsemen(context.bakeLayer(ClientRegistryHandler.NORSEMEN_ARCHER)), 0.5F);
+        super(context, new ModelArcherNorsemen(context.bakeLayer(ClientRegistryHandler.NORSEMEN_ARCHER)), 0.5F, false);
     }
 
     @NotNull

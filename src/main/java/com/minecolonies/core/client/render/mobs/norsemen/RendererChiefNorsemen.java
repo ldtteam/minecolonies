@@ -2,6 +2,7 @@ package com.minecolonies.core.client.render.mobs.norsemen;
 
 import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMonster;
 import com.minecolonies.core.client.model.raiders.ModelChiefNorsemen;
+import com.minecolonies.core.client.render.mobs.RenderMinecoloniesMonster;
 import com.minecolonies.core.event.ClientRegistryHandler;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
@@ -10,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Renderer used for Chief norsemen.
  */
-public class RendererChiefNorsemen extends AbstractRendererNorsemen<AbstractEntityMinecoloniesMonster, ModelChiefNorsemen>
+public class RendererChiefNorsemen extends RenderMinecoloniesMonster<AbstractEntityMinecoloniesMonster, ModelChiefNorsemen>
 {
     /**
      * Texture of the entity.
@@ -24,7 +25,7 @@ public class RendererChiefNorsemen extends AbstractRendererNorsemen<AbstractEnti
      */
     public RendererChiefNorsemen(final EntityRendererProvider.Context context)
     {
-        super(context, new ModelChiefNorsemen(context.bakeLayer(ClientRegistryHandler.NORSEMEN_CHIEF)), 0.5F);
+        super(context, new ModelChiefNorsemen(context.bakeLayer(ClientRegistryHandler.NORSEMEN_CHIEF)), 0.5F, false);
     }
 
     @NotNull
