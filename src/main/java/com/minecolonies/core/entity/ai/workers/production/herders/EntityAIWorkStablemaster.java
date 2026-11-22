@@ -435,17 +435,16 @@ public class EntityAIWorkStablemaster extends AbstractEntityAIHerder<JobStablema
         boolean hasNeededItem = false;
         boolean didWork = false;
 
-        if (InventoryUtils.getItemCountInProvider(worker, i -> i.is(neededItem)) <= 0)
+        if (!InventoryUtils.hasItem(worker.getInventoryCitizen(), i -> i.is(neededItem)))
         {
             if (building.hasEnoughElseCount( i -> i.is(neededItem), 1) > 0)
             {
-                walkToBuilding();
-
-                int buildingSlot = InventoryUtils.findFirstSlotInProviderNotEmptyWith(building, itemStack -> itemStack.is(neededItem));
-                if (buildingSlot >= 0)
+                if (!walkToBuilding())
                 {
-                    this.takeItemStackFromProvider(building, buildingSlot);
+                    return false;
                 }
+                walkToBuilding();
+                building.transferFrom(worker.getInventoryCitizen(), stack -> stack.is(neededItem), 1);
             }
         }
         else
@@ -567,8 +566,8 @@ public class EntityAIWorkStablemaster extends AbstractEntityAIHerder<JobStablema
         {
             if (!horseToRetrieve.isAlive() 
                 || horseToRetrieve.isRemoved() 
-                || (horseToRetrieve instanceof CavalryHorseEntity cav && cav.hasCavalryRider()) 
-                || (horseToRetrieve instanceof CavalryHorseEntity cav && cav.hasReservation()))
+                || (horseToRetrieve instanceof CavalryHorseEntity cav1 && cav1.hasCavalryRider())
+                || (horseToRetrieve instanceof CavalryHorseEntity cav2 && cav2.hasReservation()))
             {
                 detachHorse(horseToRetrieve);
                 horseToRetrieve = null;
@@ -726,8 +725,6 @@ public class EntityAIWorkStablemaster extends AbstractEntityAIHerder<JobStablema
      * Finds all horses within 20 blocks of the given position, but
      * outside the stable.
      *
-     * @param level The world/level to search in
-     * @param center The center position
      * @return List of CavalryHorseEntity found within radius
      */
    public List<AbstractHorse> findNearbyUnstabledHorses()
@@ -748,8 +745,8 @@ public class EntityAIWorkStablemaster extends AbstractEntityAIHerder<JobStablema
                searchBox,
                horse -> !horse.isRemoved() &&
                    horse.isAlive() &&
-                   !(horse instanceof CavalryHorseEntity cav && cav.hasCavalryRider()) &&
-                   !(horse instanceof CavalryHorseEntity cav && cav.isInStable()) &&
+                   !(horse instanceof CavalryHorseEntity cav1 && cav1.hasCavalryRider()) &&
+                   !(horse instanceof CavalryHorseEntity cav2 && cav2.isInStable()) &&
                    !(horseToRetrieve instanceof CavalryHorseEntity cav && cav.hasReservation()) &&
                    horse.distanceToSqr(cx, cy, cz) <= r2);
    }

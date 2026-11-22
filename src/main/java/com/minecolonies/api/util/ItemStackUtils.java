@@ -1,5 +1,7 @@
 package com.minecolonies.api.util;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.minecolonies.api.advancements.AdvancementTriggers;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
@@ -971,7 +973,7 @@ public final class ItemStackUtils
             }
             else
             {
-                InventoryUtils.addItemStackToItemHandler(citizenData.getInventory(), itemUseReturn);
+                InventoryUtils.insert(citizenData.getInventory(), itemUseReturn);
             }
         }
 
@@ -1036,5 +1038,96 @@ public final class ItemStackUtils
         }
     }
 
+    /**
+     * Gets the first matching itemstack from a list
+     *
+     * @param stacks
+     * @param stackPredicate
+     * @return
+     */
+    public static ItemStack getFirstMatch(final List<ItemStack> stacks, Predicate<ItemStack> stackPredicate)
+    {
+        for (final ItemStack stack : stacks)
+        {
+            if (stackPredicate.test(stack))
+            {
+                return stack;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Unifies a list of stacks so that they are all packed to together to the max stack size.
+     *
+     * @param stacks The stacks to pack.
+     * @return The packed stacks
+     */
+    public static List<ItemStack> processItemStackListAndMerge(@NotNull final List<ItemStack> stacks)
+    {
+        return splitMergedCountedStacksIntoMaxContentStacks(getMergedCountedStacksFromList(stacks));
+    }
+
+    /**
+     * This method splits a map with an entry for each unique unified itemstack and its count into a list of itemstacks that represent the maps, taken the max stack size into
+     * account.
+     *
+     * @param mergedCountedStacks the map with the unique unified itemstacks and their counts.
+     * @return The list of itemstacks that represent the map, taken the max stack size into account.
+     */
+    public static List<ItemStack> splitMergedCountedStacksIntoMaxContentStacks(@NotNull final Map<ItemStack, Integer> mergedCountedStacks)
+    {
+        final List<ItemStack> list = Lists.newArrayList();
+        for (final Map.Entry<ItemStack, Integer> itemStackIntegerEntry : mergedCountedStacks.entrySet())
+        {
+            final int minimalFullStacks = itemStackIntegerEntry.getValue() / itemStackIntegerEntry.getKey().getMaxStackSize();
+            final int residualStackSize = itemStackIntegerEntry.getValue() % itemStackIntegerEntry.getKey().getMaxStackSize();
+
+            for (int i = 0; i < minimalFullStacks; i++)
+            {
+                final ItemStack tobeAdded = itemStackIntegerEntry.getKey().copy();
+                tobeAdded.setCount(tobeAdded.getMaxStackSize());
+
+                list.add(tobeAdded);
+            }
+
+            if (residualStackSize > 0)
+            {
+                final ItemStack tobeAdded = itemStackIntegerEntry.getKey().copy();
+                tobeAdded.setCount(residualStackSize);
+
+                list.add(tobeAdded);
+            }
+        }
+
+        return list;
+    }
+
+    /**
+     * This method calculates the amount of items in itemstacks are contained within a list.
+     *
+     * @param stacks The stacks to count.
+     * @return A map with a entry for each unique unified itemstack and its count in the list.
+     */
+    public static Map<ItemStack, Integer> getMergedCountedStacksFromList(@NotNull final List<ItemStack> stacks)
+    {
+        final Map<ItemStack, Integer> requiredCountForStacks = Maps.newHashMap();
+        stacks.forEach(targetStack -> {
+            final Optional<ItemStack>
+                alreadyContained = requiredCountForStacks.keySet().stream().filter(itemStack -> ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, targetStack)).findFirst();
+
+            if (alreadyContained.isPresent())
+            {
+                requiredCountForStacks.put(alreadyContained.get(), requiredCountForStacks.get(alreadyContained.get()) + targetStack.getCount());
+            }
+            else
+            {
+                requiredCountForStacks.put(targetStack, targetStack.getCount());
+            }
+        });
+
+        return requiredCountForStacks;
+    }
 }
 

@@ -4,10 +4,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.crafting.ItemStorage;
-import com.minecolonies.api.util.InventoryUtils;
-import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.Log;
-import com.minecolonies.api.util.MessageUtils;
+import com.minecolonies.api.util.*;
 import com.minecolonies.core.MineColonies;
 import com.minecolonies.core.network.messages.server.AbstractBuildingServerMessage;
 import net.minecraft.ChatFormatting;
@@ -104,7 +101,7 @@ public class TransferItemsRequestMessage extends AbstractBuildingServerMessage<I
         Map<ItemStorage, ItemStorage> previousContent = null;
         if (MineColonies.getConfig().getServer().debugInventories.get())
         {
-            previousContent = InventoryUtils.getAllItemsForProviders(building.getTileEntity(), new PlayerMainInvWrapper(player.getInventory()));
+            previousContent = InvDebugUtil.getAllItemsForProviders(building.getTileEntity(), new PlayerMainInvWrapper(player.getInventory()));
         }
 
         final int toMove;
@@ -140,7 +137,7 @@ public class TransferItemsRequestMessage extends AbstractBuildingServerMessage<I
        
         if (!isCreative && previousContent != null && MineColonies.getConfig().getServer().debugInventories.get())
         {
-            InventoryUtils.doStorageSetsMatch(previousContent, InventoryUtils.getAllItemsForProviders(building.getTileEntity(), new PlayerMainInvWrapper(player.getInventory())), true);
+            InvDebugUtil.doStorageSetsMatch(previousContent, InvDebugUtil.getAllItemsForProviders(building.getTileEntity(), new PlayerMainInvWrapper(player.getInventory())), true);
         }
     }
 }

@@ -284,7 +284,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
             return getState();
         }
 
-        final Object2IntMap<ItemStack> transferredItemMap = InventoryUtils.transferFoodUpToSaturation(worker, handler, building.getBuildingLevel() * SATURATION_TO_SERVE, canEatPredicate);
+        final Object2IntMap<ItemStack> transferredItemMap = InventoryUtils.transferFoodUpToSaturation(worker.getInventoryCitizen(), handler, building.getBuildingLevel() * SATURATION_TO_SERVE, canEatPredicate);
         int count = 0;
         for (int v : transferredItemMap.values()) count += v;
 

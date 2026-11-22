@@ -18,6 +18,7 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.wrapper.InvWrapper;
 
 import java.util.*;
@@ -253,29 +254,18 @@ public class LocalResearchTree implements ILocalResearchTree
                 final InvWrapper playerInv = new InvWrapper(player.getInventory());
                 for (final ItemStorage cost : costList)
                 {
-                    final int count = InventoryUtils.getItemCount(playerInv,
-                      stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, cost.getItemStack(), !cost.ignoreDamageValue(), !cost.ignoreNBT()));
+                    final int count = InventoryUtils.getItemCount(playerInv, stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, cost.getItemStack(), !cost.ignoreDamageValue(), !cost.ignoreNBT()));
                     if (count < cost.getAmount())
                     {
-                        MessageUtils.format("com.minecolonies.coremod.research.costnotavailable",
-                          MutableComponent.create(IGlobalResearchTree.getInstance().getResearch(research.getBranch(), research.getId()).getName())).sendTo(player);
+                        MessageUtils.format("com.minecolonies.coremod.research.costnotavailable", MutableComponent.create(IGlobalResearchTree.getInstance().getResearch(research.getBranch(), research.getId()).getName())).sendTo(player);
                         SoundUtils.playErrorSound(player, player.blockPosition());
                         return;
                     }
                 }
                 for (ItemStorage cost : costList)
                 {
-                    final List<Integer> slotsWithMaterial = InventoryUtils.dec(playerInv,
-                      stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, cost.getItemStack(), !cost.ignoreDamageValue(), !cost.ignoreNBT()));
-                    int amount = cost.getAmount();
-                    for (Integer slotNum : slotsWithMaterial)
-                    {
-                        amount = amount - playerInv.extractItem(slotNum, amount, false).getCount();
-                        if (amount <= 0)
-                        {
-                            break;
-                        }
-                    }
+                    // We already checked before if there are enough items available.
+                    InventoryUtils.extract(playerInv, stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, cost.getItemStack(), !cost.ignoreDamageValue(), !cost.ignoreNBT()), cost.getAmount());
                 }
             }
             MessageUtils.format("com.minecolonies.coremod.research.undo",

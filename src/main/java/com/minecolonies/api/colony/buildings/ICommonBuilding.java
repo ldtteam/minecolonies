@@ -2,6 +2,9 @@ package com.minecolonies.api.colony.buildings;
 
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.inventory.InventoryCitizen;
+import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.core.tileentities.TileEntityRack;
 import net.minecraft.core.BlockPos;
@@ -9,6 +12,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -112,9 +116,9 @@ public interface ICommonBuilding
             if (WorldUtil.isBlockLoaded(world, pos))
             {
                 final BlockEntity entity = world.getBlockEntity(pos);
-                if (entity instanceof TileEntityRack)
+                if (entity instanceof TileEntityRack rackEntity)
                 {
-                    totalCount += ((TileEntityRack) entity).getFreeSlots();
+                    totalCount += rackEntity.getFreeSlots();
                 }
             }
         }
@@ -155,9 +159,9 @@ public interface ICommonBuilding
             if (WorldUtil.isBlockLoaded(world, pos))
             {
                 final BlockEntity entity = world.getBlockEntity(pos);
-                if (entity instanceof TileEntityRack)
+                if (entity instanceof TileEntityRack rackEntity)
                 {
-                    totalCount += ((TileEntityRack) entity).getCount(stack);
+                    totalCount += rackEntity.getCount(stack);
                 }
             }
         }
@@ -168,8 +172,19 @@ public interface ICommonBuilding
     /**
      * Count the number of items a building has.
      *
-     * @param predicate the predicate to match.
+     * @param stack the stack to match.
      * @return Amount of occurrences of stacks that match the given stack.
+     */
+    default int getItemCount(@NotNull final ItemStack stack)
+    {
+        return getItemCount(st -> ItemStackUtils.compareItemStacksIgnoreStackSize(st, stack));
+    }
+
+    /**
+     * Count the number of items a building has.
+     *
+     * @param predicate the predicate to match.
+     * @return Amount of occurrences of stacks that match the given predicate .
      */
     default int getItemCount(@NotNull final Predicate<ItemStack> predicate)
     {
@@ -181,9 +196,9 @@ public interface ICommonBuilding
             if (WorldUtil.isBlockLoaded(world, pos))
             {
                 final BlockEntity entity = world.getBlockEntity(pos);
-                if (entity instanceof TileEntityRack)
+                if (entity instanceof TileEntityRack rackEntity)
                 {
-                    totalCount += ((TileEntityRack) entity).getItemCount(predicate);
+                    totalCount += rackEntity.getItemCount(predicate);
                 }
             }
         }
@@ -209,9 +224,9 @@ public interface ICommonBuilding
             if (WorldUtil.isBlockLoaded(world, pos))
             {
                 final BlockEntity entity = world.getBlockEntity(pos);
-                if (entity instanceof TileEntityRack)
+                if (entity instanceof TileEntityRack rackEntity)
                 {
-                    for (final Map.Entry<ItemStorage, Integer> entry : ((TileEntityRack) entity).getAllContent().entrySet())
+                    for (final Map.Entry<ItemStorage, Integer> entry : rackEntity.getAllContent().entrySet())
                     {
                         if (predicate.test(entry.getKey().getItemStack()))
                         {
@@ -247,9 +262,9 @@ public interface ICommonBuilding
             if (WorldUtil.isBlockLoaded(world, pos))
             {
                 final BlockEntity entity = world.getBlockEntity(pos);
-                if (entity instanceof TileEntityRack)
+                if (entity instanceof TileEntityRack rackEntity)
                 {
-                    totalCount += ((TileEntityRack) entity).getCount(stack);
+                    totalCount += rackEntity.getCount(stack);
                 }
 
                 if (totalCount >= count)
@@ -278,9 +293,9 @@ public interface ICommonBuilding
             if (WorldUtil.isBlockLoaded(world, pos))
             {
                 final BlockEntity entity = world.getBlockEntity(pos);
-                if (entity instanceof TileEntityRack)
+                if (entity instanceof TileEntityRack rackEntity)
                 {
-                    totalCount += ((TileEntityRack) entity).getItemCount(stack);
+                    totalCount += rackEntity.getItemCount(stack);
                 }
 
                 if (totalCount >= count)
@@ -311,5 +326,37 @@ public interface ICommonBuilding
     default boolean hasItem(@NotNull final Item item)
     {
         return hasEnoughElseCount(stack -> !stack.isEmpty() && stack.getItem() == item, 1) >= 1;
+    }
+
+    /**
+     * Transfer from building into itemhandler.
+     * @param itemHandler the inventory to transfer to.
+     * @param stack the stack to match to.
+     * @param count the count to transfer.
+     * @return the transfered count.
+     */
+    default int transferFrom(@NotNull IItemHandler itemHandler, Predicate<ItemStack> stack, int count)
+    {
+        final Level world = this.getColony().getWorld();
+        int transferedQty = 0;
+        for (final BlockPos pos : this.getContainers())
+        {
+            if (WorldUtil.isBlockLoaded(world, pos))
+            {
+                final BlockEntity entity = world.getBlockEntity(pos);
+                if (entity instanceof TileEntityRack rackEntity)
+                {
+                    if (rackEntity.hasItemStack(stack))
+                    {
+                        transferedQty += InventoryUtils.transfer(rackEntity.getInventory(), itemHandler, stack, count - transferedQty);
+                    }
+                }
+            }
+            if (transferedQty >= count)
+            {
+                return transferedQty;
+            }
+        }
+        return transferedQty;
     }
 }

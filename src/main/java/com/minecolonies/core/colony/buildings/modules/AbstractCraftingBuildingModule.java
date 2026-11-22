@@ -677,7 +677,7 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
                 continue;
             }
             final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
-            if (storage != null && (stackPredicate.test(storage.getPrimaryOutput()) || InventoryUtils.getFirstMatch(storage.getAlternateOutputs(), stackPredicate) != null))
+            if (storage != null && (stackPredicate.test(storage.getPrimaryOutput()) || ItemStackUtils.getFirstMatch(storage.getAlternateOutputs(), stackPredicate) != null))
             {
                 if (storage.getRecipeType() instanceof MultiOutputRecipe && storage.getClassicForMultiOutput(stackPredicate) == null)
                 {
