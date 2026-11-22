@@ -9,6 +9,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.managers.interfaces.IReproductionManager;
 import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.MathUtils;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.core.colony.Colony;
 import com.minecolonies.core.colony.buildings.modules.LivingBuildingModule;
@@ -212,6 +213,10 @@ public class ReproductionManager implements IReproductionManager
             {
                 MessageUtils.format(MESSAGE_NEW_CHILD_BORN, newCitizen.getName(), colony.getName()).sendTo(colony).forManagers();
             }
+
+            double parentsAvg = (firstParent.getHeightModifier() + secondParent.getHeightModifier()) / 2.0;
+            double mean = (parentsAvg + 1.0) / 2.0;
+            newCitizen.setHeightModifier(mean + 0.047 * MathUtils.RANDOM.nextGaussian());
 
             colony.getEventDescriptionManager().addEventDescription(new CitizenBornEvent(newHome.getPosition(), newCitizen.getName()));
             colony.getStatisticsManager().increment(BIRTH, colony.getDay());

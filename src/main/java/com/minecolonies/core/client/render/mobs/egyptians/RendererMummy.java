@@ -2,6 +2,7 @@ package com.minecolonies.core.client.render.mobs.egyptians;
 
 import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMonster;
 import com.minecolonies.core.client.model.raiders.ModelMummy;
+import com.minecolonies.core.client.render.mobs.RenderMinecoloniesMonster;
 import com.minecolonies.core.event.ClientRegistryHandler;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
@@ -9,7 +10,7 @@ import net.minecraft.resources.ResourceLocation;
 /**
  * Renderer used for mummies.
  */
-public class RendererMummy extends AbstractRendererEgyptian<AbstractEntityMinecoloniesMonster, ModelMummy>
+public class RendererMummy extends RenderMinecoloniesMonster<AbstractEntityMinecoloniesMonster, ModelMummy>
 {
     /**
      * Texture of the entity.
@@ -23,7 +24,7 @@ public class RendererMummy extends AbstractRendererEgyptian<AbstractEntityMineco
      */
     public RendererMummy(final EntityRendererProvider.Context context)
     {
-        super(context, new ModelMummy(context.bakeLayer(ClientRegistryHandler.MUMMY)), 0.5F);
+        super(context, new ModelMummy(context.bakeLayer(ClientRegistryHandler.MUMMY)), 0.5F, false);
     }
 
     @Override

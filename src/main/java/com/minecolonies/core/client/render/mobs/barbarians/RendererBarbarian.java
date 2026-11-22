@@ -1,6 +1,7 @@
 package com.minecolonies.core.client.render.mobs.barbarians;
 
 import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMonster;
+import com.minecolonies.core.client.render.mobs.RenderMinecoloniesMonster;
 import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.model.HumanoidModel;
@@ -9,7 +10,7 @@ import net.minecraft.resources.ResourceLocation;
 /**
  * Renderer used for Barbarians And Archer Barbarians.
  */
-public class RendererBarbarian extends AbstractRendererBarbarian<AbstractEntityMinecoloniesMonster, HumanoidModel<AbstractEntityMinecoloniesMonster>>
+public class RendererBarbarian extends RenderMinecoloniesMonster<AbstractEntityMinecoloniesMonster, HumanoidModel<AbstractEntityMinecoloniesMonster>>
 {
     /**
      * Texture of the entity.

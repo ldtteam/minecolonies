@@ -185,6 +185,11 @@ public class CitizenDataView implements ICitizenDataView
     private boolean isSick;
 
     /**
+     * Height dif compared to normal (1 is normal).
+     */
+    private double heightModifier;
+
+    /**
      * Set View id.
      *
      * @param id the id to set.
@@ -434,6 +439,7 @@ public class CitizenDataView implements ICitizenDataView
             textureUUID = buf.readUUID();
         }
         this.isSick = buf.readBoolean();
+        this.heightModifier = buf.readDouble();
     }
 
     @Override
@@ -670,5 +676,11 @@ public class CitizenDataView implements ICitizenDataView
     public boolean isSick()
     {
         return this.isSick;
+    }
+
+    @Override
+    public double getHeightModifier()
+    {
+        return heightModifier;
     }
 }
