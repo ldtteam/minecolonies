@@ -242,16 +242,6 @@ public class WindowHireWorker extends AbstractWindowSkeleton
         final int row = citizenList.getListElementIndexByPane(button);
         @NotNull final ICitizenDataView citizen = citizens.get(row);
 
-        // Fire citizen if they already have a job
-        if (citizen.getWorkBuilding() != null && selectedModule instanceof WorkerBuildingModuleView)
-        {
-            IBuildingView oldJob = colony.getClientBuildingManager().getBuilding(citizen.getWorkBuilding());
-            oldJob.getModuleViewMatching(IAssignmentModuleView.class,
-                    m -> m.getJobEntry() == citizen.getJobView().getEntry())
-                .removeCitizen(citizen);
-        }
-
-
         selectedModule.addCitizen(citizen);
         onOpened();
     }

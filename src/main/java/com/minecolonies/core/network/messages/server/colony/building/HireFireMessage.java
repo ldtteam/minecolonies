@@ -4,6 +4,7 @@ import com.ldtteam.common.network.PlayMessageType;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.buildings.modules.IAssignsCitizen;
 import com.minecolonies.api.colony.buildings.modules.IAssignsJob;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.util.constant.Constants;
@@ -80,7 +81,7 @@ public class HireFireMessage extends AbstractBuildingServerMessage<IBuilding>
     @Override
     protected void onExecute(final IPayloadContext ctxIn, final ServerPlayer player, final IColony colony, final IBuilding building)
     {
-        if (building.getModule(moduleId) instanceof final IAssignsJob module)
+        if (building.getModule(moduleId) instanceof final IAssignsCitizen module)
         {
             final ICitizenData citizen = colony.getCitizenManager().getCivilian(citizenID);
             citizen.setPaused(false);
