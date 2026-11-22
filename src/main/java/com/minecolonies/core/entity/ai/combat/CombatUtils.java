@@ -106,9 +106,10 @@ public class CombatUtils
     {
         IBuilding workBuilding = user.getCitizenData().getWorkBuilding();
 
-        if (!(workBuilding instanceof IGuardBuilding)) return;
-
-        IGuardBuilding guardBuilding = (IGuardBuilding) workBuilding;
+        if (!(workBuilding instanceof IGuardBuilding guardBuilding)) 
+        {
+            return;
+        }
 
         for (final ICitizenData citizen : guardBuilding.getAllAssignedMilitaryUnits())
         {

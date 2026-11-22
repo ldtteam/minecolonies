@@ -77,7 +77,10 @@ public class GuardBuildingModule extends WorkAtHomeBuildingModule implements IBu
     @Override
     public boolean isFull()
     {
-        if (building instanceof IGuardBuilding) return ((IGuardBuilding)building).getAllAssignedMilitaryUnits().size() >= getModuleMax();
+        if (building instanceof IGuardBuilding) 
+        {
+            return ((IGuardBuilding)building).getAllAssignedMilitaryUnits().size() >= getModuleMax();
+        }
 
         return building.getAllAssignedCitizen().size() >= getModuleMax();
     }
@@ -96,7 +99,7 @@ public class GuardBuildingModule extends WorkAtHomeBuildingModule implements IBu
 
         // If we have no active worker, attempt to grab one from the appropriate trainer
         if (building.getSetting(HIRE_TRAINEE).getValue() && !isFull() &&
-                BuildingUtils.canAutoHire(building, getHiringMode(), getJobEntry()))
+            BuildingUtils.canAutoHire(building, getHiringMode(), getJobEntry()))
         {
             ICitizenData trainingCitizen = null;
             int maxSkill = 0;
@@ -107,16 +110,18 @@ public class GuardBuildingModule extends WorkAtHomeBuildingModule implements IBu
                 {
                     continue;
                 }
-                if (
-                    (
-                        getJobEntry().equals(ModJobs.archer.get()) && trainee.getJob().getJobRegistryEntry().equals(ModJobs.archerInTraining.get())
-                        || getJobEntry().equals(ModJobs.marksman.get()) && trainee.getJob().getJobRegistryEntry().equals(ModJobs.archerInTraining.get())
-                        || getJobEntry().equals(ModJobs.knight.get()) && trainee.getJob().getJobRegistryEntry().equals(ModJobs.knightInTraining.get())
-                        || getJobEntry().equals(ModJobs.cavalry.get()) && trainee.getJob().getJobRegistryEntry().equals(ModJobs.knightInTraining.get())
-                        || getJobEntry().equals(ModJobs.huscarl.get()) && trainee.getJob().getJobRegistryEntry().equals(ModJobs.knightInTraining.get())
-                    )
-                    && trainee.getCitizenSkillHandler().getLevel(getPrimarySkill()) > maxSkill
-                    )
+                
+                if ((getJobEntry().equals(ModJobs.archer.get()) &&
+                    trainee.getJob().getJobRegistryEntry().equals(ModJobs.archerInTraining.get()) ||
+                    getJobEntry().equals(ModJobs.marksman.get()) &&
+                        trainee.getJob().getJobRegistryEntry().equals(ModJobs.archerInTraining.get()) ||
+                    getJobEntry().equals(ModJobs.knight.get()) &&
+                        trainee.getJob().getJobRegistryEntry().equals(ModJobs.knightInTraining.get()) ||
+                    getJobEntry().equals(ModJobs.cavalry.get()) &&
+                        trainee.getJob().getJobRegistryEntry().equals(ModJobs.knightInTraining.get()) ||
+                    getJobEntry().equals(ModJobs.huscarl.get()) &&
+                        trainee.getJob().getJobRegistryEntry().equals(ModJobs.knightInTraining.get())) &&
+                    trainee.getCitizenSkillHandler().getLevel(getPrimarySkill()) > maxSkill)
                 {
                     maxSkill = trainee.getCitizenSkillHandler().getLevel(getPrimarySkill());
                     trainingCitizen = trainee;

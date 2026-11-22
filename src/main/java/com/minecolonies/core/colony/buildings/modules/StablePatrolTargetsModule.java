@@ -25,8 +25,7 @@ import java.util.Set;
 /**
  * Stores the ordered list of buildings selected as automatic cavalry patrol targets.
  */
-public class StablePatrolTargetsModule extends AbstractBuildingModule
-    implements IPersistentModule, IBuildingEventsModule, ITickingModule
+public class StablePatrolTargetsModule extends AbstractBuildingModule implements IPersistentModule, IBuildingEventsModule, ITickingModule
 {
     /**
      * NBT tag containing the selected patrol targets.
