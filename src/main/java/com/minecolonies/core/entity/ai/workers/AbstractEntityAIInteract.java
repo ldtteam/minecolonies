@@ -205,11 +205,11 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob<?, J>, B ex
             {
                 if (item.getItem() instanceof IDoItem)
                 {
-                    InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(getCorrectDOItem(item, curBlockState, false), worker.getInventoryCitizen());
+                    InventoryUtils.insert(worker.getInventoryCitizen(), getCorrectDOItem(item, curBlockState, false));
                 }
                 else
                 {
-                    InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(item, worker.getInventoryCitizen());
+                    InventoryUtils.insert(worker.getInventoryCitizen(), item);
                 }
             }
             onBlockDropReception(localItems);

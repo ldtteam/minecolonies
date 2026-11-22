@@ -180,7 +180,7 @@ public class EntityAIWorkPupil extends AbstractEntityAIInteract<JobPupil, Buildi
         {
             int priorIntLevel = worker.getCitizenData().getCitizenSkillHandler().getLevel(Skill.Intelligence);
 
-            InventoryUtils.reduceStackInItemHandler(worker.getInventoryCitizen(), new ItemStack(Items.PAPER), 1);
+            InventoryUtils.extract(worker.getInventoryCitizen(), new ItemStack(Items.PAPER), 1);
             StatsUtil.trackStatByName(building, ITEM_USED, new ItemStack(Items.PAPER).getHoverName(), 1);
 
             final double bonus = 50.0 * (1 + worker.getCitizenColonyHandler().getColonyOrRegister().getResearchManager().getResearchEffects().getEffectStrength(TEACHING));

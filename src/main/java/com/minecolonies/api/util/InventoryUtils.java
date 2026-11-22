@@ -1,6 +1,8 @@
 package com.minecolonies.api.util;
 
 import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.inventory.InventoryCitizen;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.tileentities.TileEntityRack;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
@@ -18,6 +20,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.items.IItemHandler;
 
+import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -304,43 +307,63 @@ public class InventoryUtils
         return transferedQty;
     }
 
+    /**
+     * Transfer some itemStacks from an origin inventory slot to a destination inventory.
+     * @param origin the origin inventory.
+     * @param destination the destination.
+     * @param slot slot to target.
+     * @return the actually transferred qty
+     */
+    public static boolean transferFromSlot(final IItemHandler origin, final @NotNull IItemHandler destination, final int slot) { return transferFromSlot(origin, destination, slot, Constants.STACKSIZE); }
+    public static boolean transferFromSlot(final IItemHandler origin, final @NotNull IItemHandler destination, final int slot, final int qty)
+    {
+        final ItemStack extracted = origin.extractItem(slot, qty, false);
+        final boolean success = extracted.getCount() > 0;
+        final ItemStack leftOver = insert(destination, extracted);
+        if (!ItemStackUtils.isEmpty(leftOver))
+        {
+            origin.insertItem(slot, leftOver, false);
+        }
+        return success;
+    }
 
     /**
-     * Method to transfer an ItemStacks to a Building.
-     *
-     * @param building The {@link IBuilding} that works as Source.
-     * @param stack    the ItemStack.
-     * @param qty      the quantity
-     * @return the remainder quantity that was not transferred.
+     * Transfer some itemStacks from an origin inventory to a destination inventory slot.
+     * @param origin the origin inventory.
+     * @param destination the destination.
+     * @param predicate stack to transfer.
+     * @param slot slot to target.
+     * @return the actually transferred qty
      */
-    public static int transferItemStackFromItemHandlerToBuilding(
-        final IItemHandler handler,
-        final IBuilding building,
-        final ItemStack stack,
-        final int qty)
+    public static void transferToSlot(final IItemHandler origin, final @NotNull IItemHandler destination, final Predicate<ItemStack> predicate, final int qty, final int slot)
     {
-        int tempQty = qty;
-        final Level level = building.getColony().getWorld();
-        for (final BlockPos pos : building.getContainers())
+        // Make sure we don't void something.
+        final ItemStack oldStack = destination.extractItem(slot, Integer.MAX_VALUE, false);
+        final ItemStack oldLeftOver = insert(destination, oldStack);
+        if (!oldLeftOver.isEmpty())
         {
-            if (WorldUtil.isBlockLoaded(level, pos))
+            // Cancel, inventory full.
+            destination.insertItem(slot, oldLeftOver, false);
+            return;
+        }
+
+        final Tuple<List<ItemStack>, Integer> itemToTransfer = extract(origin, predicate, qty);
+        final List<ItemStack> newLeftOver = new ArrayList<>();
+        for (final ItemStack stack : itemToTransfer.getA())
+        {
+            final ItemStack leftOver = destination.insertItem(slot, stack, false);
+            if (!leftOver.isEmpty())
             {
-                final BlockEntity entity = level.getBlockEntity(pos);
-                if (entity instanceof TileEntityRack tileEntityRack)
-                {
-                    tempQty -= transfer(handler, tileEntityRack.getInventory(), stack1 -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack1, stack, true, true), tempQty);
-                    if (tempQty <= 0)
-                    {
-                        return 0;
-                    }
-                }
+                newLeftOver.add(leftOver);
             }
         }
 
-        return tempQty;
+        // Add back what doesn't fit.
+        for (final ItemStack stack : newLeftOver)
+        {
+            insert(origin, stack);
+        }
     }
-
-
 
     /**
      * Attempt to transfer as much item as possible from origin to target inventory

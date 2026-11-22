@@ -88,7 +88,7 @@ public class EntityAIConcreteMixer extends AbstractEntityAICrafting<JobConcreteM
 
         final ItemStack stack = worker.getInventoryCitizen().getStackInSlot(slot);
         final Block block = ((BlockItem) stack.getItem()).getBlock();
-        if (InventoryUtils.attemptReduceStackInItemHandler(worker.getInventoryCitizen(), stack, 1))
+        if (InventoryUtils.extract(worker.getInventoryCitizen(), stack, 1).getB() >= 1)
         {
             world.setBlock(posToPlace, block.defaultBlockState().updateShape(Direction.DOWN, block.defaultBlockState(), world, posToPlace, posToPlace), UPDATE_FLAG);
         }

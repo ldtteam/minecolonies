@@ -572,7 +572,7 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
                 expeditionLog.setStatus(ExpeditionLog.Status.RETURNING_HOME);
                 for (ItemStack item : job.getProcessedResults())
                 {
-                    if (InventoryUtils.addItemStackToItemHandler(worker.getItemHandlerCitizen(), item))
+                    if (InventoryUtils.insert(worker.getItemHandlerCitizen(), item))
                     {
                         worker.decreaseSaturationForContinuousAction();
                         worker.getCitizenExperienceHandler().addExperience(0.2);

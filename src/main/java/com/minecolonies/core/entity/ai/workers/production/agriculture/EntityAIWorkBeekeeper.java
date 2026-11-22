@@ -375,7 +375,7 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
             for (ItemStack stackItem : Compatibility.getCombsFromHive(hive, world, getHoneycombsPerHarvest()))
             {
                 StatsUtil.trackStatByStack(building, ITEMS_COLLECTED, stackItem, stackItem.getCount());
-                InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(stackItem, worker.getItemHandlerCitizen());
+                InventoryUtils.insert(worker.getItemHandlerCitizen(), stackItem);
             }
             world.setBlockAndUpdate(hive, world.getBlockState(hive).setValue(BlockStateProperties.LEVEL_HONEY, 0));
             worker.getCitizenExperienceHandler().addExperience(EXP_PER_HARVEST);
@@ -390,7 +390,7 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
             }
             ItemStack honeyStack = new ItemStack(Items.HONEY_BOTTLE, i);
             StatsUtil.trackStatByStack(building, ITEMS_COLLECTED, honeyStack, honeyStack.getCount());
-            InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(honeyStack, worker.getItemHandlerCitizen());
+            InventoryUtils.insert(worker.getItemHandlerCitizen(), honeyStack);
             world.setBlockAndUpdate(hive, world.getBlockState(hive).setValue(BlockStateProperties.LEVEL_HONEY, 0));
             worker.getCitizenExperienceHandler().addExperience(EXP_PER_HARVEST);
             lastHarvestedBottle = true;
@@ -492,7 +492,7 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
             {
                 animal.setInLove(null);
                 worker.swing(InteractionHand.MAIN_HAND);
-                InventoryUtils.reduceStackInItemHandler(worker.getInventoryCitizen(), worker.getMainHandItem());
+                InventoryUtils.extract(worker.getInventoryCitizen(), worker.getMainHandItem(), 1);
             }
         }
         StatsUtil.trackStat(building, BREEDING_ATTEMPTS, 1);

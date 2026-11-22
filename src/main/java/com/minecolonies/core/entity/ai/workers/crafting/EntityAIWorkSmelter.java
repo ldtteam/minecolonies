@@ -136,11 +136,7 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter,
     protected void extractFromFurnace(final FurnaceBlockEntity furnace)
     {
         StatsUtil.trackStatFromFurnace(building, ITEMS_SMELTED_DETAIL, furnace, RESULT_SLOT);
-
-        InventoryUtils.transferItemStackIntoNextFreeSlotInItemHandler(
-          new InvWrapper(furnace), RESULT_SLOT,
-          worker.getInventoryCitizen());
-
+        InventoryUtils.transferFromSlot(new InvWrapper(furnace), worker.getInventoryCitizen(), RESULT_SLOT);
         worker.getCitizenExperienceHandler().addExperience(BASE_XP_GAIN);
         this.incrementActionsDoneAndDecSaturation();
     }

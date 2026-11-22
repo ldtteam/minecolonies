@@ -170,11 +170,11 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, Buildi
 
         if (equipItem(InteractionHand.MAIN_HAND, Collections.singletonList(new ItemStorage(building.getMilkInputItem().getItem(), building.getMilkInputItem().getCount()))) && !walkingToAnimal(animal))
         {
-            if (InventoryUtils.addItemStackToItemHandler(worker.getInventoryCitizen(), building.getMilkOutputItem()))
+            if (!InventoryUtils.insert(worker.getInventoryCitizen(), building.getMilkOutputItem()).isEmpty())
             {
                 building.getFirstModuleOccurance(BuildingCowboy.HerdingModule.class).onMilked();
                 CitizenItemUtils.setHeldItem(worker, InteractionHand.MAIN_HAND, getItemSlot(building.getMilkOutputItem().getItem()));
-                InventoryUtils.tryRemoveStackFromItemHandler(worker.getInventoryCitizen(), building.getMilkInputItem());
+                InventoryUtils.extract(worker.getInventoryCitizen(), building.getMilkInputItem(), 1);
 
                 final SoundEvent sound = animal instanceof Goat goat ? goat.getMilkingSound() : SoundEvents.COW_MILK;
                 worker.queueSound(sound, animal.blockPosition(), 10, 0, 0.9f, worker.getRandom().nextFloat());
@@ -228,11 +228,11 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, Buildi
             fakePlayer.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.BOWL));
             if (mooshroom.mobInteract(fakePlayer, InteractionHand.MAIN_HAND).equals(InteractionResult.CONSUME))
             {
-                if (InventoryUtils.addItemStackToItemHandler(worker.getInventoryCitizen(), fakePlayer.getMainHandItem()))
+                if (!InventoryUtils.insert(worker.getInventoryCitizen(), fakePlayer.getMainHandItem()).isEmpty())
                 {
                     building.getFirstModuleOccurance(BuildingCowboy.HerdingModule.class).onStewed();
                     CitizenItemUtils.setHeldItem(worker, InteractionHand.MAIN_HAND, getItemSlot(fakePlayer.getMainHandItem().getItem()));
-                    InventoryUtils.tryRemoveStackFromItemHandler(worker.getInventoryCitizen(), new ItemStack(Items.BOWL));
+                    InventoryUtils.extract(worker.getInventoryCitizen(), new ItemStack(Items.BOWL), 1);
                     worker.queueSound(SoundEvents.MOOSHROOM_MILK, mooshroom.blockPosition(), 10, 0, 0.9f, worker.getRandom().nextFloat());
                 }
                 fakePlayer.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);

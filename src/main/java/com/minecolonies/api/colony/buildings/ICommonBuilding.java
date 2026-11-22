@@ -414,9 +414,10 @@ public interface ICommonBuilding
 
     /**
      * Extract items from the building.
-     * @param predicate the matching predicate.
+     * @param itemStack the matching Stack.
      * @return the extracted amount.
      */
+    default int extractItem(final ItemStack itemStack) { return extractItem(stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, itemStack), itemStack.getCount()); }
     default int extractItem(final Predicate<ItemStack> predicate, final int count)
     {
         final Level world = getColony().getWorld();

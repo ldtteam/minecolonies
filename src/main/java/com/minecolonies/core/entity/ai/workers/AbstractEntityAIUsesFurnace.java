@@ -96,7 +96,7 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob<?, J>, B
      */
     private void extractFuelFromFurnace(final FurnaceBlockEntity furnace)
     {
-        InventoryUtils.transferItemStackIntoNextFreeSlotInItemHandler(new InvWrapper(furnace), FUEL_SLOT, worker.getInventoryCitizen());
+        InventoryUtils.transferFromSlot(new InvWrapper(furnace), worker.getInventoryCitizen(), FUEL_SLOT);
     }
 
     /**
@@ -477,18 +477,14 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob<?, J>, B
             if (InventoryUtils.hasItem((worker.getInventoryCitizen()), this::isSmeltable)
                   && (hasFuelInFurnaceAndNoSmeltable(furnace) || hasNeitherFuelNorSmeltAble(furnace)))
             {
-                InventoryUtils.transferXOfFirstSlotInItemHandlerWithIntoInItemHandler(
-                  (worker.getInventoryCitizen()), this::isSmeltable, STACKSIZE,
-                  new InvWrapper(furnace), SMELTABLE_SLOT);
+                InventoryUtils.transferToSlot(worker.getInventoryCitizen(), new InvWrapper(furnace), this::isSmeltable, STACKSIZE, SMELTABLE_SLOT);
             }
 
             final ItemListModule module = building.getModule(ITEMLIST_FUEL);
             if (InventoryUtils.hasItem((worker.getInventoryCitizen()), stack -> module.isItemInList(new ItemStorage(stack)))
                   && (hasSmeltableInFurnaceAndNoFuel(furnace) || hasNeitherFuelNorSmeltAble(furnace)))
             {
-                InventoryUtils.transferXOfFirstSlotInItemHandlerWithIntoInItemHandler(
-                  (worker.getInventoryCitizen()), stack -> module.isItemInList(new ItemStorage(stack)), STACKSIZE,
-                  new InvWrapper(furnace), FUEL_SLOT);
+                InventoryUtils.transferToSlot(worker.getInventoryCitizen(), new InvWrapper(furnace), stack -> module.isItemInList(new ItemStorage(stack)), STACKSIZE, FUEL_SLOT);
             }
         }
         walkTo = null;

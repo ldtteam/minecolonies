@@ -113,9 +113,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
     @Override
     protected void extractFromFurnace(final FurnaceBlockEntity furnace)
     {
-        InventoryUtils.transferItemStackIntoNextFreeSlotInItemHandler(
-          new InvWrapper(furnace), RESULT_SLOT,
-          worker.getInventoryCitizen());
+        InventoryUtils.transferFromSlot(new InvWrapper(furnace), worker.getInventoryCitizen(), RESULT_SLOT);
         worker.getCitizenExperienceHandler().addExperience(BASE_XP_GAIN);
         this.incrementActionsDoneAndDecSaturation();
     }
@@ -236,7 +234,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
         int qty = (int) (Math.max(1.0, (FULL_SATURATION - citizen.getCitizenData().getSaturation()) / FoodUtils.getFoodValue(worker.getInventoryCitizen().getStackInSlot(foodSlot), citizen)));
         // Hand out a bit extra
         qty = (int) Math.ceil(qty * 1.5);
-        if (InventoryUtils.transferXOfItemStackIntoNextFreeSlotInItemHandler(worker.getInventoryCitizen(), foodSlot, qty, citizenData.getInventory()))
+        if (InventoryUtils.transferFromSlot(worker.getInventoryCitizen(), citizenData.getInventory(), foodSlot, qty))
         {
             worker.getCitizenColonyHandler().getColonyOrRegister().getStatisticsManager().incrementBy(FOOD_SERVED, qty, worker.getCitizenColonyHandler().getColonyOrRegister().getDay());
             StatsUtil.trackStatByName(building, FOOD_SERVED_DETAIL, foodName, qty);
@@ -275,7 +273,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
         final IItemHandler handler = new InvWrapper(player.getInventory());
         final RestaurantMenuModule module = worker.getCitizenData().getWorkBuilding().getModule(RESTAURANT_MENU);
         final Predicate<ItemStack> canEatPredicate = stack -> module.getMenu().contains(new ItemStorage(stack));
-        if (InventoryUtils.isItemHandlerFull(handler))
+        if (InventoryUtils.getEmptySlots(handler) > 0)
         {
             return getState();
         }

@@ -152,11 +152,7 @@ public class EntityAIWorkTeacher extends AbstractEntityAIInteract<JobTeacher, Bu
         final int pupilSlot = InventoryUtils.getMatchingSlot(pupilToTeach.getInventoryCitizen(), PAPER);
         if (slot != -1 && pupilSlot == -1)
         {
-            InventoryUtils.transferXOfFirstSlotInItemHandlerWithIntoNextFreeSlotInItemHandler(
-              worker.getInventoryCitizen(),
-              PAPER,
-              1, pupilToTeach.getInventoryCitizen()
-            );
+            InventoryUtils.transfer(worker.getInventoryCitizen(), pupilToTeach.getInventoryCitizen(), PAPER, 1);
         }
 
         // Intelligence + PrimarySkill(Knowledge) for amount gained per Teach state.

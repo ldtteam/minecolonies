@@ -1009,7 +1009,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
                 final ObjectArrayList<ItemStack> randomItems = manager.getLootTable(lootTableId).getRandomItems(lootParams);
                 for (final ItemStack stack : randomItems)
                 {
-                    InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(stack, worker.getInventoryCitizen());
+                    InventoryUtils.insert(worker.getInventoryCitizen(), stack);
                 }
             }
         }

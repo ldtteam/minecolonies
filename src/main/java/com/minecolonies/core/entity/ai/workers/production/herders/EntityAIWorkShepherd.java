@@ -158,7 +158,7 @@ public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, Bu
             for (final ItemStack item : items)
             {
                 building.getModule(STATS_MODULE).incrementBy(ITEM_OBTAINED + ";" + item.getItem().getDescriptionId(), item.getCount());
-                InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(item, (worker.getInventoryCitizen()));
+                InventoryUtils.insert(worker.getInventoryCitizen(), item);
             }
         }
 

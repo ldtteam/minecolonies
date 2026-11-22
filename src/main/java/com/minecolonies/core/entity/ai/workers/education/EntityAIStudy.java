@@ -128,7 +128,7 @@ public class EntityAIStudy extends AbstractEntityAISkill<JobStudent, BuildingLib
         final Map<StudyItem, Integer> availableItems = new HashMap<>();
         for (final StudyItem curItem : studyItems)
         {
-            final int slot = InventoryUtils.findFirstSlotInProviderNotEmptyWith(worker, (item) -> item.is(curItem.item()));
+            final int slot = InventoryUtils.getMatchingSlot(worker.getInventoryCitizen(), (item) -> item.is(curItem.item()));
             if (slot != -1)
             {
                 availableItemKeys.add(curItem);
@@ -143,8 +143,7 @@ public class EntityAIStudy extends AbstractEntityAISkill<JobStudent, BuildingLib
             int amountToRequest = 1;
             for (final StudyItem studyItem : studyItems)
             {
-                final int bSlot = InventoryUtils.findFirstSlotInProviderWith(building, studyItem.item());
-                if (bSlot > -1)
+                if (building.hasItem(studyItem.item()))
                 {
                     needsCurrently = new Tuple<>(itemStack -> studyItem.item() == itemStack.getItem(), 10);
                     return GATHERING_REQUIRED_MATERIALS;

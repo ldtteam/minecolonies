@@ -287,7 +287,7 @@ public class EntityAIWorkAlchemist extends AbstractEntityAICrafting<JobAlchemist
                 worker.decreaseSaturationForContinuousAction();
                 ItemStack mistletoe = new ItemStack(ModItems.mistletoe, 1);
                 StatsUtil.trackStatByName(building, INGREDIENTS_HARVESTED, mistletoe.getDescriptionId(), mistletoe.getCount());
-                InventoryUtils.addItemStackToItemHandler(worker.getInventoryCitizen(), mistletoe);
+                InventoryUtils.insert(worker.getInventoryCitizen(), mistletoe);
                 walkTo = null;
                 CitizenItemUtils.damageItemInHand(worker, InteractionHand.MAIN_HAND, 1);
                 return INVENTORY_FULL;
@@ -615,11 +615,10 @@ public class EntityAIWorkAlchemist extends AbstractEntityAICrafting<JobAlchemist
                 final BrewingStandBlockEntity brewingStand = (BrewingStandBlockEntity) entity;
                 //Stoke the brewing stands
                 if (InventoryUtils.hasItem(worker.getInventoryCitizen(), Items.BLAZE_POWDER)
-                      && (hasBrewableAndNoFuel(brewingStand) || hasNeitherFuelNorBrewable(brewingStand)))
+                    && (hasBrewableAndNoFuel(brewingStand) || hasNeitherFuelNorBrewable(brewingStand)))
                 {
-                    InventoryUtils.transferXOfFirstSlotInItemHandlerWithIntoInItemHandler(
-                      worker.getInventoryCitizen(), item -> item.getItem() == Items.BLAZE_POWDER, BREWING_MIN_FUEL_COUNT,
-                      new InvWrapper(brewingStand), BREWING_FUEL_SLOT);
+                    InventoryUtils.transferToSlot(worker.getInventoryCitizen(),
+                        new InvWrapper(brewingStand), item -> item.getItem() == Items.BLAZE_POWDER, BREWING_MIN_FUEL_COUNT, BREWING_FUEL_SLOT);
 
                     if (preFuelState != null && preFuelState != ADD_FUEL_TO_BREWINGSTAND)
                     {
@@ -833,7 +832,7 @@ public class EntityAIWorkAlchemist extends AbstractEntityAICrafting<JobAlchemist
         String extractName = standWrapper.getStackInSlot(slot).getDescriptionId();
         int extractQty = standWrapper.getStackInSlot(slot).getCount();
         
-        InventoryUtils.transferItemStackIntoNextFreeSlotInItemHandler(standWrapper, slot, worker.getInventoryCitizen());
+        InventoryUtils.transferFromSlot(standWrapper, worker.getInventoryCitizen(), slot);
         if (slot <= 3 && slot >= 0)
         {
             StatsUtil.trackStatByName(building, ITEMS_BREWED, extractName, extractQty);
@@ -961,12 +960,7 @@ public class EntityAIWorkAlchemist extends AbstractEntityAICrafting<JobAlchemist
                                     return getState();
                                 }
                                 CitizenItemUtils.hitBlockWithToolInHand(worker, walkTo);
-                                InventoryUtils.transferXInItemHandlerIntoSlotInItemHandler(
-                                  worker.getInventoryCitizen(),
-                                  potion,
-                                  toTransfer,
-                                  new InvWrapper(brewingStand),
-                                  slot);
+                                InventoryUtils.transferToSlot(worker.getInventoryCitizen(), new InvWrapper(brewingStand), potion, toTransfer, slot);
                             }
                         }
                     }
@@ -1020,12 +1014,8 @@ public class EntityAIWorkAlchemist extends AbstractEntityAICrafting<JobAlchemist
                                 return getState();
                             }
                             CitizenItemUtils.hitBlockWithToolInHand(worker, walkTo);
-                            InventoryUtils.transferXInItemHandlerIntoSlotInItemHandler(
-                              worker.getInventoryCitizen(),
-                              ingredient,
-                              toTransfer,
-                              new InvWrapper(brewingStand),
-                              INGREDIENT_SLOT);
+                            InventoryUtils.transferToSlot(
+                              worker.getInventoryCitizen(), new InvWrapper(brewingStand), ingredient, toTransfer, INGREDIENT_SLOT);
                         }
                     }
                 }

@@ -366,11 +366,7 @@ public class EntityAIWorkHealer extends AbstractEntityAIInteract<JobHealer, Buil
                         currentPatient = null;
                         return DECIDE;
                     }
-                    InventoryUtils.transferXOfFirstSlotInItemHandlerWithIntoNextFreeSlotInItemHandler(
-                      worker.getInventoryCitizen(),
-                      Disease.hasCureItem(cure),
-                      cure.getAmount(), citizen.getInventoryCitizen()
-                    );
+                    InventoryUtils.transfer(worker.getInventoryCitizen(), citizen.getInventoryCitizen(), Disease.hasCureItem(cure), cure.getAmount());
                 }
             }
         }

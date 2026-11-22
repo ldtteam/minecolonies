@@ -207,9 +207,7 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
             {
                 if (InventoryUtils.hasItem(worker.getInventoryCitizen(), isCorrectFuel(possibleFuels)) && isEmpty(furnace.getItem(FUEL_SLOT)))
                 {
-                    InventoryUtils.transferXOfFirstSlotInItemHandlerWithIntoInItemHandler(
-                      worker.getInventoryCitizen(), isCorrectFuel(possibleFuels), STACKSIZE,
-                      new InvWrapper(furnace), FUEL_SLOT);
+                    InventoryUtils.transferToSlot(worker.getInventoryCitizen(), new InvWrapper(furnace), isCorrectFuel(possibleFuels), STACKSIZE, FUEL_SLOT);
                 }
             }
         }
@@ -410,12 +408,7 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
                 if (toTransfer > 0)
                 {
                     CitizenItemUtils.hitBlockWithToolInHand(worker, furnacePos);
-                    InventoryUtils.transferXInItemHandlerIntoSlotInItemHandler(
-                      worker.getInventoryCitizen(),
-                      smeltablePredicate,
-                      toTransfer,
-                      new InvWrapper(furnace),
-                      SMELTABLE_SLOT);
+                    InventoryUtils.transferToSlot(worker.getInventoryCitizen(), new InvWrapper(furnace), smeltablePredicate, toTransfer, SMELTABLE_SLOT);
                 }
             }
         }
@@ -615,7 +608,7 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
         {
             return false;
         }
-        final boolean success = InventoryUtils.transferItemStackIntoNextFreeSlotInItemHandler(new InvWrapper(furnace), slot, worker.getInventoryCitizen());
+        final boolean success = InventoryUtils.transferFromSlot(new InvWrapper(furnace), worker.getInventoryCitizen(), slot);
         if (slot == RESULT_SLOT && success)
         {
             recordSmeltingBuildingStats(name, count);

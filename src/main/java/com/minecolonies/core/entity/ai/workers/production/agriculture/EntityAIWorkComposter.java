@@ -153,16 +153,10 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
 
         if (building.hasItem(stack -> list.contains(new ItemStorage(stack))))
         {
-            InventoryUtils.transferItemStackIntoNextFreeSlotFromProvider(
-              building,
-              InventoryUtils.findFirstSlotInProviderNotEmptyWith(building, stack -> list.contains(new ItemStorage(stack))),
-              worker.getInventoryCitizen());
+            building.transferTo(worker.getInventoryCitizen(), stack -> list.contains(new ItemStorage(stack)), Constants.STACKSIZE);
         }
 
-        final int slot = InventoryUtils.getMatchingSlot(
-          worker.getInventoryCitizen(),
-          stack -> list.contains(new ItemStorage(stack))
-        );
+        final int slot = InventoryUtils.getMatchingSlot(worker.getInventoryCitizen(), stack -> list.contains(new ItemStorage(stack)));
         if (slot >= 0)
         {
             worker.setItemInHand(InteractionHand.MAIN_HAND, worker.getInventoryCitizen().getStackInSlot(slot));
@@ -327,19 +321,19 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
                 {
                     ItemStack product = new ItemStack(Blocks.PODZOL, 1);
                     StatsUtil.trackStatByName(building, PRODUCT_COLLECTED, product.getItem().getDescriptionId(), compost.getCount());
-                    InventoryUtils.addItemStackToItemHandler(worker.getInventoryCitizen(), product);
+                    InventoryUtils.insert(worker.getInventoryCitizen(), product);
                 }
                 else
                 {
                     ItemStack product =  new ItemStack(Blocks.DIRT, 1);
                     StatsUtil.trackStatByName(building, PRODUCT_COLLECTED, product.getItem().getDescriptionId(), compost.getCount());
-                    InventoryUtils.addItemStackToItemHandler(worker.getInventoryCitizen(), product);
+                    InventoryUtils.insert(worker.getInventoryCitizen(), product);
                 }
             }
             else
             {
                 StatsUtil.trackStatByName(building, PRODUCT_COLLECTED, compost.getItem().getDescriptionId(), compost.getCount());
-                InventoryUtils.addItemStackToItemHandler(worker.getInventoryCitizen(), compost);
+                InventoryUtils.insert(worker.getInventoryCitizen(), compost);
             }
 
             worker.getCitizenExperienceHandler().addExperience(BASE_XP_GAIN);
