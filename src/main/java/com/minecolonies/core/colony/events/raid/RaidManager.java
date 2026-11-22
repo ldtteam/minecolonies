@@ -1055,7 +1055,7 @@ public class RaidManager implements IRaiderManager
             }
         }
 
-        if (((double) raidHistories.get(0).lostCitizens / colony.getCitizenManager().getMaxCitizens()) > 0.5)
+        if (((double) getLastRaid().lostCitizens / colony.getCitizenManager().getMaxCitizens()) > 0.5)
         {
             MessageUtils.format(RAID_END_MERCY, colony.getName()).sendTo(colony).forManagers();
             extraDaysToNextRaid = MineColonies.getConfig().getServer().averageNumberOfNightsBetweenRaids.get() * 2;
