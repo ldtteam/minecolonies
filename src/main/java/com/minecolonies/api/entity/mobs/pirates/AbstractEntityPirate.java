@@ -38,6 +38,7 @@ public abstract class AbstractEntityPirate extends AbstractEntityMinecoloniesMon
     {
         super(type, world, PIRATE_TEXTURES);
         initStatsFor(BARBARIAN_BASE_HEALTH * (world.getDifficulty().getId() + 0.1), world.getDifficulty().getId() + 0.1, ATTACK_DAMAGE * world.getDifficulty().getId());
+        initHeight();
     }
 
     @Override

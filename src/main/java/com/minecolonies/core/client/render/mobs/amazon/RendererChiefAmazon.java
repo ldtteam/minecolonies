@@ -2,6 +2,7 @@ package com.minecolonies.core.client.render.mobs.amazon;
 
 import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMonster;
 import com.minecolonies.core.client.model.raiders.ModelAmazonChief;
+import com.minecolonies.core.client.render.mobs.RenderMinecoloniesMonster;
 import com.minecolonies.core.event.ClientRegistryHandler;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
@@ -10,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Renderer used for Chief amazons.
  */
-public class RendererChiefAmazon extends AbstractRendererAmazon<AbstractEntityMinecoloniesMonster, ModelAmazonChief>
+public class RendererChiefAmazon extends RenderMinecoloniesMonster<AbstractEntityMinecoloniesMonster, ModelAmazonChief>
 {
     /**
      * Texture of the entity.
@@ -24,7 +25,7 @@ public class RendererChiefAmazon extends AbstractRendererAmazon<AbstractEntityMi
      */
     public RendererChiefAmazon(final EntityRendererProvider.Context context)
     {
-        super(context, new ModelAmazonChief(context.bakeLayer(ClientRegistryHandler.AMAZON_CHIEF)), 0.5F);
+        super(context, new ModelAmazonChief(context.bakeLayer(ClientRegistryHandler.AMAZON_CHIEF)), 0.5F, false);
     }
 
     @NotNull
