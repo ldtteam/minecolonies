@@ -216,7 +216,7 @@ public class ReproductionManager implements IReproductionManager
 
             double parentsAvg = (firstParent.getHeightModifier() + secondParent.getHeightModifier()) / 2.0;
             double mean = (parentsAvg + 1.0) / 2.0;
-            newCitizen.setHeight(mean + 0.047 * MathUtils.RANDOM.nextGaussian());
+            newCitizen.setHeightModifier(mean + 0.047 * MathUtils.RANDOM.nextGaussian());
 
             colony.getEventDescriptionManager().addEventDescription(new CitizenBornEvent(newHome.getPosition(), newCitizen.getName()));
             colony.getStatisticsManager().increment(BIRTH, colony.getDay());

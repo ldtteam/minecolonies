@@ -350,7 +350,7 @@ public class CitizenData implements ICitizenData
     /**
      * Height difference compared to the standard.
      */
-    private double height = 0;
+    private double heightModifier = 0;
 
     /**
      * Create a CitizenData given an ID. Used as a super-constructor or during loading.
@@ -515,7 +515,7 @@ public class CitizenData implements ICitizenData
     @Override
     public double getHeightModifier()
     {
-        return height;
+        return heightModifier;
     }
 
     @Override
@@ -1164,7 +1164,7 @@ public class CitizenData implements ICitizenData
             buf.writeUUID(textureUUID);
         }
         buf.writeBoolean(citizenDiseaseHandler.isSick());
-        buf.writeDouble(height);
+        buf.writeDouble(heightModifier);
     }
 
     @Override
@@ -1432,7 +1432,7 @@ public class CitizenData implements ICitizenData
             nbtTagCompound.putUUID(TAG_TEXTURE_UUID, textureUUID);
         }
 
-        nbtTagCompound.putDouble(TAG_HEIGHT, height);
+        nbtTagCompound.putDouble(TAG_HEIGHT, heightModifier);
         return nbtTagCompound;
     }
 
@@ -1611,7 +1611,7 @@ public class CitizenData implements ICitizenData
 
         if (nbtTagCompound.contains(TAG_HEIGHT))
         {
-            this.height = nbtTagCompound.getDouble(TAG_HEIGHT);
+            this.heightModifier = nbtTagCompound.getDouble(TAG_HEIGHT);
         }
         else
         {
@@ -1621,7 +1621,7 @@ public class CitizenData implements ICitizenData
 
     private void initHeight()
     {
-        this.setHeight(1 + MathUtils.RANDOM.nextGaussian() * 0.05);
+        this.setHeightModifier(1 + MathUtils.RANDOM.nextGaussian() * 0.05);
     }
 
     @Override
@@ -1818,9 +1818,9 @@ public class CitizenData implements ICitizenData
     }
 
     @Override
-    public void setHeight(final double height)
+    public void setHeightModifier(final double heightModifier)
     {
-        this.height = Mth.clamp(height, 0.85, 1.15);
+        this.heightModifier = Mth.clamp(heightModifier, 0.85, 1.15);
     }
 
     @Override
