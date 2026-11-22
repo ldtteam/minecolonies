@@ -513,9 +513,9 @@ public class CitizenData implements ICitizenData
     }
 
     @Override
-    public double getHeight()
+    public double getHeightModifier()
     {
-        return 0;
+        return height;
     }
 
     @Override

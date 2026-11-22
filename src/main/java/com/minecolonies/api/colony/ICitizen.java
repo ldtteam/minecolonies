@@ -68,11 +68,11 @@ public interface ICitizen
      *
      * @return colony
      */
-    public IColony getColony();
+    IColony getColony();
 
     /**
      * Get height dif.
      * @return the height dif (around 1).
      */
-    double getHeight();
+    double getHeightModifier();
 }

@@ -214,7 +214,7 @@ public class ReproductionManager implements IReproductionManager
                 MessageUtils.format(MESSAGE_NEW_CHILD_BORN, newCitizen.getName(), colony.getName()).sendTo(colony).forManagers();
             }
 
-            double parentsAvg = (firstParent.getHeight() + secondParent.getHeight()) / 2.0;
+            double parentsAvg = (firstParent.getHeightModifier() + secondParent.getHeightModifier()) / 2.0;
             double mean = (parentsAvg + 1.0) / 2.0;
             newCitizen.setHeight(mean + 0.047 * MathUtils.RANDOM.nextGaussian());
 
