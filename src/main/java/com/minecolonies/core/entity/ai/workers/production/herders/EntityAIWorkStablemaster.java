@@ -66,6 +66,7 @@ public class EntityAIWorkStablemaster extends AbstractEntityAIHerder<JobStablema
     protected static final double TRAINING_CHANCE = .25;
     protected static final double READY_MOUNT_FOR_COMBAT_CHANCE = .40;
     protected static final double ROUND_UP_CHANCE = .15;
+    protected static final double ROUND_UP_RANGE = 30.0D;
 
     protected static final float BASE_COMBAT_READINESS_RECOVERY = 4.0f;
     
@@ -225,6 +226,18 @@ public class EntityAIWorkStablemaster extends AbstractEntityAIHerder<JobStablema
     }
 
     /**
+     * Disables the generic herder feeding task for the Stablemaster.
+     * Feeding is part of the readyMountForCombat logic.
+     *
+     * @return the decision state
+     */
+    @Override
+    protected IAIState feedAnimal()
+    {
+        return DECIDE;
+    }
+    
+    /**
      * Decides what the AI should do next.
      * @return the next state to go to.
      */
@@ -250,7 +263,7 @@ public class EntityAIWorkStablemaster extends AbstractEntityAIHerder<JobStablema
         if (roundupCooldown <= 0 && worker.getRandom().nextDouble() < ROUND_UP_CHANCE)
         {
             roundupCooldown = MAX_ROUNDUP_COOLDOWN;
-            wanderingHorses = findNearbyUnstabledHorses();
+            wanderingHorses = findNearbyUnstabledHorses(ROUND_UP_RANGE);
 
             if (!wanderingHorses.isEmpty())
             {
@@ -722,18 +735,16 @@ public class EntityAIWorkStablemaster extends AbstractEntityAIHerder<JobStablema
     }
 
    /**
-     * Finds all horses within 20 blocks of the given position, but
+     * Finds all horses within radius blocks of the given position, but
      * outside the stable.
      *
-     * @param level The world/level to search in
-     * @param center The center position
+     * @param radius the distance in which to search
      * @return List of CavalryHorseEntity found within radius
      */
-   public List<AbstractHorse> findNearbyUnstabledHorses()
+   public List<AbstractHorse> findNearbyUnstabledHorses(final double radius)
    {
        // TODO: Research to increase the range of the stablemaster's round-up
        final BlockPos center = building.getPosition();
-       final double radius = 30.0D;
        final double r2 = radius * radius;
 
        // Build a cube search box once; we'll do a spherical check in the predicate.
@@ -746,10 +757,10 @@ public class EntityAIWorkStablemaster extends AbstractEntityAIHerder<JobStablema
            .getEntitiesOfClass(AbstractHorse.class,
                searchBox,
                horse -> !horse.isRemoved() &&
-                   horse.isAlive() &&
-                   !(horse instanceof CavalryHorseEntity cav && cav.hasCavalryRider()) &&
-                   !(horse instanceof CavalryHorseEntity cav && cav.isInStable()) &&
-                   !(horseToRetrieve instanceof CavalryHorseEntity cav && cav.hasReservation()) &&
+                    horse.isAlive() &&
+                    !(horse instanceof CavalryHorseEntity cav
+                        && (cav.hasCavalryRider() || cav.isInStable() || cav.hasReservation())
+                    ) &&
                    horse.distanceToSqr(cx, cy, cz) <= r2);
    }
 
