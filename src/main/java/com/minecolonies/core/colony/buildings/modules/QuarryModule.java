@@ -27,7 +27,7 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 /**
  * The main data module for the quarry.
  */
-public class QuarryModule extends AbstractAssignedCitizenModule implements IAssignsJob, IBuildingEventsModule, ITickingModule, IPersistentModule, ICreatesResolversModule, IAltersBuildingFootprint
+public class QuarryModule extends AbstractAssignedCitizenModule implements IAssignsCitizen, IBuildingEventsModule, ITickingModule, IPersistentModule, ICreatesResolversModule, IAltersBuildingFootprint
 {
     /**
      * If the quarry was finished.
@@ -51,8 +51,18 @@ public class QuarryModule extends AbstractAssignedCitizenModule implements IAssi
     @Override
     public void onColonyTick(@NotNull final IColony colony)
     {
+        if (isFinished)
+        {
+            for (final ICitizenData citizenData : getAssignedCitizen())
+            {
+                removeCitizen(citizenData);
+            }
+
+            return;
+        }
+
         // If we have no active worker, grab one from the Colony
-        if (!isFull() && BuildingUtils.canAutoHire(building, getHiringMode(), getJobEntry()))
+        if (!isFull() && BuildingUtils.canAutoHire(building, getHiringMode(), ModJobs.quarrier.get()))
         {
             for (final ICitizenData data : colony.getCitizenManager().getCitizens())
             {
@@ -63,9 +73,9 @@ public class QuarryModule extends AbstractAssignedCitizenModule implements IAssi
             }
         }
 
-        for (final ICitizenData citizenData : new ArrayList<>(getAssignedCitizen()))
+        for (final ICitizenData citizenData : getAssignedCitizen())
         {
-            if (!(citizenData.getJob() instanceof JobQuarrier))
+            if (citizenData.getJob().getJobRegistryEntry() != ModJobs.quarrier.get())
             {
                 removeCitizen(citizenData);
             }
@@ -136,12 +146,6 @@ public class QuarryModule extends AbstractAssignedCitizenModule implements IAssi
     public int getModuleMax()
     {
         return 1;
-    }
-
-    @Override
-    public JobEntry getJobEntry()
-    {
-        return ModJobs.quarrier.get();
     }
 
     /**
