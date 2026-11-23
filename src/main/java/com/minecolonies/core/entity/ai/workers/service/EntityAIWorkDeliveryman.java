@@ -254,7 +254,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         }
 
         final ItemStack activeStack = handler.extractItem(currentSlot, amount, false);
-        InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(activeStack, worker.getInventoryCitizen());
+        InventoryUtils.insert(worker.getInventoryCitizen(), activeStack);
         targetBuilding.markDirty();
         CitizenItemUtils.setHeldItem(worker, InteractionHand.MAIN_HAND, SLOT_HAND);
 
@@ -272,7 +272,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         {
             return false;
         }
-        return InventoryUtils.getAmountOfStacksInItemHandler(worker.getInventoryCitizen()) >= Math.pow(2, building.getBuildingLevel() - 1.0D) + 1;
+        return (worker.getInventoryCitizen().getSlots() - worker.getInventoryCitizen().getFreeSlots()) >= Math.pow(2, building.getBuildingLevel() - 1.0D) + 1;
     }
 
     /**
@@ -388,29 +388,10 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             }
 
             extracted = true;
-            final ItemStack insertionResultStack;
-
-            // TODO: Please only push items into the target that were actually requested.
-            if (targetBuilding instanceof AbstractBuilding)
-            {
-                insertionResultStack = InventoryUtils.forceItemStackToItemHandler(
-                  targetBuilding.getCapability(ForgeCapabilities.ITEM_HANDLER, null).orElseGet(null), stack, ((IBuilding) targetBuilding)::isItemStackInRequest);
-            }
-            else
-            {
-                // Buildings that are not inherently part of the request system, but just receive a delivery, cannot have their items replaced.
-                // Therefore, the keep-predicate always returns true.
-                insertionResultStack =
-                  InventoryUtils.forceItemStackToItemHandler(targetBuilding.getCapability(ForgeCapabilities.ITEM_HANDLER, null).orElseGet(null),
-                    stack,
-                    itemStack -> true);
-            }
-
+            final ItemStack insertionResultStack = targetBuilding.insert(stack);
             if (!ItemStackUtils.isEmpty(insertionResultStack))
             {
-                // A stack was replaced (meaning the inventory didn't have enough space).
-
-                if (ItemStack.matches(insertionResultStack, stack) && worker.getCitizenData() != null)
+                if (ItemStackUtils.compareItemStacksIgnoreStackSize(insertionResultStack, stack) && worker.getCitizenData() != null)
                 {
                     // The replaced stack is the same as the one we tried to put into the inventory.
                     // Meaning, replacing failed.
@@ -566,17 +547,16 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             return false;
         }
 
-        if ((entity instanceof TileEntityColonyBuilding colonyBuilding
-            && colonyBuilding.getBuilding().hasEnoughElseCount(new ItemStorage(is), is.getCount()) >= is.getCount())
-            || (entity instanceof TileEntityRack && ((TileEntityRack) entity).getCount(new ItemStorage(is)) >= is.getCount()))
+        if ((entity instanceof TileEntityColonyBuilding colonyBuilding && colonyBuilding.getBuilding().hasEnoughElseCount(new ItemStorage(is), is.getCount()) >= is.getCount())
+            || (entity instanceof TileEntityRack rack && rack.getCount(new ItemStorage(is)) >= is.getCount()))
         {
             final IItemHandler handler = entity.getCapability(ForgeCapabilities.ITEM_HANDLER, null).resolve().orElse(null);
             if (handler != null)
             {
-                return InventoryUtils.transferItemStackIntoNextFreeSlotFromItemHandler(handler,
+                return InventoryUtils.transfer(handler,
+                    worker.getInventoryCitizen(),
                   stack -> !ItemStackUtils.isEmpty(stack) && ItemStackUtils.compareItemStacksIgnoreStackSize(is, stack, true, true),
-                  is.getCount(),
-                  worker.getInventoryCitizen());
+                  is.getCount()) > 0;
             }
         }
 

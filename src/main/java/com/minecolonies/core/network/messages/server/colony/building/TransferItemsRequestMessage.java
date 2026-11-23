@@ -124,7 +124,7 @@ public class TransferItemsRequestMessage extends AbstractBuildingServerMessage<I
             {
                 return;
             }
-            leftOver = InventoryUtils.transferItemStackFromItemHandlerToBuilding(new PlayerMainInvWrapper(player.getInventory()), building, itemStack, toMove);
+            leftOver = building.transferTo(new PlayerMainInvWrapper(player.getInventory()), itemStack, toMove);
         }
         if (leftOver > 0)
         {

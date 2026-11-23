@@ -572,7 +572,7 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
                 expeditionLog.setStatus(ExpeditionLog.Status.RETURNING_HOME);
                 for (ItemStack item : job.getProcessedResults())
                 {
-                    if (InventoryUtils.insert(worker.getItemHandlerCitizen(), item))
+                    if (!InventoryUtils.insert(worker.getItemHandlerCitizen(), item).isEmpty())
                     {
                         worker.decreaseSaturationForContinuousAction();
                         worker.getCitizenExperienceHandler().addExperience(0.2);
@@ -829,7 +829,7 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
     protected void attemptToEat()
     {
         final IDeliverable edible = new StackList(getEdiblesList(), "Edible Food", 1);
-        final int slot = InventoryUtils.findFirstSlotInProviderNotEmptyWith(worker, edible::matches);
+        final int slot = InventoryUtils.getMatchingSlot(worker.getInventoryCitizen(), edible::matches);
         if (slot > -1)
         {
             final ItemStack stack = worker.getInventoryCitizen().getStackInSlot(slot);
@@ -877,7 +877,7 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
                     }
                 }
 
-                final Map<IItemHandler, List<Integer>> items = InventoryUtils.findAllSlotsInProviderWith(building, item::test);
+                final Map<IItemHandler, List<Integer>> items = building.getMatchingSlots(item);
                 if (items.isEmpty())
                 {
                     // None found, check for equipped
@@ -917,17 +917,12 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
                 {
                     if (!ItemStackUtils.isEmpty(virtualEquipmentSlots.get(item.getType())))
                     {
-                        final int slot =
-                            InventoryUtils.getMatchingSlot(worker.getInventoryCitizen(), stack -> stack == virtualEquipmentSlots.get(item.getType()));
-                        if (slot > -1)
-                        {
-                            InventoryUtils.transferItemStackIntoNextFreeSlotInProvider(worker.getInventoryCitizen(), slot, building);
-                        }
+                        building.transferFrom(worker.getInventoryCitizen(), stack -> stack == virtualEquipmentSlots.get(item.getType()), 1);
                     }
 
                     // Used for further comparisons, set to the right inventory slot afterwards
                     virtualEquipmentSlots.put(item.getType(), bestHandler.getStackInSlot(bestSlot));
-                    InventoryUtils.transferItemStackIntoNextFreeSlotInItemHandler(bestHandler, bestSlot, worker.getInventoryCitizen());
+                    InventoryUtils.transferFromSlot(bestHandler, worker.getInventoryCitizen(), bestSlot);
                 }
             }
         }

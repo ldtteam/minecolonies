@@ -804,7 +804,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
                 return null;
             }
 
-            if (InventoryUtils.shrinkItemCountInItemHandler(worker.getInventoryCitizen(), this::isCompost))
+            if (InventoryUtils.extract(worker.getInventoryCitizen(), this::isCompost,1).getB() > 0)
             {
                 Network.getNetwork().sendToPosition(new CompostParticleMessage(position.above()),
                   new PacketDistributor.TargetPoint(position.getX(), position.getY(), position.getZ(), BLOCK_BREAK_SOUND_RANGE, world.dimension()));
@@ -834,7 +834,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
                 return null;
             }
 
-            if (InventoryUtils.shrinkItemCountInItemHandler(worker.getInventoryCitizen(), this::isCompost))
+            if (InventoryUtils.extract(worker.getInventoryCitizen(), this::isCompost, 1).getB() > 0)
             {
                 Network.getNetwork().sendToPosition(new CompostParticleMessage(position.above()),
                   new PacketDistributor.TargetPoint(position.getX(), position.getY(), position.getZ(), BLOCK_BREAK_SOUND_RANGE, world.dimension()));

@@ -316,7 +316,7 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
             BlockState blockState = planterModule.getPlantingBlockState(world, activeModuleResult.getWorkingPosition(), BlockUtils.getBlockStateFromStack(currentStack));
             if (world.setBlockAndUpdate(activeModuleResult.getActionPosition(), blockState))
             {
-                InventoryUtils.reduceStackInItemHandler(worker.getItemHandlerCitizen(), currentStack);
+                InventoryUtils.extract(worker.getItemHandlerCitizen(), currentStack, 1);
                 CitizenItemUtils.removeHeldItem(worker);
                 return ActionHandlerResult.FINISHED;
             }

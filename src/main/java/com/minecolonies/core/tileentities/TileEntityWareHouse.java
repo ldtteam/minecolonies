@@ -103,7 +103,6 @@ public class TileEntityWareHouse extends AbstractTileEntityWareHouse
     public List<Tuple<ItemStack, BlockPos>> getMatchingItemStacksInWarehouse(@NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
     {
         List<Tuple<ItemStack, BlockPos>> found = new ArrayList<>();
-        
         if (getBuilding() != null)
         {
             for (@NotNull final BlockPos pos : getBuilding().getContainers())
@@ -113,9 +112,13 @@ public class TileEntityWareHouse extends AbstractTileEntityWareHouse
                     final BlockEntity entity = getLevel().getBlockEntity(pos);
                     if (entity instanceof final TileEntityRack rack && !rack.isEmpty() && rack.getItemCount(itemStackSelectionPredicate) > 0)
                     {
-                        for (final ItemStack stack : InventoryUtils.filterItemHandler(rack.getInventory(), itemStackSelectionPredicate))
+                        for (int slot = 0; slot < rack.getInventory().getSlots(); slot++)
                         {
-                            found.add(new Tuple<>(stack, pos));
+                            final ItemStack stack = rack.getInventory().getStackInSlot(slot);
+                            if (itemStackSelectionPredicate.test(stack))
+                            {
+                                found.add(new Tuple<>(stack, pos));
+                            }
                         }
                     }
                 }
@@ -127,16 +130,20 @@ public class TileEntityWareHouse extends AbstractTileEntityWareHouse
     @Override
     public void dumpInventoryIntoWareHouse(@NotNull final InventoryCitizen inventoryCitizen)
     {
-        for (int i = 0; i < inventoryCitizen.getSlots(); i++)
+        for (int slot = 0; slot < inventoryCitizen.getSlots(); slot++)
         {
-            final ItemStack stack = inventoryCitizen.getStackInSlot(i);
+            final ItemStack stack = inventoryCitizen.getStackInSlot(slot);
             if (ItemStackUtils.isEmpty(stack))
             {
                 continue;
             }
 
             @Nullable final BlockEntity chest = getRackForStack(stack);
-            if (chest == null)
+            if (chest instanceof TileEntityRack rack)
+            {
+                InventoryUtils.transferFromSlot(inventoryCitizen, rack.getInventory(), slot);
+            }
+            else
             {
                 if(level.getGameTime() - lastNotification > TICKS_FIVE_MIN)
                 {
@@ -157,11 +164,7 @@ public class TileEntityWareHouse extends AbstractTileEntityWareHouse
                         MessageUtils.format(COM_MINECOLONIES_COREMOD_WAREHOUSE_FULL).sendTo(getColony()).forAllPlayers();
                     }
                 }
-                return;
             }
-
-            final int index = i;
-            chest.getCapability(ForgeCapabilities.ITEM_HANDLER, null).ifPresent(handler -> InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(inventoryCitizen, index, handler));
         }
     }
 
