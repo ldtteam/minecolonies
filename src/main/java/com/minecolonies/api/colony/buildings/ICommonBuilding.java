@@ -383,7 +383,7 @@ public interface ICommonBuilding
                 {
                     if (rackEntity.hasItemStack(stack))
                     {
-                        transferedQty += InventoryUtils.transfer(itemHandler, rackEntity.getInventory(), stack, count - transferedQty);
+                        transferedQty += InventoryUtils.transfer(rackEntity.getInventory(), itemHandler, stack, count - transferedQty);
                     }
                 }
             }
@@ -400,7 +400,7 @@ public interface ICommonBuilding
                 final BlockEntity entity = world.getBlockEntity(pos);
                 if (entity instanceof TileEntityRack rackEntity)
                 {
-                    transferedQty += InventoryUtils.transfer(itemHandler, rackEntity.getInventory(), stack, count - transferedQty);
+                    transferedQty += InventoryUtils.transfer(rackEntity.getInventory(), itemHandler, stack, count - transferedQty);
                 }
             }
             if (transferedQty >= count)
