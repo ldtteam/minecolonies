@@ -46,6 +46,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -347,6 +348,11 @@ public class CitizenData implements ICitizenData
     private int leisureTime;
 
     /**
+     * Height difference compared to the standard.
+     */
+    private double heightModifier = 0;
+
+    /**
      * Create a CitizenData given an ID. Used as a super-constructor or during loading.
      *
      * @param id     ID of the Citizen.
@@ -507,6 +513,12 @@ public class CitizenData implements ICitizenData
     }
 
     @Override
+    public double getHeightModifier()
+    {
+        return heightModifier;
+    }
+
+    @Override
     public int getId()
     {
         return id;
@@ -531,7 +543,7 @@ public class CitizenData implements ICitizenData
             levelCap = Math.max(5, levelCap);
         }
         citizenSkillHandler.init(levelCap);
-
+        initHeight();
         markDirty(0);
     }
 
@@ -1152,6 +1164,7 @@ public class CitizenData implements ICitizenData
             buf.writeUUID(textureUUID);
         }
         buf.writeBoolean(citizenDiseaseHandler.isSick());
+        buf.writeDouble(heightModifier);
     }
 
     @Override
@@ -1418,6 +1431,8 @@ public class CitizenData implements ICitizenData
         {
             nbtTagCompound.putUUID(TAG_TEXTURE_UUID, textureUUID);
         }
+
+        nbtTagCompound.putDouble(TAG_HEIGHT, heightModifier);
         return nbtTagCompound;
     }
 
@@ -1593,6 +1608,20 @@ public class CitizenData implements ICitizenData
         {
             this.textureUUID = nbtTagCompound.getUUID(TAG_TEXTURE_UUID);
         }
+
+        if (nbtTagCompound.contains(TAG_HEIGHT))
+        {
+            this.heightModifier = nbtTagCompound.getDouble(TAG_HEIGHT);
+        }
+        else
+        {
+            initHeight();
+        }
+    }
+
+    private void initHeight()
+    {
+        this.setHeightModifier(1 + MathUtils.RANDOM.nextGaussian() * 0.05);
     }
 
     @Override
@@ -1786,6 +1815,12 @@ public class CitizenData implements ICitizenData
         {
             job.getAsyncRequests().remove(token);
         }
+    }
+
+    @Override
+    public void setHeightModifier(final double heightModifier)
+    {
+        this.heightModifier = Mth.clamp(heightModifier, 0.85, 1.15);
     }
 
     @Override

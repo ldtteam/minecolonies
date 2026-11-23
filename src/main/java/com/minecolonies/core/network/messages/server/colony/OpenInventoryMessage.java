@@ -42,7 +42,7 @@ public class OpenInventoryMessage extends AbstractColonyServerMessage implements
     private int entityID;
 
     /**
-     * The position of the inventory block/entity.
+     * The position of the blockentity.
      */
     private BlockPos tePos;
 
@@ -120,7 +120,7 @@ public class OpenInventoryMessage extends AbstractColonyServerMessage implements
     protected void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony)
     {
         final ServerPlayer player = ctxIn.getSender();
-        if (player == null || !isInRange(player.blockPosition(), tePos))
+        if (player == null)
         {
             return;
         }
@@ -142,6 +142,11 @@ public class OpenInventoryMessage extends AbstractColonyServerMessage implements
         @Nullable final AbstractEntityCitizen citizen = (AbstractEntityCitizen) CompatibilityUtils.getWorldFromEntity(player).getEntity(entityID);
         if (citizen != null)
         {
+            if (!isInRange(player.blockPosition(), citizen.blockPosition()))
+            {
+                return;
+            }
+
             if (!StringUtil.isNullOrEmpty(name))
             {
                 citizen.getInventoryCitizen().setCustomName(name);
@@ -153,6 +158,11 @@ public class OpenInventoryMessage extends AbstractColonyServerMessage implements
 
     private void doHutInventory(final ServerPlayer player, final IColony colony)
     {
+        if (!isInRange(player.blockPosition(), tePos))
+        {
+            return;
+        }
+
         final BlockEntity tileEntity = BlockPosUtil.getTileEntity(player.level, tePos);
 
         if(tileEntity instanceof TileEntityRack || tileEntity instanceof TileEntityGrave)
