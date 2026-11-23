@@ -107,7 +107,7 @@ public class EntityAICitizenWander implements IStateAI
                 leisureSite = null;
                 citizen.getCitizenData()
                   .getCitizenSkillHandler()
-                  .tryLevelUpIntelligence(citizen.getCitizenData().getRandom(), EntityAIStudy.ONE_IN_X_CHANCE, citizen.getCitizenData());
+                  .tryLevelUpIntelligence(citizen.getCitizenData().getRandom(), EntityAIStudy.BASE_SKILL_INCREASE_CHANCE, citizen.getCitizenData());
                 return CitizenAIState.IDLE;
             }
 

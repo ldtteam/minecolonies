@@ -46,8 +46,8 @@ public class StudyItemListener extends SimpleJsonResourceReloadListener
      * Container class for any study item.
      *
      * @param item                the item to use.
-     * @param skillIncreaseChance chance for skill to increase after using the item.
-     * @param breakChance         chance for the item to be used up after using it.
+     * @param skillIncreaseChance percentage chance [0, 100] for intelligence to increase after using the item.
+     * @param breakChance         percentage chance [0, 100] for the item to be used up after using it.
      */
     public record StudyItem(Item item, int skillIncreaseChance, int breakChance)
     {
