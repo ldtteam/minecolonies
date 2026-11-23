@@ -11,6 +11,6 @@ public class KnightSquireBuildingModuleView extends WorkerBuildingModuleView
     @Override
     public boolean canBeHiredAs(final JobEntry jobEntry)
     {
-        return jobEntry == ModJobs.knight.get();
+        return jobEntry == ModJobs.knight.get() || jobEntry == ModJobs.cavalry.get() || jobEntry == ModJobs.huscarl.get();
     }
 }

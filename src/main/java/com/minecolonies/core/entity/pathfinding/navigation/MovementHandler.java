@@ -23,6 +23,10 @@ import net.minecraft.world.phys.shapes.VoxelShape;
  */
 public class MovementHandler extends MoveControl
 {
+    /**
+     * Squared distance below which movement will not recalculate yaw.
+     */
+    private static final double HORIZONTAL_DIRECTION_THRESHOLD = 0.01D;
 
     /**
      * Speed attribute holder
@@ -111,8 +115,14 @@ public class MovementHandler extends MoveControl
                 return;
             }
 
-            final float range = (float) (Mth.atan2(zDif, xDif) * (double) (180F / (float) Math.PI)) - 90.0F;
-            this.mob.setYRot(this.rotlerp(this.mob.getYRot(), range, 90.0F));
+            final double horizontalDistSqr = xDif * xDif + zDif * zDif;
+            // Suppress "downhill spin" by gating Y rotation behind a significance threshold.
+            if (horizontalDistSqr > HORIZONTAL_DIRECTION_THRESHOLD)
+            {
+                final float range = (float) (Mth.atan2(zDif, xDif) * (double) (180F / (float) Math.PI)) - 90.0F;
+                this.mob.setYRot(this.rotlerp(this.mob.getYRot(), range, 90.0F));
+            }
+
             this.mob.setSpeed((float) (this.speedModifier * speedValue));
             final BlockPos blockpos = this.mob.blockPosition();
             final BlockState blockstate = this.mob.level.getBlockState(blockpos);

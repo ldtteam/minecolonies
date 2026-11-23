@@ -1,22 +1,28 @@
 package com.minecolonies.core.colony.buildings.workerbuildings;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Predicate;
 
 import org.jetbrains.annotations.NotNull;
+
+import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.buildings.ICommonBuilding;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.crafting.ItemStorage;
-import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.core.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.core.colony.buildings.modules.AnimalHerdingModule;
 import com.minecolonies.core.colony.buildings.modules.BuildingModules;
+import com.minecolonies.core.colony.buildings.modules.StablePatrolTargetsModule;
 import com.minecolonies.core.colony.buildings.modules.settings.IntSetting;
 import com.minecolonies.core.colony.buildings.modules.settings.SettingKey;
+import com.minecolonies.core.colony.jobs.JobStablemaster;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -229,6 +235,9 @@ public class BuildingStable extends AbstractBuildingGuards
     {
         if (minutesSinceLastPatrol() < getSetting(PATROL_INTERVAL).getValue())
         {
+            final StablePatrolTargetsModule patrolTargetsModule = getModule(BuildingModules.STABLE_PATROL_TARGETS);
+            patrolTargetsModule.setActivePatrolTarget(null);
+
             setPatrolTimer(TICKS_SECOND * 60);
             return;
         }
@@ -238,14 +247,41 @@ public class BuildingStable extends AbstractBuildingGuards
     }
 
     /**
-     * Get a patrol target.
+     * Gets the next configured automatic patrol target.
+     *
+     * @return a patrol point for the next selected building, or {@code null} when no target is available.
      */
     @Override
-    protected BlockPos getRandomPatrolTarget()
+    protected BlockPos getPatrolTarget()
     {
-        BlockPos buildingPos = getColony().getServerBuildingManager().getRandomBuilding(cavalryPatrolFilter());
+        final StablePatrolTargetsModule patrolTargetsModule = getModule(BuildingModules.STABLE_PATROL_TARGETS);
+        final BlockPos buildingPos = patrolTargetsModule.getNextPatrolTarget();
+
+        patrolTargetsModule.setActivePatrolTarget(buildingPos);
 
         return patrolPointForBuilding(buildingPos);
+    }
+
+    /**
+     * Disables random nearby positions so automatic cavalry patrols use only selected buildings.
+     *
+     * @return {@code false}.
+     */
+    @Override
+    protected boolean useRandomPatrolPosition()
+    {
+        return false;
+    }
+
+    /**
+     * Allows selected cavalry patrol buildings to exceed the Stable's normal patrol distance.
+     *
+     * @return {@code false}.
+     */
+    @Override
+    protected boolean limitPatrolDistance()
+    {
+        return false;
     }
 
     /**
@@ -309,11 +345,53 @@ public class BuildingStable extends AbstractBuildingGuards
         }
     }
 
-    /*
-     * Filter for buildings that cavalry patrols.
+    /**
+     * Gets the filter for built buildings that cavalry can patrol.
+     *
+     * @return the cavalry patrol building filter.
      */
     public static Predicate<IBuilding> cavalryPatrolFilter()
     {
-        return b -> b instanceof BuildingStable || b instanceof BuildingGateHouse;
+        return BuildingStable::isCavalryPatrolTarget;
+    }
+
+    /**
+     * Checks whether a built colony building is eligible for cavalry patrol selection.
+     *
+     * @param building the server building or client building view to check.
+     * @return {@code true} when the building is an eligible cavalry patrol target.
+     */
+    public static boolean isCavalryPatrolTarget(final ICommonBuilding building)
+    {
+        if (building.getBuildingLevel() < 1)
+        {
+            return false;
+        }
+
+        return building.getBuildingType() == ModBuildings.stable.get()
+                 || building.getBuildingType() == ModBuildings.gateHouse.get()
+                 || building.getBuildingType() == ModBuildings.townHall.get()
+                 || building.getBuildingType() == ModBuildings.barracks.get();
+    }
+
+    @Override
+    public Set<ICitizenData> getAllAssignedMilitaryUnits()
+    {
+        final Set<ICitizenData> assignedGuards = new HashSet<>();
+
+        for (final ICitizenData citizenData : getAllAssignedCitizen())
+        {
+            if (citizenData == null || citizenData.getJob() == null)
+            {
+                continue;
+            }
+
+            if (!(citizenData.getJob() instanceof JobStablemaster))
+            {
+                assignedGuards.add(citizenData);
+            }
+        }
+
+        return assignedGuards;
     }
 }

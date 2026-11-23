@@ -1705,7 +1705,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     @Override
     public int getArmorValue()
     {
-        if (citizenJobHandler.getColonyJob() instanceof JobKnight)
+        if (citizenJobHandler.getColonyJob() instanceof JobKnight || citizenJobHandler.getColonyJob() instanceof JobCavalry)
         {
             return (int) (super.getArmorValue() * (1 + citizenColonyHandler.getColonyOrRegister().getResearchManager().getResearchEffects().getEffectStrength(MELEE_ARMOR)));
         }

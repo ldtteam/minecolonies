@@ -4,6 +4,7 @@ import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.core.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.core.colony.buildings.BuildingMysticalSite;
 import com.minecolonies.core.colony.buildings.DefaultBuildingInstance;
 import com.minecolonies.core.colony.buildings.modules.HomeBuildingModule;
@@ -167,15 +168,16 @@ public final class ModBuildingsInitializer
         ModBuildings.stable = DEFERRED_REGISTER.register(ModBuildings.STABLE_ID, () -> new BuildingEntry.Builder()
           .setBuildingBlock(ModBlocks.blockHutStable)
           .setBuildingProducer(BuildingStable::new)
-          .setBuildingViewProducer(() -> EmptyView::new)
+          .setBuildingViewProducer(() -> AbstractBuildingGuards.View::new)
           .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.STABLE_ID))
           .addBuildingModuleProducer(CAVALRY_STABLE_WORK)
           .addBuildingModuleProducer(BED)
           .addBuildingModuleProducer(STABLEMASTER_WORK)
           .addBuildingModuleProducer(STABLEMASTER_HERDING)
           .addBuildingModuleProducer(GUARD_ENTITY_LIST)
-          .addBuildingModuleProducer(STABLE_SETTINGS)
+          .addBuildingModuleProducer(STABLE_PATROL_TARGETS)
           .addBuildingModuleProducer(MIN_STOCK)
+          .addBuildingModuleProducer(STABLE_SETTINGS)
           .addBuildingModuleProducer(STATS_MODULE)
           .createBuildingEntry());
 
