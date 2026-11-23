@@ -145,12 +145,12 @@ public abstract class AbstractJobCrafter<AI extends AbstractEntityAIBasic<J, ? e
 
         if (compound.contains(NbtTagConstants.TAG_MAX_COUNTER))
         {
-            this.progress = compound.getInt(NbtTagConstants.TAG_MAX_COUNTER);
+            this.maxCraftingCount = compound.getInt(NbtTagConstants.TAG_MAX_COUNTER);
         }
 
         if (compound.contains(NbtTagConstants.TAG_CRAFT_COUNTER))
         {
-            this.progress = compound.getInt(NbtTagConstants.TAG_CRAFT_COUNTER);
+            this.craftCounter = compound.getInt(NbtTagConstants.TAG_CRAFT_COUNTER);
         }
 
         if (compound.contains(NbtTagConstants.TAG_SECONDARY_OUTPUTS))

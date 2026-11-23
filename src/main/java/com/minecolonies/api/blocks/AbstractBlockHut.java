@@ -36,6 +36,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.api.distmarker.Dist;
@@ -277,7 +278,7 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
             }
 
             final String adjusted = path.replace(".blueprint", "");
-            final String num = adjusted.substring(path.replace(".blueprint", "").length() - 2, adjusted.length() - 1);
+            final String num = adjusted.substring(adjusted.length() - 1);
 
             building.setStructurePack(pack);
             building.setBlueprintPath(path);
