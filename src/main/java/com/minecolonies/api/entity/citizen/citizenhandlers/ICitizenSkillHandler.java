@@ -48,14 +48,14 @@ public interface ICitizenSkillHandler
     void read(@NotNull final CompoundTag compoundNBT);
 
     /**
-     * Attempt an intelligence level up with a base chance.
+     * Attempt an intelligence level up with a percentage chance.
      *
-     * @param random       the random var.
-     * @param customChance the custom chance.
-     * @param citizen      the citizen that is trying to level up.
-     * @return true if leveled up.
+     * @param random  the random var.
+     * @param chance  the chance to succeed, as a percentage in the range [0, 100].
+     * @param citizen the citizen that is trying to level up.
+     * @return true if the roll succeeded.
      */
-    boolean tryLevelUpIntelligence(@NotNull final Random random, final double customChance, @NotNull final ICitizenData citizen);
+    boolean tryLevelUpIntelligence(@NotNull final Random random, final double chance, @NotNull final ICitizenData citizen);
 
     /**
      * Get the level for a certain skill.

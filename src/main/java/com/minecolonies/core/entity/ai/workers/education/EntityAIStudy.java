@@ -44,9 +44,9 @@ public class EntityAIStudy extends AbstractEntityAISkill<JobStudent, BuildingLib
     public static final String RENDER_META_STUDYING = "study";
 
     /**
-     * One in X chance to gain experience
+     * Percentage chance to gain intelligence experience when studying without a study item.
      */
-    public static final int ONE_IN_X_CHANCE = 8;
+    public static final double BASE_SKILL_INCREASE_CHANCE = 12.5D;
 
     /**
      * Delay for each subject study.
@@ -158,7 +158,7 @@ public class EntityAIStudy extends AbstractEntityAISkill<JobStudent, BuildingLib
             checkIfRequestForItemExistOrCreate(new StackList(itemsToRequest, "Study Items", amountToRequest));
 
             // Default levelup
-            data.getCitizenSkillHandler().tryLevelUpIntelligence(data.getRandom(), ONE_IN_X_CHANCE, data);
+            data.getCitizenSkillHandler().tryLevelUpIntelligence(data.getRandom(), BASE_SKILL_INCREASE_CHANCE, data);
             worker.setItemInHand(InteractionHand.MAIN_HAND, ItemStackUtils.EMPTY);
         }
         // Use random item
@@ -168,7 +168,7 @@ public class EntityAIStudy extends AbstractEntityAISkill<JobStudent, BuildingLib
             final int chosenSlot = availableItems.get(chosenItem);
 
             worker.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(chosenItem.item(), 1));
-            if (data.getCitizenSkillHandler().tryLevelUpIntelligence(data.getRandom(), ONE_IN_X_CHANCE * (10D / chosenItem.skillIncreaseChance()), data))
+            if (data.getCitizenSkillHandler().tryLevelUpIntelligence(data.getRandom(), chosenItem.skillIncreaseChance(), data))
             {
                 building.getModule(STATS_MODULE).increment(INT_LEVELED);
             }
