@@ -83,7 +83,6 @@ import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import static com.minecolonies.api.colony.requestsystem.requestable.deliveryman.AbstractDeliverymanRequestable.MAX_BUILDING_PRIORITY;
 import static com.minecolonies.api.colony.requestsystem.requestable.deliveryman.AbstractDeliverymanRequestable.getMaxBuildingPriority;
 import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT_MAX_BUILDING_LEVEL;
 import static com.minecolonies.api.util.constant.BuildingConstants.NO_WORK_ORDER;
@@ -2056,8 +2055,8 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
             return Optional.empty();
         }
 
-        final int citizenID = getCitizensByRequest().get(token);
-        if (citizenID == -1 || colony.getCitizenManager().getCivilian(citizenID) == null)
+        final Integer citizenID = getCitizensByRequest().get(token);
+        if (citizenID == null || citizenID == -1 || colony.getCitizenManager().getCivilian(citizenID) == null)
         {
             return Optional.empty();
         }
