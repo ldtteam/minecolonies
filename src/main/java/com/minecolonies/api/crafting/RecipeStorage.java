@@ -8,7 +8,6 @@ import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.registry.RecipeTypeEntry;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-import com.minecolonies.api.equipment.ModEquipmentTypes;
 import com.minecolonies.api.equipment.registry.EquipmentTypeEntry;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
@@ -103,8 +102,9 @@ public class RecipeStorage implements IRecipeStorage
     private final ResourceLocation lootTable;
 
     /**
-     * The tool required to craft this recipe (in addition to any in the recipe itself)
+     * The tool required to craft this recipe (in addition to any in the recipe itself), or null if none is required
      */
+    @Nullable
     private final EquipmentTypeEntry requiredTool;
 
     /**
@@ -141,7 +141,7 @@ public class RecipeStorage implements IRecipeStorage
         private int gridSize = 1;
         private IToken<?> token = null;
         private ResourceLocation lootTable = null;
-        private EquipmentTypeEntry requiredTool = ModEquipmentTypes.none.get();
+        @Nullable private EquipmentTypeEntry requiredTool = null;
 
         /**
          * Default constructor.
@@ -280,10 +280,10 @@ public class RecipeStorage implements IRecipeStorage
 
         /**
          * Set the required crafting tool
-         * @param tool the tool needed to craft (in addition to anything in the recipe itself)
+         * @param tool the tool needed to craft (in addition to anything in the recipe itself), or null if none is required
          * @return this
          */
-        public Builder withRequiredTool(@NotNull final EquipmentTypeEntry tool)
+        public Builder withRequiredTool(@Nullable final EquipmentTypeEntry tool)
         {
             this.requiredTool = tool;
             return this;
@@ -886,7 +886,7 @@ public class RecipeStorage implements IRecipeStorage
         return lootTable;
     }
 
-    @NotNull
+    @Nullable
     @Override
     public EquipmentTypeEntry getRequiredTool()
     {
