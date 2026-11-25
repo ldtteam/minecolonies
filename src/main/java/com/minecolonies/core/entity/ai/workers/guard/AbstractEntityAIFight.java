@@ -245,7 +245,7 @@ public abstract class AbstractEntityAIFight<J extends AbstractJobGuard<J>, B ext
                 {
                     if (!ItemStackUtils.isEmpty(worker.getItemBySlot(item.getType())))
                     {
-                        building.extractInto(worker.getInventoryCitizen(), stack -> stack == worker.getItemBySlot(item.getType()), 1);
+                        building.insertFrom(worker.getInventoryCitizen(), stack -> stack == worker.getItemBySlot(item.getType()), 1);
                     }
 
                     // Used for further comparisons, set to the right inventory slot afterwards

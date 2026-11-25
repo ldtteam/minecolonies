@@ -109,7 +109,7 @@ public class TransferItemsRequestMessage extends AbstractBuildingServerMessage<I
         {
             for (int i = 0; i < Math.ceil((double) this.quantity /itemStack.getMaxStackSize()); i++)
             {
-                final int size = Math.min(movedItems, itemStack.getMaxStackSize());
+                final int size = Math.min(this.quantity - movedItems, itemStack.getMaxStackSize());
                 final ItemStack stack = itemStack.copyWithCount(size);
                 final ItemStack leftOverStack = building.insert(stack);
                 if (!ItemStackUtils.isEmpty(leftOverStack))
@@ -128,7 +128,7 @@ public class TransferItemsRequestMessage extends AbstractBuildingServerMessage<I
             {
                 return;
             }
-            movedItems = building.insertFrom(new PlayerMainInvWrapper(player.getInventory()), itemStack, movedItems);
+            movedItems = building.insertFrom(new PlayerMainInvWrapper(player.getInventory()), itemStack, toMove);
             leftOver = toMove - movedItems;
         }
         if (leftOver > 0)

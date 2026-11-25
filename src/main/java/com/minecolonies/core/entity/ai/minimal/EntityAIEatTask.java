@@ -422,7 +422,7 @@ public class EntityAIEatTask implements IStateAI
         if (slot == -1)
         {
             final ItemStorage storageToGet = FoodUtils.checkForFoodInBuilding(citizen.getCitizenData(), null, buildingWorker);
-            if (storageToGet != null && buildingWorker.insertFrom(citizen.getInventoryCitizen(), storageToGet.getItemStack(), storageToGet.getAmount()) > 0)
+            if (storageToGet != null && buildingWorker.extractInto(citizen.getInventoryCitizen(), storageToGet.getItemStack(), storageToGet.getAmount()) > 0)
             {
                 return EAT;
             }

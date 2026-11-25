@@ -617,13 +617,6 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
                                 goDump = true;
                             }
                         }
-                        else if (getBuildingToDump().hasEnoughElseCount(matchPredicate, missing) >= missing)
-                        {
-                            if (getBuildingToDump().extractInto(worker.getInventoryCitizen(), matchPredicate, missing) < missing)
-                            {
-                                goDump = true;
-                            }
-                        }
                     }
                 }
 
