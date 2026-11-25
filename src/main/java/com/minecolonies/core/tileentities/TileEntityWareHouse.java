@@ -115,7 +115,7 @@ public class TileEntityWareHouse extends AbstractTileEntityWareHouse
                         for (int slot = 0; slot < rack.getInventory().getSlots(); slot++)
                         {
                             final ItemStack stack = rack.getInventory().getStackInSlot(slot);
-                            if (itemStackSelectionPredicate.test(stack))
+                            if (!stack.isEmpty() && itemStackSelectionPredicate.test(stack))
                             {
                                 found.add(new Tuple<>(stack, pos));
                             }

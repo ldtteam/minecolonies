@@ -2,8 +2,6 @@ package com.minecolonies.api.colony.buildings;
 
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.crafting.ItemStorage;
-import com.minecolonies.api.entity.ai.workers.util.GuardGear;
-import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.WorldUtil;
@@ -331,12 +329,12 @@ public interface ICommonBuilding
 
     /**
      * Transfer from building into itemHandler.
-     * @param itemHandler the inventory to transfer to.
+     * @param destination the inventory to transfer to.
      * @param stack the stack to match to.
      * @param count the count to transfer.
      * @return the transferred count.
      */
-    default int transferFrom(@NotNull IItemHandler itemHandler, Predicate<ItemStack> stack, int count)
+    default int extractInto(@NotNull IItemHandler destination, Predicate<ItemStack> stack, int count)
     {
         final Level world = this.getColony().getWorld();
         int transferedQty = 0;
@@ -349,7 +347,7 @@ public interface ICommonBuilding
                 {
                     if (rackEntity.hasItemStack(stack))
                     {
-                        transferedQty += InventoryUtils.transfer(rackEntity.getInventory(), itemHandler, stack, count - transferedQty);
+                        transferedQty += InventoryUtils.transfer(rackEntity.getInventory(), destination, stack, count - transferedQty);
                     }
                 }
             }
@@ -363,13 +361,13 @@ public interface ICommonBuilding
 
     /**
      * Transfer to building from itemHandler.
-     * @param itemHandler the inventory to transfer from.
+     * @param origin the inventory to transfer from.
      * @param stack the stack to match to.
      * @param count the count to transfer.
      * @return the transferred count.
      */
-    default int transferTo(@NotNull IItemHandler itemHandler, ItemStack stack, int count) { return transferTo(itemHandler, st -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, st), count); }
-    default int transferTo(@NotNull IItemHandler itemHandler, Predicate<ItemStack> stack, int count)
+    default int insertFrom(@NotNull IItemHandler origin, ItemStack stack, int count) { return insertFrom(origin, st -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, st), count); }
+    default int insertFrom(@NotNull IItemHandler origin, Predicate<ItemStack> stack, int count)
     {
         final Level world = this.getColony().getWorld();
         int transferedQty = 0;
@@ -383,7 +381,7 @@ public interface ICommonBuilding
                 {
                     if (rackEntity.hasItemStack(stack))
                     {
-                        transferedQty += InventoryUtils.transfer(rackEntity.getInventory(), itemHandler, stack, count - transferedQty);
+                        transferedQty += InventoryUtils.transfer(origin, rackEntity.getInventory(), stack, count - transferedQty);
                     }
                 }
             }
@@ -400,7 +398,7 @@ public interface ICommonBuilding
                 final BlockEntity entity = world.getBlockEntity(pos);
                 if (entity instanceof TileEntityRack rackEntity)
                 {
-                    transferedQty += InventoryUtils.transfer(rackEntity.getInventory(), itemHandler, stack, count - transferedQty);
+                    transferedQty += InventoryUtils.transfer(origin, rackEntity.getInventory(), stack, count - transferedQty);
                 }
             }
             if (transferedQty >= count)
@@ -483,7 +481,7 @@ public interface ICommonBuilding
                 final BlockEntity entity = world.getBlockEntity(pos);
                 if (entity instanceof TileEntityRack rackEntity)
                 {
-                    final List<Integer> tempList = InventoryUtils.getAllMatchingSlot(rackEntity.getInventory(), predicate);
+                    final List<Integer> tempList = InventoryUtils.getAllMatchingSlots(rackEntity.getInventory(), predicate);
                     if (!tempList.isEmpty())
                     {
                         map.put(rackEntity.getInventory(), tempList);

@@ -781,7 +781,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
         {
             final ItemStorage is = costList.get(i);
             undoCostIcons[i] = new ItemIcon();
-            if (InventoryUtils.getMatchingSlot(new PlayerMainInvWrapper(Minecraft.getInstance().player.getInventory()), stack -> !ItemStackUtils.isEmpty(stack) && ItemStack.isSameItem(stack, is.getItemStack())) < is.getAmount() && !Minecraft.getInstance().player.isCreative())
+            if (InventoryUtils.getItemCount(new PlayerMainInvWrapper(Minecraft.getInstance().player.getInventory()), stack -> !ItemStackUtils.isEmpty(stack) && ItemStack.isSameItem(stack, is.getItemStack())) < is.getAmount() && !Minecraft.getInstance().player.isCreative())
             {
                 missingItems.add(is);
             }

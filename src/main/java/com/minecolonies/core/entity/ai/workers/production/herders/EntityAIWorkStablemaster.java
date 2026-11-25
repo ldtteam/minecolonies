@@ -443,8 +443,7 @@ public class EntityAIWorkStablemaster extends AbstractEntityAIHerder<JobStablema
                 {
                     return false;
                 }
-                walkToBuilding();
-                building.transferFrom(worker.getInventoryCitizen(), stack -> stack.is(neededItem), 1);
+                building.extractInto(worker.getInventoryCitizen(), stack -> stack.is(neededItem), 1);
             }
         }
         else

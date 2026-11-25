@@ -12,7 +12,6 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.items.wrapper.InvWrapper;
 import net.minecraftforge.items.wrapper.PlayerMainInvWrapper;
 import net.minecraftforge.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
@@ -109,7 +108,7 @@ public class TransferItemsRequestMessage extends AbstractBuildingServerMessage<I
         if (isCreative)
         {
             toMove = this.quantity;
-            for (int i = 0; i < Math.ceil(this.quantity/itemStack.getMaxStackSize()); i++)
+            for (int i = 0; i < Math.ceil((double) this.quantity /itemStack.getMaxStackSize()); i++)
             {
                 final int size = Math.min(toMove, itemStack.getMaxStackSize());
                 final ItemStack stack = itemStack.copyWithCount(size);
@@ -124,7 +123,7 @@ public class TransferItemsRequestMessage extends AbstractBuildingServerMessage<I
             {
                 return;
             }
-            leftOver = building.transferTo(new PlayerMainInvWrapper(player.getInventory()), itemStack, toMove);
+            leftOver = building.insertFrom(new PlayerMainInvWrapper(player.getInventory()), itemStack, toMove);
         }
         if (leftOver > 0)
         {

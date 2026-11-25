@@ -21,6 +21,7 @@ import net.minecraftforge.items.wrapper.PlayerMainInvWrapper;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.List;
+import java.util.function.Predicate;
 
 import static com.minecolonies.api.quests.QuestParseConstant.*;
 
@@ -127,7 +128,13 @@ public class DeliveryObjectiveTemplateTemplate extends DialogueObjectiveTemplate
     @Override
     public boolean tryDiscountItem(final Player player, final IQuestInstance colonyQuest)
     {
-        return InventoryUtils.extract(new PlayerMainInvWrapper(player.getInventory()), stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, this.item, !nbtMode.equals("any"), !nbtMode.equals("any")), this.quantity).getB() > 0;
+        final Predicate<ItemStack> predicate = stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, this.item, !nbtMode.equals("any"), !nbtMode.equals("any"));
+        if (InventoryUtils.getItemCount(new PlayerMainInvWrapper(player.getInventory()), predicate) >= this.quantity)
+        {
+            InventoryUtils.extract(new PlayerMainInvWrapper(player.getInventory()), predicate, this.quantity);
+            return true;
+        }
+        return false;
     }
 
     @Override

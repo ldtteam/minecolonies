@@ -93,8 +93,9 @@ public class TeleportToColonyMessage extends AbstractColonyServerMessage impleme
             {
                 if (cost > 0)
                 {
-                    if (InventoryUtils.extract(new InvWrapper(ctxIn.getSender().getInventory()), new ItemStack(Items.GOLD_NUGGET), cost).getB() >= cost)
+                    if (InventoryUtils.getItemCount(new InvWrapper(ctxIn.getSender().getInventory()), new ItemStack(Items.GOLD_NUGGET)) >= cost)
                     {
+                        InventoryUtils.extract(new InvWrapper(ctxIn.getSender().getInventory()), new ItemStack(Items.GOLD_NUGGET), cost);
                         int output = cost/2;
                         if (output <= STACKSIZE)
                         {

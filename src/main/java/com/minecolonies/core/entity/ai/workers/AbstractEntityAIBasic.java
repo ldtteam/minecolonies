@@ -601,10 +601,18 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
                     final int invCount = InventoryUtils.getItemCount(worker.getInventoryCitizen(), delivery);
                     if (invCount < delivery.getCount())
                     {
+                        final int missing = delivery.getCount() - invCount;
                         final Predicate<ItemStack> matchPredicate = stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, delivery);
-                        if (building.hasEnoughElseCount(matchPredicate, delivery.getCount() - invCount) >= delivery.getCount() - invCount)
+                        if (building.hasEnoughElseCount(matchPredicate, missing) >= missing)
                         {
-                            if (building.transferFrom(worker.getInventoryCitizen(), matchPredicate, delivery.getCount()) < delivery.getCount())
+                            if (building.extractInto(worker.getInventoryCitizen(), matchPredicate, missing) < missing)
+                            {
+                                goDump = true;
+                            }
+                        }
+                        else if (getBuildingToDump().hasEnoughElseCount(matchPredicate, missing) >= missing)
+                        {
+                            if (getBuildingToDump().extractInto(worker.getInventoryCitizen(), matchPredicate, missing) < missing)
                             {
                                 goDump = true;
                             }
@@ -845,7 +853,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
      */
     public boolean checkAndTransferFromHut(@Nullable final ItemStack is)
     {
-        return building.transferFrom(getInventory(), stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, is), is.getCount()) > 0;
+        return building.extractInto(getInventory(), stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, is), is.getCount()) > 0;
     }
 
     /**
@@ -1047,7 +1055,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
         if (building != null)
         {
             final Predicate<ItemStack> toolPredicate = stack -> ItemStackUtils.hasEquipmentLevel(stack, toolType, minimalLevel, building.getMaxEquipmentLevel());
-            return building.transferFrom(getInventory(), toolPredicate, 1) > 0;
+            return building.extractInto(getInventory(), toolPredicate, 1) > 0;
         }
 
         return false;
@@ -1185,8 +1193,12 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
             final int amount = dumpAnyway ? stackToDump.getCount() : buildingWorker.buildingRequiresCertainAmountOfItem(stackToDump, alreadyKept, true, job.getJobRegistryEntry());
             if (amount > 0)
             {
-                final ItemStack activeStack = getInventory().extractItem(slotAt, amount, false);
-                building.transferTo(getInventory(), activeStack, activeStack.getCount());
+                final ItemStack extracted = getInventory().extractItem(slotAt, amount, false);
+                final ItemStack rest = getBuildingToDump().insert(extracted);
+                if (!rest.isEmpty())
+                {
+                    getInventory().insertItem(slotAt, rest, false);
+                }
 
                 if (getInventory().getHeldItemSlot(InteractionHand.MAIN_HAND) == slotAt)
                 {
@@ -1605,7 +1617,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
 
         // Check if in building and if we could transfer at least "mincount" over.
         if (building.hasEnoughElseCount( new ItemStorage(stack, true, matchNBT), updatedMinCount) >= updatedMinCount
-            && updatedCount - building.transferFrom(worker.getInventoryCitizen(), itemStack -> ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, stack, true, matchNBT), updatedCount) >= minCount)
+            && updatedCount - building.extractInto(worker.getInventoryCitizen(), itemStack -> ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, stack, true, matchNBT), updatedCount) >= minCount)
         {
             return true;
         }
@@ -1646,7 +1658,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
         final int updatedMinCount = Math.min(updatedCount, deliverable.getMinimumCount());
 
         if (building.hasEnoughElseCount(deliverable::matches, updatedMinCount) >= updatedMinCount
-            && building.transferFrom(worker.getInventoryCitizen(), deliverable::matches, updatedCount) > 0)
+            && building.extractInto(worker.getInventoryCitizen(), deliverable::matches, updatedCount) > 0)
         {
             return true;
         }
@@ -1676,7 +1688,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
         }
 
         if (building.hasEnoughElseCount(itemStack -> itemStack.is(tag), count) >= count
-            && building.transferFrom(worker.getInventoryCitizen(), itemStack -> itemStack.is(tag), count) > 0)
+            && building.extractInto(worker.getInventoryCitizen(), itemStack -> itemStack.is(tag), count) > 0)
         {
             return true;
         }

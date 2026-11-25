@@ -134,7 +134,7 @@ public class BlockHutTownHall extends AbstractBlockHut<BlockHutTownHall>
     public List<MutableComponent> getRequirements(final ClientLevel level, final BlockPos pos, final LocalPlayer player)
     {
         final List<MutableComponent> requirements = new ArrayList<>();
-        if (InventoryUtils.hasItem(new InvWrapper(player.getInventory()), this))
+        if (!InventoryUtils.hasItem(new InvWrapper(player.getInventory()), this))
         {
             requirements.add(Component.translatable("com.minecolonies.coremod.hut.cost", Component.translatable("block." + Constants.MOD_ID + "." + getHutName())).setStyle((Style.EMPTY).withColor(
               ChatFormatting.RED)));

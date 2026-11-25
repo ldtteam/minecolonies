@@ -273,7 +273,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
         final IItemHandler handler = new InvWrapper(player.getInventory());
         final RestaurantMenuModule module = worker.getCitizenData().getWorkBuilding().getModule(RESTAURANT_MENU);
         final Predicate<ItemStack> canEatPredicate = stack -> module.getMenu().contains(new ItemStorage(stack));
-        if (InventoryUtils.getEmptySlots(handler) > 0)
+        if (InventoryUtils.getEmptySlots(handler) == 0)
         {
             return getState();
         }

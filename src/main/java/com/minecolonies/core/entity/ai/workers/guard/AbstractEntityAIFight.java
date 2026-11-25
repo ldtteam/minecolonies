@@ -229,7 +229,7 @@ public abstract class AbstractEntityAIFight<J extends AbstractJobGuard<J>, B ext
                         final int slot = InventoryUtils.getMatchingSlot(worker.getInventoryCitizen(), stack -> stack == armorStack);
                         if (slot > -1)
                         {
-                            building.transferFrom(worker.getInventoryCitizen(), stack -> stack == armorStack, 1);
+                            building.extractInto(worker.getInventoryCitizen(), stack -> stack == armorStack, 1);
                         }
                     }
 
@@ -245,7 +245,7 @@ public abstract class AbstractEntityAIFight<J extends AbstractJobGuard<J>, B ext
                 {
                     if (!ItemStackUtils.isEmpty(worker.getItemBySlot(item.getType())))
                     {
-                        building.transferFrom(worker.getInventoryCitizen(), stack -> stack == worker.getItemBySlot(item.getType()), 1);
+                        building.extractInto(worker.getInventoryCitizen(), stack -> stack == worker.getItemBySlot(item.getType()), 1);
                     }
 
                     // Used for further comparisons, set to the right inventory slot afterwards

@@ -170,7 +170,7 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, Buildi
 
         if (equipItem(InteractionHand.MAIN_HAND, Collections.singletonList(new ItemStorage(building.getMilkInputItem().getItem(), building.getMilkInputItem().getCount()))) && !walkingToAnimal(animal))
         {
-            if (!InventoryUtils.insert(worker.getInventoryCitizen(), building.getMilkOutputItem()).isEmpty())
+            if (InventoryUtils.insert(worker.getInventoryCitizen(), building.getMilkOutputItem()).isEmpty())
             {
                 building.getFirstModuleOccurance(BuildingCowboy.HerdingModule.class).onMilked();
                 CitizenItemUtils.setHeldItem(worker, InteractionHand.MAIN_HAND, getItemSlot(building.getMilkOutputItem().getItem()));

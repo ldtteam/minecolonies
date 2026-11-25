@@ -14,10 +14,7 @@ import com.minecolonies.api.colony.interactionhandling.IChatPriority;
 import com.minecolonies.api.colony.interactionhandling.IInteractionResponseHandler;
 import com.minecolonies.api.colony.interactionhandling.ModInteractionResponseHandlers;
 import com.minecolonies.api.eventbus.events.colony.citizens.CitizenAddedModEvent;
-import com.minecolonies.api.util.InventoryUtils;
-import com.minecolonies.api.util.MessageUtils;
-import com.minecolonies.api.util.StatsUtil;
-import com.minecolonies.api.util.Tuple;
+import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -31,6 +28,7 @@ import net.minecraftforge.items.wrapper.PlayerMainInvWrapper;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.StatisticsConstants.VISITORS_ABSCONDED;
 import static com.minecolonies.api.util.constant.StatisticsConstants.VISITORS_RECRUITED;
@@ -159,9 +157,11 @@ public class RecruitmentInteraction extends ServerCitizenInteraction
             IColony colony = data.getColony();
             if (colony.getCitizenManager().getCurrentCitizenCount() < colony.getCitizenManager().getPotentialMaxCitizens())
             {
-                if (player.isCreative()
-                    || InventoryUtils.extract(new PlayerMainInvWrapper(player.getInventory()), visitorData.getRecruitCost(), visitorData.getRecruitCost().getCount()).getB() >= visitorData.getRecruitCost().getCount())
+                final Predicate<ItemStack> predicate = stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(visitorData.getRecruitCost(), stack, false, false);
+                if (player.isCreative() || InventoryUtils.getItemCount(new PlayerMainInvWrapper(player.getInventory()), predicate) >= visitorData.getRecruitCost().getCount())
                 {
+                    InventoryUtils.extract(new PlayerMainInvWrapper(player.getInventory()), predicate, visitorData.getRecruitCost().getCount());
+
                     // Recruits visitor as new citizen and respawns entity
                     colony.getVisitorManager().removeCivilian(data);
                     data.setHomeBuilding(null);

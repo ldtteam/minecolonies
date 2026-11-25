@@ -1,12 +1,8 @@
 package com.minecolonies.api.util;
 
-import com.minecolonies.api.colony.buildings.IBuilding;
-import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.core.tileentities.TileEntityRack;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
-import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -17,11 +13,9 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.items.IItemHandler;
 
 import net.minecraftforge.items.ItemHandlerHelper;
-import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -89,16 +83,16 @@ public class InventoryUtils
      * @param targetItem what to check for.
      * @return the slot.
      */
-    public static List<Integer> getAllMatchingSlot(@NotNull final IItemHandler itemHandler, @NotNull final Item targetItem) { return getAllMatchingSlot(itemHandler,stack -> !stack.isEmpty() && stack.getItem() == targetItem); }
-    public static List<Integer> getAllMatchingSlot(@NotNull final IItemHandler itemHandler, @NotNull final Block block) { return getAllMatchingSlot(itemHandler, Item.byBlock(block)); }
-    public static List<Integer> getAllMatchingSlot(@NotNull final IItemHandler itemHandler, @NotNull final Predicate<ItemStack> predicate)
+    public static List<Integer> getAllMatchingSlots(@NotNull final IItemHandler itemHandler, @NotNull final Item targetItem) { return getAllMatchingSlots(itemHandler,stack -> !stack.isEmpty() && stack.getItem() == targetItem); }
+    public static List<Integer> getAllMatchingSlots(@NotNull final IItemHandler itemHandler, @NotNull final Block block) { return getAllMatchingSlots(itemHandler, Item.byBlock(block)); }
+    public static List<Integer> getAllMatchingSlots(@NotNull final IItemHandler itemHandler, @NotNull final Predicate<ItemStack> predicate)
     {
         final List<Integer> matchingSlots = new ArrayList<>();
         for (int slot = 0; slot < itemHandler.getSlots(); slot++)
         {
             if (predicate.test(itemHandler.getStackInSlot(slot)))
             {
-                return matchingSlots;
+                matchingSlots.add(slot);
             }
         }
 

@@ -50,7 +50,7 @@ public class EntityAIRange extends AbstractEntityAIGuard<JobRanger, AbstractBuil
         if (worker.getCitizenColonyHandler().getColonyOrRegister().getResearchManager().getResearchEffects().getEffectStrength(ARCHER_USE_ARROWS) > 0)
         {
             // Pickup arrows and request arrows
-            building.transferTo(worker.getInventoryCitizen(), item -> item.getItem() instanceof ArrowItem, 64);
+            building.insertFrom(worker.getInventoryCitizen(), item -> item.getItem() instanceof ArrowItem, 64);
             if (InventoryUtils.getItemCount(worker.getInventoryCitizen(), item -> item.getItem() instanceof ArrowItem) < 16)
             {
                 checkIfRequestForItemExistOrCreateAsync(new ItemStack(Items.ARROW), 64, 16);

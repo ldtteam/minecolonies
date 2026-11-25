@@ -572,7 +572,7 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
                 expeditionLog.setStatus(ExpeditionLog.Status.RETURNING_HOME);
                 for (ItemStack item : job.getProcessedResults())
                 {
-                    if (!InventoryUtils.insert(worker.getItemHandlerCitizen(), item).isEmpty())
+                    if (InventoryUtils.insert(worker.getItemHandlerCitizen(), item).isEmpty())
                     {
                         worker.decreaseSaturationForContinuousAction();
                         worker.getCitizenExperienceHandler().addExperience(0.2);
@@ -917,7 +917,7 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
                 {
                     if (!ItemStackUtils.isEmpty(virtualEquipmentSlots.get(item.getType())))
                     {
-                        building.transferFrom(worker.getInventoryCitizen(), stack -> stack == virtualEquipmentSlots.get(item.getType()), 1);
+                        building.extractInto(worker.getInventoryCitizen(), stack -> stack == virtualEquipmentSlots.get(item.getType()), 1);
                     }
 
                     // Used for further comparisons, set to the right inventory slot afterwards
