@@ -105,7 +105,7 @@ public class EntityCitizenWalkToProxy extends AbstractWalkToProxy
         //If his current working level is null, we have nothing to worry about.
         if (level != null)
         {
-            final BlockPos vector = building.getLadderLocation().subtract(building.getCobbleLocation());
+            final BlockPos vector = building.getLadderLocation().subtract(building.getLadderBackLocation());
 
             final int levelDepth = level.getDepth() + 2;
             final int targetY = target.getY();
