@@ -5,6 +5,7 @@ import com.google.common.collect.Lists;
 import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.buildings.ICommonBuilding;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.permissions.IPermissions;
@@ -574,13 +575,14 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
                 {
                     Log.getLogger().warn("Resolver died for finished request. Oopsy. " + worker.getCitizenData().getName() + " witnessed it.", ex);
                 }
-                final ILocation pickupLocation = resolver instanceof StationRequestResolver ? resolver.getLocation() : building.getLocation();
+                final BlockPos pickupLocation = resolver instanceof StationRequestResolver ? resolver.getLocation().getInDimensionLocation() : building.getPosition();
+                final ICommonBuilding receivingBuilding = building.getColony().getCommonBuildingManager().getBuilding(pickupLocation);
 
-                if (!walkToWorkPos(pickupLocation.getInDimensionLocation()) || !WorldUtil.isBlockLoaded(world, pickupLocation.getInDimensionLocation()))
+                if (!walkToWorkPos(pickupLocation) || !WorldUtil.isBlockLoaded(world, pickupLocation))
                 {
                     return NEEDS_ITEM;
                 }
-                final BlockEntity blockEntity = world.getBlockEntity(pickupLocation.getInDimensionLocation());
+                final BlockEntity blockEntity = world.getBlockEntity(pickupLocation);
                 if (blockEntity == null)
                 {
                     return NEEDS_ITEM;
@@ -593,19 +595,24 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
 
                 building.markRequestAsAccepted(worker.getCitizenData(), firstDeliverableRequest.getId());
 
+                if (receivingBuilding == null)
+                {
+                    return NEEDS_ITEM;
+                }
+
                 // Instead of swapping if we can't pick up the full request we go dump (and recompute inventory, which is okay).
                 // Instead of re-requesting we're just happy with what we've got and let the AI re-request the appropriate quantity.
                 boolean goDump = false;
-                for (final ItemStack delivery : ItemStackUtils.processItemStackListAndMerge(firstDeliverableRequest.getDeliveries()))
+                for (final ItemStorage delivery : ItemStorage.summarize(firstDeliverableRequest.getDeliveries()))
                 {
-                    final int invCount = InventoryUtils.getItemCount(worker.getInventoryCitizen(), delivery);
-                    if (invCount < delivery.getCount())
+                    final int invCount = InventoryUtils.getItemCount(worker.getInventoryCitizen(), delivery.getItemStack());
+                    if (invCount < delivery.getAmount())
                     {
-                        final int missing = delivery.getCount() - invCount;
-                        final Predicate<ItemStack> matchPredicate = stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, delivery);
-                        if (building.hasEnoughElseCount(matchPredicate, missing) >= missing)
+                        final int missing = delivery.getAmount() - invCount;
+                        final Predicate<ItemStack> matchPredicate = stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, delivery.getItemStack());
+                        if (receivingBuilding.hasEnoughElseCount(matchPredicate, missing) >= missing)
                         {
-                            if (building.extractInto(worker.getInventoryCitizen(), matchPredicate, missing) < missing)
+                            if (receivingBuilding.extractInto(worker.getInventoryCitizen(), matchPredicate, missing) < missing)
                             {
                                 goDump = true;
                             }

@@ -1,14 +1,17 @@
 package com.minecolonies.api.crafting;
 
+import com.google.common.collect.ImmutableList;
 import com.google.gson.JsonObject;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.core.util.GsonHelper;
+import it.unimi.dsi.fastutil.objects.Object2IntLinkedOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
@@ -334,5 +337,30 @@ public class ItemStorage
     public ImmutableItemStorage toImmutable()
     {
         return new ImmutableItemStorage(this);
+    }
+
+    /**
+     * Util to summarize a bunch of itemStacks into a list of itemStorages.
+     * @param stacks the stacks to summarize.
+     * @return the summarized storages.
+     */
+    public static List<ItemStorage> summarize(@NotNull final List<ItemStack> stacks)
+    {
+        final Object2IntLinkedOpenHashMap<ItemStorage> counts = new Object2IntLinkedOpenHashMap<>();
+        for (final ItemStack stack : stacks)
+        {
+            if (!ItemStackUtils.isEmpty(stack))
+            {
+                counts.addTo(new ItemStorage(stack.copy()), stack.getCount());
+            }
+        }
+
+        final List<ItemStorage> result = new ArrayList<>(counts.size());
+        for (final Object2IntMap.Entry<ItemStorage> entry : counts.object2IntEntrySet())
+        {
+            entry.getKey().setAmount(entry.getIntValue());
+            result.add(entry.getKey());
+        }
+        return result;
     }
 }

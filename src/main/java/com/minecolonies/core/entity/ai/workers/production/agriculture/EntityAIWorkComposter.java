@@ -153,7 +153,7 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
 
         if (building.hasItem(stack -> list.contains(new ItemStorage(stack))))
         {
-            building.insertFrom(worker.getInventoryCitizen(), stack -> list.contains(new ItemStorage(stack)), Constants.STACKSIZE);
+            building.extractInto(worker.getInventoryCitizen(), stack -> list.contains(new ItemStorage(stack)), Constants.STACKSIZE);
         }
 
         final int slot = InventoryUtils.getMatchingSlot(worker.getInventoryCitizen(), stack -> list.contains(new ItemStorage(stack)));

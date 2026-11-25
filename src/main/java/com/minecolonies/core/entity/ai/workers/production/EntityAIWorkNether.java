@@ -917,7 +917,7 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
                 {
                     if (!ItemStackUtils.isEmpty(virtualEquipmentSlots.get(item.getType())))
                     {
-                        building.extractInto(worker.getInventoryCitizen(), stack -> stack == virtualEquipmentSlots.get(item.getType()), 1);
+                        building.insertFrom(worker.getInventoryCitizen(), stack -> stack == virtualEquipmentSlots.get(item.getType()), 1);
                     }
 
                     // Used for further comparisons, set to the right inventory slot afterwards

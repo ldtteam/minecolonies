@@ -228,7 +228,7 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, Buildi
             fakePlayer.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.BOWL));
             if (mooshroom.mobInteract(fakePlayer, InteractionHand.MAIN_HAND).equals(InteractionResult.CONSUME))
             {
-                if (!InventoryUtils.insert(worker.getInventoryCitizen(), fakePlayer.getMainHandItem()).isEmpty())
+                if (InventoryUtils.insert(worker.getInventoryCitizen(), fakePlayer.getMainHandItem()).isEmpty())
                 {
                     building.getFirstModuleOccurance(BuildingCowboy.HerdingModule.class).onStewed();
                     CitizenItemUtils.setHeldItem(worker, InteractionHand.MAIN_HAND, getItemSlot(fakePlayer.getMainHandItem().getItem()));

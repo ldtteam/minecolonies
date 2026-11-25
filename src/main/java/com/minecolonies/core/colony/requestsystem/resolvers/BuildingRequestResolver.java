@@ -135,11 +135,6 @@ public class BuildingRequestResolver extends AbstractBuildingDependentRequestRes
     @Override
     public void resolveForBuilding(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request, @NotNull final AbstractBuilding building)
     {
-
-
-
-        final Set<ICapabilityProvider> tileEntities = getCapabilityProviders(manager, building);
-
         final int total = request.getRequest().getCount();
         int current = 0;
         final List<ItemStack> deliveries = new ArrayList<>();

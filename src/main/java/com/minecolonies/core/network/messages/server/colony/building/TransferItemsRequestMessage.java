@@ -103,35 +103,40 @@ public class TransferItemsRequestMessage extends AbstractBuildingServerMessage<I
             previousContent = InvDebugUtil.getAllItemsForProviders(building.getTileEntity(), new PlayerMainInvWrapper(player.getInventory()));
         }
 
-        int toMove;
+        int movedItems = 0;
         int leftOver = 0;
         if (isCreative)
         {
-            toMove = this.quantity;
             for (int i = 0; i < Math.ceil((double) this.quantity /itemStack.getMaxStackSize()); i++)
             {
-                final int size = Math.min(toMove, itemStack.getMaxStackSize());
+                final int size = Math.min(movedItems, itemStack.getMaxStackSize());
                 final ItemStack stack = itemStack.copyWithCount(size);
-                building.insert(stack);
-                toMove -= size;
+                final ItemStack leftOverStack = building.insert(stack);
+                if (!ItemStackUtils.isEmpty(leftOverStack))
+                {
+                    leftOver = leftOverStack.getCount();
+                    movedItems += size - leftOver;
+                    break;
+                }
+                movedItems += size;
             }
         }
         else
         {
-            toMove = Math.min(this.quantity, InventoryUtils.getItemCount(new PlayerMainInvWrapper(player.getInventory()), stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, itemStack, true, true)));
+            final int toMove = Math.min(this.quantity, InventoryUtils.getItemCount(new PlayerMainInvWrapper(player.getInventory()), stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, itemStack, true, true)));
             if (toMove == 0)
             {
                 return;
             }
-            leftOver = building.insertFrom(new PlayerMainInvWrapper(player.getInventory()), itemStack, toMove);
+            movedItems = building.insertFrom(new PlayerMainInvWrapper(player.getInventory()), itemStack, movedItems);
+            leftOver = toMove - movedItems;
         }
         if (leftOver > 0)
         {
             MessageUtils.format(Component.translatable("entity.builder.inventoryfull", itemStack.getDisplayName()).withStyle(ChatFormatting.RED)).sendTo(player);
         }
-        final boolean success = leftOver < toMove;
 
-        if (success)
+        if (movedItems > 0)
         {
             building.getTileEntity().setChanged();
             if (attemptResolve)

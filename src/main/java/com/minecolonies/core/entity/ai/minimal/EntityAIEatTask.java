@@ -269,7 +269,7 @@ public class EntityAIEatTask implements IStateAI
                 int qty = (int) (Math.max(1.0, (FULL_SATURATION - citizen.getCitizenData().getSaturation()) / FoodUtils.getFoodValue(storageToGet.getItemStack(), citizen)));
                 // Hand out a bit extra
                 qty = (int) Math.ceil(qty * 1.5);
-                cookBuilding.insertFrom(citizen.getInventoryCitizen(), storageToGet.getItemStack(), qty);
+                cookBuilding.extractInto(citizen.getInventoryCitizen(), storageToGet.getItemStack(), qty);
                 return EAT;
             }
         }

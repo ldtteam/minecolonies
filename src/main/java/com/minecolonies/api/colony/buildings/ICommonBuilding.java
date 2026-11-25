@@ -334,6 +334,7 @@ public interface ICommonBuilding
      * @param count the count to transfer.
      * @return the transferred count.
      */
+    default int extractInto(@NotNull IItemHandler destination, ItemStack stack, int count) { return extractInto(destination, st -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, st), count); }
     default int extractInto(@NotNull IItemHandler destination, Predicate<ItemStack> stack, int count)
     {
         final Level world = this.getColony().getWorld();

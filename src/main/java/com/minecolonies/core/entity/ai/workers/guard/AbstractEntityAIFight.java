@@ -229,7 +229,7 @@ public abstract class AbstractEntityAIFight<J extends AbstractJobGuard<J>, B ext
                         final int slot = InventoryUtils.getMatchingSlot(worker.getInventoryCitizen(), stack -> stack == armorStack);
                         if (slot > -1)
                         {
-                            building.extractInto(worker.getInventoryCitizen(), stack -> stack == armorStack, 1);
+                            building.insertFrom(worker.getInventoryCitizen(), stack -> stack == armorStack, 1);
                         }
                     }
 
