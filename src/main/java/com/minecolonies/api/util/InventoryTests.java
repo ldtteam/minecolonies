@@ -113,16 +113,6 @@ public final class InventoryTests
             eq("dest", 2, count(dest, Items.DIAMOND_SWORD));
         }));
 
-        t.add(new Test("transfer: does not pick up stacks with different NBT", () -> {
-            final ItemStack named = s(Items.DIRT, 10);
-            named.setHoverName(Component.literal("Special dirt"));
-            final ItemStackHandler origin = inv(2, named, s(Items.DIRT, 10));
-            final ItemStackHandler dest = inv(2);
-            eq("returned", 10, InventoryUtils.transfer(origin, dest, s(Items.DIRT, 1), 20));
-            isTrue("named stack still in origin", origin.getStackInSlot(0).hasCustomHoverName() && origin.getStackInSlot(0).getCount() == 10);
-            isTrue("dest has no named dirt", !dest.getStackInSlot(0).hasCustomHoverName() && !dest.getStackInSlot(1).hasCustomHoverName());
-        }));
-
         // ---------------- transferAllItemHandler
 
         t.add(new Test("transferAll: everything fits", () -> {

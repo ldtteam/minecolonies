@@ -20,6 +20,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.items.IItemHandler;
 
+import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -317,14 +318,14 @@ public class InventoryUtils
     public static boolean transferFromSlot(final IItemHandler origin, final @NotNull IItemHandler destination, final int slot) { return transferFromSlot(origin, destination, slot, Constants.STACKSIZE); }
     public static boolean transferFromSlot(final IItemHandler origin, final @NotNull IItemHandler destination, final int slot, final int qty)
     {
-        final ItemStack extracted = origin.extractItem(slot, qty, false);
-        final boolean success = extracted.getCount() > 0;
-        final ItemStack leftOver = insert(destination, extracted);
-        if (!ItemStackUtils.isEmpty(leftOver))
+        final ItemStack simulated = origin.extractItem(slot, qty, true);
+        final int fits = simulated.getCount() - ItemHandlerHelper.insertItemStacked(destination, simulated, true).getCount();
+        if (fits <= 0)
         {
-            origin.insertItem(slot, leftOver, false);
+            return false;
         }
-        return success;
+        insert(destination, origin.extractItem(slot, fits, false));
+        return true;
     }
 
     /**
