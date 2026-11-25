@@ -705,6 +705,12 @@
     "checkednbtkeys": [
       "minecraft:food"
     ],
+    "item": "minecolonies:cheese_pizza_slice"
+  },
+  {
+    "checkednbtkeys": [
+      "minecraft:food"
+    ],
     "item": "minecolonies:cheese_ravioli"
   },
   {
@@ -990,6 +996,12 @@
       "minecraft:food"
     ],
     "item": "minecolonies:mushroom_pizza"
+  },
+  {
+    "checkednbtkeys": [
+      "minecraft:food"
+    ],
+    "item": "minecolonies:mushroom_pizza_slice"
   },
   {
     "checkednbtkeys": [
