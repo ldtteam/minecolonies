@@ -107,9 +107,9 @@ public class ColonyConnectionManager implements IColonyConnectionManager
                 }
             }
         }
-        if (potentialConnection == null)
+        if (potentialConnection == null && logIfNull)
         {
-            MessageUtils.format(COM_MINECOLONIES_SIGN_TOO_FAR, distance).sendTo(this.colony).forManagers();
+            MessageUtils.format(COM_MINECOLONIES_SIGN_MISSING_LINK).withPriority(MessageUtils.MessagePriority.DANGER).sendTo(colony).forManagers();
         }
         return potentialConnection;
     }
@@ -185,6 +185,7 @@ public class ColonyConnectionManager implements IColonyConnectionManager
             }
         }
         pendingColonyConnections.remove(connectionPoint);
+        colony.markDirty();
     }
 
     @Override
@@ -479,13 +480,13 @@ public class ColonyConnectionManager implements IColonyConnectionManager
             if (connectedColony == null)
             {
                 connectedColonies.remove(colonyEntry.id);
+                colony.markDirty();
                 continue;
             }
 
             if (!connectedColony.getName().equals(colonyEntry.name))
             {
-                connectedColonies.put(colonyEntry.id,
-                    new ColonyConnection(connectedColony.getID(), connectedColony.getName(), colonyEntry.pos, colonyEntry.diplomacyStatus));
+                connectedColonies.put(colonyEntry.id, new ColonyConnection(connectedColony.getID(), connectedColony.getName(), colonyEntry.pos, colonyEntry.diplomacyStatus));
             }
 
             if (colonyEntry.diplomacyStatus == DiplomacyStatus.ALLIES)
