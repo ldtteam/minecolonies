@@ -549,14 +549,18 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
 
         for (final Map.Entry<BlockPos, List<String>> tag : tags.entrySet())
         {
-
+            final BlockPos pos = tag.getKey();
+            if (pos.getX() > blueprint.getSizeX() || pos.getZ() > blueprint.getSizeZ() || pos.getY() > blueprint.getSizeY() || pos.getX() < 0 || pos.getY() < 0 || pos.getZ() < 0)
+            {
+                continue;
+            }
             if (tag.getValue().contains(TAG_H_FRAME))
             {
-                hframePos.add(tag.getKey().offset(offset));
+                hframePos.add(pos.offset(offset));
             }
             if (tag.getValue().contains(TAG_V_FRAME))
             {
-                vframePos.add(tag.getKey().offset(offset));
+                vframePos.add(pos.offset(offset));
             }
         }
 
