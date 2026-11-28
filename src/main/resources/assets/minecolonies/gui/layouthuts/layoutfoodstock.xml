@@ -12,7 +12,7 @@
             <text id="resourceName" size="100 12" pos="20 1" color="black"/>
 
             <button label="X" id="removeStock" pos="126 1" size="29 15"
-                    source="minecolonies:textures/gui/builderhut/builder_button_very_small.png" textcolor="red"/>
+                    source="minecolonies:textures/gui/builderhut/builder_button_very_small.png" color="red"/>
         </box>
     </list>
 
@@ -35,7 +35,7 @@
             <itemicon id="resourceIcon" size="16 16" pos="20 0"/>
             <text id="resourceName" size="100 12" pos="40 3" color="white"/>
             <button label="&lt;&lt;" id="switch" pos="3 1" size="14 15"
-                    source="minecolonies:textures/gui/builderhut/builder_button_mini.png" textcolor="black"/>
+                    source="minecolonies:textures/gui/builderhut/builder_button_mini.png" color="black"/>
         </box>
     </list>
 </window>
