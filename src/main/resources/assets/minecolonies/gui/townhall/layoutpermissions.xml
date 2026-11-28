@@ -5,9 +5,9 @@
         <view id="pageAddPlayer" size="374 290">
             <text size="148 11" pos="26 65" color="black" label="$(com.minecolonies.coremod.gui.townhall.addplayer)"/>
             <input id="addPlayerName" size="100 18" pos="26 76" maxlength="32"/>
-            <button id="addPlayer" size="14 15" pos="130 78" label="+" source="minecolonies:textures/gui/builderhut/builder_button_mini.png" textcolor="black"/>
+            <button id="addPlayer" size="14 15" pos="130 78" label="+" source="minecolonies:textures/gui/builderhut/builder_button_mini.png" color="black"/>
 
-            <button id="addOnlinePlayer" size="14 15" pos="150 78" label="👥" source="minecolonies:textures/gui/builderhut/builder_button_mini.png" textcolor="blue"/>
+            <button id="addOnlinePlayer" size="14 15" pos="150 78" label="👥" source="minecolonies:textures/gui/builderhut/builder_button_mini.png" color="blue"/>
 
 
             <list id="users" size="148 121" pos="26 100">
@@ -54,7 +54,7 @@
         <view id="managePermissions">
             <text size="148 11" pos="36 65" color="black" label="$(com.minecolonies.coremod.gui.townhall.addrank)"/>
             <input id="addRankName" size="100 18" pos="36 80" maxlength="32"/>
-            <button id="buttonAddRank" size="14 15" pos="140 82" label="+" source="minecolonies:textures/gui/builderhut/builder_button_mini.png" textcolor="black"/>
+            <button id="buttonAddRank" size="14 15" pos="140 82" label="+" source="minecolonies:textures/gui/builderhut/builder_button_mini.png" color="black"/>
 
             <list id="rankButtonList" size="100 110" pos="46 105">
                 <box size="100% 15" linewidth="0">
@@ -97,7 +97,7 @@
 
             <text size="146 11" pos="26 65" color="black" label="$(com.minecolonies.coremod.gui.townhall.addblock)"/>
             <input id="addBlockName" size="100 18" pos="26 76" maxlength="32"/>
-            <button id="addBlock" size="14 15" pos="130 78" label="+" source="minecolonies:textures/gui/builderhut/builder_button_mini.png" textcolor="black"/>
+            <button id="addBlock" size="14 15" pos="130 78" label="+" source="minecolonies:textures/gui/builderhut/builder_button_mini.png" color="black"/>
             <button id="blockTool" size="14 15" pos="146 78" source="minecolonies:textures/gui/scepterpermission.png"/>
 
             <list id="blocks" size="148 171" pos="201 36">
